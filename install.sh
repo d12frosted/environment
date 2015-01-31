@@ -38,21 +38,28 @@ if [[ $USER = $myself ]]; then
     log "Hello myself! Don't forget to setup ssh keys on https://github.com/settings/ssh"
     log "Because your repos are going to be cloned using ssh links instead of https"
     log "-------------------------------------------------------------------------------\n"
+else
+    log "Hello $USER!"
+    log "Welcome to environment setup hell!"
 fi
 
-gitclone() {
+clone() {
     repo=$1
     dir=$2
     if [[ $USER = $myself ]]; then
-        git clone https://github.com/${myself}/${repo}.git $dir
+        url="git@github.com:${myself}/${repo}.git"
     else
-        git clone git@github.com:${myself}/${repo}.git $dir
+        url="https://github.com/${myself}/${repo}.git"
     fi
+    log "Clone $url to $dir"
+    git clone $url $dir
 }
 
 # check operating system
 
-osx=false
+log "Running on $(uname -s)"
+
+osx=true
 if [[ $(uname -s) != "Darwin" ]]; then
     osx=false
 fi
@@ -65,12 +72,13 @@ if [ $osx = true ] ; then
     dependencies=(git curl ruby)
 else
     dependencies=(git curl emacs)
-
-    warn "Looks like your're not on OS X. Most probably you need to install some dependencies before this script will work for you. Dependencies to check: ${GREEN}$dependencies${RESET}"
+    warn "Looks like your're not on OS X. Most probably you need to install some dependencies before this script will work for you."
     separator
 fi
 
 # check dependencies
+
+log "Check for dependencies: ${GREEN}$dependencies${RESET}"
 
 for p in $dependencies; do
     hash $p 2>/dev/null || {
@@ -78,7 +86,12 @@ for p in $dependencies; do
     }
 done
 
+log "Everything is fine. Start installing."
+
 # install oh-my-zsh
+
+separator
+log "Install oh-my-zsh"
 
 if [ -d "$ZSH" ]; then
     log "oh-my-zsh is already installed"
@@ -90,6 +103,7 @@ fi
 # instal d12frosted-zshrc
 
 separator
+log "Install zsh settings"
 
 zshrc=~/.d12frosted-zshrc
 
@@ -99,7 +113,7 @@ if [ -d "$zshrc" ]; then
     cd $zshrc
     git pull
 else
-    gitclone .d12frosted-zshrc $zshrc
+    clone .d12frosted-zshrc $zshrc
 fi
 
 cd $zshrc
@@ -125,12 +139,15 @@ fi
 hash emacs || {
     # this will be called iff user is on OS X
     separator
-    log "Installing lates version of emacs"
+    log "Installing latest version of emacs"
     brew install --cocoa --srgb emacs
     ln -s /usr/local/Cellar/emacs/24.4/Emacs.app /Applications
 }
 
 # install .emacs.d
+
+separator
+log "Install .emacs.d"
 
 emacsd=~/.emacs.d
 
@@ -140,19 +157,19 @@ if [ -d "$emacsd" ]; then
     cd $emacsd
     git pull
 else
-    gitclone d12frosted-emacs $emacsd
+    clone d12frosted-emacs $emacsd
 fi
 
 cd $emacsd
 git submodule update --init
 cd $startingDir
 
-
-
 # install ghc and cabal
-# this part is stolen from https://github.com/yogsototh/install-haskell
+# for more generic version see https://github.com/yogsototh/install-haskell
+# thanks, Yann!
 
 separator
+log "Install ghc and cabal"
 
 if [[ -e $HOME/.cabal ]]; then
     log "Moving your ~/.cabal to ~/old.cabal"
