@@ -2,6 +2,8 @@
 
 Be aware, that this repository is not designed for general use. But probably you can check some of its part and steal what interests you.
 
+![](https://travis-ci.org/d12frosted/environment.svg?branch=master)
+
 ## Usage
 
 Use it on your own risk as follows:
@@ -23,7 +25,5 @@ It can take a while, because it installs:
 ## TODO
 
 * Add custom .ghci file (with docs and stuff)
-* Travis tests on ubuntu and os x
-* Before making git pull - check for any existing changes
 * Merge zshrc configs repo with this one
 * `git submodule update --init` could be dangerous
