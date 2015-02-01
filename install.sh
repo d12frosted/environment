@@ -71,7 +71,7 @@ if [ $osx = true ] ; then
     # but we want to check to be sure
     dependencies=(git curl ruby)
 else
-    dependencies=(git curl emacs)
+    dependencies=(git curl emacs-24.4)
     warn "Looks like your're not on OS X. Most probably you need to install some dependencies before this script will work for you."
     separator
 fi
@@ -136,13 +136,14 @@ fi
 
 # install emacs
 
-hash emacs || {
-    # this will be called iff user is on OS X
+hash emacs-24.4 || {
     separator
     log "Installing latest version of emacs"
     brew install --cocoa --srgb emacs
     ln -s /usr/local/Cellar/emacs/24.4/Emacs.app /Applications
 }
+
+emacs --version
 
 # install .emacs.d
 
