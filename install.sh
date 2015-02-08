@@ -213,7 +213,7 @@ fi
 hash fish || {
     separator
     log "Install latest version of fish"
-    git clone git@github.com:fish-shell/fish-shell.git $HOME/.fish-shell
+    git clone https://github.com/fish-shell/fish-shell.git $HOME/.fish-shell
     cd $HOME/.fish-shell
 
     autoconf
