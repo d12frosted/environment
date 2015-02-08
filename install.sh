@@ -213,7 +213,14 @@ fi
 hash fish || {
     separator
     log "Install latest version of fish"
-    brew install fish
+    git clone git@github.com:fish-shell/fish-shell.git $HOME/.fish-shell
+    cd $HOME/.fish-shell
+
+    autoconf
+    ./configure
+    make
+    make install
+
     if grep -q $(which fish) "/etc/shells"; then
         log 'Fish is already in "/etc/shells" file'
     else
@@ -221,6 +228,8 @@ hash fish || {
     fi
     sudo chsh -s $(which fish)
 }
+
+cd $envdir
 
 # install emacs
 
