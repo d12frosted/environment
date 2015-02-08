@@ -14,6 +14,10 @@ set -g green (set_color green)
 set -g white (set_color white)
 set -g normal (set_color normal)
 
+# git
+
+git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset'"
+
 # functions
 
 function _git_branch_name
