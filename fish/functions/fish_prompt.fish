@@ -1,12 +1,9 @@
 function __prompt_duration
-  type __fish_duration_parser > /dev/null
-  if test $status -eq 0
-    set MIN_DURATION '8.00'
-    set duration (__fish_duration_parser $CMD_DURATION)
-    if test (echo $duration ' >= ' $MIN_DURATION | bc) -eq 1
-      echo -es $white '~> duration: ' $yellow $duration 's' $normal
+  if test $CMD_DURATION
+    if test $CMD_DURATION -ge 8000
+      echo -es $white '~> duration: ' $yellow $CMD_DURATION ' ms' $normal
       if hash terminal-notifier ^ /dev/null
-        echo -es 'Finished in ' $CMD_DURATION | terminal-notifier
+        echo -es 'Finished in ' $CMD_DURATION ' ms' | terminal-notifier
       end
     end
   end
