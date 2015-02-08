@@ -104,10 +104,91 @@ else
     clone environment $envdir
 fi
 
-# install haskell
+# install ghc and cabal
+
 separator
-install_ghc "7.8.3"
-install_cabal "1.22.0.0"
+hash ghc || {
+    ghcversion="7.8.3"
+
+    if [[ -e $HOME/.ghc ]]; then
+        log "Moving your ~/.ghc to ~/old.ghc"
+        mv $HOME/{,old}.ghc
+    fi
+
+    archi=$(uname -m)
+    if [[ $(uname -s) = "Darwin" ]]; then
+        os="apple-darwin"
+    else
+        if [[ $archi = "i686" ]]; then
+            archi=i386
+        fi
+        os="unknown-linux-deb7"
+    fi
+
+    tmpdir=/tmp/install-haskell
+    mkdir -p $tmpdir
+
+    cd $tmpdir
+    ghctar=ghc-${ghcversion}-${archi}-${os}.tar.xz
+    if [[ ! -e $ghctar ]]; then
+        log "Downloading GHC..."
+        curl -LO http://www.haskell.org/ghc/dist/${ghcversion}/$ghctar
+    else
+        log "Using already downloaded GHC ($tmpdir)..."
+    fi
+    log "Installing GHC..."
+    tar xJf $ghctar
+    cd ghc-${ghcversion}
+    ./configure && make install
+}
+
+hash cabal || {
+    cabalversion="1.22.0.0"
+
+    if [[ -e $HOME/.cabal ]]; then
+        log "Moving your ~/.cabal to ~/old.cabal"
+        mv $HOME/{,old}.cabal
+    fi
+
+    archi=$(uname -m)
+    if [[ $(uname -s) = "Darwin" ]]; then
+        os="apple-darwin-mavericks"
+    else
+        if [[ $archi = "i686" ]]; then
+            archi=i386
+        fi
+        cabalversion="1.20.0.1"
+        os="unknown-linux"
+    fi
+
+    tmpdir=/tmp/install-haskell
+    mkdir -p $tmpdir
+
+
+    cd $tmpdir
+    log "Downloading cabal..."
+    cabaltar=cabal-${cabalversion}-${archi}-${os}.tar.gz
+    [[ $cabalos = "unknown-linux" ]] && cabaltar=cabal-${archi}-${cabalos}.tar.gz
+    if [[ ! -e $cabaltar ]]; then
+        curl -LO http://www.haskell.org/cabal/release/cabal-install-$cabalversion/$cabaltar
+    else
+        log "Using already downloaded cabal ($tmpdir)..."
+    fi
+    tar xzf $cabaltar
+    log "Installing cabal..."
+    if [[ -e ./cabal ]]; then
+        mv cabal /usr/local/bin
+    else
+        mv ./dist/build/cabal/cabal /usr/local/bin
+    fi
+
+    log "Init cabal..."
+    sudo -u $normaluser cabal info >/dev/null 2>&1
+
+    log "Run cabal update"
+    cabal update
+}
+
 log "Install useful cabal binaries"
 cabal install -j alex happy
 log "Install basic prelude"
@@ -184,91 +265,3 @@ make
 
 log "Install some other cabal packages for happy haskell coding"
 cabal -j install hasktags haskell-docs present
-
-# functions
-
-function install_ghc() {
-    hash ghc || {
-        ghcversion=$1
-
-        if [[ -e $HOME/.ghc ]]; then
-            log "Moving your ~/.ghc to ~/old.ghc"
-            mv $HOME/{,old}.ghc
-        fi
-
-        archi=$(uname -m)
-        if [[ $(uname -s) = "Darwin" ]]; then
-            os="apple-darwin"
-        else
-            if [[ $archi = "i686" ]]; then
-                archi=i386
-            fi
-            os="unknown-linux-deb7"
-        fi
-
-        tmpdir=/tmp/install-haskell
-        mkdir -p $tmpdir
-
-        cd $tmpdir
-        ghctar=ghc-${ghcversion}-${archi}-${os}.tar.xz
-        if [[ ! -e $ghctar ]]; then
-            log "Downloading GHC..."
-            curl -LO http://www.haskell.org/ghc/dist/${ghcversion}/$ghctar
-        else
-            log "Using already downloaded GHC ($tmpdir)..."
-        fi
-        log "Installing GHC..."
-        tar xJf $ghctar
-        cd ghc-${ghcversion}
-        ./configure && make install
-    }
-}
-
-function install_cabal () {
-    hash cabal || {
-        cabalversion=$1
-
-        if [[ -e $HOME/.cabal ]]; then
-            log "Moving your ~/.cabal to ~/old.cabal"
-            mv $HOME/{,old}.cabal
-        fi
-
-        archi=$(uname -m)
-        if [[ $(uname -s) = "Darwin" ]]; then
-            os="apple-darwin-mavericks"
-        else
-            if [[ $archi = "i686" ]]; then
-                archi=i386
-            fi
-            cabalversion="1.20.0.1"
-            os="unknown-linux"
-        fi
-
-        tmpdir=/tmp/install-haskell
-        mkdir -p $tmpdir
-
-
-        cd $tmpdir
-        log "Downloading cabal..."
-        cabaltar=cabal-${cabalversion}-${archi}-${os}.tar.gz
-        [[ $cabalos = "unknown-linux" ]] && cabaltar=cabal-${archi}-${cabalos}.tar.gz
-        if [[ ! -e $cabaltar ]]; then
-            curl -LO http://www.haskell.org/cabal/release/cabal-install-$cabalversion/$cabaltar
-        else
-            log "Using already downloaded cabal ($tmpdir)..."
-        fi
-        tar xzf $cabaltar
-        log "Installing cabal..."
-        if [[ -e ./cabal ]]; then
-            mv cabal /usr/local/bin
-        else
-            mv ./dist/build/cabal/cabal /usr/local/bin
-        fi
-
-        log "Init cabal..."
-        sudo -u $normaluser cabal info >/dev/null 2>&1
-
-        log "Run cabal update"
-        cabal update
-    }
-}
