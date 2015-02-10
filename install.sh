@@ -247,7 +247,7 @@ emacs --version
 separator
 log "Install .emacs.d"
 
-emacsd=~/.emacs.d
+emacsd=$HOME/.emacs.d
 
 if [ -d "$emacsd" ]; then
     log "Looks like emacs configs are already installed"
@@ -273,4 +273,4 @@ cd $emacsd/packages/structured-haskell-mode/elisp
 make
 
 log "Install some other cabal packages for happy haskell coding"
-cabal -j install hasktags haskell-docs present
+cabal install hasktags haskell-docs present
