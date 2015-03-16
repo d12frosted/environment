@@ -19,15 +19,17 @@ function __prompt_git
     set -l is_dirty (_git_is_dirty)
     set -l is_cherry (_git_is_cherry)
 
-    echo -ens ' · ' '('
+    echo -ens ' · ('
 
-    # if dirty or contains commits that are not merged to upstream
-    # print branch name in red
+    # if dirty or contains commits that are not
+    # merged to upstream print helper text in red
     if test $is_dirty -o $is_cherry
-      echo -ens $red $git_branch
+      echo -ens $red
     else
-      echo -ens $green $git_branch
+      echo -ens $green
     end
+
+    echo -ens "$git_branch"
 
     # * - for dirty repository
     if test $is_dirty
