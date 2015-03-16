@@ -6,11 +6,13 @@ set fish_greeting
 
 # coloring
 
-set -g cyan (set_color cyan)
-set -g yellow (set_color yellow)
+set -g black (set_color black)
 set -g red (set_color red)
-set -g blue (set_color blue)
 set -g green (set_color green)
+set -g yellow (set_color yellow)
+set -g blue (set_color blue)
+set -g purple (set_color purple)
+set -g cyan (set_color cyan)
 set -g white (set_color white)
 set -g normal (set_color normal)
 
