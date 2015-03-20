@@ -38,3 +38,11 @@ function _git_is_cherry
     echo ''
   end
 end
+
+function e
+  emacs $argv
+end
+
+function ee
+  perl ~/.environment/emacs_starter.pl $argv
+end
