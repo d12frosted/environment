@@ -8,12 +8,7 @@ set fish_greeting
 
 git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset'"
 
-# functions
+# aliases
 
-function e
-  emacs $argv
-end
-
-function ee
-  perl ~/.environment/emacs_starter.pl $argv
-end
+alias e "emacs -nw"
+alias ee "perl ~/.environment/emacs_starter.pl"
