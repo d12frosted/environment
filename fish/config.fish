@@ -12,3 +12,4 @@ git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset %C(bol
 
 alias e "emacs -nw"
 alias ee "perl ~/.environment/emacs_starter.pl"
+alias marked "open -a '/Applications/Marked 2.app'"
