@@ -1,29 +1,30 @@
-function cabal-unpack-and-install-bin
+function cabal-unpack-and-install-bin -a package -d "Unpack and install specified executable package from cabal."
   set -l current_dir (pwd)
-  set -l package $argv[1]
-
   cd $TMPDIR
+  set -l dir $package*
+
+  if test (count $dir) -ne 0
+    echo "Found $TMPDIR$dir"
+    echo "Looks like the package already unpacked in \$TMPDIR"
+    cd $current_dir
+    return 1
+  end
+
+  cabal unpack $package
+
+  if test $status -ne 0
+    cd $current_dir
+    return 1
+  end
 
   set -l dir $package*
 
-  # this is simpel script
-  # so just don't install anything
-  # when there is already
-  # dir for this package
-  if test (count $dir) -ne 0
-    echo "There is already folder for this package in $TMPDIR"
-  else
-    cabal unpack $package; and begin
-      cd $TMPDIR/$dir
+  cd $TMPDIR/$dir
 
-      cabal-install-bin
+  cabal-install-bin
 
-      # todo check that cabal install
-      # didn't fail
+  cd $TMPDIR
+  rm -rf $dir
 
-      cd $TMPDIR
-      rm -rf $dir
-    end
-  end
   cd $current_dir
 end
