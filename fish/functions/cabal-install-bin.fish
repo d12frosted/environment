@@ -1,4 +1,4 @@
-function cabal-install-bin
+function cabal-install-bin -d "Install executables from .cabal file in current directory"
   # set some color settings
   set -l error_color red
   set -l msg_color blue
