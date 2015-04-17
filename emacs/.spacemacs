@@ -7,7 +7,7 @@
   (setq-default
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (ie. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '()
+   dotspacemacs-configuration-layer-path '("~/.environment/emacs/spacemacs-layers/")
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
@@ -17,10 +17,8 @@
      auto-completion
      syntax-checking
      markdown
-     omnisharp
-
-     d12frosted-omnisharp
-
+     colors
+     d12frosted
      ;; (git :variables
      ;;      git-gutter-use-fringe t)
      )
@@ -61,14 +59,13 @@ before layers configuration."
    dotspacemacs-themes '(solarized-light
                          solarized-dark
                          leuven
-                         monokai
                          zenburn)
    ;; If non nil the cursor color matches the state color.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+                               :size 12
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -140,6 +137,7 @@ before layers configuration."
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
   (setq powerline-default-separator 'arrow)
+  (spacemacs/mode-line-battery-info-toggle)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will

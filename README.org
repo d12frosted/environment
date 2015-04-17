@@ -14,9 +14,9 @@ This is my dotfiles. Be aware that this repository is not designed for general u
 
 Use it on your own risk as follows:
 
- #+BEGIN_SRC sh
+#+BEGIN_SRC sh
 curl -L https://github.com/d12frosted/d12frosted-environment/install.sh | zsh
- #+END_SRC
+#+END_SRC
 
 It can take a while, because it installs:
 
