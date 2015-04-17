@@ -1,4 +1,4 @@
-;;; config.el --- d12frosted-omnisharp Layer config File for Spacemacs
+;;; config.el --- d12frosted Layer config File for Spacemacs
 ;;
 ;; Copyright (c) 2014-2015 Boris Buliga
 ;;
@@ -9,9 +9,14 @@
 ;;
 ;;; License: MIT
 
+;;; omnisharp
+;; configurations specific to c# and omnisharp
+
 (add-hook 'csharp-mode-hook 'omnisharp-mode)
 (add-hook 'csharp-mode-hook 'company-mode)
-(add-hook 'csharp-mode-hook 'omnisharp/on-load-fn t)
+(add-hook 'csharp-mode-hook 'd12frosted/omnisharp-on-load-fn t)
+
+(setq omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe")
 
 (unless (assoc 'csharp-mode hs-special-modes-alist)
   (push '(csharp-mode
@@ -33,3 +38,15 @@
 
 (eval-after-load 'company
   '(add-to-list 'company-backends 'company-omnisharp))
+
+;;; js
+;; configurations specifc to js
+
+(setq js-indent-level 2)
+
+;;; text-mode
+;; configurations specific to text-mode and all modes derived from text-mode
+
+(add-hook 'text-mode-hook 'visual-line-mode)
+(add-hook 'text-mode-hook 'turn-off-auto-fill)
+(add-hook 'text-mode-hook 'flyspell-mode)

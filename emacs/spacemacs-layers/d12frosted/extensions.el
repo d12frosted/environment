@@ -1,4 +1,4 @@
-;;; extensions.el --- d12frosted-omnisharp Layer extensions File for Spacemacs
+;;; extensions.el --- d12frosted Layer extensions File for Spacemacs
 ;;
 ;; Copyright (c) 2014-2015 Boris Buliga
 ;;
@@ -9,20 +9,21 @@
 ;;
 ;;; License: MIT
 
-(defvar d12frosted-omnisharp-pre-extensions
+(defvar d12frosted-pre-extensions
   '(
+    ;; pre extension d12frosteds go here
     )
   "List of all extensions to load before the packages.")
 
-(defvar d12frosted-omnisharp-post-extensions
+(defvar d12frosted-post-extensions
   '(
-
+    ;; post extension d12frosteds go here
     )
   "List of all extensions to load after the packages.")
 
-;; For each extension, define a function omnisharp/init-<extension-omnisharp>
+;; For each extension, define a function d12frosted/init-<extension-d12frosted>
 ;;
-;; (defun d12frosted-omnisharp/init-my-extension ()
+;; (defun d12frosted/init-my-extension ()
 ;;   "Initialize my extension"
 ;;   )
 ;;
