@@ -1,0 +1,6 @@
+- clean: ['~/.spacemacs'
+         ,'~/.emacs.d/private/']
+
+- link:
+    ~/.spacemacs: emacs/.spacemacs
+    ~/.emacs.d/private: emacs/spacemacs-layers/
