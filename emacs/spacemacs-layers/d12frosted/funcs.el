@@ -127,6 +127,17 @@ For example, (fold F X '(1 2 3)) computes (F (F (F X 1) 2) 3)."
     (insert (d12frosted/org-new-file-template))
     (goto-char (point-max))))
 
+(defun d12frosted/org-sort-current-level ()
+  "Sort current level by TODO."
+  (interactive)
+  (org-sort-entries nil ?o))
+
+(defun d12frosted/org-sort-upper-level ()
+  "Go to upper level and sort it by TODO."
+  (interactive)
+  (progn (outline-up-heading 1)
+         (d12frosted/org-sort-current-level)))
+
 ;;; omnisharp functions
 
 (defun csharp-hs-forward-sexp (&optional arg)
