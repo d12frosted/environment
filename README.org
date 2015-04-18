@@ -1,18 +1,31 @@
-#+TITLE:   d12frosted environment
-#+AUTHOR:  Boris Buliga
-#+EMAIL:   d12frosted@icloud.com
-#+DATE:    2015-04-17
-#+UPDATE:  07:51:00
-#+STARTUP: showeverything
+#+TITLE:        d12frosted environment
+#+AUTHOR:       Boris Buliga <d12frosted@icloud.com>
+#+EMAIL:        d12frosted@icloud.com
+#+DATE:         2015-04-17
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
 
+This repository is a dump of my dotfiles that I am trying to keep clean and organized. But I prefer to call it 'environment'. 
 
-This is my dotfiles. Be aware that this repository is not designed for general use. But probably you can check some of its part and steal what interests you.
+* What's inside?
 
-[[https://travis-ci.org/d12frosted/environment.svg]]
+All configurations that I fear to loose by making ~rm -rf \~/~ (accidentally, for sure). So here you can find configurations to emacs, fish, git, cabal, ghci etc. Also you can find some installation scripts that might make my life a bit easier(haven't tested yet).
+
+* Dependencies
+
+My configurations assume that you have installed following things.
+
+- emacs-mac-port
+- git-flow
+- ag
+- aspell
+- fish
+
+Warning! Dependencies list is under construction.
 
 * Usage
 
-Use it on your own risk as follows:
+Currently I am working on moving my installation scripts to ~dotbot~, but the old way to install everything was:
 
 #+BEGIN_SRC sh
 curl -L https://github.com/d12frosted/d12frosted-environment/install.sh | zsh
@@ -20,18 +33,19 @@ curl -L https://github.com/d12frosted/d12frosted-environment/install.sh | zsh
 
 It can take a while, because it installs:
 
-- oh-my-zsh
-- my personal zsh configs
+- fish
 - brew (OS X only)
 - emacs (OS X only)
 - my personal emacs configs
 - ghc and cabal (from sources)
 - some cabal packages
 
-* Roadmap
+* Can I use your files?
 
-- Add custom .ghci file (with docs and stuff)
-- Merge zshrc configs repo with this one
-- ~git submodule update --init~ could be dangerous
-- dotbot
-- emacs configurations
+Sure you can. But should you? 
+
+OK, jokes aside. It will be pleasure for me, if you find something useful for you in my configurations. I am trying to keep things as clear as possible, but sometimes I am making very urgent changes that I forget to document and sometimes I am just lazy to do so. So in case you have questions or any problems with my configurations - just ping me. Also be aware that I am not trying to make my configurations platform independent. You should check dependencies list or installation scripts.
+
+* Thanks
+
+Special thanks to [[http://chrisdone.com][Chris Done]] who shown me the beautiful world of Emacs. 
