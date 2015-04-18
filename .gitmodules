@@ -1,3 +1,9 @@
 [submodule "dotbot"]
 	path = dotbot
 	url = https://github.com/anishathalye/dotbot
+[submodule "emacs/structured-haskell-mode"]
+	path = emacs/packages/structured-haskell-mode
+	url = https://github.com/chrisdone/structured-haskell-mode.git
+[submodule "emacs/packages/hindent"]
+	path = emacs/packages/hindent
+	url = https://github.com/chrisdone/hindent.git
