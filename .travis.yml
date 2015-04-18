@@ -1,7 +1,0 @@
-language: objective-c
-
-install:
-  - true
-
-script:
-  - zsh install.sh
