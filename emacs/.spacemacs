@@ -19,6 +19,7 @@
      markdown
      colors
      d12frosted
+     git
      ;; (git :variables
      ;;      git-gutter-use-fringe t)
      )
@@ -138,6 +139,7 @@ before layers configuration."
 layers configuration."
   (setq powerline-default-separator 'arrow)
   (spacemacs/mode-line-battery-info-toggle)
+  (setq-default git-enable-github-support t)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
