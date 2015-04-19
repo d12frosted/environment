@@ -19,9 +19,10 @@
      markdown
      colors
      d12frosted
+     d12frosted-haskell
      git
-     ;; (git :variables
-     ;;      git-gutter-use-fringe t)
+     (git :variables
+          git-gutter-use-fringe t)
      )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
