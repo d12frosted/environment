@@ -42,6 +42,21 @@
                                dirs))))))
     dirs))
 
+(defun rename-current-file (new-name)
+  "Change the name of current file and buffer to NAME."
+  (interactive "sEnter new name for this file: ")
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (if (get-buffer new-name)
+          (message "A buffer named '%s' already exists!" new-name)
+        (progn
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil))))))
+
 ;;; text manipulations
 
 (defun comment-dwim-line (&optional arg)
