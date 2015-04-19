@@ -42,14 +42,6 @@
                                dirs))))))
     dirs))
 
-(defun fold (f x list)
-  "Recursively applies (F i j) to LIST starting with X.
-For example, (fold F X '(1 2 3)) computes (F (F (F X 1) 2) 3)."
-  (let ((li list) (x2 x))
-    (while li
-      (setq x2 (funcall f x2 (pop li))))
-    x2))
-
 ;;; text manipulations
 
 (defun comment-dwim-line (&optional arg)
