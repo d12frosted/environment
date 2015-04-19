@@ -106,3 +106,13 @@
              (dired-create-directory (d12frosted/concat-path new-file-dir "exports"))
              (dired-create-directory (d12frosted/concat-path new-file-dir "assets"))
              (with-temp-buffer (write-file (d12frosted/concat-path new-file-dir (s-append ".org" name))))))))
+
+(defun d12frosted/org-insert-date ()
+  "Insert timestamp formated by value of d12frosted/org-date-format"
+  (interactive)
+  (insert (format-time-string d12frosted/org-date-format)))
+
+(defun d12frosted/org-insert-time ()
+  "Insert timestamp formated by value of d12frosted/org-time-format"
+  (interactive)
+  (insert (format-time-string d12frosted/org-time-format)))
