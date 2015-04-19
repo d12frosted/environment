@@ -19,7 +19,9 @@
      markdown
      colors
      d12frosted
+     d12frosted-org
      d12frosted-haskell
+     d12frosted-omnisharp
      git
      (git :variables
           git-gutter-use-fringe t)
