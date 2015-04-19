@@ -24,5 +24,3 @@
 ;;; random stuff
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-(setq projectile-globally-ignored-file-extensions
-      '(".DS_Store"))
