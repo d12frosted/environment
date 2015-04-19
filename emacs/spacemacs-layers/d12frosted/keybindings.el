@@ -9,10 +9,6 @@
 ;;
 ;;; License: MIT
 
-(require 'org)
-
-(define-key org-mode-map (kbd "C-#") 'd12frosted/org-insert-block-template)
-
 ;; Window manipulations
 
 (global-set-key (kbd "<left>") 'evil-window-left)
