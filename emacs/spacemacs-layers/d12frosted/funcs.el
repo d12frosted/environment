@@ -57,6 +57,12 @@
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
+(defun d12frosted/invalidate-cache ()
+  "Invalidate projectile and recentf cache."
+  (interactive)
+  (progn (projectile-invalidate-cache nil)
+         (recentf-cleanup)))
+
 ;;; text manipulations
 
 (defun comment-dwim-line (&optional arg)
