@@ -9,36 +9,6 @@
 ;;
 ;;; License: MIT
 
-;;; omnisharp
-;; configurations specific to c# and omnisharp
-
-(add-hook 'csharp-mode-hook 'omnisharp-mode)
-(add-hook 'csharp-mode-hook 'company-mode)
-(add-hook 'csharp-mode-hook 'd12frosted/omnisharp-on-load-fn t)
-
-(setq omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe")
-
-(unless (assoc 'csharp-mode hs-special-modes-alist)
-  (push '(csharp-mode
-          ;; regexp for start block
-          "\\(^[ \\t]*#[ \\t]*region\\b\\)\\|{"
-
-          ;; regexp for end block
-          "\\(^[ \\t]*#[ \\t]*endregion\\b\\)\\|}"
-
-          ;; regexp for comment start
-          "/[*/]"
-
-          ;; hs-forward-sexp-func
-          csharp-hs-forward-sexp
-
-          ;; c-like adjust (1 char)
-          hs-c-like-adjust-block-beginning)
-        hs-special-modes-alist))
-
-(eval-after-load 'company
-  '(add-to-list 'company-backends 'company-omnisharp))
-
 ;;; js
 ;; configurations specifc to js
 

@@ -1,4 +1,4 @@
-;;; packages.el --- d12frosted Layer packages File for Spacemacs
+;;; packages.el --- d12frosted-org Layer packages File for Spacemacs
 ;;
 ;; Copyright (c) 2014-2015 Boris Buliga
 ;;
@@ -9,19 +9,19 @@
 ;;
 ;;; License: MIT
 
-(defvar d12frosted-packages
+(defvar d12frosted-org-packages
   '(
-    ;; package d12frosteds go here
+    ;; package d12frosted-orgs go here
     )
   "List of all packages to install and/or initialize. Built-in packages
 which require an initialization must be listed explicitly in the list.")
 
-(defvar d12frosted-excluded-packages '()
+(defvar d12frosted-org-excluded-packages '()
   "List of packages to exclude.")
 
-;; For each package, define a function d12frosted/init-<package-d12frosted>
+;; For each package, define a function d12frosted-org/init-<package-d12frosted-org>
 ;;
-;; (defun d12frosted/init-my-package ()
+;; (defun d12frosted-org/init-my-package ()
 ;;   "Initialize my package"
 ;;   )
 ;;
