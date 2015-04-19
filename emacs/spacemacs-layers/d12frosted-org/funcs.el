@@ -94,3 +94,15 @@
   (interactive)
   (progn (outline-up-heading 1)
          (d12frosted/org-sort-current-level)))
+
+(defun d12frosted/org-create-new-entry (name)
+  (interactive "sEnter the name of new entry: ")
+
+  (let ((existing-entries (d12frosted/directory-dirs d12frosted/org-home-path))
+        (new-entry-path (d12frosted/concat-path d12frosted/org-home-path name) ))
+    (if (-contains? existing-entries new-entry-path)
+        (message "Sorry, but there is already entry named '%s'." name)
+      (progn (dired-create-directory new-entry-path)
+             (dired-create-directory (d12frosted/concat-path new-entry-path "exports"))
+             (dired-create-directory (d12frosted/concat-path new-entry-path "assets"))
+             (with-temp-buffer (write-file (d12frosted/concat-path new-entry-path (s-append ".org" name))))))))
