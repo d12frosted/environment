@@ -69,9 +69,11 @@ which require an initialization must be listed explicitly in the list.")
           org-agenda-files d12frosted/org-agenda-files
           org-agenda-inhibit-startup nil)
 
-    (define-key org-mode-map (kbd "C-c s o") 'd12frosted/org-sort-current-level)
-    (define-key org-mode-map (kbd "C-c s O") 'd12frosted/org-sort-upper-level)
-    (define-key org-mode-map (kbd "C-#") 'd12frosted/org-insert-block-template)
+    (define-key org-mode-map (kbd "C-c o s") 'd12frosted/org-sort-current-level)
+    (define-key org-mode-map (kbd "C-c o S") 'd12frosted/org-sort-upper-level)
+    (define-key org-mode-map (kbd "C-c o #") 'd12frosted/org-insert-block-template)
+    (define-key org-mode-map (kbd "C-c o d") 'd12frosted/org-insert-date)
+    (define-key org-mode-map (kbd "C-c o t") 'd12frosted/org-insert-time)
 
     (add-hook 'org-mode-hook 'd12frosted/org-auto-insert-template)))
 
