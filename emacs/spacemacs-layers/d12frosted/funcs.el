@@ -401,3 +401,16 @@ the cursor position happened."
              (file-name-nondirectory (buffer-file-name))
              name
              (line-number-at-pos)))))
+
+;;; projectile functions
+
+(defun projectile-remove-ignored (files)
+  "Remove ignored files and folders from FILES.
+Operates on filenames relative to the project root."
+  (let ((ignored (append (projectile-ignored-files-rel)
+                         (projectile-ignored-directories-rel))))
+    (-remove (lambda (file)
+               (or (--any-p (s-starts-with-p it file) ignored)
+                   (--any-p (s-ends-with-p it file)
+                            projectile-globally-ignored-file-extensions)))
+             files)))

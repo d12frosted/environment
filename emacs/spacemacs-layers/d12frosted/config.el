@@ -50,3 +50,9 @@
 (add-hook 'text-mode-hook 'visual-line-mode)
 (add-hook 'text-mode-hook 'turn-off-auto-fill)
 (add-hook 'text-mode-hook 'flyspell-mode)
+
+;;; random stuff
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(setq projectile-globally-ignored-file-extensions
+      '(".DS_Store"))
