@@ -140,9 +140,11 @@ before layers configuration."
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
-  (setq powerline-default-separator 'arrow)
-  (spacemacs/mode-line-battery-info-toggle)
+  (setq powerline-default-separator 'arrow
+        helm-M-x-fuzzy-match t)
   (setq-default git-enable-github-support t)
+
+  (spacemacs/mode-line-battery-info-toggle)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
