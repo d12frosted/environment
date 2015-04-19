@@ -18,8 +18,8 @@
 
 (global-set-key (kbd "A-<left>") 'evil-window-move-far-left)
 (global-set-key (kbd "A-<right>") 'evil-window-move-far-right)
-(global-set-key (kbd "A-<up>") 'evil-window-move-far-up)
-(global-set-key (kbd "A-<down>") 'evil-window-move-far-down)
+(global-set-key (kbd "A-<up>") 'evil-window-move-very-top)
+(global-set-key (kbd "A-<down>") 'evil-window-move-very-down)
 
 ;; text manipulations
 
