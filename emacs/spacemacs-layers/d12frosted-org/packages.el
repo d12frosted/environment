@@ -28,7 +28,7 @@ which require an initialization must be listed explicitly in the list.")
     :init
 
     :config
-    (defvar d12frosted/org-home-path "~/Dropbox/org")
+    (defvar d12frosted/org-home-path "~/Dropbox/org/")
 
     (defvar d12frosted/org-agenda-ignore-dirs
       (-map (lambda (dir) (d12frosted/concat-path d12frosted/org-home-path dir))
@@ -40,6 +40,12 @@ which require an initialization must be listed explicitly in the list.")
 
     (defvar d12frosted/org-agenda-files
       (-flatten (-map (lambda (dir) (d12frosted/org-files-in-folder dir)) d12frosted/org-agenda-dirs)))
+
+    (defvar d12frosted/org-time-format
+      "%H:%M:%S")
+
+    (defvar d12frosted/org-date-format
+      "%d %B %Y, %A")
 
     (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
       (let ((rlt ad-return-value)
@@ -65,6 +71,7 @@ which require an initialization must be listed explicitly in the list.")
 
     (define-key org-mode-map (kbd "C-c s o") 'd12frosted/org-sort-current-level)
     (define-key org-mode-map (kbd "C-c s O") 'd12frosted/org-sort-upper-level)
+    (define-key org-mode-map (kbd "C-#") 'd12frosted/org-insert-block-template)
 
     (add-hook 'org-mode-hook 'd12frosted/org-auto-insert-template)))
 
