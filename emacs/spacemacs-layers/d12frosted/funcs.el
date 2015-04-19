@@ -105,16 +105,3 @@ For example, (fold F X '(1 2 3)) computes (F (F (F X 1) 2) 3)."
           (region-end)
         (line-beginning-position 2))
     (point-max)))
-
-;;; projectile functions
-
-(defun projectile-remove-ignored (files)
-  "Remove ignored files and folders from FILES.
-Operates on filenames relative to the project root."
-  (let ((ignored (append (projectile-ignored-files-rel)
-                         (projectile-ignored-directories-rel))))
-    (-remove (lambda (file)
-               (or (--any-p (s-starts-with-p it file) ignored)
-                   (--any-p (s-ends-with-p it file)
-                            projectile-globally-ignored-file-extensions)))
-             files)))
