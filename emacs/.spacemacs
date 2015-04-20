@@ -145,7 +145,9 @@ layers configuration."
   (setq-default git-enable-github-support t)
 
   (spacemacs/mode-line-battery-info-toggle)
-)
+
+  (evil-leader/set-key
+    "ff" 'helm-for-files))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
