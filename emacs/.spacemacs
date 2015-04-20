@@ -134,7 +134,7 @@ before layers configuration."
    dotspacemacs-default-package-repository nil
    )
   ;; User initialization goes here
-  )
+  (setq-default git-enable-github-support t))
 
 (defun dotspacemacs/config ()
   "Configuration function.
@@ -142,7 +142,6 @@ before layers configuration."
 layers configuration."
   (setq powerline-default-separator 'arrow
         helm-M-x-fuzzy-match t)
-  (setq-default git-enable-github-support t)
 
   (spacemacs/mode-line-battery-info-toggle)
 
