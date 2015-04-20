@@ -11,22 +11,17 @@
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
-   '(
-     better-defaults
+   '(better-defaults
      org
      auto-completion
      syntax-checking
      markdown
      colors
-     (colors :variables colors-enable-nyan-cat-progress-bar t)
      d12frosted
      d12frosted-org
      d12frosted-haskell
      d12frosted-omnisharp
-     git
-     (git :variables
-          git-gutter-use-fringe t)
-     )
+     git)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -136,8 +131,9 @@ before layers configuration."
    )
 
   ;; User initialization goes here
-  (setq-default git-enable-github-support t)
-  (setq-default git-magit-status-fullscreen t))
+  (setq-default git-enable-github-support t
+                git-magit-status-fullscreen t
+                colors-enable-nyan-cat-progress-bar t))
 
 (defun dotspacemacs/config ()
   "Configuration function.
