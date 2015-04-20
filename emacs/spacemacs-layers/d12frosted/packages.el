@@ -13,6 +13,7 @@
   '(
     ;; package d12frosteds go here
     helm-spotify
+    2048-game
     )
   "List of all packages to install and/or initialize. Built-in packages
 which require an initialization must be listed explicitly in the list.")
@@ -23,6 +24,13 @@ which require an initialization must be listed explicitly in the list.")
 (defun d12frosted/init-helm-spotify ()
   "Initialize helm-spotify package."
   (use-package helm-spotify
+    :defer t
+    :init
+    :config))
+
+(defun d12frosted/init-2048-game ()
+  ""
+  (use-package 2048-game
     :defer t
     :init
     :config))
