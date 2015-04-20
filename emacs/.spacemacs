@@ -18,6 +18,7 @@
      syntax-checking
      markdown
      colors
+     (colors :variables colors-enable-nyan-cat-progress-bar t)
      d12frosted
      d12frosted-org
      d12frosted-haskell
