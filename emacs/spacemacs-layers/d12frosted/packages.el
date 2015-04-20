@@ -12,12 +12,20 @@
 (defvar d12frosted-packages
   '(
     ;; package d12frosteds go here
+    helm-spotify
     )
   "List of all packages to install and/or initialize. Built-in packages
 which require an initialization must be listed explicitly in the list.")
 
 (defvar d12frosted-excluded-packages '()
   "List of packages to exclude.")
+
+(defun d12frosted/init-helm-spotify ()
+  "Initialize helm-spotify package."
+  (use-package helm-spotify
+    :defer t
+    :init
+    :config))
 
 ;; For each package, define a function d12frosted/init-<package-d12frosted>
 ;;
