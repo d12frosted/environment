@@ -10,12 +10,9 @@
 ;;; License: MIT
 
 (defvar d12frosted-omnisharp-packages
-  '(
-    ;; package d12frosted-omnisharps go here
-    omnisharp
+  '(omnisharp
     csharp-mode
-    company
-    )
+    company)
   "List of all packages to install and/or initialize. Built-in packages
 which require an initialization must be listed explicitly in the list.")
 
@@ -73,13 +70,3 @@ which require an initialization must be listed explicitly in the list.")
       '(add-to-list 'company-backends 'company-omnisharp))
 
     ))
-
-;; For each package, define a function d12frosted-omnisharp/init-<package-d12frosted-omnisharp>
-;;
-;; (defun d12frosted-omnisharp/init-my-package ()
-;;   "Initialize my package"
-;;   )
-;;
-;; Often the body of an initialize function uses `use-package'
-;; For more info on `use-package', see readme:
-;; https://github.com/jwiegley/use-package

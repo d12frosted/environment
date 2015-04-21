@@ -10,10 +10,7 @@
 ;;; License: MIT
 
 (defvar d12frosted-haskell-packages
-  '(
-    ;; package d12frosted-haskells go here
-    haskell-mode
-    )
+  '(haskell-mode)
   "List of all packages to install and/or initialize. Built-in packages
 which require an initialization must be listed explicitly in the list.")
 
@@ -198,14 +195,3 @@ import Data.Vector (Vector)
     ;; (define-key ide-backend-mode-map [f5] 'ide-backend-mode-load)
     ;; (setq ide-backend-mode-cmd "cabal")
     ))
-
-
-;; For each package, define a function d12frosted-haskell/init-<package-d12frosted-haskell>
-;;
-;; (defun d12frosted-haskell/init-my-package ()
-;;   "Initialize my package"
-;;   )
-;;
-;; Often the body of an initialize function uses `use-package'
-;; For more info on `use-package', see readme:
-;; https://github.com/jwiegley/use-package

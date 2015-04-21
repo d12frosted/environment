@@ -10,16 +10,12 @@
 ;;; License: MIT
 
 (defvar d12frosted-haskell-pre-extensions
-  '(
-    hindent/elisp
-    structured-haskell-mode/elisp
-    )
+  '(hindent/elisp
+    structured-haskell-mode/elisp)
   "List of all extensions to load before the packages.")
 
 (defvar d12frosted-haskell-post-extensions
-  '(
-    ;; post extension d12frosted-haskells go here
-    )
+  '()
   "List of all extensions to load after the packages.")
 
 (defun d12frosted-haskell/init-hindent/elisp ()
@@ -35,13 +31,3 @@
     :defer t
     :init
     :config))
-
-;; For each extension, define a function d12frosted-haskell/init-<extension-d12frosted-haskell>
-;;
-;; (defun d12frosted-haskell/init-my-extension ()
-;;   "Initialize my extension"
-;;   )
-;;
-;; Often the body of an initialize function uses `use-package'
-;; For more info on `use-package', see readme:
-;; https://github.com/jwiegley/use-package

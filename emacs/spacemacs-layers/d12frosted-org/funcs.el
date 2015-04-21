@@ -11,7 +11,7 @@
 
 (defun gtd ()
    (interactive)
-   (find-file (d12frosted/concat-path d12frosted/org-home-path "gtd/gtd.org")))
+   (find-file (s-concat d12frosted/org-home-path "gtd/gtd.org")))
 
 (defun d12frosted/org-files-in-folder (folder)
   (directory-files folder t ".*\.org$"))
@@ -99,13 +99,13 @@
   (interactive "sEnter the name of new file: ")
 
   (let ((existing-files (d12frosted/directory-dirs d12frosted/org-home-path))
-        (new-file-dir (d12frosted/concat-path d12frosted/org-home-path name) ))
+        (new-file-dir (s-concat d12frosted/org-home-path name) ))
     (if (-contains? existing-files new-file-dir)
         (message "Sorry, but there is already file named '%s'." name)
       (progn (dired-create-directory new-file-dir)
-             (dired-create-directory (d12frosted/concat-path new-file-dir "exports"))
-             (dired-create-directory (d12frosted/concat-path new-file-dir "assets"))
-             (with-temp-buffer (write-file (d12frosted/concat-path new-file-dir (s-append ".org" name))))))))
+             (dired-create-directory (s-concat new-file-dir "exports"))
+             (dired-create-directory (s-concat new-file-dir "assets"))
+             (with-temp-buffer (write-file (s-concat new-file-dir (s-append ".org" name))))))))
 
 (defun d12frosted/org-insert-date ()
   "Insert timestamp formated by value of d12frosted/org-date-format"
