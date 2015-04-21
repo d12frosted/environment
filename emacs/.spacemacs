@@ -23,8 +23,7 @@
      d12frosted-omnisharp
      git)
    ;; A list of packages and/or extensions that will not be install and loaded.
-   dotspacemacs-excluded-packages '(projectile
-                                    helm-projectile)
+   dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'
@@ -148,11 +147,7 @@ layers configuration."
   (spacemacs/mode-line-battery-info-toggle)
 
   (evil-leader/set-key
-    "ff" 'helm-for-files)
-
-  ;; remove all projectile related bindings
-  (evil-leader/set-key
-    "p" nil))
+    "ff" 'helm-multi-files))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
