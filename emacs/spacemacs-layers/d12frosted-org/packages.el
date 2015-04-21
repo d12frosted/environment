@@ -10,10 +10,8 @@
 ;;; License: MIT
 
 (defvar d12frosted-org-packages
-  '(
-    ;; package d12frosted-orgs go here
-    org
-    )
+  '(org
+    org-journal)
   "List of all packages to install and/or initialize. Built-in packages
 which require an initialization must be listed explicitly in the list.")
 
@@ -24,14 +22,13 @@ which require an initialization must be listed explicitly in the list.")
   "Initialize org package."
   (use-package org
     :defer t
-
     :init
-
     :config
+
     (defvar d12frosted/org-home-path "~/Dropbox/org/")
 
     (defvar d12frosted/org-agenda-ignore-dirs
-      (-map (lambda (dir) (d12frosted/concat-path d12frosted/org-home-path dir))
+      (-map (lambda (dir) (s-concat d12frosted/org-home-path dir))
             '("temporary"
               "tmp")))
 
@@ -77,12 +74,10 @@ which require an initialization must be listed explicitly in the list.")
 
     (add-hook 'org-mode-hook 'd12frosted/org-auto-insert-template)))
 
-;; For each package, define a function d12frosted-org/init-<package-d12frosted-org>
-;;
-;; (defun d12frosted-org/init-my-package ()
-;;   "Initialize my package"
-;;   )
-;;
-;; Often the body of an initialize function uses `use-package'
-;; For more info on `use-package', see readme:
-;; https://github.com/jwiegley/use-package
+(defun d12frosted-rg/init-org-journal ()
+  "Initialize org-journal package"
+  (use-package org-journal
+    :defer t
+    :init
+    :config
+    (setq org-journal-dir (s-concat d12frosted/org-home-path "journal/"))))

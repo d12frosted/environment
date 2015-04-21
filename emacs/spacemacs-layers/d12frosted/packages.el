@@ -10,37 +10,16 @@
 ;;; License: MIT
 
 (defvar d12frosted-packages
-  '(
-    ;; package d12frosteds go here
-    helm-spotify
-    2048-game
-    )
+  '(2048-game)
   "List of all packages to install and/or initialize. Built-in packages
 which require an initialization must be listed explicitly in the list.")
 
 (defvar d12frosted-excluded-packages '()
   "List of packages to exclude.")
 
-(defun d12frosted/init-helm-spotify ()
-  "Initialize helm-spotify package."
-  (use-package helm-spotify
-    :defer t
-    :init
-    :config))
-
 (defun d12frosted/init-2048-game ()
-  ""
+  "Initialize 2048-game package."
   (use-package 2048-game
     :defer t
     :init
     :config))
-
-;; For each package, define a function d12frosted/init-<package-d12frosted>
-;;
-;; (defun d12frosted/init-my-package ()
-;;   "Initialize my package"
-;;   )
-;;
-;; Often the body of an initialize function uses `use-package'
-;; For more info on `use-package', see readme:
-;; https://github.com/jwiegley/use-package

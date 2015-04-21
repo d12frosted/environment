@@ -11,20 +11,13 @@
 
 ;;; general functions
 
-(defun d12frosted/concat-path (dir f)
-  "Append F to DIR with respect of trailing slash in DIR."
-  (if (s-ends-with? "/" dir)
-      (s-append f dir)
-    (s-concat dir "/" f)))
-
 (defun d12frosted/directory-dirs (dir)
   "Find all directories in DIR."
   (unless (file-directory-p dir)
     (error "Not a directory `%s'" dir))
   (-filter (lambda (f) (file-directory-p f))
-           (-map (lambda (f) (d12frosted/concat-path dir f))
-                 (-filter (lambda (f) (not (-contains? '("." "..") f))) (directory-files dir))))
-  )
+           (-map (lambda (f) (s-concat dir f))
+                 (-filter (lambda (f) (not (-contains? '("." "..") f))) (directory-files dir)))))
 
 (defun d12frosted/directory-dirs-r (dir)
   "Find all directories in DIR (recursive)."
