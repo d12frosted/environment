@@ -9,6 +9,8 @@
 ;;
 ;;; License: MIT
 
+(spacemacs/declare-prefix "o" "d12frosted")
+
 ;;; js
 ;; configurations specifc to js
 
