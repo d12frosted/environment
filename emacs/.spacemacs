@@ -133,7 +133,11 @@ before layers configuration."
   ;; User initialization goes here
   (setq-default git-enable-github-support t
                 git-magit-status-fullscreen t
-                colors-enable-nyan-cat-progress-bar t))
+                colors-enable-nyan-cat-progress-bar t
+
+                d12frosted/org-home-path "~/Dropbox/org/"
+                d12frosted/org-author-name "Boris Buliga"
+                d12frosted/org-author-email "d12frosted@icloud.com"))
 
 (defun dotspacemacs/config ()
   "Configuration function.

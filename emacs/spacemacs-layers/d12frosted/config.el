@@ -9,7 +9,10 @@
 ;;
 ;;; License: MIT
 
+;;; Declare prefixes
+
 (spacemacs/declare-prefix "o" "d12frosted")
+(spacemacs/declare-prefix "oi" "insert")
 
 ;;; js
 ;; configurations specifc to js
