@@ -139,11 +139,16 @@ before layers configuration."
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
-  (setq powerline-default-separator 'arrow
-        helm-M-x-fuzzy-match t
+  (setq powerline-default-separator 'arrow ; set arrow as a separator for powerline
+
+        helm-candidate-number-limit 36  ; to help fuzzy match
+        helm-M-x-fuzzy-match t          ; enable fuzzy match for M-x
+        helm-lisp-fuzzy-completion t    ; enable fuzzy match for lisp functions completion list
+
         magit-repo-dirs '("~/Developer/"
-                          "~/.environment")
-        nyan-wavy-trail nil)
+                          "~/.environment/") ; help magit to search for git repos
+
+        nyan-wavy-trail nil)            ; wavy trail bothers me, so I disable it
 
   (spacemacs/mode-line-battery-info-toggle)
 
