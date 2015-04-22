@@ -142,7 +142,8 @@ layers configuration."
   (setq powerline-default-separator 'arrow
         helm-M-x-fuzzy-match t
         magit-repo-dirs '("~/Developer/"
-                          "~/.environment"))
+                          "~/.environment")
+        nyan-wavy-trail nil)
 
   (spacemacs/mode-line-battery-info-toggle)
 
