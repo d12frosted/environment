@@ -52,36 +52,49 @@
               (insert "#+BEGIN_" choice "\n")
               (save-excursion (insert "\n#+END_" choice))))))))))
 
+(defun d12frosted/org-guess-title ()
+  "Try to guess title for org file.
+In case of failure it will use value of d12frosted/org-default-title."
+  (let ((bname (buffer-name)))
+    (if (s-present? bname)
+        (if (s-suffix? ".org" bname)
+            (substring bname 0 -4)
+          bname)
+      d12frosted/org-default-title)))
+
 (defun d12frosted/org-new-file-template ()
   "Create template for new org file."
   (let ((option-key-width 16)
-        (title (let ((bname (buffer-name)))
-                 (if (s-present? bname)
-                  (if (s-suffix? ".org" bname)
-                      (substring bname 0 -4)
-                    bname)
-                 "Yet another org file")))
-        (author "Boris Buliga <d12frosted@icloud.com>")
-        (email "d12frosted@icloud.com")
+        (title (d12frosted/org-guess-title))
+        (author (s-format "$0 <$1>" 'elt `(,d12frosted/org-author-name ,d12frosted/org-author-email)))
+        (email d12frosted/org-author-email)
         (date (format-time-string "%Y-%m-%d")))
     (s-join "\n" (list (d12frosted/org-option option-key-width "TITLE" title)
                        (d12frosted/org-option option-key-width "AUTHOR" author)
                        (d12frosted/org-option option-key-width "EMAIL" email)
                        (d12frosted/org-option option-key-width "DATE" date)
                        (d12frosted/org-option option-key-width "STARTUP" "showeverything")
-                       (d12frosted/org-option option-key-width "OPTIONS" "toc:nil")))))
+                       (d12frosted/org-option option-key-width "OPTIONS" "toc:t")))))
 
 (defun d12frosted/org-option (width key value)
   "Create an option string for org file."
   (s-append value (s-pad-right width " " (s-concat "#+" key ":"))))
 
+(defun d12frosted/org-buffer-contains-header? ()
+  "Does current buffer contains org header?"
+  (interactive)
+  (let ((empty (= (point-min)
+                  (point-max)))
+        (titled (s-starts-with? "#+TITLE:" (buffer-string) t)))
+    (and titled (not empty))))
+
 (defun d12frosted/org-auto-insert-template ()
   "Insert template for the newly created buffer."
   (interactive)
-  (when (and (= (point-min)
-                (point-max))
-             (buffer-file-name))
+  (when (not (d12frosted/org-buffer-contains-header?))
+    (goto-char (point-min))
     (insert (d12frosted/org-new-file-template))
+    (insert "\n\n")
     (goto-char (point-max))))
 
 (defun d12frosted/org-sort-current-level ()

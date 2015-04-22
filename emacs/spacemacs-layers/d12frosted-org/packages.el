@@ -44,6 +44,15 @@ which require an initialization must be listed explicitly in the list.")
     (defvar d12frosted/org-date-format
       "%d %B %Y, %A")
 
+    (defvar d12frosted/org-default-title
+      "Yet another org file")
+
+    (defvar d12frosted/org-author-name
+      "Boris Buliga")
+
+    (defvar d12frosted/org-author-email
+      "d12frosted@icloud.com")
+
     (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
       (let ((rlt ad-return-value)
             (begin-regexp "^[ \t]*#\\+begin_\\(src\\|html\\|latex\\)")
@@ -74,10 +83,13 @@ which require an initialization must be listed explicitly in the list.")
 
     (add-hook 'org-mode-hook 'd12frosted/org-auto-insert-template)))
 
-(defun d12frosted-rg/init-org-journal ()
+(defun d12frosted-org/init-org-journal ()
   "Initialize org-journal package"
   (use-package org-journal
     :defer t
     :init
     :config
-    (setq org-journal-dir (s-concat d12frosted/org-home-path "journal/"))))
+    (add-to-list 'auto-mode-alist '(".*/[0-9]*-[0-9]*-[0-9]*$" . org-mode))
+    (setq org-journal-dir (s-concat d12frosted/org-home-path "journal/")
+          org-journal-date-format "%d %B %Y, %A"
+          org-journal-file-format "%Y-%m-%d")))
