@@ -21,37 +21,24 @@ which require an initialization must be listed explicitly in the list.")
 (defun d12frosted-org/init-org ()
   "Initialize org package."
   (use-package org
-    :defer t
+    :defer 1
     :init
     :config
 
-    (defvar d12frosted/org-home-path "~/Dropbox/org/")
+    (setq-local d12/org-ignored-dirs
+                (-flatten
+                 (-non-nil
+                  (-map (lambda (dir)
+                          (d12frosted/org-dir-and-subdirs dir))
+                        d12frosted/org-agenda-ignore-dirs))))
 
-    (defvar d12frosted/org-agenda-ignore-dirs
-      (-map (lambda (dir) (s-concat d12frosted/org-home-path dir))
-            '("temporary"
-              "tmp")))
+    (setq-local d12/org-agenda-dirs
+          (-difference (d12frosted/org-dir-and-subdirs "") d12/org-ignored-dirs))
 
-    (defvar d12frosted/org-agenda-dirs
-      (d12frosted/directory-dirs d12frosted/org-home-path))
-
-    (defvar d12frosted/org-agenda-files
-      (-flatten (-map (lambda (dir) (d12frosted/org-files-in-folder dir)) d12frosted/org-agenda-dirs)))
-
-    (defvar d12frosted/org-time-format
-      "%H:%M:%S")
-
-    (defvar d12frosted/org-date-format
-      "%d %B %Y, %A")
-
-    (defvar d12frosted/org-default-title
-      "Yet another org file")
-
-    (defvar d12frosted/org-author-name
-      "Boris Buliga")
-
-    (defvar d12frosted/org-author-email
-      "d12frosted@icloud.com")
+    (setq-local d12/org-agenda-files
+          (-flatten (-map (lambda (dir)
+                            (d12frosted/org-files-in-folder dir))
+                          d12/org-agenda-dirs)))
 
     (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
       (let ((rlt ad-return-value)
@@ -72,7 +59,7 @@ which require an initialization must be listed explicitly in the list.")
     (setq org-todo-keywords '((sequence "BLOCKED" "TODO" "DELAYED" "STARTED" "TEST" "|" "DONE" "PASS"))
           org-src-fontify-natively t
           org-directory d12frosted/org-home-path
-          org-agenda-files d12frosted/org-agenda-files
+          org-agenda-files d12/org-agenda-files
           org-agenda-inhibit-startup nil)
 
     (define-key org-mode-map (kbd "C-c o s") 'd12frosted/org-sort-current-level)
@@ -81,15 +68,30 @@ which require an initialization must be listed explicitly in the list.")
     (define-key org-mode-map (kbd "C-c o d") 'd12frosted/org-insert-date)
     (define-key org-mode-map (kbd "C-c o t") 'd12frosted/org-insert-time)
 
+    (spacemacs/declare-prefix "oj" "org/journal")
+
+    (evil-leader/set-key "ojl" 'org-store-link)
+    (evil-leader/set-key "oit" 'd12frosted/org-insert-time)
+    (evil-leader/set-key "oid" 'd12frosted/org-insert-date)
+
     (add-hook 'org-mode-hook 'd12frosted/org-auto-insert-template)))
 
 (defun d12frosted-org/init-org-journal ()
   "Initialize org-journal package"
   (use-package org-journal
-    :defer t
+    :defer 2
     :init
     :config
+
+    (global-unset-key (kbd "C-c C-j"))
+
     (add-to-list 'auto-mode-alist '(".*/[0-9]*-[0-9]*-[0-9]*$" . org-mode))
+
+    (evil-leader/set-key "ojc" 'calendar)
+    (evil-leader/set-key "ojn" 'org-journal-new-entry)
+    (evil-leader/set-key "ojv" 'org-journal-visit-entry)
+
     (setq org-journal-dir (s-concat d12frosted/org-home-path "journal/")
           org-journal-date-format "%d %B %Y, %A"
-          org-journal-file-format "%Y-%m-%d")))
+          org-journal-file-format "%Y-%m-%d"
+          org-journal-file-pattern (org-journal-format-string->regex org-journal-file-format))))

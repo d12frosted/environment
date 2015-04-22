@@ -13,6 +13,11 @@
    (interactive)
    (find-file (s-concat d12frosted/org-home-path "gtd/gtd.org")))
 
+(defun d12frosted/org-dir-and-subdirs (dir)
+      (let ((org-dir (s-concat d12frosted/org-home-path dir)))
+        (when (file-directory-p org-dir)
+          (-insert-at 0 (s-chop-suffix "/" org-dir) (d12frosted/directory-dirs-r org-dir)))))
+
 (defun d12frosted/org-files-in-folder (folder)
   (directory-files folder t ".*\.org$"))
 
@@ -129,3 +134,8 @@ In case of failure it will use value of d12frosted/org-default-title."
   "Insert timestamp formated by value of d12frosted/org-time-format"
   (interactive)
   (insert (format-time-string d12frosted/org-time-format)))
+
+(defun org-journal-visit-entry ()
+  (interactive)
+  (setq current-prefix-arg '(t))
+  (call-interactively 'org-journal-new-entry))
