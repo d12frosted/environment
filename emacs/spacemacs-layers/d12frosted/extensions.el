@@ -10,9 +10,15 @@
 ;;; License: MIT
 
 (defvar d12frosted-pre-extensions
-  '()
+  '(fish-mode)
   "List of all extensions to load before the packages.")
 
 (defvar d12frosted-post-extensions
   '()
   "List of all extensions to load after the packages.")
+
+(defun d12frosted/init-fish-mode ()
+  (use-package fish-mode
+    :defer t
+    :init
+    :config))

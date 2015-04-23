@@ -7,3 +7,6 @@
 [submodule "emacs/packages/hindent"]
 	path = emacs/spacemacs-layers/d12frosted-haskell/extensions/hindent
 	url = https://github.com/chrisdone/hindent.git
+[submodule "emacs/spacemacs-layers/d12frosted/extensions/fish-mode"]
+	path = emacs/spacemacs-layers/d12frosted/extensions/fish-mode
+	url = git@github.com:d12frosted/fish-mode.git
