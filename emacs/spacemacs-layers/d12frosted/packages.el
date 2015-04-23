@@ -29,7 +29,7 @@ which require an initialization must be listed explicitly in the list.")
 (defun d12frosted/init-elfeed ()
   "Initialize elfeed package."
   (use-package elfeed
-    :defer t
+    :defer 1
     :init
     :config
     (evil-leader/set-key "oe" 'elfeed)
