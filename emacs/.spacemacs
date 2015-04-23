@@ -17,6 +17,7 @@
      syntax-checking
      colors
      git
+     xkcd
 
      ;; langs
      csharp
