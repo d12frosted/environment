@@ -37,6 +37,7 @@ which require an initialization must be listed explicitly in the list.")
                          ("http://www.reddit.com/r/haskell/.rss" haskell reddit)
                          ("http://www.reddit.com/r/orgmode/.rss" emacs org-mode reddit)
                          ("http://planet.haskell.org/rss20.xml" haskell)
+                         ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
                          ("http://nullprogram.com/feed/" emacs)))))
 
 (defun d12frosted/init-2048-game ()
