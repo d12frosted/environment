@@ -21,6 +21,7 @@
      ;; langs
      csharp
      markdown
+     ;; shell-scripts
 
      ;; private layers
      d12frosted
