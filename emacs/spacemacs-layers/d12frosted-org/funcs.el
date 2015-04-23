@@ -11,7 +11,7 @@
 
 (defun gtd ()
    (interactive)
-   (find-file (s-concat d12frosted/org-home-path "gtd/gtd.org")))
+   (find-file (s-concat d12frosted/org-home-path "gtd.org")))
 
 (defun d12frosted/org-dir-and-subdirs (dir)
       (let ((org-dir (s-concat d12frosted/org-home-path dir)))
