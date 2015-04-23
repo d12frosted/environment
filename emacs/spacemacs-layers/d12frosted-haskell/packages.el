@@ -27,15 +27,6 @@ which require an initialization must be listed explicitly in the list.")
   (use-package haskell-mode
     :defer t
     :init
-
-    (defvar custom-load-paths
-      '("structured-haskell-mode/elisp"
-        "hindent/elisp"))
-
-    (loop for location in custom-load-paths
-      do (add-to-list 'load-path
-                      (d12frosted/concat-path d12frosted-haskell/packages-dir location)))
-
     :config
 
     (require 'shm)
