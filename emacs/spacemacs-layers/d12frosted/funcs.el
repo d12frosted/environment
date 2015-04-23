@@ -9,7 +9,7 @@
 ;;
 ;;; License: MIT
 
-;;; general functions
+;;; directoriy and file manipulations
 
 (defun d12frosted/directory-dirs (dir)
   "Find all directories in DIR."
@@ -111,3 +111,77 @@
           (region-end)
         (line-beginning-position 2))
     (point-max)))
+
+;;; omnisharp config
+
+(defun csharp-hs-forward-sexp (&optional arg)
+    "Stolen from emacswiki"
+    (message "csharp-hs-forward-sexp, (arg %d) (point %d)..."
+             (if (numberp arg) arg -1)
+             (point))
+
+    (let ((nestlevel 0)
+          (mark1 (point))
+          (done nil))
+
+      (if (and arg (< arg 0))
+          (message "negative arg (%d) is not supported..." arg)
+
+        ;; else, we have a positive argument, hence move forward.
+        ;; simple case is just move forward one brace
+        (if (looking-at "{")
+            (forward-sexp arg)
+
+          ;; The more complex case is dealing with a "region/endregion" block.
+          ;; We have to deal with nested regions!
+          (and
+           (while (not done)
+             (re-search-forward "^[ \\t]*#[ \\t]*\\(region\\|endregion\\)\\b"
+                                (point-max) 'move)
+             (cond
+
+              ;; do nothing if at end of buffer
+              ((eobp))
+
+              ((and
+                (match-beginning 1)
+                ;; if the match is longer than 6 chars, we know it is "endregion"
+                (if (> (- (match-end 1) (match-beginning 1)) 6)
+                    (setq nestlevel (1- nestlevel))
+                  (setq nestlevel (1+ nestlevel))))))
+
+             (setq done (not (and (> nestlevel 0) (not (eobp))))))
+
+           (if (= nest 0)
+               (goto-char (match-end 2))))))))
+
+(defun d12frosted/omnisharp-go-to-definition-at-center ()
+  (interactive)
+  (progn
+    (omnisharp-go-to-definition)
+    (recenter)))
+
+(defun d12frosted/omnisharp-config ()
+  "Function that should be called when omnisharp mode is enabled."
+
+  (spacemacs|diminish omnisharp-mode " ♯" " #")
+
+  (setq indent-tabs-mode t
+            c-default-style "k&r"
+            c-basic-offset 2
+            hs-isearch-open t)
+
+  (c-set-offset 'case-label '+)
+  (c-set-offset 'cpp-macro 'csharp-lineup-if-and-region)
+
+  (local-set-key (kbd "C-c <") 'hs-hide-block)
+  (local-set-key (kbd "C-c >") 'hs-show-block)
+
+  (local-unset-key (kbd "{"))
+  (local-unset-key (kbd "/"))
+  (local-unset-key (kbd "C-c C-d"))
+
+  (evil-leader/set-key-for-mode 'csharp-mode
+    "mgg" 'd12frosted/omnisharp-go-to-definition-at-center)
+
+  (local-set-key (kbd "C-.") 'omnisharp-auto-complete))

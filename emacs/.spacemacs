@@ -15,13 +15,17 @@
      org
      auto-completion
      syntax-checking
-     markdown
      colors
+     git
+
+     ;; langs
+     csharp
+     markdown
+
+     ;; private layers
      d12frosted
      d12frosted-org
-     d12frosted-haskell
-     d12frosted-omnisharp
-     git)
+     d12frosted-haskell)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -135,6 +139,8 @@ before layers configuration."
                 git-magit-status-fullscreen t
                 colors-enable-nyan-cat-progress-bar t
 
+                omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe"
+
                 d12frosted/org-home-path "~/Dropbox/org/"
                 d12frosted/org-author-name "Boris Buliga"
                 d12frosted/org-author-email "d12frosted@icloud.com"))
@@ -143,6 +149,8 @@ before layers configuration."
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
+
+  ;; variables
   (setq powerline-default-separator 'arrow ; set arrow as a separator for powerline
 
         helm-candidate-number-limit 36  ; to help fuzzy match
@@ -154,8 +162,13 @@ layers configuration."
 
         nyan-wavy-trail nil)            ; wavy trail bothers me, so I disable it
 
+  ;; toggles
   (spacemacs/mode-line-battery-info-toggle)
 
+  ;; hooks
+  (add-hook 'csharp-mode-hook 'd12frosted/omnisharp-config t)
+
+  ;; key bindings
   (evil-leader/set-key
     "ff" 'helm-multi-files))
 
