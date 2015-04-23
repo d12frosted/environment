@@ -11,7 +11,8 @@
 
 (defvar d12frosted-haskell-pre-extensions
   '(
-    ;; pre extension d12frosted-haskells go here
+    hindent/elisp
+    structured-haskell-mode/elisp
     )
   "List of all extensions to load before the packages.")
 
@@ -20,6 +21,20 @@
     ;; post extension d12frosted-haskells go here
     )
   "List of all extensions to load after the packages.")
+
+(defun d12frosted-haskell/init-hindent/elisp ()
+  "Initialize hindent extension."
+  (use-package hindent
+    :defer t
+    :init
+    :config))
+
+(defun d12frosted-haskell/init-structured-haskell-mode/elisp ()
+  "Initialize structured-haskell-mode extension."
+  (use-package structured-haskell-mode
+    :defer t
+    :init
+    :config))
 
 ;; For each extension, define a function d12frosted-haskell/init-<extension-d12frosted-haskell>
 ;;
