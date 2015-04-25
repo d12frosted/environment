@@ -167,9 +167,10 @@
   (spacemacs|diminish omnisharp-mode " ♯" " #")
 
   (setq indent-tabs-mode t
-            c-default-style "k&r"
-            c-basic-offset 2
-            hs-isearch-open t)
+        c-default-style "k&r"
+        c-basic-offset 4
+        tab-width 4
+        hs-isearch-open t)
 
   (c-set-offset 'case-label '+)
   (c-set-offset 'cpp-macro 'csharp-lineup-if-and-region)
