@@ -10,8 +10,7 @@
 ;;; License: MIT
 
 (defvar d12frosted-org-packages
-  '(org
-    org-journal)
+  '(org)
   "List of all packages to install and/or initialize. Built-in packages
 which require an initialization must be listed explicitly in the list.")
 
@@ -75,23 +74,3 @@ which require an initialization must be listed explicitly in the list.")
     (evil-leader/set-key "oid" 'd12frosted/org-insert-date)
 
     (add-hook 'org-mode-hook 'd12frosted/org-auto-insert-template)))
-
-(defun d12frosted-org/init-org-journal ()
-  "Initialize org-journal package"
-  (use-package org-journal
-    :defer 2
-    :init
-    :config
-
-    (global-unset-key (kbd "C-c C-j"))
-
-    (add-to-list 'auto-mode-alist '(".*/[0-9]*-[0-9]*-[0-9]*$" . org-mode))
-
-    (evil-leader/set-key "ojc" 'calendar)
-    (evil-leader/set-key "ojn" 'org-journal-new-entry)
-    (evil-leader/set-key "ojv" 'org-journal-visit-entry)
-
-    (setq org-journal-dir (s-concat d12frosted/org-home-path "journal/")
-          org-journal-date-format "%d %B %Y, %A"
-          org-journal-file-format "%Y-%m-%d"
-          org-journal-file-pattern (org-journal-format-string->regex org-journal-file-format))))
