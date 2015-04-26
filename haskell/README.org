@@ -1,0 +1,8 @@
+#+TITLE:        haskell domain
+#+AUTHOR:       Boris Buliga <d12frosted@icloud.com>
+#+EMAIL:        d12frosted@icloud.com
+#+DATE:         2015-04-26
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:t
+
+Configurations to ~ghc~ and ~cabal~. One might think that this domain has the hardest dependency list, but it's not true. This domain has no dependencies at all. You even don't need to install ~GHC~. But don't be pleased, emacs domain has a lot of haskell dependencies.

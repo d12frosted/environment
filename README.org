@@ -5,47 +5,30 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-This repository is a dump of my dotfiles that I am trying to keep clean and organized. But I prefer to call it 'environment'. 
+This repository is a dump of my dotfiles that I am trying to keep clean and organized. But I prefer to call it 'environment'.
 
 * What's inside?
 
-All configurations that I fear to loose by making ~rm -rf \~/~ (accidentally, for sure). So here you can find configurations to emacs, fish, git, cabal, ghci etc. Also you can find some installation scripts that might make my life a bit easier(haven't tested yet).
+All configurations that I fear to loose by making ~rm -rf \~/~ (accidentally, for sure). Configurations are divided into 'domains' like ~emacs~, ~git~ and ~haskell~. Every domain has it's own readme file, so make sure to check them as well before running installation script.
 
 * Dependencies
 
-My configurations assume that you have installed following things.
+My configurations are expecting that a lot of stuff is installed on your system. As it was already told, every domain has it's own readme file where the full list of dependencies is written down.
 
-- emacs-mac-port
-- git-flow
-- ag
-- aspell
-- fish
+But be aware that I am using OS X and haven't tested my configurations beyond this operating system. They should work, but I can't promise :smile:.
 
-Warning! Dependencies list is under construction.
+Note that I am planning to write some scripts that will help with dependencies checking and installation.
 
 * Usage
 
-Currently I am working on moving my installation scripts to ~dotbot~, but the old way to install everything was:
+Now I am using [[https://github.com/anishathalye/dotbot][dotbot]] to bootstrap my configuration, so it's very easy to install them all. Just do
 
 #+BEGIN_SRC sh
-curl -L https://github.com/d12frosted/d12frosted-environment/install.sh | zsh
+$ ./install
 #+END_SRC
-
-It can take a while, because it installs:
-
-- fish
-- brew (OS X only)
-- emacs (OS X only)
-- my personal emacs configs
-- ghc and cabal (from sources)
-- some cabal packages
 
 * Can I use your files?
 
-Sure you can. But should you? 
+Sure you can. But should you? :D
 
-OK, jokes aside. It will be pleasure for me, if you find something useful for you in my configurations. I am trying to keep things as clear as possible, but sometimes I am making very urgent changes that I forget to document and sometimes I am just lazy to do so. So in case you have questions or any problems with my configurations - just ping me. Also be aware that I am not trying to make my configurations platform independent. You should check dependencies list or installation scripts.
-
-* Thanks
-
-Special thanks to [[http://chrisdone.com][Chris Done]] who shown me the beautiful world of Emacs. 
+OK, jokes aside. It will be pleasure for me, if you find something useful in my configurations. I am trying to keep things as clear as possible, but sometimes I am making very urgent changes that I forget to document and sometimes I am just lazy to do so. So in case you have questions or any problems with my configurations - just ping me. Also be aware that I am not trying to make my configurations platform independent. You should check dependencies list or installation scripts.
