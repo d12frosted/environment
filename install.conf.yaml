@@ -7,6 +7,8 @@
     ~/.cabal/config:
       create: true
       path: haskell/cabal-config
+    ~/.gitignore_global: git/.gitignore_global
 
 - shell:
   - [echo "set -U XDG_CONFIG_HOME ~/.environment" | fish, Setting home directory for fish]
+  - sh git/configure.sh
