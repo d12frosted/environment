@@ -8,6 +8,9 @@
       create: true
       path: haskell/cabal-config
     ~/.gitignore_global: git/.gitignore_global
+    ~/.mbsyncrc: email/.mbsyncrc
+    ~/.msmtprc: email/.msmtprc
+    ~/Library/LaunchAgents/com.d12frosted.saruman.plist: email/com.d12frosted.saruman.plist
 
 - shell:
   - [echo "set -U XDG_CONFIG_HOME ~/.environment" | fish, Setting home directory for fish]

@@ -1,0 +1,89 @@
+# for more information about how to use this specific file
+# check https://github.com/d12frosted/environment
+
+# my icloud account
+
+IMAPAccount d12frosted
+Host imap.mail.me.com
+Port 993
+User d12frosted@icloud.com
+PassCmd "security find-internet-password -a d12frosted@icloud.com -w"
+UseIMAPS yes
+
+IMAPStore d12frosted-imap
+Account d12frosted
+
+Group d12frosted
+Channels d12frosted-inbox-channel d12frosted-archive-channel
+
+MaildirStore d12frosted-inbox-local
+Path "~/.mail/"
+Inbox "~/.mail/d12frosted/INBOX"
+AltMap yes
+
+Channel d12frosted-inbox-channel
+Master ":d12frosted-imap:Inbox"
+Slave :d12frosted-inbox-local:INBOX
+Create Slave
+Expunge Slave
+Sync Pull
+
+MaildirStore d12frosted-archive-local
+Path "~/.mail/"
+Inbox "~/.mail/d12frosted/ARCHIVE"
+AltMap yes
+
+Channel d12frosted-archive-channel
+Master ":d12frosted-imap:Archive"
+Slave :d12frosted-archive-local:ARCHIVE
+Create Slave
+Expunge Slave
+Sync Pull
+
+# my other icloud account
+
+IMAPAccount boris
+Host imap.mail.me.com
+Port 993
+User skingrad.guardian@icloud.com
+PassCmd "security find-internet-password -a skingrad.guardian@icloud.com -w"
+UseIMAPS yes
+
+IMAPStore boris-imap
+Account boris
+
+MaildirStore boris-local
+Path "~/.mail/"
+Inbox "~/.mail/boris/INBOX"
+AltMap yes
+
+Channel boris
+Master ":boris-imap:Inbox"
+Slave :boris-local:INBOX
+Create Slave
+Expunge Slave
+Sync Pull
+
+# my timecode account
+
+IMAPAccount timecode
+Host imap.gmail.com
+Port 993
+User boris.buliga@timecode.co
+PassCmd "security find-internet-password -a boris.buliga@timecode.co -w"
+UseIMAPS yes
+
+IMAPStore timecode-imap
+Account timecode
+
+MaildirStore timecode-local
+Path "~/.mail/"
+Inbox "~/.mail/timecode/INBOX"
+AltMap yes
+
+Channel timecode
+Master ":timecode-imap:[Gmail]/All Mail"
+Slave :timecode-local:INBOX
+Create Slave
+Expunge Slave
+Sync Pull
