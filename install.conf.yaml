@@ -1,6 +1,12 @@
+- shell:
+  - [git submodule update --init --recursive, Installing submodules]
+
 - link:
     ~/.spacemacs: emacs/.spacemacs
     ~/.ghci: haskell/.ghci
     ~/.cabal/config:
       create: true
       path: haskell/cabal-config
+
+- shell:
+  - [echo "set -U XDG_CONFIG_HOME ~/.environment" | fish, Setting home directory for fish]
