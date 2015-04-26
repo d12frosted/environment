@@ -1,10 +1,8 @@
-#+TITLE:        README
+#+TITLE:        d12frosted layer
 #+AUTHOR:       Boris Buliga <d12frosted@icloud.com>
 #+EMAIL:        d12frosted@icloud.com
 #+DATE:         2015-04-26
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:t
-
-* d12frosted layer
 
 ~d12frosted~ is a private layer for [[https://github.com/syl20bnr/spacemacs][Spacemacs]]. I don't expect this to be usable by other users, but you might want to check some specific settings.

@@ -1,0 +1,90 @@
+#+TITLE:        emacs domain
+#+AUTHOR:       Boris Buliga <d12frosted@icloud.com>
+#+EMAIL:        d12frosted@icloud.com
+#+DATE:         2015-04-26
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:t
+
+My personal emacs configurations.
+
+* Dependencies
+
+** Emacs
+
+First thing to do - grab emacs. I recommend you to use ~emacs-mac~ port on OS X. You can install it via brew or from sources.
+
+*** From brew
+
+#+BEGIN_SRC sh
+$ brew tap railwaycat/emacsmacport
+$ brew install emacs-mac
+#+END_SRC
+
+*** From sources
+
+First, get the sources.
+
+#+BEGIN_SRC sh
+$ git clone http://www.math.s.chiba-u.ac.jp/~mituharu/emacs-mac.git
+$ cd emacs-mac
+#+END_SRC
+
+Then check the installation instructions from ~README-mac~ file. Or checkout [[https://github.com/railwaycat/emacs-mac-port][this mirror]] for more information.
+
+** Spacemacs
+
+Currently I am using [[https://github.com/syl20bnr/spacemacs][Spacemacs]] as starting point for my configurations. It comes out with great batteries and cool philosophy of configuration layers. It's fast and ready to work out of box, but we are emacs users, we can't avoid configuring things, right?
+
+So go and grab the latest version of Spacemacs (don't forget to backup your ~.emacs.d~):
+
+#+BEGIN_SRC sh
+$ git clone --recursive http://github.com/syl20bnr/spacemacs ~/.emacs.d
+#+END_SRC
+
+Then start emacs, wait for it to install some packages. After it finishes it's work you should restart emacs. Now it's almost ready to work. Almost - because you need my configurations, right?
+
+** Various tools
+
+Things you can install from brew:
+
+- ag
+- ack
+- aspell
+
+** OmniSharp
+
+In order to edit c# sources, you should install [[https://github.com/OmniSharp/omnisharp-server][OmniSharp Server]].
+
+Warning! ~OmniSharp.exe~ should be located in ~~/.omnisharp/OmniSharp/bin/Debug/~. That's very important!
+
+** Haskell
+
+#+BEGIN_QUOTE
+– Do you have a minute to talk about Alonzo's Curry?
+
+– Sorry, but I am already a member of Haskell Church!
+#+END_QUOTE
+
+So let's begin. Currently I am sticking to ~GHC 7.8.3~. But it all should be fine for ~GHC 7.10.x~.
+
+Make sure that you install following packages:
+
+- ~alex~
+- ~happy~
+- ~BasicPrelude~
+
+Also you might want to update ~cabal-install~.
+
+Then you need to install (apparently from sources):
+
+- ~hindent~
+- ~structured-haskell-mode~
+- ~ghci-ng~
+
+In future I'll provide a script for doing it all. Also ~cabal-install-bin~ function for fish might help you with this.
+
+* Thanks
+
+Special thanks to [[http://chrisdone.com][Chris Done]] who shown me the beautiful world of Emacs.
+
+And sure, many thanks to the author and contributors of [[https://github.com/syl20bnr/spacemacs][Spacemacs]] (especially [[https://github.com/syl20bnr/spacemacs][Sylvain Benner]], [[https://github.com/tuhdo][Tu Do]] and [[https://github.com/trishume][Tristan Hume]]). They changed the way I use emacs. And I strongly believe that it was a good change.
