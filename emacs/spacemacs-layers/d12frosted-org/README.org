@@ -1,0 +1,76 @@
+#+TITLE:        README.org
+#+AUTHOR:       Boris Buliga <d12frosted@icloud.com>
+#+EMAIL:        d12frosted@icloud.com
+#+DATE:         2015-04-26
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:t
+
+* d12frosted-org layer
+
+~d12frosted-org~ is a private layer for [[https://github.com/syl20bnr/spacemacs][Spacemacs]]. It's in active development and sometimes I just can break things and compatibility. But I'll try to notify in this file about important (and breakable) changes.
+
+It is highly recommended to use this layer with ~org~ layer. Checkout it's [[https://github.com/d12frosted/spacemacs/tree/master/contrib/org][README]] for more information.
+
+** Customization
+
+To use this layer you should customize ~d12frosted/org-home-path~, ~d12frosted/org-author-name~ and ~d12frosted/org-author-email~ variables. In order to do this, just add following example to the end of ~dotspacemacs/init~ function in your ~.spacemacs~ file (just don't forget to change the values!).
+
+#+BEGIN_SRC lisp
+(setq-default d12frosted/org-home-path "~/path/to/org/root/"
+              d12frosted/org-author-name "Your name"
+              d12frosted/org-author-email "Your email")
+#+END_SRC
+
+Checkout [[https://github.com/d12frosted/environment/blob/master/emacs/spacemacs-layers/d12frosted-org/config.el][config.el]] file to see the full list of configurable variables.
+
+*** ~d12frosted/org-home-path~
+
+This is very important variable. Even more - it's mandatory to set it in order to use this layer. All files from this directory will be used for org agenda. In case you want to ignore some of them - you should check ~d12frosted/org-agenda-ignore-dirs~. All org files in ignored directories will not be used for agenda.
+
+Warning! Don't forget to put trailing slash in the end of the path!
+
+*** ~d12frosted/org-author-name~ and ~d12frosted/org-author-email~
+
+These variables are used in the org file template. It's not mandatory to set them, but hey, you're not John Doe right?
+
+** ~org-todo-keywords~
+
+Notice that this layer sets ~org-todo-keywords~ for you. But in case you don't like those provided by ~d12frosted-org~ layer, you can change them in ~spacemacs/config~ function. Just add to the end of it something like
+
+#+BEGIN_SRC lisp
+(setq org-todo-keywords
+      '((sequence "TODO" "STARTED" "|" "DONE")))
+#+END_SRC
+
+For more information, check [[http://orgmode.org/manual/TODO-extensions.html#TODO-extensions][org manual]].
+
+** Features
+
+- ~org-journal~ is included (currently not the MELPA version).
+- Inserts header to the org files that don't contain one (template is currently not very configurable).
+- Flyspell is configured to skip src, html and latex blocks.
+- Provides some useful (or useless) functions.
+
+** Key bindings
+
+*** Org with evil-org-mode
+
+| Key Binding    | Description                                    |
+|----------------+------------------------------------------------|
+| ~SPC m RETURN~ | ~org-meta-return~                              |
+| ~SPC m C-s~    | sort current level by TODO keyword             |
+| ~SPC m C-S~    | sort parent level by TODO keyword              |
+| ~SPC m #~      | insert block template                          |
+| ~SPC m C-d~    | insert date (uses ~d12frosted/org-date-format~ |
+| ~SPC m C-t~    | insert time (uses ~d12frosted/org-time-format~ |
+
+*** Global
+
+| Key Binding | Description               |
+|-------------+---------------------------|
+| ~SPC o j l~ | ~org-store-link~          |
+| ~SPC o i t~ | insert date               |
+| ~SPC o i d~ | insert time               |
+| ~SPC o j c~ | open calendar             |
+| ~SPC o j n~ | ~org-journal-new-entry~   |
+| ~SPC o j v~ | ~org-journal-visit-etnry~ |
