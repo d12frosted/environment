@@ -95,11 +95,14 @@ which require an initialization must be listed explicitly in the list.")
           org-agenda-files d12/org-agenda-files
           org-agenda-inhibit-startup nil)
 
-    (define-key org-mode-map (kbd "C-c o s") 'd12frosted/org-sort-current-level)
-    (define-key org-mode-map (kbd "C-c o S") 'd12frosted/org-sort-upper-level)
-    (define-key org-mode-map (kbd "C-c o #") 'd12frosted/org-insert-block-template)
-    (define-key org-mode-map (kbd "C-c o d") 'd12frosted/org-insert-date)
-    (define-key org-mode-map (kbd "C-c o t") 'd12frosted/org-insert-time)
+    ;; (define-key org-mode-map (kbd "M-<return>") nil)
+    (evil-leader/set-key-for-mode 'org-mode
+      ;; "m <return>" 'org-meta-return
+      "m C-s" 'd12frosted/org-sort-current-level
+      "m C-S" 'd12frosted/org-sort-upper-level
+      "m#" 'd12frosted/org-insert-block-template
+      "md" 'd12frosted/org-insert-date
+      "mt" 'd12frosted/org-insert-time)
 
     (spacemacs/declare-prefix "oj" "org/journal")
 
