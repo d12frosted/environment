@@ -101,8 +101,8 @@ which require an initialization must be listed explicitly in the list.")
       "m C-s" 'd12frosted/org-sort-current-level
       "m C-S" 'd12frosted/org-sort-upper-level
       "m#" 'd12frosted/org-insert-block-template
-      "md" 'd12frosted/org-insert-date
-      "mt" 'd12frosted/org-insert-time)
+      "m C-d" 'd12frosted/org-insert-date
+      "m C-t" 'd12frosted/org-insert-time)
 
     (spacemacs/declare-prefix "oj" "org/journal")
 
