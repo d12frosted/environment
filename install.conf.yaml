@@ -1,4 +1,6 @@
-- clean: ['~/.spacemacs']
-
 - link:
     ~/.spacemacs: emacs/.spacemacs
+    ~/.ghci: haskell/.ghci
+    ~/.cabal/config:
+      create: true
+      path: haskell/cabal-config
