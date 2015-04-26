@@ -1,0 +1,4 @@
+:set -XOverloadedStrings -XNoImplicitPrelude
+:set prompt "λ "
+
+import BasicPrelude
