@@ -28,22 +28,22 @@
    to d12frosted/org-home-path and must contain trailing slash.")
 
 (defvar d12frosted/org-time-format
-  "Format for 'd12frosted/org-insert-time function."
-  "%H:%M:%S")
+  "%H:%M:%S"
+  "Format for 'd12frosted/org-insert-time function.")
 
 (defvar d12frosted/org-date-format
-  "Format for 'd12frosted/org-insert-date function."
-  "%d %B %Y, %A")
+  "%d %B %Y, %A"
+  "Format for 'd12frosted/org-insert-date function.")
 
 (defvar d12frosted/org-default-title
+  "Yet another org file"
   "Default title for org files. Is used by 'd12frosted/org-guess-title
-   when it failt to get the ttitle from buffer name."
-  "Yet another org file")
+   when it failt to get the ttitle from buffer name.")
 
 (defvar d12frosted/org-author-name
-  "Author name (used in 'd12frosted/org-new-file-template function.)"
-  "John Doe")
+  "John Doe"
+  "Author name (used in 'd12frosted/org-new-file-template function.)")
 
 (defvar d12frosted/org-author-email
-  "Author email (used in 'd12frosted/org-new-file-template function.)"
-  "example@domain.com")
+  "example@domain.com"
+  "Author email (used in 'd12frosted/org-new-file-template function.)")
