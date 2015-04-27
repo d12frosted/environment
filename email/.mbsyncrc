@@ -1,7 +1,9 @@
 # for more information about how to use this specific file
 # check https://github.com/d12frosted/environment
 
+# =================
 # my icloud account
+# =================
 
 IMAPAccount d12frosted
 Host imap.mail.me.com
@@ -13,12 +15,18 @@ UseIMAPS yes
 IMAPStore d12frosted-imap
 Account d12frosted
 
+# group definition
+# ----------------
+
 Group d12frosted
-Channels d12frosted-inbox-channel d12frosted-archive-channel
+Channels d12frosted-inbox-channel d12frosted-archive-channel d12frosted-trash-channel
+
+# inbox channel
+# -------------
 
 MaildirStore d12frosted-inbox-local
 Path "~/.mail/"
-Inbox "~/.mail/d12frosted/INBOX"
+Inbox "~/.mail/d12frosted/Inbox"
 AltMap yes
 
 Channel d12frosted-inbox-channel
@@ -26,21 +34,41 @@ Master ":d12frosted-imap:Inbox"
 Slave :d12frosted-inbox-local:INBOX
 Create Slave
 Expunge Slave
-Sync Pull
+Sync Pull Push
+
+# archive channel
+# ---------------
 
 MaildirStore d12frosted-archive-local
 Path "~/.mail/"
-Inbox "~/.mail/d12frosted/ARCHIVE"
+Inbox "~/.mail/d12frosted/Archive"
 AltMap yes
 
 Channel d12frosted-archive-channel
 Master ":d12frosted-imap:Archive"
-Slave :d12frosted-archive-local:ARCHIVE
+Slave :d12frosted-archive-local:INBOX
 Create Slave
 Expunge Slave
-Sync Pull
+Sync Pull Push
 
+# trash channel
+# ---------------
+
+MaildirStore d12frosted-trash-local
+Path "~/.mail/"
+Inbox "~/.mail/d12frosted/Trash"
+AltMap yes
+
+Channel d12frosted-trash-channel
+Master ":d12frosted-imap:Trash"
+Slave :d12frosted-trash-local:INBOX
+Create Slave
+Expunge Slave
+Sync Pull Push
+
+# =======================
 # my other icloud account
+# =======================
 
 IMAPAccount boris
 Host imap.mail.me.com
@@ -52,19 +80,60 @@ UseIMAPS yes
 IMAPStore boris-imap
 Account boris
 
-MaildirStore boris-local
+# group definition
+# ----------------
+
+Group boris
+Channels boris-inbox-channel boris-archive-channel boris-trash-channel
+
+# inbox channel
+# -------------
+
+MaildirStore boris-inbox-local
 Path "~/.mail/"
-Inbox "~/.mail/boris/INBOX"
+Inbox "~/.mail/boris/Inbox"
 AltMap yes
 
-Channel boris
+Channel boris-inbox-channel
 Master ":boris-imap:Inbox"
-Slave :boris-local:INBOX
+Slave :boris-inbox-local:INBOX
 Create Slave
 Expunge Slave
-Sync Pull
+Sync Pull Push
 
+# trash channel
+# ---------------
+
+MaildirStore boris-trash-local
+Path "~/.mail/"
+Inbox "~/.mail/boris/Trash"
+AltMap yes
+
+Channel boris-trash-channel
+Master ":boris-imap:Trash"
+Slave :boris-trash-local:INBOX
+Create Slave
+Expunge Slave
+Sync Pull Push
+
+# archive channel
+# ---------------
+
+MaildirStore boris-archive-local
+Path "~/.mail/"
+Inbox "~/.mail/boris/Archive"
+AltMap yes
+
+Channel boris-archive-channel
+Master ":boris-imap:Inbox"
+Slave :boris-archive-local:INBOX
+Create Slave
+Expunge Slave
+Sync Pull Push
+
+# ===================
 # my timecode account
+# ===================
 
 IMAPAccount timecode
 Host imap.gmail.com
@@ -76,14 +145,23 @@ UseIMAPS yes
 IMAPStore timecode-imap
 Account timecode
 
-MaildirStore timecode-local
+# group definition
+# ----------------
+
+Group timecode
+Channels timecode-inbox-channel
+
+# inbox channel
+# -------------
+
+MaildirStore timecode-inbox-local
 Path "~/.mail/"
-Inbox "~/.mail/timecode/INBOX"
+Inbox "~/.mail/timecode/Inbox"
 AltMap yes
 
-Channel timecode
-Master ":timecode-imap:[Gmail]/All Mail"
-Slave :timecode-local:INBOX
+Channel timecode-inbox-channel
+Master ":timecode-imap:Inbox"
+Slave :timecode-inbox-local:INBOX
 Create Slave
 Expunge Slave
-Sync Pull
+Sync Pull Push
