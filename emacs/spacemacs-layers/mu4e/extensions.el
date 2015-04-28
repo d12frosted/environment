@@ -28,6 +28,13 @@
     (when (fboundp 'imagemagick-register-types)
       (imagemagick-register-types))
 
+    (setq mu4e-bookmarks
+      '(("flag:unread AND NOT flag:trashed"     "Unread messages"               ?u)
+        ("date:today..now AND NOT flag:trashed" "Today's messages"              ?t)
+        ("date:today..now"                      "Today's messages (with Trash)" ?T)
+        ("date:7d..now AND NOT flag:trashed"    "Last 7 days"                   ?w)
+        ("date:7d..now"                         "Last 7 days (with Trash)"      ?W)))
+
     (setq mu4e-use-fancy-chars t ; should be executed only for GUI
           message-send-mail-function 'message-send-mail-with-sendmail
           message-sendmail-extra-arguments '("--read-envelope-from")
@@ -36,21 +43,23 @@
           mu4e-maildir "~/.mail" ; tell mu4e where my Maildir is
           mu4e-get-mail-command "sh ~/.environment/email/gendalf.sh mu4e 1"
           sendmail-program "msmtp"
-          ;; mu4e-html2text-command "w3m -T text/html" ; tell mu4e to use w3m for html rendering
-          mu4e-html2text-command "html2text -utf8 -width 80"
+          ;; mu4e-html2text-command "html2text -utf8 -width 80"
+          mu4e-html2text-command "textutil -stdin -format html -convert txt -stdout"
+
           mu4e-view-show-images t
           mu4e-update-interval 60
 
           mail-user-agent 'mu4e-user-agent
 
-          ;; default (main) account settings
           mu4e-drafts-folder "/d12frosted/Drafts"
           mu4e-sent-folder "/d12frosted/Sent"
           mu4e-trash-folder "/d12frosted/Trash"
           mu4e-refile-folder "/d12frosted/Archive"
+
           mu4e-sent-messages-behavior 'sent
-          user-mail-address "d12frosted@icloud.com"
+
           user-full-name  "Boris"
+          user-mail-address "d12frosted@icloud.com"
           mu4e-compose-signature "Cheers, Boris.")
 
     (defvar d12frosted/mu4e-account-alist
