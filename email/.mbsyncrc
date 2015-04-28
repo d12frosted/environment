@@ -125,7 +125,7 @@ Inbox "~/.mail/boris/Archive"
 AltMap yes
 
 Channel boris-archive-channel
-Master ":boris-imap:Inbox"
+Master ":boris-imap:Archive"
 Slave :boris-archive-local:INBOX
 Create Slave
 Expunge Slave
@@ -149,7 +149,7 @@ Account timecode
 # ----------------
 
 Group timecode
-Channels timecode-inbox-channel
+Channels timecode-inbox-channel timecode-trash-channel
 
 # inbox channel
 # -------------
@@ -162,6 +162,21 @@ AltMap yes
 Channel timecode-inbox-channel
 Master ":timecode-imap:Inbox"
 Slave :timecode-inbox-local:INBOX
+Create Slave
+Expunge Slave
+Sync Pull Push
+
+# Trash channel
+# ------------
+
+MaildirStore timecode-trash-local
+Path "~/.mail/"
+Inbox "~/.mail/timecode/Trash"
+AltMap yes
+
+Channel timecode-trash-channel
+Master ":timecode-imap:Trash"
+Slave :timecode-trash-local:INBOX
 Create Slave
 Expunge Slave
 Sync Pull Push
