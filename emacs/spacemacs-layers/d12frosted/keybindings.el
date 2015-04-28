@@ -11,15 +11,15 @@
 
 ;; Window manipulations
 
-(global-set-key (kbd "<left>") 'evil-window-left)
-(global-set-key (kbd "<right>") 'evil-window-right)
-(global-set-key (kbd "<up>") 'evil-window-up)
-(global-set-key (kbd "<down>") 'evil-window-down)
+;; (global-set-key (kbd "<left>") 'evil-window-left)
+;; (global-set-key (kbd "<right>") 'evil-window-right)
+;; (global-set-key (kbd "<up>") 'evil-window-up)
+;; (global-set-key (kbd "<down>") 'evil-window-down)
 
-(global-set-key (kbd "A-<left>") 'evil-window-move-far-left)
-(global-set-key (kbd "A-<right>") 'evil-window-move-far-right)
-(global-set-key (kbd "A-<up>") 'evil-window-move-very-top)
-(global-set-key (kbd "A-<down>") 'evil-window-move-very-down)
+;; (global-set-key (kbd "A-<left>") 'evil-window-move-far-left)
+;; (global-set-key (kbd "A-<right>") 'evil-window-move-far-right)
+;; (global-set-key (kbd "A-<up>") 'evil-window-move-very-top)
+;; (global-set-key (kbd "A-<down>") 'evil-window-move-very-down)
 
 ;; text manipulations
 

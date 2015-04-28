@@ -179,7 +179,6 @@
   (local-set-key (kbd "C-c >") 'hs-show-block)
 
   (local-unset-key (kbd "{"))
-  (local-unset-key (kbd "/"))
   (local-unset-key (kbd "C-c C-d"))
 
   (evil-leader/set-key-for-mode 'csharp-mode
