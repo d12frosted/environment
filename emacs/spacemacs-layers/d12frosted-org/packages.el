@@ -90,6 +90,7 @@ which require an initialization must be listed explicitly in the list.")
              ;; The reason will be included in the task notes.
              "DELAYED(l)"))
 
+          org-agenda-window-setup 'current-window
           org-src-fontify-natively t
           org-directory d12frosted/org-home-path
           org-agenda-files d12/org-agenda-files
