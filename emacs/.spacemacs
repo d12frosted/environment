@@ -145,9 +145,47 @@ before layers configuration."
 
                 omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe"
 
+                ;; d12frosted-org layer
                 d12frosted/org-home-path "~/Dropbox/org/"
                 d12frosted/org-author-name "Boris Buliga"
-                d12frosted/org-author-email "d12frosted@icloud.com"))
+                d12frosted/org-author-email "d12frosted@icloud.com"
+
+                ;; mu4e layer
+                mu4e/default-account "d12frosted"
+                mu4e/update-interval 60
+                mu4e/folders-alist
+                '(("d12frosted"
+                   (mu4e-drafts-folder "/d12frosted/Drafts")
+                   (mu4e-sent-folder "/d12frosted/Sent")
+                   (mu4e-trash-folder "/d12frosted/Trash")
+                   (mu4e-refile-folder "/d12frosted/Archive"))
+                  ("boris"
+                   (mu4e-drafts-folder "/boris/Drafts")
+                   (mu4e-sent-folder "/boris/Sent")
+                   (mu4e-trash-folder "/boris/Trash")
+                   (mu4e-refile-folder "/boris/Archive"))
+                  ("timecode"
+                   (mu4e-drafts-folder "/timecode/Drafts")
+                   (mu4e-sent-folder "/timecode/Sent Mail")
+                   (mu4e-trash-folder "/timecode/Trash")
+                   (mu4e-refile-folder "/timecode/Archive")))
+                mu4e/accounts-alist
+                '(("d12frosted"
+                   (mu4e-sent-messages-behavior sent)
+                   (user-mail-address "d12frosted@icloud.com")
+                   (user-full-name  "Boris")
+                   (mu4e-compose-signature "Cheers, Boris."))
+                  ("boris"
+                   (mu4e-sent-messages-behavior sent)
+                   (user-mail-address "boris.buliga@icloud.com")
+                   (user-full-name  "Boris Buliga")
+                   (mu4e-compose-signature "Cheers, Boris."))
+                  ("timecode"
+                   (mu4e-sent-messages-behavior delete)
+                   (user-mail-address "boris.buliga@timecode.co")
+                   (user-full-name  "Boris Buliga")
+                   (mu4e-compose-signature "Cheers, Boris.")))
+                ))
 
 (defun dotspacemacs/config ()
   "Configuration function.
@@ -168,7 +206,27 @@ layers configuration."
         magit-repo-dirs '("~/Developer/"
                           "~/.environment/") ; help magit to search for git repos
 
-        nyan-wavy-trail nil)                 ; wavy trail bothers me, so I disable it
+        nyan-wavy-trail nil                  ; wavy trail bothers me, so I disable it
+
+        ;; mu4e layer
+        mu4e-bookmarks
+        '(("flag:unread AND NOT flag:trashed"            "Unread messages"               ?u)
+          ("date:;TODO: oday..now AND NOT flag:trashed"  "Today's messages"              ?t)
+          ("date:today..now"                             "Today's messages (with Trash)" ?T)
+          ("date:7d..now AND NOT flag:trashed"           "Last 7 days"                   ?w)
+          ("date:7d..now"                                "Last 7 days (with Trash)"      ?W))
+        ;; mu4e-html2text-command "html2text -utf8 -width 80"
+        ;; mu4e-html2text-command "textutil -stdin -format html -convert txt -stdout"
+        mu4e-html2text-command "w3m -dump -cols 80 -T text/html"
+        mu4e-maildir "~/.mail"
+        mu4e-use-fancy-chars t ; should be executed only for GUI
+        mu4e-get-mail-command "sh ~/.environment/email/gendalf.sh mu4e 1" ; todo - use the value of update interval
+        mu4e-view-show-images t
+        message-send-mail-function 'message-send-mail-with-sendmail
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-sendmail-f-is-evil 't
+        sendmail-program "msmtp"
+        mail-user-agent 'mu4e-user-agent)
 
   ;; hooks
   (add-hook 'csharp-mode-hook 'd12frosted/omnisharp-config t)
