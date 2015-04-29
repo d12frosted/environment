@@ -28,34 +28,14 @@
     (when (fboundp 'imagemagick-register-types)
       (imagemagick-register-types))
 
-    (setq mu4e-maildir "~/.mail"
-          mu4e-use-fancy-chars t ; should be executed only for GUI
-          mu4e-get-mail-command "sh ~/.environment/email/gendalf.sh mu4e 1"
-          ;; mu4e-html2text-command "html2text -utf8 -width 80"
-          ;; mu4e-html2text-command "textutil -stdin -format html -convert txt -stdout"
-          mu4e-html2text-command "w3m -dump -cols 80 -T text/html"
-          mu4e-view-show-images t
+    (setq mu4e/current-account (car (car mu4e/accounts-alist))
           mu4e-update-interval mu4e/update-interval
-          mu4e-bookmarks
-          '(("flag:unread AND NOT flag:trashed"     "Unread messages"               ?u)
-            ("date:today..now AND NOT flag:trashed" "Today's messages"              ?t)
-            ("date:today..now"                      "Today's messages (with Trash)" ?T)
-            ("date:7d..now AND NOT flag:trashed"    "Last 7 days"                   ?w)
-            ("date:7d..now"                         "Last 7 days (with Trash)"      ?W))
-
           mu4e-trash-folder 'mu4e/trash-folder-fn
           mu4e-refile-folder 'mu4e/refile-folder-fn
           mu4e-drafts-folder 'mu4e/drafts-folder-fn
-          mu4e-sent-folder 'mu4e/sent-folder-fn
+          mu4e-sent-folder 'mu4e/sent-folder-fn)
 
-          message-send-mail-function 'message-send-mail-with-sendmail
-          message-sendmail-extra-arguments '("--read-envelope-from")
-          message-sendmail-f-is-evil 't
-
-          sendmail-program "msmtp"
-          mail-user-agent 'mu4e-user-agent)
-
-    (mu4e/set-account-vars mu4e/default-account)
+    (mu4e/set-account-vars mu4e/current-account)
 
     (add-to-list 'mu4e-view-actions
                  '("View In Browser" . mu4e-action-view-in-browser) t)
