@@ -32,7 +32,8 @@
           mu4e-use-fancy-chars t ; should be executed only for GUI
           mu4e-get-mail-command "sh ~/.environment/email/gendalf.sh mu4e 1"
           ;; mu4e-html2text-command "html2text -utf8 -width 80"
-          mu4e-html2text-command "textutil -stdin -format html -convert txt -stdout"
+          ;; mu4e-html2text-command "textutil -stdin -format html -convert txt -stdout"
+          mu4e-html2text-command "w3m -dump -cols 80 -T text/html"
           mu4e-view-show-images t
           mu4e-update-interval 60
           mu4e-bookmarks
@@ -47,23 +48,14 @@
           message-sendmail-f-is-evil 't
 
           sendmail-program "msmtp"
-          mail-user-agent 'mu4e-user-agent
+          mail-user-agent 'mu4e-user-agent)
 
-          ;; todo - set it from account alist
-          mu4e-drafts-folder "/d12frosted/Drafts"
-          mu4e-sent-folder "/d12frosted/Sent"
-          mu4e-trash-folder "/d12frosted/Trash"
-          mu4e-refile-folder "/d12frosted/Archive"
-          mu4e-sent-messages-behavior 'sent
-          mu4e-compose-signature "Cheers, Boris."
-
-          user-full-name  "Boris"
-          user-mail-address "d12frosted@icloud.com")
+    (mu4e-set-account-vars mu4e-default-account)
 
     (add-to-list 'mu4e-view-actions
                  '("View in browser" . mu4e-msgv-action-view-in-browser) t)
 
-    (add-hook 'mu4e-compose-pre-hook 'd12frosted/mu4e-set-account)
+    (add-hook 'mu4e-compose-pre-hook 'mu4e-set-account)
 
     (evil-leader/set-key
       "am" 'mu4e)))
