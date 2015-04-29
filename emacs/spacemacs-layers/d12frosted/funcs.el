@@ -161,6 +161,21 @@
     (omnisharp-go-to-definition)
     (recenter)))
 
+(defun d12frosted/omnisharp-comment-to-doc ()
+  "Convert regular comment at point int to documentation comment."
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (when (search-forward-regexp "\\([ 	]+\\)//\\(.*\\)" nil t)
+      (replace-match (concat (match-string 1)
+                             "/// <summary>\n"
+                             (match-string 1)
+                             "/// "
+                             (match-string 2)
+                             "\n"
+                             (match-string 1)
+                             "/// </summary>") t nil))))
+
 (defun d12frosted/omnisharp-config ()
   "Function that should be called when omnisharp mode is enabled."
 
