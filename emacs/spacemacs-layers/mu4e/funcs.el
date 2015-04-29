@@ -11,7 +11,7 @@
 ;;; License: GPLv3
 
 
-(defun d12frosted/mu4e-set-account ()
+(defun mu4e-set-account ()
   "Set the account for composing a message."
   (let* ((account
           (if mu4e-compose-parent-message
@@ -20,10 +20,10 @@
                 (match-string 1 maildir))
             (completing-read (format "Compose with account: (%s) "
                                      (mapconcat #'(lambda (var) (car var))
-                                                d12frosted/mu4e-account-alist "/"))
-                             (mapcar #'(lambda (var) (car var)) d12frosted/mu4e-account-alist)
-                             nil t nil nil (caar d12frosted/mu4e-account-alist))))
-         (account-vars (cdr (assoc account d12frosted/mu4e-account-alist))))
+                                                mu4e-account-alist "/"))
+                             (mapcar #'(lambda (var) (car var)) mu4e-account-alist)
+                             nil t nil nil (caar mu4e-account-alist))))
+         (account-vars (cdr (assoc account mu4e-account-alist))))
     (if account-vars
         (mapc #'(lambda (var)
                   (set (car var) (cadr var)))
