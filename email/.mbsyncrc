@@ -149,7 +149,7 @@ Account timecode
 # ----------------
 
 Group timecode
-Channels timecode-inbox-channel timecode-trash-channel
+Channels timecode-inbox-channel timecode-trash-channel timecode-archive-channel
 
 # inbox channel
 # -------------
@@ -177,6 +177,21 @@ AltMap yes
 Channel timecode-trash-channel
 Master ":timecode-imap:Trash"
 Slave :timecode-trash-local:INBOX
+Create Slave
+Expunge Slave
+Sync Pull Push
+
+# Archive channel
+# ------------
+
+MaildirStore timecode-archive-local
+Path "~/.mail/"
+Inbox "~/.mail/timecode/Archive"
+AltMap yes
+
+Channel timecode-archive-channel
+Master ":timecode-imap:Archive"
+Slave :timecode-archive-local:INBOX
 Create Slave
 Expunge Slave
 Sync Pull Push
