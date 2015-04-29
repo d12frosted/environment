@@ -7,6 +7,9 @@
 FRIEND=$1
 INTERVAL=$2
 
+threshold=1
+index=0
+
 # but I speak only orcish
 
 export LC_ALL=en_US.UTF-8
@@ -32,12 +35,24 @@ gendalf_check () {
 }
 
 gendalf_mutter () {
-    terminal-notifier -message "Subject: $2" \
-                      -subtitle "From: $1" \
-                      -title "New mail" \
-                      -sender "org.gnu.Emacs" \
-                      -activate "org.gnu.Emacs" \
-                      -group "$3"
+    index=$(expr $index + 1)
+    if [ "$index" -gt "$threshold" ];
+    then
+        terminal-notifier -message "Subject: $2" \
+                          -subtitle "From: $1" \
+                          -title "New mail" \
+                          -sender "org.gnu.Emacs" \
+                          -activate "org.gnu.Emacs" \
+                          -group "$3"
+    else
+        terminal-notifier -message "Subject: $2" \
+                          -subtitle "From: $1" \
+                          -title "New mail" \
+                          -sender "org.gnu.Emacs" \
+                          -activate "org.gnu.Emacs" \
+                          -group "$3" \
+                          -sound "Submarine"
+    fi
 }
 
 gendalf_enter () {
