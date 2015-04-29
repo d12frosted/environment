@@ -155,19 +155,20 @@ before layers configuration."
 layers configuration."
 
   ;; variables
-  (setq powerline-default-separator 'arrow ; set arrow as a separator for powerline
+  (setq powerline-default-separator 'arrow   ; set arrow as a separator for powerline
 
-        helm-candidate-number-limit 36  ; to help fuzzy match
-        helm-M-x-fuzzy-match t          ; enable fuzzy match for M-x
-        helm-lisp-fuzzy-completion t    ; enable fuzzy match for lisp functions completion list
+        helm-candidate-number-limit 36       ; to help fuzzy match
+        helm-M-x-fuzzy-match t               ; enable fuzzy match for M-x
+        helm-lisp-fuzzy-completion t         ; enable fuzzy match for lisp
+                                             ; functions completion list
+
+        projectile-enable-caching nil        ; disable caching
+                                             ; because of SSD
 
         magit-repo-dirs '("~/Developer/"
                           "~/.environment/") ; help magit to search for git repos
 
-        nyan-wavy-trail nil)            ; wavy trail bothers me, so I disable it
-
-  ;; toggles
-  (spacemacs/mode-line-battery-info-toggle)
+        nyan-wavy-trail nil)                 ; wavy trail bothers me, so I disable it
 
   ;; hooks
   (add-hook 'csharp-mode-hook 'd12frosted/omnisharp-config t)
