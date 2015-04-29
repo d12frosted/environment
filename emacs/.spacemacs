@@ -193,40 +193,49 @@ before layers configuration."
 layers configuration."
 
   ;; variables
-  (setq powerline-default-separator 'arrow   ; set arrow as a separator for powerline
+  (setq powerline-default-separator       'arrow                                       ; set arrow as a separator for powerline
 
-        helm-candidate-number-limit 36       ; to help fuzzy match
-        helm-M-x-fuzzy-match t               ; enable fuzzy match for M-x
-        helm-lisp-fuzzy-completion t         ; enable fuzzy match for lisp
-                                             ; functions completion list
+        helm-candidate-number-limit 36                                                 ; to help fuzzy match
+        helm-M-x-fuzzy-match              t                                            ; enable fuzzy match for M-x
+        helm-lisp-fuzzy-completion        t                                            ; enable fuzzy match for lisp
+                                                                                       ; functions completion list
 
-        projectile-enable-caching nil        ; disable caching
-                                             ; because of SSD
+        projectile-enable-caching         nil                                          ; disable caching
+                                                                                       ; because of SSD
 
-        magit-repo-dirs '("~/Developer/"
-                          "~/.environment/") ; help magit to search for git repos
+        magit-repo-dirs                   '("~/Developer/"
+                                            "~/.environment/")                         ; help magit to search for git repos
 
-        nyan-wavy-trail nil                  ; wavy trail bothers me, so I disable it
+        nyan-wavy-trail                   nil                                          ; wavy trail bothers me, so I disable it
 
         ;; mu4e layer
-        mu4e-bookmarks
-        '(("flag:unread AND NOT flag:trashed"            "Unread messages"               ?u)
-          ("date:;TODO: oday..now AND NOT flag:trashed"  "Today's messages"              ?t)
-          ("date:today..now"                             "Today's messages (with Trash)" ?T)
-          ("date:7d..now AND NOT flag:trashed"           "Last 7 days"                   ?w)
-          ("date:7d..now"                                "Last 7 days (with Trash)"      ?W))
+        mu4e-bookmarks '(("flag:unread AND NOT flag:trashed"            "Unread messages"               ?u)
+                         ("date:;TODO: oday..now AND NOT flag:trashed"  "Today's messages"              ?t)
+                         ("date:today..now"                             "Today's messages (with Trash)" ?T)
+                         ("date:7d..now AND NOT flag:trashed"           "Last 7 days"                   ?w)
+                         ("date:7d..now"                                "Last 7 days (with Trash)"      ?W))
         ;; mu4e-html2text-command "html2text -utf8 -width 80"
         ;; mu4e-html2text-command "textutil -stdin -format html -convert txt -stdout"
-        mu4e-html2text-command "w3m -dump -cols 80 -T text/html"
-        mu4e-maildir "~/.mail"
-        mu4e-use-fancy-chars t ; should be executed only for GUI
-        mu4e-get-mail-command "sh ~/.environment/email/gendalf.sh mu4e 1" ; todo - use the value of update interval
-        mu4e-view-show-images t
-        message-send-mail-function 'message-send-mail-with-sendmail
-        message-sendmail-extra-arguments '("--read-envelope-from")
-        message-sendmail-f-is-evil 't
-        sendmail-program "msmtp"
-        mail-user-agent 'mu4e-user-agent)
+        mu4e-html2text-command            "w3m -dump -cols 80 -T text/html"
+        mu4e-maildir                      "~/.mail"
+        mu4e-use-fancy-chars              t                                            ; should be executed only for GUI
+        mu4e-headers-draft-mark           '("D" . "⚒ ")                                ; draft
+        mu4e-headers-seen-mark            '("S" . "☑ ")                                ; seen
+        mu4e-headers-unseen-mark          '("u" . "☐ ")                                ; unseen
+        mu4e-headers-flagged-mark         '("F" .  "⚑ ")                               ; flagged
+        mu4e-headers-new-mark             '("N" .  "✉ ")                               ; new
+        mu4e-headers-replied-mark         '("R" . "↵ ")                                ; replied
+        mu4e-headers-passed-mark          '("P" . "⇉ ")                                ; passed
+        mu4e-headers-encrypted-mark       '("x" . "♯ ")                                ; encrypted
+        mu4e-headers-signed-mark          '("s" . "✍ ")                                ; signed
+        mu4e-headers-attach-mark          '("a" . "⚓︎ ")
+        mu4e-get-mail-command             "sh ~/.environment/email/gendalf.sh mu4e 1"  ; todo - use the value of update interval
+        mu4e-view-show-images             t
+        message-send-mail-function        'message-send-mail-with-sendmail
+        message-sendmail-extra-arguments  '("--read-envelope-from")
+        message-sendmail-f-is-evil        't
+        sendmail-program                  "msmtp"
+        mail-user-agent                   'mu4e-user-agent)
 
   ;; hooks
   (add-hook 'csharp-mode-hook 'd12frosted/omnisharp-config t)
