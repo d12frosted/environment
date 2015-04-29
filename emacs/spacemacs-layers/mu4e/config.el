@@ -10,6 +10,8 @@
 ;;
 ;;; License: GPLv3
 
+(defvar mu4e-default-account "d12frosted")
+
 (defvar mu4e-account-alist
   '(("d12frosted"
      (mu4e-drafts-folder "/d12frosted/Drafts")

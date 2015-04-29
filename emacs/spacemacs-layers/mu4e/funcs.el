@@ -10,6 +10,14 @@
 ;;
 ;;; License: GPLv3
 
+(defun mu4e-set-account-vars (account)
+  "Set the variables for ACCOUNT from 'mu4e-account-alist."
+  (let* ((account-vars (cdr (assoc account mu4e-account-alist))))
+    (if account-vars
+        (mapc #'(lambda (var)
+                  (set (car var) (cadr var)))
+              account-vars)
+      (error "No email account found"))))
 
 (defun mu4e-set-account ()
   "Set the account for composing a message."
@@ -22,13 +30,8 @@
                                      (mapconcat #'(lambda (var) (car var))
                                                 mu4e-account-alist "/"))
                              (mapcar #'(lambda (var) (car var)) mu4e-account-alist)
-                             nil t nil nil (caar mu4e-account-alist))))
-         (account-vars (cdr (assoc account mu4e-account-alist))))
-    (if account-vars
-        (mapc #'(lambda (var)
-                  (set (car var) (cadr var)))
-              account-vars)
-      (error "No email account found"))))
+                             nil t nil nil (caar mu4e-account-alist)))))
+    (mu4e-set-account-vars account)))
 
 (defun mu4e-msgv-action-view-in-browser (msg)
   "View the body of the message in a web browser."
