@@ -200,3 +200,10 @@
     "mgg" 'd12frosted/omnisharp-go-to-definition-at-center)
 
   (local-set-key (kbd "C-.") 'omnisharp-auto-complete))
+
+;;; stuff
+
+(defun d12/goto-line-and-center ()
+  (interactive)
+  (call-interactively 'goto-line)
+  (call-interactively 'recenter-top-bottom))

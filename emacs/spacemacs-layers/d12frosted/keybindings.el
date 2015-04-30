@@ -31,3 +31,5 @@
 (global-set-key (kbd "C-y") 'yank)
 (global-set-key (kbd "C-S-w") 'duplicate-line-or-region)
 (global-set-key (kbd "M-K") 'delete-line-or-region)
+
+(global-set-key (kbd "M-g g") 'd12/goto-line-and-center)
