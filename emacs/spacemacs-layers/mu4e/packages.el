@@ -27,5 +27,5 @@ which require an initialization must be listed explicitly in the list.")
     (mu4e-maildirs-extension)
     (add-hook 'mu4e-index-updated-hook 'mu4e-maildirs-extension-index-updated-handler)
     (add-hook 'mu4e-main-mode-hook 'mu4e-maildirs-extension-index-updated-handler)
-    (setq mu4e-maildirs-extension-maildir-separator "»"
-          mu4e-maildirs-extension-submaildir-separator "•")))
+    (setq mu4e-maildirs-extension-maildir-separator "*"
+          mu4e-maildirs-extension-submaildir-separator "»")))
