@@ -94,7 +94,10 @@ which require an initialization must be listed explicitly in the list.")
           org-src-fontify-natively t
           org-directory d12frosted/org-home-path
           org-agenda-files d12/org-agenda-files
-          org-agenda-inhibit-startup nil)
+          org-agenda-inhibit-startup nil
+          org-mobile-inbox-for-pull (s-concat d12frosted/org-home-path "mobile.org")
+          org-mobile-force-id-on-agenda-items nil
+          org-mobile-directory "~/Dropbox/Apps/MobileOrg/")
 
     (evil-leader/set-key-for-mode 'org-mode
       "m C-s" 'd12frosted/org-sort-current-level
