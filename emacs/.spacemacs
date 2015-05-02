@@ -144,6 +144,7 @@ before layers configuration."
                 colors-enable-nyan-cat-progress-bar t
 
                 omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe"
+                ;; omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/scripts/Omnisharp"
 
                 ;; d12frosted-org layer
                 d12frosted/org-home-path "~/Dropbox/org/"
@@ -209,15 +210,25 @@ layers configuration."
         nyan-wavy-trail                   nil                                          ; wavy trail bothers me, so I disable it
 
         ;; mu4e layer
-        mu4e-bookmarks '(("flag:unread AND NOT flag:trashed"            "Unread messages"               ?u)
-                         ("date:;TODO: oday..now AND NOT flag:trashed"  "Today's messages"              ?t)
-                         ("date:today..now"                             "Today's messages (with Trash)" ?T)
-                         ("date:7d..now AND NOT flag:trashed"           "Last 7 days"                   ?w)
-                         ("date:7d..now"                                "Last 7 days (with Trash)"      ?W))
+        mu4e-bookmarks
+        '(("flag:unread AND NOT flag:trashed"            "Unread messages"               ?u)
+          ("date:;TODO: oday..now AND NOT flag:trashed"  "Today's messages"              ?t)
+          ("date:today..now"                             "Today's messages (with Trash)" ?T)
+          ("date:7d..now AND NOT flag:trashed"           "Last 7 days"                   ?w)
+          ("date:7d..now"                                "Last 7 days (with Trash)"      ?W))
         ;; mu4e-html2text-command "html2text -utf8 -width 80"
         ;; mu4e-html2text-command "textutil -stdin -format html -convert txt -stdout"
-        mu4e-html2text-command            "w3m -dump -cols 80 -T text/html"
+        ;; mu4e-html2text-command            "w3m -dump -cols 80 -T text/html"
+        mu4e-html2text-command            "w3m -dump -cols 110 -T text/html"
+        mu4e-view-fields                  '(:from
+                                            :to
+                                            :cc
+                                            :subject
+                                            :date
+                                            :tags
+                                            :attachments)
         mu4e-maildir                      "~/.mail"
+        mu4e-headers-visible-lines        16
         mu4e-use-fancy-chars              t                                            ; should be executed only for GUI
         mu4e-headers-draft-mark           '("D" . "⚒ ")                                ; draft
         mu4e-headers-seen-mark            '("S" . "☑ ")                                ; seen
@@ -231,6 +242,8 @@ layers configuration."
         mu4e-headers-attach-mark          '("a" . "⚓︎ ")
         mu4e-get-mail-command             "sh ~/.environment/email/gendalf.sh mu4e 1"  ; todo - use the value of update interval
         mu4e-view-show-images             t
+        mu4e-attachment-dir               "~/Downloads"
+        mu4e-view-image-max-width         700
         message-send-mail-function        'message-send-mail-with-sendmail
         message-sendmail-extra-arguments  '("--read-envelope-from")
         message-sendmail-f-is-evil        't
