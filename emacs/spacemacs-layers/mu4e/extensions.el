@@ -33,7 +33,15 @@
           mu4e-trash-folder 'mu4e/trash-folder-fn
           mu4e-refile-folder 'mu4e/refile-folder-fn
           mu4e-drafts-folder 'mu4e/drafts-folder-fn
-          mu4e-sent-folder 'mu4e/sent-folder-fn)
+          mu4e-sent-folder 'mu4e/sent-folder-fn
+          ;; This shouldn't be necessary, but see https://github.com/djcb/mu/issues/399.
+          mu4e-user-mail-address-list (list user-mail-address)
+          message-kill-buffer-on-exit t
+          mu4e-compose-dont-reply-to-self t)
+
+    ;; don't forget to
+    ;; $ mu mkdir ~/Maildir/queue
+    ;; $ touch ~/Maildir/queue/.noindex
 
     (mu4e/set-account-vars mu4e/current-account)
 
