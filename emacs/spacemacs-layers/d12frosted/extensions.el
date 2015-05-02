@@ -19,6 +19,6 @@
 
 (defun d12frosted/init-fish-mode ()
   (use-package fish-mode
-    :defer t
+    :defer 1
     :init
     :config))
