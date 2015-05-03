@@ -77,6 +77,7 @@ and its values are removed."
     (while (consp tail)
       (push (pop tail) result))
     (nreverse result)))
+
 ;;; Key binding helpers
 ;; =====================
 
@@ -96,6 +97,7 @@ and its values are removed."
       (unless (null ',bind-local)
         (dolist (val ',bind-local)
           (define-key (eval (car val)) (kbd (cdr val)) ',func))))))
+
 ;;; Various stuff
 ;; ===============
 
@@ -111,3 +113,46 @@ and its values are removed."
 (defmacro d12|diminish (mode dim)
   "Diminish MODE name in mode line to DIM."
   `(eval-after-load 'diminish '(diminish ',mode ,dim)))
+
+(defmacro d12|add-toggle (name &rest props)
+  "Add a toggle with NAME symbol.
+  Available PROPS:
+  `:status EXPRESSION'
+      The EXPRESSION to evaluate to get the current status of the toggle.
+  `:if EXPRESSION'
+      If this EXPRESSION evaluate to nil then no attempt to update the toggle
+      status will be performed.
+  `:on BODY'
+      Evaluate BODY when the toggle is switched on.
+  `:off BODY'
+      Evaluate BODY when the toggle is switched off.
+  `:documentation STRING'
+      STRING describes what the toggle does.
+  `:bind-global KEY-NAME'
+      Bind KEY-NAME to toggle globally.
+  `:bind-local KEY-NAME KEY-MAP
+      Bind KEY-NAME to toggle in KEY-MAP"
+  (let* ((wrapper-func (intern (format "d12/toggle-%s"
+                                       (symbol-name name))))
+         (status (plist-get props :status))
+         (condition (plist-get props :if))
+         (doc (plist-get props :documentation))
+         (on-body (d12/mplist-get props :on))
+         (off-body (d12/mplist-get props :off))
+         (bindkeys (d12/create-key-binding-form props wrapper-func)))
+    `(progn
+       ;; toggle function
+       (defun ,wrapper-func ()
+         ,(format "Toggle %s on and off." (symbol-name name))
+         (interactive)
+         ;; we evaluate condition and status only if they are a list or
+         ;; a bound symbol
+         (if (or (null ',condition)
+                   (and (or (and (symbolp ',condition) (boundp ',condition))
+                            (listp ',condition))
+                        ,condition))
+             (if (and (or (and (symbolp ',status) (boundp ',status))
+                          (listp ',status))
+                      ,status) (progn ,@off-body) ,@on-body)
+           (message "This toggle is not supported.")))
+       ,@bindkeys)))
