@@ -252,7 +252,10 @@
 ;; * http://users.teilar.gr/%7Eg1951d/
 (use-package unicode-fonts
   :ensure t
-  :init (unicode-fonts-setup))
+  ;; this is a heavy package, so defer it's loading
+  :defer 1
+  :config
+  (unicode-fonts-setup))
 
 ;;; Themes
 ;; --------
