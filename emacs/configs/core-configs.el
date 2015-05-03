@@ -212,6 +212,12 @@
 (use-package dash
   :ensure t)
 
+(use-package exec-path-from-shell
+  :ensure t
+  :init
+  (when (memq window-system '(mac ns))
+    (exec-path-from-shell-initialize)))
+
 (use-package s
   :ensure t
   :defer 1)
@@ -225,24 +231,27 @@
   :config
   (progn
     (setq dynamic-fonts-preferred-monospace-fonts
-          '("Anonymous Pro" ; http://www.marksimonson.com/fonts/view/anonymous-pro
+          '("Source Code Pro" ; https://github.com/adobe-fonts/source-code-pro
+            "Anonymous Pro" ; http://www.marksimonson.com/fonts/view/anonymous-pro
             "Fira Mono"
             "Menlo")
-          dynamic-fonts-preferred-monospace-point-size 12
+          dynamic-fonts-preferred-monospace-point-size 14
 
           dynamic-fonts-preferred-proportional-fonts
           '("Fira Sans" ; https://www.mozilla.org/en-US/styleguide/products/firefox-os/typeface/
             "Helvetica")
-          dynamic-fonts-preferred-proportional-point-size 12)
+          dynamic-fonts-preferred-proportional-point-size 14)
 
     (dynamic-fonts-setup)))
 
 ;; Map Unicode blocks to fonts
-;; currently disabled
-;; todo - investigate this package more
+;; don't forget to download and install:
+;; * http://dejavu-fonts.org/wiki/Download
+;; * http://www.quivira-font.com/downloads.php
+;; * http://www.google.com/get/noto/#/
+;; * http://users.teilar.gr/%7Eg1951d/
 (use-package unicode-fonts
   :ensure t
-  :disabled t
   :init (unicode-fonts-setup))
 
 ;;; Themes
@@ -251,8 +260,9 @@
 (use-package leuven
   :ensure leuven-theme
   :defer t
-  :init (load-theme 'leuven t)
-  :config (set-face-attribute hl-line-face nil :underline nil))
+  :init
+  (load-theme 'leuven t)
+  (set-face-attribute hl-line-face nil :underline nil))
 
 (use-package solarized
   :disabled
@@ -269,7 +279,7 @@
 ;;; Various
 ;; ---------
 
-(use-package fancy-battery              ; Fancy battery info for mode line
+(use-package fancy-battery
   :ensure t
   :defer t
   :init (fancy-battery-mode))
