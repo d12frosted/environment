@@ -77,6 +77,25 @@ and its values are removed."
     (while (consp tail)
       (push (pop tail) result))
     (nreverse result)))
+;;; Key binding helpers
+;; =====================
+
+(defun d12/create-key-binding-form (props func)
+  "Helper which returns a from to bind FUNC to a key according to PROPS.
+  Supported properties:
+  `:bind-global KEY-NAME'
+      One or several key sequence strings to be set with `global-set-key'.
+  `:bind-local CONS CELL'
+      One or several cons cells (MAP . KEY) where MAP is a mode map and KEY is a
+    key sequence string to be set with `define-key'. "
+  (let ((bind-global (d12/mplist-get props :bind-global))
+        (bind-local (d12/mplist-get props :bind-local)))
+    `((unless (null ',bind-global)
+        (dolist (key ',bind-global)
+          (global-set-key (kbd key) ',func)))
+      (unless (null ',bind-local)
+        (dolist (val ',bind-local)
+          (define-key (eval (car val)) (kbd (cdr val)) ',func))))))
 ;;; Various stuff
 ;; ===============
 
