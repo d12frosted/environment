@@ -143,10 +143,13 @@
   (bind-key "C-c c S" 'd12/org-sort-upper-level org-mode-map)
   (bind-key "C-c c #" 'd12/org-insert-block-template org-mode-map)
 
+  (d12|diminish org-mode " 本")
+
   (add-hook 'org-mode-hook 'd12/org-auto-insert-template))
 
 (use-package org-indent
   :defer t
+  :diminish org-indent-mode
   :init
   (add-hook 'org-mode-hook 'org-indent-mode))
 

@@ -135,6 +135,7 @@
       (jump-to-register :magit-fullscreen))
     (bind-key "q" 'magit-quit-session magit-status-mode-map))
 
+  (diminish 'magit-auto-revert-mode)
   (bind-key "W" 'magit-toggle-whitespace magit-status-mode-map))
 
 (use-package magit-gh-pulls
