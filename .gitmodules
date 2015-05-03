@@ -13,3 +13,9 @@
 [submodule "emacs/spacemacs-layers/d12frosted-org/extensions/org-journal"]
 	path = emacs/spacemacs-layers/d12frosted-org/extensions/org-journal
 	url = https://github.com/d12frosted/org-journal.git
+[submodule "emacs/packages/org-journal"]
+	path = emacs/packages/org-journal
+	url = git@github.com:d12frosted/org-journal.git
+[submodule "emacs/packages/org-mode"]
+	path = emacs/packages/org-mode
+	url = git://orgmode.org/org-mode.git

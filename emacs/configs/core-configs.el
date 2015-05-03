@@ -35,6 +35,7 @@
 (setq package-user-dir (concat d12/cache-directory "elpa"))
 
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 
 (package-initialize)
 
@@ -211,6 +212,10 @@
 (use-package dash
   :ensure t)
 
+(use-package s
+  :ensure t
+  :defer 1)
+
 ;;; Fonts
 ;; ------
 
@@ -223,12 +228,12 @@
           '("Anonymous Pro" ; http://www.marksimonson.com/fonts/view/anonymous-pro
             "Fira Mono"
             "Menlo")
-          dynamic-fonts-preferred-monospace-point-size 14
+          dynamic-fonts-preferred-monospace-point-size 12
 
           dynamic-fonts-preferred-proportional-fonts
           '("Fira Sans" ; https://www.mozilla.org/en-US/styleguide/products/firefox-os/typeface/
             "Helvetica")
-          dynamic-fonts-preferred-proportional-point-size 14)
+          dynamic-fonts-preferred-proportional-point-size 12)
 
     (dynamic-fonts-setup)))
 
@@ -271,4 +276,13 @@
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
 ;;; Mode line
-;; ===========
+;; -----------
+
+;; todo - implement it
+
+;;; Other configurations
+;; ======================
+
+(-each d12/custom-configs
+  (lambda (config)
+    (d12/load-config config)))
