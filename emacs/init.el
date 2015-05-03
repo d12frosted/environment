@@ -18,21 +18,12 @@
 ;;
 ;; User key prefixes:
 ;;
-;; - C-c A: Align
-;; - C-c a: Ag
-;; - C-c b: Helm commands (b for "browse")
+;; - C-c a: applications
 ;; - C-c c: current mode commands
-;; - C-c d: Data stuff
-;; - C-c f: Files
-;; - C-c h: Help and documentation
-;; - C-c l: List things
-;; - C-c m: Multiple cursors
 ;; - C-c o: Org mode
-;; - C-c s: Symbol commands
 ;; - C-c t: Toggle things and skeletons
 ;; - C-c u: Miscellaneous utilities
 ;; - C-c v: Version control
-;; - C-c w: Web stuff
 
 ;;; Code
 
@@ -90,7 +81,8 @@
 
 (setq d12/custom-configs
       '("org"
-        "magit"))
+        "magit"
+        "syntax-checking"))
 
 ;; load core configurations
 (d12/load-config "core")
