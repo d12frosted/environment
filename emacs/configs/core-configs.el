@@ -251,7 +251,8 @@
 (use-package leuven
   :ensure leuven-theme
   :defer t
-  :init (load-theme 'leuven 'no-confirm))
+  :init (load-theme 'leuven t)
+  :config (set-face-attribute hl-line-face nil :underline nil))
 
 (use-package solarized
   :disabled
