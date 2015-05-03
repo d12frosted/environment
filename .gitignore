@@ -1,0 +1,6 @@
+# el
+
+*.elc
+
+# ignore emacs cache
+emacs/.cache
