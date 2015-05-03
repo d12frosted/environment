@@ -89,7 +89,8 @@
   "List of custom config names to load.")
 
 (setq d12/custom-configs
-      '("org"))
+      '("org"
+        "magit"))
 
 ;; load core configurations
 (d12/load-config "core")
