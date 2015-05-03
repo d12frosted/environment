@@ -42,6 +42,7 @@
 (use-package git-gutter
   :ensure t
   :commands git-gutter-mode
+  :diminish git-gutter-mode
   :init
   (init-git-gutter)
   (add-hook 'markdown-mode-hook 'git-gutter-mode)
