@@ -57,8 +57,3 @@
 (defmacro d12|diminish (mode dim)
   "Diminish MODE name in mode line to DIM."
   `(eval-after-load 'diminish '(diminish ',mode ,dim)))
-
-(defun d12/reload-config ()
-  "Reloads config."
-  (interactive)
-  (load (concat d12/load-dir "init.el")))
