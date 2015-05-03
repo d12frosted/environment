@@ -59,14 +59,9 @@
   :ensure t
   :pin org
   :mode ("\\.org$" . org-mode)          ; todo - add org journal stuff as well
-  :bind (("C-c o a"  . org-agenda)
-         ("C-c o i t"  . d12/org-insert-time)
-         ("C-c o i d"  . d12/org-insert-date)
-
-         ;; local
-         ("C-c c s" . d12/org-sort-current-level)
-         ("C-c c S" . d12/org-sort-upper-level)
-         ("C-c c #" . d12/org-insert-block-template))
+  :bind (("C-c o a"   . org-agenda)
+         ("C-c o i t" . d12/org-insert-time)
+         ("C-c o i d" . d12/org-insert-date))
   :config
   (require 's)
   (setq-local d12/org-ignored-dirs
@@ -144,15 +139,11 @@
         org-mobile-force-id-on-agenda-items nil
         org-mobile-directory "~/Dropbox/Apps/MobileOrg/")
 
-  ;; (evil-leader/set-key-for-mode 'org-mode
-  ;;   "m C-s" 'd12/org-sort-current-level
-  ;;   "m C-S" 'd12/org-sort-upper-level
-  ;;   "m#" 'd12/org-insert-block-template
-  ;;   "m C-d" 'd12/org-insert-date
-  ;;   "m C-t" 'd12/org-insert-time)
+  (bind-key "C-c c s" 'd12/org-sort-current-level org-mode-map)
+  (bind-key "C-c c S" 'd12/org-sort-upper-level org-mode-map)
+  (bind-key "C-c c #" 'd12/org-insert-block-template org-mode-map)
 
-  (add-hook 'org-mode-hook 'd12/org-auto-insert-template)
-  )
+  (add-hook 'org-mode-hook 'd12/org-auto-insert-template))
 
 (use-package org-indent
   :defer t
@@ -180,9 +171,6 @@
               (require 'org-journal)))
   :config
   (global-unset-key (kbd "C-c C-j"))
-  ;; (evil-leader/set-key "ojc" 'calendar)
-  ;; (evil-leader/set-key "ojn" 'org-journal-new-entry)
-  ;; (evil-leader/set-key "ojv" 'org-journal-visit-entry)
   (setq org-journal-dir (concat d12/org-home-path "journal/")
         org-journal-date-format "%d %B %Y, %A"
         org-journal-file-format "%Y-%m-%d"
