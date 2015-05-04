@@ -338,7 +338,7 @@
              projectile-vc)
   :init
   (setq-default projectile-enable-caching nil)
-  ;; (setq projectile-sort-order 'recentf)
+  (setq projectile-sort-order 'recentf)
   (setq projectile-cache-file (concat d12/cache-directory
                                       "projectile.cache"))
   (setq projectile-known-projects-file (concat d12/cache-directory
@@ -361,6 +361,28 @@
 
 ;;; Various
 ;; ---------
+
+;; Ignore uninteresting files everywhere
+(use-package ignoramus
+  :ensure t
+  :init (ignoramus-setup))
+
+;; Save recently visited files
+(use-package recentf
+  :init (recentf-mode)
+  :config
+  (setq recentf-max-saved-items 200
+        recentf-max-menu-items 15
+        recentf-save-file (concat d12/cache-directory "recentf")
+        ;; Cleanup recent files only when Emacs is idle, but not when the mode
+        ;; is enabled, because that unnecessarily slows down Emacs. My Emacs
+        ;; idles often enough to have the recent files list clean up regularly
+        recentf-auto-cleanup 300
+        recentf-exclude (list "/\\.git/.*\\'" ; Git contents
+                              "/elpa/.*\\'" ; Package files
+                              "/itsalltext/" ; It's all text temp files
+                              ;; And all other kinds of boring files
+                              #'ignoramus-boring-p)))
 
 (use-package fancy-battery
   :ensure t
