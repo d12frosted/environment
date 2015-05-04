@@ -156,3 +156,8 @@ and its values are removed."
                       ,status) (progn ,@off-body) ,@on-body)
            (message "This toggle is not supported.")))
        ,@bindkeys)))
+
+(defun d12/goto-line-and-center ()
+  (interactive)
+  (call-interactively 'goto-line)
+  (call-interactively 'recenter-top-bottom))

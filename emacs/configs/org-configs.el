@@ -61,7 +61,8 @@
   :mode ("\\.org$" . org-mode)          ; todo - add org journal stuff as well
   :bind (("C-c o a"   . org-agenda)
          ("C-c o i t" . d12/org-insert-time)
-         ("C-c o i d" . d12/org-insert-date))
+         ("C-c o i d" . d12/org-insert-date)
+         ("C-c o l" . org-store-link))
   :config
   (require 's)
   (setq-local d12/org-ignored-dirs
