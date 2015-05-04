@@ -106,6 +106,9 @@
 (use-package flyspell
   :ensure t
   :defer t
+  :bind (("C-c u s" . ispell-word)
+         ("C-c u S b" . flyspell-buffer)
+         ("C-c u S n" . flyspell-goto-next-error))
   :init
   (setq-default ispell-program-name "aspell")
   (setq-default ispell-dictionary "english")
