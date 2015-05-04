@@ -153,7 +153,29 @@
 ;; ========================
 
 ;; scratch buffer empty
-(setq initial-scratch-message nil)
+;; (setq initial-scratch-message nil)
+;; becausse we all love cats
+(setq initial-scratch-message
+      ";;
+;;           |`-.._____..-'|
+;;           :  > .  ,  <  :
+;;           `./ __`' __ \\,'
+;;            | (|_) (|_) |
+;;            ; _  .  __  :
+;;            `.,' - `-. ,'
+;;              `, `_  .'
+;;              /       \\
+;;             /         :
+;;            :          |_
+;;           ,|  .    .  | \\
+;;          : :   \\   |  |  :
+;;          |  \\   :`-;  ;  |
+;;          :   :  | /  /   ;
+;;           :-.'  ;'  / _,'`------.
+;;           `'`''-`'''-'-''--.---  )
+;;                        SSt `----'
+
+")
 
 ;; don't create backup~ or #auto-save# files
 (setq backup-by-copying t
