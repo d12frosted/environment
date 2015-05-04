@@ -112,6 +112,14 @@
 ;; delete trailing whitespaces on save
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+;; Indicate empty lines at the end of a buffer in the fringe, but require a
+;; final new line
+(setq indicate-empty-lines t
+      require-final-newline t)
+
+(add-hook 'text-mode-hook 'visual-line-mode)
+(add-hook 'text-mode-hook 'turn-off-auto-fill)
+
 ;;; UI configurations
 ;; ===================
 
@@ -388,6 +396,52 @@
   :ensure t
   :defer t
   :init (fancy-battery-mode))
+
+(use-package elec-pair
+  :init (electric-pair-mode))
+
+(use-package server
+  :defer t
+  :init (server-start))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :defer t
+  :init
+  (dolist (hook '(text-mode-hook prog-mode-hook))
+    (add-hook hook #'rainbow-delimiters-mode)))
+
+;; Fontify number literals
+(use-package highlight-numbers
+  :ensure t
+  :defer t
+  :init (add-hook 'prog-mode-hook #'highlight-numbers-mode))
+
+;; Fontify color values in code
+(use-package rainbow-mode
+  :ensure t
+  :bind (("C-c t r" . rainbow-mode))
+  :config (add-hook 'css-mode-hook #'rainbow-mode))
+
+(use-package restclient                ; ReST REPL for Emacs
+  :ensure t
+  :defer t)
+
+(use-package company-restclient
+  :ensure t
+  :defer t
+  :init (with-eval-after-load 'company
+          (add-to-list 'company-backends 'company-restclient)))
+
+;;; Languages
+;; -----------
+
+(use-package yaml-mode
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'yaml-mode-hook
+            (lambda () (run-hooks 'prog-mode-hook))))
 
 ;;; Mode line
 ;; -----------
