@@ -399,10 +399,6 @@
 (use-package elec-pair
   :init (electric-pair-mode))
 
-(use-package server
-  :defer t
-  :init (server-start))
-
 (use-package rainbow-delimiters
   :ensure t
   :defer t
