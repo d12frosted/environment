@@ -29,7 +29,7 @@
                   :documentation "Enable error and syntax checking."
                   :bind-global "C-c t f")
   :config
-  (d12|diminish flycheck-mode " Ⓕ")
+  (d12|diminish flycheck-mode " (F)")
   ;; color mode line faces
   (defun d12/defface-flycheck-mode-line-color (state)
     "Define a face for the given Flycheck STATE."
@@ -123,4 +123,4 @@
                   :bind-global "C-c t s")
   :config
   (flyspell-prog-mode)
-  (d12|diminish flyspell-mode " Ⓢ"))
+  (d12|diminish flyspell-mode " ✗"))

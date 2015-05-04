@@ -359,6 +359,7 @@
 (use-package flx-ido
   :ensure t
   :defer t
+  :disabled t
   :init
   (ido-mode 1)
   (ido-everywhere 1)
@@ -484,8 +485,10 @@
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
-;; I need this as water!
-(bind-key "M-g g" 'd12/goto-line-and-center)
+(bind-keys
+ ;; I need this as water!
+ ("M-g g" . d12/goto-line-and-center)
+ ("C-a" . d12/smart-move-beginning-of-line))
 
 (-each d12/custom-configs
   (lambda (config)

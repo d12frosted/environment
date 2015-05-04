@@ -98,6 +98,34 @@ and its values are removed."
         (dolist (val ',bind-local)
           (define-key (eval (car val)) (kbd (cdr val)) ',func))))))
 
+;;; Navigation
+;; ============
+
+(defun d12/goto-line-and-center ()
+  (interactive)
+  (call-interactively 'goto-line)
+  (call-interactively 'recenter-top-bottom))
+
+;; Thanks to Sylvain Benner
+(defun d12/smart-move-beginning-of-line (arg)
+  "Move point back to indentation of beginning of line.
+Move point to the first non-whitespace character on this line.
+If point is already there, move to the beginning of the line.
+Effectively toggle between the first non-whitespace character and
+the beginning of the line.
+If ARG is not nil or 1, move forward ARG - 1 lines first. If
+point reaches the beginning or end of the buffer, stop there."
+  (interactive "^p")
+  (setq arg (or arg 1))
+  ;; Move lines first
+  (when (/= arg 1)
+    (let ((line-move-visual nil))
+      (forward-line (1- arg))))
+  (let ((orig-point (point)))
+    (back-to-indentation)
+    (when (= orig-point (point))
+      (move-beginning-of-line 1))))
+
 ;;; Various stuff
 ;; ===============
 
@@ -114,6 +142,7 @@ and its values are removed."
   "Diminish MODE name in mode line to DIM."
   `(eval-after-load 'diminish '(diminish ',mode ,dim)))
 
+;; Thanks to Sylvain Benner
 (defmacro d12|add-toggle (name &rest props)
   "Add a toggle with NAME symbol.
   Available PROPS:
@@ -156,8 +185,3 @@ and its values are removed."
                       ,status) (progn ,@off-body) ,@on-body)
            (message "This toggle is not supported.")))
        ,@bindkeys)))
-
-(defun d12/goto-line-and-center ()
-  (interactive)
-  (call-interactively 'goto-line)
-  (call-interactively 'recenter-top-bottom))

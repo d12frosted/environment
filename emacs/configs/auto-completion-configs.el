@@ -95,7 +95,7 @@ to complet without blocking common line endings.")
   (define-key ac-completing-map (kbd "C-j") 'ac-next)
   (define-key ac-completing-map (kbd "C-k") 'ac-previous)
   (define-key ac-completing-map (kbd "<S-tab>") 'ac-previous)
-  (d12|diminish auto-complete-mode " Ⓐ"))
+  (d12|diminish auto-complete-mode " (A)"))
 
 (use-package company
   :ensure t
@@ -111,7 +111,7 @@ to complet without blocking common line endings.")
         company-clang-prefix-guesser 'company-mode/more-than-prefix-guesser)
   :config
   (progn
-    (d12|diminish company-mode " Ⓐ")
+    (d12|diminish company-mode " (A)")
     ;; Set the completion key
     (if auto-completion-use-tab-instead-of-enter
         (progn
