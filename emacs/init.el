@@ -89,3 +89,7 @@
 
 ;; load core configurations
 (d12/load-config "core")
+
+;; start server
+(require 'server)
+(unless (server-running-p) (server-start))
