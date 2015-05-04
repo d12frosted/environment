@@ -118,6 +118,7 @@
       require-final-newline t)
 
 (add-hook 'text-mode-hook 'visual-line-mode)
+(add-hook 'text-mode-hook (lambda nil (diminish 'visual-line-mode)))
 (add-hook 'text-mode-hook 'turn-off-auto-fill)
 
 ;;; UI configurations
@@ -292,9 +293,7 @@
   :ensure t
   ;; this is a heavy package, so defer it's loading
   :defer 1
-  :config
-  (unicode-fonts-setup)
-  )
+  :config (unicode-fonts-setup))
 
 ;;; Themes
 ;; --------
