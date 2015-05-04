@@ -18,6 +18,7 @@
 ;; =======
 
 (setq message-log-max 16384)
+(setq gc-cons-threshold 20000000)
 (setq history-length 1000)
 (setq use-package-debug nil)
 (setq use-package-verbose t)
@@ -284,7 +285,8 @@
   ;; this is a heavy package, so defer it's loading
   :defer 1
   :config
-  (unicode-fonts-setup))
+  (unicode-fonts-setup)
+  )
 
 ;;; Themes
 ;; --------
@@ -341,8 +343,21 @@
                                       "projectile.cache"))
   (setq projectile-known-projects-file (concat d12/cache-directory
                                                "projectile-bookmarks.eld"))
-  :config
   (projectile-global-mode))
+
+;;; ido stuff
+;; -----------
+
+(use-package flx-ido
+  :ensure t
+  :defer t
+  :init
+  (ido-mode 1)
+  (ido-everywhere 1)
+  (flx-ido-mode 1)
+  ;; disable ido faces to see flx highlights.
+  (setq ido-enable-flex-matching t)
+  (setq ido-use-faces nil))
 
 ;;; Various
 ;; ---------
@@ -352,8 +367,6 @@
   :defer t
   :init (fancy-battery-mode))
 
-(add-hook 'window-setup-hook 'toggle-frame-maximized)
-
 ;;; Mode line
 ;; -----------
 
@@ -361,6 +374,8 @@
 
 ;;; Other configurations
 ;; ======================
+
+(add-hook 'window-setup-hook 'toggle-frame-maximized)
 
 (-each d12/custom-configs
   (lambda (config)
