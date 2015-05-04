@@ -322,6 +322,7 @@
 
 (use-package projectile
   :ensure t
+  :diminish projectile-mode
   :commands (projectile-ack
              projectile-ag
              projectile-compile-project
@@ -429,9 +430,19 @@
           (add-to-list 'company-backends 'company-restclient)))
 
 (use-package nyan-mode
+  ;; i like it
+  ;; but it takes too much space in mode line
+  :disabled t
   :ensure t
   :defer t
-  :init (nyan-mode))
+  :init
+  (nyan-mode)
+  (d12|add-toggle nyan-cat-progress-bar
+                  :status nyan-mode
+                  :on (nyan-mode)
+                  :off (nyan-mode -1)
+                  :documentation "Show a nyan cat progress bar in the mode-line."
+                  :bind-global "C-c t n"))
 
 ;;; Languages
 ;; -----------
@@ -446,7 +457,27 @@
 ;;; Mode line
 ;; -----------
 
-;; todo - implement it
+(setq-default mode-line-format
+              '("%e"
+                mode-line-front-space
+                mode-line-mule-info
+                mode-line-client
+                mode-line-remote
+                mode-line-modified
+                mode-line-frame-identification
+                mode-line-buffer-identification
+                " "
+                mode-line-position
+                (projectile-mode projectile-mode-line)
+                " "
+                mode-line-modes
+
+                ;; Flycheck status
+                ;; (flycheck-mode flycheck-mode-line)
+
+                ;; sometimes this thing is too damn huge
+                ;; so I put it into the very end
+                (vc-mode vc-mode)))
 
 ;;; Other configurations
 ;; ======================
