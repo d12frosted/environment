@@ -85,7 +85,8 @@
         "magit"
         "syntax-checking"
         "mu4e"
-        "auto-completion"))
+        "auto-completion"
+        "omnisharp"))
 
 ;; load core configurations
 (d12/load-config "core")
