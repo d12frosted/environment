@@ -162,20 +162,15 @@
   (setq org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸")))
 
 (use-package org-journal
-  :load-path "packages/org-journal/"
-  :pin manual
+  :ensure t
   :mode (".*/[0-9]*-[0-9]*-[0-9]*$" . org-mode)
   :bind (("C-c o c"  . calendar)
          ("C-c o n"  . org-journal-new-entry)
          ("C-c o v"  . org-journal-visit-entry))
-  :init
-  (add-hook 'calendar-mode-hook
-            (lambda nil
-              (require 'org-journal)))
   :config
   (global-unset-key (kbd "C-c C-j"))
   (setq org-journal-dir (concat d12/org-home-path "journal/")
         org-journal-date-format "%d %B %Y, %A"
         org-journal-file-format "%Y-%m-%d"
         org-journal-file-pattern (org-journal-format-string->regex org-journal-file-format)
-        org-journal-do-hide-entries-on-new nil))
+        org-journal-hide-entries-p nil))
