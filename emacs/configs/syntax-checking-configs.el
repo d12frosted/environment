@@ -33,21 +33,21 @@
   ;; color mode line faces
   (defun d12/defface-flycheck-mode-line-color (state)
     "Define a face for the given Flycheck STATE."
-    (let* ((fname (intern (format "spacemacs-mode-line-flycheck-%s-face"
+    (let* ((fname (intern (format "d12/mode-line-flycheck-%s-face"
                                   (symbol-name state))))
            (foreground (face-foreground
                         (intern (format "flycheck-fringe-%s" state)))))
       (eval `(defface ,fname '((t ()))
                ,(format "Color for Flycheck %s feedback in mode line."
                         (symbol-name state))
-               :group 'spacemacs))
+               :group 'd12))
       (set-face-attribute fname nil
                           :foreground foreground
                           :box (face-attribute 'mode-line :box))))
 
   (defun d12/set-flycheck-mode-line-faces ()
     "Define or set the flycheck info mode-line faces."
-    (mapcar 'spacemacs/defface-flycheck-mode-line-color
+    (mapcar 'd12/defface-flycheck-mode-line-color
             '(error warning info)))
 
   (d12/set-flycheck-mode-line-faces)

@@ -484,6 +484,9 @@
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
+;; I need this as water!
+(bind-key "M-g g" 'd12/goto-line-and-center)
+
 (-each d12/custom-configs
   (lambda (config)
     (d12/load-config config)))
