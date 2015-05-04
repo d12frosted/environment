@@ -1,1 +1,5 @@
 -dotbot
+-emacs/.cache
+-emacs/spacemacs-layers
+-emacs/packages
+-emacs/

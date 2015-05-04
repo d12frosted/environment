@@ -20,10 +20,11 @@
 ;;
 ;; - C-c a: applications
 ;; - C-c c: current mode commands
-;; - C-c o: Org mode
-;; - C-c t: Toggle things and skeletons
-;; - C-c u: Miscellaneous utilities
-;; - C-c v: Version control
+;; - C-c o: org mode
+;; - C-c p: projectile
+;; - C-c t: toggle things and skeletons
+;; - C-c u: miscellaneous utilities
+;; - C-c v: version control
 
 ;;; Code
 
@@ -82,7 +83,9 @@
 (setq d12/custom-configs
       '("org"
         "magit"
-        "syntax-checking"))
+        "syntax-checking"
+        "mu4e"
+        "auto-completion"))
 
 ;; load core configurations
 (d12/load-config "core")

@@ -44,6 +44,9 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+;; I like explicitly declaring what I want
+;; (setq use-package-always-ensure t)
+
 ;;; Requires
 ;; ----------
 
@@ -244,6 +247,10 @@
   :ensure t
   :defer 1)
 
+(use-package ag
+  :ensure t
+  :defer 1)
+
 ;;; Fonts
 ;; ------
 
@@ -300,6 +307,42 @@
   :ensure zenburn-theme
   :defer t
   :init (load-theme 'zenburn 'no-confirm))
+
+;;; Projectile
+;; ------------
+
+(use-package projectile
+  :ensure t
+  :commands (projectile-ack
+             projectile-ag
+             projectile-compile-project
+             projectile-dired
+             projectile-grep
+             projectile-find-dir
+             projectile-find-file
+             projectile-find-tag
+             projectile-find-test-file
+             projectile-invalidate-cache
+             projectile-kill-buffers
+             projectile-multi-occur
+             projectile-project-root
+             projectile-recentf
+             projectile-regenerate-tags
+             projectile-replace
+             projectile-run-async-shell-command-in-root
+             projectile-run-shell-command-in-root
+             projectile-switch-project
+             projectile-switch-to-buffer
+             projectile-vc)
+  :init
+  (setq-default projectile-enable-caching nil)
+  ;; (setq projectile-sort-order 'recentf)
+  (setq projectile-cache-file (concat d12/cache-directory
+                                      "projectile.cache"))
+  (setq projectile-known-projects-file (concat d12/cache-directory
+                                               "projectile-bookmarks.eld"))
+  :config
+  (projectile-global-mode))
 
 ;;; Various
 ;; ---------
