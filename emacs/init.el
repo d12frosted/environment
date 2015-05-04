@@ -33,8 +33,8 @@
 ;;; About myself
 ;; ==============
 
-(setq user-full-name "Michael Fogleman"
-      user-mail-address "michaelwfogleman@gmail.com"
+(setq user-full-name "Boris Buliga"
+      user-mail-address "d12frosted@icloud.com"
       user-github-url "https://github.com/d12frosted"
       user-home-url "http://d12frosted.github.io")
 
