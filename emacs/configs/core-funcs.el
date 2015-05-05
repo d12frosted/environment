@@ -98,6 +98,13 @@ and its values are removed."
         (dolist (val ',bind-local)
           (define-key (eval (car val)) (kbd (cdr val)) ',func))))))
 
+;; thanks to https://github.com/kai2nenobu/guide-key/wiki
+(defmacro d12|define-prefix (key-name prefix-name)
+  "Define prefix command for KEY-NAME."
+  (let ((name (intern (concat d12/guide-prefix (symbol-name prefix-name)))))
+    `(progn (define-prefix-command ',name)
+            (bind-key ,key-name ',name))))
+
 ;;; Navigation
 ;; ============
 
@@ -185,3 +192,25 @@ point reaches the beginning or end of the buffer, stop there."
                       ,status) (progn ,@off-body) ,@on-body)
            (message "This toggle is not supported.")))
        ,@bindkeys)))
+
+;;; Helm funcs
+;; ------------
+
+(defun d12/helm-projectile-do-search-find-tool (tools)
+  "Create a cond form given a TOOLS string list and evaluate it."
+  (eval `(cond
+          ,@(mapcar (lambda (x)
+                      `((executable-find ,x)
+                        ',(let ((func (intern
+                                       (format "d12/helm-projectile-%s"
+                                               x))))
+                            (if (fboundp func)
+                                func
+                              (intern (format "helm-projectile-%s" x))))))
+                    tools)
+          (t 'helm-do-grep))))
+
+(defun d12/helm-projectile-smart-do-search ()
+  (interactive "P")
+  (call-interactively (d12/helm-projectile-do-search-find-tool
+                       '("ag"))))
