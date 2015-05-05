@@ -195,22 +195,3 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;; Helm funcs
 ;; ------------
-
-(defun d12/helm-projectile-do-search-find-tool (tools)
-  "Create a cond form given a TOOLS string list and evaluate it."
-  (eval `(cond
-          ,@(mapcar (lambda (x)
-                      `((executable-find ,x)
-                        ',(let ((func (intern
-                                       (format "d12/helm-projectile-%s"
-                                               x))))
-                            (if (fboundp func)
-                                func
-                              (intern (format "helm-projectile-%s" x))))))
-                    tools)
-          (t 'helm-do-grep))))
-
-(defun d12/helm-projectile-smart-do-search ()
-  (interactive "P")
-  (call-interactively (d12/helm-projectile-do-search-find-tool
-                       '("ag"))))
