@@ -117,6 +117,9 @@
 (setq indicate-empty-lines t
       require-final-newline t)
 
+;; dwim!
+(delete-selection-mode 1)
+
 (add-hook 'text-mode-hook 'visual-line-mode)
 (add-hook 'text-mode-hook (lambda nil (diminish 'visual-line-mode)))
 (add-hook 'text-mode-hook 'turn-off-auto-fill)
@@ -252,6 +255,31 @@
   :init
   (when (memq window-system '(mac ns))
     (exec-path-from-shell-initialize)))
+
+(use-package guide-key
+  :ensure t
+  :defer t
+  :diminish guide-key-mode
+  :init
+  (setq-default d12/guide-prefix "d12/")
+
+  ;; define some prefixes
+  (d12|define-prefix "C-c a" applications)
+  (d12|define-prefix "C-c b" browse)
+  (d12|define-prefix "C-c c" current-mode)
+  (d12|define-prefix "C-c o" org-mode)
+  (d12|define-prefix "C-c p" projectile)
+  (d12|define-prefix "C-c t" toggles)
+  (d12|define-prefix "C-c u" utilities)
+  (d12|define-prefix "C-c v" version-control)
+
+  ;; highlight 'd12/guide-prefix
+  (setq guide-key/highlight-command-regexp d12/guide-prefix)
+
+  ;; guide all keys
+  (setq guide-key/guide-key-sequence t)
+
+  (guide-key-mode 1))
 
 (use-package s
   :ensure t

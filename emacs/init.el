@@ -19,6 +19,7 @@
 ;; User key prefixes:
 ;;
 ;; - C-c a: applications
+;; - C-c b: browse
 ;; - C-c c: current mode commands
 ;; - C-c o: org mode
 ;; - C-c p: projectile
