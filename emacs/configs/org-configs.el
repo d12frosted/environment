@@ -62,6 +62,7 @@
   :bind (("C-c o a"   . org-agenda)
          ("C-c o i t" . d12/org-insert-time)
          ("C-c o i d" . d12/org-insert-date)
+         ("C-c o i D" . d12/org-insert-full-date)
          ("C-c o l" . org-store-link))
   :config
   (require 's)
@@ -164,14 +165,15 @@
 
 (use-package org-journal
   :ensure t
-  :mode (".*/[0-9]*-[0-9]*-[0-9]*$" . org-mode)
+  :mode (".*/[0-9]*-[0-9]*-[0-9]*$" . org-journal-mode)
   :bind (("C-c o c"  . calendar)
          ("C-c o n"  . org-journal-new-entry)
          ("C-c o v"  . org-journal-visit-entry))
   :config
   (global-unset-key (kbd "C-c C-j"))
   (setq org-journal-dir (concat d12/org-home-path "journal/")
-        org-journal-date-format "%d %B %Y, %A"
+        org-journal-date-format d12/org-date-format
+        org-journal-time-format "%R\n"
         org-journal-file-format "%Y-%m-%d"
         org-journal-file-pattern (org-journal-format-string->regex org-journal-file-format)
         org-journal-hide-entries-p nil))

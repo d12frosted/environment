@@ -42,6 +42,15 @@
                          dirs)))
     dirs))
 
+;;; Buffers
+;; =========
+
+(defun buffer-contains-substring? (string)
+  (save-excursion
+    (save-match-data
+      (goto-char (point-min))
+      (search-forward string nil t))))
+
 ;;; plist functions
 ;; =================
 
