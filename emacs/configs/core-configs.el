@@ -302,12 +302,12 @@
             "Anonymous Pro" ; http://www.marksimonson.com/fonts/view/anonymous-pro
             "Fira Mono"
             "Menlo")
-          dynamic-fonts-preferred-monospace-point-size 14
+          dynamic-fonts-preferred-monospace-point-size 12
 
           dynamic-fonts-preferred-proportional-fonts
           '("Fira Sans" ; https://www.mozilla.org/en-US/styleguide/products/firefox-os/typeface/
             "Helvetica")
-          dynamic-fonts-preferred-proportional-point-size 14)
+          dynamic-fonts-preferred-proportional-point-size 12)
 
     (dynamic-fonts-setup)))
 
@@ -448,6 +448,8 @@
 (use-package flx-ido
   :ensure t
   :defer t
+  ;; now I am using helm
+  ;; and anyway, it's too slow for me
   :disabled t
   :init
   (ido-mode 1)

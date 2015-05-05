@@ -18,6 +18,9 @@
    (interactive)
    (find-file (concat d12/org-home-path "gtd.org")))
 
+;;; Files and driectories
+;; =======================
+
 (defun d12/org-dir-and-subdirs (dir)
       (let ((org-dir (concat d12/org-home-path dir)))
         (when (file-directory-p org-dir)
@@ -25,6 +28,9 @@
 
 (defun d12/org-files-in-folder (folder)
   (directory-files folder t ".*\.org$"))
+
+;;; Templates
+;; ===========
 
 (defun d12/org-insert-block-template ()
   "Insert block template at point."
@@ -62,16 +68,6 @@
               (insert "#+BEGIN_" choice "\n")
               (save-excursion (insert "\n#+END_" choice))))))))))
 
-(defun d12/org-guess-title ()
-  "Try to guess title for org file.
-In case of failure it will use value of d12/org-default-title."
-  (let ((bname (buffer-name)))
-    (if (s-present? bname)
-        (if (s-suffix? ".org" bname)
-            (substring bname 0 -4)
-          bname)
-      d12/org-default-title)))
-
 (defun d12/org-new-file-template ()
   "Create template for new org file."
   (let ((option-key-width 16)
@@ -86,26 +82,55 @@ In case of failure it will use value of d12/org-default-title."
                        (d12/org-option option-key-width "STARTUP" "showeverything")
                        (d12/org-option option-key-width "OPTIONS" "toc:t")))))
 
-(defun d12/org-option (width key value)
-  "Create an option string for org file."
-  (s-append value (s-pad-right width " " (s-concat "#+" key ":"))))
+(defun d12/org-journal-date-header ()
+  (concat org-journal-date-prefix
+          (format-time-string org-journal-date-format)))
+
+(defun d12/org-auto-insert-template ()
+  "Insert template for the newly created buffer."
+  (interactive)
+  (unless (d12/org-buffer-contains-header?)
+    (goto-char (point-min))
+    (insert (d12/org-new-file-template))
+    (insert "\n\n")
+    (unless (and (d12/org-journal-buffer-contains-date-header?)
+                 (eq major-mode "Journal"))
+      (insert (d12/org-journal-date-header))
+      (insert "\n"))
+    (goto-char (point-max))))
+
+;;; Predicates
+;; ============
 
 (defun d12/org-buffer-contains-header? ()
-  "Does current buffer contains org header?"
+  "Does current buffer contain org header?"
   (interactive)
   (let ((empty (= (point-min)
                   (point-max)))
         (titled (s-starts-with? "#+TITLE:" (buffer-string) t)))
     (and titled (not empty))))
 
-(defun d12/org-auto-insert-template ()
-  "Insert template for the newly created buffer."
+(defun d12/org-journal-buffer-contains-date-header? ()
+  "Does current buffer contain date header?"
   (interactive)
-  (when (not (d12/org-buffer-contains-header?))
-    (goto-char (point-min))
-    (insert (d12/org-new-file-template))
-    (insert "\n\n")
-    (goto-char (point-max))))
+  (buffer-contains-substring? (d12/org-journal-date-header)))
+
+;;; Various functions
+;; ===================
+
+(defun d12/org-guess-title ()
+  "Try to guess title for org file.
+In case of failure it will use value of d12/org-default-title."
+  (let ((bname (buffer-name)))
+    (if (s-present? bname)
+        (if (s-suffix? ".org" bname)
+            (substring bname 0 -4)
+          bname)
+      d12/org-default-title)))
+
+(defun d12/org-option (width key value)
+  "Create an option string for org file."
+  (s-append value (s-pad-right width " " (s-concat "#+" key ":"))))
 
 (defun d12/org-sort-current-level ()
   "Sort current level by TODO."
@@ -139,6 +164,12 @@ In case of failure it will use value of d12/org-default-title."
   "Insert timestamp formated by value of d12/org-time-format"
   (interactive)
   (insert (format-time-string d12/org-time-format)))
+
+(defun d12/org-insert-full-date ()
+  "Insert date and timestamp. Uses 'd12/org-insert-date
+  and 'd12/org-insert-time."
+  (interactive)
+  (insert (format-time-string (concat d12/org-date-format " " d12/org-time-format))))
 
 (defun org-journal-visit-entry ()
   (interactive)
