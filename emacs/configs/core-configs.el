@@ -172,7 +172,8 @@
 ;; (setq initial-scratch-message nil)
 ;; becausse we all love cats
 (setq initial-scratch-message
-      ";;
+      ";; ((cat)
+;;
 ;;           |`-.._____..-'|
 ;;           :  > .  ,  <  :
 ;;           `./ __`' __ \\,'
