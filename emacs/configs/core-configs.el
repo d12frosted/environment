@@ -60,10 +60,10 @@
 ;;; Navigation configurations
 ;; ===========================
 
-(ido-mode t)
-(setq ido-save-directory-list-file (concat d12/cache-directory "ido.last")
-      ;; enable fuzzy matching
-      ido-enable-flex-matching t)
+;; (ido-mode t)
+;; (setq ido-save-directory-list-file (concat d12/cache-directory "ido.last")
+;;       ;; enable fuzzy matching
+;;       ido-enable-flex-matching t)
 
 ;; Auto refresh buffers
 (global-auto-revert-mode 1)
@@ -351,16 +351,61 @@
 (use-package helm
   :ensure t
   :defer t
-  :bind (("C-x C-f" . helm-find-files)
-         ("C-c b f" . helm-for-files)
+  :diminish helm-mode
+  :bind (("C-x C-f" . helm-for-files)
+         ("C-c b f" . helm-find-files)
          ("C-c b l" . helm-locate)
          ("C-x b" . helm-buffers-list)
          ("C-c b b" . helm-buffers-list)
+         ("C-c b r" . helm-recentf)
+         ("C-c b s" . helm-mini)
+         ("C-c b /" . helm-restore)
          ("M-x" . helm-M-x))
   :init
   (setq helm-quick-update t
         helm-idle-delay 0.01
-        helm-input-idle-delay 0.01))
+        helm-input-idle-delay 0.01
+        helm-adaptive-history-file (concat d12/cache-directory "helm-adaptive-history"))
+
+  ;; disable popwin-mode in an active Helm session It should be disabled
+  ;; otherwise it will conflict with other window opened by Helm persistent
+  ;; action, such as *Help* window.
+  (add-hook 'helm-after-initialize-hook (lambda () (popwin-mode -1)))
+
+  ;;  Restore popwin-mode after a Helm session finishes.
+  (add-hook 'helm-cleanup-hook (lambda () (popwin-mode 1)))
+
+  :config
+  (require 'helm-config)
+
+  ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+  ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+  ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+  (global-set-key (kbd "C-c h") 'helm-command-prefix)
+  (global-unset-key (kbd "C-x c"))
+
+  (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+        helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+        helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+        helm-ff-file-name-history-use-recentf t)
+
+  (helm-mode 1)
+  ;; (helm-autoresize-mode 1)
+  (helm-adaptative-mode 1)
+  )
+
+(use-package helm-ag
+  :ensure t
+  :defer t)
+
+;; I am not sure that I really need it
+;; todo - remove it
+(use-package helm-mode-manager
+  :ensure t
+  :defer t
+  :bind (("C-c t m m" . helm-switch-major-mode)
+         ("C-c t m e" . helm-enable-minor-mode)
+         ("C-c t m d" . helm-disable-minor-mode)))
 
 ;;; Projectile
 ;; ------------
@@ -398,10 +443,6 @@
                                                "projectile-bookmarks.eld"))
   (setq projectile-keymap-prefix (kbd "C-c C-p"))
   (projectile-global-mode))
-
-(use-package helm-ag
-  :ensure t
-  :defer t)
 
 (use-package helm-projectile
   :ensure t
@@ -441,23 +482,6 @@
    ("C-c p s g" . helm-projectile-grep)
    ("C-c p s k" . helm-projectile-ack)
    ("C-c p v"   . helm-projectile-vc)))
-
-;;; ido stuff
-;; -----------
-
-(use-package flx-ido
-  :ensure t
-  :defer t
-  ;; now I am using helm
-  ;; and anyway, it's too slow for me
-  :disabled t
-  :init
-  (ido-mode 1)
-  (ido-everywhere 1)
-  (flx-ido-mode 1)
-  ;; disable ido faces to see flx highlights.
-  (setq ido-enable-flex-matching t)
-  (setq ido-use-faces nil))
 
 ;;; Various
 ;; ---------
@@ -573,6 +597,8 @@
 
 ;;; Other configurations
 ;; ======================
+
+(d12|diminish abbrev-mode "")
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
