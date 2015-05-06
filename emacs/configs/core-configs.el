@@ -560,6 +560,24 @@
                   :documentation "Show a nyan cat progress bar in the mode-line."
                   :bind-global "C-c t n"))
 
+(use-package google-translate
+  :ensure t
+  :defer 2
+  :commands (google-translate-query-translate
+             google-translate-at-point
+             google-translate-query-translate-reverse
+             google-translate-at-point-reverse)
+  :bind (("C-c u g Q" . google-translate-query-translate-reverse)
+         ("C-c u g q" . google-translate-query-translate)
+         ("C-c u g T" . google-translate-at-point-reverse)
+         ("C-c u g t" . google-translate-at-point))
+  :init
+  (d12|define-prefix "C-c u g" google-translate)
+  :config
+  (setq google-translate-default-source-language "uk"
+        google-translate-default-target-language "en"
+        google-translate-show-phonetic t))
+
 ;;; Languages
 ;; -----------
 
