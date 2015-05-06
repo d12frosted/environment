@@ -106,8 +106,7 @@
 (use-package flyspell
   :ensure t
   :defer t
-  :bind (("C-c u s" . ispell-word)
-         ("C-c u S b" . flyspell-buffer)
+  :bind (("C-c u S b" . flyspell-buffer)
          ("C-c u S n" . flyspell-goto-next-error))
   :init
   (setq-default ispell-program-name "aspell")
@@ -124,3 +123,8 @@
   :config
   (flyspell-prog-mode)
   (d12|diminish flyspell-mode " ✗"))
+
+(use-package helm-flyspell
+  :ensure t
+  :commands helm-flyspell-correct
+  :bind ("C-c u s" . helm-flyspell-correct))
