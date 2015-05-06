@@ -118,8 +118,7 @@
          ("C-c v s" . magit-status)
          ("C-c v C" . magit-commit))
   :init
-    (setq magit-last-seen-setup-instructions "1.4.0"
-          magit-completing-read-function 'magit-ido-completing-read)
+    (setq magit-last-seen-setup-instructions "1.4.0")
   :config
   ;; full screen magit-status
   (when git-magit-status-fullscreen
