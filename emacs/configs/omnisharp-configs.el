@@ -22,23 +22,32 @@
   :defer t
   :init
   (setq omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe")
+  (add-hook 'csharp-mode-hook (lambda nil
+                                (progn   (setq-local indent-tabs-mode t)
+                                         (setq-local c-default-style "k&r")
+                                         (setq-local c-basic-offset 4)
+                                         (setq-local tab-width 4)
+                                         (setq-local hs-isearch-open t))))
   :config
   (require 'company)
   (d12|diminish omnisharp-mode " ♯")
 
   (add-to-list 'company-backends 'company-omnisharp)
 
-  (setq-local indent-tabs-mode t)
-  (setq-local c-default-style "k&r")
-  (setq-local c-basic-offset 4)
-  (setq-local tab-width 4)
-  (setq-local hs-isearch-open t)
-
   (c-set-offset 'case-label '+)
   (c-set-offset 'cpp-macro 'csharp-lineup-if-and-region)
 
   (local-unset-key (kbd "{"))
-  (local-unset-key (kbd "C-c C-d"))
+  ;; (local-unset-key (kbd "C-c C-d"))
+
+  (d12|define-prefix "C-c c c" compile)
+  (d12|define-prefix "C-c c f" file)
+  (d12|define-prefix "C-c c p" projectile)
+  (d12|define-prefix "C-c c g" navigation)
+  (d12|define-prefix "C-c c h" documentation)
+  (d12|define-prefix "C-c c r" refactoring)
+  (d12|define-prefix "C-c c s" server)
+  (d12|define-prefix "C-c c t" tests)
 
   (bind-keys
    :map csharp-mode-map
@@ -50,10 +59,11 @@
    ("C-c c f R" . omnisharp-remove-from-project-dired-selected-files)
    ("C-c c p l" . omnisharp-add-reference)
    ;; Navigation
+   ("C-c c g t" . omnisharp-navigate-to-current-file-member)
    ("C-c c g g" . d12/omnisharp-go-to-definition-at-center)
    ("C-c c g G" . omnisharp-go-to-definition-other-window)
-   ;; ("C-c c g u" . omnisharp-helm-find-usages)
-   ;; ("C-c c g s" . omnisharp-helm-find-symbols)
+   ("C-c c g u" . omnisharp-helm-find-usages)
+   ("C-c c g s" . omnisharp-helm-find-symbols)
    ("C-c c g i" . omnisharp-find-implementations)
    ("C-c c g r" . omnisharp-navigate-to-region)
    ("C-c c g m" . omnisharp-navigate-to-solution-member)
