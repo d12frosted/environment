@@ -147,7 +147,8 @@
 
   ;; (d12|diminish org-mode " 本")
 
-  (add-hook 'org-mode-hook 'd12/org-auto-insert-template))
+  (add-hook 'org-mode-hook 'd12/org-auto-insert-template)
+  (add-hook 'org-mode-hook 'd12/rename-org-mode))
 
 (use-package org-indent
   :defer t
