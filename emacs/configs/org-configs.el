@@ -66,20 +66,6 @@
          ("C-c o l" . org-store-link))
   :config
   (require 's)
-  (setq-local d12/org-ignored-dirs
-                (-flatten
-                 (-non-nil
-                  (-map (lambda (dir)
-                          (d12/org-dir-and-subdirs dir))
-                        d12/org-agenda-ignore-dirs))))
-
-  (setq-local d12/org-agenda-dirs
-              (-difference (d12/org-dir-and-subdirs "") d12/org-ignored-dirs))
-
-  (setq-local d12/org-agenda-files
-              (-flatten (-map (lambda (dir)
-                                (d12/org-files-in-folder dir))
-                              d12/org-agenda-dirs)))
 
   (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
     (let ((rlt ad-return-value)
@@ -135,11 +121,12 @@
         org-agenda-window-setup 'current-window
         org-src-fontify-natively t
         org-directory d12/org-home-path
-        org-agenda-files d12/org-agenda-files
         org-agenda-inhibit-startup nil
         org-mobile-inbox-for-pull (concat d12/org-home-path "mobile.org")
         org-mobile-force-id-on-agenda-items nil
         org-mobile-directory "~/Dropbox/Apps/MobileOrg/")
+
+  (d12/reload-agenda-files)
 
   (bind-key "C-c c s" 'd12/org-sort-current-level org-mode-map)
   (bind-key "C-c c S" 'd12/org-sort-upper-level org-mode-map)
