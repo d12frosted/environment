@@ -40,7 +40,7 @@
           (-insert-at 0 (s-chop-suffix "/" org-dir) (d12/directory-dirs-r org-dir)))))
 
 (defun d12/org-files-in-folder (folder)
-  (directory-files folder t ".*\.org$"))
+  (directory-files folder t ".*\.org$\\|[0-9]+-[0-9]+-[0-9]+$"))
 
 ;;; Templates
 ;; ===========
