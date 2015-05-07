@@ -18,6 +18,19 @@
    (interactive)
    (find-file (concat d12/org-home-path "gtd.org")))
 
+(defun d12/reload-agenda-files ()
+  (interactive)
+  (let* ((d12/org-ignored-dirs (-flatten
+                                (-non-nil
+                                 (-map (lambda (dir)
+                                         (d12/org-dir-and-subdirs dir))
+                                       d12/org-agenda-ignore-dirs))))
+         (d12/org-agenda-dirs (-difference (d12/org-dir-and-subdirs "") d12/org-ignored-dirs))
+         (d12/org-agenda-files (-flatten (-map (lambda (dir)
+                                                 (d12/org-files-in-folder dir))
+                                               d12/org-agenda-dirs))))
+    (setq org-agenda-files d12/org-agenda-files)))
+
 ;;; Files and driectories
 ;; =======================
 
