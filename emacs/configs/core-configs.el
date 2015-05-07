@@ -485,6 +485,24 @@
    ("C-c p v"   . helm-projectile-vc)))
 
 ;;; Various
+
+(use-package elfeed-web
+  :ensure t
+  :defer t
+  :init
+  :config)
+
+(use-package elfeed
+  :ensure t
+  :defer 1
+  :bind ("C-c a e" . elfeed)
+  :config
+  (setq elfeed-feeds '(("http://www.reddit.com/r/haskelltil/.rss" haskell reddit)
+                       ("http://www.reddit.com/r/haskell/.rss" haskell reddit)
+                       ("http://www.reddit.com/r/orgmode/.rss" emacs org-mode reddit)
+                       ("http://planet.haskell.org/rss20.xml" haskell)
+                       ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
+                       ("http://nullprogram.com/feed/" emacs))))
 ;; ---------
 
 ;; Ignore uninteresting files everywhere
