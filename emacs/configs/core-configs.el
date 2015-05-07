@@ -329,22 +329,26 @@
 
 (use-package leuven
   :ensure leuven-theme
-  :defer t
-  :init
-  (load-theme 'leuven t)
-  (set-face-attribute hl-line-face nil :underline nil))
+  :defer t)
 
 (use-package solarized
-  :disabled
+  :disabled t
   :ensure solarized-theme
   :defer t
   :init (load-theme 'solarized-light 'no-confirm))
 
 (use-package zenburn
-  :disabled t
   :ensure zenburn-theme
-  :defer t
-  :init (load-theme 'zenburn 'no-confirm))
+  :defer t)
+
+;; leuven looks pretty ugly in my terminal
+;; because of my(!) terminal configurations
+;; in GUI emacs leuven rocks!
+;; don't believe me? TRY IT! IT'S AMAZING!
+(if window-system
+    (progn (load-theme 'leuven t)
+           (set-face-attribute hl-line-face nil :underline nil))
+  (progn (load-theme 'zenburn 'no-confirm)))
 
 ;;; Helm and friends
 ;; ------------------
