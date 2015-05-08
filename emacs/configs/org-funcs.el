@@ -188,7 +188,3 @@ In case of failure it will use value of d12/org-default-title."
   (interactive)
   (setq current-prefix-arg '(t))
   (call-interactively 'org-journal-new-entry))
-
-(defun d12/rename-org-mode ()
-  "Rename org-mode to 本. Why not?"
-  (setq mode-name "本"))
