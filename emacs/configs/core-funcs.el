@@ -145,6 +145,11 @@ point reaches the beginning or end of the buffer, stop there."
 ;;; Various stuff
 ;; ===============
 
+(defmacro d12|rename-modeline (package-name mode new-name)
+  `(eval-after-load ,package-name
+     '(defadvice ,mode (after d12|rename-modeline-hack activate)
+        (setq mode-name ,new-name))))
+
 (defun d12/toggle-fullscreen ()
   "Cycle thorugh full screen options by rule 'nil -> maximized -> fullboth -> nil'."
   (interactive)

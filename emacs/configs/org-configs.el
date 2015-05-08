@@ -127,15 +127,17 @@
         org-mobile-directory "~/Dropbox/Apps/MobileOrg/")
 
   (d12/reload-agenda-files)
+  (d12|rename-modeline "org" org-mode "本")
 
   (bind-key "C-c c s" 'd12/org-sort-current-level org-mode-map)
   (bind-key "C-c c S" 'd12/org-sort-upper-level org-mode-map)
   (bind-key "C-c c #" 'd12/org-insert-block-template org-mode-map)
 
-  ;; (d12|diminish org-mode " 本")
-
-  (add-hook 'org-mode-hook 'd12/org-auto-insert-template)
-  (add-hook 'org-mode-hook 'd12/rename-org-mode))
+  ;; sometimes I am getting laze
+  ;; but in this case - I am too lazy!
+  ;; and this thing just a bizarre that RUINS MY LIFE!!!!
+  ;; but I am too lazy to fix that
+  (add-hook 'org-mode-hook 'd12/org-auto-insert-template))
 
 (use-package org-indent
   :defer t
