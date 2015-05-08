@@ -417,6 +417,7 @@
 
 (use-package projectile
   :ensure t
+  :defer t
   :diminish projectile-mode
   :commands (projectile-ack
              projectile-ag
@@ -446,49 +447,17 @@
                                       "projectile.cache"))
   (setq projectile-known-projects-file (concat d12/cache-directory
                                                "projectile-bookmarks.eld"))
-  (setq projectile-keymap-prefix (kbd "C-c C-p"))
   (projectile-global-mode))
 
 (use-package helm-projectile
   :ensure t
   :defer t
-  :commands (helm-projectile-ack
-             helm-projectile-ag
-             helm-projectile-switch-to-buffer
-             helm-projectile-find-dir
-             helm-projectile-dired-find-dir
-             helm-projectile-recentf
-             helm-projectile-find-file
-             helm-projectile-grep
-             helm-projectile
-             helm-projectile-switch-project
-             helm-projectile-vc)
   :init
   (setq projectile-switch-project-action 'helm-projectile)
-  (bind-keys
-   ("C-c p !"   . projectile-run-shell-command-in-root)
-   ("C-c p &"   . projectile-run-async-shell-command-in-root)
-   ("C-c p c"   . projectile-compile-project)
-   ("C-c p D"   . projectile-dired)
-   ("C-c p i"   . projectile-invalidate-cache)
-   ("C-c p k"   . projectile-kill-buffers)
-   ("C-c p o"   . projectile-multi-occur)
-   ("C-c p r"   . projectile-replace)
-   ("C-c p R"   . projectile-regenerate-tags)
-   ("C-c p y"   . projectile-find-tag)
-   ("C-c p T"   . projectile-find-test-file)
-   ("C-c p b"   . helm-projectile-switch-to-buffer)
-   ("C-c p d"   . helm-projectile-find-dir)
-   ("C-c p e"   . helm-projectile-recentf)
-   ("C-c p f"   . helm-projectile-find-file)
-   ("C-c p h"   . helm-projectile)
-   ("C-c p p"   . helm-projectile-switch-project)
-   ("C-c p s a" . helm-projectile-ag)
-   ("C-c p s g" . helm-projectile-grep)
-   ("C-c p s k" . helm-projectile-ack)
-   ("C-c p v"   . helm-projectile-vc)))
+  (helm-projectile-on))
 
 ;;; Various
+;; ---------
 
 (use-package elfeed-web
   :ensure t
@@ -507,7 +476,6 @@
                        ("http://planet.haskell.org/rss20.xml" haskell)
                        ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
                        ("http://nullprogram.com/feed/" emacs))))
-;; ---------
 
 ;; Ignore uninteresting files everywhere
 (use-package ignoramus
