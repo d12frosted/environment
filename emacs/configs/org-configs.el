@@ -159,6 +159,8 @@
   :bind (("C-c o c"  . calendar)
          ("C-c o n"  . org-journal-new-entry)
          ("C-c o v"  . org-journal-visit-entry))
+  :init
+  (d12|rename-modeline "org-journal" org-journal-mode "日記")
   :config
   (global-unset-key (kbd "C-c C-j"))
   (setq org-journal-dir (concat d12/org-home-path "journal/")
