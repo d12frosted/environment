@@ -561,7 +561,8 @@
   :bind (("C-c u g Q" . google-translate-query-translate-reverse)
          ("C-c u g q" . google-translate-query-translate)
          ("C-c u g T" . google-translate-at-point-reverse)
-         ("C-c u g t" . google-translate-at-point))
+         ("C-c u g t" . google-translate-at-point)
+         ("C-c u g s" . google-translate-smooth-translate))
   :init
   (d12|define-prefix "C-c u g" google-translate)
   :config
