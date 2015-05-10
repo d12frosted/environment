@@ -484,20 +484,21 @@
 
 ;; Save recently visited files
 (use-package recentf
-  :init (recentf-mode)
+  :ensure t
+  :defer t
+  :init
+  ;; lazy load recentf
+  (add-hook 'find-file-hook (lambda () (unless recentf-mode
+                                         (recentf-mode)
+                                         (recentf-track-opened-file))))
   :config
-  (setq recentf-max-saved-items 200
-        recentf-max-menu-items 15
-        recentf-save-file (concat d12/cache-directory "recentf")
-        ;; Cleanup recent files only when Emacs is idle, but not when the mode
-        ;; is enabled, because that unnecessarily slows down Emacs. My Emacs
-        ;; idles often enough to have the recent files list clean up regularly
-        recentf-auto-cleanup 300
-        recentf-exclude (list "/\\.git/.*\\'" ; Git contents
-                              "/elpa/.*\\'" ; Package files
-                              "/itsalltext/" ; It's all text temp files
-                              ;; And all other kinds of boring files
-                              #'ignoramus-boring-p)))
+  (setq recentf-exclude '(spacemacs-cache-directory))
+  (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
+  (add-to-list 'recentf-exclude #'ignoramus-boring-p)
+  (setq recentf-save-file (concat d12/cache-directory "recentf")
+        recentf-max-saved-items 100
+        recentf-auto-cleanup 'never
+        recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list)))
 
 (use-package fancy-battery
   :ensure t
