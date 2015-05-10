@@ -442,27 +442,6 @@
   :ensure t
   :defer t
   :diminish projectile-mode
-  :commands (projectile-ack
-             projectile-ag
-             projectile-compile-project
-             projectile-dired
-             projectile-grep
-             projectile-find-dir
-             projectile-find-file
-             projectile-find-tag
-             projectile-find-test-file
-             projectile-invalidate-cache
-             projectile-kill-buffers
-             projectile-multi-occur
-             projectile-project-root
-             projectile-recentf
-             projectile-regenerate-tags
-             projectile-replace
-             projectile-run-async-shell-command-in-root
-             projectile-run-shell-command-in-root
-             projectile-switch-project
-             projectile-switch-to-buffer
-             projectile-vc)
   :init
   (setq-default projectile-enable-caching nil)
   (setq projectile-sort-order 'recentf)
@@ -565,6 +544,19 @@
   (setq google-translate-default-source-language "uk"
         google-translate-default-target-language "en"
         google-translate-show-phonetic t))
+
+(use-package eldoc
+  :ensure t
+  :defer t
+  :diminish eldoc-mode
+  :init
+  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+  :config
+  ;; enable eldoc in `eval-expression'
+  (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
+
+  ;; enable eldoc in IELM
+  (add-hook 'ielm-mode-hook #'eldoc-mode))
 
 ;;; Languages
 ;; -----------
