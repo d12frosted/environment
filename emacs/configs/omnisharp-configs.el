@@ -16,6 +16,7 @@
 
 (add-hook 'csharp-mode-hook 'omnisharp-mode)
 (add-hook 'csharp-mode-hook 'company-mode)
+(add-hook 'csharp-mode-hook 'eldoc-mode)
 
 (use-package omnisharp
   :ensure t
