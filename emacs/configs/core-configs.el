@@ -290,6 +290,29 @@
   :ensure t
   :defer 1)
 
+;; Ignore uninteresting files everywhere
+(use-package ignoramus
+  :ensure t
+  :init (ignoramus-setup))
+
+;; Save recently visited files
+(use-package recentf
+  :ensure t
+  :defer t
+  :init
+  ;; lazy load recentf
+  (add-hook 'find-file-hook (lambda () (unless recentf-mode
+                                         (recentf-mode)
+                                         (recentf-track-opened-file))))
+  :config
+  (setq recentf-exclude '(spacemacs-cache-directory))
+  (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
+  (add-to-list 'recentf-exclude #'ignoramus-boring-p)
+  (setq recentf-save-file (concat d12/cache-directory "recentf")
+        recentf-max-saved-items 100
+        recentf-auto-cleanup 'never
+        recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list)))
+
 ;;; Fonts
 ;; ------
 
@@ -476,34 +499,6 @@
                        ("http://planet.haskell.org/rss20.xml" haskell)
                        ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
                        ("http://nullprogram.com/feed/" emacs))))
-
-;; Ignore uninteresting files everywhere
-(use-package ignoramus
-  :ensure t
-  :init (ignoramus-setup))
-
-;; Save recently visited files
-(use-package recentf
-  :ensure t
-  :defer t
-  :init
-  ;; lazy load recentf
-  (add-hook 'find-file-hook (lambda () (unless recentf-mode
-                                         (recentf-mode)
-                                         (recentf-track-opened-file))))
-  :config
-  (setq recentf-exclude '(spacemacs-cache-directory))
-  (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
-  (add-to-list 'recentf-exclude #'ignoramus-boring-p)
-  (setq recentf-save-file (concat d12/cache-directory "recentf")
-        recentf-max-saved-items 100
-        recentf-auto-cleanup 'never
-        recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list)))
-
-(use-package fancy-battery
-  :ensure t
-  :defer t
-  :init (fancy-battery-mode))
 
 (use-package elec-pair
   :init (electric-pair-mode))
