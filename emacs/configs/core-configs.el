@@ -28,9 +28,9 @@
 
 ;; A bit about myself
 (setq user-full-name "Boris Buliga")
-(defvar user-mail-address "d12frosted@icloud.com")
-(defvar user-github-url "https://github.com/d12frosted")
-(defvar user-home-url "http://d12frosted.github.io")
+(setq user-mail-address "d12frosted@icloud.com")
+(setq user-github-url "https://github.com/d12frosted")
+(setq user-home-url "http://d12frosted.github.io")
 
 (defconst d12/guide-prefix "d12/"
   "Prefix for guide-key prefixes! Because prefix.")
@@ -335,7 +335,6 @@
 ;;; Helm and friends
 ;; ------------------
 
-;; todo - somehow it's loading not lazy
 (use-package helm
   :ensure t
   :defer t
@@ -343,12 +342,12 @@
   :bind (("C-x C-f" . helm-for-files)
          ("C-c b f" . helm-find-files)
          ("C-c b l" . helm-locate)
-         ("C-x b" . helm-buffers-list)
+         ("C-x b"   . helm-buffers-list)
          ("C-c b b" . helm-buffers-list)
          ("C-c b r" . helm-recentf)
          ("C-c b s" . helm-mini)
          ("C-c b /" . helm-restore)
-         ("M-x" . helm-M-x))
+         ("M-x"     . helm-M-x))
   :init
   (setq helm-quick-update t
         helm-idle-delay 0.01
@@ -371,6 +370,8 @@
   ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
   (global-set-key (kbd "C-c h") 'helm-command-prefix)
   (global-unset-key (kbd "C-x c"))
+
+  (d12|define-prefix "C-c h h" helm-help)
 
   (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
         helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
