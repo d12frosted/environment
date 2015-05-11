@@ -16,3 +16,6 @@
 [submodule "emacs/packages/org-mode"]
 	path = emacs/packages/org-mode
 	url = git://orgmode.org/org-mode.git
+[submodule "emacs/packages/fish-mode"]
+	path = emacs/packages/fish-mode
+	url = git@github.com:d12frosted/fish-mode.git

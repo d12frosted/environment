@@ -510,6 +510,10 @@
   (add-hook 'yaml-mode-hook
             (lambda () (run-hooks 'prog-mode-hook))))
 
+(use-package fish-mode
+  :load-path "packages/fish-mode/"
+  :mode ("\\.fish$" . fish-mode))
+
 ;;; Other configurations
 ;; ======================
 
