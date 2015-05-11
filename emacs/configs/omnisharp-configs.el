@@ -39,7 +39,6 @@
   (c-set-offset 'cpp-macro 'csharp-lineup-if-and-region)
 
   (local-unset-key (kbd "{"))
-  ;; (local-unset-key (kbd "C-c C-d"))
 
   (d12|define-prefix "C-c c c" compile)
   (d12|define-prefix "C-c c f" file)
