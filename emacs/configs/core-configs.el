@@ -617,6 +617,9 @@
                 " "
                 mode-line-modes
 
+                ;; because pomodoro
+                org-pomodoro-mode-line
+
                 ;; Flycheck status
                 ;; (flycheck-mode flycheck-mode-line)
 
