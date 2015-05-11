@@ -120,7 +120,7 @@
   (interactive)
   (let ((empty (= (point-min)
                   (point-max)))
-        (titled (s-starts-with? "#+TITLE:" (buffer-string) t)))
+        (titled (s-contains? "#+TITLE:" (buffer-string) t)))
     (and titled (not empty))))
 
 (defun d12/org-journal-buffer-contains-date-header? ()
