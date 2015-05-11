@@ -31,38 +31,12 @@
 
 (require 'cl)
 
-;;; About myself
-;; ==============
-
-(setq user-full-name "Boris Buliga"
-      user-mail-address "d12frosted@icloud.com"
-      user-github-url "https://github.com/d12frosted"
-      user-home-url "http://d12frosted.github.io")
-
-;;; Paths
-;; =======
-
-(defconst d12/cache-directory
-  (expand-file-name (concat user-emacs-directory ".cache/"))
-  "Storage area for persistent files.")
+;;; Configurations
+;; ================
 
 (defconst d12/configs-directory
   (expand-file-name (concat user-emacs-directory "configs/"))
   "Configs directory.")
-
-(defconst d12/packages-directory
-  (expand-file-name (concat user-emacs-directory "packages/"))
-  "Manually installed packages directory.")
-
-(defconst pcache-directory
-  (concat d12/cache-directory "pcache"))
-
-;; create d12/cache-directory if it doesn't exist yet
-(unless (file-exists-p d12/cache-directory)
-    (make-directory d12/cache-directory))
-
-;;; Configurations
-;; ================
 
 (defun d12/load-config (name)
   "Load configuration with NAME.
@@ -71,25 +45,13 @@
   - NAME-funcs.el
   - NAME-configs.el
 
-  that are located in 'd12/configs-directory."
-  (load (concat d12/configs-directory name "-funcs.el"))
+  that are located in 'd12/configs-directory.
+
+  NAME-funcs.el file is loaded before NAME-configs.el, but
+  only if exists."
+  (load (concat d12/configs-directory name "-funcs.el") t)
   (load (concat d12/configs-directory name "-configs.el")))
 
-;;; Custom configurations
-;; -----------------------
-
-(defvar d12/configs '()
-  "List of custom config names to load.")
-
-(setq d12/custom-configs
-      '("org"
-        "magit"
-        "syntax-checking"
-        "mu4e"
-        "auto-completion"
-        "omnisharp"))
-
-;; load core configurations
 (d12/load-config "core")
 
 ;; start server

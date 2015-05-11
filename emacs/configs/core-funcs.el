@@ -109,7 +109,7 @@ and its values are removed."
 
 ;; thanks to https://github.com/kai2nenobu/guide-key/wiki
 (defmacro d12|define-prefix (key-name prefix-name)
-  "Define prefix command for KEY-NAME."
+  "Define prefix command for KEY-NAME. Uses 'd12/guide-prefix to build the name."
   (let ((name (intern (concat d12/guide-prefix (symbol-name prefix-name)))))
     `(progn (define-prefix-command ',name)
             (bind-key ,key-name ',name))))
@@ -142,13 +142,25 @@ point reaches the beginning or end of the buffer, stop there."
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
-;;; Various stuff
-;; ===============
+;;; Mode renaming and diminishing
+;; ===============================
 
 (defmacro d12|rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
      '(defadvice ,mode (after d12|rename-modeline-hack activate)
         (setq mode-name ,new-name))))
+
+(defmacro d12|diminish (mode dim)
+  "Diminish MODE name in mode line to DIM."
+  `(eval-after-load 'diminish '(diminish ',mode ,dim)))
+
+(defmacro d12|lazy-diminish (mode dim)
+  "Diminish MODE name in mode line to DIM after PACKAGE-NAME is loaded."
+  `(defadvice ,mode (after d12|lazy-diminish-hack activate)
+     (d12|diminish ,mode ,dim)))
+
+;;; Various stuff
+;; ===============
 
 (defun d12/toggle-fullscreen ()
   "Cycle thorugh full screen options by rule 'nil -> maximized -> fullboth -> nil'."
@@ -158,10 +170,6 @@ point reaches the beginning or end of the buffer, stop there."
 			 (cond ((not x) 'maximized)
 			       ((eq x 'maximized) 'fullboth)
 			       (t nil)))))
-
-(defmacro d12|diminish (mode dim)
-  "Diminish MODE name in mode line to DIM."
-  `(eval-after-load 'diminish '(diminish ',mode ,dim)))
 
 ;; Thanks to Sylvain Benner
 (defmacro d12|add-toggle (name &rest props)

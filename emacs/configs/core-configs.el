@@ -23,8 +23,54 @@
 (setq use-package-debug nil)
 (setq use-package-verbose t)
 
+;;; Variables and constants
+;; =========================
+
+;; A bit about myself
+(setq user-full-name "Boris Buliga"
+      user-mail-address "d12frosted@icloud.com"
+      user-github-url "https://github.com/d12frosted"
+      user-home-url "http://d12frosted.github.io")
+
+(defconst d12/guide-prefix "d12/"
+  "Prefix for guide-key prefixes! Because prefix.")
+
+(defconst d12/cache-directory
+  (expand-file-name (concat user-emacs-directory ".cache/"))
+  "Storage area for persistent files.")
+
+(defconst d12/packages-directory
+  (expand-file-name (concat user-emacs-directory "packages/"))
+  "Manually installed packages directory.")
+
+(defconst pcache-directory
+  (concat d12/cache-directory "pcache"))
+
+;; create d12/cache-directory if it doesn't exist yet
+(unless (file-exists-p d12/cache-directory)
+  (make-directory d12/cache-directory))
+
+;;; Custom configs
+;; ---------------
+
+(defvar d12/configs '()
+  "List of custom config names to load.")
+
+(setq d12/custom-configs
+      '("ui"
+        "org"
+        "magit"
+        "elfeed"
+        "syntax-checking"
+        "mu4e"
+        "auto-completion"
+        "omnisharp"))
+
 ;;; Packages
 ;; ==========
+;;
+;; Configure package.el
+;; and bootstrap use-package
 
 ;; Please don't load outdated byte code
 (setq load-prefer-newer t)
@@ -32,10 +78,16 @@
 (require 'package)
 
 ;; optimization, no need to activate all the packages so early
+;; ~ the question - should I even use it?
 (setq package-enable-at-startup nil)
+
+;; download and install packages to cache directory
 (setq package-user-dir (concat d12/cache-directory "elpa"))
 
+;; add MELPA to package archives
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+
+;; add org archive to package archives
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 
 (package-initialize)
@@ -50,6 +102,8 @@
 
 ;;; Requires
 ;; ----------
+;;
+;; some important requires
 
 (eval-when-compile
   (require 'use-package))
@@ -117,82 +171,29 @@
 (setq indicate-empty-lines t
       require-final-newline t)
 
-;; dwim!
+;; when there is selection (region) active
+;; replace it when typing something
+;; instead of placing it before the selection
 (delete-selection-mode 1)
 
+;; use visual-line mode for text-mode
 (add-hook 'text-mode-hook 'visual-line-mode)
-(add-hook 'text-mode-hook (lambda nil (diminish 'visual-line-mode)))
+
+;; turn off auto fill for text0mode
 (add-hook 'text-mode-hook 'turn-off-auto-fill)
 
-;;; UI configurations
-;; ===================
+;; diminish visual-line-mode
+(d12|lazy-diminish visual-line-mode "")
 
-;; Show column number in mode line
-(setq column-number-mode t)
-
-;; line number
-(setq linum-format "%4d")
-
-;; highlight current line
-(global-hl-line-mode t)
-
-;; no blink
-(blink-cursor-mode 0)
-
-;; When emacs asks for "yes" or "no", let "y" or "n" sufficide
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; don't let the cursor go into minibuffer prompt
-;; Tip taken from Xah Lee: http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
-(setq minibuffer-prompt-properties
-      '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt))
-
-; removes the GUI elements
-(when (and (fboundp 'tool-bar-mode) (not (eq tool-bar-mode -1)))
-  (tool-bar-mode -1))
-(when (and (fboundp 'scroll-bar-mode) (not (eq scroll-bar-mode -1)))
-  (scroll-bar-mode -1))
-
- ;; tooltips in echo-aera
-(when (and (fboundp 'tooltip-mode) (not (eq tooltip-mode -1)))
-  (tooltip-mode -1))
-(setq tooltip-use-echo-area t)
-(unless (eq window-system 'mac)
-  (when (and (fboundp 'menu-bar-mode) (not (eq menu-bar-mode -1)))
-    (menu-bar-mode -1)))
-
-;; Opt out from the startup message in the echo area by simply disabling this
-;; ridiculously bizarre thing entirely.
-(fset 'display-startup-echo-area-message #'ignore)
+;; do not warn me about defadvice
+(setq ad-redefinition-action 'accept)
 
 ;;; Session configurations
 ;; ========================
 
-;; scratch buffer empty
-;; (setq initial-scratch-message nil)
-;; becausse we all love cats
-(setq initial-scratch-message
-      ";; ((cat)
-;;
-;;           |`-.._____..-'|
-;;           :  > .  ,  <  :
-;;           `./ __`' __ \\,'
-;;            | (|_) (|_) |
-;;            ; _  .  __  :
-;;            `.,' - `-. ,'
-;;              `, `_  .'
-;;              /       \\
-;;             /         :
-;;            :          |_
-;;           ,|  .    .  | \\
-;;          : :   \\   |  |  :
-;;          |  \\   :`-;  ;  |
-;;          :   :  | /  /   ;
-;;           :-.'  ;'  / _,'`------.
-;;           `'`''-`'''-'-''--.---  )
-;;                        SSt `----'
-
-")
+;; scratch buffer is empty
+;; for now :D
+(setq initial-scratch-message nil)
 
 ;; don't create backup~ or #auto-save# files
 (setq backup-by-copying t
@@ -244,26 +245,39 @@
 
 ;;; Packages
 ;; ==========
+;;
+;; confifgurations for different packages
+;; just a note - try to move things to separate files
+;; when it's possible
+;; also, try to keep things unrelated as much as possible
+;; so the order of loading doesn't affect the result
 
 ;;; Utilities
 ;; -----------
+;;
+;; random important stuff that is required
+;; by other configurations
 
+;; must-have for list manipulations
 (use-package dash
   :ensure t)
 
+;; get's all required environment variables
 (use-package exec-path-from-shell
   :ensure t
   :init
   (when (memq window-system '(mac ns))
     (exec-path-from-shell-initialize)))
 
+;; guide-key
+;; at this point I find it useful for discovering keys
+;; but also checkout helm-descbinds
+;; todo - move it out from here
 (use-package guide-key
   :ensure t
   :defer t
   :diminish guide-key-mode
   :init
-  (setq-default d12/guide-prefix "d12/")
-
   ;; define some prefixes
   (d12|define-prefix "C-c a" applications)
   (d12|define-prefix "C-c b" browse)
@@ -282,20 +296,24 @@
 
   (guide-key-mode 1))
 
+;; some string manupilations
+;; but this is heavy thing - so defer it's loading
 (use-package s
   :ensure t
   :defer 1)
 
+;; search tool
 (use-package ag
   :ensure t
   :defer 1)
 
-;; Ignore uninteresting files everywhere
+;; ignore uninteresting files everywhere
+;; todo - check if it's really needed
 (use-package ignoramus
   :ensure t
   :init (ignoramus-setup))
 
-;; Save recently visited files
+;; save recently visited files
 (use-package recentf
   :ensure t
   :defer t
@@ -305,7 +323,7 @@
                                          (recentf-mode)
                                          (recentf-track-opened-file))))
   :config
-  (setq recentf-exclude '(spacemacs-cache-directory))
+  (setq recentf-exclude '(d12/cache-directory))
   (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
   (add-to-list 'recentf-exclude #'ignoramus-boring-p)
   (setq recentf-save-file (concat d12/cache-directory "recentf")
@@ -313,68 +331,10 @@
         recentf-auto-cleanup 'never
         recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list)))
 
-;;; Fonts
-;; ------
-
-;; Select best available font
-(use-package dynamic-fonts
-  :ensure t
-  :config
-  (progn
-    (setq dynamic-fonts-preferred-monospace-fonts
-          '("Source Code Pro" ; https://github.com/adobe-fonts/source-code-pro
-            "Anonymous Pro" ; http://www.marksimonson.com/fonts/view/anonymous-pro
-            "Menlo")
-          dynamic-fonts-preferred-monospace-point-size 12
-
-          dynamic-fonts-preferred-proportional-fonts
-          '("Fira Sans" ; https://www.mozilla.org/en-US/styleguide/products/firefox-os/typeface/
-            "Helvetica")
-          dynamic-fonts-preferred-proportional-point-size 12)
-
-    (dynamic-fonts-setup)))
-
-;; Map Unicode blocks to fonts
-;; don't forget to download and install:
-;; * http://dejavu-fonts.org/wiki/Download
-;; * http://www.quivira-font.com/downloads.php
-;; * http://www.google.com/get/noto/#/
-;; * http://users.teilar.gr/%7Eg1951d/
-(use-package unicode-fonts
-  :ensure t
-  :disabled t
-  :defer 1
-  :config (unicode-fonts-setup))
-
-;;; Themes
-;; --------
-
-(use-package leuven
-  :ensure leuven-theme
-  :defer t)
-
-(use-package solarized
-  :disabled t
-  :ensure solarized-theme
-  :defer t
-  :init (load-theme 'solarized-light 'no-confirm))
-
-(use-package zenburn
-  :ensure zenburn-theme
-  :defer t)
-
-;; leuven looks pretty ugly in my terminal
-;; because of my(!) terminal configurations
-;; in GUI emacs leuven rocks!
-;; don't believe me? TRY IT! IT'S AMAZING!
-(if window-system
-    (progn (load-theme 'leuven t)
-           (set-face-attribute hl-line-face nil :underline nil))
-  (progn (load-theme 'zenburn 'no-confirm)))
-
 ;;; Helm and friends
 ;; ------------------
 
+;; todo - somehow it's loading not lazy
 (use-package helm
   :ensure t
   :defer t
@@ -478,45 +438,8 @@
 ;;; Various
 ;; ---------
 
-(use-package elfeed-web
-  :ensure t
-  :defer t
-  :init
-  :config)
-
-(use-package elfeed
-  :ensure t
-  :defer 1
-  :bind ("C-c a e" . elfeed)
-  :config
-  (setq elfeed-feeds '(("http://www.reddit.com/r/haskelltil/.rss" haskell reddit)
-                       ("http://www.reddit.com/r/haskell/.rss" haskell reddit)
-                       ("http://www.reddit.com/r/orgmode/.rss" emacs org-mode reddit)
-                       ("http://planet.haskell.org/rss20.xml" haskell)
-                       ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
-                       ("http://nullprogram.com/feed/" emacs))))
-
 (use-package elec-pair
   :init (electric-pair-mode))
-
-(use-package rainbow-delimiters
-  :ensure t
-  :defer t
-  :init
-  (dolist (hook '(text-mode-hook prog-mode-hook))
-    (add-hook hook #'rainbow-delimiters-mode)))
-
-;; Fontify number literals
-(use-package highlight-numbers
-  :ensure t
-  :defer t
-  :init (add-hook 'prog-mode-hook #'highlight-numbers-mode))
-
-;; Fontify color values in code
-(use-package rainbow-mode
-  :ensure t
-  :bind (("C-c t r" . rainbow-mode))
-  :config (add-hook 'css-mode-hook #'rainbow-mode))
 
 (use-package restclient                ; ReST REPL for Emacs
   :ensure t
@@ -527,17 +450,6 @@
   :defer t
   :init (with-eval-after-load 'company
           (add-to-list 'company-backends 'company-restclient)))
-
-(use-package nyan-mode
-  :ensure t
-  :defer t
-  :init
-  (d12|add-toggle nyan-cat-progress-bar
-                  :status nyan-mode
-                  :on (nyan-mode)
-                  :off (nyan-mode -1)
-                  :documentation "Show a nyan cat progress bar in the mode-line."
-                  :bind-global "C-c t n"))
 
 (use-package google-translate
   :ensure t
@@ -590,47 +502,10 @@
   (add-hook 'yaml-mode-hook
             (lambda () (run-hooks 'prog-mode-hook))))
 
-;;; Mode line
-;; -----------
-
-(defun d12/update-header-line ()
-  "Setup and update header line."
-  (when eldoc-mode
-    (let ((line-format (concat (unless (= (length d12/eldoc-msg-format) 0)
-                                 (concat " [" d12/eldoc-msg-format "] "))))
-          (line-args d12/eldoc-msg-args))
-      (setq header-line-format (apply 'format line-format line-args))
-      (force-mode-line-update))))
-
-(setq-default mode-line-format
-              '("%e"
-                mode-line-front-space
-                mode-line-mule-info
-                mode-line-client
-                mode-line-remote
-                mode-line-modified
-                mode-line-frame-identification
-                mode-line-buffer-identification
-                " "
-                mode-line-position
-                (projectile-mode projectile-mode-line)
-                " "
-                mode-line-modes
-
-                ;; because pomodoro
-                org-pomodoro-mode-line
-
-                ;; Flycheck status
-                ;; (flycheck-mode flycheck-mode-line)
-
-                ;; sometimes this thing is too damn huge
-                ;; so I put it into the very end
-                (vc-mode vc-mode)))
-
 ;;; Other configurations
 ;; ======================
 
-(d12|diminish abbrev-mode "")
+(d12|lazy-diminish abbrev-mode "")
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
