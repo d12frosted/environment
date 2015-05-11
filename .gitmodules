@@ -1,18 +1,6 @@
 [submodule "dotbot"]
 	path = dotbot
 	url = https://github.com/anishathalye/dotbot
-[submodule "emacs/structured-haskell-mode"]
-	path = emacs/spacemacs-layers/d12frosted-haskell/extensions/structured-haskell-mode
-	url = https://github.com/chrisdone/structured-haskell-mode.git
-[submodule "emacs/packages/hindent"]
-	path = emacs/spacemacs-layers/d12frosted-haskell/extensions/hindent
-	url = https://github.com/chrisdone/hindent.git
-[submodule "emacs/spacemacs-layers/d12frosted/extensions/fish-mode"]
-	path = emacs/spacemacs-layers/d12frosted/extensions/fish-mode
-	url = git@github.com:d12frosted/fish-mode.git
-[submodule "emacs/spacemacs-layers/d12frosted-org/extensions/org-journal"]
-	path = emacs/spacemacs-layers/d12frosted-org/extensions/org-journal
-	url = https://github.com/d12frosted/org-journal.git
 [submodule "emacs/packages/org-mode"]
 	path = emacs/packages/org-mode
 	url = git://orgmode.org/org-mode.git
