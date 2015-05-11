@@ -379,8 +379,7 @@
 
   (helm-mode 1)
   ;; (helm-autoresize-mode 1)
-  (helm-adaptative-mode 1)
-  )
+  (helm-adaptative-mode 1))
 
 (use-package helm-ag
   :ensure t
@@ -402,7 +401,10 @@
   :ensure t
   :defer t
   :init
-  (helm-descbinds-mode))
+  ;; lazy load descbinds
+  (add-hook 'find-file-hook
+            (lambda () (unless helm-descbinds-mode
+                         (helm-descbinds-mode)))))
 
 (use-package helm-company
   :ensure t
@@ -418,21 +420,23 @@
 
 (use-package projectile
   :ensure t
-  :defer t
+  :defer 1
   :diminish projectile-mode
   :init
   (setq-default projectile-enable-caching nil)
-  (setq projectile-sort-order 'recentf)
-  (setq projectile-cache-file (concat d12/cache-directory
-                                      "projectile.cache"))
-  (setq projectile-known-projects-file (concat d12/cache-directory
-                                               "projectile-bookmarks.eld"))
-  (projectile-global-mode))
 
-(use-package helm-projectile
-  :ensure t
-  :defer t
-  :init
+  (setq projectile-sort-order 'recentf
+
+        ;; it's not needed in my setup
+        ;; but who cares
+        projectile-cache-file (concat d12/cache-directory
+                                      "projectile.cache")
+
+        projectile-known-projects-file (concat d12/cache-directory
+                                               "projectile-bookmarks.eld"))
+
+  :config
+  (projectile-global-mode)
   (setq projectile-switch-project-action 'helm-projectile)
   (helm-projectile-on))
 
