@@ -27,10 +27,10 @@
 ;; =========================
 
 ;; A bit about myself
-(setq user-full-name "Boris Buliga"
-      user-mail-address "d12frosted@icloud.com"
-      user-github-url "https://github.com/d12frosted"
-      user-home-url "http://d12frosted.github.io")
+(setq user-full-name "Boris Buliga")
+(defvar user-mail-address "d12frosted@icloud.com")
+(defvar user-github-url "https://github.com/d12frosted")
+(defvar user-home-url "http://d12frosted.github.io")
 
 (defconst d12/guide-prefix "d12/"
   "Prefix for guide-key prefixes! Because prefix.")
@@ -53,7 +53,7 @@
 ;;; Custom configs
 ;; ---------------
 
-(defvar d12/configs '()
+(defvar d12/custom-configs '()
   "List of custom config names to load.")
 
 (setq d12/custom-configs
@@ -319,9 +319,10 @@
   :defer t
   :init
   ;; lazy load recentf
-  (add-hook 'find-file-hook (lambda () (unless recentf-mode
-                                         (recentf-mode)
-                                         (recentf-track-opened-file))))
+  (add-hook 'find-file-hook
+            (lambda () (unless recentf-mode
+                         (recentf-mode)
+                         (recentf-track-opened-file))))
   :config
   (setq recentf-exclude '(d12/cache-directory))
   (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
@@ -475,6 +476,9 @@
   :defer t
   :diminish eldoc-mode
   :init
+  (defvar d12/eldoc-msg-format "")
+  (defvar d12/eldoc-msg-args "")
+
   (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
   (setq d12/eldoc-msg-format ""
@@ -527,6 +531,10 @@
  ("C-S-<backspace>" . d12/delete-line-or-region)
  ("C-c u d" . d12/duplicate-line-or-region))
 
+;; and load my custom configurations
+;; that's the final step for this file
 (-each d12/custom-configs
   (lambda (config)
     (d12/load-config config)))
+
+;;; end
