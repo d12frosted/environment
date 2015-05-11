@@ -324,7 +324,6 @@
     (setq dynamic-fonts-preferred-monospace-fonts
           '("Source Code Pro" ; https://github.com/adobe-fonts/source-code-pro
             "Anonymous Pro" ; http://www.marksimonson.com/fonts/view/anonymous-pro
-            "Fira Mono"
             "Menlo")
           dynamic-fonts-preferred-monospace-point-size 12
 
@@ -343,7 +342,7 @@
 ;; * http://users.teilar.gr/%7Eg1951d/
 (use-package unicode-fonts
   :ensure t
-  ;; this is a heavy package, so defer it's loading
+  :disabled t
   :defer 1
   :config (unicode-fonts-setup))
 
