@@ -529,13 +529,9 @@
           (add-to-list 'company-backends 'company-restclient)))
 
 (use-package nyan-mode
-  ;; i like it
-  ;; but it takes too much space in mode line
-  :disabled t
   :ensure t
   :defer t
   :init
-  (nyan-mode)
   (d12|add-toggle nyan-cat-progress-bar
                   :status nyan-mode
                   :on (nyan-mode)
