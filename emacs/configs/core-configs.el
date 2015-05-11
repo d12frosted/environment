@@ -430,9 +430,27 @@
 (use-package helm-mode-manager
   :ensure t
   :defer t
-  :bind (("C-c t m m" . helm-switch-major-mode)
-         ("C-c t m e" . helm-enable-minor-mode)
-         ("C-c t m d" . helm-disable-minor-mode)))
+  :bind
+  (("C-c b m m" . helm-switch-major-mode)
+   ("C-c b m e" . helm-enable-minor-mode)
+   ("C-c b m d" . helm-disable-minor-mode))
+  :init
+  (d12|define-prefix "C-c b m" mode-manager))
+
+(use-package helm-descbinds
+  :ensure t
+  :defer t
+  :init
+  (helm-descbinds-mode))
+
+(use-package helm-company
+  :ensure t
+  :defer t
+  :init
+  (eval-after-load 'company
+  '(progn
+     (define-key company-mode-map (kbd "C-:") 'helm-company)
+     (define-key company-active-map (kbd "C-:") 'helm-company))))
 
 ;;; Projectile
 ;; ------------
