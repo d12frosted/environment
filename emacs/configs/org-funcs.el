@@ -188,3 +188,19 @@ In case of failure it will use value of d12/org-default-title."
   (interactive)
   (setq current-prefix-arg '(t))
   (call-interactively 'org-journal-new-entry))
+
+(defun d12/org-update-parent-cookie ()
+  (when (equal major-mode 'org-mode)
+    (save-excursion
+      (ignore-errors
+        (org-back-to-heading)
+        (org-update-parent-todo-statistics)))))
+
+(defadvice d12/delete-line-or-region (after fix-cookies activate)
+  (d12/org-update-parent-cookie))
+
+(defadvice d12/duplicate-line-or-region (after fix-cookies activate)
+  (d12/org-update-parent-cookie))
+
+(defadvice d12/cut-line-or-region (after fix-cookies activate)
+  (d12/org-update-parent-cookie))
