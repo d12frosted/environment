@@ -564,10 +564,19 @@
   :diminish eldoc-mode
   :init
   (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+
+  (setq d12/eldoc-msg-format ""
+        d12/eldoc-msg-args '())
+
+  (defun d12/eldoc-message-function (format-string &rest args)
+    (setq d12/eldoc-msg-format format-string
+          d12/eldoc-msg-args args)
+    (d12/update-header-line))
+
+  (setq eldoc-message-function #'d12/eldoc-message-function)
   :config
   ;; enable eldoc in `eval-expression'
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
-
   ;; enable eldoc in IELM
   (add-hook 'ielm-mode-hook #'eldoc-mode))
 
@@ -583,6 +592,15 @@
 
 ;;; Mode line
 ;; -----------
+
+(defun d12/update-header-line ()
+  "Setup and update header line."
+  (when eldoc-mode
+    (let ((line-format (concat (unless (= (length d12/eldoc-msg-format) 0)
+                                 (concat " [" d12/eldoc-msg-format "] "))))
+          (line-args d12/eldoc-msg-args))
+      (setq header-line-format (apply 'format line-format line-args))
+      (force-mode-line-update))))
 
 (setq-default mode-line-format
               '("%e"
