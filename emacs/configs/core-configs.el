@@ -635,9 +635,22 @@
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
 (bind-keys
- ;; I need this as water!
+ ;; whenever I go to line
+ ;; I want that line be at the center of window
  ("M-g g" . d12/goto-line-and-center)
- ("C-a" . d12/smart-move-beginning-of-line))
+
+ ;; I rarely need to go to the real beginning of line
+ ;; usually I need go back to first non-whitespace symbol
+ ("C-a" . d12/smart-move-beginning-of-line)
+
+ ;; do what I mean
+ ;; usually I remove lines and regions by <M-w>
+ ;; but when I don't want to put it to kill-ring
+ ;; I use <C-S-backspace>
+ ("C-w" . d12/cut-line-or-region)
+ ("M-w" . d12/copy-line-or-region)
+ ("C-S-<backspace>" . d12/delete-line-or-region)
+ ("C-c u d" . d12/duplicate-line-or-region))
 
 (-each d12/custom-configs
   (lambda (config)

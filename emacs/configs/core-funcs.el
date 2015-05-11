@@ -207,5 +207,51 @@ point reaches the beginning or end of the buffer, stop there."
            (message "This toggle is not supported.")))
        ,@bindkeys)))
 
-;;; Helm funcs
-;; ------------
+;;; Text manipulations
+;; --------------------
+
+(defun d12/copy-line-or-region ()
+  "Copy current line (with newline character) or region. When `universal-argument' is called first, copy whole buffer (but respect `narrow-to-region')."
+  (interactive)
+  (kill-ring-save (d12/line-or-region-point-min)
+                  (d12/line-or-region-point-max))
+  (message "copied"))
+
+(defun d12/cut-line-or-region ()
+  "Cut current line or region. When `universal-argument' is called first, cut whole buffer (but respect `narrow-to-region')."
+  (interactive)
+  (kill-region (d12/line-or-region-point-min)
+               (d12/line-or-region-point-max))
+  (message "cut"))
+
+(defun d12/duplicate-line-or-region ()
+  "Duplicates current line or region. When `universal-argument' is called first, duplicate whole buffer (but respect `narrow-to-region')."
+  (interactive)
+  (kill-ring-save (d12/line-or-region-point-min)
+                  (d12/line-or-region-point-max))
+  (move-beginning-of-line 1)
+  (yank)
+  (message "duplicated"))
+
+(defun d12/delete-line-or-region ()
+  "Delete current line or region without putting it to kill-ring. When `universal-argument' is called first, duplicate whole buffer (but respect `narrow-to-region')."
+  (interactive)
+  (delete-region (d12/line-or-region-point-min)
+                 (d12/line-or-region-point-max))
+  (message "deleted"))
+
+(defun d12/line-or-region-point-min ()
+  "Return min point of line or region. When `universal-argument' is called first, returns min point of whole buffer (but respect `narrow-to-region')."
+  (if (null current-prefix-arg)
+      (if (use-region-p)
+          (region-beginning)
+        (line-beginning-position))
+    (point-min)))
+
+(defun d12/line-or-region-point-max ()
+  "Return max point of line or region. When `universal-argument' is called first, returns max point of whole buffer (but respect `narrow-to-region')."
+  (if (null current-prefix-arg)
+      (if (use-region-p)
+          (region-end)
+        (line-beginning-position 2))
+    (point-max)))
