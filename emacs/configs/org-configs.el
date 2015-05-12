@@ -126,6 +126,74 @@
         org-mobile-force-id-on-agenda-items nil
         org-mobile-directory "~/Dropbox/Apps/MobileOrg/")
 
+  ;; quick-hack/fix
+  ;; actually this is a copy-paste
+  ;; with minor modification
+  ;; todo - investigate more
+  (defun org-html-src-block (src-block contents info)
+    "Transcode a SRC-BLOCK element from Org to HTML.
+CONTENTS holds the contents of the item.  INFO is a plist holding
+contextual information."
+    (if (org-export-read-attribute :attr_html src-block :textarea)
+        (org-html--textarea-block src-block)
+      (let ((lang (org-element-property :language src-block))
+            (caption (org-export-get-caption src-block))
+            (code (org-html-format-code src-block info))
+            (label (let ((lbl (org-element-property :name src-block)))
+                     (if (not lbl) ""
+                       (format " id=\"%s\""
+                               (org-export-solidify-link-text lbl))))))
+        (if (not lang) (format "<pre class=\"example\"%s>\n%s</pre>" label code)
+          (format
+           "<div class=\"org-src-container\">\n%s%s\n</div>"
+           (if (not caption) ""
+             (format "<label class=\"org-src-name\">%s</label>"
+                     (org-export-data caption info)))
+           (cond ((string= lang "emacs-lisp")
+                  (format "\n<pre class=\"src src-%s commonlisp\"%s>%s</pre>" lang label code))
+
+                 ((string= lang "fish")
+                  (format "\n<pre class=\"src src-%s bash\"%s>%s</pre>" lang label code))
+
+                 (t
+                  (format "\n<pre class=\"src src-%s %s\"%s>%s</pre>" lang lang label code))))))))
+
+  (require 'ox-publish)
+  (setq org-publish-project-alist
+        '(
+          ("d12-org-files"
+           :base-directory "~/Dropbox/org/d12frosted/posts/"
+           :base-extension "org"
+           :publishing-directory "~/d12frosted.github.io/posts/"
+           :publishing-function org-html-publish-to-html
+           :headline-levels 4
+           :html-extension "html"
+           :section-numbers nil
+
+           :html-preamble t
+
+           :auto-sitemap t
+           :sitemap-filename "Archive.org"
+           :sitemap-title "Archive"
+           :sitemap-style "tree"
+           :sitemap-sort-files "chronologically"
+           :sitemap-file-entry-format "%d - %t"
+
+           :author "Boris Buliga <d12frosted@icloud.com"
+           :email "d12frosted@icloud.com"
+           :with-email t
+           )
+
+          ("d12-images"
+           :base-directory "~/Dropbox/org/d12frosted/images/"
+           :base-extension "png\\|jpg\\|gif"
+           :publishing-directory "~/d12frosted.github.io/images/"
+           :publishing-function org-publish-attachment)
+
+          ("d12" :components ("d12-org-files"
+                              "d12-images"))
+          ))
+
   (d12/reload-agenda-files)
   (d12|rename-modeline "org" org-mode "本")
 
