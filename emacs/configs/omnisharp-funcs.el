@@ -14,6 +14,16 @@
 
 ;;; Code
 
+;;; Setup
+;; =======
+
+(defun d12/omnisharp-setup ()
+  (progn   (setq-local indent-tabs-mode t)
+           (setq-local c-default-style "k&r")
+           (setq-local c-basic-offset 4)
+           (setq-local tab-width 4)
+           (setq-local hs-isearch-open t)))
+
 ;;; Hide-show
 ;; ===========
 
