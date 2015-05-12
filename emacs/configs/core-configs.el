@@ -280,14 +280,14 @@
   :diminish guide-key-mode
   :init
   ;; define some prefixes
-  (d12|define-prefix "C-c a" applications)
-  (d12|define-prefix "C-c b" browse)
-  (d12|define-prefix "C-c c" current-mode)
-  (d12|define-prefix "C-c o" org-mode)
-  (d12|define-prefix "C-c p" projectile)
-  (d12|define-prefix "C-c t" toggles)
-  (d12|define-prefix "C-c u" utilities)
-  (d12|define-prefix "C-c v" version-control)
+  (d12|define-prefix-global "C-c a" applications)
+  (d12|define-prefix-global "C-c b" browse)
+  (d12|define-prefix-global "C-c c" current-mode)
+  (d12|define-prefix-global "C-c o" org-mode)
+  (d12|define-prefix-global "C-c p" projectile)
+  (d12|define-prefix-global "C-c t" toggles)
+  (d12|define-prefix-global "C-c u" utilities)
+  (d12|define-prefix-global "C-c v" version-control)
 
   ;; highlight 'd12/guide-prefix
   (setq guide-key/highlight-command-regexp d12/guide-prefix)
@@ -372,7 +372,7 @@
   (global-set-key (kbd "C-c h") 'helm-command-prefix)
   (global-unset-key (kbd "C-x c"))
 
-  (d12|define-prefix "C-c h h" helm-help)
+  (d12|define-prefix-global "C-c h h" helm-help)
 
   (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
         helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
@@ -397,7 +397,7 @@
    ("C-c b m e" . helm-enable-minor-mode)
    ("C-c b m d" . helm-disable-minor-mode))
   :init
-  (d12|define-prefix "C-c b m" mode-manager))
+  (d12|define-prefix-global "C-c b m" mode-manager))
 
 (use-package helm-descbinds
   :ensure t
@@ -471,7 +471,7 @@
          ("C-c u g t" . google-translate-at-point)
          ("C-c u g s" . google-translate-smooth-translate))
   :init
-  (d12|define-prefix "C-c u g" google-translate)
+  (d12|define-prefix-global "C-c u g" google-translate)
   :config
   (setq google-translate-default-source-language "uk"
         google-translate-default-target-language "en"

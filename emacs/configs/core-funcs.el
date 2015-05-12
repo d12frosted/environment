@@ -108,11 +108,19 @@ and its values are removed."
           (define-key (eval (car val)) (kbd (cdr val)) ',func))))))
 
 ;; thanks to https://github.com/kai2nenobu/guide-key/wiki
-(defmacro d12|define-prefix (key-name prefix-name)
-  "Define prefix command for KEY-NAME. Uses 'd12/guide-prefix to build the name."
+(defmacro d12|define-prefix-global (key-name prefix-name)
+  "Define prefix command for KEY-NAME globally.
+   Uses 'd12/guide-prefix to build the name."
   (let ((name (intern (concat d12/guide-prefix (symbol-name prefix-name)))))
     `(progn (define-prefix-command ',name)
             (bind-key ,key-name ',name))))
+
+(defmacro d12|define-prefix-local (key-name prefix-name key-map)
+  "Define prefix command for KEY-NAME fro KEY-MAP.
+   Uses 'd12/guide-prefix to build the name."
+  (let ((name (intern (concat d12/guide-prefix (symbol-name prefix-name)))))
+    `(progn (define-prefix-command ',name)
+            (bind-key ,key-name ',name ,key-map))))
 
 ;;; Navigation
 ;; ============

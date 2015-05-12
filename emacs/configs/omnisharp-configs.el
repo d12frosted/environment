@@ -14,21 +14,15 @@
 
 ;;; Code
 
-(add-hook 'csharp-mode-hook 'omnisharp-mode)
-(add-hook 'csharp-mode-hook 'company-mode)
-(add-hook 'csharp-mode-hook 'eldoc-mode)
-
 (use-package omnisharp
   :ensure t
   :defer t
   :init
   (setq omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe")
-  (add-hook 'csharp-mode-hook (lambda nil
-                                (progn   (setq-local indent-tabs-mode t)
-                                         (setq-local c-default-style "k&r")
-                                         (setq-local c-basic-offset 4)
-                                         (setq-local tab-width 4)
-                                         (setq-local hs-isearch-open t))))
+  (add-hook 'csharp-mode-hook 'omnisharp-mode)
+  (add-hook 'csharp-mode-hook 'company-mode)
+  (add-hook 'csharp-mode-hook 'eldoc-mode)
+  (add-hook 'csharp-mode-hook 'd12/omnisharp-setup)
   :config
   (require 'company)
   (d12|diminish omnisharp-mode " ♯")
@@ -40,14 +34,14 @@
 
   (local-unset-key (kbd "{"))
 
-  (d12|define-prefix "C-c c c" compile)
-  (d12|define-prefix "C-c c f" file)
-  (d12|define-prefix "C-c c p" projectile)
-  (d12|define-prefix "C-c c g" navigation)
-  (d12|define-prefix "C-c c h" documentation)
-  (d12|define-prefix "C-c c r" refactoring)
-  (d12|define-prefix "C-c c s" server)
-  (d12|define-prefix "C-c c t" tests)
+  (d12|define-prefix-local "C-c c c" compile csharp-mode-map)
+  (d12|define-prefix-local "C-c c f" file csharp-mode-map)
+  (d12|define-prefix-local "C-c c p" projectile csharp-mode-map)
+  (d12|define-prefix-local "C-c c g" navigation csharp-mode-map)
+  (d12|define-prefix-local "C-c c h" documentation csharp-mode-map)
+  (d12|define-prefix-local "C-c c r" refactoring csharp-mode-map)
+  (d12|define-prefix-local "C-c c s" server csharp-mode-map)
+  (d12|define-prefix-local "C-c c t" tests csharp-mode-map)
 
   (bind-keys
    :map csharp-mode-map

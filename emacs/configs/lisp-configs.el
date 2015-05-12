@@ -23,13 +23,14 @@
  ;; Elisp go-to-definition with M-. and back again with M-,
 (use-package elisp-slime-nav
   :ensure t
-  :bind
-  ;; the defaul is <C-c C-d d>
-  (("C-c c d" . elisp-slime-nav-describe-elisp-thing-at-point))
   :init
   (d12|lazy-diminish elisp-slime-nav-mode "")
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-    (add-hook hook 'turn-on-elisp-slime-nav-mode)))
+    (add-hook hook 'turn-on-elisp-slime-nav-mode))
+  ;; the defaul is <C-c C-d d>
+  (bind-keys
+   :map emacs-lisp-mode-map
+   ("C-c c d" . elisp-slime-nav-describe-elisp-thing-at-point)))
 
 ;; just to try
 (use-package paredit
