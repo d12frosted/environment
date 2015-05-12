@@ -64,7 +64,8 @@
         "syntax-checking"
         "mu4e"
         "auto-completion"
-        "omnisharp"))
+        "omnisharp"
+        "lisp"))
 
 ;;; Packages
 ;; ==========
@@ -483,8 +484,6 @@
   :init
   (defvar d12/eldoc-msg-format "")
   (defvar d12/eldoc-msg-args "")
-
-  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
   (setq d12/eldoc-msg-format ""
         d12/eldoc-msg-args '())
