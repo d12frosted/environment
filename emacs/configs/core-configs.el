@@ -184,7 +184,8 @@
 (add-hook 'text-mode-hook 'turn-off-auto-fill)
 
 ;; diminish visual-line-mode
-(d12|lazy-diminish visual-line-mode "")
+(use-package simple
+  :diminish visual-line-mode)
 
 ;; do not warn me about defadvice
 (setq ad-redefinition-action 'accept)
@@ -517,7 +518,8 @@
 ;;; Other configurations
 ;; ======================
 
-(d12|lazy-diminish abbrev-mode "")
+(use-package abbrev
+  :diminish abbrev-mode)
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 

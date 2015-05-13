@@ -162,6 +162,7 @@ point reaches the beginning or end of the buffer, stop there."
   "Diminish MODE name in mode line to DIM."
   `(eval-after-load 'diminish '(diminish ',mode ,dim)))
 
+;; deprecated
 (defmacro d12|lazy-diminish (mode dim)
   "Diminish MODE name in mode line to DIM after PACKAGE-NAME is loaded."
   `(defadvice ,mode (after d12|lazy-diminish-hack activate)
