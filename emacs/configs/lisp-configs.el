@@ -23,8 +23,8 @@
  ;; Elisp go-to-definition with M-. and back again with M-,
 (use-package elisp-slime-nav
   :ensure t
+  :diminish elisp-slime-nav-mode
   :init
-  (d12|lazy-diminish elisp-slime-nav-mode "")
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
     (add-hook hook 'turn-on-elisp-slime-nav-mode))
   ;; the defaul is <C-c C-d d>
