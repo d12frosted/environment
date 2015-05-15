@@ -193,7 +193,8 @@
   ;; but in this case - I am too lazy!
   ;; and this thing just a bizarre that RUINS MY LIFE!!!!
   ;; but I am too lazy to fix that
-  (add-hook 'org-mode-hook 'd12/org-auto-insert-template))
+  ;; (add-hook 'org-mode-hook 'd12/org-auto-insert-template)
+  )
 
 (use-package org-indent
   :defer t
