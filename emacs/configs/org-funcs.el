@@ -87,13 +87,13 @@
         (title (d12/org-guess-title))
         (author (s-format "$0 <$1>" 'elt `(,d12/org-author-name ,d12/org-author-email)))
         (email d12/org-author-email)
-        (date (format-time-string "%Y-%m-%d")))
+        (date (format "<%s>" (format-time-string "%Y-%m-%d"))))
     (s-join "\n" (list (d12/org-option option-key-width "TITLE" title)
                        (d12/org-option option-key-width "AUTHOR" author)
                        (d12/org-option option-key-width "EMAIL" email)
                        (d12/org-option option-key-width "DATE" date)
                        (d12/org-option option-key-width "STARTUP" "showeverything")
-                       (d12/org-option option-key-width "OPTIONS" "toc:t")))))
+                       (d12/org-option option-key-width "OPTIONS" "toc:nil")))))
 
 (defun d12/org-journal-date-header ()
   (concat org-journal-date-prefix
