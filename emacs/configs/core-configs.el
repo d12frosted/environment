@@ -65,7 +65,8 @@
         "mu4e"
         "auto-completion"
         "omnisharp"
-        "lisp"))
+        "lisp"
+        "haskell"))
 
 ;;; Packages
 ;; ==========
@@ -344,8 +345,8 @@
   :bind (("C-x C-f" . helm-for-files)
          ("C-x b"   . helm-buffers-list)
          ("M-x"     . helm-M-x)
-         ("C-c h C-f" . helm-find-files)
-         ("C-c h C-m" . helm-mini))
+         ("C-c b f" . helm-find-files)
+         ("C-c b m" . helm-mini))
   :init
   (setq helm-quick-update t
         helm-idle-delay 0.01
@@ -570,7 +571,11 @@
  ("C-w" . d12/cut-line-or-region)
  ("M-w" . d12/copy-line-or-region)
  ("C-S-<backspace>" . d12/delete-line-or-region)
- ("C-c u d" . d12/duplicate-line-or-region))
+ ("C-c u d" . d12/duplicate-line-or-region)
+
+ ;; I am using it very often
+ ("C-x a r" . align-regexp)
+ ("M-[" . align))
 
 ;; and load my custom configurations
 ;; that's the final step for this file

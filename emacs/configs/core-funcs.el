@@ -224,6 +224,10 @@ point reaches the beginning or end of the buffer, stop there."
            (message "This toggle is not supported.")))
        ,@bindkeys)))
 
+(defun d12/disable-hl-line-mode ()
+  "Disable `global-hl-line-mode' locally."
+  (setq-local global-hl-line-mode nil))
+
 ;;; Text manipulations
 ;; --------------------
 
