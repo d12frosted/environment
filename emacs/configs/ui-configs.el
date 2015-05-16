@@ -94,7 +94,10 @@
 
 (use-package leuven
   :ensure leuven-theme
-  :defer t)
+  :defer t
+  :init
+  (setq d12/shm-current-face-bg "#F6FECD"
+        d12/shm-quarantine-face-bg "#FBE3E4"))
 
 (use-package solarized
   :disabled t
@@ -104,7 +107,10 @@
 
 (use-package zenburn
   :ensure zenburn-theme
-  :defer t)
+  :defer t
+  :init
+  (setq d12/shm-current-face-bg "#6F6F6F"
+        d12/shm-quarantine-face-bg "#8C5353"))
 
 ;; leuven looks pretty ugly in my terminal
 ;; because of my(!) terminal configurations
