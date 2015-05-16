@@ -23,3 +23,7 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# cabal sandboxes
+.cabal-sandbox/
+cabal.sandbox.config
