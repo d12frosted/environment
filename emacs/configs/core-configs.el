@@ -388,9 +388,9 @@
   :ensure t
   :defer t
   :bind
-  (("C-c b m m" . helm-switch-major-mode)
-   ("C-c b m e" . helm-enable-minor-mode)
-   ("C-c b m d" . helm-disable-minor-mode))
+  (("C-c m m" . helm-switch-major-mode)
+   ("C-c m e" . helm-enable-minor-mode)
+   ("C-c m d" . helm-disable-minor-mode))
   :init
   (d12|define-prefix-global "C-c b m" mode-manager))
 
