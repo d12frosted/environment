@@ -21,6 +21,8 @@
 ;; - C-c a: applications
 ;; - C-c b: browse
 ;; - C-c c: current mode commands
+;; - C-c h: helm
+;; - C-c m: mode manager
 ;; - C-c o: org mode
 ;; - C-c p: projectile
 ;; - C-c t: toggle things and skeletons
