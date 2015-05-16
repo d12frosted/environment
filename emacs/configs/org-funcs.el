@@ -31,6 +31,9 @@
                                                d12/org-agenda-dirs))))
     (setq org-agenda-files d12/org-agenda-files)))
 
+(defmacro d12|plist-add (list key value)
+  `(setq ,list (plist-put ,list ,key ,value)))
+
 ;;; Files and driectories
 ;; =======================
 

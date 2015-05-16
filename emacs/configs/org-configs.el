@@ -127,60 +127,9 @@
         org-mobile-directory "~/Dropbox/Apps/MobileOrg/")
 
   (require 'ox-publish)
-  (setq org-html-htmlize-output-type 'inline-css)
-  (setq org-html-validation-link nil)
-  (setq org-publish-project-alist
-        '(
-          ("d12-posts"
-           :base-directory "~/Dropbox/org/d12frosted/"
-           :base-extension "org"
-           :exclude "index.org\\|archive.org"
-           :publishing-directory "~/Developer/d12frosted.github.io/"
-           :publishing-function org-html-publish-to-html
-           :headline-levels 4
-           :html-extension "html"
-           :section-numbers nil
-           :recursive t
-
-           :html-head "<link rel='stylesheet' type='text/css' href='../css/post.css' />"
-
-           :auto-sitemap t
-           :sitemap-filename "archive.org"
-           :sitemap-title ""
-           :sitemap-style list
-           :sitemap-sort-files anti-chronologically
-           :sitemap-file-entry-format "%d - %t"
-
-           :author "Boris Buliga <d12frosted@icloud.com>"
-           :email "d12frosted@icloud.com"
-           :with-email t
-           )
-
-          ("d12-index"
-           :base-directory "~/Dropbox/org/d12frosted/"
-           :base-extension "org"
-           :exclude "Archive\.org"
-           :publishing-directory "~/Developer/d12frosted.github.io/"
-           :publishing-function org-html-publish-to-html
-           :headline-levels 4
-           :html-extension "html"
-           :section-numbers nil
-
-           :html-head "<link rel='stylesheet' type='text/css' href='css/post.css' />"
-
-           :with-email t)
-
-          ("d12-static"
-           :base-directory "~/Dropbox/org/d12frosted/"
-           :base-extension "png\\|jpg\\|gif\\|css\\|js"
-           :publishing-directory "~/Developer/d12frosted.github.io/"
-           :publishing-function org-publish-attachment
-           :recursive t)
-
-          ("d12" :components ("d12-static"
-                              "d12-posts"
-                              "d12-index"))
-          ))
+  (setq org-html-htmlize-output-type 'inline-css
+        org-html-validation-link nil
+        org-publish-project-alist d12-blog/projects)
 
   (d12/reload-agenda-files)
   (d12|rename-modeline "org" org-mode "本")
@@ -230,3 +179,88 @@
 (use-package org-pomodoro
   :ensure t
   :defer t)
+
+;;; Publishing
+;; ============
+
+(defvar d12-blog/sources-path (concat d12/org-home-path "d12frosted/"))
+(defvar d12-blog/publish-path "~/Developer/d12frosted.github.io/")
+
+(defvar d12-blog/template-navigation "
+<header>
+  <hr>
+  <ul class='nav-list'>
+    <li class='nav-elem nav-left nav-head'>
+      <a href='/'><i class='fa fa-home'></i> d12frosted</a>
+    </li>
+    <li class='nav-elem nav-right'>
+      <a href='http://stackoverflow.com/users/3086454/d12frosted'><i class='fa fa-stack-overflow'></i> StackOverflow</a>
+    </li>
+    <li class='nav-elem nav-right'>
+      <a href='https://github.com/d12frosted'><i class='fa fa-github'></i> GitHub</a>
+    </li>
+  </ul>
+  <hr>
+</header>
+")
+
+(defvar d12-blog/template-head "<link rel='stylesheet' type='text/css' href='/css/default.css' />
+<link rel='stylesheet' href='/font-awesome/css/font-awesome.min.css'>")
+
+(defvar d12-blog/projects '())
+(defvar d12-blog/project-pages '())
+(defvar d12-blog/project-static-files '())
+(defvar d12-blog/project-posts '())
+(defvar d12-blog/project-final '())
+
+;;; Setup projects
+;; ----------------
+
+;; pages
+(d12|plist-add d12-blog/project-pages :base-directory d12-blog/sources-path)
+(d12|plist-add d12-blog/project-pages :publishing-directory d12-blog/publish-path)
+(d12|plist-add d12-blog/project-pages :publishing-function 'org-html-publish-to-html)
+(d12|plist-add d12-blog/project-pages :headline-levels 4)
+(d12|plist-add d12-blog/project-pages :section-numbers nil)
+(d12|plist-add d12-blog/project-pages :with-email t)
+(d12|plist-add d12-blog/project-pages :html-head d12-blog/template-head)
+(d12|plist-add d12-blog/project-pages :html-preamble d12-blog/template-navigation)
+
+;; static files
+(d12|plist-add d12-blog/project-static-files :base-directory d12-blog/sources-path)
+(d12|plist-add d12-blog/project-static-files :base-extension "png\\|jpg\\|gif\\|css\\|js")
+(d12|plist-add d12-blog/project-static-files :publishing-directory d12-blog/publish-path)
+(d12|plist-add d12-blog/project-static-files :publishing-function 'org-publish-attachment)
+(d12|plist-add d12-blog/project-static-files :recursive t)
+
+;; posts
+(d12|plist-add d12-blog/project-posts :base-directory (concat d12-blog/sources-path "posts/"))
+(d12|plist-add d12-blog/project-posts :publishing-directory (concat d12-blog/publish-path "posts/"))
+(d12|plist-add d12-blog/project-posts :publishing-function 'org-html-publish-to-html)
+(d12|plist-add d12-blog/project-posts :with-toc nil)
+(d12|plist-add d12-blog/project-posts :headline-levels 4)
+(d12|plist-add d12-blog/project-posts :section-numbers nil)
+(d12|plist-add d12-blog/project-posts :with-email t)
+(d12|plist-add d12-blog/project-posts :html-head d12-blog/template-head)
+(d12|plist-add d12-blog/project-posts :html-preamble d12-blog/template-navigation)
+(d12|plist-add d12-blog/project-posts :auto-sitemap t)
+(d12|plist-add d12-blog/project-posts :sitemap-function 'd12/org-publish-org-sitemap)
+(d12|plist-add d12-blog/project-posts :sitemap-link-relative-to d12-blog/sources-path)
+(d12|plist-add d12-blog/project-posts :sitemap-filename "archive.org")
+(d12|plist-add d12-blog/project-posts :sitemap-title "")
+(d12|plist-add d12-blog/project-posts :sitemap-style 'list)
+(d12|plist-add d12-blog/project-posts :sitemap-sort-files 'anti-chronologically)
+(d12|plist-add d12-blog/project-posts :sitemap-file-entry-format "%d - %t")
+
+;; final
+(d12|plist-add d12-blog/project-final :components '("d12-blog-static-files"
+                                                    "d12-blog-static-files"
+                                                    "d12-blog-posts"))
+
+;; projects list
+
+(setq d12-blog/projects '())
+(add-to-list 'd12-blog/projects (cons "d12-blog-pages" d12-blog/project-pages))
+(add-to-list 'd12-blog/projects (cons "d12-blog-static-files" d12-blog/project-static-files))
+(add-to-list 'd12-blog/projects (cons "d12-blog-posts" d12-blog/project-posts))
+(add-to-list 'd12-blog/projects (cons "d12-blog-final" d12-blog/project-final))
