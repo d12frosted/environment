@@ -217,38 +217,38 @@ Optionally set the filename of the sitemap with SITEMAP-FILENAME.
 Default for SITEMAP-FILENAME is 'sitemap.org'."
   (let* ((project-plist (cdr project))
          (dir (file-name-as-directory
+               (plist-get project-plist :sitemap-root)))
+         (base-dir (file-name-as-directory
                (plist-get project-plist :base-directory)))
          (localdir (file-name-directory dir))
          (indent-str (make-string 2 ?\ ))
          (exclude-regexp (plist-get project-plist :exclude))
          (files (nreverse
                  (org-publish-get-base-files project exclude-regexp)))
-         (sitemap-filename (concat dir (or sitemap-filename "sitemap.org")))
-         (sitemap-link-relative-to (or (file-name-as-directory (plist-get project-plist :sitemap-link-relative-to))
-                                       dir))
+         (sitemap-filepath (concat dir (or sitemap-filename "sitemap.org")))
          (sitemap-title (or (plist-get project-plist :sitemap-title)
                             (concat "Sitemap for project " (car project))))
          (sitemap-style (or (plist-get project-plist :sitemap-style)
                             'tree))
          (sitemap-sans-extension
           (plist-get project-plist :sitemap-sans-extension))
-         (visiting (find-buffer-visiting sitemap-filename))
-         (ifn (file-name-nondirectory sitemap-filename))
+         (visiting (find-buffer-visiting sitemap-filepath))
+         (ifn (file-name-nondirectory sitemap-filepath))
          file sitemap-buffer)
     (with-current-buffer
         (let ((org-inhibit-startup t))
           (setq sitemap-buffer
-                (or visiting (find-file sitemap-filename))))
+                (or visiting (find-file sitemap-filepath))))
       (erase-buffer)
       (insert (concat "#+TITLE: " sitemap-title "\n\n"))
       (while (setq file (pop files))
         (let ((fn (file-name-nondirectory file))
-              (link (file-relative-name file sitemap-link-relative-to))
+              (link (file-relative-name file dir))
               (oldlocal localdir))
           (when sitemap-sans-extension
             (setq link (file-name-sans-extension link)))
           ;; sitemap shouldn't list itself
-          (unless (equal (file-truename sitemap-filename)
+          (unless (equal (file-truename (concat base-dir (or sitemap-filename "sitemap.org")))
                          (file-truename file))
             (if (eq sitemap-style 'list)
                 (message "Generating list-style sitemap for %s" sitemap-title)
