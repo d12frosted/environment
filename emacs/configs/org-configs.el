@@ -186,31 +186,19 @@
 (defvar d12-blog/sources-path (concat d12/org-home-path "d12frosted/"))
 (defvar d12-blog/publish-path "~/Developer/d12frosted.github.io/")
 
-(defvar d12-blog/template-navigation "
-<header>
-  <hr>
-  <ul class='nav-list'>
-    <li class='nav-elem nav-left nav-head'>
-      <a href='/'><i class='fa fa-home'></i> d12frosted</a>
-    </li>
-    <li class='nav-elem nav-right'>
-      <a href='http://stackoverflow.com/users/3086454/d12frosted'><i class='fa fa-stack-overflow'></i> StackOverflow</a>
-    </li>
-    <li class='nav-elem nav-right'>
-      <a href='https://github.com/d12frosted'><i class='fa fa-github'></i> GitHub</a>
-    </li>
-  </ul>
-  <hr>
-</header>
-")
+(defvar d12-blog/template-preamble (d12/get-string-from-file
+                                    (concat d12-blog/sources-path
+                                            "templates/preamble.html")))
 
-(defvar d12-blog/template-head "<link rel='stylesheet' type='text/css' href='/css/default.css' />
-<link rel='stylesheet' href='/font-awesome/css/font-awesome.min.css'>")
+(defvar d12-blog/template-head (d12/get-string-from-file
+                                (concat d12-blog/sources-path
+                                        "templates/head.html")))
 
 (defvar d12-blog/projects '())
 (defvar d12-blog/project-pages '())
 (defvar d12-blog/project-static-files '())
 (defvar d12-blog/project-posts '())
+(defvar d12-blog/project-font-awesome '())
 (defvar d12-blog/project-final '())
 
 ;;; Setup projects
@@ -224,7 +212,8 @@
 (d12|plist-add d12-blog/project-pages :section-numbers nil)
 (d12|plist-add d12-blog/project-pages :with-email t)
 (d12|plist-add d12-blog/project-pages :html-head d12-blog/template-head)
-(d12|plist-add d12-blog/project-pages :html-preamble d12-blog/template-navigation)
+(d12|plist-add d12-blog/project-pages :html-preamble d12-blog/template-preamble)
+(d12|plist-add d12-blog/project-pages :html-postamble "")
 
 ;; static files
 (d12|plist-add d12-blog/project-static-files :base-directory d12-blog/sources-path)
@@ -233,6 +222,13 @@
 (d12|plist-add d12-blog/project-static-files :publishing-function 'org-publish-attachment)
 (d12|plist-add d12-blog/project-static-files :recursive t)
 
+;; font-awesome
+(d12|plist-add d12-blog/project-font-awesome :base-directory (concat d12-blog/sources-path "font-awesome/"))
+(d12|plist-add d12-blog/project-font-awesome :base-extension ".*")
+(d12|plist-add d12-blog/project-font-awesome :publishing-directory (concat d12-blog/publish-path "font-awesome/"))
+(d12|plist-add d12-blog/project-font-awesome :publishing-function 'org-publish-attachment)
+(d12|plist-add d12-blog/project-font-awesome :recursive t)
+
 ;; posts
 (d12|plist-add d12-blog/project-posts :base-directory (concat d12-blog/sources-path "posts/"))
 (d12|plist-add d12-blog/project-posts :publishing-directory (concat d12-blog/publish-path "posts/"))
@@ -240,21 +236,22 @@
 (d12|plist-add d12-blog/project-posts :with-toc nil)
 (d12|plist-add d12-blog/project-posts :headline-levels 4)
 (d12|plist-add d12-blog/project-posts :section-numbers nil)
-(d12|plist-add d12-blog/project-posts :with-email t)
 (d12|plist-add d12-blog/project-posts :html-head d12-blog/template-head)
-(d12|plist-add d12-blog/project-posts :html-preamble d12-blog/template-navigation)
+(d12|plist-add d12-blog/project-posts :html-preamble d12-blog/template-preamble)
+(d12|plist-add d12-blog/project-posts :html-postamble "<p>By %a<\p><p>Created: %d<\p>")
 (d12|plist-add d12-blog/project-posts :auto-sitemap t)
 (d12|plist-add d12-blog/project-posts :sitemap-function 'd12/org-publish-org-sitemap)
-(d12|plist-add d12-blog/project-posts :sitemap-link-relative-to d12-blog/sources-path)
+(d12|plist-add d12-blog/project-posts :sitemap-root d12-blog/sources-path)
 (d12|plist-add d12-blog/project-posts :sitemap-filename "archive.org")
-(d12|plist-add d12-blog/project-posts :sitemap-title "")
+(d12|plist-add d12-blog/project-posts :sitemap-title "Archive")
 (d12|plist-add d12-blog/project-posts :sitemap-style 'list)
 (d12|plist-add d12-blog/project-posts :sitemap-sort-files 'anti-chronologically)
 (d12|plist-add d12-blog/project-posts :sitemap-file-entry-format "%d - %t")
 
 ;; final
-(d12|plist-add d12-blog/project-final :components '("d12-blog-static-files"
+(d12|plist-add d12-blog/project-final :components '("d12-blog-pages"
                                                     "d12-blog-static-files"
+                                                    "d12-blog-font-awesome"
                                                     "d12-blog-posts"))
 
 ;; projects list
@@ -262,5 +259,6 @@
 (setq d12-blog/projects '())
 (add-to-list 'd12-blog/projects (cons "d12-blog-pages" d12-blog/project-pages))
 (add-to-list 'd12-blog/projects (cons "d12-blog-static-files" d12-blog/project-static-files))
+(add-to-list 'd12-blog/projects (cons "d12-blog-font-awesome" d12-blog/project-font-awesome))
 (add-to-list 'd12-blog/projects (cons "d12-blog-posts" d12-blog/project-posts))
 (add-to-list 'd12-blog/projects (cons "d12-blog-final" d12-blog/project-final))
