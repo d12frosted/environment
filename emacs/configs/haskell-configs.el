@@ -31,6 +31,7 @@
                  "{-# LANGUAGE OverloadedStrings #-}\n\n"
                  "module %s where\n\n"))
   :config
+  (d12|rename-modeline "haskell-mode" haskell-mode "λ")
   ;; add `speedbar' support
   ;; (speedbar-add-supported-extension ".hs")
 
@@ -63,10 +64,9 @@
 
   ;; some custom variables
   (custom-set-variables
-   '(haskell-tags-on-save t)
    '(haskell-process-type 'cabal-repl)
    '(haskell-process-args-cabal-repl
-     '("--ghc-option=-ferror-spans" "--with-ghc=cabal-repl"))
+     '("--ghc-option=-ferror-spans" "--with-ghc=ghci-ng"))
    '(haskell-notify-p t)
    '(haskell-stylish-on-save nil)
    '(haskell-tags-on-save nil)
@@ -83,10 +83,8 @@
    '(haskell-process-suggest-haskell-docs-imports t)
    '(hindent-style "chris-done")
    '(haskell-interactive-mode-eval-mode 'haskell-mode)
-   '(haskell-process-path-ghci "cabal-repl")
+   '(haskell-process-path-ghci "ghci-ng")
    '(haskell-process-args-ghci '("-ferror-spans"))
-   '(haskell-process-args-cabal-repl
-     '("--ghc-option=-ferror-spans" "--with-ghc=cabal-repl"))
    '(haskell-process-generate-tags nil)
    '(haskell-complete-module-preferred
      '("Data.Text"
