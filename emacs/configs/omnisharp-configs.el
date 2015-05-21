@@ -84,4 +84,7 @@
    ("C-c c ="   . omnisharp-code-format)
    ("C-c <" . hs-hide-block)
    ("C-c >" . hs-show-block)
-   ("C-." . omnisharp-auto-complete)))
+   ("C-." . omnisharp-auto-complete)
+   ;; Some usefull shotcuts
+   ("M-." . d12/omnisharp-go-to-definition-at-center)
+   ("M-," . pop-tag-mark)))
