@@ -25,8 +25,8 @@ Not used for now.")
 (defvar auto-completion-enable-company-help-tooltip t
   "If non nil the docstring appears in a tooltip.")
 
-(defvar auto-completion-use-tab-instead-of-enter t
-  "If non nil use tab instead of enter for completion.")
+(defvar auto-completion-use-tab t
+  "If non nil use tab for completion.")
 
 (defvar company-mode-completion-cancel-keywords
   '("do"
@@ -110,43 +110,39 @@ to complet without blocking common line endings.")
         company-frontends '(company-pseudo-tooltip-frontend)
         company-clang-prefix-guesser 'company-mode/more-than-prefix-guesser)
   :config
-  (progn
-    (d12|diminish company-mode " (A)")
-    ;; Set the completion key
-    (if auto-completion-use-tab-instead-of-enter
-        (progn
-          ;; have tab stand in for enter
-          (define-key company-active-map (kbd "TAB") 'company-complete-selection)
-          (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
-          (define-key company-active-map [tab] 'company-complete-selection)
-          ;;disable enter
-          (define-key company-active-map [return] nil)
-          (define-key company-active-map (kbd "RET") nil))
-      ;; Fix integration of company and yasnippet
-      (define-key company-active-map (kbd "TAB") nil)
-      (define-key company-active-map (kbd "<tab>") nil)
-      (define-key company-active-map [tab] nil))
-    ;; key bindings
-    (define-key company-active-map (kbd "C-j") 'company-select-next)
-    (define-key company-active-map (kbd "C-k") 'company-select-previous)
-    (define-key company-active-map (kbd "C-/") 'company-search-candidates)
-    (define-key company-active-map (kbd "C-M-/") 'company-filter-candidates)
-    (define-key company-active-map (kbd "C-d") 'company-show-doc-buffer)
-    ;; Nicer looking faces
-    (custom-set-faces
-     '(company-tooltip-common
-       ((t (:inherit company-tooltip :weight bold :underline nil))))
-     '(company-tooltip-common-selection
-       ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
-    ;; Transformers
-    (defun company-transformer-cancel (candidates)
-      "Cancel completion if prefix is in the list
+  (d12|diminish company-mode " (A)")
+  ;; Set the completion key
+  (if auto-completion-use-tab
+      (progn
+        ;; have tab stand in for enter
+        (define-key company-active-map (kbd "TAB") 'company-complete-selection)
+        (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+        (define-key company-active-map [tab] 'company-complete-selection))
+    ;; Fix integration of company and yasnippet
+    (define-key company-active-map (kbd "TAB") nil)
+    (define-key company-active-map (kbd "<tab>") nil)
+    (define-key company-active-map [tab] nil))
+  ;; key bindings
+  (define-key company-active-map (kbd "C-j") 'company-select-next)
+  (define-key company-active-map (kbd "C-k") 'company-select-previous)
+  (define-key company-active-map (kbd "C-/") 'company-search-candidates)
+  (define-key company-active-map (kbd "C-M-/") 'company-filter-candidates)
+  (define-key company-active-map (kbd "C-d") 'company-show-doc-buffer)
+  ;; Nicer looking faces
+  (custom-set-faces
+   '(company-tooltip-common
+     ((t (:inherit company-tooltip :weight bold :underline nil))))
+   '(company-tooltip-common-selection
+     ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+  ;; Transformers
+  (defun company-transformer-cancel (candidates)
+    "Cancel completion if prefix is in the list
       `company-mode-completion-cancel-keywords'"
-      (unless (and (member company-prefix company-mode-completion-cancel-keywords)
-                   (not auto-completion-use-tab-instead-of-enter))
-        candidates))
-    (setq company-transformers '(company-transformer-cancel
-                                 company-sort-by-occurrence))))
+    (unless (and (member company-prefix company-mode-completion-cancel-keywords)
+                 (not auto-completion-use-tab-instead-of-enter))
+      candidates))
+  (setq company-transformers '(company-transformer-cancel
+                               company-sort-by-occurrence)))
 
 (use-package company-quickhelp
   :if (and auto-completion-enable-company-help-tooltip
