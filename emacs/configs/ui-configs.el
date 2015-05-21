@@ -113,14 +113,8 @@
   (setq d12/shm-current-face-bg "#6F6F6F"
         d12/shm-quarantine-face-bg "#8C5353"))
 
-;; leuven looks pretty ugly in my terminal
-;; because of my(!) terminal configurations
-;; in GUI emacs leuven rocks!
-;; don't believe me? TRY IT! IT'S AMAZING!
-(if window-system
-    (progn (load-theme 'leuven t)
-           (set-face-attribute hl-line-face nil :underline nil))
-  (progn (load-theme 'zenburn 'no-confirm)))
+(load-theme 'leuven t)
+(set-face-attribute hl-line-face nil :underline nil)
 
 ;;; Various pretty packages
 ;; =========================
