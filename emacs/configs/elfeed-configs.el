@@ -30,4 +30,5 @@
                        ("http://www.reddit.com/r/orgmode/.rss" emacs org-mode reddit)
                        ("http://planet.haskell.org/rss20.xml" haskell)
                        ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
-                       ("http://nullprogram.com/feed/" emacs))))
+                       ("http://nullprogram.com/feed/" emacs)
+                       ("http://endlessparentheses.com/atom.xml" emacs))))
