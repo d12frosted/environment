@@ -168,7 +168,7 @@
 ;; scratch buffer might be empty
 ;; but we all love cats, so...
 (setq initial-scratch-message
-      ";; ((cat)
+      ";; ((ネコ)
 ;;
 ;;           |`-.._____..-'|
 ;;           :  > .  ,  <  :
@@ -187,5 +187,6 @@
 ;;           :-.'  ;'  / _,'`------.
 ;;           `'`''-`'''-'-''--.---  )
 ;;                        SSt `----'
+;;
 
 ")
