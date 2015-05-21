@@ -30,7 +30,7 @@
   (add-to-list 'company-backends 'company-omnisharp)
 
   (c-set-offset 'case-label '+)
-  (c-set-offset 'cpp-macro 'csharp-lineup-if-and-region)
+  (c-set-offset 'cpp-macro 'csharp-lineup-region)
 
   (local-unset-key (kbd "{"))
 
