@@ -91,7 +91,9 @@
 (use-package git-messenger
   :ensure t
   :defer t
-  :bind ("C-c v m" . git-messenger:popup-message))
+  :bind ("C-c v m" . git-messenger:popup-message)
+  :init
+  (setq-default git-messenger:show-detail t))
 
 (use-package git-timemachine
   :ensure t
