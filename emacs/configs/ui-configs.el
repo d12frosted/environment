@@ -95,7 +95,7 @@
 (use-package leuven
   :ensure leuven-theme
   :defer t
-  :init
+  :config
   (setq d12/shm-current-face-bg "#F6FECD"
         d12/shm-quarantine-face-bg "#FBE3E4"))
 
@@ -106,9 +106,10 @@
   :init (load-theme 'solarized-light 'no-confirm))
 
 (use-package zenburn
+  :disabled t
   :ensure zenburn-theme
   :defer t
-  :init
+  :config
   (setq d12/shm-current-face-bg "#6F6F6F"
         d12/shm-quarantine-face-bg "#8C5353"))
 
