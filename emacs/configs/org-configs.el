@@ -238,7 +238,7 @@
 (d12|plist-add d12-blog/project-posts :section-numbers nil)
 (d12|plist-add d12-blog/project-posts :html-head d12-blog/template-head)
 (d12|plist-add d12-blog/project-posts :html-preamble d12-blog/template-preamble)
-(d12|plist-add d12-blog/project-posts :html-postamble "<p>By %a<\p><p>Created: %d<\p>")
+(d12|plist-add d12-blog/project-posts :html-postamble "<p>By %a<\p><p>Created on %d<\p>")
 (d12|plist-add d12-blog/project-posts :auto-sitemap t)
 (d12|plist-add d12-blog/project-posts :sitemap-function 'd12/org-publish-org-sitemap)
 (d12|plist-add d12-blog/project-posts :sitemap-root d12-blog/sources-path)
