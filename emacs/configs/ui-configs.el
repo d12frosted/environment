@@ -153,30 +153,14 @@
 ;;; Mode line
 ;; ===========
 
-(setq-default mode-line-format
-              '("%e"
-                mode-line-front-space
-                mode-line-mule-info
-                mode-line-client
-                mode-line-remote
-                mode-line-modified
-                mode-line-frame-identification
-                mode-line-buffer-identification
-                " "
-                mode-line-position
-                (projectile-mode projectile-mode-line)
-                " "
-                mode-line-modes
-
-                ;; because pomodoro
-                org-pomodoro-mode-line
-
-                ;; Flycheck status
-                ;; (flycheck-mode flycheck-mode-line)
-
-                ;; sometimes this thing is too damn huge
-                ;; so I put it into the very end
-                (vc-mode vc-mode)))
+;; because this is awesome
+;; just AWESOME
+(use-package smart-mode-line
+  :ensure t
+  :init
+  (setq sml/no-confirm-load-theme t)
+  (setq sml/theme nil)
+  (sml/setup))
 
 ;;; Scratch buffer
 ;; ================
