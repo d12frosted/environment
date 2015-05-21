@@ -553,6 +553,11 @@
 (use-package abbrev
   :diminish abbrev-mode)
 
+(use-package subword
+  :defer t
+  :init
+  (add-hook 'prog-mode-hook 'subword-mode))
+
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
 (bind-keys
