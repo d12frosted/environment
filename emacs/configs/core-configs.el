@@ -589,3 +589,7 @@
     (d12/load-config config)))
 
 ;;; end
+ ;; commenting
+ ("C-;" . comment-dwim)
+ ("M-;" . endless/comment-line-or-region)
+
