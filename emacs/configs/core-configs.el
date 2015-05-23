@@ -556,7 +556,9 @@
 (use-package subword
   :defer t
   :init
-  (add-hook 'prog-mode-hook 'subword-mode))
+  (add-hook 'prog-mode-hook 'subword-mode)
+  :config
+  (d12|diminish subword-mode ""))
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
