@@ -547,6 +547,19 @@
   :load-path "packages/fish-mode/"
   :mode ("\\.fish$" . fish-mode))
 
+;;; Ace mode
+;; ----------
+
+(use-package ace-jump-mode
+  :ensure t
+  :bind
+  (("C-c SPC" . ace-jump-mode)))
+
+(use-package ace-window
+  :ensure t
+  :bind
+  (("M-p" . ace-window)))
+
 ;;; Other configurations
 ;; ======================
 
