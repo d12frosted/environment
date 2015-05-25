@@ -482,6 +482,9 @@
 (use-package elec-pair
   :init (electric-pair-mode))
 
+(use-package smartparens
+  :ensure t)
+
 (use-package restclient                ; ReST REPL for Emacs
   :ensure t
   :defer t)
