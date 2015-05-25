@@ -594,6 +594,10 @@
  ("C-S-<backspace>" . d12/delete-line-or-region)
  ("C-c u d" . d12/duplicate-line-or-region)
 
+ ;; commenting
+ ("C-;" . comment-dwim)
+ ("M-;" . endless/comment-line-or-region)
+
  ;; I am using it very often
  ("C-x a r" . align-regexp)
  ("M-[" . align))
@@ -605,7 +609,3 @@
     (d12/load-config config)))
 
 ;;; end
- ;; commenting
- ("C-;" . comment-dwim)
- ("M-;" . endless/comment-line-or-region)
-
