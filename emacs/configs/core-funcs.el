@@ -177,6 +177,14 @@ point reaches the beginning or end of the buffer, stop there."
 ;;; Various stuff
 ;; ===============
 
+(defun spacemacs//set-dotted-directory ()
+  "Set the face of diretories for `.' and `..'"
+  (set-face-attribute 'helm-ff-dotted-directory
+                      nil
+                      :foreground nil
+                      :background nil
+                      :inherit 'helm-ff-directory))
+
 (defun d12/toggle-fullscreen ()
   "Cycle thorugh full screen options by rule 'nil -> maximized -> fullboth -> nil'."
   (interactive)
