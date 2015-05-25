@@ -377,7 +377,8 @@
 
   (helm-mode 1)
   ;; (helm-autoresize-mode 1)
-  (helm-adaptative-mode 1))
+  (helm-adaptative-mode 1)
+  (add-hook 'helm-find-files-before-init-hook 'spacemacs//set-dotted-directory))
 
 (use-package helm-ag
   :ensure t
