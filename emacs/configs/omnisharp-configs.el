@@ -22,6 +22,7 @@
   (add-hook 'csharp-mode-hook 'omnisharp-mode)
   (add-hook 'csharp-mode-hook 'company-mode)
   (add-hook 'csharp-mode-hook 'eldoc-mode)
+  (add-hook 'csharp-mode-hook 'hs-minor-mode)
   (add-hook 'csharp-mode-hook 'd12/omnisharp-setup)
   :config
   (require 'company)
