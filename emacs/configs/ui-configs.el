@@ -72,7 +72,8 @@
           dynamic-fonts-preferred-monospace-point-size 12
 
           dynamic-fonts-preferred-proportional-fonts
-          '("Fira Sans" ; https://www.mozilla.org/en-US/styleguide/products/firefox-os/typeface/
+          '("M+ 1m"     ; http://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html
+            "Fira Sans" ; https://www.mozilla.org/en-US/styleguide/products/firefox-os/typeface/
             "Helvetica")
           dynamic-fonts-preferred-proportional-point-size 12)
 
