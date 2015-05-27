@@ -91,30 +91,20 @@
 
 ;;; Themes
 ;; ========
+;;
+;; previously I was using different themes based on my mood
+;; and also I was using different themes for terminal emacs and GUI
+;; but leuven conquered me
+;; it all started with org-mode (if you know what I mean)
+;; and then I found that it's the best theme for eveyrthing
 
 (use-package leuven
   :ensure leuven-theme
-  :defer t
-  :config
+  :init
+  (load-theme 'leuven t)
+  (set-face-attribute hl-line-face nil :underline nil)
   (setq d12/shm-current-face-bg "#F6FECD"
         d12/shm-quarantine-face-bg "#FBE3E4"))
-
-(use-package solarized
-  :disabled t
-  :ensure solarized-theme
-  :defer t
-  :init (load-theme 'solarized-light 'no-confirm))
-
-(use-package zenburn
-  :disabled t
-  :ensure zenburn-theme
-  :defer t
-  :config
-  (setq d12/shm-current-face-bg "#6F6F6F"
-        d12/shm-quarantine-face-bg "#8C5353"))
-
-(load-theme 'leuven t)
-(set-face-attribute hl-line-face nil :underline nil)
 
 ;;; Various pretty packages
 ;; =========================
