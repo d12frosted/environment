@@ -65,8 +65,9 @@
   :config
   (progn
     (setq dynamic-fonts-preferred-monospace-fonts
-          '("Source Code Pro" ; https://github.com/adobe-fonts/source-code-pro
-            "Anonymous Pro" ; http://www.marksimonson.com/fonts/view/anonymous-pro
+          '("M+ 1m"           ; http://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html
+            "Source Code Pro" ; https://github.com/adobe-fonts/source-code-pro
+            "Anonymous Pro"   ; http://www.marksimonson.com/fonts/view/anonymous-pro
             "Menlo")
           dynamic-fonts-preferred-monospace-point-size 12
 
