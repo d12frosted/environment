@@ -5,7 +5,7 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:t
 
-My personal emacs configurations.
+My personal emacs configurations. I like to experiment with them, so sometimes I just break things. And forget to write about it. This was a regular warning :D
 
 * Dependencies
 
@@ -30,18 +30,6 @@ $ cd emacs-mac
 #+END_SRC
 
 Then check the installation instructions from ~README-mac~ file. Or checkout [[https://github.com/railwaycat/emacs-mac-port][this mirror]] for more information.
-
-** Spacemacs
-
-Currently I am using [[https://github.com/syl20bnr/spacemacs][Spacemacs]] as starting point for my configurations. It comes out with great batteries and cool philosophy of configuration layers. It's fast and ready to work out of box, but we are emacs users, we can't avoid configuring things, right?
-
-So go and grab the latest version of Spacemacs (don't forget to backup your ~.emacs.d~):
-
-#+BEGIN_SRC sh
-$ git clone --recursive http://github.com/syl20bnr/spacemacs ~/.emacs.d
-#+END_SRC
-
-Then start emacs, wait for it to install some packages. After it finishes it's work you should restart emacs. Now it's almost ready to work. Almost - because you need my configurations, right?
 
 ** Various tools
 
