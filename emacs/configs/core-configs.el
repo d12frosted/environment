@@ -59,14 +59,20 @@
 (setq d12/custom-configs
       '("ui"
         "org"
-        "magit"
+
+        ;; apps
         "elfeed"
-        "syntax-checking"
         "mu4e"
-        "auto-completion"
-        "omnisharp"
+
+        ;; utils
+        "magit"
+        "flycheck"
+        "completion"
+
+        ;; langs
         "lisp"
-        "haskell"))
+        "haskell"
+        "omnisharp"))
 
 ;;; Packages
 ;; ==========
