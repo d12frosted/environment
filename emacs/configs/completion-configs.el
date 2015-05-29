@@ -1,4 +1,4 @@
-;;; auto-complete-configs.el --- configs file of auto complete configurations
+;;; completion-configs.el --- configs file of completion configurations
 ;;
 ;; Copyright (c) 2014-2015 Boris Buliga
 ;;
