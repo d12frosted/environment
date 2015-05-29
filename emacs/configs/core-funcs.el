@@ -244,9 +244,9 @@ point reaches the beginning or end of the buffer, stop there."
   (interactive)
   (let ((x (frame-parameter nil 'fullscreen)))
     (set-frame-parameter nil 'fullscreen
-			 (cond ((not x) 'maximized)
-			       ((eq x 'maximized) 'fullboth)
-			       (t nil)))))
+                         (cond ((not x) 'maximized)
+                               ((eq x 'maximized) 'fullboth)
+                               (t nil)))))
 
 ;; Thanks to Sylvain Benner
 (defmacro d12|add-toggle (name &rest props)
@@ -283,9 +283,9 @@ point reaches the beginning or end of the buffer, stop there."
          ;; we evaluate condition and status only if they are a list or
          ;; a bound symbol
          (if (or (null ',condition)
-                   (and (or (and (symbolp ',condition) (boundp ',condition))
-                            (listp ',condition))
-                        ,condition))
+                 (and (or (and (symbolp ',condition) (boundp ',condition))
+                          (listp ',condition))
+                      ,condition))
              (if (and (or (and (symbolp ',status) (boundp ',status))
                           (listp ',status))
                       ,status) (progn ,@off-body) ,@on-body)
