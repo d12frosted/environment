@@ -1,4 +1,4 @@
-;;; syntax-checking-funcs.el --- funcs file of syntax checking configurations
+;;; flycheck-funcs.el --- funcs file of flycheck configurations
 ;;
 ;; Copyright (c) 2014-2015 Boris Buliga
 ;;
