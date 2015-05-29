@@ -22,3 +22,10 @@
           (line-args d12/eldoc-msg-args))
       (setq header-line-format (apply 'format line-format line-args))
       (force-mode-line-update))))
+
+(defun highlight-TODO-words ()
+  "Highlight keywords for  "
+  (interactive)
+  (font-lock-add-keywords
+   nil '(("\\<\\(\\(FIX\\(ME\\)?\\|TODO\\|OPTIMIZE\\|HACK\\|REFACTOR\\):\\)"
+          1 font-lock-warning-face t))))
