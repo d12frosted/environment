@@ -1,4 +1,4 @@
-;;; syntax-checking-configs.el --- configs file of syntax checking configurations
+;;; flycheck-configs.el --- configs file of flycheck configurations
 ;;
 ;; Copyright (c) 2014-2015 Boris Buliga
 ;;
