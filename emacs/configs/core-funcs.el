@@ -228,6 +228,73 @@ point reaches the beginning or end of the buffer, stop there."
   `(defadvice ,mode (after d12|lazy-diminish-hack activate)
      (d12|diminish ,mode ,dim)))
 
+;;; Text manipulations
+;; ====================
+
+(defun d12/copy-line-or-region ()
+  "Copy current line (with newline character) or region. When `universal-argument' is called first, copy whole buffer (but respect `narrow-to-region')."
+  (interactive)
+  (kill-ring-save (d12/line-or-region-point-min)
+                  (d12/line-or-region-point-max))
+  (message "copied"))
+
+(defun d12/cut-line-or-region ()
+  "Cut current line or region. When `universal-argument' is called first, cut whole buffer (but respect `narrow-to-region')."
+  (interactive)
+  (kill-region (d12/line-or-region-point-min)
+               (d12/line-or-region-point-max))
+  (message "cut"))
+
+(defun d12/duplicate-line-or-region ()
+  "Duplicates current line or region. When `universal-argument' is called first, duplicate whole buffer (but respect `narrow-to-region')."
+  (interactive)
+  (kill-ring-save (d12/line-or-region-point-min)
+                  (d12/line-or-region-point-max))
+  (move-beginning-of-line 1)
+  (yank)
+  (message "duplicated"))
+
+(defun d12/delete-line-or-region ()
+  "Delete current line or region without putting it to kill-ring. When `universal-argument' is called first, duplicate whole buffer (but respect `narrow-to-region')."
+  (interactive)
+  (delete-region (d12/line-or-region-point-min)
+                 (d12/line-or-region-point-max))
+  (message "deleted"))
+
+(defun d12/line-or-region-point-min ()
+  "Return min point of line or region. When `universal-argument' is called first, returns min point of whole buffer (but respect `narrow-to-region')."
+  (if (null current-prefix-arg)
+      (if (use-region-p)
+          (region-beginning)
+        (line-beginning-position))
+    (point-min)))
+
+(defun d12/line-or-region-point-max ()
+  "Return max point of line or region. When `universal-argument' is called first, returns max point of whole buffer (but respect `narrow-to-region')."
+  (if (null current-prefix-arg)
+      (if (use-region-p)
+          (region-end)
+        (line-beginning-position 2))
+    (point-max)))
+
+(defun endless/comment-line-or-region (n)
+  "Comment or uncomment current line and leave point after it.
+With positive prefix, apply to N lines including current one.
+With negative prefix, apply to -N lines above.
+If region is active, apply to active region instead."
+  (interactive "p")
+  (if (use-region-p)
+      (comment-or-uncomment-region
+       (region-beginning) (region-end))
+    (let ((range
+           (list (line-beginning-position)
+                 (goto-char (line-end-position n)))))
+      (comment-or-uncomment-region
+       (apply #'min range)
+       (apply #'max range)))
+    (forward-line 1)
+    (back-to-indentation)))
+
 ;;; Various stuff
 ;; ===============
 
@@ -296,69 +363,91 @@ point reaches the beginning or end of the buffer, stop there."
   "Disable `global-hl-line-mode' locally."
   (setq-local global-hl-line-mode nil))
 
-;;; Text manipulations
-;; --------------------
+;;; Utils
+;; -------
 
-(defun d12/copy-line-or-region ()
-  "Copy current line (with newline character) or region. When `universal-argument' is called first, copy whole buffer (but respect `narrow-to-region')."
+(defun util-count-lines (beg end)
+  (let (tmp)
+    (if (< end beg) (progn (setq tmp beg) (setq beg end) (setq end tmp)))
+    (save-excursion
+      (goto-char beg) (setq beg (line-beginning-position))
+      (goto-char end) (setq end (line-beginning-position)))
+    (count-lines beg end)))
+
+(defun empty-line-suffix () (only-whitespace (current-line-suffix)))
+
+(defun empty-line-prefix () (only-whitespace (current-line-prefix)))
+
+(defun only-whitespace (str) (and (string-match "^[ \r\t]*\$" str) 't))
+
+(defun current-line ()
+  (buffer-substring (line-beginning-position) (line-end-position)))
+
+(defun current-line-full ()
+  (buffer-substring (line-beginning-position) (+ 1 (line-end-position))))
+
+(defun current-line-prefix ()
+  (buffer-substring (line-beginning-position) (point)))
+
+(defun current-line-suffix () (buffer-substring (point) (line-end-position)))
+
+(defun current-line-number ()
+  (let ((linenum (string-to-int (substring (what-line) 5))))
+    (message "")
+    linenum))
+
+(defun current-number ()
+  (save-excursion
+    (let (beg)
+      (skip-chars-backward "0-9")
+      (setq beg (point))
+      (skip-chars-forward "0-9")
+      (buffer-substring beg (point)))))
+
+;; from https://github.com/cofi/dotfiles/blob/master/emacs.d/config/cofi-util.el#L38
+(defun add-to-hooks (fun hooks)
+  "Add function to hooks"
+  (dolist (hook hooks)
+    (add-hook hook fun)))
+
+(defun add-all-to-hook (hook &rest funs)
+  "Add functions to hook."
+  (add-to-hook hook funs))
+
+(defun add-to-hook (hook funs)
+  "Add list of functions to hook."
+  (dolist (fun funs)
+    (add-hook hook fun)))
+
+(defun echo (msg &rest args)
+  "Display MSG in echo-area without logging it in *Messages* buffer."
   (interactive)
-  (kill-ring-save (d12/line-or-region-point-min)
-                  (d12/line-or-region-point-max))
-  (message "copied"))
+  (let ((message-log-max nil))
+    (apply 'message msg args)))
 
-(defun d12/cut-line-or-region ()
-  "Cut current line or region. When `universal-argument' is called first, cut whole buffer (but respect `narrow-to-region')."
+(defun new-empty-buffer ()
+  "Create a new buffer called untitled(<n>)"
   (interactive)
-  (kill-region (d12/line-or-region-point-min)
-               (d12/line-or-region-point-max))
-  (message "cut"))
+  (let ((newbuf (generate-new-buffer-name "untitled")))
+    (switch-to-buffer newbuf)))
 
-(defun d12/duplicate-line-or-region ()
-  "Duplicates current line or region. When `universal-argument' is called first, duplicate whole buffer (but respect `narrow-to-region')."
+(defun system-is-mac ()
+  (string-equal system-type "darwin"))
+
+(defun system-is-linux ()
+  (string-equal system-type "gnu/linux"))
+
+(defun system-is-mswindows ()
+  (string-equal system-type "windows-nt"))
+
+(defun spacemacs/open-in-external-app ()
+  "Open current file in external application."
   (interactive)
-  (kill-ring-save (d12/line-or-region-point-min)
-                  (d12/line-or-region-point-max))
-  (move-beginning-of-line 1)
-  (yank)
-  (message "duplicated"))
-
-(defun d12/delete-line-or-region ()
-  "Delete current line or region without putting it to kill-ring. When `universal-argument' is called first, duplicate whole buffer (but respect `narrow-to-region')."
-  (interactive)
-  (delete-region (d12/line-or-region-point-min)
-                 (d12/line-or-region-point-max))
-  (message "deleted"))
-
-(defun d12/line-or-region-point-min ()
-  "Return min point of line or region. When `universal-argument' is called first, returns min point of whole buffer (but respect `narrow-to-region')."
-  (if (null current-prefix-arg)
-      (if (use-region-p)
-          (region-beginning)
-        (line-beginning-position))
-    (point-min)))
-
-(defun d12/line-or-region-point-max ()
-  "Return max point of line or region. When `universal-argument' is called first, returns max point of whole buffer (but respect `narrow-to-region')."
-  (if (null current-prefix-arg)
-      (if (use-region-p)
-          (region-end)
-        (line-beginning-position 2))
-    (point-max)))
-
-(defun endless/comment-line-or-region (n)
-  "Comment or uncomment current line and leave point after it.
-With positive prefix, apply to N lines including current one.
-With negative prefix, apply to -N lines above.
-If region is active, apply to active region instead."
-  (interactive "p")
-  (if (use-region-p)
-      (comment-or-uncomment-region
-       (region-beginning) (region-end))
-    (let ((range
-           (list (line-beginning-position)
-                 (goto-char (line-end-position n)))))
-      (comment-or-uncomment-region
-       (apply #'min range)
-       (apply #'max range)))
-    (forward-line 1)
-    (back-to-indentation)))
+  (let ((file-path (if (eq major-mode 'dired-mode)
+                       (dired-get-file-for-visit)
+                     (buffer-file-name))))
+    (cond
+     ((system-is-mswindows) (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" file-path)))
+     ((system-is-mac) (shell-command (format "open \"%s\"" file-path)))
+     ((system-is-linux) (let ((process-connection-type nil))
+                          (start-process "" nil "xdg-open" file-path))))))
