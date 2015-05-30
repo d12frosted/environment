@@ -176,10 +176,6 @@
         org-journal-file-pattern (org-journal-format-string->regex org-journal-file-format)
         org-journal-hide-entries-p nil))
 
-(use-package org-pomodoro
-  :ensure t
-  :defer t)
-
 ;;; Publishing
 ;; ============
 
