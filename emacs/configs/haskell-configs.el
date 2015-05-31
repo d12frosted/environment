@@ -99,7 +99,7 @@
        "Data.Ord")))
 
   (bind-keys
-   :mode haskell-mode-map
+   :map haskell-mode-map
    ("M-." . haskell-mode-jump-to-def-or-tag)
    ("M-," . pop-tag-mark)
    ("C-c C-l" . haskell-process-load-or-reload)
@@ -115,21 +115,18 @@
    ("C-<left>" . haskell-move-left))
 
   (bind-keys
-   :mode interactive-haskell-mode-map
+   :map haskell-interactive-mode-map
    ("<f5>" . haskell-process-load-or-reload)
    ("C-c C-k" . haskell-interactive-mode-clear)
    ("C-c C-c" . haskell-process-cabal-build)
-   ("C-c c" . haskell-process-cabal))
-
-  (bind-keys
-   :mode haskell-interactive-mode-map
+   ("C-c c" . haskell-process-cabal)
    ("C-<left>" . haskell-interactive-mode-error-backward)
    ("C-<right>" . haskell-interactive-mode-error-forward)
    ("C-c C-i" . haskell-process-do-info)
    ("C-c c" . haskell-process-cabal))
 
   (bind-keys
-   :mode haskell-cabal-mode-map
+   :map haskell-cabal-mode-map
    ("C-`" . haskell-interactive-bring)
    ("C-c C-k" . haskell-interactive-mode-clear)
    ("C-c C-c" . haskell-process-cabal-build)
