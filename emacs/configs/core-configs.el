@@ -607,9 +607,6 @@
  ("C-;" . comment-dwim)
  ("M-;" . endless/comment-line-or-region)
 
- ("M-F" . util-forward-word)
- ("M-B" . util-backward-word)
-
  ;; I am using it very often
  ("C-x a r" . align-regexp)
  ("M-[" . align))
