@@ -23,15 +23,15 @@
   (add-hook 'csharp-mode-hook 'company-mode)
   (add-hook 'csharp-mode-hook 'eldoc-mode)
   (add-hook 'csharp-mode-hook 'hs-minor-mode)
+  (add-hook 'csharp-mode-hook 'hide-ifdef-mode)
   (add-hook 'csharp-mode-hook 'd12/omnisharp-setup)
   :config
   (require 'company)
   (d12|diminish omnisharp-mode " ♯")
+  (d12|diminish hs-minor-mode "")
+  (d12|diminish hide-ifdef-mode "")
 
   (add-to-list 'company-backends 'company-omnisharp)
-
-  (c-set-offset 'case-label '+)
-  (c-set-offset 'cpp-macro 'csharp-lineup-region)
 
   (local-unset-key (kbd "{"))
 
@@ -88,4 +88,19 @@
    ("C-." . omnisharp-auto-complete)
    ;; Some usefull shotcuts
    ("M-." . d12/omnisharp-go-to-definition-at-center)
-   ("M-," . pop-tag-mark)))
+   ("M-," . pop-tag-mark)
+   ("<return>" . reindent-then-newline-and-indent))
+
+  (unless (assoc 'csharp-mode hs-special-modes-alist)
+    (push '(csharp-mode
+            ;; regexp for start block
+            "\\([ \\t]*#[ \\t]*region\\b\\)\\|{"
+
+            ;; regexp for end block
+            "\\([ \\t]*#[ \\t]*endregion\\b\\)\\|}"
+
+            "/[*/]"                                 ; regexp for comment start
+            csharp-hs-forward-sexp                  ; hs-forward-sexp-func
+            hs-c-like-adjust-block-beginning        ; c-like adjust (1 char)
+            )
+          hs-special-modes-alist)))
