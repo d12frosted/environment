@@ -22,7 +22,9 @@
            (setq-local c-default-style "k&r")
            (setq-local c-basic-offset 4)
            (setq-local tab-width 4)
-           (setq-local hs-isearch-open t)))
+           (setq-local hs-isearch-open t)
+           (c-set-offset 'case-label '+)
+           (c-set-offset 'cpp-macro 'csharp-lineup-region)))
 
 ;;; Hide-show
 ;; ===========
@@ -67,24 +69,6 @@
 
            (if (= nest 0)
                (goto-char (match-end 2))))))))
-
-(unless (assoc 'csharp-mode hs-special-modes-alist)
-  (push '(csharp-mode
-          ;; regexp for start block
-          "\\(^[ \\t]*#[ \\t]*region\\b\\)\\|{"
-
-          ;; regexp for end block
-          "\\(^[ \\t]*#[ \\t]*endregion\\b\\)\\|}"
-
-          ;; regexp for comment start
-          "/[*/]"
-
-          ;; hs-forward-sexp-func
-          csharp-hs-forward-sexp
-
-          ;; c-like adjust (1 char)
-          hs-c-like-adjust-block-beginning)
-        hs-special-modes-alist))
 
 ;;; Other stuff
 ;; =============
