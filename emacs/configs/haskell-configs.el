@@ -29,7 +29,8 @@
                 (concat
                  "{-# LANGUAGE NoImplicitPrelude #-}\n"
                  "{-# LANGUAGE OverloadedStrings #-}\n\n"
-                 "module %s where\n\n"))
+                 "module %s where\n\n"
+                 "import BasicPrelude\n\n"))
   :config
   (d12|rename-modeline "haskell-mode" haskell-mode "λ")
   ;; add `speedbar' support
