@@ -123,7 +123,7 @@
                   :off (nyan-mode -1)
                   :documentation "Show a nyan cat progress bar in the mode-line."
                   :bind-global "C-c t n")
-  (nyan-mode))
+  (unless nyan-mode (nyan-mode)))
 
 ;; Fontify number literals
 (use-package highlight-numbers
