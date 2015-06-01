@@ -88,8 +88,7 @@
    ("C-." . omnisharp-auto-complete)
    ;; Some usefull shotcuts
    ("M-." . d12/omnisharp-go-to-definition-at-center)
-   ("M-," . pop-tag-mark)
-   ("<return>" . reindent-then-newline-and-indent))
+   ("M-," . pop-tag-mark))
 
   (unless (assoc 'csharp-mode hs-special-modes-alist)
     (push '(csharp-mode
