@@ -415,8 +415,8 @@
   :ensure t
   :defer t
   :bind
-  (("M-i" . helm-swoop)
-   ("M-I" . helm-swoop-back-to-last-point)
+  (("M-i"     . helm-swoop)
+   ("M-I"     . helm-swoop-back-to-last-point)
    ("C-c M-i" . helm-multi-swoop)
    ("C-x M-i" . helm-multi-swoop-all))
   :config
@@ -598,10 +598,10 @@
  ;; usually I remove lines and regions by <M-w>
  ;; but when I don't want to put it to kill-ring
  ;; I use <C-S-backspace>
- ("C-w" . d12/cut-line-or-region)
- ("M-w" . d12/copy-line-or-region)
+ ("C-w"             . d12/cut-line-or-region)
+ ("M-w"             . d12/copy-line-or-region)
  ("C-S-<backspace>" . d12/delete-line-or-region)
- ("C-c u d" . d12/duplicate-line-or-region)
+ ("C-c u d"         . d12/duplicate-line-or-region)
 
  ;; commenting
  ("C-;" . comment-dwim)
@@ -609,7 +609,7 @@
 
  ;; I am using it very often
  ("C-x a r" . align-regexp)
- ("M-[" . align))
+ ("M-["     . align))
 
 ;; and load my custom configurations
 ;; that's the final step for this file
