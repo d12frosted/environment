@@ -56,6 +56,8 @@
 ;; ridiculously bizarre thing entirely.
 (fset 'display-startup-echo-area-message #'ignore)
 
+(add-hook 'prog-mode-hook 'd12/highlight-TODO-words)
+
 ;;; Fonts
 ;; =======
 
