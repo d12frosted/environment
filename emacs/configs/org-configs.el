@@ -63,7 +63,9 @@
          ("C-c o i t" . d12/org-insert-time)
          ("C-c o i d" . d12/org-insert-date)
          ("C-c o i D" . d12/org-insert-full-date)
-         ("C-c o l" . org-store-link))
+         ("C-c o c i" . org-clock-in-last)
+         ("C-c o c o" . org-clock-out)
+         ("C-c o c l" . org-store-link))
   :config
   (d12|define-prefix-global "C-c o i" insert)
   (require 's)
