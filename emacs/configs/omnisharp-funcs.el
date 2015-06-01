@@ -70,6 +70,36 @@
            (if (= nest 0)
                (goto-char (match-end 2))))))))
 
+;;; Faces
+;; =======
+
+(defun d12/csharp-highlight-directives ()
+  (interactive)
+
+  ;; if directive
+  (make-face 'font-lock-csharp-if-directive-face)
+  (set-face-attribute 'font-lock-csharp-if-directive-face nil
+                      :height 1.0
+                      :weight 'bold
+                      :overline "#A7A7A7"
+                      :foreground "#3C3C3C"
+                      :background "#F0F0F0")
+  (setq csharp-if-directive-font-lock `(("\\([ ]*#\\(if .*\\|else\\|endif\\)\\)" 1 'font-lock-csharp-if-directive-face t)))
+
+  ;; region directive
+  (make-face 'font-lock-csharp-region-directive-face)
+  (set-face-attribute 'font-lock-csharp-region-directive-face nil
+                      :height 1.0
+                      :weight 'bold
+                      :overline "#123555"
+                      :foreground "#123555"
+                      :background "#E5F4FB")
+  (setq csharp-region-directive-font-lock `(("\\([ ]*#\\(region .*\\|endregion\\)\\)" 1 'font-lock-csharp-region-directive-face t)))
+
+  ;; update font-lock
+  (font-lock-add-keywords 'csharp-mode csharp-if-directive-font-lock)
+  (font-lock-add-keywords 'csharp-mode csharp-region-directive-font-lock))
+
 ;;; Other stuff
 ;; =============
 
