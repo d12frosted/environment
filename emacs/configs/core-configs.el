@@ -72,7 +72,8 @@
         ;; langs
         "lisp"
         "haskell"
-        "omnisharp"))
+        "omnisharp"
+        "python"))
 
 ;;; Packages
 ;; ==========
