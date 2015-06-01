@@ -65,6 +65,7 @@
          ("C-c o i D" . d12/org-insert-full-date)
          ("C-c o l" . org-store-link))
   :config
+  (d12|define-prefix-global "C-c o i" insert)
   (require 's)
 
   (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
