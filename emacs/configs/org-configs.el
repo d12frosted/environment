@@ -162,7 +162,7 @@
 (use-package org-journal
   :ensure t
   :mode (".*/[0-9]*-[0-9]*-[0-9]*$" . org-journal-mode)
-  :bind (("C-c o c"  . calendar)
+  :bind (("C-c o j"  . calendar)
          ("C-c o n"  . org-journal-new-entry)
          ("C-c o v"  . org-journal-visit-entry))
   :init
