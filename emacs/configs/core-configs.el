@@ -32,7 +32,7 @@
 (setq user-github-url "https://github.com/d12frosted")
 (setq user-home-url "http://d12frosted.github.io")
 
-(defconst d12/guide-prefix "d12/"
+(defconst d12/guide-prefix "d12-"
   "Prefix for guide-key prefixes! Because prefix.")
 
 (defconst d12/cache-directory
@@ -299,7 +299,7 @@
   (d12|define-prefix-global "C-c v" version-control)
 
   ;; highlight 'd12/guide-prefix
-  (setq guide-key/highlight-command-regexp d12/guide-prefix)
+  ;; (setq guide-key/highlight-command-regexp d12/guide-prefix)
 
   ;; guide all keys
   (setq guide-key/guide-key-sequence t)
