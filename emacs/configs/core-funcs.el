@@ -135,7 +135,7 @@ and its values are removed."
 (defmacro d12|define-prefix-global (key-name prefix-name)
   "Define prefix command for KEY-NAME globally.
    Uses 'd12/guide-prefix to build the name."
-  (let ((name (intern (concat d12/guide-prefix (symbol-name prefix-name)))))
+  (let ((name (intern (concat d12/guide-prefix (symbol-name prefix-name) "-command-prefix"))))
     `(progn (define-prefix-command ',name)
             (bind-key ,key-name ',name))))
 
