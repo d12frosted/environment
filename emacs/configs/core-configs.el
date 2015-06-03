@@ -401,7 +401,7 @@
    ("C-c m e" . helm-enable-minor-mode)
    ("C-c m d" . helm-disable-minor-mode))
   :init
-  (d12|define-prefix-global "C-c b m" mode-manager))
+  (d12|define-prefix-global "C-c m" mode-manager))
 
 (use-package helm-descbinds
   :ensure t
