@@ -31,13 +31,6 @@
   (d12|diminish hs-minor-mode "")
   (d12|diminish hide-ifdef-mode "")
 
-  (set-face-attribute 'font-lock-preprocessor-face nil
-                      :height 1.0
-                      :weight 'bold
-                      :overline "#123555"
-                      :foreground "#123555"
-                      :background "#E5F4FB")
-
   (add-to-list 'company-backends 'company-omnisharp)
 
   (local-unset-key (kbd "{"))
