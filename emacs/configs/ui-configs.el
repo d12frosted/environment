@@ -154,7 +154,9 @@
   :init
   (setq sml/no-confirm-load-theme t)
   (setq sml/theme nil)
-  (sml/setup))
+  (sml/setup)
+  :config
+  (add-to-list 'sml/replacer-regexp-list '("^~/Dropbox/org/" ":ORG:")))
 
 ;;; Scratch buffer
 ;; ================
