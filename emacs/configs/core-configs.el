@@ -569,7 +569,7 @@
 (use-package ace-window
   :ensure t
   :bind
-  (("M-p" . ace-window)))
+  (("<f12>" . ace-window)))
 
 ;;; Other configurations
 ;; ======================
