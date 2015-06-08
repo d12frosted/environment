@@ -577,12 +577,11 @@
 (use-package abbrev
   :diminish abbrev-mode)
 
-(use-package subword
+(use-package syntax-subword
+  :ensure t
   :defer t
   :init
-  (add-hook 'prog-mode-hook 'subword-mode)
-  :config
-  (d12|diminish subword-mode ""))
+  (add-hook 'prog-mode-hook 'syntax-subword-mode))
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
