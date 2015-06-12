@@ -25,6 +25,7 @@
   (add-hook 'csharp-mode-hook 'hs-minor-mode)
   (add-hook 'csharp-mode-hook 'hide-ifdef-mode)
   (add-hook 'csharp-mode-hook 'd12/omnisharp-setup)
+  (add-hook 'csharp-mode-hook 'flycheck-mode)
   :config
   (require 'company)
   (d12|diminish omnisharp-mode " ♯")
