@@ -483,14 +483,46 @@
   (setq projectile-switch-project-action 'helm-projectile)
   (helm-projectile-on))
 
-;;; Various
-;; ---------
-
-(use-package elec-pair
-  :init (electric-pair-mode))
+;;; Parents and stuff
+;; -------------------
 
 (use-package smartparens
-  :ensure t)
+  :ensure t
+  :defer t
+  :init
+  (add-hook 'prog-mode-hook 'smartparens-mode)
+  :config
+  (bind-keys
+   :map smartparens-mode-map
+   ("C-M-f" . sp-forward-sexp)
+   ("C-M-b" . sp-backward-sexp)
+   ("C-M-d" . sp-down-sexp)
+   ("C-M-a" . sp-backward-down-sexp)
+   ("C-S-a" . sp-beginning-of-sexp)
+   ("C-S-e" . sp-end-of-sexp)
+   ("C-M-e" . sp-up-sexp)
+   ("C-M-u" . sp-backward-up-sexp)
+   ("C-M-t" . sp-transpose-sexp)
+   ("C-M-n" . sp-next-sexp)
+   ("C-M-p" . sp-previous-sexp)
+   ("C-M-k" . sp-kill-sexp)
+   ("C-M-w" . sp-copy-sexp)
+   ("A-<delete>" . sp-unwrap-sexp)
+   ("A-<backspace>" . sp-backward-unwrap-sexp)
+   ("C-<right>" . sp-forward-slurp-sexp)
+   ("C-<left>" . sp-forward-barf-sexp)
+   ("C-M-<left>" . sp-backward-slurp-sexp)
+   ("C-M-<right>" . sp-backward-barf-sexp)
+   ("M-D" . sp-splice-sexp)
+   ("C-M-<delete>" . sp-splice-sexp-killing-forward)
+   ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
+   ("C-S-<backspace>" . sp-splice-sexp-killing-around)
+   ("C-]" . sp-select-next-thing-exchange)
+   ("C-<left_bracket>" . sp-select-previous-thing)
+   ("C-M-]" . sp-select-next-thing)
+   ("M-F" . sp-forward-symbol)
+   ("M-B" . sp-backward-symbol)))
+
 (use-package corral
   :ensure t
   :bind
@@ -501,6 +533,9 @@
   ("M-{"  . corral-braces-backward)
   ("M-}"  . corral-braces-forward)
   ("M-\"" . corral-double-quotes-backward))
+
+;;; Various
+;; ---------
 
 (use-package restclient                ; ReST REPL for Emacs
   :ensure t
