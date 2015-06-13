@@ -156,6 +156,7 @@
   (setq sml/theme nil)
   (sml/setup)
   :config
+  (setq sml/mode-width 16)
   (add-to-list 'sml/replacer-regexp-list '("^~/Dropbox/org/" ":ORG:")))
 
 ;;; Scratch buffer
