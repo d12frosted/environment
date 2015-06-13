@@ -18,7 +18,8 @@
   :ensure t
   :defer t
   :init
-  (setq omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe")
+  ;; (setq omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe")
+  (setq omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
   (add-hook 'csharp-mode-hook 'omnisharp-mode)
   (add-hook 'csharp-mode-hook 'company-mode)
   (add-hook 'csharp-mode-hook 'eldoc-mode)
@@ -84,12 +85,12 @@
    ("C-c c u"   . omnisharp-auto-complete-overrides)
    ("C-c c i"   . omnisharp-fix-usings)
    ("C-c c ="   . omnisharp-code-format)
-   ("C-c <" . hs-hide-block)
-   ("C-c >" . hs-show-block)
-   ("C-." . omnisharp-auto-complete)
+   ("C-c <"     . hs-hide-block)
+   ("C-c >"     . hs-show-block)
+   ("C-."       . omnisharp-auto-complete)
    ;; Some usefull shotcuts
-   ("M-." . d12/omnisharp-go-to-definition-at-center)
-   ("M-," . pop-tag-mark))
+   ("M-."       . d12/omnisharp-go-to-definition-at-center)
+   ("M-,"       . pop-tag-mark))
 
   (unless (assoc 'csharp-mode hs-special-modes-alist)
     (push '(csharp-mode
