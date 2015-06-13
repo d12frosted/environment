@@ -15,8 +15,8 @@
 ;;; Code
 
 (defun gtd ()
-   (interactive)
-   (find-file (concat d12/org-home-path "gtd.org")))
+  (interactive)
+  (find-file (concat d12/org-home-path "gtd.org")))
 
 (defun d12/reload-agenda-files ()
   (interactive)
