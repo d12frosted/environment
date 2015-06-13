@@ -619,6 +619,18 @@
 ;;; Other configurations
 ;; ======================
 
+(use-package direx
+  :ensure t
+  :init
+  (push '(direx:direx-mode :position left :width 25 :dedicated t)
+        popwin:special-display-config)
+  (global-set-key (kbd "C-x C-j") 'direx:jump-to-directory-other-window))
+
+(use-package neotree
+  :ensure t
+  :init
+  (setq neo-theme 'nerd))
+
 (use-package abbrev
   :diminish abbrev-mode)
 
