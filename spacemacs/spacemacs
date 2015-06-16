@@ -23,6 +23,8 @@
      (org :variables
           org-enable-github-support t
           org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))
+     (shell :variables
+            shell-default-term-shell "/usr/local/bin/fish")
 
      ;; my own layers
      (d12frosted :variables
@@ -36,7 +38,6 @@
              ;; todo - uncomment this whel omnisharp-emacs is updated
              ;; omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp"
              omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe")
-     shell
      python
      haskell
 
