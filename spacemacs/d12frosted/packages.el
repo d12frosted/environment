@@ -511,6 +511,27 @@ Default for SITEMAP-FILENAME is 'sitemap.org'."
           (if (and b e (< (point) e)) (setq rlt nil)))
         (setq ad-return-value rlt)))
 
+    (defun org-clock-get-clock-string ()
+  "Form a clock-string, that will be shown in the mode line.
+If an effort estimate was defined for the current item, use
+01:30/01:50 format (clocked/estimated).
+If not, show simply the clocked time like 01:50."
+  (let ((clocked-time (org-clock-get-clocked-time)))
+    (if org-clock-effort
+        (let* ((effort-in-minutes
+                (org-duration-string-to-minutes org-clock-effort))
+               (work-done-str
+                (org-propertize
+                 (org-minutes-to-clocksum-string clocked-time)
+                 'face (if (and org-clock-task-overrun (not org-clock-task-overrun-text))
+                           'org-mode-line-clock-overrun 'org-mode-line-clock)))
+               (effort-str (org-minutes-to-clocksum-string effort-in-minutes))
+               (clockstr (org-propertize (concat  " [%s/" effort-str "] ")
+                                         'face 'org-mode-line-clock)))
+          (format clockstr work-done-str))
+      (org-propertize (concat "[" (org-minutes-to-clocksum-string clocked-time) "]")
+                      'face 'org-mode-line-clock))))
+
     (setq org-todo-keywords
           '((sequence
              ;; The item is ready to be done at the earliest opportunity or
