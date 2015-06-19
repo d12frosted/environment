@@ -729,6 +729,10 @@ If not, show simply the clocked time like 01:50."
             hs-special-modes-alist)))
   )
 
+;; ======================
+;;; Elfeed configurations
+;; ======================
+
 (defun d12frosted/init-elfeed ()
   "Initialize elfeed package."
   (use-package elfeed
