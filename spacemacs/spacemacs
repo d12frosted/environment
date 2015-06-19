@@ -23,6 +23,7 @@
      (org :variables
           org-enable-github-support t
           org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))
+     restclient
      (shell :variables
             shell-default-term-shell "/usr/local/bin/fish")
 
@@ -34,14 +35,19 @@
 
      ;; languages
      emacs-lisp
+     shell-scripts
      (csharp :variables
              ;; todo - uncomment this whel omnisharp-emacs is updated
              ;; omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp"
              omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe")
+     (haskell :variables
+              haskell-enable-ghci-ng-support t
+              haskell-enable-shm-support t
+              haskell-enable-hindent-style "chris-done")
      python
-     haskell
 
      ;; misc
+     colors
      markdown
      spotify
      )
