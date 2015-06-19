@@ -17,5 +17,9 @@ set fish_color_redirection "3e999f"
 # nix
 eval (~/.environment/fish/nix_fish_env.sh) 2>/dev/null
 
+# git subrepo
+set -x PATH $HOME/Developer/git-subrepo/lib $PATH
+set -x MANPATH $HOME/Developer/git-subrepo/man $MANPATH
+
 # python
 eval (python -m virtualfish)
