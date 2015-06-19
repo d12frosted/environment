@@ -164,6 +164,9 @@ before layers configuration."
    ;; specified with an installed package.
    ;; Not used for now.
    dotspacemacs-default-package-repository nil
+
+   ;; show org current task in mode line
+   spacemacs-mode-line-org-clock-current-taskp t
    )
   ;; User initialization goes here
   (if (display-graphic-p)
