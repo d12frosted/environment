@@ -220,6 +220,16 @@ If region is active, apply to active region instead."
       (skip-chars-forward "0-9")
       (buffer-substring beg (point)))))
 
+(defun d12-fc/format-oos-msg ()
+  (interactive)
+  ;; todo - create new buffer for that
+  (let ((msg (substring-no-properties (car kill-ring))))
+    (string-match "error(\\(.*\\) verifiedHash(\\(.*\\)) clientHash(\\(.*\\)))" msg)
+    (insert (format "error: %s\nverified: %s\nclient:   %s"
+                    (match-string 1 msg)
+                    (match-string 2 msg)
+                    (match-string 3 msg)))))
+
 ;;; Misc configs
 
 ;; =====================
