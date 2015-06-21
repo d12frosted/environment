@@ -611,14 +611,15 @@ If not, show simply the clocked time like 01:50."
 ;; =====================
 
 (defun d12/omnisharp-setup ()
-  (progn (setq-local indent-tabs-mode t)
-         (setq-local c-default-style "k&r")
-         (setq-local c-basic-offset 4)
-         (setq-local tab-width 4)
-         (setq-local hs-isearch-open t)
-         (c-set-offset 'case-label '+)
-         (c-set-offset 'cpp-macro 'csharp-lineup-region)
-         (local-unset-key (kbd "{"))))
+  ;; (progn (setq-local indent-tabs-mode t)
+  ;;        (setq-local c-default-style "k&r")
+  ;;        (setq-local c-basic-offset 4)
+  ;;        (setq-local tab-width 4)
+  ;;        (setq-local hs-isearch-open t)
+  ;;        (c-set-offset 'case-label '+)
+  ;;        (c-set-offset 'cpp-macro 'csharp-lineup-region)
+  ;;        (local-unset-key (kbd "{")))
+  )
 
 (defun csharp-hs-forward-sexp (&optional arg)
   "Stolen from emacswiki"
