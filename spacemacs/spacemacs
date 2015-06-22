@@ -37,9 +37,9 @@
      emacs-lisp
      shell-scripts
      (csharp :variables
-             ;; todo - uncomment this whel omnisharp-emacs is updated
-             ;; omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp"
-             omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe")
+             omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp"
+             ;; omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe"
+             )
      (haskell :variables
               haskell-enable-ghci-ng-support t
               haskell-enable-shm-support t

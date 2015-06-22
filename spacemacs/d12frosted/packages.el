@@ -709,6 +709,24 @@ If not, show simply the clocked time like 01:50."
     ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "ms" "server")
     ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "mt" "tests")
 
+    (defun omnisharp--get-omnisharp-server-executable-command
+        (solution-file-path &optional server-exe-file-path)
+      (let* ((server-exe-file-path-arg (expand-file-name
+                                        (if (eq nil server-exe-file-path)
+                                            omnisharp-server-executable-path
+                                          server-exe-file-path)))
+             (solution-file-path-arg (expand-file-name solution-file-path))
+             (args (list server-exe-file-path-arg
+                         "-s"
+                         solution-file-path-arg)))
+        (cond
+         ((or (equal system-type 'cygwin)                    ; No mono needed on cygwin
+              (not (s-suffix-p ".exe" server-exe-file-path)) ; No mono needed on roslyn
+              (equal system-type 'windows-nt))
+          args)
+         (t                                                  ; some kind of unix: linux or osx
+          (cons "mono" args)))))
+
     (bind-keys
      :map csharp-mode-map
      ;; Some usefull shotcuts
