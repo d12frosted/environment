@@ -610,17 +610,6 @@ If not, show simply the clocked time like 01:50."
 ;;; Csharp and Omnisharp
 ;; =====================
 
-(defun d12/omnisharp-setup ()
-  ;; (progn (setq-local indent-tabs-mode t)
-  ;;        (setq-local c-default-style "k&r")
-  ;;        (setq-local c-basic-offset 4)
-  ;;        (setq-local tab-width 4)
-  ;;        (setq-local hs-isearch-open t)
-  ;;        (c-set-offset 'case-label '+)
-  ;;        (c-set-offset 'cpp-macro 'csharp-lineup-region)
-  ;;        (local-unset-key (kbd "{")))
-  )
-
 (defun csharp-hs-forward-sexp (&optional arg)
   "Stolen from emacswiki"
   (message "csharp-hs-forward-sexp, (arg %d) (point %d)..."
@@ -673,7 +662,7 @@ If not, show simply the clocked time like 01:50."
   (interactive)
   (save-excursion
     (beginning-of-line)
-    (when (search-forward-regexp "\\([ 	]+\\)//\\(.*\\)" nil t)
+    (when (search-forward-regexp "\\([ \t]+\\)//\\(.*\\)" nil t)
       (replace-match (concat (match-string 1)
                              "/// <summary>\n"
                              (match-string 1)
@@ -691,8 +680,6 @@ If not, show simply the clocked time like 01:50."
     :init
     (add-hook 'csharp-mode-hook 'hs-minor-mode)
     (add-hook 'csharp-mode-hook 'hide-ifdef-mode)
-    (add-hook 'csharp-mode-hook 'd12/omnisharp-setup)
-    ;; todo - defer flycheck-mode until server is available
     (add-hook 'csharp-mode-hook 'flycheck-mode)
     :config
     (require 'company)
