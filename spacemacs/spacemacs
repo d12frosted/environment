@@ -50,12 +50,15 @@
      colors
      markdown
      spotify
+     rcirc
+     erc
      )
    ;; List of additional packages that will be installed wihout being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(color-theme-sanityinc-tomorrow
+                                      material-theme)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -167,11 +170,15 @@ before layers configuration."
 
    ;; show org current task in mode line
    spacemacs-mode-line-org-clock-current-taskp t
+   paradox-github-token "f0ca929eecdf784b88f6370c37067783ff88deb5"
    )
   ;; User initialization goes here
   (if (display-graphic-p)
-      (setq-default dotspacemacs-themes '(leuven))
-    (setq-default dotspacemacs-themes '(sanityinc-tomorrow-eighties)))
+      (setq-default dotspacemacs-themes '(leuven
+                                          material
+                                          material-light))
+    (setq-default dotspacemacs-themes '(sanityinc-tomorrow-eighties
+                                        material)))
   )
 
 (defun dotspacemacs/config ()
