@@ -1,6 +1,7 @@
 # variables
 
 set -x PATH $HOME/.cabal/bin /usr/local/bin /bin /usr/sbin /sbin /usr/bin $HOME/.bin $HOME/.local/bin $HOME/.rvm/bin
+set -x MANPATH ""
 set -x EDITOR "emacsclient"
 set fish_greeting
 
@@ -19,7 +20,7 @@ eval (~/.environment/fish/nix_fish_env.sh) 2>/dev/null
 
 # git subrepo
 set -x PATH $HOME/Developer/git-subrepo/lib $PATH
-set -x MANPATH $HOME/Developer/git-subrepo/man $MANPATH
+set -gx MANPATH $MANPATH $HOME/Developer/git-subrepo/man
 
 # python
 eval (python -m virtualfish)
