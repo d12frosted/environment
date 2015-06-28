@@ -170,7 +170,6 @@ before layers configuration."
 
    ;; show org current task in mode line
    spacemacs-mode-line-org-clock-current-taskp t
-   paradox-github-token "f0ca929eecdf784b88f6370c37067783ff88deb5"
    )
   ;; User initialization goes here
   (if (display-graphic-p)
