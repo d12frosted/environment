@@ -15,9 +15,9 @@
      ;; utilities
      better-defaults
      (git :variables
-          git-gutter-use-fringe t
-          git-enable-github-support t
           git-magit-status-fullscreen t)
+     github
+     version-control
      syntax-checking
      auto-completion
      (org :variables
