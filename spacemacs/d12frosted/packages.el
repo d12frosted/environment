@@ -666,7 +666,7 @@ If not, show simply the clocked time like 01:50."
       (replace-match (concat (match-string 1)
                              "/// <summary>\n"
                              (match-string 1)
-                             "/// "
+                             "///"
                              (match-string 2)
                              "\n"
                              (match-string 1)
