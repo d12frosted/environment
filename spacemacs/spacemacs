@@ -186,10 +186,10 @@ before layers configuration."
 layers configuration."
   (helm-projectile-on)
   (delete-selection-mode 1)
-  (setq dotspacemacs-additional-packages
-        '(color-theme-sanityinc-tomorrow)
-        projectile-enable-caching nil
-        magit-repo-dirs '("~/Developer/")))
+  (setq projectile-enable-caching nil
+        magit-repo-dirs '("~/Developer/")
+        google-translate-default-source-language "Ukrainian"
+        google-translate-default-target-language "English"))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
