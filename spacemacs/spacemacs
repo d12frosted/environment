@@ -204,7 +204,22 @@ layers configuration."
  '(ahs-idle-timer 0 t)
  '(ahs-inhibit-face-list nil)
  '(paradox-automatically-star t)
- '(ring-bell-function (quote ignore) t))
+ '(ring-bell-function (quote ignore) t)
+ '(safe-local-variable-values
+   (quote
+    ((projectile-globally-ignored-file-suffixes ".meta" ".prefab" ".png" ".jpg" ".mat" ".dll" ".bin" ".mdb" ".db" ".prefs" ".asset" ".dwlt")
+     (eval progn
+           (c-set-offset
+            (quote case-label)
+            (quote +))
+           (c-set-offset
+            (quote cpp-macro)
+            (quote csharp-lineup-region))
+           (local-unset-key
+            (kbd "{")))
+     (hs-isearch-open . t)
+     (c-default-style . "k&r")
+     (projectile-globally-ignored-file-suffixes ".meta" ".prefab" ".png" ".mat" ".dll" ".bin" ".mdb" ".db" ".prefs" ".asset" ".dwlt")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
