@@ -9,8 +9,8 @@
       create: true
       path: haskell/cabal-config
     ~/.gitignore_global: git/.gitignore_global
-    ~/.mbsyncrc: email/.mbsyncrc
-    ~/.msmtprc: email/.msmtprc
+    ~/.mbsyncrc: ../Dropbox/email/.mbsyncrc
+    ~/.msmtprc: ../Dropbox/email/.msmtprc
     ~/Library/LaunchAgents/com.d12frosted.sauron.plist: email/com.d12frosted.sauron.plist
     ~/Library/LaunchAgents/com.d12frosted.melkor.plist: email/com.d12frosted.melkor.plist
 
