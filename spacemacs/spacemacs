@@ -186,10 +186,12 @@ before layers configuration."
 layers configuration."
   (helm-projectile-on)
   (delete-selection-mode 1)
+  (add-hook 'text-mode-hook 'visual-line-mode)
   (setq projectile-enable-caching nil
         magit-repo-dirs '("~/Developer/")
         google-translate-default-source-language "Ukrainian"
-        google-translate-default-target-language "English"))
+        google-translate-default-target-language "English"
+        git-messenger:show-detail t))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
