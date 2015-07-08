@@ -173,11 +173,12 @@ before layers configuration."
    )
   ;; User initialization goes here
   (if (display-graphic-p)
-      (setq-default dotspacemacs-themes '(leuven
-                                          material
-                                          material-light))
-    (setq-default dotspacemacs-themes '(sanityinc-tomorrow-eighties
-                                        material)))
+      (setq-default dotspacemacs-themes '(spacemacs-light
+                                          spacemacs-dark
+                                          leuven))
+    (setq-default dotspacemacs-themes '(spacemacs-dark
+                                        spacemacs-light
+                                        sanityinc-tomorrow-eighties)))
   )
 
 (defun dotspacemacs/config ()
