@@ -222,10 +222,12 @@ If region is active, apply to active region instead."
 
 (defun d12-fc/format-oos-msg ()
   (interactive)
-  ;; todo - create new buffer for that
-  (let ((msg (substring-no-properties (car kill-ring))))
+  (let* ((raw-data (shell-command-to-string "pbpaste")) ; (car kill-ring)
+         (msg (substring-no-properties raw-data)))
+    (switch-to-buffer "*fc-oos-msg*")
+    (local-set-key "q" 'kill-this-buffer)
     (string-match "error(\\(.*\\) verifiedHash(\\(.*\\)) clientHash(\\(.*\\)))" msg)
-    (insert (format "error: %s\nverified: %s\nclient:   %s"
+    (insert (format "error: %s\nverified: %s\nclient:   %s\n\n"
                     (match-string 1 msg)
                     (match-string 2 msg)
                     (match-string 3 msg)))))
