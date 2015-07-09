@@ -720,7 +720,11 @@ If not, show simply the clocked time like 01:50."
      :map csharp-mode-map
      ;; Some usefull shotcuts
      ("M-." . d12/omnisharp-go-to-definition-at-center)
-     ("M-," . pop-tag-mark))
+     ("M-," . pop-tag-mark)
+     ("C-c <" . hs-hide-block)
+     ("C-c >" . hs-show-block)
+     ("C-c c <" . hide-ifdef-block)
+     ("C-c c >" . show-ifdef-block))
 
     (unless (assoc 'csharp-mode hs-special-modes-alist)
       (push '(csharp-mode
