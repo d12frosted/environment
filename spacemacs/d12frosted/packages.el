@@ -225,6 +225,7 @@ If region is active, apply to active region instead."
   (let* ((raw-data (shell-command-to-string "pbpaste")) ; (car kill-ring)
          (msg (substring-no-properties raw-data)))
     (switch-to-buffer "*fc-oos-msg*")
+    (end-of-buffer)
     (local-set-key "q" 'kill-this-buffer)
     (string-match "error(\\(.*\\) verifiedHash(\\(.*\\)) clientHash(\\(.*\\)))" msg)
     (insert (format "error: %s\nverified: %s\nclient:   %s\n\n"
