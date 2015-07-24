@@ -187,6 +187,7 @@ before layers configuration."
 layers configuration."
   (helm-projectile-on)
   (delete-selection-mode 1)
+  (company-quickhelp-mode 1)
   (add-hook 'text-mode-hook 'visual-line-mode)
   (setq projectile-enable-caching nil
         magit-repo-dirs '("~/Developer/")
