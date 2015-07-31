@@ -31,7 +31,14 @@
      (d12frosted :variables
                  d12/org-home-path "~/Dropbox/org/"
                  d12/org-author-name "Boris Buliga"
-                 d12/org-author-email "d12frosted@icloud.com")
+                 d12/org-author-email "d12frosted@icloud.com"
+                 d12/org-agenda-ignore-dirs '(".git/"
+                                              "technical/"
+                                              "d12frosted/"
+                                              "clips/"
+                                              "journal/"
+                                              "projects/"
+                                              "personal/"))
 
      ;; languages
      emacs-lisp
