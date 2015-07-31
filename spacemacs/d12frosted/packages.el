@@ -263,7 +263,7 @@ If region is active, apply to active region instead."
 (defun d12/org-dir-and-subdirs (dir)
   (let ((org-dir (concat d12/org-home-path dir)))
     (when (file-directory-p org-dir)
-      (-insert-at 0 (s-chop-suffix "/" org-dir) (d12/directory-dirs-r org-dir)))))
+      (-insert-at 0 org-dir (d12/directory-dirs-r org-dir)))))
 
 (defun d12/org-files-in-folder (folder)
   (directory-files folder t ".*\.org$\\|[0-9]+-[0-9]+-[0-9]+$"))
