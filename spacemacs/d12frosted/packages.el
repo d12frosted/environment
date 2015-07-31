@@ -354,10 +354,13 @@ In case of failure it will use value of d12/org-default-title."
              (dired-create-directory (s-concat new-file-dir "assets"))
              (with-temp-buffer (write-file (s-concat new-file-dir (s-append ".org" name))))))))
 
-(defun d12/org-insert-date ()
+(defun d12/org-insert-date (&optional days)
   "Insert timestamp formated by value of d12/org-date-format"
-  (interactive)
-  (insert (format-time-string d12/org-date-format)))
+  (interactive "P")
+  (if (or (eq days nil)
+          (not (number-or-marker-p days)))
+      (insert (format-time-string d12/org-date-format))
+    (insert (format-time-string d12/org-date-format (time-add (current-time) (days-to-time days))))))
 
 (defun d12/org-insert-time ()
   "Insert timestamp formated by value of d12/org-time-format"
