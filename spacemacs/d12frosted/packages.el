@@ -483,7 +483,7 @@ Default for SITEMAP-FILENAME is 'sitemap.org'."
 ;;; org mode initialization
 ;; ------------------------
 
-(defun d12frosted/init-org ()
+(defun d12frosted/post-init-org ()
   "Initialize org package."
   (use-package org
     :defer t
@@ -681,7 +681,7 @@ If not, show simply the clocked time like 01:50."
                              "/// </summary>") t nil))))
 
 
-(defun d12frosted/init-omnisharp ()
+(defun d12frosted/post-init-omnisharp ()
   "Initialize omnisharp package."
   (use-package omnisharp
     :defer t
