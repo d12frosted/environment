@@ -25,165 +25,8 @@
 ;;; Misc configs
 
 ;; =============================================================================
-;; org mode and friends
+;; org mode
 ;; =============================================================================
-
-;; -----------------------------------------------------------------------------
-;; org mode functions
-;; -----------------------------------------------------------------------------
-
-(defun d12/reload-agenda-files ()
-  (interactive)
-  (let* ((d12/org-ignored-dirs (-flatten
-                                (-non-nil
-                                 (-map (lambda (dir)
-                                         (d12/org-dir-and-subdirs dir))
-                                       d12/org-agenda-ignore-dirs))))
-         (d12/org-agenda-dirs (-difference (d12/org-dir-and-subdirs "") d12/org-ignored-dirs))
-         (d12/org-agenda-files (-flatten (-map (lambda (dir)
-                                                 (d12/org-files-in-folder dir))
-                                               d12/org-agenda-dirs))))
-    (setq org-agenda-files d12/org-agenda-files)))
-
-(defun d12/org-dir-and-subdirs (dir)
-  (let ((org-dir (concat d12/org-home-path dir)))
-    (when (file-directory-p org-dir)
-      (-insert-at 0 org-dir (d12/directory-dirs-r org-dir)))))
-
-(defun d12/org-files-in-folder (folder)
-  (directory-files folder t ".*\.org$\\|[0-9]+-[0-9]+-[0-9]+$"))
-
-(defun d12/org-insert-block-template ()
-  "Insert block template at point."
-  (interactive)
-  (if (org-at-table-p)
-      (call-interactively 'org-table-rotate-recalc-marks)
-    (let* ((choices '(("s" . "SRC")
-                      ("e" . "EXAMPLE")
-                      ("h" . "HTML")
-                      ("q" . "QUOTE")
-                      ("c" . "CENTER")))
-           (key
-            (key-description
-             (vector
-              (read-key
-               (concat (propertize "Template type: " 'face 'minibuffer-prompt)
-                       (mapconcat (lambda (choice)
-                                    (concat (propertize (car choice) 'face 'font-lock-type-face)
-                                            ": "
-                                            (cdr choice)))
-                                  choices
-                                  ", ")))))))
-      (let ((result (assoc key choices)))
-        (when result
-          (let ((choice (cdr result)))
-            (cond
-             ((region-active-p)
-              (let ((start (region-beginning))
-                    (end (region-end)))
-                (goto-char end)
-                (insert "\n#+END_" choice)
-                (goto-char start)
-                (insert "#+BEGIN_" choice "\n")))
-             (t
-              (insert "#+BEGIN_" choice "\n")
-              (save-excursion (insert "\n#+END_" choice))))))))))
-
-(defun d12/org-buffer-contains-header? ()
-  "Does current buffer contain org header?"
-  (interactive)
-  (let ((empty (= (point-min)
-                  (point-max)))
-        (titled (or t (s-contains? "#+TITLE:" (buffer-string) t))))
-    (and titled (not empty))))
-
-(defun d12/org-journal-buffer-contains-date-header? ()
-  "Does current buffer contain date header?"
-  (interactive)
-  (buffer-contains-substring? (d12/org-journal-date-header)))
-
-(defun d12/org-guess-title ()
-  "Try to guess title for org file.
-In case of failure it will use value of d12/org-default-title."
-  (let ((bname (buffer-name)))
-    (if (s-present? bname)
-        (if (s-suffix? ".org" bname)
-            (substring bname 0 -4)
-          bname)
-      d12/org-default-title)))
-
-(defun d12/org-option (width key value)
-  "Create an option string for org file."
-  (s-append value (s-pad-right width " " (s-concat "#+" key ":"))))
-
-(defun d12/org-sort-current-level ()
-  "Sort current level by TODO."
-  (interactive)
-  (org-sort-entries nil ?o))
-
-(defun d12/org-sort-upper-level ()
-  "Go to upper level and sort it by TODO."
-  (interactive)
-  (progn (outline-up-heading 1)
-         (d12/org-sort-current-level)))
-
-(defun d12/org-create-new-org-file (name)
-  (interactive "sEnter the name of new file: ")
-
-  (let ((existing-files (d12/directory-dirs d12/org-home-path))
-        (new-file-dir (s-concat d12/org-home-path name) ))
-    (if (-contains? existing-files new-file-dir)
-        (message "Sorry, but there is already file named '%s'." name)
-      (progn (dired-create-directory new-file-dir)
-             (dired-create-directory (s-concat new-file-dir "exports"))
-             (dired-create-directory (s-concat new-file-dir "assets"))
-             (with-temp-buffer (write-file (s-concat new-file-dir (s-append ".org" name))))))))
-
-(defun d12/org-insert-date (&optional days)
-  "Insert timestamp formated by value of `d12/date-format'.
-If optional argument DAYS is non-nil and number or marker, then
-it will be added to current date."
-  (interactive "P")
-  (if (or (eq days nil)
-          (not (number-or-marker-p days)))
-      (insert (format-time-string d12/date-format))
-    (insert (format-time-string d12/date-format (time-add (current-time) (days-to-time days))))))
-
-(defun d12/org-insert-time ()
-  "Insert timestamp formated by value of `d12/time-format'"
-  (interactive)
-  (insert (format-time-string d12/time-format)))
-
-(defun d12/org-insert-full-date ()
-  "Insert date and timestamp. Uses 'd12/org-insert-date
-  and 'd12/org-insert-time."
-  (interactive)
-  (insert (format-time-string (concat d12/date-format " " d12/time-format))))
-
-(defun org-journal-visit-entry ()
-  (interactive)
-  (setq current-prefix-arg '(t))
-  (call-interactively 'org-journal-new-entry))
-
-(defun d12/org-update-parent-cookie ()
-  (when (equal major-mode 'org-mode)
-    (save-excursion
-      (ignore-errors
-        (org-back-to-heading)
-        (org-update-parent-todo-statistics)))))
-
-(defadvice d12/delete-line-or-region (after fix-cookies activate)
-  (d12/org-update-parent-cookie))
-
-(defadvice d12/duplicate-line-or-region (after fix-cookies activate)
-  (d12/org-update-parent-cookie))
-
-(defadvice d12/cut-line-or-region (after fix-cookies activate)
-  (d12/org-update-parent-cookie))
-
-;; -----------------------------------------------------------------------------
-;; org mode initialization
-;; -----------------------------------------------------------------------------
 
 (defun d12frosted/post-init-org ()
   "Initialize org package."
@@ -220,6 +63,155 @@ it will be added to current date."
             (setq case-fold-search old-flag))
           (if (and b e (< (point) e)) (setq rlt nil)))
         (setq ad-return-value rlt)))
+
+    (defun d12/reload-agenda-files ()
+      (interactive)
+      (let* ((d12/org-ignored-dirs (-flatten
+                                    (-non-nil
+                                     (-map (lambda (dir)
+                                             (d12/org-dir-and-subdirs dir))
+                                           d12/org-agenda-ignore-dirs))))
+             (d12/org-agenda-dirs (-difference (d12/org-dir-and-subdirs "") d12/org-ignored-dirs))
+             (d12/org-agenda-files (-flatten (-map (lambda (dir)
+                                                     (d12/org-files-in-folder dir))
+                                                   d12/org-agenda-dirs))))
+        (setq org-agenda-files d12/org-agenda-files)))
+
+    (defun d12/org-dir-and-subdirs (dir)
+      (let ((org-dir (concat d12/org-home-path dir)))
+        (when (file-directory-p org-dir)
+          (-insert-at 0 org-dir (d12/directory-dirs-r org-dir)))))
+
+    (defun d12/org-files-in-folder (folder)
+      (directory-files folder t ".*\.org$\\|[0-9]+-[0-9]+-[0-9]+$"))
+
+    (defun d12/org-insert-block-template ()
+      "Insert block template at point."
+      (interactive)
+      (if (org-at-table-p)
+          (call-interactively 'org-table-rotate-recalc-marks)
+        (let* ((choices '(("s" . "SRC")
+                          ("e" . "EXAMPLE")
+                          ("h" . "HTML")
+                          ("q" . "QUOTE")
+                          ("c" . "CENTER")))
+               (key
+                (key-description
+                 (vector
+                  (read-key
+                   (concat (propertize "Template type: " 'face 'minibuffer-prompt)
+                           (mapconcat (lambda (choice)
+                                        (concat (propertize (car choice) 'face 'font-lock-type-face)
+                                                ": "
+                                                (cdr choice)))
+                                      choices
+                                      ", ")))))))
+          (let ((result (assoc key choices)))
+            (when result
+              (let ((choice (cdr result)))
+                (cond
+                 ((region-active-p)
+                  (let ((start (region-beginning))
+                        (end (region-end)))
+                    (goto-char end)
+                    (insert "\n#+END_" choice)
+                    (goto-char start)
+                    (insert "#+BEGIN_" choice "\n")))
+                 (t
+                  (insert "#+BEGIN_" choice "\n")
+                  (save-excursion (insert "\n#+END_" choice))))))))))
+
+    (defun d12/org-buffer-contains-header? ()
+      "Does current buffer contain org header?"
+      (interactive)
+      (let ((empty (= (point-min)
+                      (point-max)))
+            (titled (or t (s-contains? "#+TITLE:" (buffer-string) t))))
+        (and titled (not empty))))
+
+    (defun d12/org-journal-buffer-contains-date-header? ()
+      "Does current buffer contain date header?"
+      (interactive)
+      (buffer-contains-substring? (d12/org-journal-date-header)))
+
+    (defun d12/org-guess-title ()
+      "Try to guess title for org file.
+In case of failure it will use value of d12/org-default-title."
+      (let ((bname (buffer-name)))
+        (if (s-present? bname)
+            (if (s-suffix? ".org" bname)
+                (substring bname 0 -4)
+              bname)
+          d12/org-default-title)))
+
+    (defun d12/org-option (width key value)
+      "Create an option string for org file."
+      (s-append value (s-pad-right width " " (s-concat "#+" key ":"))))
+
+    (defun d12/org-sort-current-level ()
+      "Sort current level by TODO."
+      (interactive)
+      (org-sort-entries nil ?o))
+
+    (defun d12/org-sort-upper-level ()
+      "Go to upper level and sort it by TODO."
+      (interactive)
+      (progn (outline-up-heading 1)
+             (d12/org-sort-current-level)))
+
+    (defun d12/org-create-new-org-file (name)
+      (interactive "sEnter the name of new file: ")
+
+      (let ((existing-files (d12/directory-dirs d12/org-home-path))
+            (new-file-dir (s-concat d12/org-home-path name) ))
+        (if (-contains? existing-files new-file-dir)
+            (message "Sorry, but there is already file named '%s'." name)
+          (progn (dired-create-directory new-file-dir)
+                 (dired-create-directory (s-concat new-file-dir "exports"))
+                 (dired-create-directory (s-concat new-file-dir "assets"))
+                 (with-temp-buffer (write-file (s-concat new-file-dir (s-append ".org" name))))))))
+
+    (defun d12/org-insert-date (&optional days)
+      "Insert timestamp formated by value of `d12/date-format'.
+If optional argument DAYS is non-nil and number or marker, then
+it will be added to current date."
+      (interactive "P")
+      (if (or (eq days nil)
+              (not (number-or-marker-p days)))
+          (insert (format-time-string d12/date-format))
+        (insert (format-time-string d12/date-format (time-add (current-time) (days-to-time days))))))
+
+    (defun d12/org-insert-time ()
+      "Insert timestamp formated by value of `d12/time-format'"
+      (interactive)
+      (insert (format-time-string d12/time-format)))
+
+    (defun d12/org-insert-full-date ()
+      "Insert date and timestamp. Uses 'd12/org-insert-date
+  and 'd12/org-insert-time."
+      (interactive)
+      (insert (format-time-string (concat d12/date-format " " d12/time-format))))
+
+    (defun org-journal-visit-entry ()
+      (interactive)
+      (setq current-prefix-arg '(t))
+      (call-interactively 'org-journal-new-entry))
+
+    (defun d12/org-update-parent-cookie ()
+      (when (equal major-mode 'org-mode)
+        (save-excursion
+          (ignore-errors
+            (org-back-to-heading)
+            (org-update-parent-todo-statistics)))))
+
+    (defadvice d12/delete-line-or-region (after fix-cookies activate)
+      (d12/org-update-parent-cookie))
+
+    (defadvice d12/duplicate-line-or-region (after fix-cookies activate)
+      (d12/org-update-parent-cookie))
+
+    (defadvice d12/cut-line-or-region (after fix-cookies activate)
+      (d12/org-update-parent-cookie))
 
     (defun org-clock-get-clock-string ()
       "Form a clock-string, that will be shown in the mode line.
