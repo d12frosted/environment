@@ -146,25 +146,25 @@ In case of failure it will use value of d12/org-default-title."
              (with-temp-buffer (write-file (s-concat new-file-dir (s-append ".org" name))))))))
 
 (defun d12/org-insert-date (&optional days)
-  "Insert timestamp formated by value of d12/org-date-format.
+  "Insert timestamp formated by value of `d12/date-format'.
 If optional argument DAYS is non-nil and number or marker, then
 it will be added to current date."
   (interactive "P")
   (if (or (eq days nil)
           (not (number-or-marker-p days)))
-      (insert (format-time-string d12/org-date-format))
-    (insert (format-time-string d12/org-date-format (time-add (current-time) (days-to-time days))))))
+      (insert (format-time-string d12/date-format))
+    (insert (format-time-string d12/date-format (time-add (current-time) (days-to-time days))))))
 
 (defun d12/org-insert-time ()
-  "Insert timestamp formated by value of d12/org-time-format"
+  "Insert timestamp formated by value of `d12/time-format'"
   (interactive)
-  (insert (format-time-string d12/org-time-format)))
+  (insert (format-time-string d12/time-format)))
 
 (defun d12/org-insert-full-date ()
   "Insert date and timestamp. Uses 'd12/org-insert-date
   and 'd12/org-insert-time."
   (interactive)
-  (insert (format-time-string (concat d12/org-date-format " " d12/org-time-format))))
+  (insert (format-time-string (concat d12/date-format " " d12/time-format))))
 
 (defun org-journal-visit-entry ()
   (interactive)
@@ -398,7 +398,7 @@ If not, show simply the clocked time like 01:50."
     :config
     (global-unset-key (kbd "C-c C-j"))
     (setq org-journal-dir (concat d12/org-home-path "journal/")
-          org-journal-date-format d12/org-date-format
+          org-journal-date-format d12/date-format
           org-journal-time-format "%R\n"
           org-journal-file-format "%Y-%m-%d"
           org-journal-file-pattern (org-journal-format-string->regex org-journal-file-format)
