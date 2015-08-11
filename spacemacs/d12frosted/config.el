@@ -24,11 +24,11 @@
   "List of directories to be ignored for agenda. Every path should be relative
    to d12/org-home-path and must contain trailing slash.")
 
-(defvar d12/org-time-format
+(defvar d12/time-format
   "%H:%M:%S"
   "Format for 'd12/org-insert-time function.")
 
-(defvar d12/org-date-format
+(defvar d12/date-format
   "%d %B %Y, %A"
   "Format for 'd12/org-insert-date function.")
 
