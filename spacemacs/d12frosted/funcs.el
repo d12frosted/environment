@@ -131,6 +131,27 @@
 ;; Misc functions
 ;; =============================================================================
 
+(defun d12/insert-date (&optional days)
+  "Insert timestamp formated by value of `d12/date-format'.
+If optional argument DAYS is non-nil and number or marker, then
+it will be added to current date."
+  (interactive "P")
+  (if (or (eq days nil)
+          (not (number-or-marker-p days)))
+      (insert (format-time-string d12/date-format))
+    (insert (format-time-string d12/date-format (time-add (current-time) (days-to-time days))))))
+
+(defun d12/insert-time ()
+  "Insert timestamp formated by value of `d12/time-format'"
+  (interactive)
+  (insert (format-time-string d12/time-format)))
+
+(defun d12/insert-full-date ()
+  "Insert date and timestamp. Uses 'd12/insert-date
+  and 'd12/insert-time."
+  (interactive)
+  (insert (format-time-string (concat d12/date-format " " d12/time-format))))
+
 (defun d12-fc/format-oos-msg ()
   (interactive)
   (let* ((raw-data (shell-command-to-string "pbpaste")) ; (car kill-ring)

@@ -218,7 +218,11 @@ layers configuration."
                        ("http://endlessparentheses.com/atom.xml" emacs)))
 
   ;; key bindings
-  (evil-leader/set-key "ae" 'elfeed))
+  (evil-leader/set-key
+    "ae" 'elfeed
+    ".it" 'd12/insert-time
+    ".id" 'd12/insert-date
+    ".iD" 'd12/insert-full-date))
 
 (defun d12-haskell/config ()
   (message "configured haskell")
