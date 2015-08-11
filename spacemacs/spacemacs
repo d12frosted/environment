@@ -66,7 +66,8 @@
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(comment-dwim-2
-                                      color-theme-sanityinc-tomorrow)
+                                      color-theme-sanityinc-tomorrow
+                                      elfeed)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -192,16 +193,32 @@ before layers configuration."
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
+
+  ;; configs
   (helm-projectile-on)
   (delete-selection-mode 1)
   (company-quickhelp-mode 1)
   (d12-haskell/config)
+
+  ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
+
+  ;; vars
   (setq projectile-enable-caching nil
         magit-repo-dirs '("~/Developer/")
         google-translate-default-source-language "Ukrainian"
         google-translate-default-target-language "English"
-        git-messenger:show-detail t))
+        git-messenger:show-detail t
+        elfeed-feeds '(("http://www.reddit.com/r/haskelltil/.rss" haskell reddit)
+                       ("http://www.reddit.com/r/haskell/.rss" haskell reddit)
+                       ("http://www.reddit.com/r/orgmode/.rss" emacs org-mode reddit)
+                       ("http://planet.haskell.org/rss20.xml" haskell)
+                       ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
+                       ("http://nullprogram.com/feed/" emacs)
+                       ("http://endlessparentheses.com/atom.xml" emacs)))
+
+  ;; key bindings
+  (evil-leader/set-key "ae" 'elfeed))
 
 (defun d12-haskell/config ()
   (message "configured haskell")

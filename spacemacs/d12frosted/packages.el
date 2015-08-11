@@ -17,8 +17,6 @@
         org
         org-journal
         omnisharp
-        elfeed
-        elfeed-web
         ))
 
 ;; List of packages to exclude.
@@ -533,31 +531,6 @@ If not, show simply the clocked time like 01:50."
               )
             hs-special-modes-alist)))
   )
-
-;; =============================================================================
-;; Elfeed configurations
-;; =============================================================================
-
-(defun d12frosted/init-elfeed ()
-  "Initialize elfeed package."
-  (use-package elfeed
-    :defer 1
-    :init
-    (evil-leader/set-key "ae" 'elfeed)
-    :config
-    ;; todo - move to configurable variable
-    (setq elfeed-feeds '(("http://www.reddit.com/r/haskelltil/.rss" haskell reddit)
-                         ("http://www.reddit.com/r/haskell/.rss" haskell reddit)
-                         ("http://www.reddit.com/r/orgmode/.rss" emacs org-mode reddit)
-                         ("http://planet.haskell.org/rss20.xml" haskell)
-                         ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
-                         ("http://nullprogram.com/feed/" emacs)
-                         ("http://endlessparentheses.com/atom.xml" emacs)))))
-
-(defun d12frosted/init-elfeed-web ()
-  "Initialize elfeed-web package."
-  (use-package elfeed-web
-    :defer t))
 
 ;; For each package, define a function d12frosted/init-<package-d12frosted>
 ;;
