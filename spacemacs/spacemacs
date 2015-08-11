@@ -48,9 +48,10 @@
              ;; omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe"
              )
      (haskell :variables
-              haskell-enable-ghci-ng-support t
+              haskell-enable-ghci-ng-support nil
               haskell-enable-shm-support t
-              haskell-enable-hindent-style "chris-done")
+              haskell-enable-hindent-style "chris-done"
+              haskell-process-type 'stack-ghci)
      python
 
      ;; misc
@@ -196,12 +197,18 @@ layers configuration."
   (helm-projectile-on)
   (delete-selection-mode 1)
   (company-quickhelp-mode 1)
+  (d12-haskell/config)
   (add-hook 'text-mode-hook 'visual-line-mode)
   (setq projectile-enable-caching nil
         magit-repo-dirs '("~/Developer/")
         google-translate-default-source-language "Ukrainian"
         google-translate-default-target-language "English"
         git-messenger:show-detail t))
+
+(defun d12-haskell/config ()
+  (message "configured haskell")
+  (add-hook 'haskell-mode-hook (lambda () (setq global-hl-line-mode nil)))
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
