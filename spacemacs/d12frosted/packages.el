@@ -355,7 +355,9 @@ In case of failure it will use value of d12/org-default-title."
              (with-temp-buffer (write-file (s-concat new-file-dir (s-append ".org" name))))))))
 
 (defun d12/org-insert-date (&optional days)
-  "Insert timestamp formated by value of d12/org-date-format"
+  "Insert timestamp formated by value of d12/org-date-format.
+If optional argument DAYS is non-nil and number or marker, then
+it will be added to current date."
   (interactive "P")
   (if (or (eq days nil)
           (not (number-or-marker-p days)))
