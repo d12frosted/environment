@@ -5,6 +5,9 @@ set -x MANPATH ""
 set -x EDITOR "emacsclient"
 set fish_greeting
 
+# haskell
+set -x PATH $HOME/.stack/programs/x86_64-osx/ghc-7.10.2/bin $PATH
+
 # theme
 set fish_color_autosuggestion "8e908c"
 set fish_color_command "8959a8"
