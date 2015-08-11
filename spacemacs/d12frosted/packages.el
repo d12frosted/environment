@@ -26,13 +26,13 @@
 
 ;;; Misc configs
 
-;; =====================
-;;; org mode and friends
-;; =====================
+;; =============================================================================
+;; org mode and friends
+;; =============================================================================
 
-;; -------------------
-;;; org mode functions
-;; -------------------
+;; -----------------------------------------------------------------------------
+;; org mode functions
+;; -----------------------------------------------------------------------------
 
 (defun gtd ()
   (interactive)
@@ -270,9 +270,9 @@ Default for SITEMAP-FILENAME is 'sitemap.org'."
       (save-buffer))
     (or visiting (kill-buffer sitemap-buffer))))
 
-;; ------------------------
-;;; org mode initialization
-;; ------------------------
+;; -----------------------------------------------------------------------------
+;; org mode initialization
+;; -----------------------------------------------------------------------------
 
 (defun d12frosted/post-init-org ()
   "Initialize org package."
@@ -405,9 +405,9 @@ If not, show simply the clocked time like 01:50."
           org-journal-hide-entries-p nil))
   )
 
-;; =====================
+;; =============================================================================
 ;;; Csharp and Omnisharp
-;; =====================
+;; =============================================================================
 
 (defun csharp-hs-forward-sexp (&optional arg)
   "Stolen from emacswiki"
@@ -538,9 +538,9 @@ If not, show simply the clocked time like 01:50."
             hs-special-modes-alist)))
   )
 
-;; ======================
-;;; Elfeed configurations
-;; ======================
+;; =============================================================================
+;; Elfeed configurations
+;; =============================================================================
 
 (defun d12frosted/init-elfeed ()
   "Initialize elfeed package."

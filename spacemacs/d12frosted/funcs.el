@@ -10,13 +10,13 @@
 ;;
 ;;; License: GPLv3
 
-;; =========================
-;;; General helper functions
-;; =========================
+;; =============================================================================
+;; General helper functions
+;; =============================================================================
 
-;; ----------------------
-;;; Files and directories
-;; ----------------------
+;; -----------------------------------------------------------------------------
+;; Files and directories
+;; -----------------------------------------------------------------------------
 
 (defun d12/directory-dirs (directory)
   "Return a list of names of directories in DIRECTORY
@@ -55,18 +55,18 @@
       (goto-char (point-min))
       (search-forward string nil t))))
 
-;; -----------
-;;; Navigation
-;; -----------
+;; -----------------------------------------------------------------------------
+;; Navigation
+;; -----------------------------------------------------------------------------
 
 (defun d12/goto-line-and-center ()
   (interactive)
   (call-interactively 'goto-line)
   (call-interactively 'recenter-top-bottom))
 
-;; ------------------------------
-;;; Mode renaming and diminishing
-;; ------------------------------
+;; -----------------------------------------------------------------------------
+;; Mode renaming and diminishing
+;; -----------------------------------------------------------------------------
 
 (defmacro d12|rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
@@ -83,9 +83,9 @@
   `(defadvice ,mode (after d12|lazy-diminish-hack activate)
      (d12|diminish ,mode ,dim)))
 
-;; -------------------
-;;; Text manipulations
-;; -------------------
+;; -----------------------------------------------------------------------------
+;; Text manipulations
+;; -----------------------------------------------------------------------------
 
 (defun d12/copy-line-or-region ()
   "Copy current line (with newline character) or region. When `universal-argument' is called first, copy whole buffer (but respect `narrow-to-region')."
@@ -151,9 +151,9 @@ If region is active, apply to active region instead."
     (forward-line 1)
     (back-to-indentation)))
 
-;; ---------------
-;;; Misc functions
-;; ---------------
+;; -----------------------------------------------------------------------------
+;; Misc functions
+;; -----------------------------------------------------------------------------
 
 (defmacro d12|plist-add (list key value)
   `(setq ,list (plist-put ,list ,key ,value)))
@@ -217,3 +217,5 @@ If region is active, apply to active region instead."
                     (match-string 1 msg)
                     (match-string 2 msg)
                     (match-string 3 msg)))))
+
+;;; funcs.el ends here
