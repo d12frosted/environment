@@ -77,12 +77,6 @@
   "Diminish MODE name in mode line to DIM."
   `(eval-after-load 'diminish '(diminish ',mode ,dim)))
 
-;; deprecated
-(defmacro d12|lazy-diminish (mode dim)
-  "Diminish MODE name in mode line to DIM after PACKAGE-NAME is loaded."
-  `(defadvice ,mode (after d12|lazy-diminish-hack activate)
-     (d12|diminish ,mode ,dim)))
-
 ;; -----------------------------------------------------------------------------
 ;; Text manipulations
 ;; -----------------------------------------------------------------------------
@@ -133,77 +127,9 @@
         (line-beginning-position 2))
     (point-max)))
 
-(defun endless/comment-line-or-region (n)
-  "Comment or uncomment current line and leave point after it.
-With positive prefix, apply to N lines including current one.
-With negative prefix, apply to -N lines above.
-If region is active, apply to active region instead."
-  (interactive "p")
-  (if (use-region-p)
-      (comment-or-uncomment-region
-       (region-beginning) (region-end))
-    (let ((range
-           (list (line-beginning-position)
-                 (goto-char (line-end-position n)))))
-      (comment-or-uncomment-region
-       (apply #'min range)
-       (apply #'max range)))
-    (forward-line 1)
-    (back-to-indentation)))
-
 ;; -----------------------------------------------------------------------------
 ;; Misc functions
 ;; -----------------------------------------------------------------------------
-
-(defmacro d12|plist-add (list key value)
-  `(setq ,list (plist-put ,list ,key ,value)))
-
-(defun d12/toggle-fullscreen ()
-  "Cycle thorugh full screen options by rule 'nil -> maximized -> fullboth -> nil'."
-  (interactive)
-  (let ((x (frame-parameter nil 'fullscreen)))
-    (set-frame-parameter nil 'fullscreen
-                         (cond ((not x) 'maximized)
-                               ((eq x 'maximized) 'fullboth)
-                               (t nil)))))
-
-(defun util-count-lines (beg end)
-  (let (tmp)
-    (if (< end beg) (progn (setq tmp beg) (setq beg end) (setq end tmp)))
-    (save-excursion
-      (goto-char beg) (setq beg (line-beginning-position))
-      (goto-char end) (setq end (line-beginning-position)))
-    (count-lines beg end)))
-
-(defun empty-line-suffix () (only-whitespace (current-line-suffix)))
-
-(defun empty-line-prefix () (only-whitespace (current-line-prefix)))
-
-(defun only-whitespace (str) (and (string-match "^[ \r\t]*\$" str) 't))
-
-(defun current-line ()
-  (buffer-substring (line-beginning-position) (line-end-position)))
-
-(defun current-line-full ()
-  (buffer-substring (line-beginning-position) (+ 1 (line-end-position))))
-
-(defun current-line-prefix ()
-  (buffer-substring (line-beginning-position) (point)))
-
-(defun current-line-suffix () (buffer-substring (point) (line-end-position)))
-
-(defun current-line-number ()
-  (let ((linenum (string-to-number (substring (what-line) 5))))
-    (message "")
-    linenum))
-
-(defun current-number ()
-  (save-excursion
-    (let (beg)
-      (skip-chars-backward "0-9")
-      (setq beg (point))
-      (skip-chars-forward "0-9")
-      (buffer-substring beg (point)))))
 
 (defun d12-fc/format-oos-msg ()
   (interactive)
