@@ -66,8 +66,7 @@
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(comment-dwim-2
-                                      color-theme-sanityinc-tomorrow
-                                      material-theme)
+                                      color-theme-sanityinc-tomorrow)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
