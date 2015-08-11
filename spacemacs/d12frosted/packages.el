@@ -40,8 +40,8 @@
       ".l" 'org-store-link)
     :config
     (evil-leader/set-key-for-mode 'org-mode
-      "ms" 'd12/org-sort-current-level
-      "mS" 'd12/org-sort-upper-level
+      "m1" 'd12/org-sort-current-level
+      "m!" 'd12/org-sort-upper-level
       "m#" 'd12/org-insert-block-template)
     (require 's)
 
