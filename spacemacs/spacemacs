@@ -187,8 +187,7 @@ before layers configuration."
                                           leuven))
     (setq-default dotspacemacs-themes '(spacemacs-dark
                                         spacemacs-light
-                                        sanityinc-tomorrow-eighties)))
-  )
+                                        sanityinc-tomorrow-eighties))))
 
 (defun dotspacemacs/config ()
   "Configuration function.
