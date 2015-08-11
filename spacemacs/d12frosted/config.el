@@ -26,11 +26,11 @@
 
 (defvar d12/time-format
   "%H:%M:%S"
-  "Format for 'd12/org-insert-time function.")
+  "Format for 'd12/insert-time function.")
 
 (defvar d12/date-format
   "%d %B %Y, %A"
-  "Format for 'd12/org-insert-date function.")
+  "Format for 'd12/insert-date function.")
 
 (defvar d12/org-default-title
   "Yet another org file"
