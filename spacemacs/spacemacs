@@ -49,6 +49,7 @@
              )
      (haskell :variables
               haskell-enable-ghci-ng-support nil
+              haskell-enable-ghc-mod-support nil
               haskell-enable-shm-support t
               haskell-enable-hindent-style "chris-done"
               haskell-process-type 'stack-ghci)
@@ -187,7 +188,12 @@ before layers configuration."
                                           leuven))
     (setq-default dotspacemacs-themes '(spacemacs-dark
                                         spacemacs-light
-                                        sanityinc-tomorrow-eighties))))
+                                        sanityinc-tomorrow-eighties)))
+
+  ;; hooks
+  (add-hook 'text-mode-hook 'visual-line-mode)
+  (add-hook 'haskell-mode-hook (lambda () (setq global-hl-line-mode nil)))
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode))
 
 (defun dotspacemacs/config ()
   "Configuration function.
@@ -198,10 +204,6 @@ layers configuration."
   (helm-projectile-on)
   (delete-selection-mode 1)
   (company-quickhelp-mode 1)
-  (d12-haskell/config)
-
-  ;; hooks
-  (add-hook 'text-mode-hook 'visual-line-mode)
 
   ;; vars
   (setq projectile-enable-caching nil
@@ -215,7 +217,9 @@ layers configuration."
                        ("http://planet.haskell.org/rss20.xml" haskell)
                        ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
                        ("http://nullprogram.com/feed/" emacs)
-                       ("http://endlessparentheses.com/atom.xml" emacs)))
+                       ("http://endlessparentheses.com/atom.xml" emacs))
+        haskell-process-suggest-remove-import-lines nil
+        haskell-process-suggest-hoogle-imports nil)
 
   ;; key bindings
   (evil-leader/set-key
