@@ -228,44 +228,5 @@ layers configuration."
     "id" 'd12/insert-date
     "iD" 'd12/insert-full-date))
 
-(defun d12-haskell/config ()
-  (message "configured haskell")
-  (add-hook 'haskell-mode-hook (lambda () (setq global-hl-line-mode nil)))
-  (add-hook 'haskell-mode-hook 'interactive-haskell-mode))
-
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ahs-case-fold-search nil)
- '(ahs-default-range (quote ahs-range-whole-buffer))
- '(ahs-idle-interval 0.25)
- '(ahs-idle-timer 0 t)
- '(ahs-inhibit-face-list nil)
- '(paradox-automatically-star t)
- '(ring-bell-function (quote ignore) t)
- '(safe-local-variable-values
-   (quote
-    ((projectile-globally-ignored-file-suffixes ".meta" ".prefab" ".png" ".jpg" ".mat" ".dll" ".bin" ".mdb" ".db" ".prefs" ".asset" ".dwlt")
-     (eval progn
-           (c-set-offset
-            (quote case-label)
-            (quote +))
-           (c-set-offset
-            (quote cpp-macro)
-            (quote csharp-lineup-region))
-           (local-unset-key
-            (kbd "{")))
-     (hs-isearch-open . t)
-     (c-default-style . "k&r")
-     (projectile-globally-ignored-file-suffixes ".meta" ".prefab" ".png" ".mat" ".dll" ".bin" ".mdb" ".db" ".prefs" ".asset" ".dwlt")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
