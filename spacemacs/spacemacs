@@ -68,6 +68,7 @@
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(comment-dwim-2
                                       color-theme-sanityinc-tomorrow
+                                      apropospriate-theme
                                       elfeed)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
@@ -182,13 +183,29 @@ before layers configuration."
    spacemacs-mode-line-org-clock-current-taskp t
    )
   ;; User initialization goes here
+
+
+  (setq-default d12/env-directory (concat user-home-directory ".environment/")
+                d12/env-spacemacs-directory (concat d12/env-directory "spacemacs/"))
+
+  (defun d12//spacemacs-replace-title (title)
+    (save-excursion
+      (beginning-of-buffer)
+      (replace-string "[S P A C E M A C S]" title)))
+  (d12//spacemacs-replace-title "[A N I M A C S]")
+
   (if (display-graphic-p)
       (setq-default dotspacemacs-themes '(spacemacs-light
+                                          apropospriate-light
                                           spacemacs-dark
                                           leuven))
     (setq-default dotspacemacs-themes '(spacemacs-dark
                                         spacemacs-light
                                         sanityinc-tomorrow-eighties)))
+
+  (let ((banner-path (expand-file-name (concat d12/env-spacemacs-directory "animacs-banner.png"))))
+    (when (file-exists-p banner-path)
+      (setq spacemacs-banner-official-png banner-path)))
 
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
@@ -230,3 +247,29 @@ layers configuration."
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values
+   (quote
+    ((eval progn
+           (c-set-offset
+            (quote case-label)
+            (quote +))
+           (c-set-offset
+            (quote cpp-macro)
+            (quote csharp-lineup-region))
+           (local-unset-key
+            (kbd "{")))
+     (hs-isearch-open . t)
+     (c-default-style . "k&r")
+     (projectile-globally-ignored-file-suffixes ".meta" ".prefab" ".png" ".jpg" ".mat" ".dll" ".bin" ".mdb" ".db" ".prefs" ".asset" ".dwlt")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
