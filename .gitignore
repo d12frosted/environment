@@ -4,3 +4,7 @@
 
 # ignore emacs cache
 emacs/.cache
+
+# ignore animacs banner
+# in order to make sure that no rights are violated
+spacemacs/animacs-banner.png
