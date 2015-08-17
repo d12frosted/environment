@@ -17,4 +17,5 @@
  ("C-S-<backspace>" . d12/delete-line-or-region)
  ("C-c u d"         . d12/duplicate-line-or-region)
  ("M-;"             . comment-dwim-2)
+ ("M-C-;"           . comment-or-uncomment-sexp)
  )
