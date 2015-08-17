@@ -26,6 +26,7 @@
      restclient
      (shell :variables
             shell-default-term-shell "/usr/local/bin/fish")
+     eyebrowse
 
      ;; my own layers
      (d12frosted :variables
