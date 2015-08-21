@@ -45,5 +45,9 @@
   user-mail-address
   "Author email (used in 'd12/org-new-file-template function.)")
 
+(defvar d12/dir-settings-file
+  "settings.el"
+  "File containing dir settings.")
+
 (spacemacs/declare-prefix "." "org")
 (spacemacs/declare-prefix ".i" "insert")

@@ -209,6 +209,7 @@ before layers configuration."
       (setq spacemacs-banner-official-png banner-path)))
 
   ;; hooks
+  (add-hook 'find-file-hook 'd12/load-dir-settings)
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'haskell-mode-hook (lambda () (setq global-hl-line-mode nil)))
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode))
