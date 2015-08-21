@@ -234,6 +234,7 @@ layers configuration."
                        ("http://www.reddit.com/r/haskell/.rss" haskell reddit)
                        ("http://www.reddit.com/r/orgmode/.rss" emacs org-mode reddit)
                        ("http://planet.haskell.org/rss20.xml" haskell)
+                       ("http://www.paolocapriotti.com/atom.xml" haskell)
                        ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
                        ("http://nullprogram.com/feed/" emacs)
                        ("http://endlessparentheses.com/atom.xml" emacs))
