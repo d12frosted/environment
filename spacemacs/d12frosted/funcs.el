@@ -14,6 +14,18 @@
   (interactive)
   (find-file (concat d12/org-home-path "gtd.org")))
 
+(defun d12/recursive-load-dir-settings (currentfile)
+  (let ((lds-dir (locate-dominating-file currentfile d12/dir-settings-file)))
+    (when lds-dir
+      (progn
+        (load-file (concat lds-dir d12/dir-settings-file))
+        (d12/recursive-load-dir-settings (file-truename(concat lds-dir "..")))))))
+
+(defun d12/load-dir-settings()
+  (interactive)
+  (when buffer-file-name
+    (d12/recursive-load-dir-settings buffer-file-name)))
+
 ;; =============================================================================
 ;; Files and directories
 ;; =============================================================================
@@ -166,7 +178,7 @@
                   (>= (point) beg))
         (skip-chars-backward (rx (syntax expression-prefix)))
         (setq p (point-marker)))
-      ;; Re-comment everything before it. 
+      ;; Re-comment everything before it.
       (ignore-errors
         (comment-region beg p))
       ;; And everything after it.
