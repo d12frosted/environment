@@ -11,6 +11,7 @@
     ~/.gitignore_global: git/.gitignore_global
     ~/.mbsyncrc: ../Dropbox/email/.mbsyncrc
     ~/.msmtprc: ../Dropbox/email/.msmtprc
+    ~/.hgrc: ../Dropbox/Apps/hgrc
     ~/Library/LaunchAgents/com.d12frosted.sauron.plist: email/com.d12frosted.sauron.plist
     ~/Library/LaunchAgents/com.d12frosted.melkor.plist: email/com.d12frosted.melkor.plist
 
