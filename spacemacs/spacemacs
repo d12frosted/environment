@@ -190,9 +190,10 @@ before layers configuration."
                 d12/env-spacemacs-directory (concat d12/env-directory "spacemacs/"))
 
   (defun d12//spacemacs-replace-title (title)
-    (save-excursion
-      (beginning-of-buffer)
-      (replace-string "[S P A C E M A C S]" title)))
+    (when (string-equal (buffer-name) "*spacemacs*")
+        (save-excursion
+          (beginning-of-buffer)
+          (replace-string "[S P A C E M A C S]" title))))
   (d12//spacemacs-replace-title "[A N I M A C S]")
 
   (if (display-graphic-p)
