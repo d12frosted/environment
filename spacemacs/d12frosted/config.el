@@ -10,7 +10,7 @@
 ;;
 ;;; License: GPLv3
 
-(defvar d12/org-home-path "~/org/"
+(defvar d12/org-home-path (concat user-home-directory "org/")
   "Directory where org files are stored.
    All org files in this directory and all subdirectories will be used as agenda
    files for org agenda. If you want to ignore some files, checkout
