@@ -30,7 +30,7 @@
 
      ;; my own layers
      (d12frosted :variables
-                 d12/org-home-path "~/Dropbox/org/"
+                 d12/org-home-path (concat d12/dropbox-path "org/")
                  d12/org-author-name "Boris Buliga"
                  d12/org-author-email "d12frosted@icloud.com"
                  d12/org-agenda-ignore-dirs '(".git/"
@@ -187,7 +187,8 @@ before layers configuration."
 
 
   (setq-default d12/env-directory (concat user-home-directory ".environment/")
-                d12/env-spacemacs-directory (concat d12/env-directory "spacemacs/"))
+                d12/env-spacemacs-directory (concat d12/env-directory "spacemacs/")
+                d12/dropbox-path (concat user-home-directory "Dropbox/"))
 
   (defun d12//spacemacs-replace-title (title)
     (when (string-equal (buffer-name) "*spacemacs*")
