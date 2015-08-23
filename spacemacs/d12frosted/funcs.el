@@ -227,8 +227,109 @@ With a prefix argument N, (un)comment that many sexps."
       (comment-sexp--raw))))
 
 ;; =============================================================================
+;; mu4e functions
+;; =============================================================================
+
+(defun d12-mu4e/set-account-vars (account)
+  "Set the variables for ACCOUNT from 'mu4e/accounts-alist."
+  (setq d12-mu4e/current-account account)
+  (let* ((account-vars (cdr (assoc account d12-mu4e/accounts-alist))))
+    (if account-vars
+        (mapc #'(lambda (var)
+                  (set (car var) (cadr var)))
+              account-vars)
+      (error "Couln't find variables for <%s>" account))))
+
+(defun d12-mu4e/set-account ()
+  "Set the account for composing a message."
+  (let* ((account
+          (if mu4e-compose-parent-message
+              (let ((maildir
+                     (mu4e-message-field mu4e-compose-parent-message :maildir)))
+                (string-match "/\\(.*?\\)/" maildir)
+                (match-string 1 maildir))
+            (helm-comp-read
+             "Compose with account:"
+             (mapcar (lambda (var) (car var)) d12-mu4e/accounts-alist)))))
+    (d12-mu4e/set-account-vars account)))
+
+(defun d12-mu4e/msgv-action-view-in-browser (msg)
+  "View the body of the message in a web browser."
+  (interactive)
+  (let ((html (mu4e-msg-field (mu4e-message-at-point t) :body-html))
+        (tmpfile (format "%s/%d.html" temporary-file-directory (random))))
+    (unless html (error "No html part for this message"))
+    (with-temp-file tmpfile
+      (insert
+       "<html>"
+       "<head><meta http-equiv=\"content-type\""
+       "content=\"text/html;charset=UTF-8\">"
+       html))
+    (browse-url (concat "file://" tmpfile))))
+
+(defun d12-mu4e/mail-account-reset ()
+  "Reset mail account info to first."
+  (d12-mu4e/set-account-vars d12-mu4e/default-account))
+
+;; -----------------------------------------------------------------------------
+;; *-folder functions
+;; -----------------------------------------------------------------------------
+
+(defun d12-mu4e/get-folder (type msg)
+  "Returns the folder of TYPE based on msg.
+   If MSG is nil then returns the folder of
+   TYPE based on 'mu4e/current-account."
+  (let* ((account (if msg
+                      (d12-mu4e/get-account-from-maildir
+                       (mu4e-message-field msg :maildir))
+                    d12-mu4e/current-account)))
+    (d12-mu4e/get-prop-for-account-in-alist account
+                                            type
+                                            d12-mu4e/folders-alist)))
+
+(defun d12-mu4e/trash-folder-fn (msg)
+  "Returns trash folder for MSG."
+  (d12-mu4e/get-folder 'mu4e-trash-folder msg))
+
+(defun d12-mu4e/refile-folder-fn (msg)
+  "Returns refile folder for MSG."
+  (d12-mu4e/get-folder 'mu4e-refile-folder msg))
+
+(defun d12-mu4e/drafts-folder-fn (msg)
+  "Returns drafts folder for MSG."
+  (d12-mu4e/get-folder 'mu4e-drafts-folder msg))
+
+(defun d12-mu4e/sent-folder-fn (msg)
+  "Returns sent folder for MSG."
+  (d12-mu4e/get-folder 'mu4e-sent-folder msg))
+
+;; -----------------------------------------------------------------------------
+;; Helper functions
+;; -----------------------------------------------------------------------------
+
+(defun d12-mu4e/get-account-from-maildir (maildir)
+  "Return account name for maildir.
+   For example, (mu4e/get-account-from-maildir \"/some-name/Trash\")
+   returns \"some-name\"."
+  (string-match "/\\(.*?\\)/" maildir)
+  (match-string 1 maildir))
+
+(defun d12-mu4e/get-prop-for-account-in-alist (account prop alist)
+  (let* ((props (cdr (assoc account alist)))
+         (value (car (cdr (assoc prop props)))))
+    (if value
+        value
+      (error "Couldn't find '%s' property for '%s' in %s"
+             prop
+             account
+             alist))))
+
+;; =============================================================================
 ;; Misc functions
 ;; =============================================================================
+
+(defun d12-mu4e/load-private-configs ()
+  "Load private mu4e configurations from `d12-mu4e/private-config-path'")
 
 (defun d12/insert-date (&optional days)
   "Insert timestamp formated by value of `d12/date-format'.
