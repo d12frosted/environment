@@ -50,12 +50,12 @@
              omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp"
              ;; omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe"
              )
-     (haskell :variables
-              haskell-enable-ghci-ng-support nil
-              haskell-enable-ghc-mod-support nil
-              haskell-enable-shm-support t
-              haskell-enable-hindent-style "chris-done"
-              haskell-process-type 'stack-ghci)
+     ;; (haskell :variables
+     ;;          haskell-enable-ghci-ng-support nil
+     ;;          haskell-enable-ghc-mod-support nil
+     ;;          haskell-enable-shm-support t
+     ;;          haskell-enable-hindent-style "chris-done"
+     ;;          haskell-process-type 'stack-ghci)
      python
 
      ;; misc
