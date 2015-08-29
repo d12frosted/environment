@@ -181,6 +181,9 @@ before layers configuration."
    )
   ;; User initialization goes here
 
+  (let ((default-directory "/usr/local/share/emacs/site-lisp/"))
+    (normal-top-level-add-subdirs-to-load-path))
+
   ;; set some essential vars
   (setq-default d12/env-directory (concat user-home-directory ".environment/")
                 d12/env-spacemacs-directory (concat d12/env-directory "spacemacs/")
