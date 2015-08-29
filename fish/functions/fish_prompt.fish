@@ -5,40 +5,34 @@ function fish_prompt --description 'Write out the prompt'
 
   echo
 
+  if test $last_status -ne 0
+    set_color $fish_color_error
+    printf "<%d> " $last_status
+  end
+
   # Time
   set_color $fish_color_comment
-  echo -ns "[" (date +%X) "] "
-
-  # User
-  set_color $fish_color_user
-  echo -n (whoami)
-  set_color normal
-
-  echo -n '@'
-
-  # Host
-  set_color $fish_color_host
-  echo -n (hostname -s)
-  set_color normal
-
-  echo -n ':'
+  printf "[%s] " (date +%X)
 
   # PWD
   set_color $fish_color_cwd
-  echo -n (prompt_pwd)
+  printf "%s" (prompt_pwd)
+
   set_color normal
 
   __fish_venv
   __terlar_git_prompt
   __fish_hg_prompt
+
   echo
 
-  if not test $last_status -eq 0
+  if test $last_status -ne 0
     set_color $fish_color_error
+  else
+    set_color $fish_color_operator
   end
 
   # echo -n '➤ '
-  set_color $fish_color_operator
   echo -n 'λ '
   set_color normal
 end
