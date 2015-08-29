@@ -16,7 +16,9 @@
       <string>en_US.UTF-8</string>
     </dict>
     <key>KeepAlive</key>
-    <false/>
+    <true/>
+    <key>ThrottleInterval</key>
+    <integer>60</integer>
     <key>ProgramArguments</key>
     <array>
       <string>sh</string>
