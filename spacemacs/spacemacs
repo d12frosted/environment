@@ -247,7 +247,12 @@ layers configuration."
     "ae" 'elfeed
     "it" 'd12/insert-time
     "id" 'd12/insert-date
-    "iD" 'd12/insert-full-date))
+    "iD" 'd12/insert-full-date)
+
+  (when (configuration-layer/layer-usedp 'eyebrowse)
+    (bind-keys ("M-A-<right>"  . eyebrowse-next-window-config)
+               ("M-A-<left>" . eyebrowse-prev-window-config))))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+
