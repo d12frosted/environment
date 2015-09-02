@@ -1,18 +1,26 @@
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
+  - chmod +x emacs/switch_emacs
 
 - link:
     ~/.emacs.d:
-      relink: true
       path: ../.emacs.d.spacemacs
-    ~/.spacemacs: emacs/spacemacs
+      relink: true
+    ~/.spacemacs:
+      path: emacs/spacemacs
+      relink: true
+    ~/.local/bin/switch_emacs:
+      path: emacs/switch_emacs
+      create: true
+
     ~/.ghci: haskell/.ghci
-    ~/.stack/global/stack.yaml
-      create: true
+    ~/.stack/global/stack.yaml:
       path: haskell/stack.yaml
-    ~/.cabal/config:
       create: true
+    ~/.cabal/config:
       path: haskell/cabal-config
+      create: true
+
     ~/.gitignore_global: git/.gitignore_global
     ~/.hgrc: ../Dropbox/Apps/hgrc
 
