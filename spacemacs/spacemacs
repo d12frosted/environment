@@ -29,7 +29,8 @@
             shell-default-term-shell "/usr/local/bin/fish")
      eyebrowse
 
-     ;; my own layers
+     ;; private layers
+     no-dots
      (d12frosted :variables
                  d12-mu4e/private-config-path (concat d12/dropbox-path "Apps/mu4e-private.el")
                  d12-mu4e/installation-path "/usr/local/Cellar/mu/HEAD/share/emacs/site-lisp/mu4e/"
