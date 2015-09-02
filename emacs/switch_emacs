@@ -1,8 +1,8 @@
 #!/bin/sh
 
 case $1 in
-    "d12")
-        emacs_path=~/.environment/emacs
+    "deprecated")
+        emacs_path=~/.environment/deprecated/emacs
 	      ;;
 
     "spacemacs")

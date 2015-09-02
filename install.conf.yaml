@@ -5,7 +5,7 @@
     ~/.emacs.d:
       relink: true
       path: ../.emacs.d.spacemacs
-    ~/.spacemacs: spacemacs/spacemacs
+    ~/.spacemacs: emacs/spacemacs
     ~/.ghci: haskell/.ghci
     ~/.stack/global/stack.yaml
       create: true
