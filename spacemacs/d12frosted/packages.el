@@ -430,6 +430,7 @@ If not, show simply the clocked time like 01:50."
     :config
     (progn
       (defun d12/init-haskell-mode ()
+        (setq global-hl-line-mode nil)
         (if (fboundp 'electric-indent-local-mode)
             (electric-indent-local-mode -1)))
 
