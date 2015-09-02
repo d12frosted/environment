@@ -22,6 +22,7 @@
      auto-completion
      (org :variables
           org-enable-github-support t
+          org-enable-company-mode nil
           org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))
      restclient
      (shell :variables
