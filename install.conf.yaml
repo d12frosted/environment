@@ -5,6 +5,9 @@
     ~/.emacs.d: ../.emacs.d.spacemacs
     ~/.spacemacs: spacemacs/spacemacs
     ~/.ghci: haskell/.ghci
+    ~/.stack/global/stack.yaml
+      create: true
+      path: haskell/stack.yaml
     ~/.cabal/config:
       create: true
       path: haskell/cabal-config
