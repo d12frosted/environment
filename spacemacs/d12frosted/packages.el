@@ -254,7 +254,10 @@ If not, show simply the clocked time like 01:50."
           org-agenda-inhibit-startup nil
           org-mobile-inbox-for-pull (concat d12/org-home-path "mobile.org")
           org-mobile-force-id-on-agenda-items nil
-          org-mobile-directory "~/Dropbox/Apps/MobileOrg/")
+          org-mobile-directory "~/Dropbox/Apps/MobileOrg/"
+
+          org-time-clocksum-format
+          '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 
     ;; (require 'ox-publish)
     ;; (setq org-html-htmlize-output-type 'inline-css
