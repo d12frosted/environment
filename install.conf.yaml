@@ -1,6 +1,19 @@
 - shell:
-  - [git submodule update --init --recursive, Installing submodules]
-  - chmod +x emacs/switch_emacs
+  -
+    command: git submodule update --init --recursive
+    description: Installing submodules
+  -
+    command: sh bootstrap
+    description: Bootstrap
+  -
+    command: chmod +x emacs/switch_emacs
+    description: Promote 'switch_emacs' to executable
+  -
+    command: sh emacs/bootstrap
+    description: Bootstrap emacs
+  -
+    command: sh haskell/bootstrap
+    description: Bootstrap haskell
 
 - link:
     ~/.emacs.d:

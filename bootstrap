@@ -1,0 +1,12 @@
+#!/bin/sh
+
+
+if [ $(uname -s) = "Darwin" ]; then
+    hash brew || {
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    }
+
+    hash wget || {
+        brew install wget
+    }
+fi
