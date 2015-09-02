@@ -213,8 +213,8 @@ before layers configuration."
                                         sanityinc-tomorrow-eighties)))
 
   ;; hooks
-  (add-hook 'find-file-hook 'd12/load-dir-settings)
   (add-hook 'text-mode-hook 'visual-line-mode)
+  (add-hook 'text-mode-hook 'flyspell-mode)
   (add-hook 'haskell-mode-hook (lambda () (setq global-hl-line-mode nil)))
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
   (add-hook 'prog-mode-hook 'flyspell-prog-mode))
@@ -224,10 +224,12 @@ before layers configuration."
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
 
+  (add-hook 'find-file-hook 'd12/load-dir-settings)
+  (add-hook 'company-mode-hook 'company-quickhelp-mode)
+
   ;; configs
   (helm-projectile-on)
-  (delete-selection-mode 1)
-  (company-quickhelp-mode 1)
+  ;; (delete-selection-mode 1)
 
   ;; vars
   (setq projectile-enable-caching nil
