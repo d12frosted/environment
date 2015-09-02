@@ -1,0 +1,11 @@
+#+TITLE: no-dots
+
+Mirror of [[https://github.com/TheBB/spacemacs-layers/tree/master/no-dots][TheBB/no-dots]] layer.
+
+By default it's impossible to ignore the dotted directories =.= and =..= in
+=helm-find-files=, even if you use =helm-boring-file-regexp-list=. This layer
+hacks it in, anyway.
+
+Note that this works regardless of the value of =helm-ff-skip-boring-files= and
+=helm-boring-file-regexp-list=. That functionality will continue to work as
+before.
