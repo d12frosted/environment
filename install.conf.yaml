@@ -2,7 +2,9 @@
   - [git submodule update --init --recursive, Installing submodules]
 
 - link:
-    ~/.emacs.d: ../.emacs.d.spacemacs
+    ~/.emacs.d:
+      relink: true
+      path: ../.emacs.d.spacemacs
     ~/.spacemacs: spacemacs/spacemacs
     ~/.ghci: haskell/.ghci
     ~/.stack/global/stack.yaml
