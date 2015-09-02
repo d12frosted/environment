@@ -1,0 +1,29 @@
+#!/bin/sh
+
+spacemacs=~/.emacs.d.spacemacs
+
+if [ ! -e $spacemacs ]; then
+    if [ $USER = "d12frosted" ]; then
+        spacemacs_link="git@github.com:d12frosted/spacemacs.git"
+    else
+        spacemacs_link="git@github.com:syl20bnr/spacemacs.git"
+    fi
+
+    git clone $spacemacs_link $spacemacs
+    cd $spacemacs
+    git checkout develop
+fi
+
+if [ $(uname -s) = "Darwin" ]; then
+    hash emacs || {
+        brew install emacs-mac --with-spacemacs-icon --with-gnutls --with-imagemagick
+    }
+
+    hash ack || {
+        brew install ack
+    }
+
+    hash ispell || {
+        brew install ispell
+    }
+fi

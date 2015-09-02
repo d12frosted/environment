@@ -1,0 +1,5 @@
+#!/bin/sh
+
+bin_dir=~/.local/bin
+
+mkdir -p $bin_dir
