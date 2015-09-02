@@ -50,6 +50,7 @@ function __prompt_duration
       end
     end
   end
+  set CMD_DURATION 0
 end
 
 function __fish_venv
