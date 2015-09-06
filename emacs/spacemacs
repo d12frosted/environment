@@ -5,11 +5,7 @@
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
   (setq-default
-   ;; List of additional paths where to look for configuration layers.
-   ;; Paths must have a trailing slash (ie. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '("~/.environment/emacs/")
-   ;; List of configuration layers to load. If it is the symbol `all' instead
-   ;; of a list then all discovered layers will be installed.
+   dotspacemacs-configuration-layer-path `(,d12/env-spacemacs-directory)
    dotspacemacs-configuration-layers
    '(
      ;; utilities
@@ -19,10 +15,9 @@
      github
      version-control
      syntax-checking
-     auto-completion
+     (auto-completion :disabled-for org)
      (org :variables
           org-enable-github-support t
-          org-enable-company-mode nil
           org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))
      restclient
      (shell :variables
@@ -50,7 +45,6 @@
      shell-scripts
      (csharp :variables
              omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp"
-             ;; omnisharp-server-executable-path "~/.omnisharp/OmniSharp/bin/Debug/OmniSharp.exe"
              )
      python
 
@@ -61,136 +55,61 @@
      rcirc
      erc
      )
-   ;; List of additional packages that will be installed wihout being
-   ;; wrapped in a layer. If you need some configuration for these
-   ;; packages then consider to create a layer, you can also put the
-   ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(comment-dwim-2
                                       color-theme-sanityinc-tomorrow
                                       apropospriate-theme
                                       elfeed)
-   ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
-   ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
-   ;; are declared in a layer which is not a member of
-   ;; the list `dotspacemacs-configuration-layers'
-   dotspacemacs-delete-orphan-packages t))
+   dotspacemacs-delete-orphan-packages nil))
 
 (defun dotspacemacs/init ()
   "Initialization function.
 This function is called at the very startup of Spacemacs initialization
 before layers configuration."
-  ;; This setq-default sexp is an exhaustive list of all the supported
-  ;; spacemacs settings.
-  (setq-default
-   ;; Either `vim' or `emacs'. Evil is always enabled but if the variable
-   ;; is `emacs' then the `holy-mode' is enabled at startup.
-   dotspacemacs-editing-style 'emacs
-   ;; If non nil output loading progress in `*Messages*' buffer.
-   dotspacemacs-verbose-loading nil
-   ;; Specify the startup banner. Default value is `official', it displays
-   ;; the official spacemacs logo. An integer value is the index of text
-   ;; banner, `random' chooses a random text banner in `core/banners'
-   ;; directory. A string value must be a path to an image format supported
-   ;; by your Emacs build.
-   ;; If the value is nil then no banner is displayed.
-   dotspacemacs-startup-banner 'official
-   ;; List of items to show in the startup buffer. If nil it is disabled.
-   ;; Possible values are: `recents' `bookmarks' `projects'."
-   dotspacemacs-startup-lists '(recents projects bookmarks)
-   ;; List of themes, the first of the list is loaded when spacemacs starts.
-   ;; Press <SPC> T n to cycle to the next theme in the list (works great
-   ;; with 2 themes variants, one dark and one light)
-   ;; dotspacemacs-themes '(leuven)
-   ;; If non nil the cursor color matches the state color.
-   dotspacemacs-colorize-cursor-according-to-state t
-   ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
-   ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '(;; "Source Code Pro"
-                               ;; "M+ 1m" ; http://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html
-                               "Fira Mono"
-                               :size 13
-                               :weight normal
-                               :width normal
-                               :powerline-scale 1.1)
-   ;; The leader key
-   dotspacemacs-leader-key "SPC"
-   ;; The leader key accessible in `emacs state' and `insert state'
-   dotspacemacs-emacs-leader-key "M-m"
-   ;; Major mode leader key is a shortcut key which is the equivalent of
-   ;; pressing `<leader> m`. Set it to `nil` to disable it.
-   dotspacemacs-major-mode-leader-key ","
-   ;; Major mode leader key accessible in `emacs state' and `insert state'
-   dotspacemacs-major-mode-emacs-leader-key "C-M-m"
-   ;; The command key used for Evil commands (ex-commands) and
-   ;; Emacs commands (M-x).
-   ;; By default the command key is `:' so ex-commands are executed like in Vim
-   ;; with `:' and Emacs commands are executed with `<leader> :'.
-   dotspacemacs-command-key ":"
-   ;; If non nil then `ido' replaces `helm' for some commands. For now only
-   ;; `find-files' (SPC f f) is replaced.
-   dotspacemacs-use-ido nil
-   ;; If non nil the paste micro-state is enabled. When enabled pressing `p`
-   ;; several times cycle between the kill ring content.
-   dotspacemacs-enable-paste-micro-state nil
-   ;; Guide-key delay in seconds. The Guide-key is the popup buffer listing
-   ;; the commands bound to the current keystrokes.
-   dotspacemacs-guide-key-delay 0.4
-   ;; If non nil a progress bar is displayed when spacemacs is loading. This
-   ;; may increase the boot time on some systems and emacs builds, set it to
-   ;; nil ;; to boost the loading time.
-   dotspacemacs-loading-progress-bar t
-   ;; If non nil the frame is fullscreen when Emacs starts up.
-   ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup nil
-   ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
-   ;; Use to disable fullscreen animations in OSX."
-   dotspacemacs-fullscreen-use-non-native nil
-   ;; If non nil the frame is maximized when Emacs starts up.
-   ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
-   ;; (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup t
-   ;; A value from the range (0..100), in increasing opacity, which describes
-   ;; the transparency level of a frame when it's active or selected.
-   ;; Transparency can be toggled through `toggle-transparency'.
-   dotspacemacs-active-transparency 90
-   ;; A value from the range (0..100), in increasing opacity, which describes
-   ;; the transparency level of a frame when it's inactive or deselected.
-   ;; Transparency can be toggled through `toggle-transparency'.
-   dotspacemacs-inactive-transparency 90
-   ;; If non nil unicode symbols are displayed in the mode line.
-   dotspacemacs-mode-line-unicode-symbols t
-   ;; If non nil smooth scrolling (native-scrolling) is enabled. Smooth
-   ;; scrolling overrides the default behavior of Emacs which recenters the
-   ;; point when it reaches the top or bottom of the screen.
-   dotspacemacs-smooth-scrolling t
-   ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
-   dotspacemacs-smartparens-strict-mode nil
-   ;; Select a scope to highlight delimiters. Possible value is `all',
-   ;; `current' or `nil'. Default is `all'
-   dotspacemacs-highlight-delimiters 'all
-   ;; If non nil advises quit functions to keep server open when quitting.
-   dotspacemacs-persistent-server nil
-   ;; List of search tool executable names. Spacemacs uses the first installed
-   ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
-   dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
-   ;; The default package repository used if no explicit repository has been
-   ;; specified with an installed package.
-   ;; Not used for now.
-   dotspacemacs-default-package-repository nil
-
-   ;; show org current task in mode line
-   spacemacs-mode-line-org-clock-current-taskp t
-   )
-  ;; User initialization goes here
 
   (let ((default-directory "/usr/local/share/emacs/site-lisp/"))
     (normal-top-level-add-subdirs-to-load-path))
 
-  ;; set some essential vars
-  (setq-default d12/env-directory (concat user-home-directory ".environment/")
-                d12/env-spacemacs-directory (concat d12/env-directory "spacemacs/")
-                d12/dropbox-path (concat user-home-directory "Dropbox/"))
+  (setq-default
+   d12/env-directory (concat user-home-directory ".environment/")
+   d12/env-spacemacs-directory (concat d12/env-directory "emacs/")
+   d12/dropbox-path (concat user-home-directory "Dropbox/")
+
+   dotspacemacs-editing-style 'emacs
+   dotspacemacs-verbose-loading t
+   dotspacemacs-startup-banner (concat d12/env-spacemacs-directory "animacs-banner.png")
+   dotspacemacs-startup-lists '(recents projects bookmarks)
+   dotspacemacs-colorize-cursor-according-to-state t
+   dotspacemacs-default-font '("Source Code Pro"
+                               ;; "M+ 1m" ; http://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html
+                               ;; "Fira Mono"
+                               :size 13
+                               :weight normal
+                               :width normal
+                               :powerline-scale 1.1)
+   dotspacemacs-leader-key "SPC"
+   dotspacemacs-emacs-leader-key "M-m"
+   dotspacemacs-major-mode-leader-key ","
+   dotspacemacs-major-mode-emacs-leader-key "C-M-m"
+   dotspacemacs-command-key ":"
+   dotspacemacs-use-ido nil
+   dotspacemacs-enable-paste-micro-state t
+   dotspacemacs-guide-key-delay 0.4
+   dotspacemacs-loading-progress-bar t
+   dotspacemacs-fullscreen-at-startup nil
+   dotspacemacs-fullscreen-use-non-native nil
+   dotspacemacs-maximized-at-startup t
+   dotspacemacs-active-transparency 90
+   dotspacemacs-inactive-transparency 90
+   dotspacemacs-mode-line-unicode-symbols nil
+   dotspacemacs-smooth-scrolling t
+   dotspacemacs-smartparens-strict-mode t
+   dotspacemacs-highlight-delimiters 'all
+   dotspacemacs-persistent-server nil
+   dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
+   dotspacemacs-default-package-repository nil
+   spacemacs-mode-line-org-clock-current-taskp t
+   )
 
   ;; rename title in init screen
   (defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
@@ -199,35 +118,41 @@ before layers configuration."
       (beginning-of-buffer)
       (replace-string "[S P A C E M A C S]" "[A N I M A C S]")))
 
-  ;; change banner image
-  (let ((banner-path (expand-file-name (concat d12/env-spacemacs-directory "animacs-banner.png"))))
-    (when (file-exists-p banner-path)
-      (setq spacemacs-banner-official-png banner-path)))
-
-  ;; set theme
-  (if (display-graphic-p)
-      (setq-default dotspacemacs-themes '(spacemacs-light
-                                          apropospriate-light
-                                          spacemacs-dark
-                                          leuven))
-    (setq-default dotspacemacs-themes '(spacemacs-dark
-                                        spacemacs-light
-                                        sanityinc-tomorrow-eighties)))
-
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'text-mode-hook 'flyspell-mode)
   (add-hook 'haskell-mode-hook (lambda () (setq global-hl-line-mode nil)))
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
-(defun dotspacemacs/config ()
+  (setq custom-file (concat d12/dropbox-path "App/emacs-custom.el"))
+  (load custom-file t)
+
+  (if (display-graphic-p)
+      (dotspacemacs/init-gui)
+    (dotspacemacs/init-terminal)))
+
+(defun dotspacemacs/init-terminal ()
+  "Initialization function when `display-graphic-p' returns nil."
+  (setq-default dotspacemacs-themes '(spacemacs-dark
+                                      spacemacs-light
+                                      sanityinc-tomorrow-eighties)))
+
+(defun dotspacemacs/init-gui ()
+  "Initialization function when `display-graphic-p' returns t."
+  (setq-default dotspacemacs-themes '(spacemacs-light
+                                      apropospriate-light
+                                      spacemacs-dark
+                                      leuven)))
+
+(defun dotspacemacs/user-config ()
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
 
   (add-hook 'find-file-hook 'd12/load-dir-settings)
   (add-hook 'company-mode-hook 'company-quickhelp-mode)
+  (remove-hook 'org-mode-hook 'company-mode)
 
   ;; configs
   (helm-projectile-on)
@@ -262,6 +187,13 @@ layers configuration."
     (bind-keys ("M-A-<right>"  . eyebrowse-next-window-config)
                ("M-A-<left>" . eyebrowse-prev-window-config))))
 
-;; Do not write anything past this comment. This is where Emacs will
-;; auto-generate custom variable definitions.
-
+(defun configuration-layer/get-owner (pkg &optional print)
+  (interactive "SEnter package name: \np")
+  (let ((owner (cdr (assoc pkg
+                           (mapcar (lambda (pkg)
+                                     (cons (oref pkg :name)
+                                           (oref pkg :owner)))
+                                   configuration-layer--packages)))))
+    (when print
+      (message "Owner of %S is %S" pkg owner))
+    owner))
