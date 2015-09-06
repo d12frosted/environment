@@ -437,14 +437,14 @@ If not, show simply the clocked time like 01:50."
       (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
       (add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
       (add-hook 'haskell-mode-hook 'd12/init-haskell-mode)
-      (when (configuration-layer/package-usedp 'flycheck)
-        (add-hook 'haskell-mode-hook 'flycheck-mode))
+
+      (spacemacs|diminish interactive-haskell-mode "λ")
 
       (setq haskell-process-type 'stack-ghci
             haskell-notify-p t
             haskell-tags-on-save nil
             haskell-interactive-popup-error nil
-            haskell-process-suggest-remove-import-lines t
+            haskell-process-suggest-remove-import-lines nil
             haskell-process-auto-import-loaded-modules t
             haskell-stylish-on-save nil
             haskell-process-log t
@@ -452,7 +452,7 @@ If not, show simply the clocked time like 01:50."
             haskell-process-use-presentation-mode t
             haskell-interactive-mode-include-file-name nil
             haskell-interactive-mode-eval-pretty nil
-            haskell-process-suggest-haskell-docs-imports t
+            haskell-process-suggest-haskell-docs-imports nil
             hindent-style "chris-done"
             haskell-interactive-mode-eval-mode 'haskell-mode)
       )
@@ -526,7 +526,8 @@ If not, show simply the clocked time like 01:50."
   (use-package flycheck-haskell
     :if (configuration-layer/package-usedp 'flycheck)
     :commands flycheck-haskell-configure
-    :init (add-hook 'flycheck-mode-hook 'flycheck-haskell-configure)))
+    :init
+    (add-hook 'flycheck-mode-hook 'flycheck-haskell-configure)))
 
 ;; For each package, define a function d12frosted/init-<package-d12frosted>
 ;;
