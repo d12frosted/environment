@@ -122,7 +122,6 @@ before layers configuration."
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'text-mode-hook 'flyspell-mode)
-  (add-hook 'haskell-mode-hook (lambda () (setq global-hl-line-mode nil)))
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
   (add-hook 'prog-mode-hook 'flyspell-prog-mode)
   (add-hook 'after-save-hook 'delete-trailing-whitespace)
