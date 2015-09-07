@@ -23,6 +23,7 @@
      (shell :variables
             shell-default-term-shell "/usr/local/bin/fish")
      eyebrowse
+     perspectives
 
      ;; private layers
      no-dots
