@@ -124,6 +124,7 @@ before layers configuration."
   (add-hook 'haskell-mode-hook (lambda () (setq global-hl-line-mode nil)))
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
   (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+  (add-hook 'after-save-hook 'delete-trailing-whitespace)
 
   (setq custom-file (concat d12/dropbox-path "App/emacs-custom.el"))
   (load custom-file t)
