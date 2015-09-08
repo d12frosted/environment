@@ -115,6 +115,8 @@ before layers configuration."
    dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
    dotspacemacs-default-package-repository nil
    spacemacs-mode-line-org-clock-current-taskp t
+   dotspacemacs-auto-save-file-location 'cache
+   dotspacemacs-which-key-position 'bottom
    )
 
   ;; rename title in init screen
