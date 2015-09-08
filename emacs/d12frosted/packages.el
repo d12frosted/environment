@@ -10,8 +10,6 @@
 ;;
 ;;; License: GPLv3
 
-;; List of all packages to install and/or initialize. Built-in packages
-;; which require an initialization must be listed explicitly in the list.
 (setq d12frosted-packages
       '(
         org
@@ -19,7 +17,6 @@
         omnisharp
         ))
 
-;; List of packages to exclude.
 (setq d12frosted-excluded-packages '())
 
 ;;; Misc configs
@@ -368,15 +365,6 @@ If not, show simply the clocked time like 01:50."
     (spacemacs|hide-lighter hs-minor-mode)
     (spacemacs|hide-lighter hide-ifdef-mode)
 
-    ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "mc" "compile")
-    ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "mf" "file")
-    ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "mp" "projectile")
-    ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "mg" "navigation")
-    ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "mh" "documentation")
-    ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "mr" "refactoring")
-    ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "ms" "server")
-    ;; (spacemacs/declare-prefix-for-mode 'omnisharp-mode "mt" "tests")
-
     (defun omnisharp--get-omnisharp-server-executable-command
         (solution-file-path &optional server-exe-file-path)
       (let* ((server-exe-file-path-arg (expand-file-name
@@ -417,15 +405,4 @@ If not, show simply the clocked time like 01:50."
               csharp-hs-forward-sexp                  ; hs-forward-sexp-func
               hs-c-like-adjust-block-beginning        ; c-like adjust (1 char)
               )
-            hs-special-modes-alist)))
-  )
-
-;; For each package, define a function d12frosted/init-<package-d12frosted>
-;;
-;; (defun d12frosted/init-my-package ()
-;;   "Initialize my package"
-;;   )
-;;
-;; Often the body of an initialize function uses `use-package'
-;; For more info on `use-package', see readme:
-;; https://github.com/jwiegley/use-package
+            hs-special-modes-alist))))
