@@ -41,6 +41,11 @@
                                               "projects/"
                                               "personal/"))
 
+     (d12-haskell :variables
+                  haskell-enable-hindent-style "chris-done"
+                  haskell-enable-shm-support t
+                  haskell-process-type 'stack-ghci)
+
      ;; languages
      emacs-lisp
      shell-scripts
