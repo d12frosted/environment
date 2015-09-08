@@ -58,9 +58,6 @@
      ;; misc
      colors
      markdown
-     spotify
-     rcirc
-     erc
      )
    dotspacemacs-additional-packages '(comment-dwim-2
                                       color-theme-sanityinc-tomorrow
