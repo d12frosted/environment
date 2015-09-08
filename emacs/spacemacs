@@ -24,6 +24,7 @@
             shell-default-term-shell "/usr/local/bin/fish")
      eyebrowse
      perspectives
+     pandoc
 
      ;; private layers
      no-dots
