@@ -7,8 +7,7 @@
   (setq-default
    dotspacemacs-configuration-layer-path `(,d12/env-spacemacs-directory)
    dotspacemacs-configuration-layers
-   '(
-     ;; utilities
+   '(;; utilities
      better-defaults
      (git :variables
           git-magit-status-fullscreen t)
@@ -25,6 +24,7 @@
      eyebrowse
      perspectives
      pandoc
+     colors
 
      ;; private layers
      no-dots
@@ -48,17 +48,16 @@
                   haskell-process-type 'stack-ghci)
 
      ;; languages
-     emacs-lisp
-     shell-scripts
      (csharp :variables
-             omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp"
-             )
-     python
-
-     ;; misc
-     colors
+             omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
+     emacs-lisp
+     javascript
+     lua
      markdown
-     )
+     python
+     ruby
+     shell-scripts
+     yaml)
    dotspacemacs-additional-packages '(comment-dwim-2
                                       color-theme-sanityinc-tomorrow
                                       apropospriate-theme
