@@ -162,7 +162,7 @@ layers configuration."
 
   ;; configs
   (helm-projectile-on)
-  ;; (delete-selection-mode 1)
+  (delete-selection-mode 1)
 
   ;; vars
   (setq projectile-enable-caching nil
