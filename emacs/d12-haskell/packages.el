@@ -13,6 +13,7 @@
 (setq d12-haskell-packages
       '(
         haskell-mode
+        hindent
         shm
         company
         company-ghci
@@ -56,6 +57,17 @@
        haskell-stylish-on-save nil
        haskell-interactive-mode-eval-mode 'haskell-mode)
 
+(defun d12-haskell/init-hindent ()
+  (use-package hindent
+    :defer t
+    :if (stringp haskell-enable-hindent-style)
+    :init
+    (add-hook 'haskell-mode-hook #'hindent-mode)
+    :config
+    (progn
+      (setq hindent-style haskell-enable-hindent-style)
+      (evil-leader/set-key-for-mode 'haskell-mode
+        "mF" 'hindent/reformat-decl))))
 (when haskell-enable-shm-support
   (defun d12-haskell/init-shm ()
     "Initialize structured haskell mode."
