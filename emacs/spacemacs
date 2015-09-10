@@ -45,7 +45,14 @@
      (d12-haskell :variables
                   haskell-enable-hindent-style "chris-done"
                   haskell-enable-shm-support t
-                  haskell-process-type 'stack-ghci)
+                  haskell-process-type 'stack-ghci
+                  haskell-tags-on-save nil
+                  haskell-process-log t
+                  haskell-process-reload-with-fbytecode nil
+                  ;; haskell-process-use-presentation-mode t
+                  haskell-interactive-mode-include-file-name nil
+                  haskell-interactive-mode-eval-pretty nil
+                  haskell-process-suggest-haskell-docs-imports nil)
 
      ;; languages
      (csharp :variables
@@ -125,7 +132,6 @@ before layers configuration."
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'text-mode-hook 'flyspell-mode)
-  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
   (add-hook 'prog-mode-hook 'flyspell-prog-mode)
   (add-hook 'after-save-hook 'delete-trailing-whitespace)
 
