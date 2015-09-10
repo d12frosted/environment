@@ -14,6 +14,7 @@
      github
      version-control
      syntax-checking
+     spell-checking
      (auto-completion :disabled-for org)
      (org :variables
           org-enable-github-support t
@@ -131,8 +132,6 @@ before layers configuration."
 
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
-  (add-hook 'text-mode-hook 'flyspell-mode)
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
   (add-hook 'after-save-hook 'delete-trailing-whitespace)
 
   (setq custom-file (concat d12/dropbox-path "App/emacs-custom.el"))
