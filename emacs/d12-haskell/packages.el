@@ -57,6 +57,99 @@
        haskell-stylish-on-save nil
        haskell-interactive-mode-eval-mode 'haskell-mode)
 
+      (defun spacemacs/haskell-process-do-type-on-prev-line ()
+        (interactive)
+        (if haskell-enable-ghci-ng-support
+            (haskell-mode-show-type-at 1)
+          (haskell-process-do-type 1)))
+
+      ;; key bindings
+      (evil-leader/set-key-for-mode 'haskell-mode
+        "mgg"  'haskell-mode-jump-to-def-or-tag
+        "mf"   'haskell-mode-stylish-buffer
+
+        "msb"  'haskell-process-load-or-reload
+        "msc"  'haskell-interactive-mode-clear
+        "mss"  'haskell-interactive-bring
+        "msS"  'haskell-interactive-switch
+
+        "mca"  'haskell-process-cabal
+        "mcb"  'haskell-process-cabal-build
+        "mcc"  'haskell-compile
+        "mcv"  'haskell-cabal-visit-file
+
+        "mhd"  'inferior-haskell-find-haddock
+        "mhh"  'hoogle
+        "mhi"  'haskell-process-do-info
+        "mht"  'haskell-process-do-type
+        "mhT"  'spacemacs/haskell-process-do-type-on-prev-line
+        "mhy"  'hayoo
+
+        "mdd"  'haskell-debug
+        "mdb"  'haskell-debug/break-on-function
+        "mdn"  'haskell-debug/next
+        "mdN"  'haskell-debug/previous
+        "mdB"  'haskell-debug/delete
+        "mdc"  'haskell-debug/continue
+        "mda"  'haskell-debug/abandon
+        "mdr"  'haskell-debug/refresh)
+
+       ;; Switch back to editor from REPL
+      (evil-leader/set-key-for-mode 'haskell-interactive-mode
+        "msS"  'haskell-interactive-switch)
+
+      ;; Compile
+      (evil-leader/set-key-for-mode 'haskell-cabal
+        "mC"  'haskell-compile)
+
+      ;; Cabal-file bindings
+      (evil-leader/set-key-for-mode 'haskell-cabal-mode
+        ;; "m="  'haskell-cabal-subsection-arrange-lines ;; Does a bad job, 'gg=G' works better
+        "md" 'haskell-cabal-add-dependency
+        "mb" 'haskell-cabal-goto-benchmark-section
+        "me" 'haskell-cabal-goto-executable-section
+        "mt" 'haskell-cabal-goto-test-suite-section
+        "mm" 'haskell-cabal-goto-exposed-modules
+        "ml" 'haskell-cabal-goto-library-section
+        "mn" 'haskell-cabal-next-subsection
+        "mp" 'haskell-cabal-previous-subsection
+        "mN" 'haskell-cabal-next-section
+        "mP" 'haskell-cabal-previous-section
+        "mf" 'haskell-cabal-find-or-create-source-file)
+
+      ;; Make "RET" behaviour in REPL saner
+      (evil-define-key 'insert haskell-interactive-mode-map
+        (kbd "RET") 'haskell-interactive-mode-return)
+      (evil-define-key 'normal haskell-interactive-mode-map
+        (kbd "RET") 'haskell-interactive-mode-return)
+
+      ;; Useful to have these keybindings for .cabal files, too.
+      (eval-after-load 'haskell-cabal-mode-map
+        '(define-key haskell-cabal-mode-map
+           [?\C-c ?\C-z] 'haskell-interactive-switch))
+      ))
+
+  (eval-after-load 'haskell-indentation
+    '(progn
+       ;; Show indentation guides in insert or emacs state only.
+       (defun spacemacs//haskell-indentation-show-guides ()
+         "Show visual indentation guides."
+         (when (and (boundp 'haskell-indentation-mode) haskell-indentation-mode)
+           (haskell-indentation-enable-show-indentations)))
+
+       (defun spacemacs//haskell-indentation-hide-guides ()
+         "Hide visual indentation guides."
+         (when (and (boundp 'haskell-indentation-mode) haskell-indentation-mode)
+           (haskell-indentation-disable-show-indentations)))
+
+       ;; first entry in normal state
+       (add-hook 'evil-normal-state-entry-hook 'spacemacs//haskell-indentation-hide-guides)
+
+       (add-hook 'evil-insert-state-entry-hook 'spacemacs//haskell-indentation-show-guides)
+       (add-hook 'evil-emacs-state-entry-hook 'spacemacs//haskell-indentation-show-guides)
+       (add-hook 'evil-insert-state-exit-hook 'spacemacs//haskell-indentation-hide-guides)
+       (add-hook 'evil-emacs-state-exit-hook 'spacemacs//haskell-indentation-hide-guides))))
+
 (defun d12-haskell/init-hindent ()
   (use-package hindent
     :defer t
@@ -68,6 +161,7 @@
       (setq hindent-style haskell-enable-hindent-style)
       (evil-leader/set-key-for-mode 'haskell-mode
         "mF" 'hindent/reformat-decl))))
+
 (when haskell-enable-shm-support
   (defun d12-haskell/init-shm ()
     "Initialize structured haskell mode."
