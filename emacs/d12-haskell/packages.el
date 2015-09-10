@@ -35,7 +35,6 @@
 
       (add-hook 'haskell-mode-hook 'd12/init-haskell-mode)
       (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-      (add-hook 'haskell-mode-hook 'haskell-doc-mode)
       (add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
       (add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
 
@@ -44,20 +43,18 @@
 
       (spacemacs|diminish interactive-haskell-mode " λ")
 
-      (setq haskell-notify-p t
-            haskell-tags-on-save nil
-            haskell-interactive-popup-error nil
-            haskell-process-suggest-remove-import-lines nil
-            haskell-process-auto-import-loaded-modules t
-            haskell-stylish-on-save nil
-            haskell-process-log t
-            haskell-process-reload-with-fbytecode nil
-            haskell-process-use-presentation-mode t
-            haskell-interactive-mode-include-file-name nil
-            haskell-interactive-mode-eval-pretty nil
-            haskell-process-suggest-haskell-docs-imports nil
-            hindent-style haskell-enable-hindent-style
-            haskell-interactive-mode-eval-mode 'haskell-mode))))
+      (setq
+       ;; Use notify.el (if you have it installed) at the end of running
+       ;; Cabal commands or generally things worth notifying.
+       haskell-notify-p t
+       ;; Remove annoying error popups
+       haskell-interactive-popup-error nil
+       ;; Better import handling
+       haskell-process-suggest-remove-import-lines t
+       haskell-process-auto-import-loaded-modules t
+       ;; Disable haskell-stylish on save, it breaks flycheck highlighting
+       haskell-stylish-on-save nil
+       haskell-interactive-mode-eval-mode 'haskell-mode)
 
 (when haskell-enable-shm-support
   (defun d12-haskell/init-shm ()
