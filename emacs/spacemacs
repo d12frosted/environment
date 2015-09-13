@@ -87,6 +87,7 @@ before layers configuration."
    d12/dropbox-path (concat user-home-directory "Dropbox/")
 
    dotspacemacs-editing-style 'emacs
+   dotspacemacs-distribution 'spacemacs
    dotspacemacs-verbose-loading nil
    dotspacemacs-startup-banner (concat d12/env-spacemacs-directory "animacs-banner.png")
    dotspacemacs-startup-lists '(recents projects bookmarks)
