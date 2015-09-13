@@ -9,7 +9,7 @@ Personal fish configuration. I am trying to make it fly!
 
 * Dependencies
 
-- Make sure that you have installed the latest version of fish. Please install it from sources rather than from brew. At the moment of writing this brew version doesn't have all features required by my configurations (and work flow).
-- ~terminal-notifier~ of version ~1.6.2~ or higher (OS X only).
-- ~ghc~ of version ~7.8.3~.
-- ~BasicPrelude~ package for haskell.
+- =fish= (just install it from =brew= or whatever, just keep it up to date)
+- =terminal-notifier= of version =1.6.2= or higher (OS X only)
+
+For installing fish, see [[https://github.com/fish-shell/fish-shell/#building][official instructions]].
