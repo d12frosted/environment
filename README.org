@@ -9,7 +9,7 @@ This repository is a dump of my dotfiles that I am trying to keep clean and orga
 
 * What's inside?
 
-All configurations that I fear to loose by making ~rm -rf \~/~ (accidentally, for sure). Configurations are divided into 'domains' like =emacs=, =spacemacs=, =git=, =haskell=, =fish=. Every domain has it's own readme file, so make sure to check them as well before running installation script.
+All configurations that I fear to loose by making ~rm -rf \~/~ (accidentally, for sure). Configurations are divided into 'domains' like =emacs=, =git=, =haskell=, =fish= etc. Every domain has it's own readme file, so make sure to check them as well before running installation script. There is also =deprecated= 'domain'. There are things that are no more used but has little value for me.
 
 * Dependencies
 
@@ -17,11 +17,11 @@ My configurations are expecting that a lot of stuff is installed on your system.
 
 But be aware that I am using OS X and haven't tested my configurations beyond this operating system. They should work, but I can't promise :smile:.
 
-Note that I am planning to write some scripts that will help with dependencies checking and installation.
+The installation script will try to get some of the dependencies if you are using OS X. Dependencies are installed via =bootstrap= script, which can be found in the root of =environment= and in some of domains. For example, root =bootstrap= script will install =brew= if you don't have one.
 
 * Usage
 
-Now I am using [[https://github.com/anishathalye/dotbot][dotbot]] to bootstrap my configuration, so it's very easy to install them all. Just do
+The most important thing - you need to clone this repo into =~/.environment=. Otherwise fish and emacs will not work properly. I am using [[https://github.com/anishathalye/dotbot][dotbot]] to bootstrap my configuration, so it's very easy to install them all. Just do
 
 #+BEGIN_SRC sh
 $ ./install

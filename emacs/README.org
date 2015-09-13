@@ -1,0 +1,29 @@
+#+TITLE:        Emacs domain
+#+AUTHOR:       Boris Buliga <d12frosted@icloud.com>
+#+EMAIL:        d12frosted@icloud.com
+#+DATE:         2015-04-17
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+Personal emacs configurations based on [[https://github.com/syl20bnr/spacemacs][Spacemacs]]. Usually I use =d12frosted= branch of [[https://github.com/d12frosted/spacemacs][Spacemacs fork]]. But in most cases it should be OK to use official =develop= branch.
+
+* Install emacs
+
+The only tested version is =emacs-24.5-z-mac-5.10=. Usually I install it using following command.
+
+#+BEGIN_SRC shell
+$ brew install emacs-mac --with-spacemacs-icon --with-gnutls --with-imagemagick
+#+END_SRC
+
+* Run-time dependencies
+
+Bootstrap script will install following dependencies.
+
+- =ack=
+- =ispell=
+
+For haskell development you need to have following executables installed.
+
+- =stack=
+- =structured-haskell-mode=
+- =hindent=
