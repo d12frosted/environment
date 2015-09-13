@@ -9,7 +9,7 @@ This repository is a dump of my dotfiles that I am trying to keep clean and orga
 
 * What's inside?
 
-All configurations that I fear to loose by making ~rm -rf \~/~ (accidentally, for sure). Configurations are divided into 'domains' like =emacs=, =git=, =haskell=, =fish= etc. Every domain has it's own readme file, so make sure to check them as well before running installation script. There is also =deprecated= 'domain'. There are things that are no more used but has little value for me.
+All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for sure). Configurations are divided into 'domains' like =emacs=, =git=, =haskell=, =fish= etc. Every domain has it's own readme file, so make sure to check them as well before running installation script. There is also =deprecated= 'domain'. There are things that are no more used but has little value for me.
 
 * Dependencies
 
