@@ -49,31 +49,5 @@
   "settings.el"
   "File containing dir settings.")
 
-(defvar d12-mu4e/private-config-path
-  (concat user-home-directory "mu4e-configs.el")
-  "Path to mu4e private configs.")
-
-(defvar d12-mu4e/installation-path nil
-  "Path to mu4e. Depends on installation.")
-
-(defvar d12-mu4e/folders-alist
-  '(("example"
-     (mu4e-drafts-folder "/example/Drafts")
-     (mu4e-sent-folder "/example/Sent")
-     (mu4e-trash-folder "/example/Trash")
-     (mu4e-refile-folder "/example/Archive"))))
-
-(defvar d12-mu4e/accounts-alist
-  '(("example"
-     (mu4e-sent-messages-behavior delete)
-     (user-mail-address "example@example.com")
-     (user-full-name  "John Doe")
-     (mu4e-compose-signature "Sent with love using emacs and mu4e."))))
-
-(defvar d12-mu4e/default-account "example")
-(defvar d12-mu4e/update-interval 60)
-(defvar d12-mu4e/maildir-path
-  (concat user-home-directory "Maildir"))
-
 (spacemacs/declare-prefix "." "org")
 (spacemacs/declare-prefix ".i" "insert")
