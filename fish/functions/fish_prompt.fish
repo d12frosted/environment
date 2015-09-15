@@ -40,8 +40,14 @@ function fish_prompt --description 'Write out the prompt'
   set_color normal
 
   __fish_venv
-  __terlar_git_prompt
-  __fish_hg_prompt
+
+  if command -v git > /dev/null
+    __terlar_git_prompt
+  end
+
+  if command -v hg > /dev/null
+    __fish_hg_prompt
+  end
 
   echo
 
