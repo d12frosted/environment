@@ -12,11 +12,30 @@ function fish_prompt --description 'Write out the prompt'
 
   # Time
   set_color $fish_color_comment
-  printf "[%s] " (date +%X)
+  printf "[%s]" (date +%X)
+
+  # User and host
+  set -l user (whoami)
+  set -l host (hostname | cut -d . -f 1)
+  set -l default_user "d12frosted"
+  set -l default_host "d12frosted"
+  if test "$user" != $default_user
+    set_color $fish_color_user
+    printf " $user"
+  end
+  if test "$host" != $default_host
+    set_color $fish_color_comment
+    if test "$user" = $default_user
+      printf " "
+    end
+    printf "@"
+    set_color $fish_color_host
+    printf "$host"
+  end
 
   # PWD
   set_color $fish_color_cwd
-  printf "%s" (prompt_pwd)
+  printf " %s" (prompt_pwd)
 
   set_color normal
 
