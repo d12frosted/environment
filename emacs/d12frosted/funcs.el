@@ -352,17 +352,4 @@ it will be added to current date."
   (interactive)
   (insert (format-time-string (concat d12/date-format " " d12/time-format))))
 
-(defun d12-fc/format-oos-msg ()
-  (interactive)
-  (let* ((raw-data (shell-command-to-string "pbpaste")) ; (car kill-ring)
-         (msg (substring-no-properties raw-data)))
-    (switch-to-buffer "*fc-oos-msg*")
-    (end-of-buffer)
-    (local-set-key "q" 'kill-this-buffer)
-    (string-match "error(\\(.*\\) verifiedHash(\\(.*\\)) clientHash(\\(.*\\)))" msg)
-    (insert (format "error: %s\nverified: %s\nclient:   %s\n\n"
-                    (match-string 1 msg)
-                    (match-string 2 msg)
-                    (match-string 3 msg)))))
-
 ;;; funcs.el ends here
