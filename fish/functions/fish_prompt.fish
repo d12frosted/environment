@@ -45,7 +45,7 @@ function __prompt_duration
       set_color yellow
       echo -es $CMD_DURATION ' ms'
       set_color normal
-      if hash terminal-notifier ^ /dev/null
+      if command -v terminal-notifier > /dev/null
         echo -es 'Finished in ' $CMD_DURATION ' ms' | terminal-notifier
       end
     end
