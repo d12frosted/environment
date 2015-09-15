@@ -12,17 +12,19 @@
 
 (defvar d12/org-home-path (concat user-home-directory "org/")
   "Directory where org files are stored.
-   All org files in this directory and all subdirectories will be used as agenda
-   files for org agenda. If you want to ignore some files, checkout
-   'd12/org-agenda-ignore-dirs variable. Currently you can ignore files
-   only by putting them into ignored directory.
-   Warning! Don't forget to add trailing slash at the end.")
+   All org files in this directory and all subdirectories will be
+   used as agenda files for org agenda. If you want to ignore
+   some files, checkout 'd12/org-agenda-ignore-dirs variable.
+   Currently you can ignore files only by putting them into
+   ignored directory. Warning! Don't forget to add trailing slash
+   at the end.")
 
 (defvar d12/org-agenda-ignore-dirs
   '("temporary/"
     "tmp/")
-  "List of directories to be ignored for agenda. Every path should be relative
-   to d12/org-home-path and must contain trailing slash.")
+  "List of directories to be ignored for agenda. Every path
+   should be relative to d12/org-home-path and must contain
+   trailing slash.")
 
 (defvar d12/time-format
   "%H:%M:%S"
