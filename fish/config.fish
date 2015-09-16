@@ -4,6 +4,13 @@ set -x PATH $HOME/.local/bin $PATH
 set -x EDITOR "emacsclient"
 set fish_greeting ""
 
+alias ghc "stack ghc"
+alias ghci "stack ghci"
+alias cabal "stack cabal"
+alias runghc "stack runghc"
+alias runhaskell "stack runghc"
+alias haddock "stack haddock"
+
 # theme
 set fish_color_command blue
 set fish_color_param "715ab1"
