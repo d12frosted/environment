@@ -52,7 +52,7 @@
               haskell-tags-on-save nil
               haskell-process-log t
               haskell-process-reload-with-fbytecode nil
-              ;; haskell-process-use-presentation-mode t
+              haskell-process-use-presentation-mode t
               haskell-interactive-mode-include-file-name nil
               haskell-interactive-mode-eval-pretty nil
               haskell-process-suggest-haskell-docs-imports nil
