@@ -28,8 +28,13 @@
 
     ~/.ghci: haskell/.ghci
     ~/.stack/global/stack.yaml:
+      path: haskell/stack-global.yaml
+      create: true
+      relink: true
+    ~/.stack/stack.yaml:
       path: haskell/stack.yaml
       create: true
+      relink: true
     ~/.cabal/config:
       path: haskell/cabal-config
       create: true
