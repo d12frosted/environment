@@ -1,0 +1,12 @@
+#+TITLE:        Utils
+#+AUTHOR:       Boris Buliga
+#+EMAIL:        d12frosted@icloud.com
+#+DATE:         <2015-09-19 Sat>
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+Some of utilities I use. For more information checkout =README= file for utility you are interested in.
+
+* Available utilities
+
+1. =dump= - utility for dumping files or directories by either copying or moving them with appended timestamp

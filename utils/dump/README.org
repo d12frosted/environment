@@ -1,0 +1,98 @@
+#+TITLE:        Dump
+#+AUTHOR:       Boris Buliga
+#+EMAIL:        d12frosted@icloud.com
+#+DATE:         <2015-09-19 Sat>
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+=Dump= is utility for dumping files or directories by either copying or moving them with appended timestamp.
+
+* Install
+
+This is a cabal project that supports =stack=. So either run =stack install= or =cabal install= (probably in sandbox) and feel happy.
+
+* Usage
+
+#+BEGIN_SRC shell
+dump
+
+Usage: dump [--version] [--help] [-c|--copy] FILE_OR_DIR
+  Utility for dumping files.
+
+Available options:
+  --version                Show version
+  --help                   Show this help text
+  -c,--copy                Copy target instead of moving
+#+END_SRC
+
+* Example
+
+#+BEGIN_SRC shell
+[11:16:08] ~
+λ mkdir test_dump
+
+[11:16:11] ~
+λ cd test_dump/
+
+[11:16:12] ~/test_dump
+λ ll
+
+[11:16:19] ~/test_dump
+λ mkdir dir1
+
+[11:16:23] ~/test_dump
+λ touch file1 file2.txt
+
+[11:16:28] ~/test_dump
+λ ll
+total 0
+drwxr-xr-x  2 d12frosted  staff    68B Sep 19 11:16 dir1
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file1
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file2.txt
+
+[11:16:29] ~/test_dump
+λ dump -c dir1
+
+[11:16:40] ~/test_dump
+λ ll
+total 0
+drwxr-xr-x  2 d12frosted  staff    68B Sep 19 11:16 dir1
+drwxr-xr-x  2 d12frosted  staff    68B Sep 19 11:16 dir1_2015_09_19_11_16_40
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file1
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file2.txt
+
+[11:16:42] ~/test_dump
+λ dump dir1
+
+[11:16:48] ~/test_dump
+λ ll
+total 0
+drwxr-xr-x  2 d12frosted  staff    68B Sep 19 11:16 dir1_2015_09_19_11_16_40
+drwxr-xr-x  2 d12frosted  staff    68B Sep 19 11:16 dir1_2015_09_19_11_16_48
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file1
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file2.txt
+
+[11:16:49] ~/test_dump
+λ dump -c file1
+
+[11:16:55] ~/test_dump
+λ ll
+total 0
+drwxr-xr-x  2 d12frosted  staff    68B Sep 19 11:16 dir1_2015_09_19_11_16_40
+drwxr-xr-x  2 d12frosted  staff    68B Sep 19 11:16 dir1_2015_09_19_11_16_48
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file1
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file1_2015_09_19_11_16_55
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file2.txt
+
+[11:16:57] ~/test_dump
+λ dump file2.txt
+
+[11:17:02] ~/test_dump
+λ ll
+total 0
+drwxr-xr-x  2 d12frosted  staff    68B Sep 19 11:16 dir1_2015_09_19_11_16_40
+drwxr-xr-x  2 d12frosted  staff    68B Sep 19 11:16 dir1_2015_09_19_11_16_48
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file1
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file1_2015_09_19_11_16_55
+-rw-r--r--  1 d12frosted  staff     0B Sep 19 11:16 file2_2015_09_19_11_17_02.txt
+#+END_SRC
