@@ -1,7 +1,7 @@
 #+TITLE:        haskell domain
-#+AUTHOR:       Boris Buliga <d12frosted@icloud.com>
+#+AUTHOR:       Boris Buliga
 #+EMAIL:        d12frosted@icloud.com
-#+DATE:         2015-04-26
+#+DATE:         <2015-04-26 Sun>
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:t
 
