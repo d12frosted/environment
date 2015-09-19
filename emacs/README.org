@@ -1,7 +1,7 @@
 #+TITLE:        Emacs domain
-#+AUTHOR:       Boris Buliga <d12frosted@icloud.com>
+#+AUTHOR:       Boris Buliga
 #+EMAIL:        d12frosted@icloud.com
-#+DATE:         2015-04-17
+#+DATE:         <2015-04-17 Fri>
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
