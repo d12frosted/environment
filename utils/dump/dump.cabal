@@ -1,5 +1,5 @@
 name:                dump
-version:             0.1.0.0
+version:             0.2.0.0
 synopsis:            Utility for dumping files
 description:         Please see README.org
 homepage:            http://github.com/d12frosted/environment
@@ -14,16 +14,37 @@ cabal-version:       >=1.10
 extra-source-files:  README.org
                      stack.yaml
 
+library
+  hs-source-dirs:      src
+  exposed-modules:     Dump
+  build-depends:       base >= 4.7 && < 5
+                     , basic-prelude >= 0.5
+                     , mtl >= 2.2.1
+                     , system-filepath >= 0.4.13.4
+                     , text >= 1.2.1.3
+                     , time >= 1.5.0.1
+                     , turtle >= 1.2.1
+  default-language:    Haskell2010
+
 executable dump
-  hs-source-dirs:      src/
+  hs-source-dirs:      app
   ghc-options:         -Wall
   other-modules:       Paths_dump
   main-is:             Main.hs
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5
                      , basic-prelude >= 0.5
+                     , dump
                      , optparse-applicative >= 0.11.0.2
                      , optparse-simple >= 0.0.3
-                     , system-filepath >= 0.4.13.4
-                     , time >= 1.5.0.1
+
+test-suite dump-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , basic-prelude >= 0.5
+                     , dump
                      , turtle >= 1.2.1
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
