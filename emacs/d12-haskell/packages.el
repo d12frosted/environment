@@ -11,59 +11,89 @@
 ;;; License: GPLv3
 
 (setq d12-haskell-packages
-      '(
-        haskell-mode
-        hindent
-        shm
-        company
-        company-ghci
-        flycheck
-        flycheck-haskell
-        ))
+  '(
+    cmm-mode
+    company
+    company-ghc
+    company-cabal
+    flycheck
+    flycheck-haskell
+    ghc
+    haskell-mode
+    haskell-snippets
+    hindent
+    shm
+    ))
+
+(defun d12-haskell/init-cmm-mode ()
+  (use-package cmm-mode
+    :defer t))
+
+(defun d12-haskell/post-init-flycheck ()
+  (add-hook 'haskell-mode-hook 'flycheck-mode))
+
+(when (configuration-layer/layer-usedp 'syntax-checking)
+  (defun d12-haskell/init-flycheck-haskell ()
+    (use-package flycheck-haskell
+      :if (configuration-layer/package-usedp 'flycheck)
+      :commands flycheck-haskell-configure
+      :init (add-hook 'flycheck-mode-hook 'flycheck-haskell-configure))))
+
+(defun d12-haskell/init-ghc ()
+  (use-package ghc
+    :defer t
+    :if haskell-enable-ghc-mod-support
+    :init (add-hook 'haskell-mode-hook 'ghc-init)
+    :config
+    (when (configuration-layer/package-usedp 'flycheck)
+      ;; remove overlays from ghc-check.el if flycheck is enabled
+      (set-face-attribute 'ghc-face-error nil :underline nil)
+      (set-face-attribute 'ghc-face-warn nil :underline nil))))
 
 (defun d12-haskell/init-haskell-mode ()
-  "Initialize haskell-mode."
   (use-package haskell-mode
     :defer t
-    :init
     :config
     (progn
-      (defun d12/init-haskell-mode ()
+      ;; Haskell main editing mode key bindings.
+      (defun spacemacs/init-haskell-mode ()
+        ;; use only internal indentation system from haskell
         (if (fboundp 'electric-indent-local-mode)
             (electric-indent-local-mode -1))
         (when haskell-enable-shm-support
+          ;; in structured-haskell-mode line highlighting creates noise
           (setq-local global-hl-line-mode nil)))
 
-      (add-hook 'haskell-mode-hook 'd12/init-haskell-mode)
-      (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-      (add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
+      ;; hooks
+      (add-hook 'haskell-mode-hook 'spacemacs/init-haskell-mode)
       (add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
-
       (unless haskell-enable-shm-support
         (add-hook 'haskell-mode-hook 'haskell-indentation-mode))
 
       (spacemacs|diminish interactive-haskell-mode " λ")
 
+      ;; settings
       (setq
        ;; Use notify.el (if you have it installed) at the end of running
        ;; Cabal commands or generally things worth notifying.
        haskell-notify-p t
+       ;; To enable tags generation on save.
+       haskell-tags-on-save t
        ;; Remove annoying error popups
        haskell-interactive-popup-error nil
        ;; Better import handling
        haskell-process-suggest-remove-import-lines t
        haskell-process-auto-import-loaded-modules t
        ;; Disable haskell-stylish on save, it breaks flycheck highlighting
-       haskell-stylish-on-save nil
-       haskell-interactive-mode-eval-mode 'haskell-mode)
+       haskell-stylish-on-save nil)
 
+      ;; key bindings
       (defun spacemacs/haskell-process-do-type-on-prev-line ()
         (interactive)
         (if haskell-enable-ghci-ng-support
             (haskell-mode-show-type-at 1)
           (haskell-process-do-type 1)))
 
-      ;; key bindings
       (evil-leader/set-key-for-mode 'haskell-mode
         "mgg"  'haskell-mode-jump-to-def-or-tag
         "mf"   'haskell-mode-stylish-buffer
@@ -94,7 +124,7 @@
         "mda"  'haskell-debug/abandon
         "mdr"  'haskell-debug/refresh)
 
-       ;; Switch back to editor from REPL
+      ;; Switch back to editor from REPL
       (evil-leader/set-key-for-mode 'haskell-interactive-mode
         "msS"  'haskell-interactive-switch)
 
@@ -123,11 +153,24 @@
       (evil-define-key 'normal haskell-interactive-mode-map
         (kbd "RET") 'haskell-interactive-mode-return)
 
+      ;;GHCi-ng
+      (when haskell-enable-ghci-ng-support
+        ;; haskell-process-type is set to auto, so setup ghci-ng for either case
+        ;; if haskell-process-type == cabal-repl
+        (setq haskell-process-args-cabal-repl '("--ghc-option=-ferror-spans" "--with-ghc=ghci-ng"))
+        ;; if haskell-process-type == GHCi
+        (setq haskell-process-path-ghci "ghci-ng")
+
+        (evil-leader/set-key-for-mode 'haskell-mode
+          "mu"   'haskell-mode-find-uses
+          "mht"  'haskell-mode-show-type-at
+          "mgg"  'haskell-mode-goto-loc))
+
       ;; Useful to have these keybindings for .cabal files, too.
       (eval-after-load 'haskell-cabal-mode-map
         '(define-key haskell-cabal-mode-map
-           [?\C-c ?\C-z] 'haskell-interactive-switch))
-      ))
+           [?\C-c ?\C-z] 'haskell-interactive-switch))))
+
 
   (eval-after-load 'haskell-indentation
     '(progn
@@ -150,6 +193,19 @@
        (add-hook 'evil-insert-state-exit-hook 'spacemacs//haskell-indentation-hide-guides)
        (add-hook 'evil-emacs-state-exit-hook 'spacemacs//haskell-indentation-hide-guides))))
 
+(defun d12-haskell/init-haskell-snippets ()
+  ;; manually load the package since the current implementation is not lazy
+  ;; loading friendly (funny coming from the haskell mode :-))
+  (setq haskell-snippets-dir (spacemacs//get-package-directory
+                              'haskell-snippets))
+
+  (defun haskell-snippets-initialize ()
+    (let ((snip-dir (expand-file-name "snippets" haskell-snippets-dir)))
+      (add-to-list 'yas-snippet-dirs snip-dir t)
+      (yas-load-directory snip-dir)))
+
+  (eval-after-load 'yasnippet '(haskell-snippets-initialize)))
+
 (defun d12-haskell/init-hindent ()
   (use-package hindent
     :defer t
@@ -162,35 +218,38 @@
       (evil-leader/set-key-for-mode 'haskell-mode
         "mF" 'hindent/reformat-decl))))
 
-(when haskell-enable-shm-support
-  (defun d12-haskell/init-shm ()
-    "Initialize structured haskell mode."
-    (use-package shm
-      :init
-      (add-hook 'haskell-mode-hook 'structured-haskell-mode))))
+(defun d12-haskell/init-shm ()
+  (use-package shm
+    :defer t
+    :if haskell-enable-shm-support
+    :init
+    (add-hook 'haskell-mode-hook 'structured-haskell-mode)
+    :config
+    (progn
+      (when (require 'shm-case-split nil 'noerror)
+        (define-key shm-map (kbd "C-c S") 'shm/case-split)
+        (define-key shm-map (kbd "C-c C-s") 'shm/do-case-split)))))
 
 (when (configuration-layer/layer-usedp 'auto-completion)
   (defun d12-haskell/post-init-company ()
     (spacemacs|add-company-hook haskell-mode)
     (spacemacs|add-company-hook haskell-interactive-mode)
-    ))
+    (spacemacs|add-company-hook haskell-cabal-mode))
 
-(defun d12-haskell/init-company-ghci ()
-  (use-package company-ghci
-    :if (configuration-layer/package-usedp 'company)
-    :defer t
-    :init
-    (push 'company-ghci company-backends-haskell-mode)
-    (push 'company-ghci company-backends-haskell-interactive-mode)))
+  (defun d12-haskell/init-company-ghc ()
+    (use-package company-ghc
+      :if (configuration-layer/package-usedp 'company)
+      :defer t
+      :init
+      (push '(company-ghc company-dabbrev-code company-yasnippet)
+            company-backends-haskell-mode)
+      (push '(company-ghc company-dabbrev-code company-yasnippet)
+            company-backends-haskell-interactive-mode)))
 
-;; Currently flycheck breaks haskell interactive mode
-
-;; (defun d12frosted/post-init-flycheck ()
-;;   (add-hook 'haskell-mode-hook 'flycheck-mode))
-
-;; (when (configuration-layer/layer-usedp 'syntax-checking)
-;;   (defun d12frosted/init-flycheck-haskell ()
-;;     (use-package flycheck-haskell
-;;       :if (configuration-layer/package-usedp 'flycheck)
-;;       :commands flycheck-haskell-configure
-;;       :init (add-hook 'flycheck-mode-hook 'flycheck-haskell-configure))))
+  (defun d12-haskell/init-company-cabal ()
+    (use-package company-cabal
+      :if (configuration-layer/package-usedp 'company)
+      :defer t
+      :init
+      (push '(company-cabal)
+            company-backends-haskell-cabal-mode))))
