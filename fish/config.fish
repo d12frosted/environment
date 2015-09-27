@@ -1,6 +1,6 @@
 # variables
 
-set -x PATH $HOME/.local/bin $PATH
+set -x PATH $HOME/.local/bin /usr/texbin $PATH
 set -x EDITOR "emacsclient"
 set fish_greeting ""
 
