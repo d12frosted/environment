@@ -181,7 +181,7 @@ layers configuration."
                        ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
                        ("http://nullprogram.com/feed/" emacs)
                        ("http://endlessparentheses.com/atom.xml" emacs)
-                       ("http://spacemacs.brianthicks.com/rss" emacs))
+                       ("http://spacemacs.brianthicks.com/index.xml" emacs))
         haskell-process-suggest-remove-import-lines nil
         haskell-process-suggest-hoogle-imports nil)
 
