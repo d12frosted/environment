@@ -40,12 +40,7 @@
                                               "journal/"
                                               "projects/"
                                               "personal/"))
-
-     ;; languages
-     (csharp :variables
-             omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
-     emacs-lisp
-     (haskell :variables
+     (d12-haskell :variables
               haskell-enable-hindent-style "chris-done"
               haskell-enable-shm-support t
               haskell-process-type 'stack-ghci
@@ -55,8 +50,12 @@
               haskell-process-use-presentation-mode t
               haskell-interactive-mode-include-file-name nil
               haskell-interactive-mode-eval-pretty nil
-              haskell-process-suggest-haskell-docs-imports nil
-              )
+              haskell-process-suggest-haskell-docs-imports nil)
+
+     ;; languages
+     (csharp :variables
+             omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
+     emacs-lisp
      javascript
      lua
      markdown
