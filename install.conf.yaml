@@ -2,18 +2,23 @@
   -
     command: git submodule update --init --recursive
     description: Installing submodules
+    stdout: true
   -
     command: sh bootstrap
     description: Bootstrap
+    stdout: true
   -
     command: chmod +x emacs/switch_emacs
     description: Promote 'switch_emacs' to executable
+    stdout: true
   -
     command: sh emacs/bootstrap
     description: Bootstrap emacs
+    stdout: true
   -
     command: sh haskell/bootstrap
     description: Bootstrap haskell
+    stdout: true
 
 - link:
     ~/.emacs.d:
