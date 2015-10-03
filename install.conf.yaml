@@ -8,6 +8,10 @@
     description: Bootstrap
     stdout: true
   -
+    command: sh fish/bootstrap
+    description: Bootstrap fish
+    stdout: true
+  -
     command: chmod +x emacs/switch_emacs
     description: Promote 'switch_emacs' to executable
     stdout: true

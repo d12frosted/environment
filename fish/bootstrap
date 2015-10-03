@@ -1,0 +1,8 @@
+#!/bin/sh
+
+
+if [ $(uname -s) = "Darwin" ]; then    
+    hash fish || {
+        brew install fish
+    }
+fi
