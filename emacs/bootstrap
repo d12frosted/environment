@@ -17,9 +17,11 @@ if [ ! -e $spacemacs ]; then
 fi
 
 if [ $(uname -s) = "Darwin" ]; then
-    hash emacs || {
+    if [ $(which emacs) == "/usr/bin/emacs" ]
+    then
+        brew tap railwaycat/emacsmacport
         brew install emacs-mac --with-spacemacs-icon --with-gnutls --with-imagemagick
-    }
+    fi
 
     hash ack || {
         brew install ack
