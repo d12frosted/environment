@@ -66,6 +66,7 @@
    dotspacemacs-additional-packages '(comment-dwim-2
                                       color-theme-sanityinc-tomorrow
                                       apropospriate-theme
+                                      vimish-fold
                                       elfeed)
    dotspacemacs-excluded-packages '()
    dotspacemacs-delete-orphan-packages nil))
@@ -160,7 +161,7 @@ layers configuration."
 
   (add-hook 'find-file-hook 'd12/load-dir-settings)
   (add-hook 'company-mode-hook 'company-quickhelp-mode)
-  (remove-hook 'org-mode-hook 'company-mode)
+  (add-hook 'prog-mode-hook 'vimish-fold-mode)
 
   ;; configs
   (helm-projectile-on)
