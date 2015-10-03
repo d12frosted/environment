@@ -47,5 +47,5 @@
     ~/.hgrc: ../Dropbox/Apps/hgrc
 
 - shell:
-  - [echo "set -U XDG_CONFIG_HOME ~/.environment" | fish, Setting home directory for fish]
+  - [echo "set -x XDG_CONFIG_HOME ~/.environment" | fish, Setting config directory]
   - sh git/configure.sh
