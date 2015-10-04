@@ -66,8 +66,7 @@
    dotspacemacs-additional-packages '(comment-dwim-2
                                       color-theme-sanityinc-tomorrow
                                       apropospriate-theme
-                                      vimish-fold
-                                      elfeed)
+                                      vimish-fold)
    dotspacemacs-excluded-packages '()
    dotspacemacs-delete-orphan-packages nil))
 
@@ -173,21 +172,11 @@ layers configuration."
         google-translate-default-source-language "Ukrainian"
         google-translate-default-target-language "English"
         git-messenger:show-detail t
-        elfeed-feeds '(("http://www.reddit.com/r/haskelltil/.rss" haskell reddit)
-                       ("http://www.reddit.com/r/haskell/.rss" haskell reddit)
-                       ("http://www.reddit.com/r/orgmode/.rss" emacs org-mode reddit)
-                       ("http://planet.haskell.org/rss20.xml" haskell)
-                       ("http://www.paolocapriotti.com/atom.xml" haskell)
-                       ("http://www.reddit.com/r/emacs/.rss" emacs reddit)
-                       ("http://nullprogram.com/feed/" emacs)
-                       ("http://endlessparentheses.com/atom.xml" emacs)
-                       ("http://spacemacs.brianthicks.com/index.xml" emacs))
         haskell-process-suggest-remove-import-lines nil
         haskell-process-suggest-hoogle-imports nil)
 
   ;; key bindings
   (evil-leader/set-key
-    "ae" 'elfeed
     "it" 'd12/insert-time
     "id" 'd12/insert-date
     "iD" 'd12/insert-full-date)
