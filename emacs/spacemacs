@@ -142,14 +142,15 @@ before layers configuration."
 
 (defun dotspacemacs/init-terminal ()
   "Initialization function when `display-graphic-p' returns nil."
-  (setq-default dotspacemacs-themes '(spacemacs-dark
+  (setq-default dotspacemacs-themes '(apropospriate-dark
+                                      spacemacs-dark
                                       spacemacs-light
                                       sanityinc-tomorrow-eighties)))
 
 (defun dotspacemacs/init-gui ()
   "Initialization function when `display-graphic-p' returns t."
-  (setq-default dotspacemacs-themes '(spacemacs-light
-                                      apropospriate-light
+  (setq-default dotspacemacs-themes '(apropospriate-light
+                                      spacemacs-light
                                       spacemacs-dark
                                       leuven)))
 
