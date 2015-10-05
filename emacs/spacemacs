@@ -150,9 +150,9 @@ before layers configuration."
 
 (defun dotspacemacs/init-gui ()
   "Initialization function when `display-graphic-p' returns t."
-  (setq-default dotspacemacs-themes '(apropospriate-light
-                                      spacemacs-light
+  (setq-default dotspacemacs-themes '(spacemacs-light
                                       spacemacs-dark
+                                      apropospriate-light
                                       leuven)))
 
 (defun dotspacemacs/user-config ()
