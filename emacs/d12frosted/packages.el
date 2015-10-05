@@ -15,6 +15,7 @@
         org
         org-journal
         omnisharp
+        shm
         ))
 
 (setq d12frosted-excluded-packages '())
@@ -406,3 +407,16 @@ If not, show simply the clocked time like 01:50."
               hs-c-like-adjust-block-beginning        ; c-like adjust (1 char)
               )
             hs-special-modes-alist))))
+
+(defun d12frosted/post-init-shm ()
+  (use-package shm
+    :defer t
+    :init
+    (add-hook 'haskell-mode-hook 'structured-haskell-mode)
+    (defadvice spacemacs/init-haskell-mode (after d12//init-haskell-mode activate)
+      (setq-local global-hl-line-mode nil))
+    :config
+    (progn
+      (when (require 'shm-case-split nil 'noerror)
+        (define-key shm-map (kbd "C-c S") 'shm/case-split)
+        (define-key shm-map (kbd "C-c C-s") 'shm/do-case-split)))))

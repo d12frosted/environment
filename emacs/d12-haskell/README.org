@@ -1,3 +1,0 @@
-#+TITLE: Haskell Layer
-
-Custom Haskell layer. Works nice with =stack=.
