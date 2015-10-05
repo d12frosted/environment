@@ -54,7 +54,7 @@
 
      ;; languages
      (csharp :variables
-             omnisharp-server-executable-path "~/Developer/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
+             omnisharp-server-executable-path "~/Developer/Other/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
      emacs-lisp
      javascript
      lua
