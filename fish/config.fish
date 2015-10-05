@@ -7,7 +7,6 @@ set fish_greeting ""
 
 alias ghc "stack ghc"
 alias ghci "stack ghci"
-alias cabal "stack cabal"
 alias runghc "stack runghc"
 alias runhaskell "stack runghc"
 alias haddock "stack haddock"
