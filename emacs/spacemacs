@@ -125,8 +125,9 @@ before layers configuration."
   (defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
     "Change the default title in *spacemacs* banner."
     (save-excursion
-      (beginning-of-buffer)
-      (replace-string "[S P A C E M A C S]" "[A N I M A C S]")))
+      (goto-char (point-min))
+      (search-forward "[S P A C E M A C S]")
+      (replace-match "[A N I M A C S]")))
 
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
