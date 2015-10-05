@@ -182,11 +182,7 @@ layers configuration."
   (evil-leader/set-key
     "it" 'd12/insert-time
     "id" 'd12/insert-date
-    "iD" 'd12/insert-full-date)
-
-  (when (configuration-layer/layer-usedp 'eyebrowse)
-    (bind-keys ("M-A-<right>"  . eyebrowse-next-window-config)
-               ("M-A-<left>" . eyebrowse-prev-window-config))))
+    "iD" 'd12/insert-full-date))
 
 (defun configuration-layer/get-owner (pkg &optional print)
   (interactive "SEnter package name: \np")
@@ -198,3 +194,5 @@ layers configuration."
     (when print
       (message "Owner of %S is %S" pkg owner))
     owner))
+
+;;; End
