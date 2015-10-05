@@ -1,5 +1,4 @@
 # el
-
 *.elc
 
 # ignore emacs cache
