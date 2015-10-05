@@ -175,7 +175,8 @@ layers configuration."
         google-translate-default-target-language "English"
         git-messenger:show-detail t
         haskell-process-suggest-remove-import-lines nil
-        haskell-process-suggest-hoogle-imports nil)
+        haskell-process-suggest-hoogle-imports nil
+        powerline-default-separator 'utf-8)
 
   ;; key bindings
   (evil-leader/set-key
