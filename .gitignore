@@ -30,3 +30,7 @@ tags
 *.imports
 /.idea/
 /*.iml
+
+# csharp
+NuGet/
+xbuild/
