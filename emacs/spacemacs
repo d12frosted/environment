@@ -128,11 +128,6 @@ before layers configuration."
       (search-forward "[S P A C E M A C S]")
       (replace-match "[A N I M A C S]")))
 
-  ;; OS X
-  (if (spacemacs/system-is-mac)
-      (setq mac-command-modifier 'meta
-            mac-option-modifier 'none))
-
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'after-save-hook 'delete-trailing-whitespace)
@@ -164,9 +159,13 @@ before layers configuration."
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
 
+  (defun d12/init-company-quickhelp-mode ()
+    (define-key company-quickhelp-mode-map (kbd "M-h") nil))
+
   (add-hook 'find-file-hook 'd12/load-dir-settings)
   (add-hook 'company-mode-hook 'company-quickhelp-mode)
   (add-hook 'prog-mode-hook 'vimish-fold-mode)
+  (add-hook 'company-quickhelp-mode-hook 'd12/init-company-quickhelp-mode)
 
   ;; configs
   (helm-projectile-on)
@@ -181,6 +180,12 @@ layers configuration."
         haskell-process-suggest-remove-import-lines nil
         haskell-process-suggest-hoogle-imports nil
         powerline-default-separator 'utf-8)
+
+  ;; OS X
+  (if (spacemacs/system-is-mac)
+      (setq mac-command-modifier 'meta
+            mac-option-modifier  'none))
+  (bind-key "M-h" 'ns-do-hide-emacs)
 
   ;; key bindings
   (evil-leader/set-key
