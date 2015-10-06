@@ -9,10 +9,20 @@ Personal emacs configurations based on [[https://github.com/syl20bnr/spacemacs][
 
 * Install emacs
 
-The only tested version is =emacs-24.5-z-mac-5.10=. Usually I install it using following command.
+For OS X users I recommend to install =emacs-mac= or =emacs=. You can find more information about different versions of Emacs on OS X in [[http://emacs.stackexchange.com/a/274/5161][this answer]].
+
+These configurations were tested on =emacs-24.5-z-mac-5.10= and =GNU Emacs 25.0.50.1=.
+
+** =emacs-mac=
 
 #+BEGIN_SRC shell
 $ brew install emacs-mac --with-spacemacs-icon --with-gnutls --with-imagemagick
+#+END_SRC
+
+** =emacs=
+
+#+BEGIN_SRC
+$ brew install emacs --HEAD --use-git-head --with-cocoa --with-gnutls --with-rsvg --with-imagemagick
 #+END_SRC
 
 * Run-time dependencies
@@ -27,3 +37,7 @@ For haskell development you need to have following executables installed.
 - =stack=
 - =structured-haskell-mode=
 - =hindent=
+- =hlint=
+- =ghc-mod=
+- =stylish-haskell=
+- =pandoc=
