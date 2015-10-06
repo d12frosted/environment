@@ -128,6 +128,11 @@ before layers configuration."
       (search-forward "[S P A C E M A C S]")
       (replace-match "[A N I M A C S]")))
 
+  ;; OS X
+  (if (spacemacs/system-is-mac)
+      (setq mac-command-modifier 'meta
+            mac-option-modifier 'none))
+
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'after-save-hook 'delete-trailing-whitespace)
