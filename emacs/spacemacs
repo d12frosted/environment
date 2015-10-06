@@ -65,7 +65,8 @@
    dotspacemacs-additional-packages '(comment-dwim-2
                                       color-theme-sanityinc-tomorrow
                                       apropospriate-theme
-                                      vimish-fold)
+                                      vimish-fold
+                                      reveal-in-osx-finder)
    dotspacemacs-excluded-packages '()
    dotspacemacs-delete-orphan-packages nil))
 
