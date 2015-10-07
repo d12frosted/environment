@@ -9,7 +9,17 @@ Personal fish configuration. I am trying to make it fly!
 
 * Dependencies
 
-- =fish= (just install it from =brew= or whatever, just keep it up to date)
+- =fish=
 - =terminal-notifier= of version =1.6.2= or higher (OS X only)
 
-For installing fish, see [[https://github.com/fish-shell/fish-shell/#building][official instructions]].
+As usual, these dependencies will be automatically bootstrapped during environment installation. But in any case, you should check [[https://github.com/fish-shell/fish-shell/#building][official instructions]] on setting fish as your default shell.
+
+* Batteries
+
+There are some useful functions that come with my configs.
+
+1. =__package_install PKG= - install =PKG= using =brew= if it's not yet installed (OS X only).
+2. =dnvm= - wrapper for [[https://github.com/aspnet/dnvm][dnvm]].
+3. =hglog= - pretty =log= for mercurial repository.
+4. =mov_to_gif= - convert video file to gif. Video file must be supported by =ffmpeg=. Supports scaling. Dependencies will be installed on OS X automatically.
+5. =cabal-install-bin=, =cabal-unpack-and-install-bin= - functions for safe binary packages installation using cabal. Deprecated since =stack= is out.
