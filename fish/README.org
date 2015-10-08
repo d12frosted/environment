@@ -22,4 +22,3 @@ There are some useful functions that come with my configs.
 2. =dnvm= - wrapper for [[https://github.com/aspnet/dnvm][dnvm]].
 3. =hglog= - pretty =log= for mercurial repository.
 4. =mov_to_gif= - convert video file to gif. Video file must be supported by =ffmpeg=. Supports scaling. Dependencies will be installed on OS X automatically.
-5. =cabal-install-bin=, =cabal-unpack-and-install-bin= - functions for safe binary packages installation using cabal. Deprecated since =stack= is out.
