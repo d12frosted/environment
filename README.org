@@ -5,12 +5,12 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
+  #+ATTR_HTML: title="Join the chat at https://gitter.im/d12frosted/environment"
+  [[https://gitter.im/d12frosted/environment?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge][file:https://badges.gitter.im/Join%20Chat.svg]]
+
 This repository is a dump of my dotfiles that I am trying to keep clean and organized. But I prefer to call it 'environment'.
 
 * What's inside?
-
-  #+ATTR_HTML: title="Join the chat at https://gitter.im/d12frosted/environment"
-  [[https://gitter.im/d12frosted/environment?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge][file:https://badges.gitter.im/Join%20Chat.svg]]
 
 All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for sure). Configurations are divided into 'domains' like =emacs=, =git=, =haskell=, =fish= etc. Every domain has it's own readme file, so make sure to check them as well before running installation script. There is also =deprecated= 'domain'. There are things that are no more used but has little value for me.
 
