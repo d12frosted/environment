@@ -41,3 +41,4 @@ For haskell development you need to have following executables installed.
 - =ghc-mod=
 - =stylish-haskell=
 - =pandoc=
+- =hasktags=
