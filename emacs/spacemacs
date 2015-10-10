@@ -133,22 +133,8 @@ before layers configuration."
   (load custom-file t)
 
   (if (display-graphic-p)
-      (dotspacemacs/init-gui)
-    (dotspacemacs/init-terminal)))
-
-(defun dotspacemacs/init-terminal ()
-  "Initialization function when `display-graphic-p' returns nil."
-  (setq-default dotspacemacs-themes '(apropospriate-dark
-                                      spacemacs-dark
-                                      spacemacs-light
-                                      sanityinc-tomorrow-eighties)))
-
-(defun dotspacemacs/init-gui ()
-  "Initialization function when `display-graphic-p' returns t."
-  (setq-default dotspacemacs-themes '(spacemacs-light
-                                      spacemacs-dark
-                                      apropospriate-light
-                                      leuven)))
+      (d12/init-gui)
+    (d12/init-terminal)))
 
 (defun dotspacemacs/user-config ()
   "Configuration function.
@@ -210,4 +196,17 @@ layers configuration."
       (message "Owner of %S is %S" pkg owner))
     owner))
 
+(defun d12/init-terminal ()
+  "Initialization function when `display-graphic-p' returns nil."
+  (setq-default dotspacemacs-themes '(apropospriate-dark
+                                      spacemacs-dark
+                                      spacemacs-light
+                                      sanityinc-tomorrow-eighties)))
+
+(defun d12/init-gui ()
+  "Initialization function when `display-graphic-p' returns t."
+  (setq-default dotspacemacs-themes '(spacemacs-light
+                                      spacemacs-dark
+                                      apropospriate-light
+                                      leuven)))
 ;;; End
