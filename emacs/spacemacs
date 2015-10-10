@@ -141,13 +141,12 @@ before layers configuration."
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
 
-  (defun d12/init-company-quickhelp-mode ()
-    (define-key company-quickhelp-mode-map (kbd "M-h") nil))
-
   (add-hook 'find-file-hook 'd12/load-dir-settings)
   (add-hook 'company-mode-hook 'company-quickhelp-mode)
   (add-hook 'prog-mode-hook 'vimish-fold-mode)
   (add-hook 'company-quickhelp-mode-hook 'd12/init-company-quickhelp-mode)
+  (add-hook 'org-mode-hook 'd12/init-org-mode)
+  (add-hook 'haskell-interactive-mode-hook 'd12/init-haskell-interactive-mode)
 
   ;; configs
   (helm-projectile-on)
@@ -209,4 +208,14 @@ layers configuration."
                                       spacemacs-dark
                                       apropospriate-light
                                       leuven)))
+
+(defun d12/init-haskell-interactive-mode ()
+  (setq-local evil-move-cursor-back nil))
+
+(defun d12/init-company-quickhelp-mode ()
+  (define-key company-quickhelp-mode-map (kbd "M-h") nil))
+
+(defun d12/init-org-mode ()
+  (define-key org-mode-map (kbd "M-h") nil))
+
 ;;; End
