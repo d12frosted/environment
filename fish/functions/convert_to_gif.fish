@@ -1,4 +1,4 @@
-function mov_to_gif -a file scale -d "Convert video to gif"
+function convert_to_gif -a file scale -d "Convert video to gif"
   if test ! -f $file
     echo "You must provide input video file as first argument"
     return 1

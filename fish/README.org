@@ -21,4 +21,4 @@ There are some useful functions that come with my configs.
 1. =__package_install PKG= - install =PKG= using =brew= if it's not yet installed (OS X only).
 2. =dnvm= - wrapper for [[https://github.com/aspnet/dnvm][dnvm]].
 3. =hglog= - pretty =log= for mercurial repository.
-4. =mov_to_gif= - convert video file to gif. Video file must be supported by =ffmpeg=. Supports scaling. Dependencies will be installed on OS X automatically.
+4. =convert_to_gif= - convert video file to gif. Video file must be supported by =ffmpeg=. Supports scaling. Dependencies will be installed on OS X automatically.
