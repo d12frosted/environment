@@ -22,3 +22,4 @@ There are some useful functions that come with my configs.
 2. =dnvm= - wrapper for [[https://github.com/aspnet/dnvm][dnvm]].
 3. =hglog= - pretty =log= for mercurial repository.
 4. =convert_to_gif= - convert video file to gif. Video file must be supported by =ffmpeg=. Supports scaling. Dependencies will be installed on OS X automatically.
+5. =convert_texture= - convert input texture to specified format using =TexturePacker=. For more information, checkout =$ TexturePacker --help=.
