@@ -6,7 +6,7 @@ function __package_install -a pkg -d "Install a package on OS X using brew"
       brew install $pkg
     else
       echo "Don't know how to install packages on your system! Get yourself a mac!"
-      exit 1
+      return 1
     end
   end
 end
