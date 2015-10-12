@@ -1,6 +1,10 @@
-;; -*- mode: emacs-lisp -*-
+;;; spacemacs --- Spacemacs dotfile
+;;;
+;;; Commentary:
+;;
 ;; This file is loaded by Spacemacs at startup.
-;; It must be stored in your home directory.
+;;
+;;; Code:
 
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
@@ -223,4 +227,4 @@ layers configuration."
 (defun d12/init-org-mode ()
   (define-key org-mode-map (kbd "M-h") nil))
 
-;;; End
+;;; spacemacs ends here
