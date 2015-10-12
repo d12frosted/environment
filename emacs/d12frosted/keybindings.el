@@ -12,10 +12,8 @@
 
 (bind-keys
  ("M-g g"           . d12/goto-line-and-center)
- ("C-w"             . d12/cut-line-or-region)
+ ("C-w"             . d12/kill-line-or-region)
  ("M-w"             . d12/copy-line-or-region)
  ("C-S-<backspace>" . d12/delete-line-or-region)
- ("C-c u d"         . d12/duplicate-line-or-region)
  ("M-;"             . comment-dwim-2)
- ("M-C-;"           . comment-or-uncomment-sexp)
- )
+ ("M-C-;"           . comment-or-uncomment-sexp))

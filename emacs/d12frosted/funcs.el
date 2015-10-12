@@ -93,62 +93,48 @@
 ;; Text manipulations
 ;; =============================================================================
 
-(defun d12/copy-line-or-region ()
+(defun d12/copy-line-or-region (&optional copy-func)
   "Copy current line (with newline character) or region. When
 `universal-argument' is called first, copy whole buffer (but
-respect `narrow-to-region')."
-  (interactive)
-  (kill-ring-save (d12/line-or-region-point-min)
-                  (d12/line-or-region-point-max))
-  (message "copied"))
+respect `narrow-to-region').
 
-(defun d12/cut-line-or-region ()
+When `copy-func' is provided, it is used to copy line or region
+instead of `kill-ring-save'"
+  (interactive)
+  (if (fboundp copy-func)
+      (d12//funcall-on-line-or-region copy-func)
+    (d12//funcall-on-line-or-region 'copy-region-as-kill)))
+
+(defun d12/kill-line-or-region (&optional kill-func)
   "Cut current line or region. When `universal-argument' is
-called first, cut whole buffer (but respect `narrow-to-region')."
-  (interactive)
-  (kill-region (d12/line-or-region-point-min)
-               (d12/line-or-region-point-max))
-  (message "cut"))
+called first, cut whole buffer (but respect `narrow-to-region').
 
-(defun d12/duplicate-line-or-region ()
-  "Duplicates current line or region. When `universal-argument'
-is called first, duplicate whole buffer (but respect
-`narrow-to-region')."
+When `kill-func' is provided, it is used to copy line or region
+instead of `kill-region'"
   (interactive)
-  (kill-ring-save (d12/line-or-region-point-min)
-                  (d12/line-or-region-point-max))
-  (move-beginning-of-line 1)
-  (yank)
-  (message "duplicated"))
+  (if (fboundp kill-func)
+      (d12//funcall-on-line-or-region kill-func)
+    (d12//funcall-on-line-or-region 'kill-region)))
 
-(defun d12/delete-line-or-region ()
+(defun d12/delete-line-or-region (&optional delete-func)
   "Delete current line or region without putting it to kill-ring.
-When `universal-argument' is called first, duplicate whole
-buffer (but respect `narrow-to-region')."
+When `universal-argument' is called first, delete whole
+buffer (but respect `narrow-to-region').
+
+When `kill-func' is provided, it is used to copy line or region
+instead of `kill-region'"
   (interactive)
-  (delete-region (d12/line-or-region-point-min)
-                 (d12/line-or-region-point-max))
-  (message "deleted"))
+  (if (fboundp delete-func)
+      (d12//funcall-on-line-or-region delete-func)
+    (d12//funcall-on-line-or-region 'delete-region)))
 
-(defun d12/line-or-region-point-min ()
-  "Return min point of line or region. When `universal-argument'
-is called first, returns min point of whole buffer (but respect
-`narrow-to-region')."
-  (if (null current-prefix-arg)
-      (if (use-region-p)
-          (region-beginning)
-        (line-beginning-position))
-    (point-min)))
-
-(defun d12/line-or-region-point-max ()
-  "Return max point of line or region. When `universal-argument'
-is called first, returns max point of whole buffer (but respect
-`narrow-to-region')."
-  (if (null current-prefix-arg)
-      (if (use-region-p)
-          (region-end)
-        (line-beginning-position 2))
-    (point-max)))
+(defun d12//funcall-on-line-or-region (func)
+  "Call function `f' on current line or region."
+  (if current-prefix-arg
+      (funcall-interactively func (point-min) (point-max))
+    (if (use-region-p)
+        (funcall-interactively func (region-beginning) (region-end) t)
+      (funcall-interactively func (line-beginning-position) (line-beginning-position 2)))))
 
 ;; =============================================================================
 ;; comment-or-uncomment-sexp
