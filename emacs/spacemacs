@@ -42,7 +42,8 @@
 
      ;; languages
      (csharp :variables
-             omnisharp-server-executable-path "~/Developer/Other/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
+             omnisharp-server-executable-path
+             "~/Developer/Other/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
      emacs-lisp
      (haskell :variables
               haskell-enable-hindent-style "chris-done"
