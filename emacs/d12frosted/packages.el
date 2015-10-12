@@ -254,11 +254,6 @@ If not, show simply the clocked time like 01:50."
           org-time-clocksum-format
           '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 
-    ;; (require 'ox-publish)
-    ;; (setq org-html-htmlize-output-type 'inline-css
-    ;;       org-html-validation-link nil
-    ;;       org-publish-project-alist d12-blog/projects)
-
     (d12/reload-agenda-files)
     (d12|rename-modeline "org" org-mode "本")
     )
@@ -289,7 +284,42 @@ If not, show simply the clocked time like 01:50."
 ;;; Csharp and Omnisharp
 ;; =============================================================================
 
-(defun csharp-hs-forward-sexp (&optional arg)
+(defun d12frosted/post-init-omnisharp ()
+  "Initialize omnisharp package."
+  (use-package omnisharp
+    :defer t
+    :init
+    (add-hook 'csharp-mode-hook 'hs-minor-mode)
+    (add-hook 'csharp-mode-hook 'hide-ifdef-mode)
+    (add-hook 'csharp-mode-hook 'flycheck-mode)
+    :config
+    (require 'company)
+    (spacemacs|diminish omnisharp-mode " ♯" " #")
+    (spacemacs|hide-lighter hs-minor-mode)
+    (spacemacs|hide-lighter hide-ifdef-mode)
+
+    (defun d12/omnisharp-go-to-definition-at-center ()
+      (interactive)
+      (progn
+        (omnisharp-go-to-definition)
+        (recenter)))
+
+    (defun d12/omnisharp-comment-to-doc ()
+      "Convert regular comment at point int to documentation comment."
+      (interactive)
+      (save-excursion
+        (beginning-of-line)
+        (when (search-forward-regexp "\\([ \t]+\\)//\\(.*\\)" nil t)
+          (replace-match (concat (match-string 1)
+                                 "/// <summary>\n"
+                                 (match-string 1)
+                                 "///"
+                                 (match-string 2)
+                                 "\n"
+                                 (match-string 1)
+                                 "/// </summary>") t nil))))
+
+    (defun csharp-hs-forward-sexp (&optional arg)
   "Stolen from emacswiki"
   (message "csharp-hs-forward-sexp, (arg %d) (point %d)..."
            (if (numberp arg) arg -1)
@@ -330,60 +360,6 @@ If not, show simply the clocked time like 01:50."
          (if (= nest 0)
              (goto-char (match-end 2))))))))
 
-(defun d12/omnisharp-go-to-definition-at-center ()
-  (interactive)
-  (progn
-    (omnisharp-go-to-definition)
-    (recenter)))
-
-(defun d12/omnisharp-comment-to-doc ()
-  "Convert regular comment at point int to documentation comment."
-  (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (when (search-forward-regexp "\\([ \t]+\\)//\\(.*\\)" nil t)
-      (replace-match (concat (match-string 1)
-                             "/// <summary>\n"
-                             (match-string 1)
-                             "///"
-                             (match-string 2)
-                             "\n"
-                             (match-string 1)
-                             "/// </summary>") t nil))))
-
-
-(defun d12frosted/post-init-omnisharp ()
-  "Initialize omnisharp package."
-  (use-package omnisharp
-    :defer t
-    :init
-    (add-hook 'csharp-mode-hook 'hs-minor-mode)
-    (add-hook 'csharp-mode-hook 'hide-ifdef-mode)
-    (add-hook 'csharp-mode-hook 'flycheck-mode)
-    :config
-    (require 'company)
-    (spacemacs|diminish omnisharp-mode " ♯" " #")
-    (spacemacs|hide-lighter hs-minor-mode)
-    (spacemacs|hide-lighter hide-ifdef-mode)
-
-    (defun omnisharp--get-omnisharp-server-executable-command
-        (solution-file-path &optional server-exe-file-path)
-      (let* ((server-exe-file-path-arg (expand-file-name
-                                        (if (eq nil server-exe-file-path)
-                                            omnisharp-server-executable-path
-                                          server-exe-file-path)))
-             (solution-file-path-arg (expand-file-name solution-file-path))
-             (args (list server-exe-file-path-arg
-                         "-s"
-                         solution-file-path-arg)))
-        (cond
-         ((or (equal system-type 'cygwin)                    ; No mono needed on cygwin
-              (not (s-suffix-p ".exe" server-exe-file-path)) ; No mono needed on roslyn
-              (equal system-type 'windows-nt))
-          args)
-         (t                                                  ; some kind of unix: linux or osx
-          (cons "mono" args)))))
-
     (bind-keys
      :map csharp-mode-map
      ;; Some usefull shotcuts
@@ -407,6 +383,10 @@ If not, show simply the clocked time like 01:50."
               hs-c-like-adjust-block-beginning        ; c-like adjust (1 char)
               )
             hs-special-modes-alist))))
+
+;; =============================================================================
+;; Structured haskell mode
+;; =============================================================================
 
 (defun d12frosted/post-init-shm ()
   (use-package shm
