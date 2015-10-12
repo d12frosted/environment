@@ -397,6 +397,18 @@ If not, show simply the clocked time like 01:50."
       (setq-local global-hl-line-mode nil))
     :config
     (progn
-      (when (require 'shm-case-split nil 'noerror)
-        (define-key shm-map (kbd "C-c S") 'shm/case-split)
-        (define-key shm-map (kbd "C-c C-s") 'shm/do-case-split)))))
+
+      (defun d12-shm/copy-line-or-region ()
+        (interactive)
+        (d12/copy-line-or-region 'shm/copy-region))
+
+      (defun d12-shm/kill-line-or-region ()
+        (interactive)
+        (d12/kill-line-or-region 'shm/kill-region))
+
+      (bind-keys
+       :map shm-map
+       ("C-c S" . shm/case-split)
+       ("C-c C-s" . shm/do-case-split)
+       ("C-w" . d12-shm/kill-line-or-region)
+       ("M-w" . d12-shm/copy-line-or-region)))))
