@@ -103,7 +103,8 @@ instead of `kill-ring-save'"
   (interactive)
   (if (fboundp copy-func)
       (d12//funcall-on-line-or-region copy-func)
-    (d12//funcall-on-line-or-region 'copy-region-as-kill)))
+    (d12//funcall-on-line-or-region 'copy-region-as-kill))
+  (message "copied"))
 
 (defun d12/kill-line-or-region (&optional kill-func)
   "Cut current line or region. When `universal-argument' is
@@ -114,7 +115,8 @@ instead of `kill-region'"
   (interactive)
   (if (fboundp kill-func)
       (d12//funcall-on-line-or-region kill-func)
-    (d12//funcall-on-line-or-region 'kill-region)))
+    (d12//funcall-on-line-or-region 'kill-region))
+  (message "killed"))
 
 (defun d12/delete-line-or-region (&optional delete-func)
   "Delete current line or region without putting it to kill-ring.
@@ -126,7 +128,8 @@ instead of `kill-region'"
   (interactive)
   (if (fboundp delete-func)
       (d12//funcall-on-line-or-region delete-func)
-    (d12//funcall-on-line-or-region 'delete-region)))
+    (d12//funcall-on-line-or-region 'delete-region))
+  (message "removed"))
 
 (defun d12//funcall-on-line-or-region (func)
   "Call function `f' on current line or region."
