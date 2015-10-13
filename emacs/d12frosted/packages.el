@@ -406,9 +406,43 @@ If not, show simply the clocked time like 01:50."
         (interactive)
         (d12/kill-line-or-region 'shm/kill-region))
 
+      (defun d12-shm/comment ()
+        "Comment the current node, or if there is none, or some error,
+  fall back to `comment-dwim-2'. If the region is active, uses
+  `comment-dwim-2'."
+        (interactive)
+        (if (region-active-p)
+            (call-interactively 'comment-dwim-2)
+          (let ((is-multiline-comment nil)
+                (current (shm-current-node)))
+            (cond
+             ((shm-in-comment)
+              (save-excursion
+                (unless (looking-at "[-{]-[^#]")
+                  (search-backward-regexp "[-{]-[^#]" nil nil 1))
+                (when (looking-at "{-[^#]")
+                  (setq is-multiline-comment t))
+                (delete-region (point) (+ 2 (point)))
+                (if is-multiline-comment
+                    (search-forward-regexp "-}" nil nil 1)
+                  (search-forward-regexp "\n" nil nil 1))
+                (if (string-equal (match-string 0) "-}")
+                    (delete-region (- (point) 2) (point))
+                  (delete-region (- (point) 0) (point)))))
+             (current
+              (save-excursion
+                (goto-char (shm-node-start current))
+                (insert "{-")
+                (goto-char (shm-node-end current))
+                (insert "-}")
+                (font-lock-fontify-region (shm-node-start current)
+                                          (shm-node-end current))))
+             (t (call-interactively 'comment-dwim-2))))))
+
       (bind-keys
        :map shm-map
        ("C-c S" . shm/case-split)
        ("C-c C-s" . shm/do-case-split)
        ("C-w" . d12-shm/kill-line-or-region)
-       ("M-w" . d12-shm/copy-line-or-region)))))
+       ("M-w" . d12-shm/copy-line-or-region)
+       ("M-;" . d12-shm/comment)))))
