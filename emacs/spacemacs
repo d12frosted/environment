@@ -146,6 +146,10 @@ before layers configuration."
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
 
+  ;; extract values of environemnt variables
+  (exec-path-from-shell-copy-env "XDG_CONFIG_HOME")
+
+  ;; hooks
   (add-hook 'find-file-hook 'd12/load-dir-settings)
   (add-hook 'company-mode-hook 'company-quickhelp-mode)
   (add-hook 'prog-mode-hook 'vimish-fold-mode)
