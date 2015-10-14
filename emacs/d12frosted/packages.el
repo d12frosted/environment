@@ -398,13 +398,19 @@ If not, show simply the clocked time like 01:50."
     :config
     (progn
 
+      (defun d12-shm//copy-region (beg end region)
+        (shm/copy-region beg end))
+
+      (defun d12-shm//kill-region (beg end region)
+        (shm/kill-region beg end))
+
       (defun d12-shm/copy-line-or-region ()
         (interactive)
-        (d12/copy-line-or-region 'shm/copy-region))
+        (d12/copy-line-or-region 'd12-shm//copy-region))
 
       (defun d12-shm/kill-line-or-region ()
         (interactive)
-        (d12/kill-line-or-region 'shm/kill-region))
+        (d12/kill-line-or-region 'd12-shm//kill-region))
 
       (defun d12-shm/comment ()
         "Comment the current node, or if there is none, or some error,
