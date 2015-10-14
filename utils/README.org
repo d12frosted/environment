@@ -5,8 +5,10 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-Some of utilities I use. For more information checkout =README= file for utility you are interested in.
+Some of utilities I use. For more information checkout =README= file for utility
+you are interested in.
 
 * Available utilities
 
-1. =dump= - utility for dumping files or directories by either copying or moving them with appended timestamp
+1. =dump= - utility for dumping files or directories by either copying or moving
+   them with appended timestamp

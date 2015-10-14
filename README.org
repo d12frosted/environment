@@ -8,23 +8,37 @@
   #+ATTR_HTML: title="Join the chat at https://gitter.im/d12frosted/environment"
   [[https://gitter.im/d12frosted/environment?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge][file:https://badges.gitter.im/Join%20Chat.svg]]
 
-This repository contains configurations to various tools that I am trying to keep clean and organized.
+This repository contains configurations to various tools that I am trying to
+keep clean and organized.
 
 * What's inside?
 
-All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for sure). Configurations are divided into domains like =emacs=, =git=, =haskell=, =fish= etc. Every domain has it's own readme file, so make sure to check them as well before running installation script. There is also =deprecated= domain. There are things that are no more used but has little value for me. Time to time I clean that domain, so don't be surprised to see it's missing.
+All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for
+sure). Configurations are divided into domains like =emacs=, =git=, =haskell=,
+=fish= etc. Every domain has it's own readme file, so make sure to check them as
+well before running installation script. There is also =deprecated= domain.
+There are things that are no more used but has little value for me. Time to time
+I clean that domain, so don't be surprised to see it's missing.
 
 * Dependencies
 
-My configurations are expecting that a lot of stuff is installed on your system. As it was already told, every domain has it's own readme file where the full list of dependencies is written down.
+My configurations are expecting that a lot of stuff is installed on your system.
+As it was already told, every domain has it's own readme file where the full
+list of dependencies is written down.
 
-But be aware that I am using OS X and haven't tested my configurations beyond this operating system. They should work, but I can't promise :smile:.
+But be aware that I am using OS X and haven't tested my configurations beyond
+this operating system. They should work, but I can't promise :smile:.
 
-The installation script will try to get some of the dependencies if you are using OS X. Dependencies are installed via =bootstrap= script, which can be found in the root of =environment= and in some of domains. For example, root =bootstrap= script will install =brew= if you don't have one.
+The installation script will try to get some of the dependencies if you are
+using OS X. Dependencies are installed via =bootstrap= script, which can be
+found in the root of =environment= and in some of domains. For example, root
+=bootstrap= script will install =brew= if you don't have one.
 
 * Usage
 
-The most important thing - you need to clone this repo into =~/.environment=. Otherwise fish and emacs will not work properly. I am using [[https://github.com/anishathalye/dotbot][dotbot]] to bootstrap my configuration, so it's very easy to install them all. Just do
+The most important thing - you need to clone this repo into =~/.environment=.
+Otherwise fish and emacs will not work properly. I am using [[https://github.com/anishathalye/dotbot][dotbot]] to bootstrap
+my configuration, so it's very easy to install them all. Just do
 
 #+BEGIN_SRC sh
 $ ./install
@@ -34,4 +48,10 @@ $ ./install
 
 Sure you can. But should you? :D
 
-OK, jokes aside. It would be a pleasure to me knowing that someone finds something useful in my configurations. I am trying to keep things as clear as possible, but these are *personal* configurations, so I rarely think about any compatibility with previous configurations or other platforms. In any case, if you have questions or any problems with my configurations - just ping me. I'll try to help you as much as I can. Any suggestions or pull requests are warmly welcome!
+OK, jokes aside. It would be a pleasure to me knowing that someone finds
+something useful in my configurations. I am trying to keep things as clear as
+possible, but these are *personal* configurations, so I rarely think about any
+compatibility with previous configurations or other platforms. In any case, if
+you have questions or any problems with my configurations - just ping me. I'll
+try to help you as much as I can. Any suggestions or pull requests are warmly
+welcome!

@@ -14,4 +14,5 @@ Personal git configurations.
 
 * Dependencies
 
-Make sure that ~git~ is installed. On OS X you should also install ~command line tools~. My version of git is ~2.3.1~.
+Make sure that ~git~ is installed. On OS X you should also install ~command line
+tools~. My version of git is ~2.6.0~.

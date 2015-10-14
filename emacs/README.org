@@ -5,13 +5,17 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-Personal emacs configurations based on [[https://github.com/syl20bnr/spacemacs][Spacemacs]]. Usually I use =d12frosted= branch of [[https://github.com/d12frosted/spacemacs][Spacemacs fork]]. But in most cases it should be OK to use official =develop= branch.
+Personal emacs configurations based on [[https://github.com/syl20bnr/spacemacs][Spacemacs]]. Usually I use =d12frosted=
+branch of [[https://github.com/d12frosted/spacemacs][Spacemacs fork]]. But in most cases it should be OK to use official
+=develop= branch.
 
 * Install emacs
 
-For OS X users I recommend to install =emacs-mac= or =emacs=. You can find more information about different versions of Emacs on OS X in [[http://emacs.stackexchange.com/a/274/5161][this answer]].
+For OS X users I recommend to install =emacs-mac= or =emacs=. You can find more
+information about different versions of Emacs on OS X in [[http://emacs.stackexchange.com/a/274/5161][this answer]].
 
-These configurations were tested on =emacs-24.5-z-mac-5.10= and =GNU Emacs 25.0.50.1=.
+These configurations were tested on =emacs-24.5-z-mac-5.10= and =GNU Emacs
+25.0.50.1=.
 
 ** =emacs-mac=
 

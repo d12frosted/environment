@@ -5,11 +5,13 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-=Dump= is utility for dumping files or directories by either copying or moving them with appended timestamp.
+=Dump= is utility for dumping files or directories by either copying or moving
+them with appended timestamp.
 
 * Install
 
-This is a cabal project that supports =stack=. So either run =stack install= or =cabal install= (probably in sandbox) and feel happy.
+This is a cabal project that supports =stack=. So either run =stack install= or
+=cabal install= (probably in sandbox) and feel happy.
 
 * Usage
 
