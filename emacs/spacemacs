@@ -75,9 +75,6 @@
 This function is called at the very startup of Spacemacs initialization
 before layers configuration."
 
-  (let ((default-directory "/usr/local/share/emacs/site-lisp/"))
-    (normal-top-level-add-subdirs-to-load-path))
-
   (setq-default
    d12/env-directory (concat user-home-directory ".environment/")
    d12/env-spacemacs-directory (concat d12/env-directory "emacs/")
