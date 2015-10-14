@@ -8,11 +8,11 @@
   #+ATTR_HTML: title="Join the chat at https://gitter.im/d12frosted/environment"
   [[https://gitter.im/d12frosted/environment?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge][file:https://badges.gitter.im/Join%20Chat.svg]]
 
-This repository is a dump of my dotfiles that I am trying to keep clean and organized. But I prefer to call it 'environment'.
+This repository contains configurations to various tools that I am trying to keep clean and organized.
 
 * What's inside?
 
-All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for sure). Configurations are divided into 'domains' like =emacs=, =git=, =haskell=, =fish= etc. Every domain has it's own readme file, so make sure to check them as well before running installation script. There is also =deprecated= 'domain'. There are things that are no more used but has little value for me.
+All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for sure). Configurations are divided into domains like =emacs=, =git=, =haskell=, =fish= etc. Every domain has it's own readme file, so make sure to check them as well before running installation script. There is also =deprecated= domain. There are things that are no more used but has little value for me. Time to time I clean that domain, so don't be surprised to see it's missing.
 
 * Dependencies
 
@@ -34,4 +34,4 @@ $ ./install
 
 Sure you can. But should you? :D
 
-OK, jokes aside. It will be pleasure for me, if you find something useful in my configurations. I am trying to keep things as clear as possible, but sometimes I am making very urgent changes that I forget to document and sometimes I am just lazy to do so. So in case you have questions or any problems with my configurations - just ping me. Also be aware that I am not trying to make my configurations platform independent. You should check dependencies list or installation scripts.
+OK, jokes aside. It would be a pleasure to me knowing that someone finds something useful in my configurations. I am trying to keep things as clear as possible, but these are *personal* configurations, so I rarely think about any compatibility with previous configurations or other platforms. In any case, if you have questions or any problems with my configurations - just ping me. I'll try to help you as much as I can. Any suggestions or pull requests are warmly welcome!
