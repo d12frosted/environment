@@ -5,10 +5,10 @@ spacemacs=~/.emacs.d.spacemacs
 if [ ! -e $spacemacs ]; then
     if [ $USER = "d12frosted" ]; then
         spacemacs_link="git@github.com:d12frosted/spacemacs.git"
-        branch="d12frosted"
+        branch="develop"
     else
         spacemacs_link="git@github.com:syl20bnr/spacemacs.git"
-        branch="develop"
+        branch="master"
     fi
 
     git clone $spacemacs_link $spacemacs
