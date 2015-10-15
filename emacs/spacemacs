@@ -129,7 +129,6 @@ before layers configuration."
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'after-save-hook 'delete-trailing-whitespace)
-  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 
   (setq custom-file (concat d12/dropbox-path "App/emacs-custom.el"))
   (load custom-file t)
