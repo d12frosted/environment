@@ -10,9 +10,37 @@
 ;;
 ;;; License: GPLv3
 
+;; Getting things done
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun gtd ()
+  "Open gtd.org file in `d12/org-home-path'."
   (interactive)
   (find-file (concat d12/org-home-path "gtd.org")))
+
+(defun helm-gtd()
+  "Org files discovery with helm interface."
+  (interactive)
+  (helm :buffer "*helm: gtd"
+        :sources `(,(helm-gtd/source))))
+
+(defun helm-gtd/source ()
+  "Construct helm source for org files in `d12/org-home-path'."
+  `((name . "Files")
+    (candidates . ,(sort (helm-gtd/get-files-list) 'string<))
+    (candidate-number-limit)
+    (action . (("Open file" . helm-gtd/open-org-file)))))
+
+(defun helm-gtd/get-files-list ()
+  "Get the list of org files in `d12/org-home-path'."
+  (directory-files d12/org-home-path nil ".*\.org"))
+
+(defun helm-gtd/open-org-file (candidate)
+  "Open file in `d12/org-home-path'."
+  (find-file (concat d12/org-home-path candidate)))
+
+;; Custom settings loader
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun d12/recursive-load-dir-settings (currentfile)
   (let ((lds-dir (locate-dominating-file currentfile d12/dir-settings-file)))
@@ -26,9 +54,8 @@
   (when buffer-file-name
     (d12/recursive-load-dir-settings buffer-file-name)))
 
-;; =============================================================================
 ;; Files and directories
-;; =============================================================================
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun d12/directory-dirs (directory)
   "Return a list of names of directories in DIRECTORY excluding
@@ -67,18 +94,16 @@
       (goto-char (point-min))
       (search-forward string nil t))))
 
-;; =============================================================================
 ;; Navigation
-;; =============================================================================
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun d12/goto-line-and-center ()
   (interactive)
   (call-interactively 'goto-line)
   (call-interactively 'recenter-top-bottom))
 
-;; =============================================================================
 ;; Mode renaming and diminishing
-;; =============================================================================
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmacro d12|rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
@@ -89,9 +114,8 @@
   "Diminish MODE name in mode line to DIM."
   `(eval-after-load 'diminish '(diminish ',mode ,dim)))
 
-;; =============================================================================
 ;; Text manipulations
-;; =============================================================================
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun d12/copy-line-or-region (&optional copy-func)
   "Copy current line (with newline character) or region. When
@@ -139,10 +163,9 @@ instead of `kill-region'"
         (funcall-interactively func (region-beginning) (region-end) t)
       (funcall-interactively func (line-beginning-position) (line-beginning-position 2)))))
 
-;; =============================================================================
 ;; comment-or-uncomment-sexp
 ;; http://endlessparentheses.com/a-comment-or-uncomment-sexp-command.html?source=rss
-;; =============================================================================
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun uncomment-sexp (&optional n)
   "Uncomment a sexp around point."
@@ -226,9 +249,8 @@ argument N, (un)comment that many sexps."
     (dotimes (_ (or n 1))
       (comment-sexp--raw))))
 
-;; =============================================================================
 ;; Misc functions
-;; =============================================================================
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun d12/insert-date (&optional days)
   "Insert timestamp formated by value of `d12/date-format'. If

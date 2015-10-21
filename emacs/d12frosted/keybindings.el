@@ -17,3 +17,8 @@
  ("C-S-<backspace>" . d12/delete-line-or-region)
  ("M-;"             . comment-dwim-2)
  ("M-C-;"           . comment-or-uncomment-sexp))
+
+(evil-leader/set-key
+  "oo" 'helm-gtd)
+
+(spacemacs/declare-prefix "o" "d12frosted")
