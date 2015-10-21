@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# create directory for user-wide binaries
+mkdir -p ~/.local/bin
 
 if [ $(uname -s) = "Darwin" ]; then
     hash brew || {

@@ -1,5 +1,8 @@
 #!/bin/sh
 
-bin_dir=~/.local/bin
-
-mkdir -p $bin_dir
+if [ $(uname -s) = "Darwin" ]; then
+    hash stack || {
+        brew install haskell-stack
+        stack setup
+    }
+fi
