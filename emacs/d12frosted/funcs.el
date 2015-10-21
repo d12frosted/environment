@@ -33,7 +33,7 @@
 
 (defun helm-gtd/get-files-list ()
   "Get the list of org files in `d12/org-home-path'."
-  (directory-files d12/org-home-path nil ".*\.org"))
+  (directory-files d12/org-home-path nil ".*\.org$"))
 
 (defun helm-gtd/open-org-file (candidate)
   "Open file in `d12/org-home-path'."
