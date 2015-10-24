@@ -5,7 +5,7 @@ git config --global core.excludesfile ~/.gitignore_global
 
 # setup user info
 git config --global user.name "d12frosted"
-git config --global user.email d12frosted@icloud.com
+git config --global user.email d12frosted@users.noreply.github.com
 
 # setup editor
 git config --global core.editor emacsclient
