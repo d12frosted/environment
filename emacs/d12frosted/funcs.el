@@ -9,9 +9,10 @@
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; License: GPLv3
+;;
+;;; Code:
 
-;; Getting things done
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Getting things done
 
 (defun gtd ()
   "Open gtd.org file in `d12/org-home-path'."
@@ -39,8 +40,7 @@
   "Open file in `d12/org-home-path'."
   (find-file (concat d12/org-home-path candidate)))
 
-;; Custom settings loader
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Custom settings loader
 
 (defun d12/recursive-load-dir-settings (currentfile)
   (let ((lds-dir (locate-dominating-file currentfile d12/dir-settings-file)))
@@ -54,8 +54,7 @@
   (when buffer-file-name
     (d12/recursive-load-dir-settings buffer-file-name)))
 
-;; Files and directories
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Files and directories
 
 (defun d12/directory-dirs (directory)
   "Return a list of names of directories in DIRECTORY excluding
@@ -94,16 +93,14 @@
       (goto-char (point-min))
       (search-forward string nil t))))
 
-;; Navigation
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Navigation
 
 (defun d12/goto-line-and-center ()
   (interactive)
   (call-interactively 'goto-line)
   (call-interactively 'recenter-top-bottom))
 
-;; Mode renaming and diminishing
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Mode renaming and diminishing
 
 (defmacro d12|rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
@@ -114,8 +111,7 @@
   "Diminish MODE name in mode line to DIM."
   `(eval-after-load 'diminish '(diminish ',mode ,dim)))
 
-;; Text manipulations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Text manipulations
 
 (defun d12/copy-line-or-region (&optional copy-func)
   "Copy current line (with newline character) or region. When
@@ -163,9 +159,8 @@ instead of `kill-region'"
         (funcall-interactively func (region-beginning) (region-end) t)
       (funcall-interactively func (line-beginning-position) (line-beginning-position 2)))))
 
-;; comment-or-uncomment-sexp
+;;; comment-or-uncomment-sexp
 ;; http://endlessparentheses.com/a-comment-or-uncomment-sexp-command.html?source=rss
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun uncomment-sexp (&optional n)
   "Uncomment a sexp around point."
@@ -249,8 +244,7 @@ argument N, (un)comment that many sexps."
     (dotimes (_ (or n 1))
       (comment-sexp--raw))))
 
-;; Misc functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Misc functions
 
 (defun d12/insert-date (&optional days)
   "Insert timestamp formated by value of `d12/date-format'. If

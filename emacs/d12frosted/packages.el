@@ -9,6 +9,8 @@
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; License: GPLv3
+;;
+;;; Code:
 
 (setq d12frosted-packages
       '(
@@ -20,11 +22,7 @@
 
 (setq d12frosted-excluded-packages '())
 
-;;; Misc configs
-
-;; =============================================================================
-;; org mode
-;; =============================================================================
+;;; org-mode
 
 (defun d12frosted/post-init-org ()
   "Initialize org package."
@@ -280,9 +278,7 @@ If not, show simply the clocked time like 01:50."
           org-journal-hide-entries-p nil))
   )
 
-;; =============================================================================
 ;;; Csharp and Omnisharp
-;; =============================================================================
 
 (defun d12frosted/post-init-omnisharp ()
   "Initialize omnisharp package."
@@ -384,9 +380,7 @@ If not, show simply the clocked time like 01:50."
               )
             hs-special-modes-alist))))
 
-;; =============================================================================
-;; Structured haskell mode
-;; =============================================================================
+;;; Structured haskell mode
 
 (defun d12frosted/post-init-shm ()
   (use-package shm
@@ -452,3 +446,5 @@ If not, show simply the clocked time like 01:50."
        ("C-w" . d12-shm/kill-line-or-region)
        ("M-w" . d12-shm/copy-line-or-region)
        ("M-;" . d12-shm/comment)))))
+
+;;; packages.el ends here
