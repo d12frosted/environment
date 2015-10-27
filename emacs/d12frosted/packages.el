@@ -386,6 +386,7 @@ If not, show simply the clocked time like 01:50."
   (use-package shm
     :defer t
     :init
+    (remove-hook 'haskell-mode-hook 'haskell-indentation-mode)
     (add-hook 'haskell-mode-hook 'structured-haskell-mode)
     (defadvice spacemacs/init-haskell-mode (after d12//init-haskell-mode activate)
       (setq-local global-hl-line-mode nil))
