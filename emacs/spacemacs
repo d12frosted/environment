@@ -35,8 +35,8 @@
      no-dots
      (d12frosted :variables
                  d12/org-home-path (concat d12/dropbox-path "org/")
-                 d12/org-author-name "Boris Buliga"
-                 d12/org-author-email "d12frosted@icloud.com"
+                 d12/org-author-name `(,d12/full-name)
+                 d12/org-author-email `(,d12/email)
                  d12/org-agenda-ignore-dirs '(".git/"
                                               "journal/"))
 
