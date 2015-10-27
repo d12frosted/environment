@@ -70,16 +70,23 @@
    dotspacemacs-excluded-packages '()
    dotspacemacs-delete-orphan-packages nil))
 
+(defun dotspacemacs/pre-init ()
+  "Function that is called at the very beginning of
+  configurations initialization."
+  (setq-default d12/env-directory (concat user-home-directory ".environment/")
+                d12/env-spacemacs-directory (concat d12/env-directory "emacs/")
+                d12/dropbox-path (concat user-home-directory "Dropbox/")
+                d12/emacs-private-path (concat d12/dropbox-path "Apps/Emacs/"))
+  (load (concat d12/emacs-private-path "private.el")))
+
 (defun dotspacemacs/init ()
   "Initialization function.
 This function is called at the very startup of Spacemacs initialization
-before layers configuration."
-
+before layers configuration.
+You should not put any user code in there besides modifying the variable
+values."
+  (dotspacemacs/pre-init)
   (setq-default
-   d12/env-directory (concat user-home-directory ".environment/")
-   d12/env-spacemacs-directory (concat d12/env-directory "emacs/")
-   d12/dropbox-path (concat user-home-directory "Dropbox/")
-
    dotspacemacs-editing-style 'emacs
    dotspacemacs-distribution 'spacemacs
    dotspacemacs-verbose-loading nil
@@ -116,8 +123,12 @@ before layers configuration."
    dotspacemacs-default-package-repository nil
    spacemacs-mode-line-org-clock-current-taskp t
    dotspacemacs-auto-save-file-location 'cache
-   dotspacemacs-which-key-position 'bottom)
+   dotspacemacs-which-key-position 'bottom))
 
+(defun dotspacemacs/user-init ()
+  "Initialization function for user code.
+It is called immediately after `dotspacemacs/init'.  You are free to put any
+user code."
   ;; rename title in init screen
   (defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
     "Change the default title in *spacemacs* banner."
@@ -130,7 +141,7 @@ before layers configuration."
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'after-save-hook 'delete-trailing-whitespace)
 
-  (setq custom-file (concat d12/dropbox-path "App/emacs-custom.el"))
+  (setq custom-file (concat d12/emacs-private-path "custom.el"))
   (load custom-file t)
 
   (if (display-graphic-p)
