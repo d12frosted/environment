@@ -77,7 +77,12 @@
                 d12/env-spacemacs-directory (concat d12/env-directory "emacs/")
                 d12/dropbox-path (concat user-home-directory "Dropbox/")
                 d12/emacs-private-path (concat d12/dropbox-path "Apps/Emacs/"))
-  (load (concat d12/emacs-private-path "private.el")))
+  ;; and load `private.el' file containing all sensitive data
+  (load (concat d12/emacs-private-path "private.el"))
+
+  ;; setup custom-file
+  (setq custom-file (concat d12/emacs-private-path "custom.el"))
+  (load custom-file t))
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -140,9 +145,6 @@ user code."
   ;; hooks
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'after-save-hook 'delete-trailing-whitespace)
-
-  (setq custom-file (concat d12/emacs-private-path "custom.el"))
-  (load custom-file t)
 
   (if (display-graphic-p)
       (d12/init-gui)
