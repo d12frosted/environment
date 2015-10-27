@@ -9,6 +9,7 @@
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
   (setq-default
+   dotspacemacs-distribution 'spacemacs
    dotspacemacs-configuration-layer-path `(,d12/env-spacemacs-directory)
    dotspacemacs-configuration-layers
    '(;; utilities
@@ -93,7 +94,6 @@ values."
   (dotspacemacs/pre-init)
   (setq-default
    dotspacemacs-editing-style 'emacs
-   dotspacemacs-distribution 'spacemacs
    dotspacemacs-verbose-loading nil
    dotspacemacs-startup-banner (concat d12/env-spacemacs-directory "animacs-banner.png")
    dotspacemacs-startup-lists '(recents projects bookmarks)
@@ -110,9 +110,15 @@ values."
    dotspacemacs-major-mode-leader-key ","
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
    dotspacemacs-command-key ":"
+   dotspacemacs-remap-Y-to-y$ t
+   dotspacemacs-auto-save-file-location 'cache
    dotspacemacs-use-ido nil
+   dotspacemacs-helm-resize nil
+   dotspacemacs-helm-no-header nil
+   dotspacemacs-helm-position 'bottom
    dotspacemacs-enable-paste-micro-state t
-   dotspacemacs-guide-key-delay 0.4
+   dotspacemacs-which-key-delay 0.4
+   dotspacemacs-which-key-position 'bottom
    dotspacemacs-loading-progress-bar t
    dotspacemacs-fullscreen-at-startup nil
    dotspacemacs-fullscreen-use-non-native nil
@@ -126,9 +132,9 @@ values."
    dotspacemacs-persistent-server nil
    dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
    dotspacemacs-default-package-repository nil
-   spacemacs-mode-line-org-clock-current-taskp t
-   dotspacemacs-auto-save-file-location 'cache
-   dotspacemacs-which-key-position 'bottom))
+
+   ;; other
+   spacemacs-mode-line-org-clock-current-taskp t))
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
