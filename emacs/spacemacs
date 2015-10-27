@@ -13,24 +13,25 @@
    dotspacemacs-configuration-layer-path `(,d12/env-spacemacs-directory)
    dotspacemacs-configuration-layers
    '(;; utilities
+     (auto-completion :disabled-for org erc)
      better-defaults
+     colors
+     emoji
+     erc
+     eyebrowse
      (git :variables
           git-magit-status-fullscreen t)
      github
-     version-control
-     syntax-checking
-     spell-checking
-     (auto-completion :disabled-for org)
      (org :variables
           org-enable-github-support t
           org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))
-     restclient
+     pandoc
+     perspectives
+     syntax-checking
+     spell-checking
      (shell :variables
             shell-default-term-shell "/usr/local/bin/fish")
-     eyebrowse
-     perspectives
-     pandoc
-     colors
+     version-control
 
      ;; private layers
      no-dots
@@ -154,7 +155,26 @@ user code."
 
   (if (display-graphic-p)
       (d12//init-gui)
-    (d12//init-terminal)))
+    (d12//init-terminal))
+
+  (setq-default
+   ;; IRC
+   erc-autojoin-channels-alist
+   '(("1\\.0\\.0" "#syl20bnr/spacemacs") ; Gitter
+     ("irc.gitter.im" "#syl20bnr/spacemacs")
+     ("freenode\\.net" "#emacs" "#emacs-beginners"))
+   erc-timestamp-format-left "\n%A %B %e, %Y\n\n"
+   erc-timestamp-format-right "%H:%M"
+   erc-timestamp-right-column 80
+   erc-prompt-for-nickserv-password nil
+   erc-image-inline-rescale 300
+   erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
+   erc-foolish-content
+   '("\\[Github\\].* starred"
+     "\\[Github\\].* forked"
+     "\\[Github\\].* synchronize a Pull Request"
+     "\\[Github\\].* labeled an issue in"
+     "\\[Github\\].* unlabeled an issue in")))
 
 (defun dotspacemacs/user-config ()
   "Configuration function.
@@ -163,6 +183,9 @@ layers configuration."
 
   ;; extract values of environemnt variables
   (exec-path-from-shell-copy-env "XDG_CONFIG_HOME")
+
+  (defmacro remove-from-list (list-var element)
+    `(setq ,list-var (remove ,element ,list-var)))
 
   ;; hooks
   (add-hook 'find-file-hook 'd12/load-dir-settings)
@@ -206,6 +229,69 @@ layers configuration."
       (setq mac-command-modifier 'meta
             mac-option-modifier  'none))
   (bind-key "M-h" 'ns-do-hide-emacs)
+
+  ;; IRC
+  (add-hook 'erc-insert-pre-hook
+            (defun bb/erc-foolish-filter (msg)
+              "Ignores messages matching `erc-foolish-content'."
+              (when (erc-list-match erc-foolish-content msg)
+                (setq erc-insert-this nil))))
+
+  (defun bb/erc-github-filter ()
+    "Shortens messages from gitter."
+    (interactive)
+    (when (and (< 18 (- (point-max) (point-min)))
+               (string= (buffer-substring (point-min)
+                                          (+ (point-min) 18))
+                        "<gitter> [Github] "))
+      (dolist (regexp '(" \\[Github\\]"
+                        " \\(?:in\\|to\\) [^ /]+/[^ /:]+"))
+        (goto-char (point-min))
+        (when (re-search-forward regexp (point-max) t)
+          (replace-match "")))
+      (goto-char (point-min))
+      (when (re-search-forward
+             "https?://github\\.com/[^/]+/[^/]+/[^/]+/\\([[:digit:]]+\\)\\([^[:space:]]*\\)?"
+             (point-max) t)
+        (let* ((url (match-string 0))
+               (number (match-string 1))
+               (start (+ 1 (match-beginning 0)))
+               (end (+ 1 (length number) start)))
+          (replace-match (format "(#%s)" (match-string 1)))
+          (erc-button-add-button start end 'browse-url nil (list url)))
+        )))
+
+  (with-eval-after-load 'erc
+    (setq erc-insert-modify-hook
+          '(erc-controls-highlight
+            erc-button-add-buttons
+            bb/erc-github-filter
+            erc-fill
+            erc-match-message
+            erc-add-timestamp
+            erc-hl-nicks)))
+
+  (add-hook 'erc-mode-hook 'emoji-cheat-sheet-plus-display-mode)
+  (dolist (module '(track youtube image))
+    (remove-from-list erc-modules module))
+  (with-eval-after-load 'erc
+    (erc-track-mode -1))
+
+  (evil-leader/set-key
+    "aiq" 'erc-quit-server
+    "aig" (defun d12/gitter ()
+            (interactive)
+            (erc-tls :server "irc.gitter.im"
+                     :port "6667"
+                     :nick d12/gitter-nickname
+                     :password d12/gitter-password
+                     :full-name d12/gitter-full-name))
+    "aif" (defun d12/freenode ()
+            (interactive)
+            (erc :server "irc.freenode.net"
+                 :port "6667"
+                 :nick d12/irc-nickname
+                 :full-name d12/irc-full-name)))
 
   ;; key bindings
   (evil-leader/set-key
