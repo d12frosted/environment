@@ -257,18 +257,22 @@ layers configuration."
 
 (defun d12//init-terminal ()
   "Initialization function when `display-graphic-p' returns nil."
-  (setq-default dotspacemacs-themes '(apropospriate-dark
+  (setq-default dotspacemacs-themes '(
+                                      apropospriate-dark
                                       spacemacs-dark
                                       spacemacs-light
-                                      sanityinc-tomorrow-eighties)))
+                                      sanityinc-tomorrow-eighties
+                                      )))
 
 (defun d12//init-gui ()
   "Initialization function when `display-graphic-p' returns t."
-  (setq-default dotspacemacs-themes '(spacemacs-light
+  (setq-default dotspacemacs-themes '(
+                                      spacemacs-light
                                       spacemacs-dark
                                       apropospriate-dark
                                       apropospriate-light
-                                      leuven)))
+                                      leuven
+                                      )))
 
 (defun d12//init-haskell-interactive-mode ()
   (setq-local evil-move-cursor-back nil))
