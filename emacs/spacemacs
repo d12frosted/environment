@@ -212,6 +212,30 @@ layers configuration."
             mac-option-modifier  'none))
   (bind-key "M-h" 'ns-do-hide-emacs)
 
+  ;; Eyebrowse
+  (defun spacemacs//workspaces-ms-get-window-configs ()
+    "Return the list of window configs. Depends on value of
+`eyebrowse-place-zero-at-the-end'."
+    (--sort (if (eq (car other) 0)
+                t
+              (< (car it) (car other)))
+            (eyebrowse--get 'window-configs)))
+
+  (defun spacemacs//workspaces-ms-documentation ()
+    "Return the docstring for the workspaces micro-state."
+    (let* ((current-slot (eyebrowse--get 'current-slot))
+           (window-configs (spacemacs//workspaces-ms-get-window-configs)))
+      (concat
+       "<" (if window-configs
+               (concat
+                (mapconcat 'spacemacs//workspaces-ms-get-slot-name
+                           window-configs "> <") ">")
+             (when eyebrowse-display-help
+               (concat
+                "\n[0-9] to create/switch to a workspace, "
+                "[n] next, [p/N] previous, [TAB] back and forth, [c] close, "
+                "[r] rename"))))))
+
   ;; key bindings
   (evil-leader/set-key
     "it" 'd12/insert-time
