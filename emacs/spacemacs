@@ -67,7 +67,8 @@
                                       color-theme-sanityinc-tomorrow
                                       apropospriate-theme
                                       vimish-fold
-                                      reveal-in-osx-finder)
+                                      reveal-in-osx-finder
+                                      beacon)
    dotspacemacs-excluded-packages '()
    dotspacemacs-delete-orphan-packages nil))
 
@@ -185,6 +186,7 @@ layers configuration."
   ;; configs
   (helm-projectile-on)
   (delete-selection-mode 1)
+  (beacon-mode 1)
 
   ;; vars
   (setq projectile-enable-caching nil
