@@ -26,6 +26,7 @@
           org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))
      pandoc
      perspectives
+     ranger
      syntax-checking
      spell-checking
      (shell :variables
@@ -141,6 +142,22 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (setq-default
+   ;; Miscellaneous
+   vc-follow-symlinks t
+   require-final-newline t
+
+   ;; Whitespace mode
+   whitespace-style '(face tabs tab-mark)
+   whitespace-display-mappings
+   '((newline-mark 10 [172 10])
+     (tab-mark 9 [9655 9]))
+
+   ;; Ranger
+   ranger-override-dired t
+
+   )
+
   ;; rename title in init screen
   (defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
     "Change the default title in *spacemacs* banner."
