@@ -178,10 +178,6 @@ layers configuration."
   (add-hook 'org-mode-hook 'd12//init-org-mode)
   (add-hook 'haskell-interactive-mode-hook 'd12//init-haskell-interactive-mode)
 
-  (when (configuration-layer/layer-usedp 'haskell)
-    (with-eval-after-load 'haskell-indentation
-      (remove-hook 'evil-insert-state-entry-hook 'spacemacs//haskell-indentation-show-guides)
-      (remove-hook 'evil-emacs-state-entry-hook 'spacemacs//haskell-indentation-show-guides)))
 
   ;; configs
   (helm-projectile-on)
