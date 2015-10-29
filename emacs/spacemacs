@@ -195,13 +195,14 @@ layers configuration."
   (add-hook 'org-mode-hook 'd12//init-org-mode)
   (add-hook 'haskell-interactive-mode-hook 'd12//init-haskell-interactive-mode)
 
+  ;; haskell indentation
+  ;; TODO: remove when merged
   (spacemacs|define-micro-state haskell-indentation
     :doc "Press = to indent further or - to indent backwards"
     :use-minibuffer t
     :bindings
     ("=" indent-for-tab-command)
     ("-" haskell-indentation-indent-backwards))
-
   (evil-define-key 'visual haskell-mode-map (kbd "=") 'spacemacs/haskell-indentation-micro-state)
 
   ;; configs
@@ -236,6 +237,7 @@ layers configuration."
   (bind-key "M-h" 'ns-do-hide-emacs)
 
   ;; Eyebrowse
+  ;; TODO: remove when #3564 is merged
   (defun spacemacs//workspaces-ms-get-window-configs ()
     "Return the list of window configs. Depends on value of
 `eyebrowse-place-zero-at-the-end'."
@@ -260,7 +262,7 @@ layers configuration."
                 "[r] rename"))))))
 
   ;; full screen magit-status
-  ;; TODO - remove when #3319 is merged
+  ;; TODO: remove when #3319 is merged
   (when git-magit-status-fullscreen
     (setq magit-display-buffer-function
           (lambda (buffer)
