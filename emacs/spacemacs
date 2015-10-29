@@ -178,6 +178,14 @@ layers configuration."
   (add-hook 'org-mode-hook 'd12//init-org-mode)
   (add-hook 'haskell-interactive-mode-hook 'd12//init-haskell-interactive-mode)
 
+  (spacemacs|define-micro-state haskell-indentation
+    :doc "Press = to indent further or - to indent backwards"
+    :use-minibuffer t
+    :bindings
+    ("=" indent-for-tab-command)
+    ("-" haskell-indentation-indent-backwards))
+
+  (evil-define-key 'visual haskell-mode-map (kbd "=") 'spacemacs/haskell-indentation-micro-state)
 
   ;; configs
   (helm-projectile-on)
