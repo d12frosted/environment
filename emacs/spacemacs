@@ -196,7 +196,7 @@ layers configuration."
   (add-hook 'haskell-interactive-mode-hook 'd12//init-haskell-interactive-mode)
 
   ;; haskell indentation
-  ;; TODO: remove when merged
+  ;; TODO: remove when #3586 is merged
   (spacemacs|define-micro-state haskell-indentation
     :doc "Press = to indent further or - to indent backwards"
     :use-minibuffer t
