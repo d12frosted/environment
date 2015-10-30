@@ -67,9 +67,10 @@
    dotspacemacs-additional-packages '(comment-dwim-2
                                       color-theme-sanityinc-tomorrow
                                       apropospriate-theme
-                                      vimish-fold
                                       reveal-in-osx-finder
-                                      beacon)
+                                      beacon
+                                      vimish-fold
+                                      (haskell-mode :location "~/Developer/haskell-mode/"))
    dotspacemacs-excluded-packages '()
    dotspacemacs-delete-orphan-packages nil))
 
