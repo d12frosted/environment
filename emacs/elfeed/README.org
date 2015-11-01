@@ -71,6 +71,9 @@ so it starts automatically on Emacs startup.
    elfeed-web-enabled-on-emacs-startup t)
 #+END_SRC
 
+By default web interface is available on [[http://localhost:8080/elfeed/][localhost:8080/elfeed]]. You can change
+the default port by changing value of =httpd-port=.
+
 *** Importing Feeds
 
 Feeds can be specified in configuration variable, or interactively imported from
