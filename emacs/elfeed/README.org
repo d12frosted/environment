@@ -47,8 +47,8 @@ in your =.spacemacs= file.
                   ("http://nedroid.com/feed/" webcomic))))
 #+END_SRC
 
-Check documentation for =elfeed-feeds= for more information (~SPC h d v
-elfeed-feeds RET~).
+Check documentation for =elfeed-feeds= for more information about this variable
+(~SPC h d v elfeed-feeds RET~).
 
 But you might prefer to use [[https://github.com/remyhonig/elfeed-org][elfeed-org]] package and store all your feeds in
 separate =org= file. Then you have to specify it's path.
