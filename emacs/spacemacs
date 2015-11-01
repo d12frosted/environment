@@ -71,7 +71,7 @@
                                       beacon
                                       vimish-fold
                                       (haskell-mode :location "~/Developer/haskell-mode/"))
-   dotspacemacs-excluded-packages '(evil-magit)
+   dotspacemacs-excluded-packages '()
    dotspacemacs-delete-orphan-packages nil))
 
 (defun dotspacemacs/pre-init ()
