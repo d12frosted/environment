@@ -23,7 +23,7 @@
     (evil-leader/set-key "af" 'elfeed)
     :config
     (progn
-      (if rmh-elfeed-org-files
+      (when rmh-elfeed-org-files
         (elfeed-org))
       (evilify elfeed-search-mode elfeed-search-mode-map
                (kbd "q") 'quit-window

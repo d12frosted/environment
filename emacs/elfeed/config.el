@@ -12,16 +12,6 @@
 
 ;;; Variables
 
-(defvar elfeed-feeds nil
-  "List of all feeds that Elfeed should follow. You must add your
-feeds to this list.")
-
-(defvar url-queue-timeout 5
-  "How long to let a job live once it's started (in seconds).")
-
-(defvar elfeed-search-filter "@1-week-ago +unread "
-  "Query string filtering shown entries.")
-
 (defvar elfeed-web-enabled-on-emacs-startup nil
   "If true, serve web interface Elfeed with simpl-httpd.")
 
