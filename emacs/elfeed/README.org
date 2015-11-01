@@ -1,6 +1,6 @@
 #+TITLE: Elfeed contribution layer for Spacemacs
 
-[[file:img/elfeed.png][logo_elfeed]]
+[[file:img/elfeed.png]]
 
 * Table of Contents                                                   :TOC@4:
  - [[#description][Description]]
