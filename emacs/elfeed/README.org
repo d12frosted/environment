@@ -1,0 +1,70 @@
+#+TITLE: Elfeed contribution layer for Spacemacs
+
+[[file:img/elfeed.png][logo_elfeed]]
+
+* Table of Contents                                                   :TOC@4:
+ - [[#description][Description]]
+   - [[#install][Install]]
+     - [[#layer][Layer]]
+   - [[#usage][Usage]]
+     - [[#importing-feeds][Importing Feeds]]
+     - [[#key-bindings][Key Bindings]]
+     - [[#custom-key-bindings][Custom Key Bindings]]
+
+* Description
+
+This layer enables [[https://github.com/skeeto/elfeed][Elfeed]], a web feeds client which supports both Atom and RSS
+feeds. It'll optionally enable supporting packages, such as =elfeed-web= and
+=elfeed-org=.
+
+** Install
+
+*** Layer
+
+To use this layer, add it to your =~/.spacemacs=
+
+#+BEGIN_SRC emacs-lisp
+(setq-default dotspacemacs-configuration-layers '(elfeed))
+#+END_SRC
+
+By default, =elfeed= stores its database under =~/.elfeed=.
+
+** Usage
+
+Add your feeds to the =elfeed-feeds= variable in =.spacemacs=, or specify
+location of an org file containing a feed list (see example).
+
+Increase =url-queue-timeout= if getting "Queue timeout exceeded" errors.
+
+#+BEGIN_SRC emacs-lisp
+(elfeed :variables
+   rmh-elfeed-org-files ("~/.emacs.d/private/elfeed.org")
+   elfeed-web-enabled-on-emacs-startup t
+   url-queue-timeout 30
+   elfeed-search-filter "@2-week-ago +unread ")
+#+END_SRC
+
+*** Importing Feeds
+
+Feeds can be specified in configuration variable, or interactively imported from
+OPML, running =SPC-: elfeed-load-opml=, or =afo=.
+
+When imported interactively, feedlist will be saved in your customization file.
+
+*** Key Bindings
+
+| Key Binding | Description  |
+|-------------+--------------|
+| ~SPC a f~   | start elfeed |
+
+Use =SPC ?= to discover major-mode key bindings.
+
+*** Custom Key Bindings
+
+| Key Binding | Description                            |
+|-------------+----------------------------------------|
+| ~q~         | quit main window, or item view buffer. |
+| ~c~         | compact feed db                        |
+| ~o~         | looad OPML                             |
+| ~w~         | start web server                       |
+| ~W~         | stop web server                        |
