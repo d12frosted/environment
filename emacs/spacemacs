@@ -41,6 +41,8 @@
                  d12/org-author-email `(,d12/email)
                  d12/org-agenda-ignore-dirs '(".git/"
                                               "journal/"))
+     (elfeed :variables
+             elfeed-feeds d12/elfeed-feeds)
 
      ;; languages
      (csharp :variables
