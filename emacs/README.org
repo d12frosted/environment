@@ -9,6 +9,14 @@ Personal emacs configurations based on [[https://github.com/syl20bnr/spacemacs][
 branch of [[https://github.com/d12frosted/spacemacs][Spacemacs fork]]. But in most cases it should be OK to use official
 =develop= branch.
 
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/animacs.png"
+       alt="[A N I M A C S]"
+       title="Welcome to Animacs!">
+</p>
+#+END_HTML
+
 * Install emacs
 
 For OS X users I recommend to install =emacs-mac= or =emacs=. You can find more
