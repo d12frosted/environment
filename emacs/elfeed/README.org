@@ -7,9 +7,13 @@
    - [[#install][Install]]
      - [[#layer][Layer]]
    - [[#usage][Usage]]
+     - [[#setup-feeds][Setup feeds]]
+     - [[#server][Server]]
      - [[#importing-feeds][Importing Feeds]]
      - [[#key-bindings][Key Bindings]]
      - [[#custom-key-bindings][Custom Key Bindings]]
+   - [[#troubleshooting][Troubleshooting]]
+     - [[#queue-timeout-exceeded][Queue timeout exceeded]]
 
 * Description
 
@@ -31,17 +35,40 @@ By default, =elfeed= stores its database under =~/.elfeed=.
 
 ** Usage
 
-Add your feeds to the =elfeed-feeds= variable in =.spacemacs=, or specify
-location of an org file containing a feed list (see example).
+*** Setup feeds
 
-Increase =url-queue-timeout= if getting "Queue timeout exceeded" errors.
+To explicitly setup the list of feeds, set the value of =elfeed-feeds= variable
+in your =.spacemacs= file.
+
+#+BEGIN_SRC emacs-list
+(elfeed :variables
+   elfeed-feeds '(("http://nullprogram.com/feed/" blog emacs)
+                  "http://www.50ply.com/atom.xml"  ; no autotagging
+                  ("http://nedroid.com/feed/" webcomic))))
+#+END_SRC
+
+Check documentation for =elfeed-feeds= for more information (~SPC h d v
+elfeed-feeds RET~).
+
+But you might prefer to use [[https://github.com/remyhonig/elfeed-org][elfeed-org]] package and store all your feeds in
+separate =org= file. Then you have to specify it's path.
+
+#+BEGIN_SRC emacs-list
+(elfeed :variables
+   rmh-elfeed-org-files ("~/.emacs.d/private/elfeed.org"))
+#+END_SRC
+
+Checkout [[https://github.com/remyhonig/elfeed-org][elfeed-org]] documentation to see the format of that file.
+
+*** Server
+
+Elfeed comes with simple [[https://github.com/skeeto/elfeed#web-interface][web interface]]. You can manually start it by calling
+=elfeed-web-start= or by setting =elfeed-web-enabled-on-emacs-startup= to =t=,
+so it starts automatically on Emacs startup.
 
 #+BEGIN_SRC emacs-lisp
 (elfeed :variables
-   rmh-elfeed-org-files ("~/.emacs.d/private/elfeed.org")
-   elfeed-web-enabled-on-emacs-startup t
-   url-queue-timeout 30
-   elfeed-search-filter "@2-week-ago +unread ")
+   elfeed-web-enabled-on-emacs-startup t)
 #+END_SRC
 
 *** Importing Feeds
@@ -68,3 +95,15 @@ Use =SPC ?= to discover major-mode key bindings.
 | ~o~         | looad OPML                             |
 | ~w~         | start web server                       |
 | ~W~         | stop web server                        |
+
+** Troubleshooting
+
+*** Queue timeout exceeded
+
+If you are getting "Queue timeout exceeded" errors, just increase
+=url-queue-timeout= value.
+
+#+BEGIN_SRC emacs-lisp
+(elfeed :variables
+   url-queue-timeout 30)
+#+END_SRC
