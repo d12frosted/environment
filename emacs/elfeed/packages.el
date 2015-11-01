@@ -1,7 +1,7 @@
 ;;; packages.el --- elfeed Layer extensions File for Spacemacs
 ;;
 ;; Copyright (c) 2012-2015 Sylvain Benner
-;; Copyright (c) 2015- Uri Sharf & Contributors
+;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -23,8 +23,6 @@
     (evil-leader/set-key "af" 'elfeed)
     :config
     (progn
-      (when rmh-elfeed-org-files
-        (elfeed-org))
       (evilify elfeed-search-mode elfeed-search-mode-map
                (kbd "q") 'quit-window
                (kbd "c") 'elfeed-db-compact
@@ -37,7 +35,9 @@
 (defun elfeed/init-elfeed-org ()
   (use-package elfeed-org
     :commands elfeed-org
-    :if rmh-elfeed-org-files))
+    :init
+    (when (boundp 'rmh-elfeed-org-files)
+      (elfeed-org))))
 
 (defun elfeed/init-elfeed-web ()
   (use-package elfeed-web
