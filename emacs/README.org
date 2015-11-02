@@ -5,9 +5,8 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-Personal emacs configurations based on [[https://github.com/syl20bnr/spacemacs][Spacemacs]]. Usually I use =d12frosted=
-branch of [[https://github.com/d12frosted/spacemacs][Spacemacs fork]]. But in most cases it should be OK to use official
-=develop= branch.
+Personal emacs configurations based on develop branch of [[https://github.com/syl20bnr/spacemacs][Spacemacs]], but for some odd reasons
+called Animacs.
 
 #+BEGIN_HTML
 <p align="center">
@@ -43,6 +42,7 @@ Bootstrap script will install following dependencies.
 
 - =ack=
 - =ispell=
+- =pandoc=
 
 For haskell development you need to have following executables installed.
 
@@ -52,5 +52,4 @@ For haskell development you need to have following executables installed.
 - =hlint=
 - =ghc-mod=
 - =stylish-haskell=
-- =pandoc=
 - =hasktags=
