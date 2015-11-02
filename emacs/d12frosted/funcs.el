@@ -25,6 +25,11 @@
   (helm :buffer "*helm: gtd*"
         :sources `(,(helm-gtd/source))))
 
+(defun helm-spotlight ()
+  (interactive)
+  (helm :buffer "*helm: spotlight*"
+        :sources '(helm-source-mac-spotlight)))
+
 (defun helm-gtd/source ()
   "Construct helm source for org files in `d12/org-home-path'."
   `((name . "Files")
