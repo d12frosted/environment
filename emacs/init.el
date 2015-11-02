@@ -86,6 +86,9 @@ values."
   ;; make sure that `exec-path-from-shell' is loaded
   (spacemacs/load-or-install-package 'exec-path-from-shell)
 
+  ;; extract values of environment variables
+  (exec-path-from-shell-copy-env "XDG_CONFIG_HOME")
+
   ;; setup path variables
   (setq-default d12/dropbox-path (concat user-home-directory "Dropbox/")
                 d12/emacs-private-path (concat d12/dropbox-path "Apps/Emacs/"))
@@ -183,9 +186,6 @@ user code."
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
-
-  ;; extract values of environemnt variables
-  (exec-path-from-shell-copy-env "XDG_CONFIG_HOME")
 
   (defmacro remove-from-list (list-var element)
     `(setq ,list-var (remove ,element ,list-var)))
