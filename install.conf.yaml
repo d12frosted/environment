@@ -28,9 +28,6 @@
     ~/.emacs.d:
       path: ../.emacs.d.spacemacs
       relink: true
-    ~/.spacemacs:
-      path: emacs/spacemacs
-      relink: true
     ~/.local/bin/switch_emacs:
       path: emacs/switch_emacs
       create: true

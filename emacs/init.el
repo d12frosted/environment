@@ -1,4 +1,4 @@
-;;; spacemacs --- Spacemacs dotfile
+;;; init.el --- Spacemacs dotfile
 ;;;
 ;;; Commentary:
 ;;
