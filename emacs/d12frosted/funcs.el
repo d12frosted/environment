@@ -19,29 +19,29 @@
   (interactive)
   (find-file (concat d12/org-home-path "gtd.org")))
 
-(defun helm-gtd ()
-  "Org files discovery with helm interface."
-  (interactive)
-  (helm :buffer "*helm: gtd*"
-        :sources `(,(helm-gtd/source))))
-
-(defun helm-spotlight ()
+(defun d12/helm-spotlight ()
   (interactive)
   (helm :buffer "*helm: spotlight*"
         :sources '(helm-source-mac-spotlight)))
 
-(defun helm-gtd/source ()
+(defun d12/helm-gtd ()
+  "Org files discovery with helm interface."
+  (interactive)
+  (helm :buffer "*helm: gtd*"
+        :sources `(,(d12/helm-gtd/source))))
+
+(defun d12/helm-gtd/source ()
   "Construct helm source for org files in `d12/org-home-path'."
   `((name . "Files")
-    (candidates . ,(sort (helm-gtd/get-files-list) 'string<))
+    (candidates . ,(sort (d12/helm-gtd/get-files-list) 'string<))
     (candidate-number-limit)
-    (action . (("Open file" . helm-gtd/open-org-file)))))
+    (action . (("Open file" . d12/helm-gtd/open-org-file)))))
 
-(defun helm-gtd/get-files-list ()
+(defun d12/helm-gtd/get-files-list ()
   "Get the list of org files in `d12/org-home-path'."
   (directory-files d12/org-home-path nil ".*\.org$"))
 
-(defun helm-gtd/open-org-file (candidate)
+(defun d12/helm-gtd/open-org-file (candidate)
   "Open file in `d12/org-home-path'."
   (find-file (concat d12/org-home-path candidate)))
 
