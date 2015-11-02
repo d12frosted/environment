@@ -19,10 +19,10 @@
   (interactive)
   (find-file (concat d12/org-home-path "gtd.org")))
 
-(defun helm-gtd()
+(defun helm-gtd ()
   "Org files discovery with helm interface."
   (interactive)
-  (helm :buffer "*helm: gtd"
+  (helm :buffer "*helm: gtd*"
         :sources `(,(helm-gtd/source))))
 
 (defun helm-gtd/source ()
