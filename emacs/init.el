@@ -10,7 +10,7 @@
   "Configuration Layers declaration."
   (setq-default
    dotspacemacs-distribution 'spacemacs
-   dotspacemacs-configuration-layer-path `(,d12/env-spacemacs-directory)
+   dotspacemacs-configuration-layer-path `(,dotspacemacs-directory)
    dotspacemacs-configuration-layers
    '(;; utilities
      (auto-completion :disabled-for org)
@@ -76,31 +76,31 @@
    dotspacemacs-excluded-packages '()
    dotspacemacs-delete-orphan-packages nil))
 
-(defun dotspacemacs/pre-init ()
-  "Function that is called at the very beginning of
-  configurations initialization."
-  (setq-default d12/env-directory (concat user-home-directory ".environment/")
-                d12/env-spacemacs-directory (concat d12/env-directory "emacs/")
-                d12/dropbox-path (concat user-home-directory "Dropbox/")
-                d12/emacs-private-path (concat d12/dropbox-path "Apps/Emacs/"))
-  ;; and load `private.el' file containing all sensitive data
-  (load (concat d12/emacs-private-path "private.el"))
-
-  ;; setup custom-file
-  (setq custom-file (concat d12/emacs-private-path "custom.el"))
-  (load custom-file t))
-
 (defun dotspacemacs/init ()
   "Initialization function.
 This function is called at the very startup of Spacemacs initialization
 before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
-  (dotspacemacs/pre-init)
+
+  ;; make sure that `exec-path-from-shell' is loaded
+  (spacemacs/load-or-install-package 'exec-path-from-shell)
+
+  ;; setup path variables
+  (setq-default d12/dropbox-path (concat user-home-directory "Dropbox/")
+                d12/emacs-private-path (concat d12/dropbox-path "Apps/Emacs/"))
+
+  ;; and load `private.el' file containing all sensitive data
+  (load (concat d12/emacs-private-path "private.el"))
+
+  ;; setup custom-file
+  (setq custom-file (concat d12/emacs-private-path "custom.el"))
+  (load custom-file t)
+
   (setq-default
    dotspacemacs-editing-style 'emacs
    dotspacemacs-verbose-loading nil
-   dotspacemacs-startup-banner (concat d12/env-spacemacs-directory "animacs-banner.png")
+   dotspacemacs-startup-banner (concat dotspacemacs-directory "animacs-banner.png")
    dotspacemacs-startup-lists '(recents projects bookmarks)
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Source Code Pro"
