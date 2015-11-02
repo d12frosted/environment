@@ -19,6 +19,7 @@
  ("M-C-;"           . comment-or-uncomment-sexp))
 
 (evil-leader/set-key
-  "oo" 'helm-gtd)
+  "og" 'd12/helm-gtd
+  "oc" 'd12/helm-configs)
 
 (spacemacs/declare-prefix "o" "d12frosted")

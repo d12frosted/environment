@@ -45,6 +45,20 @@
   "Open file in `d12/org-home-path'."
   (find-file (concat d12/org-home-path candidate)))
 
+(defun d12/helm-configs ()
+  "Config files discovery with helm interface."
+  (interactive)
+  (helm :buffer "*helm: configs*"
+        :sources `(,(d12/helm-configs/source))))
+
+(defun d12/helm-configs/source ()
+  "Construct helm source for some configuration files."
+  `((name . "Files")
+    (candidates . ("~/.spacemacs"
+                   "~/Dropbox/Apps/Emacs/private.el"))
+    (candidate-number-limit)
+    (action . (("Open file" . find-file)))))
+
 ;;; Custom settings loader
 
 (defun d12/recursive-load-dir-settings (currentfile)
