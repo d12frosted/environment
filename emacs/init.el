@@ -196,7 +196,10 @@ user code."
       (d12//init-gui)
     (d12//init-terminal))
 
-  )
+  (setq auto-mode-alist
+        (cons '("SConstruct" . python-mode) auto-mode-alist))
+  (setq auto-mode-alist
+        (cons '("SConscript" . python-mode) auto-mode-alist)))
 
 (defun dotspacemacs/user-config ()
   "Configuration function.
