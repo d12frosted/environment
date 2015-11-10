@@ -65,9 +65,9 @@ end
 function __prompt_duration
   if test $CMD_DURATION
     if test $CMD_DURATION -ge 8000
-      set_color white
+      set_color $fish_color_command
       echo -esn '  ~> duration: '
-      set_color yellow
+      set_color $fish_color_param
       echo -es $CMD_DURATION ' ms'
       set_color normal
       if command -v terminal-notifier > /dev/null
