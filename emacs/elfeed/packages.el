@@ -23,21 +23,29 @@
     (evil-leader/set-key "af" 'elfeed)
     :config
     (progn
-      (evilify elfeed-search-mode elfeed-search-mode-map
-               (kbd "q") 'quit-window
-               (kbd "c") 'elfeed-db-compact
-               (kbd "o") 'elfeed-load-opml
-               (kbd "w") 'elfeed-web-start
-               (kbd "W") 'elfeed-web-stop)
-      (evilify elfeed-show-mode elfeed-show-mode-map
-               (kbd "q") 'quit-window))))
+      (spacemacs|evilify-map elfeed-search-mode-map
+        :mode elfeed-search-mode
+        :bindings
+        "q" 'quit-window
+        "c" 'elfeed-db-compact
+        "o" 'elfeed-load-opml
+        "w" 'elfeed-web-start
+        "W" 'elfeed-web-stop
+        "r" 'elfeed-search-update--force
+        "l" 'elfeed-update)
+      (spacemacs|evilify-map elfeed-show-mode-map
+        :mode elfeed-show-mode
+        :bindings
+        "q" 'quit-window))))
 
 (defun elfeed/init-elfeed-org ()
   (use-package elfeed-org
+    :defer t
+    :if (boundp 'rmh-elfeed-org-files)
     :commands elfeed-org
     :init
-    (when (boundp 'rmh-elfeed-org-files)
-      (elfeed-org))))
+    (spacemacs|use-package-add-hook
+        :pre-config (elfeed-org))))
 
 (defun elfeed/init-elfeed-web ()
   (use-package elfeed-web
