@@ -185,6 +185,13 @@ user code."
   (add-hook 'text-mode-hook 'visual-line-mode)
   (add-hook 'after-save-hook 'delete-trailing-whitespace)
 
+  (spacemacs|use-package-add-hook helm
+    :post-config
+    ;; Disable fuzzy matching to make mdfind work with helm-locate
+    (setq helm-locate-fuzzy-match nil)
+    (setq helm-locate-command "mdfind -name %s %s"))
+
+  ;; init GUI or terminal
   (if (display-graphic-p)
       (d12//init-gui)
     (d12//init-terminal))
