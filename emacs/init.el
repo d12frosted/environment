@@ -88,6 +88,10 @@ before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
 
+  (require 'package)
+  (add-to-list 'package-archives
+               '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
   ;; make sure that `exec-path-from-shell' is loaded
   (spacemacs/load-or-install-package 'exec-path-from-shell)
 
