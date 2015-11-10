@@ -50,6 +50,7 @@
              omnisharp-server-executable-path
              "~/Developer/Other/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
      emacs-lisp
+     erlang
      (haskell :variables
               haskell-enable-hindent-style "chris-done"
               haskell-process-type 'stack-ghci
