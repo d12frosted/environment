@@ -7,6 +7,8 @@ set -x EDITOR "emacsclient"
 set fish_greeting ""
 
 alias ghci "stack ghci"
+alias e "emacsclient"
+alias en "emacsclient -nw"
 
 # theme
 set fish_color_command blue
