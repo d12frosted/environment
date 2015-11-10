@@ -259,6 +259,12 @@ layers configuration."
             mac-option-modifier  'none))
   (bind-key "M-h" 'ns-do-hide-emacs)
 
+  ;; python
+  (defun pyenv-mode-versions ()
+    "List installed python versions."
+    (let ((versions (shell-command-to-string "vf ls")))
+      (delete-dups (cons "system" (split-string versions)))))
+
   ;; key bindings
   (evil-leader/set-key
     "it" 'd12/insert-time
