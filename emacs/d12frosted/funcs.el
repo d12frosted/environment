@@ -173,10 +173,10 @@ instead of `kill-region'"
 (defun d12//funcall-on-line-or-region (func)
   "Call function `f' on current line or region."
   (if current-prefix-arg
-      (funcall-interactively func (point-min) (point-max))
+      (funcall func (point-min) (point-max))
     (if (use-region-p)
-        (funcall-interactively func (region-beginning) (region-end) t)
-      (funcall-interactively func (line-beginning-position) (line-beginning-position 2)))))
+        (funcall func (region-beginning) (region-end) t)
+      (funcall func (line-beginning-position) (line-beginning-position 2)))))
 
 ;;; comment-or-uncomment-sexp
 ;; http://endlessparentheses.com/a-comment-or-uncomment-sexp-command.html?source=rss
