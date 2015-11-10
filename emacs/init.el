@@ -157,6 +157,7 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+
   (setq-default
    ;; Miscellaneous
    vc-follow-symlinks t
@@ -169,9 +170,7 @@ user code."
      (tab-mark 9 [9655 9]))
 
    ;; Ranger
-   ranger-override-dired t
-
-   )
+   ranger-override-dired t)
 
   ;; rename title in init screen
   (defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
