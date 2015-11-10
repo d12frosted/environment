@@ -20,3 +20,6 @@ set fish_color_error "e0211d"
 set fish_color_comment "2aa198"
 set fish_color_quote "718c00"
 set fish_color_redirection "3e999f"
+
+# python
+eval (python -m virtualfish)
