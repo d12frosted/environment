@@ -27,6 +27,7 @@
      pandoc
      spacemacs-layouts
      ranger
+     ;; semantic
      syntax-checking
      spell-checking
      (shell :variables
