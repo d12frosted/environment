@@ -61,7 +61,10 @@
               haskell-interactive-mode-include-file-name nil
               haskell-interactive-mode-eval-pretty nil
               haskell-process-suggest-haskell-docs-imports nil)
-     javascript
+     html
+     (javascript :variables
+                 js-indent-level 2
+                 js2-basic-offset 2)
      lua
      markdown
      python
