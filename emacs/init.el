@@ -25,7 +25,7 @@
           org-enable-github-support t
           org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))
      pandoc
-     perspectives
+     spacemacs-layouts
      ranger
      syntax-checking
      spell-checking
