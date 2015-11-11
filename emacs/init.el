@@ -61,7 +61,12 @@
               haskell-interactive-mode-include-file-name nil
               haskell-interactive-mode-eval-pretty nil
               haskell-process-suggest-haskell-docs-imports nil)
-     html
+     (html :variables
+           web-mode-markup-indent-offset 2
+           web-mode-attr-indent-offset 2
+           web-mode-code-indent-offset 2
+           web-mode-css-indent-offset 2
+           web-mode-sql-indent-offset 2)
      (javascript :variables
                  js-indent-level 2
                  js2-basic-offset 2)
