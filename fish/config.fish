@@ -16,6 +16,8 @@ set fish_greeting ""
 alias ghci "stack ghci"
 alias eclient "emacsclient"
 alias ec "emacsclient -nw"
+alias cenv "cd $XDG_CONFIG_HOME"
+alias cem  "cd $HOME/.emacs.d"
 
 # theme
 __set_theme "tomorrow_night"
