@@ -121,6 +121,7 @@ values."
    dotspacemacs-verbose-loading nil
    dotspacemacs-startup-banner (concat dotspacemacs-directory "animacs-banner.png")
    dotspacemacs-startup-lists '(recents projects bookmarks)
+   dotspacemacs-startup-recent-list-size 16
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Source Code Pro"
                                ;; "M+ 1m" ; http://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html
