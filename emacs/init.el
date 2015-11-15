@@ -27,6 +27,7 @@
      pandoc
      ;; spacemacs-layouts
      ranger
+     restclient
      ;; semantic
      syntax-checking
      spell-checking
