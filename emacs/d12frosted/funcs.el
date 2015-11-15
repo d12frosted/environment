@@ -55,7 +55,9 @@
   "Construct helm source for some configuration files."
   `((name . "Files")
     (candidates . ("~/.spacemacs"
-                   "~/Dropbox/Apps/Emacs/private.el"))
+                   "~/Dropbox/Apps/Emacs/private.el"
+                   "~/Dropbox/Apps/fish/preconfig.fish"
+                   "~/Dropbox/Apps/fish/postconfig.fish"))
     (candidate-number-limit)
     (action . (("Open file" . find-file)))))
 
