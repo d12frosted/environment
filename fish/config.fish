@@ -14,8 +14,8 @@ set fish_greeting ""
 
 # aliases
 alias ghci "stack ghci"
-alias e "emacsclient"
-alias en "emacsclient -nw"
+alias eclient "emacsclient"
+alias ec "emacsclient -nw"
 
 # theme
 __set_theme "tomorrow_night"
