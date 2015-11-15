@@ -8,8 +8,8 @@ function convert_to_gif -a file scale -d "Convert video to gif"
   set -l out (echo $file | sed 's/\(.*\)\..*/\1.gif/')
 
   # make sure that everything in installed
-  __package_install ffmpeg
-  __package_install gifsicle
+  __d12_package_install ffmpeg
+  __d12_package_install gifsicle
 
   if test -z $scale
     set scale 1

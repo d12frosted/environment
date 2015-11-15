@@ -1,7 +1,7 @@
 function fish_prompt --description 'Write out the prompt'
 	set -l last_status $status
 
-  __prompt_duration
+  __d12_prompt_duration
 
   echo
 
@@ -39,7 +39,7 @@ function fish_prompt --description 'Write out the prompt'
 
   set_color normal
 
-  __fish_venv
+  __d12_fish_venv
 
   if command -v git > /dev/null
     __terlar_git_prompt
@@ -62,7 +62,7 @@ function fish_prompt --description 'Write out the prompt'
   set_color normal
 end
 
-function __prompt_duration
+function __d12_prompt_duration
   if test $CMD_DURATION
     if test $CMD_DURATION -ge 8000
       set_color $fish_color_command
@@ -78,7 +78,7 @@ function __prompt_duration
   set CMD_DURATION 0
 end
 
-function __fish_venv
+function __d12_fish_venv
   if set -q VIRTUAL_ENV
     echo -n -s "|" (set_color $fish_color_comment) (basename "$VIRTUAL_ENV") (set_color normal)
   end

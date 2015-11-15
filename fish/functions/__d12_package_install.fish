@@ -1,4 +1,4 @@
-function __package_install -a pkg -d "Install a package on OS X using brew"
+function __d12_package_install -a pkg -d "Install a package on OS X using brew"
   hash $pkg > /dev/null 2>&1; or begin
     echo "Warning! '$pkg' is not installed!"
     if [ (uname -s) = "Darwin" ]

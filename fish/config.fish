@@ -20,7 +20,7 @@ alias cenv "cd $XDG_CONFIG_HOME"
 alias cem  "cd $HOME/.emacs.d"
 
 # theme
-__set_theme "tomorrow_night"
+__d12_set_theme "tomorrow_night"
 
 # python
 eval (python -m virtualfish)

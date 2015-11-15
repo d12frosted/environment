@@ -1,4 +1,4 @@
-function __set_theme -a theme -d "Set fish prompt color theme"
+function __d12_set_theme -a theme -d "Set fish prompt color theme"
   switch $theme
 
     case "spacemacs_light"
