@@ -67,7 +67,8 @@
            web-mode-attr-indent-offset 2
            web-mode-code-indent-offset 2
            web-mode-css-indent-offset 2
-           web-mode-sql-indent-offset 2)
+           web-mode-sql-indent-offset 2
+           css-indent-offset 2)
      (javascript :variables
                  js-indent-level 2
                  js2-basic-offset 2)
