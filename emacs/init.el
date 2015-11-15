@@ -84,7 +84,7 @@
                                       beacon
                                       vimish-fold
                                       (haskell-mode :location "~/Developer/haskell-mode/"))
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(emmet-mode)
    dotspacemacs-delete-orphan-packages nil))
 
 (defun dotspacemacs/init ()
