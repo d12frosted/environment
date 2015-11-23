@@ -20,7 +20,27 @@ alias cenv "cd $XDG_CONFIG_HOME"
 alias cem  "cd $HOME/.emacs.d"
 
 # theme
-__d12_set_theme "tomorrow_night"
+set fish_color_autosuggestion gray
+set fish_color_command purple
+set fish_color_comment brown
+set fish_color_cwd green
+set fish_color_cwd_root red
+set fish_color_error red
+set fish_color_escape cyan
+set fish_color_history_current cyan
+set fish_color_match cyan
+set fish_color_normal normal
+set fish_color_operator cyan
+set fish_color_param blue
+set fish_color_quote green
+set fish_color_redirection cyan
+set fish_color_search_match \x2d\x2dbackground\x3dblack
+set fish_color_selection \x2d\x2dbackground\x3dblack
+set fish_color_valid_path \x2d\x2dunderline
+set fish_pager_color_completion normal
+set fish_pager_color_description yellow
+set fish_pager_color_prefix cyan
+set fish_pager_color_progress cyan
 
 # python
 eval (python -m virtualfish)
