@@ -126,7 +126,7 @@ values."
    dotspacemacs-default-font '("Source Code Pro"
                                ;; "M+ 1m" ; http://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html
                                ;; "Fira Mono"
-                               :size 13
+                               :size 10
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
