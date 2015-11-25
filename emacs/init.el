@@ -292,9 +292,11 @@ layers configuration."
 (defun d12//init-terminal ()
   "Initialization function when `display-graphic-p' returns nil."
   (setq-default dotspacemacs-themes '(
+                                      sanityinc-tomorrow-eighties
                                       apropospriate-dark
-                                      spacemacs-dark
+                                      apropospriate-light
                                       spacemacs-light
+                                      spacemacs-dark
                                       sanityinc-tomorrow-eighties
                                       )))
 
