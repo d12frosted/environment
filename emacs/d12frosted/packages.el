@@ -36,9 +36,9 @@
       ".l" 'org-store-link)
     :config
     (evil-leader/set-key-for-mode 'org-mode
-      "m1" 'd12/org-sort-current-level
-      "m!" 'd12/org-sort-upper-level
-      "m#" 'd12/org-insert-block-template)
+      "1" 'd12/org-sort-current-level
+      "!" 'd12/org-sort-upper-level
+      "#" 'd12/org-insert-block-template)
     (require 's)
 
     (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
