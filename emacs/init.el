@@ -53,8 +53,8 @@
      emacs-lisp
      erlang
      (haskell :variables
+              haskell-enable-ghc-mod-support t
               haskell-enable-hindent-style "chris-done"
-              haskell-process-type 'stack-ghci
               haskell-tags-on-save nil
               haskell-process-log t
               haskell-process-reload-with-fbytecode nil
