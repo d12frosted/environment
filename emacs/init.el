@@ -160,7 +160,11 @@ values."
    dotspacemacs-default-package-repository nil
 
    ;; other
-   spacemacs-mode-line-org-clock-current-taskp t))
+   spacemacs-mode-line-org-clock-current-taskp t
+
+   ;; spacemacs-theme
+   spacemacs-theme-org-highlight t
+   spacemacs-theme-org-height t))
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
