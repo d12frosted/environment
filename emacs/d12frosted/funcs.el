@@ -54,10 +54,11 @@
 (defun d12/helm-configs/source ()
   "Construct helm source for some configuration files."
   `((name . "Files")
-    (candidates . ("~/.spacemacs"
-                   "~/Dropbox/Apps/Emacs/private.el"
-                   "~/Dropbox/Apps/fish/preconfig.fish"
-                   "~/Dropbox/Apps/fish/postconfig.fish"))
+    (candidates . (,(concat d12/spacemacs-dir "init.el")
+                   ,(concat d12/emacs-private-path "private.el")
+                   ,(concat d12/fish-public-path "config.fish")
+                   ,(concat d12/fish-private-path "preconfig.fish")
+                   ,(concat d12/fish-private-path "postconfig.fish")))
     (candidate-number-limit)
     (action . (("Open file" . find-file)))))
 
