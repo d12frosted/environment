@@ -25,11 +25,12 @@
           org-enable-github-support t
           org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))
      pandoc
-     ;; spacemacs-layouts
      ranger
      restclient
      ;; semantic
      syntax-checking
+     ;; spacemacs-home-agenda
+     ;; spacemacs-layouts
      spell-checking
      (shell :variables
             shell-default-term-shell "/usr/local/bin/fish")
