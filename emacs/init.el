@@ -120,7 +120,7 @@ values."
    dotspacemacs-editing-style 'emacs
    dotspacemacs-verbose-loading nil
    dotspacemacs-startup-banner (concat dotspacemacs-directory "animacs-banner.png")
-   dotspacemacs-startup-lists '(recents projects bookmarks)
+   dotspacemacs-startup-lists '(recents projects bookmarks todos agenda)
    dotspacemacs-startup-recent-list-size 16
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Source Code Pro"
