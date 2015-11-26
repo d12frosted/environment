@@ -8,7 +8,9 @@ end
 # variables
 set -x XDG_CONFIG_HOME ~/.environment
 set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs
-set -x PATH $HOME/.local/bin /usr/texbin $PATH
+set -x GEM_HOME $HOME/.local/gem
+set -x GEM_PATH $HOME/.local/gem
+set -x PATH $HOME/.local/bin $GEM_HOME/bin /usr/texbin $PATH
 set -x EDITOR "emacsclient"
 set fish_greeting ""
 
