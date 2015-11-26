@@ -133,7 +133,7 @@ values."
                                :width normal
                                :powerline-scale 1.1)
    dotspacemacs-leader-key "SPC"
-   dotspacemacs-emacs-leader-key "C-c"
+   dotspacemacs-emacs-leader-key "M-m"
    dotspacemacs-major-mode-leader-key ","
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
    dotspacemacs-command-key ":"
