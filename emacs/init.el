@@ -107,6 +107,7 @@ values."
 
   ;; setup path variables
   (setq-default d12/dropbox-path (concat user-home-directory "Dropbox/")
+                d12/fish-private-path (concat d12/dropbox-path "Apps/fish/")
                 d12/emacs-private-path (concat d12/dropbox-path "Apps/Emacs/"))
 
   ;; and load `private.el' file containing all sensitive data
