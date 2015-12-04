@@ -296,7 +296,11 @@ layers configuration."
   (evil-leader/set-key
     "it" 'd12/insert-time
     "id" 'd12/insert-date
-    "iD" 'd12/insert-full-date))
+    "iD" 'd12/insert-full-date)
+
+  ;; reset key bindings
+  (unbind-key "<C-wheel-down>")
+  (unbind-key "<C-wheel-up>"))
 
 (defun configuration-layer/get-owner (pkg &optional print)
   (interactive "SEnter package name: \np")
