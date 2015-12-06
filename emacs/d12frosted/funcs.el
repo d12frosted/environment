@@ -58,7 +58,8 @@
                    ,(concat d12/emacs-private-path "private.el")
                    ,(concat d12/fish-public-path "config.fish")
                    ,(concat d12/fish-private-path "preconfig.fish")
-                   ,(concat d12/fish-private-path "postconfig.fish")))
+                   ,(concat d12/fish-private-path "postconfig.fish")
+                   ,(concat user-home-directory ".emacs.d/init.el")))
     (candidate-number-limit)
     (action . (("Open file" . find-file)))))
 
