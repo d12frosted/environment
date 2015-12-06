@@ -8,21 +8,7 @@
 
 (defun d12/init-path-variables ()
   "Initialize essential path variables"
-  ;; make sure that `exec-path-from-shell' is loaded
-  (spacemacs/load-or-install-package 'exec-path-from-shell)
-
-  ;; extract values of environment variables
-  (exec-path-from-shell-copy-env "XDG_CONFIG_HOME")
-
-  ;; setup spacemacs-dir
-  (defvar-local spacemacs-dir (concat (getenv "SPACEMACSDIR") "/"))
-  (when (string-equal spacemacs-dir "/")
-    (message "WARNING! SPACEMACSDIR is not set. Falling back to $XDG_CONFIG_HOME/emacs")
-    (setq-local spacemacs-dir (concat (getenv "XDG_CONFIG_HOME") "/emacs/")))
-
-  ;; setup path variables
   (setq-default d12/dropbox-path (concat user-home-directory "Dropbox/")
-                d12/spacemacs-dir spacemacs-dir
                 d12/emacs-private-path (concat d12/dropbox-path "Apps/Emacs/")
                 d12/fish-public-path (concat (getenv "XDG_CONFIG_HOME") "/fish/")
                 d12/fish-private-path (concat d12/dropbox-path "Apps/fish/"))
