@@ -11,8 +11,7 @@
   (setq-default d12/dropbox-path (concat user-home-directory "Dropbox/")
                 d12/emacs-private-path (concat d12/dropbox-path "Apps/Emacs/")
                 d12/fish-public-path (concat (getenv "XDG_CONFIG_HOME") "/fish/")
-                d12/fish-private-path (concat d12/dropbox-path "Apps/fish/"))
-  )
+                d12/fish-private-path (concat d12/dropbox-path "Apps/fish/")))
 
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
@@ -226,8 +225,6 @@ layers configuration."
   (add-hook 'find-file-hook 'd12/load-dir-settings)
   (add-hook 'company-mode-hook 'company-quickhelp-mode)
   (add-hook 'prog-mode-hook 'vimish-fold-mode)
-  (add-hook 'company-quickhelp-mode-hook 'd12//init-company-quickhelp-mode)
-  (add-hook 'org-mode-hook 'd12//init-org-mode)
   (add-hook 'haskell-interactive-mode-hook 'd12//init-haskell-interactive-mode)
 
   ;; haskell indentation
@@ -270,7 +267,7 @@ layers configuration."
   (if (spacemacs/system-is-mac)
       (setq mac-command-modifier 'meta
             mac-option-modifier  'none))
-  (bind-key "M-h" 'ns-do-hide-emacs)
+  (d12/setup-M-h)
 
   ;; python
   (defun pyenv-mode-versions ()
@@ -299,6 +296,23 @@ layers configuration."
       (message "Owner of %S is %S" pkg owner))
     owner))
 
+;; Private functions
+
+(defun d12/setup-M-h ()
+  "Setup M-h key binding on OS X in GUI."
+  (when (and (spacemacs/system-is-mac)
+             (display-graphic-p))
+    (bind-key "M-h" 'ns-do-hide-emacs)
+    (-map (lambda (mode)
+            (add-hook (intern (concat (symbol-name mode) "-hook"))
+                      `(lambda ()
+                         (define-key
+                           (symbol-value (intern ,(concat (symbol-name mode) "-map")))
+                           (kbd "M-h")
+                           nil))))
+          '(org-mode
+            company-quickhelp-mode))))
+
 (defun d12//init-terminal ()
   "Initialization function when `display-graphic-p' returns nil."
   (setq-default dotspacemacs-themes '(
@@ -322,11 +336,5 @@ layers configuration."
 
 (defun d12//init-haskell-interactive-mode ()
   (setq-local evil-move-cursor-back nil))
-
-(defun d12//init-company-quickhelp-mode ()
-  (define-key company-quickhelp-mode-map (kbd "M-h") nil))
-
-(defun d12//init-org-mode ()
-  (define-key org-mode-map (kbd "M-h") nil))
 
 ;;; spacemacs ends here
