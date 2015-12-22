@@ -281,6 +281,18 @@ layers configuration."
     "id" 'd12/insert-date
     "iD" 'd12/insert-full-date)
 
+  ;; MOAI
+  (defun moai-run-main ()
+    "Run main.lua using moai."
+    (interactive)
+    (setq-local async-shell-command-buffer 'confirm-kill-process)
+    (if (projectile-project-p)
+        (let ((root (projectile-project-root)))
+          (projectile-save-project-buffers)
+          (async-shell-command (concat "cd " root "; and moai " root "main.lua")))
+      (async-shell-command (concat "moai " (buffer-file-name)))))
+  (spacemacs/set-leader-keys-for-major-mode 'lua-mode "sm" 'moai-run-main)
+
   ;; reset key bindings
   (unbind-key "<C-wheel-down>")
   (unbind-key "<C-wheel-up>"))
