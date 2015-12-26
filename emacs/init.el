@@ -154,13 +154,14 @@ values."
    dotspacemacs-persistent-server nil
    dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
    dotspacemacs-default-package-repository nil
+   dotspacemacs-default-layout-name "org"
 
    ;; other
    spacemacs-mode-line-org-clock-current-taskp t
 
    ;; spacemacs-theme
-   spacemacs-theme-org-highlight t
-   spacemacs-theme-org-height t))
+   spacemacs-theme-org-highlight nil
+   spacemacs-theme-org-height nil))
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
