@@ -54,7 +54,7 @@
 (defun d12/helm-configs/source ()
   "Construct helm source for some configuration files."
   `((name . "Files")
-    (candidates . (,(concat d12/spacemacs-dir "init.el")
+    (candidates . (,(concat dotspacemacs-directory "init.el")
                    ,(concat d12/emacs-private-path "private.el")
                    ,(concat d12/fish-public-path "config.fish")
                    ,(concat d12/fish-private-path "preconfig.fish")
