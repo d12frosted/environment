@@ -52,7 +52,8 @@
                  d12/org-agenda-ignore-dirs '(".git/"
                                               "journal/"))
      (elfeed :variables
-             elfeed-feeds d12/elfeed-feeds)
+             elfeed-feeds d12/elfeed-feeds
+             rmh-elfeed-org-files '())
 
      ;; languages
      (csharp :variables
