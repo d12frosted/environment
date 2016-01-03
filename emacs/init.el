@@ -86,7 +86,10 @@
      python
      ruby
      shell-scripts
-     yaml)
+     yaml
+
+     ;; frameworks
+     react)
    dotspacemacs-additional-packages '(comment-dwim-2
                                       color-theme-sanityinc-tomorrow
                                       apropospriate-theme
