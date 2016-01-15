@@ -159,6 +159,7 @@ values."
    dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
    dotspacemacs-default-package-repository nil
    dotspacemacs-default-layout-name "org"
+   dotspacemacs-whitespace-cleanup 'changed
 
    ;; other
    spacemacs-mode-line-org-clock-current-taskp t
