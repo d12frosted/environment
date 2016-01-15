@@ -296,7 +296,7 @@ layers configuration."
     (if (projectile-project-p)
         (let ((root (projectile-project-root)))
           (projectile-save-project-buffers)
-          (async-shell-command (concat "cd " root "; and moai " root "main.lua")))
+          (async-shell-command (concat "cd '" root "'; and moai main.lua")))
       (async-shell-command (concat "moai " (buffer-file-name)))))
   (spacemacs/set-leader-keys-for-major-mode 'lua-mode "sm" 'moai-run-main)
 
