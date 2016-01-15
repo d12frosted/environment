@@ -96,6 +96,7 @@
                                       reveal-in-osx-finder
                                       beacon
                                       vimish-fold
+                                      glsl-mode
                                       (haskell-mode :location "~/Developer/haskell-mode/"))
    dotspacemacs-excluded-packages '(emmet-mode)
    dotspacemacs-delete-orphan-packages nil))
@@ -210,10 +211,14 @@ user code."
       (d12//init-gui)
     (d12//init-terminal))
 
-  (setq auto-mode-alist
-        (cons '("SConstruct" . python-mode) auto-mode-alist))
-  (setq auto-mode-alist
-        (cons '("SConscript" . python-mode) auto-mode-alist)))
+  (add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
+  (add-to-list 'auto-mode-alist '("SConscript" . python-mode))
+  (add-to-list 'auto-mode-alist '("\\.fsh\\'" . glsl-mode))
+  (add-to-list 'auto-mode-alist '("\\.vsh\\'" . glsl-mode))
+  (add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode))
+  (add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
+  (add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+  (add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode)))
 
 (defun dotspacemacs/user-config ()
   "Configuration function.
