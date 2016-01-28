@@ -298,7 +298,15 @@ layers configuration."
           (projectile-save-project-buffers)
           (async-shell-command (concat "cd '" root "'; and moai main.lua")))
       (async-shell-command (concat "moai " (buffer-file-name)))))
+  (defun moai-upload ()
+    "Upload moai game to device."
+    (interactive)
+    (setq-local async-shell-command-buffer 'confirm-kill-process)
+    (if (projectile-project-p)
+        (shell-command (concat "upload_moai_game '" (projectile-project-root) "'"))))
+
   (spacemacs/set-leader-keys-for-major-mode 'lua-mode "sm" 'moai-run-main)
+  (spacemacs/set-leader-keys-for-major-mode 'lua-mode "su" 'moai-upload)
 
   ;; reset key bindings
   (unbind-key "<C-wheel-down>")
