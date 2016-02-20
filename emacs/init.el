@@ -371,4 +371,13 @@ layers configuration."
   (align-regexp start end
                 (concat "\\(\\s-*\\)" regexp) 1 1 t))
 
+(defun align-c-func-call-in-a-very-strange-way-that-i-dont-like (start end)
+  "Some people are using very odd code style. This function at
+least makes me happy."
+  (interactive "r")
+  (align-regexp start end "\\(\\s-*\\)(*(")
+  (align-regexp start end "\\(\\s-*\\)," 1 1 t)
+  (align-regexp start end "\\(\\s-*\\))*)")
+  )
+
 ;;; spacemacs ends here
