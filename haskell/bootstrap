@@ -1,8 +1,0 @@
-#!/bin/sh
-
-if [ $(uname -s) = "Darwin" ]; then
-    hash stack || {
-        brew install haskell-stack
-        stack setup
-    }
-fi

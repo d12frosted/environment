@@ -1,28 +1,18 @@
 - shell:
-  -
-    command: git submodule update --init --recursive
-    description: Installing submodules
-    stdout: true
-  -
-    command: sh bootstrap
-    description: Bootstrap
-    stdout: true
-  -
-    command: sh fish/bootstrap
-    description: Bootstrap fish
-    stdout: true
-  -
-    command: chmod +x emacs/switch_emacs
-    description: Promote 'switch_emacs' to executable
-    stdout: true
-  -
-    command: sh emacs/bootstrap
-    description: Bootstrap emacs
-    stdout: true
-  -
-    command: sh haskell/bootstrap
-    description: Bootstrap haskell
-    stdout: true
+  # TODO: make sure that this dir is added to $PATH
+  - [mkdir -p ~/.local/bin, Create directory for user-wide binaries]
+  - [chmod +x utils/brw/brw, Promote brw to executable]
+
+- link:
+    ~/.local/bin/brw:
+      path: utils/brw/brw
+      relink: true
+
+- shell:
+  - [brw wget ack ispell git, Install some helpful packages]
+  - [brw fish terminal-notifier, Bootstrap fish]
+  - [chmod +x emacs/bootstrap && emacs/bootstrap, Bootstrap emacs]
+  - [chmod +x emacs/switch_emacs, Promote switch_emacs to executable]
 
 - link:
     ~/.emacs.d:
@@ -45,17 +35,18 @@
       path: haskell/cabal-config
       create: true
 
+- shell:
+    - [brw haskell-stack && stack setup, "Bootstrap haskell"]
+
+- link:
     ~/.aws/config:
       path: ../Dropbox/Apps/aws/config
       create: true
-
     ~/.gitignore_global: git/.gitignore_global
     ~/.hgrc: ../Dropbox/Apps/hgrc
 
-    ~/iCloud:
-      path: ../Library/Mobile Documents/com~apple~CloudDocs
-      create: true
-
 - shell:
   - [echo "set -U XDG_CONFIG_HOME ~/.environment" | fish, Setting config directory]
+  - [echo "set -x XDG_CONFIG_HOME ~/.environment" | fish, Setting config directory]
+  - [echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish, Setting Spacemacs directory]
   - sh git/configure.sh

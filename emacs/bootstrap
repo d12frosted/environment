@@ -1,33 +1,26 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 spacemacs=~/.emacs.d.spacemacs
 
 if [ ! -e $spacemacs ]; then
-    if [ $USER = "d12frosted" ]; then
-        spacemacs_link="git@github.com:d12frosted/spacemacs.git"
-        branch="develop"
-    else
-        spacemacs_link="git@github.com:syl20bnr/spacemacs.git"
-        branch="master"
-    fi
-
-    git clone $spacemacs_link $spacemacs
-    cd $spacemacs
-    git checkout $branch
+  hash git || {
+    echo "Can't properly bootstrap emacs since 'git' is not available on your system. Please, install it manually."
+    exit 1
+  }
+  username=$USER
+  branch="develop"
+  if [ $USER != "d12frosted" ]; then
+    username="syl20bnr"
+    branch="master"
+  fi
+  spacemacs_link="git@github.com:$username/spacemacs.git"
+  git clone $spacemacs_link $spacemacs
+  cd $spacemacs
+  git checkout $branch
 fi
 
 if [ $(uname -s) = "Darwin" ]; then
-    if [ $(which emacs) == "/usr/bin/emacs" ]
-    then
-        brew tap railwaycat/emacsmacport
-        brew install emacs-mac --with-spacemacs-icon --with-gnutls --with-imagemagick
-    fi
-
-    hash ack || {
-        brew install ack
-    }
-
-    hash ispell || {
-        brew install ispell
-    }
+  if [ $(which emacs) == "/usr/bin/emacs" ]; then
+    brew install emacs --HEAD --use-git-head --with-cocoa --with-gnutls --with-rsvg --with-imagemagick
+  fi
 fi
