@@ -1,0 +1,10 @@
+branches:
+  only:
+    - master
+
+os:
+  - linux
+  - osx
+
+install: true
+script: ./install
