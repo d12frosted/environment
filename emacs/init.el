@@ -186,7 +186,11 @@ user code."
      (tab-mark 9 [9655 9]))
 
    ;; Ranger
-   ranger-override-dired t)
+   ranger-override-dired t
+
+   ;; Shell
+   sh-basic-offset 2
+   sh-indentation 2)
 
   ;; rename title in init screen
   (defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
