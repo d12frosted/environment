@@ -250,6 +250,7 @@ layers configuration."
   (delete-selection-mode 1)
   (beacon-mode 1)
   (spacemacs/toggle-camel-case-motion-globally-on)
+  (spacemacs/toggle-automatic-symbol-highlight-on)
 
   ;; vars
   (setq projectile-enable-caching nil
