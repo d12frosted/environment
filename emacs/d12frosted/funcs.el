@@ -70,9 +70,9 @@
     (when lds-dir
       (progn
         (load-file (concat lds-dir d12/dir-settings-file))
-        (d12/recursive-load-dir-settings (file-truename(concat lds-dir "..")))))))
+        (d12/recursive-load-dir-settings (file-truename (concat lds-dir "..")))))))
 
-(defun d12/load-dir-settings()
+(defun d12/load-dir-settings ()
   (interactive)
   (when buffer-file-name
     (d12/recursive-load-dir-settings buffer-file-name)))
