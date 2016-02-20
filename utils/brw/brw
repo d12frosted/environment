@@ -14,8 +14,10 @@ function install_brew {
 }
 
 function install {
-  install_brew
-  brew install $1 || brew cask install $1 || exit
+  hash $1 || {
+    install_brew
+    brew install $1 || brew cask install $1 || exit
+  }
 }
 
 for pkg in "$@"; do
