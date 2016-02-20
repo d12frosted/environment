@@ -52,6 +52,10 @@
     ~/.gitignore_global: git/.gitignore_global
     ~/.hgrc: ../Dropbox/Apps/hgrc
 
+    ~/iCloud:
+      path: ../Library/Mobile Documents/com~apple~CloudDocs
+      create: true
+
 - shell:
   - [echo "set -U XDG_CONFIG_HOME ~/.environment" | fish, Setting config directory]
   - sh git/configure.sh
