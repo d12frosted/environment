@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+if [ $(uname -s) != "Darwin" ]; then
+  echo "Skipping package installation on system that is not OS X."
+  exit 0
+fi
+
+function install_brew {
+  hash brew || {
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    brew tap caskroom/cask
+    brew update
+  }
+}
+
+function install {
+  install_brew
+  brew install $1 || brew cask install $1 || exit
+}
+
+for pkg in "$@"; do
+  echo "Installing '$pkg'"
+  install $pkg
+done

@@ -1,0 +1,25 @@
+#+TITLE:        Brw
+#+AUTHOR:       Boris Buliga
+#+EMAIL:        d12frosted@icloud.com
+#+DATE:         <2016-02-20 Sat>
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+=Brw= is an utility for installing packages on OS X using =brew=. On other
+operating systems it does nothing, so it's safe to use it in your environment
+bootstrap scripts.
+
+When =brw= is called it makes sure that =brew= is installed. After that it tries
+to install specified package using =brew install= or =brew cask install=.
+
+* Install
+
+Make it available in your =PATH= or just use it from this directory.
+
+* Usage
+
+Just pass a list of packages you want to install.
+
+#+BEGIN_SRC bash
+$ brw pkg1 pkg2 ...
+#+END_SRC
