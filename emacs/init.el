@@ -249,6 +249,7 @@ layers configuration."
   (helm-projectile-on)
   (delete-selection-mode 1)
   (beacon-mode 1)
+  (spacemacs/toggle-camel-case-motion-globally-on)
 
   ;; vars
   (setq projectile-enable-caching nil
