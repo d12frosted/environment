@@ -298,6 +298,16 @@ layers configuration."
           (projectile-save-project-buffers)
           (async-shell-command (concat "cd '" root "'; and moai main.lua")))
       (async-shell-command (concat "moai " (buffer-file-name)))))
+  (defun moai-run-main-multiplayer ()
+    "Run main.lua using moai in multiplayer mode."
+    (interactive)
+    (setq-local async-shell-command-buffer 'confirm-kill-process)
+    (if (projectile-project-p)
+        (let ((root (projectile-project-root)))
+          (projectile-save-project-buffers)
+          (async-shell-command (concat "cd '" root "'; and moai main.lua")))
+      (async-shell-command (concat "moai " (buffer-file-name) " -r 5152") "moai-server")
+      (async-shell-command (concat "moai " (buffer-file-name) " -c 127.0.0.1 5152") "moai-client")))
   (defun moai-upload ()
     "Upload moai game to device."
     (interactive)
