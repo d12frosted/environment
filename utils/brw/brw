@@ -18,7 +18,7 @@ function install {
 }
 
 for pkg in "$@"; do
-  hash $pkg || {
+  hash $pkg > /dev/null 2>&1 || {
     echo "Installing '$pkg'"
     install $pkg
   }
