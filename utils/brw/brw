@@ -14,7 +14,7 @@ function install {
     echo "Could not install package '$1' on your system."
     exit 0
   fi
-  brew install $1 || brew cask install $1 || exit
+  brew ls $1 || brew install $1 || brew cask ls $1 || brew cask install $1 || exit
 }
 
 for pkg in "$@"; do
