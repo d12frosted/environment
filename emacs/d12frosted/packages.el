@@ -393,10 +393,10 @@ If not, show simply the clocked time like 01:50."
     :config
     (progn
 
-      (defun d12-shm//copy-region (beg end)
+      (defun d12-shm//copy-region (beg end region)
         (shm/copy-region beg end))
 
-      (defun d12-shm//kill-region (beg end)
+      (defun d12-shm//kill-region (beg end region)
         (shm/kill-region beg end))
 
       (defun d12-shm/copy-line-or-region ()

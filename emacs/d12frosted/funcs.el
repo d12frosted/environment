@@ -180,7 +180,7 @@ instead of `kill-region'"
       (funcall func (point-min) (point-max))
     (if (use-region-p)
         (funcall func (region-beginning) (region-end) t)
-      (funcall func (line-beginning-position) (line-beginning-position 2)))))
+      (funcall func (line-beginning-position) (line-beginning-position 2) nil))))
 
 ;;; comment-or-uncomment-sexp
 ;; http://endlessparentheses.com/a-comment-or-uncomment-sexp-command.html?source=rss
