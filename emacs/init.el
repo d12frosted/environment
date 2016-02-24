@@ -38,6 +38,7 @@
      syntax-checking
      ;; spacemacs-home-agenda
      spacemacs-layouts
+     spacemacs-ivy
      spell-checking
      (shell :variables
             shell-default-term-shell "/usr/local/bin/fish")
@@ -250,7 +251,8 @@ layers configuration."
   (evil-define-key 'visual haskell-mode-map (kbd "=") 'spacemacs/haskell-indentation-micro-state)
 
   ;; configs
-  (helm-projectile-on)
+  (if (configuration-layer/layer-usedp 'spacemacs-helm)
+      (helm-projectile-on))
   (delete-selection-mode 1)
   (beacon-mode 1)
   (spacemacs/toggle-camel-case-motion-globally-on)
