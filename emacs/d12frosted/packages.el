@@ -249,6 +249,8 @@ If not, show simply the clocked time like 01:50."
           org-mobile-force-id-on-agenda-items nil
           org-mobile-directory "~/Dropbox/Apps/MobileOrg/"
 
+          org-archive-location "archive/%s::"
+
           org-time-clocksum-format
           '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 
