@@ -253,6 +253,8 @@ layers configuration."
   ;; configs
   (if (configuration-layer/layer-usedp 'spacemacs-helm)
       (helm-projectile-on))
+  (if (configuration-layer/layer-usedp 'spacemacs-ivy)
+      (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))
   (delete-selection-mode 1)
   (beacon-mode 1)
   (spacemacs/toggle-camel-case-motion-globally-on)
