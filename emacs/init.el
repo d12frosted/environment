@@ -71,7 +71,8 @@
               haskell-process-use-presentation-mode t
               haskell-interactive-mode-include-file-name nil
               haskell-interactive-mode-eval-pretty nil
-              haskell-process-suggest-haskell-docs-imports nil)
+              haskell-process-suggest-haskell-docs-imports nil
+              )
      (html :variables
            web-mode-markup-indent-offset 2
            web-mode-attr-indent-offset 2
@@ -216,6 +217,7 @@ user code."
       (d12//init-gui)
     (d12//init-terminal))
 
+  ;; auto-mode
   (add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
   (add-to-list 'auto-mode-alist '("SConscript" . python-mode))
   (add-to-list 'auto-mode-alist '("\\.fsh\\'" . glsl-mode))
