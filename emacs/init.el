@@ -254,7 +254,10 @@ layers configuration."
 
   ;; configs
   (if (configuration-layer/layer-usedp 'spacemacs-helm)
-      (helm-projectile-on))
+      (progn
+        (helm-projectile-on)
+        (bind-key "C-s" 'helm-swoop)
+        (bind-key "C-S-s" 'spacemacs/helm-swoop-region-or-symbol)))
   (if (configuration-layer/layer-usedp 'spacemacs-ivy)
       (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))
   (delete-selection-mode 1)
