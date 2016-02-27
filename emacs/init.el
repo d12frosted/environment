@@ -301,7 +301,8 @@ layers configuration."
   (evil-leader/set-key
     "it" 'd12/insert-time
     "id" 'd12/insert-date
-    "iD" 'd12/insert-full-date)
+    "iD" 'd12/insert-full-date
+    "p#" 'projectile-replace-regexp)
 
   ;; MOAI
   (defun moai-run-main ()
@@ -404,5 +405,21 @@ least makes me happy."
   (align-regexp start end "\\(\\s-*\\)," 1 1 t)
   (align-regexp start end "\\(\\s-*\\))*)")
   )
+
+(defun projectile-replace-regexp ()
+  "Replace a string in the project using `tags-query-replace'.
+Less efficient than `projectile-replace' but at least allows
+usage of regular expressions. See
+https://github.com/bbatsov/projectile/issues/576 for more details
+on `projectile-replace' issue with regexps."
+  (interactive "P")
+  (let* ((old-text (read-string
+                    (projectile-prepend-project-name "Replace: ")
+                    (projectile-symbol-or-selection-at-point)))
+         (new-text (read-string
+                    (projectile-prepend-project-name
+                     (format "Replace %s with: " old-text))))
+         (files (-map (lambda (f) (concat (projectile-project-root) f)) (projectile-current-project-files))))
+    (tags-query-replace old-text new-text nil (cons 'list files))))
 
 ;;; spacemacs ends here
