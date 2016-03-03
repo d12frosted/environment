@@ -51,7 +51,8 @@
                  d12/org-author-name `(,d12/full-name)
                  d12/org-author-email `(,d12/email)
                  d12/org-agenda-ignore-dirs '(".git/"
-                                              "journal/"))
+                                              "journal/"
+                                              "archive/"))
      (elfeed :variables
              elfeed-feeds d12/elfeed-feeds
              rmh-elfeed-org-files '())
