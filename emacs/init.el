@@ -23,6 +23,7 @@
      (auto-completion :disabled-for org)
      better-defaults
      colors
+     dash
      emoji
      eyebrowse
      (git :variables
