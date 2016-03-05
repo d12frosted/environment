@@ -24,6 +24,8 @@
      better-defaults
      colors
      dash
+     (deft :variables
+       deft-directory (concat d12/dropbox-path "Apps/deft"))
      emoji
      eyebrowse
      (git :variables
