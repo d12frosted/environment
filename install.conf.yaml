@@ -9,7 +9,7 @@
       relink: true
 
 - shell:
-  - [brw wget ack ag ispell git, Install some helpful packages]
+  - [brw coreutils wget ack ag ispell git git-lfs lua tree ncdu lynx, Install some helpful packages]
   - [brw fish terminal-notifier, Bootstrap fish]
   - [chmod +x emacs/bootstrap && emacs/bootstrap, Bootstrap emacs]
   - [chmod +x emacs/switch_emacs, Promote switch_emacs to executable]
@@ -52,6 +52,6 @@
   - sh git/configure.sh
   - sh osx/configure.sh
   -
-    command: brw slack mplayerx colorpicker flux gitter coreutils
+    command: brw slack mplayerx colorpicker flux gitter
     description: installing several useful apps
     stdout: true
