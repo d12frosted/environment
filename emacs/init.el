@@ -14,6 +14,7 @@
 (defconst d12-path/emacs-private (concat d12-path/dropbox "Apps/Emacs/"))
 (defconst d12-path/fish-public (concat d12-path/xdg-config "fish/"))
 (defconst d12-path/fish-private (concat d12-path/dropbox "Apps/fish/"))
+(defconst d12-path/developer (concat user-home-directory "Developer/"))
 
 ;; setup custom-file
 (setq custom-file (concat d12-path/emacs-private "custom.el"))
@@ -73,6 +74,8 @@
               haskell-process-log t
               haskell-process-reload-with-fbytecode nil
               haskell-process-use-presentation-mode t
+              haskell-process-suggest-remove-import-lines nil
+              haskell-process-suggest-hoogle-imports nil
               haskell-interactive-mode-include-file-name nil
               haskell-interactive-mode-eval-pretty nil
               haskell-process-suggest-haskell-docs-imports nil
@@ -96,12 +99,10 @@
 
      ;; frameworks
      react)
-   dotspacemacs-additional-packages '(comment-dwim-2
-                                      color-theme-sanityinc-tomorrow
+   dotspacemacs-additional-packages '(color-theme-sanityinc-tomorrow
                                       apropospriate-theme
                                       reveal-in-osx-finder
-                                      vimish-fold
-                                      glsl-mode)
+                                      vimish-fold)
    dotspacemacs-excluded-packages '(emmet-mode)
    dotspacemacs-delete-orphan-packages nil))
 

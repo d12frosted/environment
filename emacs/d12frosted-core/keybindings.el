@@ -18,11 +18,15 @@
  ("C-w"             . d12/kill-line-or-region)
  ("M-w"             . d12/copy-line-or-region)
  ("C-S-<backspace>" . d12/delete-line-or-region)
- ("M-;"             . comment-dwim-2)
  ("M-C-;"           . comment-or-uncomment-sexp))
 
 (evil-leader/set-key
-  "oj" 'd12-helm)
+  "oj" 'd12-helm
+  "p#" 'projectile-replace-regexp)
+
+;; remove some crazy bindings
+(unbind-key "<C-wheel-down>")
+(unbind-key "<C-wheel-up>")
 
 (spacemacs/declare-prefix "o" "d12frosted")
 ;; (spacemacs/declare-prefix "." "org")
