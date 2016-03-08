@@ -1,0 +1,21 @@
+#+TITLE: d12frosted-org layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../css/readtheorg.css" />
+
+#+CAPTION: logo
+
+# The maximum height of the logo should be 200 pixels.
+[[img/d12frosted-org.png]]
+
+* Table of Contents                                        :TOC_4_org:noexport:
+ - [[Description][Description]]
+ - [[Install][Install]]
+
+* Description
+Personal layer. Contains =org-mode= configurations.
+
+* Install
+To use this contribution add it to your =~/.spacemacs=
+
+#+begin_src emacs-lisp
+(setq-default dotspacemacs-configuration-layers '(d12frosted-org))
+#+end_src

@@ -15,6 +15,7 @@
 (defconst d12-path/fish-public (concat d12-path/xdg-config "fish/"))
 (defconst d12-path/fish-private (concat d12-path/dropbox "Apps/fish/"))
 (defconst d12-path/developer (concat user-home-directory "Developer/"))
+(defconst d12-path/org-home (concat d12-path/dropbox "org/"))
 
 ;; setup custom-file
 (setq custom-file (concat d12-path/emacs-private "custom.el"))
@@ -57,6 +58,7 @@
      ;; private layers
      no-dots
      d12frosted-core
+     d12frosted-org
      (elfeed :variables
              elfeed-feeds d12/elfeed-feeds
              rmh-elfeed-org-files '())

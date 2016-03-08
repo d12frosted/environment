@@ -15,9 +15,6 @@
 
 (defvar d12-helm/sources '())
 
-(add-to-list 'd12-helm/sources 'd12-helm/config-source)
-(add-to-list 'd12-helm/sources 'd12-helm/gtd-source)
-
 (defun d12-helm ()
   "Interesting files discovery with helm interface."
   (interactive)
@@ -25,14 +22,6 @@
         :sources (-map 'funcall d12-helm/sources)))
 
 ;; Sources
-
-;; TODO: move to d12frosted-org
-(defun d12-helm/gtd-source ()
-  "Construct helm source from `d12-org/files-list'."
-  `((name . "org files")
-    (candidates . d12-org/files-list)
-    (candidate-number-limit)
-    (action . (("Open file" . find-file)))))
 
 (defun d12-helm/config-source ()
   "Construct helm source from `d12-org/files-list'."

@@ -13,11 +13,6 @@
 
 ;;; Code:
 
-;; TODO: move me to d12frosted-org
-(defvar d12-org/files-list
-  '()
-  "List of interesting org files.")
-
 ;; setup load path
 (add-to-load-path (concat d12-path/emacs-layers "d12frosted-core/"))
 
@@ -28,6 +23,8 @@
 
 ;; load `private.el' file containing all sensitive data
 (load (concat d12-path/emacs-private "private.el"))
+
+(add-to-list 'd12-helm/sources 'd12-helm/config-source)
 
 ;;; Auto modes
 
