@@ -14,7 +14,7 @@
 ;;; Code:
 
 ;; setup load path
-(add-to-load-path (concat d12-path/emacs-layers "d12frosted-core/"))
+(add-to-load-path (concat d12-path/emacs-layers "d12frosted-core/extra/"))
 
 ;; require all modules
 (require 'd12-files)
