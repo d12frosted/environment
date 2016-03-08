@@ -101,8 +101,7 @@
                                       apropospriate-theme
                                       reveal-in-osx-finder
                                       vimish-fold
-                                      glsl-mode
-                                      (haskell-mode :location "~/Developer/haskell-mode/"))
+                                      glsl-mode)
    dotspacemacs-excluded-packages '(emmet-mode)
    dotspacemacs-delete-orphan-packages nil))
 
