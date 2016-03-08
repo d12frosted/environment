@@ -5,12 +5,8 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-#+BEGIN_HTML
-<img src="https://rawgithub.com/syl20bnr/spacemacs/develop/assets/spacemacs-badge.svg">
-#+END_HTML
-
-Personal emacs configurations based on develop branch of [[https://github.com/syl20bnr/spacemacs][Spacemacs]], but for some odd reasons
-called Animacs.
+Personal emacs configurations based on develop branch of [[https://github.com/syl20bnr/spacemacs][Spacemacs]], but for some
+odd reasons called Animacs.
 
 #+BEGIN_HTML
 <p align="center">
