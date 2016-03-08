@@ -1,4 +1,4 @@
-;;; d12-dir-settings.el --- d12frosted-core layer funcs file for Spacemacs.
+;;; d12-dir-settings.el --- d12frosted-core layer d12-dir-settings file for Spacemacs.
 ;;
 ;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;

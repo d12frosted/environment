@@ -1,4 +1,4 @@
-;;; keybindings.el --- d12frosted-core layer config file for Spacemacs.
+;;; keybindings.el --- d12frosted-core layer keybindings file for Spacemacs.
 ;;
 ;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
