@@ -1,116 +1,29 @@
-;;; funcs.el --- d12frosted Layer funcs File for Spacemacs
+;;; funcs.el --- d12frosted-core layer funcs file for Spacemacs.
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Boris Buliga & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
-;; Author: Boris Buliga <d12frosted@icloud.com>
-;; URL: https://github.com/d12frosted/environment
+;; Author: Boris Buliga <d12frosted@d12frosted.local>
+;; URL: https://github.com/syl20bnr/spacemacs
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; License: GPLv3
-;;
+
+;;; Commentary:
+
 ;;; Code:
 
-;;; Getting things done
+;;; File operations
 
-(defun gtd ()
-  "Open gtd.org file in `d12/org-home-path'."
-  (interactive)
-  (find-file (concat d12/org-home-path "gtd.org")))
-
-(defun d12/helm-spotlight ()
-  (interactive)
-  (helm :buffer "*helm: spotlight*"
-        :sources '(helm-source-mac-spotlight)))
-
-(defun d12/helm-gtd ()
-  "Org files discovery with helm interface."
-  (interactive)
-  (helm :buffer "*helm: gtd*"
-        :sources `(,(d12/helm-gtd/source))))
-
-(defun d12/helm-gtd/source ()
-  "Construct helm source for org files in `d12/org-home-path'."
-  `((name . "Files")
-    (candidates . ,(sort (d12/helm-gtd/get-files-list) 'string<))
-    (candidate-number-limit)
-    (action . (("Open file" . d12/helm-gtd/open-org-file)))))
-
-(defun d12/helm-gtd/get-files-list ()
-  "Get the list of org files in `d12/org-home-path'."
-  (directory-files d12/org-home-path nil ".*\.org$"))
-
-(defun d12/helm-gtd/open-org-file (candidate)
-  "Open file in `d12/org-home-path'."
-  (find-file (concat d12/org-home-path candidate)))
-
-(defun d12/helm-configs ()
-  "Config files discovery with helm interface."
-  (interactive)
-  (helm :buffer "*helm: configs*"
-        :sources `(,(d12/helm-configs/source))))
-
-(defun d12/helm-configs/source ()
-  "Construct helm source for some configuration files."
-  `((name . "Files")
-    (candidates . (,(concat dotspacemacs-directory "init.el")
-                   ,(concat d12/emacs-private-path "private.el")
-                   ,(concat d12/fish-public-path "config.fish")
-                   ,(concat d12/fish-private-path "preconfig.fish")
-                   ,(concat d12/fish-private-path "postconfig.fish")
-                   ,(concat user-home-directory ".emacs.d/init.el")))
-    (candidate-number-limit)
-    (action . (("Open file" . find-file)))))
-
-;;; Custom settings loader
-
-(defun d12/recursive-load-dir-settings (currentfile)
-  (let ((lds-dir (locate-dominating-file currentfile d12/dir-settings-file)))
-    (when lds-dir
-      (progn
-        (load-file (concat lds-dir d12/dir-settings-file))
-        (d12/recursive-load-dir-settings (file-truename (concat lds-dir "..")))))))
-
-(defun d12/load-dir-settings ()
-  (interactive)
-  (when buffer-file-name
-    (d12/recursive-load-dir-settings buffer-file-name)))
-
-;;; Files and directories
-
-(defun d12/directory-dirs (directory)
-  "Return a list of names of directories in DIRECTORY excluding
-  '.' and '..'."
-  (unless (file-directory-p directory)
-    (error "Not a directory `%s'" directory))
-  (let* ((dir (directory-file-name directory))
-         (dirs '())
-         (files (directory-files dir nil nil t)))
-    (dolist (file files)
-      (unless (member file '("." ".."))
-        (let ((file (concat dir "/" file "/")))
-          (when (file-directory-p file)
-            (add-to-list 'dirs file)))))
-    dirs))
-
-(defun d12/directory-dirs-r (directory)
-  "Return a list of names of directories in DIRECTORY and all
-  it's subdirectories excluding '.' and '..'."
-  (let ((dirs '()))
-    (dolist (dir (d12/directory-dirs directory))
-      (setq dirs (append (cons dir
-                               (d12/directory-dirs-r dir))
-                         dirs)))
-    dirs))
-
-(defun d12/get-string-from-file (filePath)
-  "Return filePath's file content."
+(defun d12/get-string-from-file (filepath)
+  "Return filepath's file content."
   (with-temp-buffer
-    (insert-file-contents filePath)
+    (insert-file-contents filepath)
     (buffer-string)))
 
-(defun buffer-contains-substring? (string)
+;;; Buffer operations
+
+(defun d12/buffer-contains-substring? (string)
   (save-excursion
     (save-match-data
       (goto-char (point-min))
@@ -123,16 +36,12 @@
   (call-interactively 'goto-line)
   (call-interactively 'recenter-top-bottom))
 
-;;; Mode renaming and diminishing
+;;; Modeline
 
 (defmacro d12|rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
      '(defadvice ,mode (after d12|rename-modeline-hack activate)
         (setq mode-name ,new-name))))
-
-(defmacro d12|diminish (mode dim)
-  "Diminish MODE name in mode line to DIM."
-  `(eval-after-load 'diminish '(diminish ',mode ,dim)))
 
 ;;; Text manipulations
 
@@ -144,10 +53,10 @@ respect `narrow-to-region').
 When `copy-func' is provided, it is used to copy line or region
 instead of `kill-ring-save'"
   (interactive)
-  (if (fboundp copy-func)
-      (d12//funcall-on-line-or-region copy-func)
-    (d12//funcall-on-line-or-region 'copy-region-as-kill))
-  (message "copied"))
+  (d12//funcall-on-line-or-region
+   (if (fboundp copy-func)
+       copy-func
+     'copy-region-as-kill)))
 
 (defun d12/kill-line-or-region (&optional kill-func)
   "Cut current line or region. When `universal-argument' is
@@ -156,10 +65,10 @@ called first, cut whole buffer (but respect `narrow-to-region').
 When `kill-func' is provided, it is used to copy line or region
 instead of `kill-region'"
   (interactive)
-  (if (fboundp kill-func)
-      (d12//funcall-on-line-or-region kill-func)
-    (d12//funcall-on-line-or-region 'kill-region))
-  (message "killed"))
+  (d12//funcall-on-line-or-region
+   (if (fboundp kill-func)
+       kill-func
+     'kill-region)))
 
 (defun d12/delete-line-or-region (&optional delete-func)
   "Delete current line or region without putting it to kill-ring.
@@ -169,10 +78,10 @@ buffer (but respect `narrow-to-region').
 When `kill-func' is provided, it is used to copy line or region
 instead of `kill-region'"
   (interactive)
-  (if (fboundp delete-func)
-      (d12//funcall-on-line-or-region delete-func)
-    (d12//funcall-on-line-or-region 'delete-region))
-  (message "removed"))
+  (d12//funcall-on-line-or-region
+   (if (fboundp delete-func)
+       delete-func
+     'delete-region)))
 
 (defun d12//funcall-on-line-or-region (func)
   "Call function `f' on current line or region."
@@ -265,27 +174,75 @@ argument N, (un)comment that many sexps."
     (dotimes (_ (or n 1))
       (comment-sexp--raw))))
 
-;;; Misc functions
+;;; Miscellaneous
 
-(defun d12/insert-date (&optional days)
-  "Insert timestamp formated by value of `d12/date-format'. If
-optional argument DAYS is non-nil and number or marker, then it
-will be added to current date."
+;; rename title in init screen
+(defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
+  "Change the default title in *spacemacs* banner."
+  (save-excursion
+    (goto-char (point-min))
+    (search-forward "[S P A C E M A C S]")
+    (replace-match "[A N I M A C S]")))
+
+(defun configuration-layer/get-owner (pkg &optional print)
+  (interactive "SEnter package name: \np")
+  (let ((owner (cdr (assoc pkg
+                           (mapcar (lambda (pkg)
+                                     (cons (oref pkg :name)
+                                           (oref pkg :owner)))
+                                   configuration-layer--packages)))))
+    (when print
+      (message "Owner of %S is %S" pkg owner))
+    owner))
+
+(defun d12/setup-M-h ()
+  "Setup M-h key binding on OS X in GUI."
+  (when (and (spacemacs/system-is-mac)
+             (display-graphic-p))
+    (bind-key "M-h" 'ns-do-hide-emacs)
+    (-map (lambda (mode)
+            (add-hook (intern (concat (symbol-name mode) "-hook"))
+                      `(lambda ()
+                         (define-key
+                           (symbol-value (intern ,(concat (symbol-name mode) "-map")))
+                           (kbd "M-h")
+                           nil))))
+          '(org-mode
+            company-quickhelp-mode))))
+
+(defun d12//init-haskell-interactive-mode ()
+  (setq-local evil-move-cursor-back nil))
+
+(defun align-repeat (start end regexp)
+  "Repeat alignment with respect to the given regular
+     expression."
+  (interactive "r\nsAlign regexp: ")
+  (align-regexp start end
+                (concat "\\(\\s-*\\)" regexp) 1 1 t))
+
+(defun align-c-func-call-in-a-very-strange-way-that-i-dont-like (start end)
+  "Some people are using very odd code style. This function at
+least makes me happy."
+  (interactive "r")
+  (align-regexp start end "\\(\\s-*\\)(*(")
+  (align-regexp start end "\\(\\s-*\\)," 1 1 t)
+  (align-regexp start end "\\(\\s-*\\))*)")
+  )
+
+(defun projectile-replace-regexp ()
+  "Replace a string in the project using `tags-query-replace'.
+Less efficient than `projectile-replace' but at least allows
+usage of regular expressions. See
+https://github.com/bbatsov/projectile/issues/576 for more details
+on `projectile-replace' issue with regexps."
   (interactive "P")
-  (if (or (eq days nil)
-          (not (number-or-marker-p days)))
-      (insert (format-time-string d12/date-format))
-    (insert (format-time-string d12/date-format (time-add (current-time) (days-to-time days))))))
-
-(defun d12/insert-time ()
-  "Insert timestamp formated by value of `d12/time-format'"
-  (interactive)
-  (insert (format-time-string d12/time-format)))
-
-(defun d12/insert-full-date ()
-  "Insert date and timestamp. Uses 'd12/insert-date
-  and 'd12/insert-time."
-  (interactive)
-  (insert (format-time-string (concat d12/date-format " " d12/time-format))))
+  (let* ((old-text (read-string
+                    (projectile-prepend-project-name "Replace: ")
+                    (projectile-symbol-or-selection-at-point)))
+         (new-text (read-string
+                    (projectile-prepend-project-name
+                     (format "Replace %s with: " old-text))))
+         (files (-map (lambda (f) (concat (projectile-project-root) f)) (projectile-current-project-files))))
+    (tags-query-replace old-text new-text nil (cons 'list files))))
 
 ;;; funcs.el ends here

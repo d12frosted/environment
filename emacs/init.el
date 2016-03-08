@@ -6,12 +6,18 @@
 ;;
 ;;; Code:
 
-(defun d12/init-path-variables ()
-  "Initialize essential path variables"
-  (setq-default d12/dropbox-path (concat user-home-directory "Dropbox/")
-                d12/emacs-private-path (concat d12/dropbox-path "Apps/Emacs/")
-                d12/fish-public-path (concat (getenv "XDG_CONFIG_HOME") "/fish/")
-                d12/fish-private-path (concat d12/dropbox-path "Apps/fish/")))
+;; setup some constants and variables
+(defconst d12-path/dropbox (concat user-home-directory "Dropbox/"))
+(defconst d12-path/xdg-config (concat (getenv "XDG_CONFIG_HOME") "/"))
+(defconst d12-path/emacs-home (expand-file-name user-emacs-directory))
+(defconst d12-path/emacs-layers (concat d12-path/xdg-config "emacs/"))
+(defconst d12-path/emacs-private (concat d12-path/dropbox "Apps/Emacs/"))
+(defconst d12-path/fish-public (concat d12-path/xdg-config "fish/"))
+(defconst d12-path/fish-private (concat d12-path/dropbox "Apps/fish/"))
+
+;; setup custom-file
+(setq custom-file (concat d12-path/emacs-private "custom.el"))
+(load custom-file t)
 
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
@@ -24,8 +30,8 @@
      better-defaults
      colors
      dash
-     (deft :variables
-       deft-directory (concat d12/dropbox-path "Apps/deft"))
+     ;; (deft :variables
+     ;;   deft-directory (concat d12-path/dropbox "Apps/deft"))
      emoji
      eyebrowse
      (git :variables
@@ -49,13 +55,14 @@
 
      ;; private layers
      no-dots
-     (d12frosted :variables
-                 d12/org-home-path (concat d12/dropbox-path "org/")
-                 d12/org-author-name `(,d12/full-name)
-                 d12/org-author-email `(,d12/email)
-                 d12/org-agenda-ignore-dirs '(".git/"
-                                              "journal/"
-                                              "archive/"))
+     d12frosted-core
+     ;; (d12frosted :variables
+     ;;             d12/org-home-path (concat d12/dropbox-path "org/")
+     ;;             d12/org-author-name `(,d12/full-name)
+     ;;             d12/org-author-email `(,d12/email)
+     ;;             d12/org-agenda-ignore-dirs '(".git/"
+     ;;                                          "journal/"
+     ;;                                          "archive/"))
      (elfeed :variables
              elfeed-feeds d12/elfeed-feeds
              rmh-elfeed-org-files '())
@@ -100,7 +107,6 @@
                                       color-theme-sanityinc-tomorrow
                                       apropospriate-theme
                                       reveal-in-osx-finder
-                                      beacon
                                       vimish-fold
                                       glsl-mode
                                       (haskell-mode :location "~/Developer/haskell-mode/"))
@@ -113,21 +119,10 @@ This function is called at the very startup of Spacemacs initialization
 before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
-
-  ;; initialize path variables
-  (d12/init-path-variables)
-
-  ;; and load `private.el' file containing all sensitive data
-  (load (concat d12/emacs-private-path "private.el"))
-
-  ;; setup custom-file
-  (setq custom-file (concat d12/emacs-private-path "custom.el"))
-  (load custom-file t)
-
   (setq-default
    dotspacemacs-editing-style 'emacs
    dotspacemacs-verbose-loading nil
-   dotspacemacs-startup-banner (concat d12/emacs-private-path "animacs-banner.png")
+   dotspacemacs-startup-banner (concat d12-path/emacs-private "animacs-banner.png")
    dotspacemacs-startup-lists '(recents projects bookmarks)
    dotspacemacs-startup-recent-list-size 16
    dotspacemacs-colorize-cursor-according-to-state t
@@ -167,6 +162,18 @@ values."
    dotspacemacs-default-package-repository nil
    dotspacemacs-default-layout-name "org"
    dotspacemacs-whitespace-cleanup 'changed
+   dotspacemacs-themes (if (display-graphic-p)
+                           '(spacemacs-light
+                             spacemacs-dark
+                             apropospriate-dark
+                             apropospriate-light
+                             leuven)
+                         '(sanityinc-tomorrow-eighties
+                           apropospriate-dark
+                           apropospriate-light
+                           spacemacs-light
+                           spacemacs-dark
+                           sanityinc-tomorrow-eighties))
 
    ;; other
    spacemacs-mode-line-org-clock-current-taskp t
@@ -178,252 +185,15 @@ values."
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
-user code."
-
-  (setq-default
-   ;; Miscellaneous
-   vc-follow-symlinks t
-   require-final-newline t
-
-   ;; Whitespace mode
-   whitespace-style '(face tabs tab-mark)
-   whitespace-display-mappings
-   '((newline-mark 10 [172 10])
-     (tab-mark 9 [9655 9]))
-
-   ;; Ranger
-   ranger-override-dired t
-
-   ;; Shell
-   sh-basic-offset 2
-   sh-indentation 2)
-
-  ;; rename title in init screen
-  (defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
-    "Change the default title in *spacemacs* banner."
-    (save-excursion
-      (goto-char (point-min))
-      (search-forward "[S P A C E M A C S]")
-      (replace-match "[A N I M A C S]")))
-
-  ;; hooks
-  (add-hook 'text-mode-hook 'visual-line-mode)
-  (add-hook 'after-save-hook 'delete-trailing-whitespace)
-
-  (spacemacs|use-package-add-hook helm
-    :post-config
-    ;; Disable fuzzy matching to make mdfind work with helm-locate
-    (setq helm-locate-fuzzy-match nil)
-    (setq helm-locate-command "mdfind -name %s %s"))
-
-  ;; init GUI or terminal
-  (if (display-graphic-p)
-      (d12//init-gui)
-    (d12//init-terminal))
-
-  ;; auto-mode
-  (add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
-  (add-to-list 'auto-mode-alist '("SConscript" . python-mode))
-  (add-to-list 'auto-mode-alist '("\\.fsh\\'" . glsl-mode))
-  (add-to-list 'auto-mode-alist '("\\.vsh\\'" . glsl-mode))
-  (add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode))
-  (add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
-  (add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
-  (add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode)))
+user code.")
 
 (defun dotspacemacs/user-config ()
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
-
-  (defmacro remove-from-list (list-var element)
-    `(setq ,list-var (remove ,element ,list-var)))
-
-  ;; hooks
-  (add-hook 'find-file-hook 'd12/load-dir-settings)
-  (add-hook 'company-mode-hook 'company-quickhelp-mode)
-  (add-hook 'prog-mode-hook 'vimish-fold-mode)
-  (add-hook 'haskell-interactive-mode-hook 'd12//init-haskell-interactive-mode)
-
-  ;; haskell indentation
-  ;; TODO: remove when #3586 is merged
-  ;; https://github.com/syl20bnr/spacemacs/pull/3586
-  (spacemacs|define-micro-state haskell-indentation
-    :doc "Press = to indent further or - to indent backwards"
-    :use-minibuffer t
-    :bindings
-    ("=" indent-for-tab-command)
-    ("-" haskell-indentation-indent-backwards))
-  (evil-define-key 'visual haskell-mode-map (kbd "=") 'spacemacs/haskell-indentation-micro-state)
-
-  ;; configs
-  (if (configuration-layer/layer-usedp 'spacemacs-helm)
-      (progn
-        (helm-projectile-on)
-        (bind-key "C-s" 'helm-swoop)
-        (bind-key "C-S-s" 'spacemacs/helm-swoop-region-or-symbol)))
-  (if (configuration-layer/layer-usedp 'spacemacs-ivy)
-      (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))
-  (delete-selection-mode 1)
-  (beacon-mode 1)
-  (spacemacs/toggle-camel-case-motion-globally-on)
-  (spacemacs/toggle-automatic-symbol-highlight-on)
-
-  ;; vars
-  (setq projectile-enable-caching nil
-        magit-repo-dirs '("~/Developer/")
-        google-translate-default-source-language "Ukrainian"
-        google-translate-default-target-language "English"
-        git-messenger:show-detail t
-        haskell-process-suggest-remove-import-lines nil
-        haskell-process-suggest-hoogle-imports nil
-        powerline-default-separator 'utf-8)
-
-  ;; setup scrolling
-  (setq scroll-margin 0                   ; Drag the point along while scrolling
-        scroll-conservatively 1000        ; Never recenter the screen while scrolling
-        scroll-error-top-bottom t         ; Move to beg/end of buffer before
-                                        ; signalling an error
-        ;; These settings make trackpad scrolling on OS X much more predictable
-        ;; and smooth
-        mouse-wheel-progressive-speed nil
-        mouse-wheel-scroll-amount '(1))
-
-  ;; OS X
-  (if (spacemacs/system-is-mac)
-      (setq mac-command-modifier 'meta
-            mac-option-modifier  'none))
+  ;; TODO: move me out
   (d12/setup-M-h)
-
-  ;; python
-  (defun pyenv-mode-versions ()
-    "List installed python versions."
-    (let ((versions (shell-command-to-string "vf ls")))
-      (delete-dups (cons "system" (split-string versions)))))
-
-  ;; key bindings
-  (evil-leader/set-key
-    "it" 'd12/insert-time
-    "id" 'd12/insert-date
-    "iD" 'd12/insert-full-date
-    "p#" 'projectile-replace-regexp)
-
-  ;; MOAI
-  (defun moai-run-main ()
-    "Run main.lua using moai."
-    (interactive)
-    (setq-local async-shell-command-buffer 'confirm-kill-process)
-    (if (projectile-project-p)
-        (let ((root (projectile-project-root)))
-          (projectile-save-project-buffers)
-          (async-shell-command (concat "cd '" root "'; and moai main.lua")))
-      (async-shell-command (concat "moai " (buffer-file-name)))))
-  (defun moai-run-main-multiplayer ()
-    "Run main.lua using moai in multiplayer mode."
-    (interactive)
-    (setq-local async-shell-command-buffer 'confirm-kill-process)
-    (if (projectile-project-p)
-        (let ((root (projectile-project-root)))
-          (projectile-save-project-buffers)
-          (async-shell-command (concat "cd '" root "'; and moai main.lua")))
-      (async-shell-command (concat "moai " (buffer-file-name) " -r 5152") "moai-server")
-      (async-shell-command (concat "moai " (buffer-file-name) " -c 127.0.0.1 5152") "moai-client")))
-  (defun moai-upload ()
-    "Upload moai game to device."
-    (interactive)
-    (setq-local async-shell-command-buffer 'confirm-kill-process)
-    (if (projectile-project-p)
-        (shell-command (concat "upload_moai_game '" (projectile-project-root) "'"))))
-
-  (spacemacs/set-leader-keys-for-major-mode 'lua-mode "sm" 'moai-run-main)
-  (spacemacs/set-leader-keys-for-major-mode 'lua-mode "su" 'moai-upload)
-
-  ;; reset key bindings
-  (unbind-key "<C-wheel-down>")
-  (unbind-key "<C-wheel-up>"))
-
-(defun configuration-layer/get-owner (pkg &optional print)
-  (interactive "SEnter package name: \np")
-  (let ((owner (cdr (assoc pkg
-                           (mapcar (lambda (pkg)
-                                     (cons (oref pkg :name)
-                                           (oref pkg :owner)))
-                                   configuration-layer--packages)))))
-    (when print
-      (message "Owner of %S is %S" pkg owner))
-    owner))
-
-;; Private functions
-
-(defun d12/setup-M-h ()
-  "Setup M-h key binding on OS X in GUI."
-  (when (and (spacemacs/system-is-mac)
-             (display-graphic-p))
-    (bind-key "M-h" 'ns-do-hide-emacs)
-    (-map (lambda (mode)
-            (add-hook (intern (concat (symbol-name mode) "-hook"))
-                      `(lambda ()
-                         (define-key
-                           (symbol-value (intern ,(concat (symbol-name mode) "-map")))
-                           (kbd "M-h")
-                           nil))))
-          '(org-mode
-            company-quickhelp-mode))))
-
-(defun d12//init-terminal ()
-  "Initialization function when `display-graphic-p' returns nil."
-  (setq-default dotspacemacs-themes '(
-                                      sanityinc-tomorrow-eighties
-                                      apropospriate-dark
-                                      apropospriate-light
-                                      spacemacs-light
-                                      spacemacs-dark
-                                      sanityinc-tomorrow-eighties
-                                      )))
-
-(defun d12//init-gui ()
-  "Initialization function when `display-graphic-p' returns t."
-  (setq-default dotspacemacs-themes '(
-                                      spacemacs-light
-                                      spacemacs-dark
-                                      apropospriate-dark
-                                      apropospriate-light
-                                      leuven
-                                      )))
-
-(defun d12//init-haskell-interactive-mode ()
-  (setq-local evil-move-cursor-back nil))
-
-(defun align-repeat (start end regexp)
-  "Repeat alignment with respect to the given regular
-     expression."
-  (interactive "r\nsAlign regexp: ")
-  (align-regexp start end
-                (concat "\\(\\s-*\\)" regexp) 1 1 t))
-
-(defun align-c-func-call-in-a-very-strange-way-that-i-dont-like (start end)
-  "Some people are using very odd code style. This function at
-least makes me happy."
-  (interactive "r")
-  (align-regexp start end "\\(\\s-*\\)(*(")
-  (align-regexp start end "\\(\\s-*\\)," 1 1 t)
-  (align-regexp start end "\\(\\s-*\\))*)")
-  )
-
-(defun projectile-replace-regexp ()
-  "Replace a string in the project using `tags-query-replace'.
-Less efficient than `projectile-replace' but at least allows
-usage of regular expressions. See
-https://github.com/bbatsov/projectile/issues/576 for more details
-on `projectile-replace' issue with regexps."
-  (interactive "P")
-  (let* ((old-text (read-string
-                    (projectile-prepend-project-name "Replace: ")
-                    (projectile-symbol-or-selection-at-point)))
-         (new-text (read-string
-                    (projectile-prepend-project-name
-                     (format "Replace %s with: " old-text))))
-         (files (-map (lambda (f) (concat (projectile-project-root) f)) (projectile-current-project-files))))
-    (tags-query-replace old-text new-text nil (cons 'list files))))
+  (spacemacs/toggle-camel-case-motion-globally-on)
+  (spacemacs/toggle-automatic-symbol-highlight-on))
 
 ;;; spacemacs ends here
