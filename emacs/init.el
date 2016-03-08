@@ -30,8 +30,8 @@
      better-defaults
      colors
      dash
-     ;; (deft :variables
-     ;;   deft-directory (concat d12-path/dropbox "Apps/deft"))
+     (deft :variables
+       deft-directory (concat d12-path/dropbox "Apps/deft"))
      emoji
      eyebrowse
      (git :variables
@@ -56,13 +56,6 @@
      ;; private layers
      no-dots
      d12frosted-core
-     ;; (d12frosted :variables
-     ;;             d12/org-home-path (concat d12/dropbox-path "org/")
-     ;;             d12/org-author-name `(,d12/full-name)
-     ;;             d12/org-author-email `(,d12/email)
-     ;;             d12/org-agenda-ignore-dirs '(".git/"
-     ;;                                          "journal/"
-     ;;                                          "archive/"))
      (elfeed :variables
              elfeed-feeds d12/elfeed-feeds
              rmh-elfeed-org-files '())
