@@ -37,6 +37,7 @@
      dash
      (deft :variables
        deft-directory (concat d12-path/dropbox "Apps/deft"))
+     elfeed
      emoji
      eyebrowse
      (git :variables
@@ -62,9 +63,6 @@
      no-dots
      d12frosted-core
      d12frosted-org
-     (elfeed :variables
-             elfeed-feeds d12/elfeed-feeds
-             rmh-elfeed-org-files '())
 
      ;; languages
      (csharp :variables

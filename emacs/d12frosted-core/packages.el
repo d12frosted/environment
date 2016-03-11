@@ -25,7 +25,8 @@
     ivy
     glsl-mode
     lua
-    comment-dwim-2))
+    comment-dwim-2
+    elfeed))
 
 (defun d12frosted-core/init-beacon ()
   (use-package beacon
@@ -126,4 +127,10 @@
   (use-package comment-dwim-2
     :bind ("M-;" . comment-dwim-2)))
 
-;;; packages.el ends here
+(defun d12frosted-core/post-init-elfeed ()
+  (use-package elfeed
+    :defer t
+    :config
+    (setq elfeed-feeds d12/elfeed-feeds)))
+
+;; packages.el ends here
