@@ -24,7 +24,7 @@
     helm
     ivy
     glsl-mode
-    lua
+    lua-mode
     comment-dwim-2
     elfeed))
 
@@ -91,8 +91,9 @@
     :mode ("\\.geom$" . glsl-mode)))
 
 ;; TODO: move me to separate layer
-(defun d12frosted-core/post-init-lua ()
-  (use-package lua
+(defun d12frosted-core/post-init-lua-mode ()
+  (use-package lua-mode
+    :defer t
     :config
     (defun moai-run-main ()
       "Run main.lua using moai."
@@ -101,7 +102,7 @@
       (if (projectile-project-p)
           (let ((root (projectile-project-root)))
             (projectile-save-project-buffers)
-            (async-shell-command (concat "cd '" root "'; and moai main.lua")))
+            (async-shell-command (concat "cd '" root "/lua'; and moai main.lua")))
         (async-shell-command (concat "moai " (buffer-file-name)))))
     (defun moai-run-main-multiplayer ()
       "Run main.lua using moai in multiplayer mode."
@@ -110,7 +111,7 @@
       (if (projectile-project-p)
           (let ((root (projectile-project-root)))
             (projectile-save-project-buffers)
-            (async-shell-command (concat "cd '" root "'; and moai main.lua")))
+            (async-shell-command (concat "cd '" root "/lua'; and moai main.lua")))
         (async-shell-command (concat "moai " (buffer-file-name) " -r 5152") "moai-server")
         (async-shell-command (concat "moai " (buffer-file-name) " -c 127.0.0.1 5152") "moai-client")))
     (defun moai-upload ()
@@ -118,7 +119,7 @@
       (interactive)
       (setq-local async-shell-command-buffer 'confirm-kill-process)
       (if (projectile-project-p)
-          (shell-command (concat "upload_moai_game '" (projectile-project-root) "'"))))
+          (shell-command (concat "upload_moai_game '" (projectile-project-root) "/lua'"))))
 
     (spacemacs/set-leader-keys-for-major-mode 'lua-mode "sm" 'moai-run-main)
     (spacemacs/set-leader-keys-for-major-mode 'lua-mode "su" 'moai-upload)))
