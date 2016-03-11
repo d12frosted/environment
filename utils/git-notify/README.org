@@ -1,0 +1,20 @@
+#+TITLE:        git-notify
+#+AUTHOR:       Boris Buliga
+#+EMAIL:        d12frosted@icloud.com
+#+DATE:         <2016-02-20 Sat>
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+=git-notify= is utility script that notifies you when inspected repository has
+new commits. This script is actually a modified version of [[https://gist.github.com/joehillen/8a123178145a1b38f0f8][git-notify.sh]] to make
+it working on OS X via [[https://github.com/julienXX/terminal-notifier][terminal-notifier]].
+
+* Usage
+
+#+BEGIN_SRC bash
+$ git-notify dir [remote branch]
+#+END_SRC
+
+The only mandatory argument is =dir= - path to local repository. You may also
+specify =remote= and =branch= which are =origin= and =master= by default
+respectively.

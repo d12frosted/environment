@@ -13,3 +13,4 @@ you are interested in.
 1. =dump= - utility for dumping files or directories by either copying or moving
    them with appended timestamp
 2. =brw= - utility for installing packages (currently OS X only).
+3. =git-notify= - utility for tracking updates to repository.

@@ -7,6 +7,9 @@
     ~/.local/bin/brw:
       path: utils/brw/brw
       relink: true
+    ~/.local/bin/git-notify:
+      path: utils/git-notify/git-notify.sh
+      relink: true
 
 - shell:
   - [brw coreutils wget ack ag ispell git git-lfs lua tree ncdu lynx, Install some helpful packages]
