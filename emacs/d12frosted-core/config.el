@@ -21,9 +21,6 @@
 (require 'd12-helm)
 (require 'd12-dir-settings)
 
-;; load `private.el' file containing all sensitive data
-(load (concat d12-path/emacs-private "private.el"))
-
 (add-to-list 'd12-helm/sources 'd12-helm/config-source)
 
 ;;; Auto modes

@@ -21,6 +21,9 @@
 (setq custom-file (concat d12-path/emacs-private "custom.el"))
 (load custom-file t)
 
+;; load `private.el' file containing all sensitive data
+(load (concat d12-path/emacs-private "private.el"))
+
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
   (setq-default
