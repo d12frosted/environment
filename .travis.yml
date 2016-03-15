@@ -6,5 +6,6 @@ os:
   - linux
   - osx
 
+sudo: true
 install: true
 script: ./install
