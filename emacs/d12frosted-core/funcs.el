@@ -229,7 +229,7 @@ least makes me happy."
   (align-regexp start end "\\(\\s-*\\))*)")
   )
 
-(defun projectile-replace-regexp ()
+(defun d12/projectile-replace-regexp ()
   "Replace a string in the project using `tags-query-replace'.
 Less efficient than `projectile-replace' but at least allows
 usage of regular expressions. See
