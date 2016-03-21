@@ -27,6 +27,7 @@
     lua-mode
     comment-dwim-2
     elfeed
+    elfeed-goodies
     bpr))
 
 (defun d12frosted-core/init-beacon ()
@@ -134,6 +135,12 @@
     :defer t
     :config
     (setq elfeed-feeds d12/elfeed-feeds)))
+
+(defun d12frosted-core/post-init-elfeed-goodies ()
+  (use-package elfeed-goodies
+    :defer t
+    :config
+    (setq elfeed-goodies/powerline-default-separator 'utf-8)))
 
 (defun d12frosted-core/init-bpr ()
     (use-package bpr
