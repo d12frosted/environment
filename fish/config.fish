@@ -5,17 +5,12 @@ if test -f $PRIVATE_FISH_CONFIGS_HOME/preconfig.fish
   source $PRIVATE_FISH_CONFIGS_HOME/preconfig.fish
 end
 
-set -l COREUTILS_HOME (brew --prefix coreutils)
-set -l COREUTILS_PATH $COREUTILS_HOME/libexec/gnubin
-set -l COREUTILS_MAN $COREUTILS_HOME/libexec/gnuman
-
 # variables
 set -x XDG_CONFIG_HOME ~/.environment
 set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs
 set -x GEM_HOME $HOME/.local/gem
 set -x GEM_PATH $HOME/.local/gem
-set -x PATH $HOME/.local/bin $COREUTILS_PATH $GEM_HOME/bin /usr/texbin $PATH
-set -x MANPATH $COREUTILS_MAN $MANPATH
+set -x PATH $HOME/.local/bin $GEM_HOME/bin /usr/texbin $PATH
 set -x EDITOR "emacsclient"
 set fish_greeting ""
 
