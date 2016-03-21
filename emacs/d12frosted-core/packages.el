@@ -26,7 +26,8 @@
     glsl-mode
     lua-mode
     comment-dwim-2
-    elfeed))
+    elfeed
+    bpr))
 
 (defun d12frosted-core/init-beacon ()
   (use-package beacon
@@ -133,5 +134,12 @@
     :defer t
     :config
     (setq elfeed-feeds d12/elfeed-feeds)))
+
+(defun d12frosted-core/init-bpr ()
+    (use-package bpr
+      :commands (bpr-spawn bpr-open-last-buffer)
+      :config
+      (setq bpr-colorize-output t)
+      (setq bpr-close-after-success t)))
 
 ;; packages.el ends here
