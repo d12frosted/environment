@@ -28,7 +28,8 @@
     comment-dwim-2
     elfeed
     elfeed-goodies
-    bpr))
+    bpr
+    zoom-frm))
 
 (defun d12frosted-core/init-beacon ()
   (use-package beacon
@@ -148,5 +149,12 @@
       :config
       (setq bpr-colorize-output t)
       (setq bpr-close-after-success t)))
+
+(defun d12frosted-core/post-init-zoom-frm ()
+  (use-package zoom-frm
+    :config
+    ;; remove some crazy bindings
+    (unbind-key "<C-wheel-down>")
+    (unbind-key "<C-wheel-up>")))
 
 ;; packages.el ends here

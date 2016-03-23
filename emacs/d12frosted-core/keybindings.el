@@ -24,10 +24,6 @@
   "oj" 'd12-helm
   "p#" 'projectile-replace-regexp)
 
-;; remove some crazy bindings
-(unbind-key "<C-wheel-down>")
-(unbind-key "<C-wheel-up>")
-
 (spacemacs/declare-prefix "o" "d12frosted")
 ;; (spacemacs/declare-prefix "." "org")
 
