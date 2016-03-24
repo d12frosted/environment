@@ -29,7 +29,8 @@
     elfeed
     elfeed-goodies
     bpr
-    zoom-frm))
+    zoom-frm
+    move-text))
 
 (defun d12frosted-core/init-beacon ()
   (use-package beacon
@@ -156,5 +157,12 @@
     ;; remove some crazy bindings
     (unbind-key "<C-wheel-down>")
     (unbind-key "<C-wheel-up>")))
+
+(defun d12frosted-core/post-init-move-text ()
+  (use-package move-text
+    :config
+    ;; remove some crazy bindings
+    (bind-key "<M-down>" 'move-text-down prog-mode-map)
+    (bind-key "<M-up>" 'move-text-up prog-mode-map)))
 
 ;; packages.el ends here
