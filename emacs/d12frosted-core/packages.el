@@ -122,7 +122,7 @@
       (interactive)
       (setq-local async-shell-command-buffer 'confirm-kill-process)
       (if (projectile-project-p)
-          (shell-command (concat "upload_moai_game '" (projectile-project-root) "/lua'"))))
+          (bpr-spawn (concat "upload_moai_game '" (projectile-project-root) "/lua'"))))
 
     (spacemacs/set-leader-keys-for-major-mode 'lua-mode "sm" 'moai-run-main)
     (spacemacs/set-leader-keys-for-major-mode 'lua-mode "su" 'moai-upload)))
