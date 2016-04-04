@@ -18,7 +18,8 @@
  ("C-w"             . d12/kill-line-or-region)
  ("M-w"             . d12/copy-line-or-region)
  ("C-S-<backspace>" . d12/delete-line-or-region)
- ("M-C-;"           . comment-or-uncomment-sexp))
+ ("M-C-;"           . comment-or-uncomment-sexp)
+ ("<f8>"            . calendar))
 
 (evil-leader/set-key
   "oj" 'd12-helm
