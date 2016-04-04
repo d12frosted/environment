@@ -19,6 +19,7 @@
  ("M-w"             . d12/copy-line-or-region)
  ("C-S-<backspace>" . d12/delete-line-or-region)
  ("M-C-;"           . comment-or-uncomment-sexp)
+ ("<f9>"            . calc)
  ("<f8>"            . calendar))
 
 (evil-leader/set-key
