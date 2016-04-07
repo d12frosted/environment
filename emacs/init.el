@@ -43,6 +43,8 @@
      (git :variables
           git-magit-status-fullscreen t)
      github
+     gnus
+     mu4e
      (org :variables
           org-enable-github-support t
           org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))

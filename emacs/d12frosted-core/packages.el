@@ -30,7 +30,8 @@
     elfeed-goodies
     bpr
     zoom-frm
-    move-text))
+    move-text
+    mu4e))
 
 (defun d12frosted-core/init-beacon ()
   (use-package beacon
@@ -164,5 +165,33 @@
     ;; remove some crazy bindings
     (bind-key "<M-down>" 'move-text-down prog-mode-map)
     (bind-key "<M-up>" 'move-text-up prog-mode-map)))
+
+(defun d12frosted-core/post-init-mu4e ()
+  (use-package move-text
+    :init
+    (setq mu4e-installation-path "/usr/local/Cellar/mu/0.9.16/share/emacs/site-lisp"
+          mu4e-maildir "~/.mail"
+          mu4e-drafts-folder "/[Gmail].Drafts"
+          mu4e-sent-folder "/[Gmail].Sent Mail"
+          mu4e-refile-folder "/[Gmail].All Mail"
+          mu4e-trash-folder "/[Gmail].Trash"
+          mu4e-get-mail-command "mbsync -a"
+          mu4e-update-interval nil
+          mu4e-compose-signature-auto-include nil
+          mu4e-view-show-images t
+          mu4e-view-show-addresses t
+          mu4e-sent-messages-behavior 'delete
+          mu4e-maildir-shortcuts
+          '(("/INBOX"               . ?i)
+            ("/[Gmail].Sent Mail"   . ?s)
+            ("/[Gmail].Trash"       . ?t)
+            ("/[Gmail].All Mail"    . ?a))
+          mu4e-enable-notifications t
+          mu4e-enable-mode-line t)
+    (with-eval-after-load 'mu4e-alert
+      ;; Enable Desktop notifications
+      (mu4e-alert-set-default-style 'notifier))
+    (bind-key "<f5>" (lambda () (interactive ) (mu4e-update-mail-and-index t )))
+    (require 'mu4e)))
 
 ;; packages.el ends here
