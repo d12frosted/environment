@@ -72,7 +72,8 @@
           org-agenda-inhibit-startup nil
           org-archive-location "archive/%s::"
           org-time-clocksum-format
-          '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
+          '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
+          org-property-format "%-16s %s")
 
     (d12|rename-modeline "org" org-mode "本")))
 
