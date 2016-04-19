@@ -43,6 +43,19 @@
      '(defadvice ,mode (after d12|rename-modeline-hack activate)
         (setq mode-name ,new-name))))
 
+;;; String helpers
+
+(defun d12/string-equal (s1 s2)
+  (and (stringp s1)
+       (stringp s2)
+       (string-equal s1 s2)))
+
+(defun d12/string-to-number (string default)
+  (if (and (stringp string)
+           (not (string-empty-p string)))
+      (string-to-number string)
+    default))
+
 ;;; Text manipulations
 
 (defun d12/copy-line-or-region (&optional copy-func)
