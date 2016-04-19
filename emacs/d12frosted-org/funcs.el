@@ -14,6 +14,8 @@
 ;;; Code:
 
 (defun d12-org/reload-agenda-files ()
+  "Reload agenda files. Useful for situations when file is added
+or removed from agenda files directory."
   (interactive)
   (setq d12-org/files-list (d12-files/query "*.org" d12-path/org-home 1))
   (setq org-agenda-files d12-org/files-list))
