@@ -73,7 +73,13 @@
           org-archive-location "archive/%s::"
           org-time-clocksum-format
           '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
-          org-property-format "%-16s %s")
+          org-property-format "%-16s %s"
+          org-agenda-prefix-format '((agenda . " %i %-24:c%?-12t% s")
+                                     (timeline . "  % s")
+                                     (todo . " %i %-24:c")
+                                     (tags . " %i %-24:c")
+                                     (search . " %i %-24:c"))
+          org-agenda-day-face-function 'd12/org-agenda-day-face-holidays-function)
 
     (d12|rename-modeline "org" org-mode "本")))
 
