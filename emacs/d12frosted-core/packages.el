@@ -56,6 +56,25 @@
     (setq projectile-enable-caching nil)
     (helm-projectile-on)))
 
+(defun d12frosted-core/post-init-projectile ()
+  (use-package projectile
+    :config
+    (setq projectile-switch-project-action #'projectile-commander)
+    (def-projectile-commander-method ?s
+      "Open a *shell* buffer for the project."
+      (shell (get-buffer-create
+              (format "*shell %s*"
+                      (projectile-project-name)))))
+    (def-projectile-commander-method ?c
+      "Run `compile' in the project."
+      (call-interactively #'compile))
+    (def-projectile-commander-method ?\C-?
+      "Go back to project selection."
+      (projectile-switch-project))
+    (def-projectile-commander-method ?d
+      "Open project root in dired."
+      (projectile-dired))))
+
 (defun d12frosted-core/post-init-spaceline ()
   (use-package spaceline-config
     :init
