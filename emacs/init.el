@@ -158,7 +158,7 @@ values."
    dotspacemacs-persistent-server nil
    dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
    dotspacemacs-default-package-repository nil
-   dotspacemacs-default-layout-name "org"
+   dotspacemacs-default-layout-name "Def"
    dotspacemacs-whitespace-cleanup 'changed
    dotspacemacs-themes (if (display-graphic-p)
                            '(spacemacs-light
