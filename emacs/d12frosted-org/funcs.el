@@ -38,6 +38,10 @@ buffer."
   "Get global org property KEY of current buffer."
   (org-element-property :value (car (org-global-props key))))
 
+(defun d12//org-mode-setup-title ()
+  (when-let ((title (org-global-prop-value "title")))
+    (rename-buffer title)))
+
 (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
   (let ((rlt ad-return-value)
         (begin-regexp "^[ \t]*#\\+begin_\\(src\\|html\\|latex\\)")

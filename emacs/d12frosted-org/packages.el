@@ -81,6 +81,8 @@
                                      (search . " %i %-24:c"))
           org-agenda-day-face-function 'd12/org-agenda-day-face-holidays-function)
 
+    (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
+
     (d12|rename-modeline "org" org-mode "本")))
 
 (defun d12frosted-org/init-org-journal ()
