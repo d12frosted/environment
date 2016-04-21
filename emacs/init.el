@@ -46,8 +46,7 @@
      gnus
      mu4e
      (org :variables
-          org-enable-github-support t
-          org-bullets-bullet-list '("◉" "○" "✿" "❀" "✸"))
+          org-enable-github-support t)
      pandoc
      ranger
      restclient

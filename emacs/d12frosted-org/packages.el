@@ -15,6 +15,7 @@
 
 (defconst d12frosted-org-packages
   '(org
+    org-bullets
     org-journal))
 
 (defun d12frosted-org/post-init-org ()
@@ -84,6 +85,12 @@
     (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
 
     (d12|rename-modeline "org" org-mode "本")))
+
+(defun d12frosted-org/post-init-org-bullets ()
+  (use-package org-bullets
+    :defer t
+    :config
+    (setq org-bullets-bullet-list '("◉" "◎" "●" "○" "•" "◦"))))
 
 (defun d12frosted-org/init-org-journal ()
   "Initialize org-journal package"
