@@ -31,7 +31,8 @@
     bpr
     zoom-frm
     move-text
-    mu4e))
+    mu4e
+    god-mode))
 
 (defun d12frosted-core/init-beacon ()
   (use-package beacon
@@ -212,5 +213,12 @@
       (mu4e-alert-set-default-style 'notifier))
     (bind-key "<f5>" (lambda () (interactive ) (mu4e-update-mail-and-index t )))
     (require 'mu4e)))
+
+(defun d12frosted-core/init-god-mode ()
+  (use-package god-mode
+    :commands (god-local-mode)
+    :bind ("<escape>" . god-local-mode)
+    :config
+    (spacemacs|diminish god-local-mode)))
 
 ;; packages.el ends here
