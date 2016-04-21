@@ -188,21 +188,4 @@
  ("’" ?Ъ)
  ("»" ?Ё))
 
-;; Change cursor color according to mode
-(defvar d12//set-cursor-color-color "")
-(defvar d12//set-cursor-color-buffer "")
-(defun d12//set-cursor-color-according-to-mode ()
-  "change cursor color according to some minor modes."
-  ;; set-cursor-color is somewhat costly, so we only call it when needed:
-  (let ((color
-         (if buffer-read-only "DarkGoldenrod2"
-           (if current-input-method-title "chartreuse3"
-             "SkyBlue2"))))
-    (unless (and
-             (string= color d12//set-cursor-color-color)
-             (string= (buffer-name) d12//set-cursor-color-buffer))
-      (set-cursor-color (setq d12//set-cursor-color-color color))
-      (setq d12//set-cursor-color-buffer (buffer-name)))))
-(add-hook 'post-command-hook 'd12//set-cursor-color-according-to-mode)
-
 ;;; config.el ends here
