@@ -67,6 +67,7 @@
              ;; The reason will be included in the task notes.
              "DELAYED(l)"))
 
+          org-hide-emphasis-markers t
           org-agenda-window-setup 'current-window
           org-src-fontify-natively t
           org-directory d12-path/org-home
