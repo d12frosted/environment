@@ -22,6 +22,12 @@
         (-maxdepth (if maxdepth (concat " -maxdepth " (number-to-string maxdepth)) "")))
     (d12-files/run-find (directory-file-name dir) (concat -type " " -query " " -maxdepth))))
 
+(defun d12/get-string-from-file (filepath)
+  "Return filepath's file content."
+  (with-temp-buffer
+    (insert-file-contents filepath)
+    (buffer-string)))
+
 (provide 'd12-files)
 
 ;;; d12-files.el ends here
