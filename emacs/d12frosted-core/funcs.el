@@ -258,4 +258,10 @@ on `projectile-replace' issue with regexps."
          (files (-map (lambda (f) (concat (projectile-project-root) f)) (projectile-current-project-files))))
     (tags-query-replace old-text new-text nil (cons 'list files))))
 
+(defun d12/refill-paragraphs-to-be-one-line ()
+  "Fill individual paragraphs with large fill column"
+  (interactive)
+  (let ((fill-column 10000000))
+    (fill-individual-paragraphs (point-min) (point-max))))
+
 ;;; funcs.el ends here
