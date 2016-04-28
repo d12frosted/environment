@@ -30,7 +30,8 @@ on `projectile-replace' issue with regexps."
          (files (-map (lambda (f) (concat (projectile-project-root) f)) (projectile-current-project-files))))
     (tags-query-replace old-text new-text nil (cons 'list files))))
 
-(defun d12-ivy//add-files (list)
+(defun d12-ivy//add-interesting-files (list)
+  "Add files to `d12-ivy--files'"
   (setq d12-ivy--files (-union d12-ivy--files list)))
 
 (defun d12-ivy ()

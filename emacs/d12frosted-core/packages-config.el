@@ -117,7 +117,7 @@
   (defun d12frosted-core/post-init-ivy ()
     (use-package ivy
       :config
-      (d12-ivy//add-files d12-ivy--config-files)
+      (d12-ivy//add-interesting-files d12-ivy--config-files)
       (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
 
 (defun d12frosted-core/init-glsl-mode ()

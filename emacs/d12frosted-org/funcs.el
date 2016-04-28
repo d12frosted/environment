@@ -20,7 +20,7 @@ or removed from agenda files directory."
   (setq d12-org/files-list (d12-files/query "*.org" d12-path/org-home 1))
   (setq org-agenda-files d12-org/files-list)
   (when (configuration-layer/layer-usedp 'spacemacs-ivy)
-    (d12-ivy//add-files d12-org/files-list)))
+    (d12-ivy//add-interesting-files d12-org/files-list)))
 
 (when (configuration-layer/layer-usedp 'spacemacs-helm)
   (defun d12-helm/gtd-source ()
