@@ -14,4 +14,20 @@
 
 ;;; Code:
 
+(defun d12/projectile-replace-regexp ()
+  "Replace a string in the project using `tags-query-replace'.
+Less efficient than `projectile-replace' but at least allows
+usage of regular expressions. See
+https://github.com/bbatsov/projectile/issues/576 for more details
+on `projectile-replace' issue with regexps."
+  (interactive "P")
+  (let* ((old-text (read-string
+                    (projectile-prepend-project-name "Replace: ")
+                    (projectile-symbol-or-selection-at-point)))
+         (new-text (read-string
+                    (projectile-prepend-project-name
+                     (format "Replace %s with: " old-text))))
+         (files (-map (lambda (f) (concat (projectile-project-root) f)) (projectile-current-project-files))))
+    (tags-query-replace old-text new-text nil (cons 'list files))))
+
 ;; packages-funcs.el ends here
