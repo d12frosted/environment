@@ -80,7 +80,7 @@
      (comment-region l r)
      (skip-chars-forward "\r\n[:blank:]"))))
 
-(defun d12//comment-or-uncomment-sexp (&optional n)
+(defun d12/comment-or-uncomment-sexp (&optional n)
   "Comment the sexp at point and move past it. If already
 inside (or before) a comment, uncomment instead. With a prefix
 argument N, (un)comment that many sexps."
