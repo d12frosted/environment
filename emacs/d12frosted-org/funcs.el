@@ -18,14 +18,17 @@
 or removed from agenda files directory."
   (interactive)
   (setq d12-org/files-list (d12-files/query "*.org" d12-path/org-home 1))
-  (setq org-agenda-files d12-org/files-list))
+  (setq org-agenda-files d12-org/files-list)
+  (when (configuration-layer/layer-usedp 'spacemacs-ivy)
+    (d12-ivy//add-files d12-org/files-list)))
 
-(defun d12-helm/gtd-source ()
-  "Construct helm source from `d12-org/files-list'."
-  `((name . "org files")
-    (candidates . d12-org/files-list)
-    (candidate-number-limit)
-    (action . (("Open file" . find-file)))))
+(when (configuration-layer/layer-usedp 'spacemacs-helm)
+  (defun d12-helm/gtd-source ()
+    "Construct helm source from `d12-org/files-list'."
+    `((name . "org files")
+      (candidates . d12-org/files-list)
+      (candidate-number-limit)
+      (action . (("Open file" . find-file))))))
 
 (defun org-global-props (&optional property buffer)
   "Get the plists of global org properties of current

@@ -54,7 +54,7 @@
      syntax-checking
      ;; spacemacs-home-agenda
      spacemacs-layouts
-     spacemacs-helm
+     spacemacs-ivy
      spell-checking
      (shell :variables
             shell-default-term-shell "/usr/local/bin/fish")

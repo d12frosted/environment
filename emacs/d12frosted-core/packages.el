@@ -56,7 +56,8 @@
   (use-package projectile
     :init
     (setq projectile-enable-caching nil)
-    (helm-projectile-on)))
+    (when (configuration-layer/layer-usedp 'spacemacs-helm)
+      (helm-projectile-on))))
 
 (defun d12frosted-core/post-init-projectile ()
   (use-package projectile
@@ -137,6 +138,7 @@
   (defun d12frosted-core/post-init-ivy ()
     (use-package ivy
       :config
+      (require 'd12-ivy)
       (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
 
 (defun d12frosted-core/init-glsl-mode ()

@@ -22,9 +22,13 @@
  ("<f9>"            . calc)
  ("<f8>"            . calendar))
 
-(evil-leader/set-key
-  "oj" 'd12-helm
-  "p#" 'projectile-replace-regexp)
+(evil-leader/set-key "p#" 'projectile-replace-regexp)
+
+(when (configuration-layer/layer-usedp 'spacemacs-helm)
+  (evil-leader/set-key "oj" 'd12-helm))
+
+(when (configuration-layer/layer-usedp 'spacemacs-ivy)
+  (evil-leader/set-key "oj" 'd12-ivy))
 
 (spacemacs/declare-prefix "o" "d12frosted")
 ;; (spacemacs/declare-prefix "." "org")

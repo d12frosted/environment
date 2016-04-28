@@ -18,12 +18,14 @@
 
 ;; require all modules
 (require 'd12-files)
-(require 'd12-helm)
+(when (configuration-layer/layer-usedp 'spacemacs-helm)
+  (require 'd12-helm))
 (require 'd12-dir-settings)
 (require 'd12-copy-paste)
 (require 'd12-comment)
 
-(add-to-list 'd12-helm/sources 'd12-helm/config-source)
+(when (configuration-layer/layer-usedp 'spacemacs-helm)
+  (add-to-list 'd12-helm/sources 'd12-helm/config-source))
 
 ;;; Auto modes
 
