@@ -80,6 +80,17 @@
   (let ((versions (shell-command-to-string "vf ls")))
     (delete-dups (cons "system" (split-string versions)))))
 
+;; d12-ivy
+(defvar d12-ivy--files '()
+  "List of interesting files to discover via ivy interface.")
+
+(setq d12-ivy--config-files `(,(concat d12-path/emacs-layers "init.el")
+                              ,(concat d12-path/emacs-private "private.el")
+                              ,(concat d12-path/fish-public "config.fish")
+                              ,(concat d12-path/fish-private "preconfig.fish")
+                              ,(concat d12-path/fish-private "postconfig.fish")
+                              ,(concat d12-path/emacs-home "init.el")))
+
 ;; Langs
 (quail-define-package
  "d12-ukrainian" "UTF-8" "UK" t "Input method for Ukrainian based

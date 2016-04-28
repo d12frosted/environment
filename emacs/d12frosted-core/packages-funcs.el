@@ -30,4 +30,14 @@ on `projectile-replace' issue with regexps."
          (files (-map (lambda (f) (concat (projectile-project-root) f)) (projectile-current-project-files))))
     (tags-query-replace old-text new-text nil (cons 'list files))))
 
+(defun d12-ivy//add-files (list)
+  (setq d12-ivy--files (-union d12-ivy--files list)))
+
+(defun d12-ivy ()
+  "Interesting files discovery with ivy interface."
+  (interactive)
+  (ivy-read "Config file: " d12-ivy--files
+            :action '(1
+                      ("o" find-file "Open file"))))
+
 ;; packages-funcs.el ends here
