@@ -16,10 +16,15 @@ set fish_greeting ""
 
 # aliases
 alias ghci "stack ghci"
-alias eclient "emacsclient"
-alias ec "emacsclient -nw"
+alias ecl "emacsclient"
+alias eclt "emacsclient -nw"
+alias emt "emacs -nw --insecure"
 alias cenv "cd $XDG_CONFIG_HOME"
 alias cem  "cd $HOME/.emacs.d"
+
+function em
+  emacs --insecure $argv &
+end
 
 # theme
 set fish_color_autosuggestion gray
