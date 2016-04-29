@@ -165,4 +165,13 @@ If not, show simply the clocked time like 01:50."
                    (return 'org-agenda-date-weekend))))))
         (when face (return face))))))
 
+(defun d12/toggle-org-html-export-on-save ()
+  (interactive)
+  (if (memq 'org-html-export-to-html after-save-hook)
+      (progn
+        (remove-hook 'after-save-hook 'org-html-export-to-html t)
+        (message "Disabled org html export on save for current buffer..."))
+    (add-hook 'after-save-hook 'org-html-export-to-html nil t)
+    (message "Enabled org html export on save for current buffer...")))
+
 ;;; funcs.el ends here
