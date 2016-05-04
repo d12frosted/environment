@@ -23,6 +23,7 @@
 (require 'd12-dir-settings)
 (require 'd12-copy-paste)
 (require 'd12-comment)
+(require 'd12-eww)
 
 (when (configuration-layer/layer-usedp 'spacemacs-helm)
   (add-to-list 'd12-helm/sources 'd12-helm/config-source))
