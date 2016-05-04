@@ -234,4 +234,7 @@
     :config
     (spacemacs|diminish god-local-mode)))
 
+(defun d12frosted-core/init-composable ()
+  (use-package composable))
+
 ;; packages-config.el ends here

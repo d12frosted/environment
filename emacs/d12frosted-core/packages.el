@@ -33,6 +33,7 @@
     move-text
     mu4e
     god-mode
-    spaceline))
+    spaceline
+    composable))
 
 ;; packages.el ends here
