@@ -151,7 +151,7 @@ values."
    dotspacemacs-active-transparency 90
    dotspacemacs-inactive-transparency 90
    dotspacemacs-mode-line-unicode-symbols nil
-   dotspacemacs-smooth-scrolling t
+   dotspacemacs-smooth-scrolling nil
    dotspacemacs-smartparens-strict-mode nil
    dotspacemacs-highlight-delimiters 'all
    dotspacemacs-persistent-server nil
