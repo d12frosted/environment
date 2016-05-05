@@ -34,6 +34,8 @@
     mu4e
     god-mode
     spaceline
-    composable))
+    (composable :location (recipe
+                           :fetcher github
+                           :repo "paldepind/composable.el")))
 
 ;; packages.el ends here

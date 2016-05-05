@@ -235,6 +235,12 @@
     (spacemacs|diminish god-local-mode)))
 
 (defun d12frosted-core/init-composable ()
-  (use-package composable))
+  (use-package composable
+    :commands (composable-mode)
+    :init
+    (progn
+      (composable-mode)
+      (composable-def '(delete-region))
+      (bind-key "C-M-w" 'composable-delete-region composable-mode-map))))
 
 ;; packages-config.el ends here
