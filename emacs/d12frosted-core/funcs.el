@@ -88,10 +88,13 @@ expression."
   (align-regexp start end
                 (concat "\\(\\s-*\\)" regexp) 1 1 t))
 
-(defun d12/refill-paragraphs-to-be-one-line ()
+(defun d12/refill-paragraphs-to-be-one-line (&optional start end)
   "Fill individual paragraphs with large fill column"
-  (interactive)
-  (let ((fill-column 10000000))
-    (fill-individual-paragraphs (point-min) (point-max))))
+  (interactive "r")
+  (let* ((fill-column most-positive-fixnum)
+         (has-region (/= start end))
+         (p1 (if has-region start (point-min)))
+         (p2 (if has-region end (point-max))))
+    (fill-individual-paragraphs p1 p2)))
 
 ;;; funcs.el ends here
