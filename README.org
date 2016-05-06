@@ -58,3 +58,14 @@ compatibility with previous configurations or other platforms. In any case, if
 you have questions or any problems with my configurations - just ping me. I'll
 try to help you as much as I can. Any suggestions or pull requests are warmly
 welcome!
+
+* Acknowledgments
+
+These configurations would not have been possible without the work of and the
+inspiration from these people:
+
+- [[https://github.com/chrisdone][Chris Done]]
+- [[https://github.com/purcell][Steve Purcell]]
+- [[https://github.com/syl20bnr][Sylvain Benner]]
+- [[https://github.com/TheBB][Eivind Fonn]]
+- [[https://github.com/Malabarba][Artur Malabarba]]
