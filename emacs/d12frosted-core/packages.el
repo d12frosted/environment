@@ -36,9 +36,6 @@
     spaceline
     (composable :location (recipe
                            :fetcher github
-                           :repo "paldepind/composable.el"))
-    (flyspell-correct :location (recipe
-                               :fetcher github
-                               :repo "d12frosted/flyspell-correct"))))
+                           :repo "paldepind/composable.el"))))
 
 ;; packages.el ends here

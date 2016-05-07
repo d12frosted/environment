@@ -243,14 +243,4 @@
       (composable-def '(delete-region))
       (bind-key "C-M-w" 'composable-delete-region composable-mode-map))))
 
-(defun d12frosted-core/init-flyspell-correct ()
-  (use-package flyspell-correct
-    :init
-    (when (configuration-layer/layer-usedp 'spacemacs-ivy)
-      (setq flyspell-correct-interface 'flyspell-correct/ivy))
-    (when (configuration-layer/layer-usedp 'spacemacs-helm)
-      (setq flyspell-correct-interface 'flyspell-correct/helm))
-    (when (bound-and-true-p flyspell-correct-interface)
-      (spacemacs/set-leader-keys "Sc" 'flyspell-correct/word))))
-
 ;; packages-config.el ends here
