@@ -41,4 +41,12 @@ on `projectile-replace' issue with regexps."
             :action '(1
                       ("o" find-file "Open file"))))
 
+(defun d12-ivy//delete-file (file)
+  "Action for `counsel-find-file' that removes selected file and
+kills corresponding buffer (if any exists)."
+  (with-ivy-window
+    (when-let ((buffer (find-buffer-visiting file)))
+      (kill-buffer buffer))
+    (delete-file file)))
+
 ;; packages-funcs.el ends here

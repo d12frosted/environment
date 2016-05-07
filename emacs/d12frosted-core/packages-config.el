@@ -118,6 +118,9 @@
     (use-package ivy
       :config
       (d12-ivy//add-interesting-files d12-ivy--config-files)
+      (ivy-set-actions
+       'counsel-find-file
+       '(("d" d12-ivy//delete-file "remove")))
       (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
 
 (defun d12frosted-core/init-glsl-mode ()
