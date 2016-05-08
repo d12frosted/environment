@@ -5,10 +5,7 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-#+ATTR_HTML: title="Join the chat at https://gitter.im/d12frosted/environment" style="float:left;margin-right: 8px;"
 [[https://gitter.im/d12frosted/environment?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge][file:https://badges.gitter.im/Join%20Chat.svg]]
-
-#+ATTR_HTML: title="Build with love and Spacemacs"
 [[http://spacemacs.org][file:https://cdn.rawgit.com/syl20bnr/spacemacs/442d025779da2f62fc86c2082703697714db6514/assets/spacemacs-badge.svg]]
 
 This repository contains configurations to various tools that I am trying to
