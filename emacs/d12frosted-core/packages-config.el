@@ -246,6 +246,13 @@
       (composable-def '(delete-region))
       (bind-key "C-M-w" 'composable-delete-region composable-mode-map))))
 
+(defun d12frosted-core/init-counsel-app ()
+  (use-package counsel-app
+    :if (configuration-layer/layer-usedp 'spacemacs-ivy)
+    :commands (counsel-app)
+    :init
+    (bind-key "M-<f12>" 'counsel-app)))
+
 (defun d12frosted-core/init-flyspell-correct ()
   (use-package flyspell-correct
     :init
