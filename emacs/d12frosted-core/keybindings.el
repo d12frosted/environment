@@ -14,7 +14,7 @@
 ;;; Code:
 
 (bind-keys
- ("M-g g"           . d12/goto-line-and-center)
+ ("M-g M-g"         . d12/goto-line-and-center)
  ("C-w"             . d12/kill-line-or-region)
  ("M-w"             . d12/copy-line-or-region)
  ("C-S-<backspace>" . d12/delete-line-or-region)
