@@ -42,6 +42,9 @@
                             :repo "d12frosted/counsel-app"))
     (flyspell-correct :location (recipe
                                :fetcher github
-                               :repo "d12frosted/flyspell-correct"))))
+                               :repo "d12frosted/flyspell-correct"))
+    (electric-align :location (recipe
+                               :fetcher github
+                               :repo "zk-phi/electric-align"))))
 
 ;; packages.el ends here

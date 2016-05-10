@@ -263,4 +263,8 @@
     (when (bound-and-true-p flyspell-correct-interface)
       (spacemacs/set-leader-keys "Sc" 'flyspell-correct/word))))
 
+(defun d12frosted-core/init-electric-align ()
+  (use-package electric-align)
+  (add-hook 'prog-mode-hook 'electric-align-mode))
+
 ;; packages-config.el ends here
