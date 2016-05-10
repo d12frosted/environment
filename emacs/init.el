@@ -107,7 +107,8 @@
                                       apropospriate-theme
                                       reveal-in-osx-finder
                                       vimish-fold)
-   dotspacemacs-excluded-packages '(emmet-mode)
+   dotspacemacs-excluded-packages '(emmet-mode
+                                    window-numbering)
    dotspacemacs-delete-orphan-packages nil))
 
 (defun dotspacemacs/init ()
