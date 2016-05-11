@@ -266,7 +266,7 @@
     (when (configuration-layer/layer-usedp 'spacemacs-helm)
       (setq flyspell-correct-interface 'flyspell-correct/helm))
     (when (bound-and-true-p flyspell-correct-interface)
-      (spacemacs/set-leader-keys "Sc" 'flyspell-correct/word))))
+      (spacemacs/set-leader-keys "Sc" 'flyspell-correct-word-generic))))
 
 (defun d12frosted-core/init-electric-align ()
   (use-package electric-align)
