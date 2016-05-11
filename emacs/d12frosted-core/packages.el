@@ -34,6 +34,7 @@
     mu4e
     god-mode
     spaceline
+    ace-window
     (composable :location (recipe
                            :fetcher github
                            :repo "paldepind/composable.el"))

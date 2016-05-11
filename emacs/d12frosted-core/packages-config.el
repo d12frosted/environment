@@ -237,6 +237,11 @@
     :config
     (spacemacs|diminish god-local-mode)))
 
+(defun d12frosted-core/post-init-ace-window ()
+  (use-package ace-window
+    :init
+    (bind-key "M-p" 'ace-window)))
+
 (defun d12frosted-core/init-composable ()
   (use-package composable
     :commands (composable-mode)
