@@ -187,7 +187,19 @@
       :commands (bpr-spawn bpr-open-last-buffer)
       :config
       (setq bpr-colorize-output t)
-      (setq bpr-close-after-success t)))
+      (setq bpr-close-after-success t)
+      (defvar bpr-cmd-and-separator (pcase d12-env-shell-type
+                                      ('fish "; and ")
+                                      (t " && ")))
+      (defvar bpr-cmd-or-separator(pcase d12-env-shell-type
+                                    ('fish "; or ")
+                                    (t " || ")))
+      (defun bpr-cmd-and (&rest cmds)
+        (mapconcat 'identity cmds bpr-cmd-and-separator))
+      (defun bpr-cmd-or (&rest cmds)
+        (mapconcat 'identity cmds bpr-cmd-or-separator))
+      (defun bpr-cmd-cd (dir)
+        (format "cd '%s'" dir))))
 
 (defun d12frosted-core/post-init-zoom-frm ()
   (use-package zoom-frm
