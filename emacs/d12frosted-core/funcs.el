@@ -48,6 +48,16 @@ string before that."
 
 ;;; Miscellaneous
 
+(defun d12/get-env-shell-type ()
+  (interactive)
+  (let* ((path (getenv "SHELL"))
+         (shell (file-name-nondirectory path)))
+    (pcase shell
+      ("fish" 'fish)
+      ("bash" 'bash)
+      ("zsh" 'zsh)
+      (t 'unknown))))
+
 (defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
   "Change the default title in *spacemacs* buffer."
   (save-excursion
