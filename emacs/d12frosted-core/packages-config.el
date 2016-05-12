@@ -61,6 +61,7 @@
   (use-package spaceline-config
     :init
     (setq powerline-default-separator 'utf-8)
+    (spaceline-compile)
     :config
     (require 'cl)
     (defvar d12-state-cursors '((emacs "SkyBlue2" box)
