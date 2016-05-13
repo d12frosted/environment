@@ -262,6 +262,7 @@
     (progn
       (composable-mode)
       (composable-def '(delete-region))
+      (spacemacs|diminish composable-mode)
       (bind-key "C-M-w" 'composable-delete-region composable-mode-map))))
 
 (defun d12frosted-core/init-counsel-app ()
