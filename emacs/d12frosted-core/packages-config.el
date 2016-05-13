@@ -41,7 +41,7 @@
 (defun d12frosted-core/post-init-projectile ()
   (use-package projectile
     :config
-    (setq projectile-switch-project-action #'projectile-commander)
+    (setq projectile-switch-project-action #'projectile-find-file)
     (def-projectile-commander-method ?s
       "Open a *shell* buffer for the project."
       (shell (get-buffer-create
