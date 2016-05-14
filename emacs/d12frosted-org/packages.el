@@ -34,37 +34,12 @@
       "#" 'd12-org/insert-block-template)
     (setq org-todo-keywords
           '((sequence
-             ;; The item is ready to be done at the earliest opportunity or
-             ;; at the date (and maybe time) indicated in the SCHEDULED tag.
-             ;; Some tasks are given a DEADLINE date which is useful for
-             ;; scheduling the tasks during my daily planning.
+             "NEXT(n)"
              "TODO(t)"
-
-             ;; I should use this tag when I start on a task, but if I clock
-             ;; in to a TODO item, I don't really need this task.
-             "STARTED(s)"
-
-             ;; I did some work on this task but I am waiting for a response.
-             ;; If I use this task I schedule the task into the future as a
-             ;; reminder to follow up with some notes in the body of the task.
              "WAITING(w)"
-
-             ;; Used to tag an activity that can only be done at the specified
-             ;; time and date, instead of tasks that can be
-             ;; completed at any time.
-             "APPT(a)"
-
              "|"
-
-             ;; The task is completed.
              "DONE(d)"
-
-             ;; I decided not to do this task but have left the task on file
-             ;; with this status.
-             "CANCELLED(c)"
-
-             ;; Used to identify a task that will not be activated just yet.
-             ;; The reason will be included in the task notes.
+             "CANCELED(c)"
              "DELAYED(l)"))
 
           org-hide-emphasis-markers t
