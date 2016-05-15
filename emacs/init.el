@@ -120,7 +120,7 @@ before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
   (setq-default
-   dotspacemacs-elpa-https t
+   dotspacemacs-elpa-https nil
    dotspacemacs-elpa-timeout 5
    dotspacemacs-check-for-update t
    dotspacemacs-editing-style 'emacs
