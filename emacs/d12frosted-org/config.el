@@ -17,7 +17,7 @@
   '()
   "List of interesting org files.")
 
-(when (configuration-layer/layer-usedp 'spacemacs-helm)
+(when (configuration-layer/layer-usedp 'helm)
   (add-to-list 'd12-helm/sources 'd12-helm/gtd-source))
 
 ;;; config.el ends here

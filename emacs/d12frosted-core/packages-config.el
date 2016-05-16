@@ -35,7 +35,7 @@
   (use-package projectile
     :init
     (setq projectile-enable-caching nil)
-    (when (configuration-layer/layer-usedp 'spacemacs-helm)
+    (when (configuration-layer/layer-usedp 'helm)
       (helm-projectile-on))))
 
 (defun d12frosted-core/post-init-projectile ()
@@ -104,7 +104,7 @@
     :config
     (setq git-messenger:show-detail t)))
 
-(when (configuration-layer/layer-usedp 'spacemacs-helm)
+(when (configuration-layer/layer-usedp 'helm)
   (defun d12frosted-core/post-init-helm ()
     (use-package helm
       :config
@@ -114,7 +114,7 @@
       (bind-key "C-s" 'helm-swoop)
       (bind-key "C-S-s" 'spacemacs/helm-swoop-region-or-symbol))))
 
-(when (configuration-layer/layer-usedp 'spacemacs-ivy)
+(when (configuration-layer/layer-usedp 'ivy)
   (defun d12frosted-core/post-init-ivy ()
     (use-package ivy
       :config
@@ -267,7 +267,7 @@
 
 (defun d12frosted-core/init-counsel-app ()
   (use-package counsel-app
-    :if (configuration-layer/layer-usedp 'spacemacs-ivy)
+    :if (configuration-layer/layer-usedp 'ivy)
     :commands (counsel-app)
     :init
     (bind-key "M-<f12>" 'counsel-app)))
@@ -275,9 +275,9 @@
 (defun d12frosted-core/init-flyspell-correct ()
   (use-package flyspell-correct
     :init
-    (when (configuration-layer/layer-usedp 'spacemacs-ivy)
+    (when (configuration-layer/layer-usedp 'ivy)
       (setq flyspell-correct-interface 'flyspell-correct/ivy))
-    (when (configuration-layer/layer-usedp 'spacemacs-helm)
+    (when (configuration-layer/layer-usedp 'helm)
       (setq flyspell-correct-interface 'flyspell-correct/helm))
     (when (bound-and-true-p flyspell-correct-interface)
       (spacemacs/set-leader-keys "Sc" 'flyspell-correct-word-generic))))

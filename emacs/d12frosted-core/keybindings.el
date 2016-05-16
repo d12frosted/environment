@@ -24,10 +24,10 @@
 
 (evil-leader/set-key "p#" 'projectile-replace-regexp)
 
-(when (configuration-layer/layer-usedp 'spacemacs-helm)
+(when (configuration-layer/layer-usedp 'helm)
   (evil-leader/set-key "oj" 'd12-helm))
 
-(when (configuration-layer/layer-usedp 'spacemacs-ivy)
+(when (configuration-layer/layer-usedp 'ivy)
   (evil-leader/set-key "oj" 'd12-ivy))
 
 (spacemacs/declare-prefix "o" "d12frosted")

@@ -19,10 +19,10 @@ or removed from agenda files directory."
   (interactive)
   (setq d12-org/files-list (d12-files/query "*.org" d12-path/org-home 1))
   (setq org-agenda-files d12-org/files-list)
-  (when (configuration-layer/layer-usedp 'spacemacs-ivy)
+  (when (configuration-layer/layer-usedp 'ivy)
     (d12-ivy//add-interesting-files d12-org/files-list)))
 
-(when (configuration-layer/layer-usedp 'spacemacs-helm)
+(when (configuration-layer/layer-usedp 'helm)
   (defun d12-helm/gtd-source ()
     "Construct helm source from `d12-org/files-list'."
     `((name . "org files")
