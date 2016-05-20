@@ -197,11 +197,11 @@ user code.")
 
 (defun dotspacemacs/user-config ()
   "Configuration function.
- This function is called at the very end of Spacemacs initialization after
+This function is called at the very end of Spacemacs initialization after
 layers configuration."
   ;; TODO: move me out
   (d12/setup-M-h)
   (spacemacs/toggle-camel-case-motion-globally-on)
   (spacemacs/toggle-automatic-symbol-highlight-on))
 
-;;; spacemacs ends here
+;;; init.el ends here
