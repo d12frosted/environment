@@ -205,6 +205,15 @@
       (defun bpr-cmd-cd (dir)
         (format "cd '%s'" dir))))
 
+(defun d12frosted-core/post-init-magit ()
+  (use-package magit
+    :defer t
+    :config
+    (defun d12-magit/push-all ()
+      (interactive)
+      (let ((bpr-on-success #'magit-refresh))
+        (bpr-spawn "git pushall")))))
+
 (defun d12frosted-core/post-init-zoom-frm ()
   (use-package zoom-frm
     :config
