@@ -41,6 +41,10 @@
 (defun d12frosted-core/post-init-projectile ()
   (use-package projectile
     :config
+    (defun d12-projectile/open-root-in-finder ()
+      (interactive)
+      (shell-command (format "open '%s'" (projectile-project-root))))
+    (spacemacs/set-leader-keys "pO" #'d12-projectile/open-root-in-finder)
     (setq projectile-switch-project-action #'projectile-find-file)
     (def-projectile-commander-method ?s
       "Open a *shell* buffer for the project."
