@@ -35,6 +35,7 @@
     god-mode
     spaceline
     ace-window
+    flycheck-package
     (composable :location (recipe
                            :fetcher github
                            :repo "paldepind/composable.el"))
