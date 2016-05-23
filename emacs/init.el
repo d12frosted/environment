@@ -74,7 +74,8 @@
      emacs-lisp
      erlang
      (haskell :variables
-              haskell-enable-ghc-mod-support t
+              haskell-enable-ghc-mod-support nil
+              haskell-enable-ghci-ng-support nil
               haskell-enable-hindent-style "chris-done"
               haskell-tags-on-save nil
               haskell-process-log t
