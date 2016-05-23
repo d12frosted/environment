@@ -33,14 +33,9 @@
       "!" 'd12-org/sort-upper-level
       "#" 'd12-org/insert-block-template)
     (setq org-todo-keywords
-          '((sequence
-             "NEXT(n)"
-             "TODO(t)"
-             "WAITING(w)"
-             "|"
-             "DONE(d)"
-             "CANCELED(c)"
-             "DELAYED(l)"))
+          '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))
+
 
           org-hide-emphasis-markers t
           org-agenda-window-setup 'current-window
