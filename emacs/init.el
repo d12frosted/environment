@@ -195,6 +195,9 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (configuration-layer//declare-layers)
+  (mapc #'d12-layers/add-extra-to-load-path
+        (configuration-layer/get-layers-list))
   (setq-default spacemacs-theme-org-highlight t
                 spacemacs-theme-org-height t))
 
@@ -206,5 +209,15 @@ layers configuration."
   (d12/setup-M-h)
   (spacemacs/toggle-camel-case-motion-globally-on)
   (spacemacs/toggle-automatic-symbol-highlight-on))
+
+(defun d12-layers/add-extra-to-load-path (layer)
+  "Add 'extra' folder to `load-path' for a given LAYER.
+
+Load-path is modified only when such folder exists."
+  (let* ((layer-path (configuration-layer/get-layer-path layer))
+         (layer-root (format "%s%s/" layer-path layer))
+         (extra-path (concat layer-root "extra/")))
+    (when (file-exists-p extra-path)
+      (add-to-load-path extra-path))))
 
 ;;; init.el ends here
