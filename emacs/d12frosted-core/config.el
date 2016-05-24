@@ -41,8 +41,9 @@
 ;;; Configs
 
 (defvar d12-env-shell-type (d12/get-env-shell-type)
-  "Type of shell. Available types are `fish', `bash' and `zsh'.
-  If you wish to add support for more types checkout
+  "Type of shell, available types are `fish', `bash' and `zsh'.
+
+If you wish to add support for more types checkout
   `d12/setup-env-shell-type'")
 
 (setq-default
