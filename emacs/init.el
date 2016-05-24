@@ -194,7 +194,9 @@ values."
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
-user code.")
+user code."
+  (setq-default spacemacs-theme-org-highlight t
+                spacemacs-theme-org-height t))
 
 (defun dotspacemacs/user-config ()
   "Configuration function.
