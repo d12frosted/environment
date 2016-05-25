@@ -39,9 +39,9 @@
     (composable :location (recipe
                            :fetcher github
                            :repo "paldepind/composable.el"))
-    (counsel-app :location (recipe
-                            :fetcher github
-                            :repo "d12frosted/counsel-app"))
+    (counsel-osx-app :location (recipe
+                                :fetcher github
+                                :repo "d12frosted/counsel-osx-app"))
     (flyspell-correct :location (recipe
                                :fetcher github
                                :repo "d12frosted/flyspell-correct"))

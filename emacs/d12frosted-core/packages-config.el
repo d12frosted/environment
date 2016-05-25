@@ -284,14 +284,23 @@
       (composable-mode)
       (composable-def '(delete-region))
       (spacemacs|diminish composable-mode)
-      (bind-key "C-M-w" 'composable-delete-region composable-mode-map))))
+      (defun d12-composable/mark-word (arg)
+        "Mark ARG words.
+Supports negative arguments and repeating."
+        (interactive "P")
+        (composable--mark-with-forward 'forward-word arg))
+      (bind-key "C-M-w" 'composable-delete-region composable-mode-map)
+      (bind-key "w" 'd12-composable/mark-word composable-object-mode-map))))
 
-(defun d12frosted-core/init-counsel-app ()
-  (use-package counsel-app
+(defun d12frosted-core/init-counsel-osx-app ()
+  (use-package counsel-osx-app
     :if (configuration-layer/layer-usedp 'ivy)
-    :commands (counsel-app)
+    :commands (counsel-osx-app)
     :init
-    (bind-key "M-<f12>" 'counsel-app)))
+    (setq counsel-apps-location
+          `("/Applications"
+            ,(concat user-home-directory "Applications")))
+    (bind-key "M-<f12>" 'counsel-osx-app)))
 
 (defun d12frosted-core/init-flyspell-correct ()
   (use-package flyspell-correct
