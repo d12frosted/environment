@@ -125,7 +125,8 @@
       (d12-ivy//add-interesting-files d12-ivy--config-files)
       (ivy-set-actions
        'counsel-find-file
-       '(("d" d12-ivy//delete-file "remove")))
+       '(("d" d12-ivy//delete-file "remove")
+         ("r" d12-ivy//rename-file "rename")))
       (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
 
 (defun d12frosted-core/init-glsl-mode ()
