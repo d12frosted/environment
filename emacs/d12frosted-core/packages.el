@@ -14,36 +14,49 @@
 ;;; Code:
 
 (defconst d12frosted-core-packages
-  '(beacon
+  '(
+    ;; utils
     ranger
     google-translate
     projectile
-    spaceline
     magit
     git-messenger
-    helm
-    ivy
-    glsl-mode
-    lua-mode
     comment-dwim-2
-    elfeed
-    elfeed-goodies
     bpr
     zoom-frm
-    move-text
-    mu4e
     god-mode
-    spaceline
     ace-window
-    flycheck-package
+    persp-mode
+    move-text
+    alert
     (composable :location (recipe
                            :fetcher github
                            :repo "paldepind/composable.el"))
     (counsel-osx-app :location (recipe
                                 :fetcher github
                                 :repo "d12frosted/counsel-osx-app"))
+
+    ;; completion
+    helm
+    ivy
+
+    ;; visual
+    beacon
+    spaceline
+
+    ;; langs
+    glsl-mode
+    lua-mode
+
+    ;; flyspell
+    flycheck-package
     (flyspell-correct :location (recipe
-                               :fetcher github
-                               :repo "d12frosted/flyspell-correct"))))
+                                 :fetcher github
+                                 :repo "d12frosted/flyspell-correct"))
+
+    ;; other
+    mu4e
+    elfeed
+    elfeed-goodies))
 
 ;;; packages.el ends here

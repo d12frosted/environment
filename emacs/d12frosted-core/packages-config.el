@@ -14,11 +14,6 @@
 
 ;;; Code:
 
-(defun d12frosted-core/init-beacon ()
-  (use-package beacon
-    :init
-    (beacon-mode 1)))
-
 (defun d12frosted-core/pre-init-ranger ()
   (use-package ranger
     :init
@@ -61,6 +56,121 @@
       "Open project root in dired."
       (projectile-dired))))
 
+(defun d12frosted-core/post-init-magit ()
+  (use-package magit
+    :init
+    (setq magit-repo-dirs `(,d12-path/developer))
+    (defun d12-magit/push-all ()
+      (interactive)
+      (let ((bpr-on-success #'magit-refresh))
+        (bpr-spawn "git pushall")))))
+
+(defun d12frosted-core/post-init-git-messenger ()
+  (use-package git-messenger
+    :config
+    (setq git-messenger:show-detail t)))
+
+(defun d12frosted-core/init-bpr ()
+  (use-package bpr
+    :commands (bpr-spawn bpr-open-last-buffer)
+    :config
+    (setq bpr-colorize-output t)
+    (setq bpr-close-after-success t)
+    (defvar bpr-cmd-and-separator (pcase d12-env-shell-type
+                                    ('fish "; and ")
+                                    (t " && ")))
+    (defvar bpr-cmd-or-separator(pcase d12-env-shell-type
+                                  ('fish "; or ")
+                                  (t " || ")))
+    (defun bpr-cmd-and (&rest cmds)
+      (mapconcat 'identity cmds bpr-cmd-and-separator))
+    (defun bpr-cmd-or (&rest cmds)
+      (mapconcat 'identity cmds bpr-cmd-or-separator))
+    (defun bpr-cmd-cd (dir)
+      (format "cd '%s'" dir))))
+
+(defun d12frosted-core/post-init-zoom-frm ()
+  (use-package zoom-frm
+    :config
+    ;; remove some crazy bindings
+    (unbind-key "<C-wheel-down>")
+    (unbind-key "<C-wheel-up>")))
+
+(defun d12frosted-core/init-god-mode ()
+  (use-package god-mode
+    :commands (god-local-mode)
+    :bind ("<escape>" . god-local-mode)
+    :config
+    (spacemacs|diminish god-local-mode)))
+
+(defun d12frosted-core/post-init-ace-window ()
+  (use-package ace-window
+    :init
+    (bind-key "M-p" 'ace-window)))
+
+(defun d12frosted-core/post-init-move-text ()
+  (use-package move-text
+    :config
+    (bind-key "<M-down>" 'move-text-down prog-mode-map)
+    (bind-key "<M-up>" 'move-text-up prog-mode-map)))
+
+(defun d12frosted-core/init-alert ()
+  (use-package alert
+    :commands (alert)
+    :init
+    (setq alert-default-style 'notifier)))
+
+(defun d12frosted-core/init-composable ()
+  (use-package composable
+    :commands (composable-mode)
+    :init
+    (progn
+      (composable-mode)
+      (composable-def '(delete-region))
+      (spacemacs|diminish composable-mode)
+      (defun d12-composable/mark-word (arg)
+        "Mark ARG words.
+Supports negative arguments and repeating."
+        (interactive "P")
+        (composable--mark-with-forward 'forward-word arg))
+      (bind-key "C-M-w" 'composable-delete-region composable-mode-map)
+      (bind-key "w" 'd12-composable/mark-word composable-object-mode-map))))
+
+(defun d12frosted-core/init-counsel-osx-app ()
+  (use-package counsel-osx-app
+    :if (configuration-layer/layer-usedp 'ivy)
+    :commands (counsel-osx-app)
+    :init
+    (setq counsel-osx-app-location
+          `("/Applications"
+            ,(concat user-home-directory "Applications")))
+    (bind-key "M-<f12>" 'counsel-osx-app)))
+
+(when (configuration-layer/layer-usedp 'helm)
+  (defun d12frosted-core/post-init-helm ()
+    (use-package helm
+      :config
+      ;; Disable fuzzy matching to make mdfind work with helm-locate
+      (setq helm-locate-fuzzy-match nil)
+      (setq helm-locate-command "mdfind -name %s %s")
+      (bind-key "C-s" 'helm-swoop)
+      (bind-key "C-S-s" 'spacemacs/helm-swoop-region-or-symbol))))
+
+(when (configuration-layer/layer-usedp 'ivy)
+  (defun d12frosted-core/post-init-ivy ()
+    (use-package ivy
+      :config
+      (ivy-set-actions
+       'counsel-find-file
+       '(("d" d12-ivy//delete-file "remove")
+         ("r" d12-ivy//rename-file "rename")))
+      (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
+
+(defun d12frosted-core/init-beacon ()
+  (use-package beacon
+    :init
+    (beacon-mode 1)))
+
 (defun d12frosted-core/post-init-spaceline ()
   (use-package spaceline-config
     :init
@@ -98,36 +208,6 @@
         (intern (format "d12-spaceline-%S-face" state))))
     (setq spaceline-highlight-face-func 'd12//get-state-face)))
 
-(defun d12frosted-core/post-init-magit ()
-  (use-package magit
-    :init
-    (setq magit-repo-dirs `(,d12-path/developer))))
-
-(defun d12frosted-core/post-init-git-messenger ()
-  (use-package git-messenger
-    :config
-    (setq git-messenger:show-detail t)))
-
-(when (configuration-layer/layer-usedp 'helm)
-  (defun d12frosted-core/post-init-helm ()
-    (use-package helm
-      :config
-      ;; Disable fuzzy matching to make mdfind work with helm-locate
-      (setq helm-locate-fuzzy-match nil)
-      (setq helm-locate-command "mdfind -name %s %s")
-      (bind-key "C-s" 'helm-swoop)
-      (bind-key "C-S-s" 'spacemacs/helm-swoop-region-or-symbol))))
-
-(when (configuration-layer/layer-usedp 'ivy)
-  (defun d12frosted-core/post-init-ivy ()
-    (use-package ivy
-      :config
-      (ivy-set-actions
-       'counsel-find-file
-       '(("d" d12-ivy//delete-file "remove")
-         ("r" d12-ivy//rename-file "rename")))
-      (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
-
 (defun d12frosted-core/init-glsl-mode ()
   (use-package glsl-mode
     :mode ("\\.fsh$"  . glsl-mode)
@@ -136,7 +216,6 @@
     :mode ("\\.frag$" . glsl-mode)
     :mode ("\\.geom$" . glsl-mode)))
 
-;; TODO: move me to separate layer
 (defun d12frosted-core/post-init-lua-mode ()
   (use-package lua-mode
     :defer t
@@ -170,104 +249,6 @@
     (spacemacs/set-leader-keys-for-major-mode 'lua-mode "sm" 'moai-run-main)
     (spacemacs/set-leader-keys-for-major-mode 'lua-mode "su" 'moai-upload)))
 
-(defun d12frosted-core/init-comment-dwim-2 ()
-  (use-package comment-dwim-2
-    :bind ("M-;" . comment-dwim-2)))
-
-(defun d12frosted-core/post-init-elfeed ()
-  (use-package elfeed
-    :defer t
-    :config
-    (setq elfeed-feeds d12/elfeed-feeds)))
-
-(defun d12frosted-core/post-init-elfeed-goodies ()
-  (use-package elfeed-goodies
-    :defer t
-    :config
-    (setq elfeed-goodies/powerline-default-separator 'utf-8)))
-
-(defun d12frosted-core/init-bpr ()
-    (use-package bpr
-      :commands (bpr-spawn bpr-open-last-buffer)
-      :config
-      (setq bpr-colorize-output t)
-      (setq bpr-close-after-success t)
-      (defvar bpr-cmd-and-separator (pcase d12-env-shell-type
-                                      ('fish "; and ")
-                                      (t " && ")))
-      (defvar bpr-cmd-or-separator(pcase d12-env-shell-type
-                                    ('fish "; or ")
-                                    (t " || ")))
-      (defun bpr-cmd-and (&rest cmds)
-        (mapconcat 'identity cmds bpr-cmd-and-separator))
-      (defun bpr-cmd-or (&rest cmds)
-        (mapconcat 'identity cmds bpr-cmd-or-separator))
-      (defun bpr-cmd-cd (dir)
-        (format "cd '%s'" dir))))
-
-(defun d12frosted-core/post-init-magit ()
-  (use-package magit
-    :defer t
-    :config
-    (defun d12-magit/push-all ()
-      (interactive)
-      (let ((bpr-on-success #'magit-refresh))
-        (bpr-spawn "git pushall")))))
-
-(defun d12frosted-core/post-init-zoom-frm ()
-  (use-package zoom-frm
-    :config
-    ;; remove some crazy bindings
-    (unbind-key "<C-wheel-down>")
-    (unbind-key "<C-wheel-up>")))
-
-(defun d12frosted-core/post-init-move-text ()
-  (use-package move-text
-    :config
-    ;; remove some crazy bindings
-    (bind-key "<M-down>" 'move-text-down prog-mode-map)
-    (bind-key "<M-up>" 'move-text-up prog-mode-map)))
-
-(defun d12frosted-core/post-init-mu4e ()
-  (use-package move-text
-    :init
-    (setq mu4e-installation-path "/usr/local/Cellar/mu/0.9.16/share/emacs/site-lisp"
-          mu4e-maildir "~/.mail"
-          mu4e-drafts-folder "/[Gmail].Drafts"
-          mu4e-sent-folder "/[Gmail].Sent Mail"
-          mu4e-refile-folder "/[Gmail].All Mail"
-          mu4e-trash-folder "/[Gmail].Trash"
-          mu4e-get-mail-command "mbsync -a"
-          mu4e-update-interval nil
-          mu4e-compose-signature-auto-include nil
-          mu4e-view-show-images t
-          mu4e-view-show-addresses t
-          mu4e-sent-messages-behavior 'delete
-          mu4e-maildir-shortcuts
-          '(("/INBOX"               . ?i)
-            ("/[Gmail].Sent Mail"   . ?s)
-            ("/[Gmail].Trash"       . ?t)
-            ("/[Gmail].All Mail"    . ?a))
-          mu4e-enable-notifications t
-          mu4e-enable-mode-line t)
-    (with-eval-after-load 'mu4e-alert
-      ;; Enable Desktop notifications
-      (mu4e-alert-set-default-style 'notifier))
-    (bind-key "<f5>" (lambda () (interactive ) (mu4e-update-mail-and-index t )))
-    (require 'mu4e)))
-
-(defun d12frosted-core/init-god-mode ()
-  (use-package god-mode
-    :commands (god-local-mode)
-    :bind ("<escape>" . god-local-mode)
-    :config
-    (spacemacs|diminish god-local-mode)))
-
-(defun d12frosted-core/post-init-ace-window ()
-  (use-package ace-window
-    :init
-    (bind-key "M-p" 'ace-window)))
-
 (when (configuration-layer/layer-usedp 'syntax-checking)
   (defun d12frosted-core/init-flycheck-package ()
     (use-package flycheck-package
@@ -275,38 +256,6 @@
       :commands flycheck-package-setup
       :init (eval-after-load 'flycheck
               '(flycheck-package-setup)))))
-
-(defun d12frosted-core/init-alert ()
-  (use-package alert
-    :commands (alert)
-    :init
-    (setq alert-default-style 'notifier)))
-
-(defun d12frosted-core/init-composable ()
-  (use-package composable
-    :commands (composable-mode)
-    :init
-    (progn
-      (composable-mode)
-      (composable-def '(delete-region))
-      (spacemacs|diminish composable-mode)
-      (defun d12-composable/mark-word (arg)
-        "Mark ARG words.
-Supports negative arguments and repeating."
-        (interactive "P")
-        (composable--mark-with-forward 'forward-word arg))
-      (bind-key "C-M-w" 'composable-delete-region composable-mode-map)
-      (bind-key "w" 'd12-composable/mark-word composable-object-mode-map))))
-
-(defun d12frosted-core/init-counsel-osx-app ()
-  (use-package counsel-osx-app
-    :if (configuration-layer/layer-usedp 'ivy)
-    :commands (counsel-osx-app)
-    :init
-    (setq counsel-osx-app-location
-          `("/Applications"
-            ,(concat user-home-directory "Applications")))
-    (bind-key "M-<f12>" 'counsel-osx-app)))
 
 (defun d12frosted-core/init-flyspell-correct ()
   (use-package flyspell-correct
