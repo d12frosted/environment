@@ -46,4 +46,4 @@
                                :fetcher github
                                :repo "d12frosted/flyspell-correct"))))
 
-;; packages.el ends here
+;;; packages.el ends here
