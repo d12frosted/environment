@@ -36,6 +36,14 @@
           '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
             (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))
 
+          org-todo-state-tags-triggers
+          '(("CANCELLED" ("CANCELLED" . t))
+            ("WAITING" ("WAITING" . t))
+            ("HOLD" ("WAITING") ("HOLD" . t))
+            (done ("WAITING") ("HOLD"))
+            ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+            ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+            ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
 
           org-hide-emphasis-markers t
           org-agenda-window-setup 'current-window
