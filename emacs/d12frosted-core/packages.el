@@ -44,9 +44,6 @@
                                 :repo "d12frosted/counsel-osx-app"))
     (flyspell-correct :location (recipe
                                :fetcher github
-                               :repo "d12frosted/flyspell-correct"))
-    (electric-align :location (recipe
-                               :fetcher github
-                               :repo "zk-phi/electric-align"))))
+                               :repo "d12frosted/flyspell-correct"))))
 
 ;; packages.el ends here

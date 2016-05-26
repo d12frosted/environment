@@ -313,8 +313,4 @@ Supports negative arguments and repeating."
     (when (bound-and-true-p flyspell-correct-interface)
       (spacemacs/set-leader-keys "Sc" 'flyspell-correct-word-generic))))
 
-(defun d12frosted-core/init-electric-align ()
-  (use-package electric-align)
-  (add-hook 'prog-mode-hook 'electric-align-mode))
-
 ;; packages-config.el ends here
