@@ -39,6 +39,11 @@
       path: haskell/cabal-config
       create: true
 
+    ~/.local/bin/ipa-install:
+      path: utils/ipa-install/ipa-install
+      relink: true
+      create: true
+
 - shell:
     - [brw haskell-stack && stack setup, "Bootstrap haskell"]
 
