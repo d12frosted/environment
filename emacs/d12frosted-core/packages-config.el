@@ -276,6 +276,12 @@
       :init (eval-after-load 'flycheck
               '(flycheck-package-setup)))))
 
+(defun d12frosted-core/init-alert ()
+  (use-package alert
+    :commands (alert)
+    :init
+    (setq alert-default-style 'notifier)))
+
 (defun d12frosted-core/init-composable ()
   (use-package composable
     :commands (composable-mode)
