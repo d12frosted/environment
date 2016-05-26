@@ -61,6 +61,6 @@
   - sh git/configure.sh
   - sh osx/configure.sh
   -
-    command: brw slack mplayerx colorpicker flux gitter
+    command: brw slack mplayerx colorpicker flux gitter gfxcardstatus
     description: installing several useful apps
     stdout: true
