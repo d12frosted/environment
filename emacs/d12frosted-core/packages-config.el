@@ -297,7 +297,7 @@ Supports negative arguments and repeating."
     :if (configuration-layer/layer-usedp 'ivy)
     :commands (counsel-osx-app)
     :init
-    (setq counsel-apps-location
+    (setq counsel-osx-app-location
           `("/Applications"
             ,(concat user-home-directory "Applications")))
     (bind-key "M-<f12>" 'counsel-osx-app)))
