@@ -10,7 +10,8 @@ you are interested in.
 
 * Available utilities
 
-1. =dump= - utility for dumping files or directories by either copying or moving
-   them with appended timestamp
-2. =brw= - utility for installing packages (currently OS X only).
-3. =git-notify= - utility for tracking updates to repository.
+1. =dump= - dumping files or directories by either copying or moving them with
+   appended timestamp
+2. =brw= - bootstrapping packages using =brew= (currently OS X only).
+3. =git-notify= - tracking updates to repository.
+4. =ipa-install= - installing =ipa= files to iOS devices (OS X only).
