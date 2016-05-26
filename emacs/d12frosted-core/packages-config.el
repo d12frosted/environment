@@ -122,7 +122,6 @@
   (defun d12frosted-core/post-init-ivy ()
     (use-package ivy
       :config
-      (d12-ivy//add-interesting-files d12-ivy--config-files)
       (ivy-set-actions
        'counsel-find-file
        '(("d" d12-ivy//delete-file "remove")

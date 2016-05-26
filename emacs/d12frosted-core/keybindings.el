@@ -22,15 +22,10 @@
  ("<f9>"            . calc)
  ("<f8>"            . calendar))
 
-(evil-leader/set-key "p#" 'projectile-replace-regexp)
-
-(when (configuration-layer/layer-usedp 'helm)
-  (evil-leader/set-key "oj" 'd12-helm))
-
-(when (configuration-layer/layer-usedp 'ivy)
-  (evil-leader/set-key "oj" 'd12-ivy))
+(evil-leader/set-key
+  "p#" 'projectile-replace-regexp
+  "oj" 'd12-interesting-files)
 
 (spacemacs/declare-prefix "o" "d12frosted")
-;; (spacemacs/declare-prefix "." "org")
 
 ;;; keybindings.el ends here

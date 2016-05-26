@@ -13,23 +13,42 @@
 
 ;;; Code:
 
-;; require all modules
+;;;; Require general stuff
+;;
+
 (require 'd12-files)
 (require 'd12-dir-settings)
 (require 'd12-copy-paste)
 (require 'd12-comment)
 (require 'd12-eww)
 
-(when (configuration-layer/layer-usedp 'helm)
-  (require 'd12-helm)
-  (add-to-list 'd12-helm/sources 'd12-helm/config-source))
+;;;; d12-interesting files
+;;
 
-;;; Auto modes
+(require 'd12-interesting-files)
+
+(setq d12-interesting-files-interface
+      (cond
+       ((configuration-layer/layer-usedp 'helm) #'d12-interesting-files-helm)
+       ((configuration-layer/layer-usedp 'ivy) #'d12-interesting-files-ivy)
+       (t #'d12-interesting-files-default)))
+
+(d12-interesting-files-add
+ `(,(concat d12-path/emacs-layers "init.el")
+   ,(concat d12-path/emacs-private "private.el")
+   ,(concat d12-path/fish-public "config.fish")
+   ,(concat d12-path/fish-private "preconfig.fish")
+   ,(concat d12-path/fish-private "postconfig.fish")
+   ,(concat d12-path/emacs-home "init.el")))
+
+;;;; Auto modes
+;;
 
 (add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
 (add-to-list 'auto-mode-alist '("SConscript" . python-mode))
 
-;;; Hooks
+;;;; Hooks
+;;
 
 (add-hook 'find-file-hook 'd12-dir-settings/load)
 (add-hook 'company-mode-hook 'company-quickhelp-mode)
@@ -37,7 +56,8 @@
 (add-hook 'text-mode-hook 'visual-line-mode)
 (add-hook 'after-save-hook 'delete-trailing-whitespace)
 
-;;; Configs
+;;;; Configs
+;;
 
 (defvar d12-env-shell-type (d12/get-env-shell-type)
   "Type of shell, available types are `fish', `bash' and `zsh'.
@@ -81,18 +101,7 @@ If you wish to add support for more types checkout
 (defun pyenv-mode-versions ()
   "List installed python versions."
   (let ((versions (shell-command-to-string "vf ls")))
-    (delete-dups (cons "system" (split-string versions)))))
-
-;; d12-ivy
-(defvar d12-ivy--files '()
-  "List of interesting files to discover via ivy interface.")
-
-(setq d12-ivy--config-files `(,(concat d12-path/emacs-layers "init.el")
-                              ,(concat d12-path/emacs-private "private.el")
-                              ,(concat d12-path/fish-public "config.fish")
-                              ,(concat d12-path/fish-private "preconfig.fish")
-                              ,(concat d12-path/fish-private "postconfig.fish")
-                              ,(concat d12-path/emacs-home "init.el")))
+    (delete-dups (cons "system" (split-string verasions)))))
 
 ;; Langs
 (quail-define-package
