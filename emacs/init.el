@@ -21,7 +21,7 @@
 (setq custom-file (concat d12-path/emacs-private "custom.el"))
 (load custom-file t)
 
-;; load `private.el' file containing all sensitive data
+;; load `private.el' file containing all the sensitive data
 (load (concat d12-path/emacs-private "private.el"))
 
 (defun dotspacemacs/layers ()
@@ -37,29 +37,20 @@
      better-defaults
      colors
      dash
-     (deft :variables
-       deft-directory (concat d12-path/dropbox "Apps/deft"))
-     elfeed
-     emoji
-     eyebrowse
+     erc
      (git :variables
           git-magit-status-fullscreen t)
      github
-     gnus
-     mu4e
      (org :variables
           org-enable-github-support t)
      pandoc
      ranger
      restclient
-     ;; semantic
      syntax-checking
-     ;; spacemacs-home-agenda
      spacemacs-layouts
      ivy
      spell-checking
-     (shell :variables
-            shell-default-term-shell "/usr/local/bin/fish")
+     shell
      version-control
 
      ;; private layers
@@ -68,9 +59,6 @@
      d12frosted-org
 
      ;; languages
-     (csharp :variables
-             omnisharp-server-executable-path
-             "~/Developer/Other/omnisharp-roslyn/artifacts/build/omnisharp/omnisharp")
      emacs-lisp
      erlang
      (haskell :variables
@@ -99,8 +87,6 @@
                  js2-basic-offset 2)
      lua
      markdown
-     python
-     ruby
      shell-scripts
      yaml
 
