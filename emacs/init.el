@@ -167,7 +167,7 @@ values."
    dotspacemacs-show-transient-state-title t
    dotspacemacs-show-transient-state-color-guide t
    dotspacemacs-mode-line-unicode-symbols nil
-   dotspacemacs-smooth-scrolling nil
+   dotspacemacs-smooth-scrolling t
    dotspacemacs-line-numbers nil
    dotspacemacs-smartparens-strict-mode nil
    dotspacemacs-smart-closing-parenthesis t
