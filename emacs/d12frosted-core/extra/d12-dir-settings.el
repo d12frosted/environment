@@ -10,6 +10,7 @@
 ;;; License: GPLv3
 
 ;;; Commentary:
+;; Grabbed from http://emacs.stackexchange.com/a/14784/5161
 
 ;;; Code:
 
@@ -28,6 +29,8 @@
   (interactive)
   (when buffer-file-name
     (d12-dir-settings/recursive-load buffer-file-name)))
+
+(add-hook 'find-file-hook 'd12-dir-settings/load)
 
 (provide 'd12-dir-settings)
 

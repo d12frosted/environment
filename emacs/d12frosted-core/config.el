@@ -46,7 +46,6 @@
 ;;;; Hooks
 ;;
 
-(add-hook 'find-file-hook 'd12-dir-settings/load)
 (add-hook 'company-mode-hook 'company-quickhelp-mode)
 (add-hook 'prog-mode-hook 'vimish-fold-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
