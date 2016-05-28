@@ -22,6 +22,7 @@
 (require 'd12-comment)
 (require 'd12-eww)
 (require 'd12-ukrainian-input-method)
+(require 'd12-eval-overlay)
 
 ;;;; d12-interesting files
 ;;
