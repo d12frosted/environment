@@ -42,12 +42,6 @@
    ,(concat d12-path/fish-private "postconfig.fish")
    ,(concat d12-path/emacs-home "init.el")))
 
-;;;; Auto modes
-;;
-
-(add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
-(add-to-list 'auto-mode-alist '("SConscript" . python-mode))
-
 ;;;; Hooks
 ;;
 
@@ -83,7 +77,9 @@ If you wish to add support for more types checkout
 
 (delete-selection-mode 1)
 
-;; setup scrolling
+;;;; setup scrolling
+;;
+
 (setq scroll-margin 0                   ; Drag the point along while scrolling
       scroll-conservatively 1000        ; Never recenter the screen while scrolling
       scroll-error-top-bottom t         ; Move to beg/end of buffer before
@@ -93,12 +89,19 @@ If you wish to add support for more types checkout
       mouse-wheel-progressive-speed nil
       mouse-wheel-scroll-amount '(1))
 
-;; OS X
+;;;; OS X
+;;
+
 (if (spacemacs/system-is-mac)
     (setq mac-command-modifier 'meta
           mac-option-modifier  'none))
 
-;; python
+;;;; python
+;;
+
+(add-to-list 'auto-mode-alist '("SConstruct" . python-mode))
+(add-to-list 'auto-mode-alist '("SConscript" . python-mode))
+
 (defun pyenv-mode-versions ()
   "List installed python versions."
   (let ((versions (shell-command-to-string "vf ls")))

@@ -48,4 +48,4 @@ buffer."
 
 (provide 'd12-eww)
 
-;;; d12-helm.el ends here
+;;; d12-eww.el ends here
