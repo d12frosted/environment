@@ -21,12 +21,10 @@
     projectile
     magit
     git-messenger
-    comment-dwim-2
     bpr
     zoom-frm
     god-mode
     ace-window
-    persp-mode
     move-text
     alert
     (composable :location (recipe
@@ -48,7 +46,7 @@
     glsl-mode
     lua-mode
 
-    ;; flyspell
+    ;; flyspell / flycheck
     flycheck-package
     (flyspell-correct :location (recipe
                                  :fetcher github
