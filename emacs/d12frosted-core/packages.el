@@ -33,6 +33,7 @@
     (counsel-osx-app :location (recipe
                                 :fetcher github
                                 :repo "d12frosted/counsel-osx-app"))
+    cider ;; it's used as utility
 
     ;; completion
     helm
@@ -188,6 +189,34 @@ Supports negative arguments and repeating."
           `("/Applications"
             ,(concat user-home-directory "Applications")))
     (bind-key "M-<f12>" 'counsel-osx-app)))
+
+(defun d12frosted-core/init-cider ()
+  (use-package cider
+    :init
+    (defun d12/eval-overlay (value point)
+      (cider--make-result-overlay (format "%S" value)
+        :where point
+        :duration 'command)
+      ;; Preserve the return value.
+      value)
+
+    (advice-add 'eval-region :around
+                (lambda (f beg end &rest r)
+                  (d12/eval-overlay
+                   (apply f beg end r)
+                   end)))
+
+    (advice-add 'eval-last-sexp :filter-return
+                (lambda (r)
+                  (d12/eval-overlay r (point))))
+
+    (advice-add 'eval-defun :filter-return
+                (lambda (r)
+                  (d12/eval-overlay
+                   r
+                   (save-excursion
+                     (end-of-defun)
+                     (point)))))))
 
 (when (configuration-layer/layer-usedp 'helm)
   (defun d12frosted-core/post-init-helm ()
