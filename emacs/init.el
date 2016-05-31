@@ -206,4 +206,20 @@ Load-path is modified only when such folder exists."
     (when (file-exists-p extra-path)
       (add-to-load-path extra-path))))
 
+(defmacro d12-layers|define-layer-package (layer package &rest args)
+  "Define package for specified layer."
+  (let* ((fname (intern (format "%s/init-%s"
+                               layer
+                               package)))
+         (feature-init (intern (format "%s-%s-init" layer package)))
+         (feature-config (intern (format "%s-%s-config" layer package)))
+         (package-config args))
+    (add-to-list 'package-config :init t)
+    (add-to-list 'package-config `(require ',feature-init nil t) t)
+    (add-to-list 'package-config :config t)
+    (add-to-list 'package-config `(require ',feature-config nil t) t)
+    (message "feature-init = %s" feature-init)
+    `(defun ,fname ()
+       (use-package ,package ,@package-config))))
+
 ;;; init.el ends here
