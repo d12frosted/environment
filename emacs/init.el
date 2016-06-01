@@ -98,7 +98,7 @@
                                       vimish-fold)
    dotspacemacs-excluded-packages '(emmet-mode
                                     window-numbering)
-   dotspacemacs-delete-orphan-packages nil))
+   dotspacemacs-download-packages 'used-but-keep-unused))
 
 (defun dotspacemacs/init ()
   "Initialization function.
