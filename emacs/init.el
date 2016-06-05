@@ -57,24 +57,11 @@
      no-dots
      d12frosted-core
      d12frosted-org
+     d12frosted-haskell
 
      ;; languages
      emacs-lisp
      erlang
-     (haskell :variables
-              haskell-enable-ghc-mod-support nil
-              haskell-enable-ghci-ng-support nil
-              haskell-enable-hindent-style "chris-done"
-              haskell-tags-on-save nil
-              haskell-process-log t
-              haskell-process-reload-with-fbytecode nil
-              haskell-process-use-presentation-mode t
-              haskell-process-suggest-remove-import-lines nil
-              haskell-process-suggest-hoogle-imports nil
-              haskell-interactive-mode-include-file-name nil
-              haskell-interactive-mode-eval-pretty nil
-              haskell-process-suggest-haskell-docs-imports nil
-              )
      (html :variables
            web-mode-markup-indent-offset 2
            web-mode-attr-indent-offset 2

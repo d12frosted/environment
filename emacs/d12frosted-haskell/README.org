@@ -1,0 +1,20 @@
+#+TITLE: d12frosted-haskell layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../css/readtheorg.css" />
+
+#+CAPTION: logo
+
+# The maximum height of the logo should be 200 pixels.
+[[img/d12frosted-haskell.png]]
+
+# TOC links should be GitHub style anchors.
+* Table of Contents                                        :TOC_4_gh:noexport:
+ - [[#description][Description]]
+ - [[#install][Install]]
+
+* Description
+Personal layer. Contains configurations for Haskell-related packages.
+
+* Install
+To use this configuration layer, add it to your =~/.spacemacs=. You will need to
+add =d12frosted-haskell= to the existing =dotspacemacs-configuration-layers= list in this
+file.
