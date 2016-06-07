@@ -232,10 +232,6 @@ Supports negative arguments and repeating."
   (defun d12frosted-core/post-init-ivy ()
     (use-package ivy
       :config
-      (ivy-set-actions
-       'counsel-find-file
-       '(("d" d12-ivy//delete-file "remove")
-         ("r" d12-ivy//rename-file "rename")))
       (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
 
 (defun d12frosted-core/init-glsl-mode ()

@@ -150,34 +150,4 @@ on `projectile-replace' issue with regexps."
            (files (-map (lambda (f) (concat (projectile-project-root) f)) (projectile-current-project-files))))
       (tags-query-replace old-text new-text nil (cons 'list files)))))
 
-(when (configuration-layer/layer-usedp 'ivy)
-  (defun d12-ivy//delete-file (file)
-  "Action for `counsel-find-file' that removes selected FILE.
-
-It also kills corresponding buffer (if any exists) and
-invalidates projectile cache (if it's possible)."
-  (with-ivy-window
-    (when-let ((buffer (find-buffer-visiting file)))
-      (kill-buffer buffer))
-    (delete-file file)
-    (when (projectile-project-p)
-      (call-interactively #'projectile-invalidate-cache))))
-
-(defun d12-ivy//rename-file (file)
-  "Action for `counsel-find-file' that renames selected FILE.
-
-It also kills corresponding buffer (if any exists)"
-  (with-ivy-window
-    (let* ((short-name (file-name-nondirectory file))
-           (newfile (and short-name
-                     (read-file-name
-                      (format "Rename %s to: " short-name))))
-           (buffer (find-buffer-visiting file)))
-      (rename-file file newfile)
-      (when buffer
-        (kill-buffer buffer)
-        (find-file newfile))
-      (when (projectile-project-p)
-        (call-interactively #'projectile-invalidate-cache))))))
-
 ;;; funcs.el ends here
