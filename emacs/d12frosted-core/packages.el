@@ -42,7 +42,6 @@
 
     ;; langs
     glsl-mode
-    lua-mode
 
     ;; flyspell / flycheck
     flycheck-package
@@ -241,39 +240,6 @@ Supports negative arguments and repeating."
     :mode ("\\.glsl$" . glsl-mode)
     :mode ("\\.frag$" . glsl-mode)
     :mode ("\\.geom$" . glsl-mode)))
-
-(defun d12frosted-core/post-init-lua-mode ()
-  (use-package lua-mode
-    :defer t
-    :config
-    (defun moai-run-main ()
-      "Run main.lua using moai."
-      (interactive)
-      (setq-local async-shell-command-buffer 'confirm-kill-process)
-      (if (projectile-project-p)
-          (let ((root (projectile-project-root)))
-            (projectile-save-project-buffers)
-            (async-shell-command (concat "cd '" root "/lua'; and moai main.lua")))
-        (async-shell-command (concat "moai " (buffer-file-name)))))
-    (defun moai-run-main-multiplayer ()
-      "Run main.lua using moai in multiplayer mode."
-      (interactive)
-      (setq-local async-shell-command-buffer 'confirm-kill-process)
-      (if (projectile-project-p)
-          (let ((root (projectile-project-root)))
-            (projectile-save-project-buffers)
-            (async-shell-command (concat "cd '" root "/lua'; and moai main.lua")))
-        (async-shell-command (concat "moai " (buffer-file-name) " -r 5152") "moai-server")
-        (async-shell-command (concat "moai " (buffer-file-name) " -c 127.0.0.1 5152") "moai-client")))
-    (defun moai-upload ()
-      "Upload moai game to device."
-      (interactive)
-      (setq-local async-shell-command-buffer 'confirm-kill-process)
-      (if (projectile-project-p)
-          (bpr-spawn (concat "upload_moai_game '" (projectile-project-root) "/lua'"))))
-
-    (spacemacs/set-leader-keys-for-major-mode 'lua-mode "sm" 'moai-run-main)
-    (spacemacs/set-leader-keys-for-major-mode 'lua-mode "su" 'moai-upload)))
 
 (when (configuration-layer/layer-usedp 'syntax-checking)
   (defun d12frosted-core/init-flycheck-package ()
