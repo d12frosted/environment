@@ -56,13 +56,6 @@ string before that."
       ("zsh" 'zsh)
       (t 'unknown))))
 
-(defadvice spacemacs-buffer//insert-image-banner (after d12//spacemacs-title-advice activate)
-  "Change the default title in *spacemacs* buffer."
-  (save-excursion
-    (goto-char (point-min))
-    (search-forward "[S P A C E M A C S]")
-    (replace-match "[A N I M A C S]")))
-
 (defun configuration-layer/get-owner (pkg &optional print)
   (interactive "SEnter package name: \np")
   (let ((owner (cdr (assoc pkg
