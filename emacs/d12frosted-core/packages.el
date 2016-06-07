@@ -39,10 +39,6 @@
     helm
     ivy
 
-    ;; visual
-    beacon
-    spaceline
-
     ;; langs
     glsl-mode
     lua-mode
@@ -237,48 +233,6 @@ Supports negative arguments and repeating."
        '(("d" d12-ivy//delete-file "remove")
          ("r" d12-ivy//rename-file "rename")))
       (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
-
-(defun d12frosted-core/init-beacon ()
-  (use-package beacon
-    :init
-    (beacon-mode 1)))
-
-(defun d12frosted-core/post-init-spaceline ()
-  (use-package spaceline-config
-    :init
-    (setq powerline-default-separator 'utf-8)
-    (spaceline-compile)
-    :config
-    (require 'cl)
-    (defvar d12-state-cursors '((emacs "SkyBlue2" box)
-                                (emacs-input "chartreuse3" box)
-                                (god "DarkGoldenrod2" box)
-                                (god-input "plum3" box))
-          "Colors assigned to several states with cursor definitions.")
-
-    (cl-loop for (state color cursor) in d12-state-cursors
-             do
-             (eval `(defface ,(intern (format "d12-spaceline-%S-face" state))
-                      `((t (:background ,color
-                                        :foreground ,(face-background 'mode-line)
-                                        :box ,(face-attribute 'mode-line :box)
-                                        :inherit 'mode-line)))
-                      (format "%s state face." state)
-                      :group 'd12frosted))
-             (set (intern (format "d12-%s-state-cursor" state))
-                  (list (when dotspacemacs-colorize-cursor-according-to-state color)
-                        cursor)))
-
-    (defun d12//get-state ()
-      (cond
-       ((and (bound-and-true-p current-input-method) (bound-and-true-p god-local-mode)) 'god-input)
-       ((bound-and-true-p current-input-method) 'emacs-input)
-       ((bound-and-true-p god-local-mode) 'god)
-       (t 'emacs)))
-    (defun d12//get-state-face ()
-      (let ((state (d12//get-state)))
-        (intern (format "d12-spaceline-%S-face" state))))
-    (setq spaceline-highlight-face-func 'd12//get-state-face)))
 
 (defun d12frosted-core/init-glsl-mode ()
   (use-package glsl-mode
