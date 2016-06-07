@@ -46,7 +46,6 @@
 ;;
 
 (add-hook 'company-mode-hook 'company-quickhelp-mode)
-(add-hook 'prog-mode-hook 'vimish-fold-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
 (add-hook 'after-save-hook 'delete-trailing-whitespace)
 
