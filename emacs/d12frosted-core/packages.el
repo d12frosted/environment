@@ -34,6 +34,7 @@
                                 :fetcher github
                                 :repo "d12frosted/counsel-osx-app"))
     cider ;; it's used as utility
+    (fill-unfill :location local)
 
     ;; completion
     helm
@@ -213,6 +214,9 @@ Supports negative arguments and repeating."
                    (save-excursion
                      (end-of-defun)
                      (point)))))))
+
+(defun d12frosted-core/init-fill-unfill ()
+  (use-package fill-unfill))
 
 (when (configuration-layer/layer-usedp 'helm)
   (defun d12frosted-core/post-init-helm ()
