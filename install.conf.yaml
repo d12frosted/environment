@@ -46,6 +46,12 @@
 
 - shell:
     - [brw haskell-stack && stack setup, "Bootstrap haskell"]
+    - [stack install pandoc, "Install pandoc"]
+    - stack install hindent
+    - stack install hlint
+    - stack install stylish-haskell
+    - stack install hasktags
+    - stack install intero
 
 - link:
     ~/.aws/config:
