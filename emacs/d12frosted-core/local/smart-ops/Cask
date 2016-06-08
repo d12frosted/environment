@@ -1,0 +1,7 @@
+(source melpa)
+
+(package-file "smart-ops.el")
+
+(development
+ (depends-on "noflet")
+ (depends-on "ert"))

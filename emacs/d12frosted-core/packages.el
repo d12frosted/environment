@@ -34,9 +34,7 @@
                                 :fetcher github
                                 :repo "d12frosted/counsel-osx-app"))
     cider ;; it's used as utility
-    (smart-ops :location (recipe
-                          :fetcher github
-                          :repo "d12frosted/smart-ops"))
+    (smart-ops :location local)
     (fill-unfill :location local)
 
     ;; completion
@@ -221,8 +219,8 @@ Supports negative arguments and repeating."
 (defun d12frosted-core/init-smart-ops ()
   (use-package smart-ops
     :diminish smart-ops-mode
-    :defer t
-    :commands (smart-ops-global-mode)))
+    :config
+    (smart-ops-global-mode)))
 
 (defun d12frosted-core/init-fill-unfill ()
   (use-package fill-unfill))
