@@ -46,9 +46,6 @@
 
     ;; flyspell / flycheck
     flycheck-package
-    (flyspell-correct :location (recipe
-                                 :fetcher github
-                                 :repo "d12frosted/flyspell-correct"))
 
     ;; other
     mu4e
@@ -256,17 +253,5 @@ Supports negative arguments and repeating."
       :commands flycheck-package-setup
       :init (eval-after-load 'flycheck
               '(flycheck-package-setup)))))
-
-(defun d12frosted-core/init-flyspell-correct ()
-  (use-package flyspell-correct
-    :commands (flyspell-correct-word-generic
-               flyspell-correct-previous-word-generic)
-    :init
-    (when (configuration-layer/layer-usedp 'ivy)
-      (setq flyspell-correct-interface 'flyspell-correct-ivy))
-    (when (configuration-layer/layer-usedp 'helm)
-      (setq flyspell-correct-interface 'flyspell-correct-helm))
-    (when (bound-and-true-p flyspell-correct-interface)
-      (spacemacs/set-leader-keys "Sc" 'flyspell-correct-previous-word-generic))))
 
 ;;; packages.el ends here
