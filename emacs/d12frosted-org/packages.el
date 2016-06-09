@@ -63,6 +63,45 @@
 
     (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
 
+    ;; setup appt
+    (require 'appt)
+    (appt-activate t)
+
+    (setq appt-display-mode-line nil
+          ;; Show notification 5 minutes before event
+          appt-message-warning-time 10
+          ;; Disable multiple reminders
+          appt-display-interval 5
+
+          ;; Display appointments as a window manager notification
+          appt-disp-window-function 'd12-org/appt-display
+          appt-delete-window-function (lambda () t))
+
+    (defun d12-org/agenda-to-appt ()
+      (interactive)
+      (setq appt-time-msg-list nil)
+      (org-agenda-to-appt))
+
+    (defun d12-org//appt-alert (min-to-app msg)
+      (alert (format "In %s minute(s)" min-to-app)
+             :title msg))
+
+    (defun d12-org/appt-display (min-to-app new-time msg)
+      (if (atom min-to-app)
+          (d12-org//appt-alert min-to-app msg)
+        (dolist (i (number-sequence 0 (1- (length min-to-app))))
+          (d12-org//appt-alert (nth i min-to-app) (nth i msg)))))
+
+    ;; Update alarms when...
+    ;; (1) ... Starting Emacs
+    (d12-org/agenda-to-appt)
+
+    ;; (2) ... Everyday at 12:05am (useful in case you keep Emacs always on)
+    (run-at-time "12:05am" (* 24 3600) 'd12-org/agenda-to-appt)
+
+    ;; (3) when agenda is displayed
+    (add-hook 'org-finalize-agenda-hook 'd12-org/agenda-to-appt 'append)
+
     (d12|rename-modeline "org" org-mode "本")))
 
 (defun d12frosted-org/post-init-org-bullets ()
