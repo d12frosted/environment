@@ -55,6 +55,10 @@
                                      (todo . " %i %-24:c")
                                      (tags . " %i %-24:c")
                                      (search . " %i %-24:c"))
+          org-agenda-sorting-strategy '((agenda habit-up time-up scheduled-down deadline-down todo-state-up category-keep priority-down)
+                                        (todo todo-state-up priority-down category-keep)
+                                        (tags todo-state-up priority-down category-keep)
+                                        (search todo-state-up priority-down category-keep))
           org-agenda-day-face-function 'd12/org-agenda-day-face-holidays-function)
 
     (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
