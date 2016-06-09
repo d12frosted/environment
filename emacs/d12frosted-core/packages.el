@@ -34,6 +34,7 @@
                                 :fetcher github
                                 :repo "d12frosted/counsel-osx-app"))
     cider ;; it's used as utility
+    term-projectile
     (smart-ops :location local)
     (fill-unfill :location local)
 
@@ -212,6 +213,12 @@ Supports negative arguments and repeating."
                    (save-excursion
                      (end-of-defun)
                      (point)))))))
+
+(defun d12frosted-core/init-term-projectile ()
+  (use-package term-projectile
+    :commands (term-projectile-forward
+               term-projectile-backward
+               term-projectile-create-new)))
 
 (defun d12frosted-core/init-smart-ops ()
   (use-package smart-ops
