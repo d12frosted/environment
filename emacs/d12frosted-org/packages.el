@@ -23,14 +23,10 @@
     :defer t
     :init
     (d12-org/reload-agenda-files)
-    :config
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((ledger . t)))
+
     (bind-key "<f12>" 'org-agenda)
+
     (evil-leader/set-key-for-mode 'org-mode
-      "1" 'd12-org/sort-current-level
-      "!" 'd12-org/sort-upper-level
       "#" 'd12-org/insert-block-template)
     (setq org-todo-keywords
           '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
