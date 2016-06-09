@@ -16,7 +16,10 @@
 (defconst d12frosted-org-packages
   '(org
     org-bullets
-    org-journal))
+    org-journal
+    (org-weather :location (recipe
+                            :fetcher github
+                            :repo "kautsig/org-weather"))))
 
 (defun d12frosted-org/post-init-org ()
   (use-package org
@@ -28,6 +31,8 @@
 
     (evil-leader/set-key-for-mode 'org-mode
       "#" 'd12-org/insert-block-template)
+
+    :config
     (setq org-todo-keywords
           '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
             (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))
@@ -102,6 +107,9 @@
     ;; (3) when agenda is displayed
     (add-hook 'org-finalize-agenda-hook 'd12-org/agenda-to-appt 'append)
 
+    ;; weather
+    ;; (org-weather-refresh)
+
     (d12|rename-modeline "org" org-mode "本")))
 
 (defun d12frosted-org/post-init-org-bullets ()
@@ -128,5 +136,12 @@
           org-journal-file-format "%Y-%m-%d"
           org-journal-file-pattern (org-journal-format-string->regex org-journal-file-format)
           org-journal-hide-entries-p nil)))
+
+(defun d12frosted-org/init-org-weather ()
+  (use-package org-weather
+    :commands (org-weather)
+    :init
+    (setq org-weather-location d12/org-weather-location
+          org-weather-api-key d12/open-weather-api-key)))
 
 ;;; packages.el ends here
