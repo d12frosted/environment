@@ -28,7 +28,7 @@
   "Configuration Layers declaration."
   (setq-default
    dotspacemacs-distribution 'spacemacs
-   dotspacemacs-enable-lazy-installation 'unused
+   dotspacemacs-enable-lazy-installation nil
    dotspacemacs-ask-for-lazy-installation t
    dotspacemacs-configuration-layer-path `(,dotspacemacs-directory)
    dotspacemacs-configuration-layers
