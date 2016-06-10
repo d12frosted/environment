@@ -58,6 +58,8 @@
      d12frosted-core
      d12frosted-org
      d12frosted-haskell
+     d12frosted-lua
+     d12frosted-visual
 
      ;; languages
      emacs-lisp
