@@ -54,6 +54,8 @@
             haskell-indentation-left-offset 2
             haskell-indent-spaces 2)
 
+      (spacemacs|diminish interactive-haskell-mode "λ" "λ")
+
       (defun d12frosted-haskell/set-indentation-step ()
         (setq tab-width 2))
 
@@ -173,6 +175,7 @@
 
       (evil-define-key 'normal intero-mode-map (kbd "M-.") #'intero-goto-definition)
       (evil-define-key 'normal intero-mode-map (kbd "M-,") #'pop-global-mark)
+      (spacemacs|diminish intero-mode "λ" "λ")
       (define-key intero-mode-map (kbd "M-.") #'intero-goto-definition)
       (define-key intero-mode-map (kbd "M-,") #'pop-global-mark))))
 
