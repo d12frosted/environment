@@ -133,8 +133,7 @@
     :after haskell-mode
     :config
     (progn
-      (define-key haskell-interactive-mode-map (kbd "C-c C-h") #'haskell-hoogle)
-      (evil-define-key 'normal haskell-error-mode-map (kbd "q") #'quit-window)))
+      (define-key haskell-interactive-mode-map (kbd "C-c C-h") #'haskell-hoogle)))
 
   (use-package haskell-cabal
     :after haskell-mode
@@ -145,21 +144,7 @@
     :after haskell-mode
     :config
     (progn
-      (add-hook 'haskell-debug-mode-hook #'flyspell-mode-off)
-
-      (with-no-warnings
-        (evilified-state-evilify-map haskell-debug-mode-map
-          :mode haskell-debug-mode
-          :bindings
-          (kbd "n") #'haskell-debug/next
-          (kbd "N") #'haskell-debug/previous
-          (kbd "p") #'haskell-debug/previous
-          (kbd "q") #'quit-window))))
-
-  (use-package haskell-presentation-mode
-    :after haskell-mode
-    :config
-    (evil-define-key 'normal haskell-presentation-mode-map (kbd "q") #'quit-window)))
+      (add-hook 'haskell-debug-mode-hook #'flyspell-mode-off))))
 
 (defun d12frosted-haskell/post-init-aggressive-indent ()
   (with-eval-after-load 'aggressive-indent
@@ -172,9 +157,6 @@
     :config
     (progn
       (add-hook 'haskell-mode-hook #'intero-mode)
-
-      (evil-define-key 'normal intero-mode-map (kbd "M-.") #'intero-goto-definition)
-      (evil-define-key 'normal intero-mode-map (kbd "M-,") #'pop-global-mark)
       (spacemacs|diminish intero-mode "λ" "λ")
       (define-key intero-mode-map (kbd "M-.") #'intero-goto-definition)
       (define-key intero-mode-map (kbd "M-,") #'pop-global-mark))))
