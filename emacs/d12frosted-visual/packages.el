@@ -16,7 +16,8 @@
 (defconst d12frosted-visual-packages
   '(
     beacon
-    spaceline))
+    spaceline
+    prettify-greek))
 
 (defun d12frosted-visual/init-beacon ()
   (use-package beacon
@@ -59,5 +60,13 @@
       (let ((state (d12//get-state)))
         (intern (format "d12-spaceline-%S-face" state))))
     (setq spaceline-highlight-face-func 'd12//get-state-face)))
+
+(defun d12frosted-visual/init-prettify-greek ()
+  (use-package prettify-greek
+    :init
+    (defun d12-visual/prettify-greek ()
+      (setq prettify-symbols-alist (append prettify-symbols-alist prettify-greek-lower prettify-greek-upper))
+      (prettify-symbols-mode t))
+    (add-hook 'prog-mode-hook #'d12-visual/prettify-greek)))
 
 ;;; packages.el ends here
