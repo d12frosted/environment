@@ -21,96 +21,110 @@
                             :fetcher github
                             :repo "kautsig/org-weather"))))
 
-(defun d12frosted-org/post-init-org ()
+(defun d12frosted-org/pre-init-org ()
   (use-package org
-    :defer t
     :init
-    (d12-org/reload-agenda-files)
-
-    (bind-key "<f12>" 'org-agenda)
-
-    (evil-leader/set-key-for-mode 'org-mode
-      "#" 'd12-org/insert-block-template)
-
+    (progn
+      (d12-org/reload-agenda-files)
+      (bind-key "<f12>" #'org-agenda))
     :config
-    (setq org-todo-keywords
-          '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))
+    (progn
+      (evil-leader/set-key-for-mode 'org-mode
+        "#" 'd12-org/insert-block-template)
+      (setq org-todo-keywords
+            '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))
 
-          org-todo-state-tags-triggers
-          '(("CANCELLED" ("CANCELLED" . t))
-            ("WAITING" ("WAITING" . t))
-            ("HOLD" ("WAITING") ("HOLD" . t))
-            (done ("WAITING") ("HOLD"))
-            ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-            ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-            ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
+            org-todo-state-tags-triggers
+            '(("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
 
-          org-hide-emphasis-markers t
-          org-agenda-window-setup 'current-window
-          org-src-fontify-natively t
-          org-directory d12-path/org-home
-          org-agenda-inhibit-startup nil
-          org-archive-location "archive/%s::"
-          org-time-clocksum-format
-          '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
-          org-property-format "%-16s %s"
-          org-agenda-prefix-format '((agenda . " %i %-24:c%?-12t% s")
-                                     (timeline . "  % s")
-                                     (todo . " %i %-24:c")
-                                     (tags . " %i %-24:c")
-                                     (search . " %i %-24:c"))
-          org-agenda-sorting-strategy '((agenda habit-up time-up scheduled-down deadline-down todo-state-up category-keep priority-down)
-                                        (todo todo-state-up priority-down category-keep)
-                                        (tags todo-state-up priority-down category-keep)
-                                        (search todo-state-up priority-down category-keep))
-          org-agenda-day-face-function 'd12/org-agenda-day-face-holidays-function)
+            org-hide-emphasis-markers t
+            org-agenda-window-setup 'current-window
+            org-src-fontify-natively t
+            org-directory d12-path/org-home
+            org-agenda-inhibit-startup nil
+            org-archive-location "archive/%s::"
+            org-time-clocksum-format
+            '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
+            org-property-format "%-16s %s"
+            org-agenda-prefix-format '((agenda . " %i %-24:c%?-12t% s")
+                                       (timeline . "  % s")
+                                       (todo . " %i %-24:c")
+                                       (tags . " %i %-24:c")
+                                       (search . " %i %-24:c"))
+            org-agenda-sorting-strategy '((agenda habit-up time-up scheduled-down deadline-down todo-state-up category-keep priority-down)
+                                          (todo todo-state-up priority-down category-keep)
+                                          (tags todo-state-up priority-down category-keep)
+                                          (search todo-state-up priority-down category-keep))
+            org-agenda-day-face-function 'd12/org-agenda-day-face-holidays-function)
 
-    (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
+      (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
 
-    ;; setup appt
-    (require 'appt)
-    (appt-activate t)
+      (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
+        (let ((rlt ad-return-value)
+              (begin-regexp "^[ \t]*#\\+begin_\\(src\\|html\\|latex\\)")
+              (end-regexp "^[ \t]*#\\+end_\\(src\\|html\\|latex\\)")
+              old-flag
+              b e)
+          (when ad-return-value
+            (save-excursion
+              (setq old-flag case-fold-search)
+              (setq case-fold-search t)
+              (setq b (re-search-backward begin-regexp nil t))
+              (if b (setq e (re-search-forward end-regexp nil t)))
+              (setq case-fold-search old-flag))
+            (if (and b e (< (point) e)) (setq rlt nil)))
+          (setq ad-return-value rlt)))
 
-    (setq appt-display-mode-line nil
-          ;; Show notification 5 minutes before event
-          appt-message-warning-time 10
-          ;; Disable multiple reminders
-          appt-display-interval 5
+      ;; setup appt
+      (require 'appt)
+      (appt-activate t)
 
-          ;; Display appointments as a window manager notification
-          appt-disp-window-function 'd12-org/appt-display
-          appt-delete-window-function (lambda () t))
+      (setq appt-display-mode-line nil
+            ;; Show notification 5 minutes before event
+            appt-message-warning-time 10
+            ;; Disable multiple reminders
+            appt-display-interval 5
 
-    (defun d12-org/agenda-to-appt ()
-      (interactive)
-      (setq appt-time-msg-list nil)
-      (org-agenda-to-appt))
+            ;; Display appointments as a window manager notification
+            appt-disp-window-function 'd12-org/appt-display
+            appt-delete-window-function (lambda () t))
 
-    (defun d12-org//appt-alert (min-to-app msg)
-      (alert (format "In %s minute(s)" min-to-app)
-             :title msg))
+      (defun d12-org/agenda-to-appt ()
+        (interactive)
+        (setq appt-time-msg-list nil)
+        (org-agenda-to-appt))
 
-    (defun d12-org/appt-display (min-to-app new-time msg)
-      (if (atom min-to-app)
-          (d12-org//appt-alert min-to-app msg)
-        (dolist (i (number-sequence 0 (1- (length min-to-app))))
-          (d12-org//appt-alert (nth i min-to-app) (nth i msg)))))
+      (defun d12-org//appt-alert (min-to-app msg)
+        (alert (format "In %s minute(s)" min-to-app)
+               :title msg))
 
-    ;; Update alarms when...
-    ;; (1) ... Starting Emacs
-    (d12-org/agenda-to-appt)
+      (defun d12-org/appt-display (min-to-app new-time msg)
+        (if (atom min-to-app)
+            (d12-org//appt-alert min-to-app msg)
+          (dolist (i (number-sequence 0 (1- (length min-to-app))))
+            (d12-org//appt-alert (nth i min-to-app) (nth i msg)))))
 
-    ;; (2) ... Everyday at 12:05am (useful in case you keep Emacs always on)
-    (run-at-time "12:05am" (* 24 3600) 'd12-org/agenda-to-appt)
+      ;; Update alarms when...
+      ;; (1) ... Starting Emacs
+      (d12-org/agenda-to-appt)
 
-    ;; (3) when agenda is displayed
-    (add-hook 'org-finalize-agenda-hook 'd12-org/agenda-to-appt 'append)
+      ;; (2) ... Everyday at 12:05am (useful in case you keep Emacs always on)
+      (run-at-time "12:05am" (* 24 3600) 'd12-org/agenda-to-appt)
 
-    ;; weather
-    ;; (org-weather-refresh)
+      ;; (3) when agenda is displayed
+      (add-hook 'org-finalize-agenda-hook 'd12-org/agenda-to-appt 'append)
 
-    (d12|rename-modeline "org" org-mode "本")))
+      ;; weather
+      ;; (org-weather-refresh)
+
+      (d12|rename-modeline "org" org-mode "本"))))
 
 (defun d12frosted-org/post-init-org-bullets ()
   (use-package org-bullets
