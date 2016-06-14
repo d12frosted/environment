@@ -17,7 +17,7 @@ set fish_greeting ""
 # aliases
 alias ghci "stack ghci"
 alias ecl "emacsclient"
-alias eclt "emacsclient -nw"
+alias eclt "emacsclient -c"
 alias emt "emacs -nw --insecure"
 alias cenv "cd $XDG_CONFIG_HOME"
 alias cem  "cd $HOME/.emacs.d"
