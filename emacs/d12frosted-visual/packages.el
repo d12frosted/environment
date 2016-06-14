@@ -17,7 +17,7 @@
   '(
     beacon
     spaceline
-    prettify-greek))
+    (d12-pretty-greek :location local)))
 
 (defun d12frosted-visual/init-beacon ()
   (use-package beacon
@@ -61,12 +61,9 @@
         (intern (format "d12-spaceline-%S-face" state))))
     (setq spaceline-highlight-face-func 'd12//get-state-face)))
 
-(defun d12frosted-visual/init-prettify-greek ()
-  (use-package prettify-greek
+(defun d12frosted-visual/init-d12-pretty-greek ()
+  (use-package d12-pretty-greek
     :init
-    (defun d12-visual/prettify-greek ()
-      (setq prettify-symbols-alist (append prettify-symbols-alist prettify-greek-lower prettify-greek-upper))
-      (prettify-symbols-mode t))
-    (add-hook 'prog-mode-hook #'d12-visual/prettify-greek)))
+    (add-hook 'prog-mode-hook #'d12-pretty-greek)))
 
 ;;; packages.el ends here
