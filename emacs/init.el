@@ -63,7 +63,6 @@
 
      ;; languages
      emacs-lisp
-     erlang
      (html :variables
            web-mode-markup-indent-offset 2
            web-mode-attr-indent-offset 2
