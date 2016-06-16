@@ -63,6 +63,7 @@
 
      ;; languages
      emacs-lisp
+     (haskell :variables haskell-completion-backend 'intero)
      (html :variables
            web-mode-markup-indent-offset 2
            web-mode-attr-indent-offset 2

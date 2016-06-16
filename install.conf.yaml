@@ -12,11 +12,15 @@
       relink: true
 
 - shell:
-  - [brw coreutils wget ack ag git git-lfs lua tree ncdu lynx terminal-notifier ledger ossp-uuid mu, Install some helpful packages]
+  - [brw coreutils wget ack ag lua tree ncdu lynx terminal-notifier ledger ossp-uuid mu, Install some helpful packages]
   - [brew install aspell --with-all-langs, Install aspell]
   - [brw fish, Bootstrap fish]
   - [chmod +x emacs/bootstrap && emacs/bootstrap, Bootstrap emacs]
   - [chmod +x emacs/switch_emacs, Promote switch_emacs to executable]
+
+- shell:
+  - [brew install git, Install git]
+  - [brew install git-lfs, Install git-lfs]
 
 - link:
     ~/.emacs.d:
