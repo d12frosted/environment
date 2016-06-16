@@ -6,23 +6,8 @@
 ;;
 ;;; Code:
 
-;; setup some constants and variables
-(defconst d12-path/dropbox (concat user-home-directory "Dropbox/"))
-(defconst d12-path/xdg-config (concat (getenv "XDG_CONFIG_HOME") "/"))
-(defconst d12-path/emacs-home (expand-file-name user-emacs-directory))
-(defconst d12-path/emacs-layers (concat d12-path/xdg-config "emacs/"))
-(defconst d12-path/emacs-private (concat d12-path/dropbox "Apps/Emacs/"))
-(defconst d12-path/fish-public (concat d12-path/xdg-config "fish/"))
-(defconst d12-path/fish-private (concat d12-path/dropbox "Apps/fish/"))
-(defconst d12-path/developer (concat user-home-directory "Developer/"))
-(defconst d12-path/org-home (concat d12-path/dropbox "org/"))
-
-;; setup custom-file
-(setq custom-file (concat d12-path/emacs-private "custom.el"))
-(load custom-file t)
-
-;; load `private.el' file containing all the sensitive data
-(load (concat d12-path/emacs-private "private.el"))
+(load (concat (file-name-directory (dotspacemacs/location))
+              "d12frosted.el"))
 
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
@@ -186,31 +171,5 @@ layers configuration."
   (d12/setup-M-h)
   (spacemacs/toggle-camel-case-motion-globally-on)
   (spacemacs/toggle-automatic-symbol-highlight-on))
-
-(defun d12-layers/add-extra-to-load-path (layer)
-  "Add 'extra' folder to `load-path' for a given LAYER.
-
-Load-path is modified only when such folder exists."
-  (let* ((layer-path (configuration-layer/get-layer-path layer))
-         (layer-root (format "%s%s/" layer-path layer))
-         (extra-path (concat layer-root "extra/")))
-    (when (file-exists-p extra-path)
-      (add-to-load-path extra-path))))
-
-(defmacro d12-layers|define-layer-package (layer package &rest args)
-  "Define package for specified layer."
-  (let* ((fname (intern (format "%s/init-%s"
-                               layer
-                               package)))
-         (feature-init (intern (format "%s-%s-init" layer package)))
-         (feature-config (intern (format "%s-%s-config" layer package)))
-         (package-config args))
-    (add-to-list 'package-config :init t)
-    (add-to-list 'package-config `(require ',feature-init nil t) t)
-    (add-to-list 'package-config :config t)
-    (add-to-list 'package-config `(require ',feature-config nil t) t)
-    (message "feature-init = %s" feature-init)
-    `(defun ,fname ()
-       (use-package ,package ,@package-config))))
 
 ;;; init.el ends here
