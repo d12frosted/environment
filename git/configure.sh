@@ -12,6 +12,9 @@ git config --global core.editor emacsclient
 # setup push method
 git config --global push.default simple
 
+# force signing
+git config --global commit.gpgsign true
+
 #
 # aliases
 #
