@@ -15,6 +15,9 @@ git config --global push.default simple
 # force signing
 git config --global commit.gpgsign true
 
+# enable heuristic diff (git >= 2.9.0)
+git config --global diff.compactionHeuristic true
+
 #
 # aliases
 #
