@@ -14,6 +14,9 @@
 (defconst d12-path/emacs-home (expand-file-name user-emacs-directory))
 (defconst d12-path/emacs-layers (concat d12-path/xdg-config "emacs/"))
 (defconst d12-path/emacs-private (concat d12-path/dropbox "Apps/Emacs/"))
+(defconst d12-path/spacemacs-init (dotspacemacs/location))
+(defconst d12-path/d12frosted-init
+  (concat (file-name-directory d12-path/spacemacs-init) "d12frosted.el"))
 (defconst d12-path/fish-public (concat d12-path/xdg-config "fish/"))
 (defconst d12-path/fish-private (concat d12-path/dropbox "Apps/fish/"))
 (defconst d12-path/developer (concat user-home-directory "Developer/"))
