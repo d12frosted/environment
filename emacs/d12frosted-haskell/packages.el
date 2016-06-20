@@ -34,17 +34,14 @@
     (cb-haskell-alignment :location local)
     (haskell-flycheck-holes :location local)))
 
-(defun d12frosted-haskell/init-haskell-mode ()
+(defun d12frosted-haskell/post-init-haskell-mode ()
   (use-package haskell-mode
     :defer t
     :config
     (progn
-      (setq haskell-process-type 'stack-ghci
-            haskell-process-use-presentation-mode t
-            haskell-interactive-mode-eval-mode 'haskell-mode
+      (setq haskell-process-use-presentation-mode t
             haskell-interactive-mode-scroll-to-bottom t
-            haskell-interactive-popup-errors t
-            haskell-interactive-prompt "\nλ> "
+            haskell-interactive-popup-errors nil
             haskell-process-show-debug-tips t
             haskell-stylish-on-save t
             haskell-indentation-layout-offset 2
@@ -95,39 +92,7 @@
       (define-key haskell-mode-map (kbd "C-.")       #'haskell-move-nested-right)
       (define-key haskell-mode-map (kbd "C-c C-d")   #'haskell-w3m-open-haddock)
       (define-key haskell-mode-map (kbd "C-c C-f")   #'haskell-cabal-visit-file)
-      (define-key haskell-mode-map (kbd "C-c C-h")   #'haskell-hoogle)
-
-      (spacemacs/set-leader-keys-for-major-mode 'haskell-mode
-        "gg"  'haskell-mode-jump-to-def-or-tag
-        "gi"  'haskell-navigate-imports
-        "f"   'haskell-mode-stylish-buffer
-
-        "sb"  'haskell-process-load-file
-        "sc"  'haskell-interactive-mode-clear
-        "ss"  'spacemacs/haskell-interactive-bring
-        "sS"  'haskell-interactive-switch
-
-        "ca"  'haskell-process-cabal
-        "cb"  'haskell-process-cabal-build
-        "cc"  'haskell-compile
-        "cv"  'haskell-cabal-visit-file
-
-        "hd"  'inferior-haskell-find-haddock
-        "hh"  'hoogle
-        "hH"  'haskell-hoogle-lookup-from-local
-        "hi"  (lookup-key haskell-mode-map (kbd "C-c TAB"))
-        "ht"  (lookup-key haskell-mode-map (kbd "C-c C-t"))
-        "hT"  'spacemacs/haskell-process-do-type-on-prev-line
-        "hy"  'hayoo
-
-        "dd"  'haskell-debug
-        "db"  'haskell-debug/break-on-function
-        "dn"  'haskell-debug/next
-        "dN"  'haskell-debug/previous
-        "dB"  'haskell-debug/delete
-        "dc"  'haskell-debug/continue
-        "da"  'haskell-debug/abandon
-        "dr"  'haskell-debug/refresh)))
+      (define-key haskell-mode-map (kbd "C-c C-h")   #'haskell-hoogle)))
 
   (use-package haskell-interactive-mode
     :after haskell-mode
@@ -151,12 +116,11 @@
     (with-no-warnings
       (add-to-list 'aggressive-indent-excluded-modes 'haskell-interactive-mode))))
 
-(defun d12frosted-haskell/init-intero ()
+(defun d12frosted-haskell/post-init-intero ()
   (use-package intero
     :after haskell-mode
     :config
     (progn
-      (add-hook 'haskell-mode-hook #'intero-mode)
       (spacemacs|diminish intero-mode "λ" "λ")
       (define-key intero-mode-map (kbd "M-.") #'intero-goto-definition)
       (define-key intero-mode-map (kbd "M-,") #'pop-global-mark))))
