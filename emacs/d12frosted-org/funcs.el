@@ -157,4 +157,13 @@ If not, show simply the clocked time like 01:50."
     (add-hook 'after-save-hook 'org-html-export-to-html nil t)
     (message "Enabled org html export on save for current buffer...")))
 
+(defun d12-org/insert-github-issue-link (repo number)
+  (insert (format "[[https://github.com/%s/issues/%s][%s#%s]] "
+                  repo number
+                  repo number)))
+
+(defun d12-org/insert-spacemacs-issue-link (number)
+  (interactive "n")
+  (d12-org/insert-github-issue-link "syl20bnr/spacemacs" number))
+
 ;;; funcs.el ends here
