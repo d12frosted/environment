@@ -42,6 +42,10 @@
 (setq custom-file (concat d12-path/emacs-private "custom.el"))
 (load custom-file t)
 
+;; setup package-user-dir to allow seamless switch between emacs versions
+(setq package-user-dir (file-name-as-directory
+                        (concat d12-path/spacemacs-home "elpa/" emacs-version)))
+
 ;; load `private.el' file containing all the sensitive data
 (load (concat d12-path/emacs-private "private.el"))
 
