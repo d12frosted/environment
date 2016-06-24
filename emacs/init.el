@@ -48,7 +48,7 @@
 
      ;; languages
      emacs-lisp
-     (haskell :variables haskell-completion-backend 'intero)
+     (haskell :variables haskell-completion-backend 'ghci)
      (html :variables
            web-mode-markup-indent-offset 2
            web-mode-attr-indent-offset 2
