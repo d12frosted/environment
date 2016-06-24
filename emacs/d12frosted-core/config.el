@@ -35,12 +35,12 @@
        (t #'d12-interesting-files-default)))
 
 (d12-interesting-files-add
- `(,(concat d12-path/emacs-layers "init.el")
+ `(,(concat d12-path/spacemacs-layers "init.el")
    ,(concat d12-path/emacs-private "private.el")
    ,(concat d12-path/fish-public "config.fish")
    ,(concat d12-path/fish-private "preconfig.fish")
    ,(concat d12-path/fish-private "postconfig.fish")
-   ,(concat d12-path/emacs-home "init.el")))
+   ,(concat user-emacs-directory "init.el")))
 
 ;;;; Hooks
 ;;

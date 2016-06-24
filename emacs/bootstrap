@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-spacemacs=~/.emacs.d.spacemacs
+spacemacs=~/.spacemacs
 
 if [ ! -e $spacemacs ]; then
   hash git || {

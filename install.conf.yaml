@@ -23,8 +23,9 @@
   - [brew install git-lfs, Install git-lfs]
 
 - link:
-    ~/.emacs.d:
-      path: ../.emacs.d.spacemacs
+    ~/.emacs.d/init.el:
+      path: emacs/d12frosted.el
+      create: true
       relink: true
     ~/.local/bin/switch_emacs:
       path: emacs/switch_emacs

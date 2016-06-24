@@ -6,9 +6,6 @@
 ;;
 ;;; Code:
 
-(load (concat (file-name-directory (dotspacemacs/location))
-              "d12frosted.el"))
-
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
   (setq-default
@@ -42,7 +39,7 @@
      no-dots
      d12frosted-core
      d12frosted-org
-     d12frosted-haskell
+     ;; d12frosted-haskell
      d12frosted-lua
      d12frosted-visual
 
