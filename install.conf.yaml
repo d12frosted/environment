@@ -24,7 +24,7 @@
 
 - link:
     ~/.emacs.d/init.el:
-      path: emacs/d12frosted.el
+      path: emacs/d12-init.el
       create: true
       relink: true
     ~/.local/bin/switch_emacs:
