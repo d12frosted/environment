@@ -42,10 +42,6 @@
 (setq custom-file (concat d12-path/emacs-private "custom.el"))
 (load custom-file t)
 
-;; setup package-user-dir to allow seamless switch between emacs versions
-(setq package-user-dir (file-name-as-directory
-                        (concat d12-path/spacemacs-home "elpa/" emacs-version)))
-
 ;; load `private.el' file containing all the sensitive data
 (load (concat d12-path/emacs-private "private.el"))
 
@@ -96,6 +92,10 @@ Usage: (d12-layers|define-layer-package layer package pre|post|nil)."
     (message "feature-init = %s" feature-init)
     `(defun ,fname ()
        (use-package ,package ,@package-config))))
+
+;; setup package-user-dir to allow seamless switch between emacs versions
+(setq package-user-dir (file-name-as-directory
+                        (concat d12-path/spacemacs-home "elpa/" emacs-version)))
 
 ;; load spacemacs
 (setq-default spacemacs-start-directory d12-path/spacemacs-home
