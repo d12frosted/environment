@@ -62,7 +62,6 @@
     ~/.aws/config:
       path: ../Dropbox/Apps/aws/config
       create: true
-    ~/.gitignore_global: git/.gitignore_global
     ~/.hgrc: ../Dropbox/Apps/hgrc
 
 - shell:

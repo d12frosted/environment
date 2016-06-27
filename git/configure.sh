@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # setup global gitignore
-git config --global core.excludesfile ~/.gitignore_global
+git config --global core.excludesfile $XDG_CONFIG_HOME/git/.gitignore_global
 
 # setup user info
 git config --global user.useconfigonly true
