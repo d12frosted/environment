@@ -16,12 +16,26 @@ As usual, these dependencies will be automatically bootstrapped during
 environment installation. But in any case, you should check [[https://github.com/fish-shell/fish-shell/#building][official
 instructions]] on setting fish as your default shell.
 
+* Custom lambda-prompt
+
+[[file:images/prompt.png]]
+
+Strong points of my custom [[file:functions/fish_prompt.fish][fish_prompt]] are:
+
+1. it print non-zero status code of previous command
+2. uses =__terlar_git_prompt= for being informative about git repositories and
+   =__fish_hg_prompt= for mercurial repositories
+3. prints duration of last executed command if it exceeds =8000= ms and notifies
+   about completion using =terminal-notifier= (checkout =__d12_prompt_duration=
+   function for more information)
+4. minimalistic
+
 * Batteries
 
 There are some useful functions that come with my configs.
 
 1. =__package_install PKG= - install =PKG= using =brew= if it's not yet
-   installed (OS X only).
+   installed (OS X only and /deprecated/ in favour of =brw=).
 2. =dnvm= - wrapper for [[https://github.com/aspnet/dnvm][dnvm]].
 3. =hglog= - pretty =log= for mercurial repository.
 4. =convert_to_gif= - convert video file to gif. Video file must be supported by
@@ -29,3 +43,5 @@ There are some useful functions that come with my configs.
    automatically.
 5. =convert_texture= - convert input texture to specified format using
    =TexturePacker=. For more information, checkout =$ TexturePacker --help=.
+6. =spacemacs_update= - sync spacemacs fork with checkversion remote (please,
+   check out function definition to see available options).
