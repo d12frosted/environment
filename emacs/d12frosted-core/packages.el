@@ -55,18 +55,21 @@
 
 (defun d12frosted-core/pre-init-ranger ()
   (use-package ranger
+    :defer t
     :init
     (setq-default ranger-override-dired t
                   ranger-show-literal nil)))
 
 (defun d12frosted-core/post-init-google-translate ()
   (use-package google-translate
+    :defer t
     :config
     (setq google-translate-default-source-language "uk"
           google-translate-default-target-language "en")))
 
 (defun d12frosted-core/pre-init-projectile ()
   (use-package projectile
+    :defer t
     :init
     (setq projectile-enable-caching nil)
     (when (configuration-layer/layer-usedp 'helm)
@@ -74,6 +77,7 @@
 
 (defun d12frosted-core/post-init-projectile ()
   (use-package projectile
+    :defer t
     :config
     (defun d12-projectile/open-root-in-finder ()
       (interactive)
@@ -97,6 +101,7 @@
 
 (defun d12frosted-core/post-init-magit ()
   (use-package magit
+    :defer t
     :init
     (setq magit-repo-dirs `(,d12-path/developer))
     (defun d12-magit/push-all ()
@@ -106,6 +111,7 @@
 
 (defun d12frosted-core/post-init-git-messenger ()
   (use-package git-messenger
+    :defer t
     :config
     (setq git-messenger:show-detail t)))
 
@@ -130,6 +136,7 @@
 
 (defun d12frosted-core/post-init-zoom-frm ()
   (use-package zoom-frm
+    :defer t
     :config
     ;; remove some crazy bindings
     (unbind-key "<C-wheel-down>")
@@ -150,6 +157,7 @@
 
 (defun d12frosted-core/post-init-move-text ()
   (use-package move-text
+    :defer t
     :config
     (bind-key "<M-down>" 'move-text-down prog-mode-map)
     (bind-key "<M-up>" 'move-text-up prog-mode-map)))
@@ -188,6 +196,7 @@ Supports negative arguments and repeating."
 
 (defun d12frosted-core/init-cider ()
   (use-package cider
+    :commands (cider--make-result-overlay)
     :init
     (defun d12/eval-overlay (value point)
       (cider--make-result-overlay (format "%S" value)
@@ -232,6 +241,7 @@ Supports negative arguments and repeating."
 (when (configuration-layer/layer-usedp 'helm)
   (defun d12frosted-core/post-init-helm ()
     (use-package helm
+      :defer t
       :config
       ;; Disable fuzzy matching to make mdfind work with helm-locate
       (setq helm-locate-fuzzy-match nil)
@@ -242,6 +252,7 @@ Supports negative arguments and repeating."
 (when (configuration-layer/layer-usedp 'ivy)
   (defun d12frosted-core/post-init-ivy ()
     (use-package ivy
+      :defer t
       :config
       (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
 
