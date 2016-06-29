@@ -56,3 +56,12 @@ eval (python -m virtualfish)
 if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
   source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
 end
+
+function stack-install -a git_url
+  pushd (pwd)
+  set -l wd (echo -s "$TMPDIR" (date "+%Y_%m_%d_%H_%M_%S"))
+  git clone $git_url $wd
+  cd $wd
+  stack install
+  popd
+end
