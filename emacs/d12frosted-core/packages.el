@@ -37,6 +37,7 @@
     term-projectile
     (smart-ops :location local)
     (fill-unfill :location local)
+    persp-mode
 
     ;; completion
     helm
@@ -237,6 +238,19 @@ Supports negative arguments and repeating."
 
 (defun d12frosted-core/init-fill-unfill ()
   (use-package fill-unfill))
+
+(defun d12frosted-core/post-init-persp-mode ()
+  (use-package persp-mode
+    :defer t
+    :init
+    (spacemacs|define-custom-layout "@Spacemacs"
+      :binding "s"
+      :body
+      (find-file-existing user-init-file))
+    (spacemacs|define-custom-layout "@Env"
+      :binding "e"
+      :body
+      (find-file-existing d12-path/d12frosted-init))))
 
 (when (configuration-layer/layer-usedp 'helm)
   (defun d12frosted-core/post-init-helm ()
