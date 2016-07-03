@@ -44,7 +44,7 @@
               ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
 
-            org-hide-emphasis-markers t
+            org-hide-emphasis-markers nil
             org-agenda-window-setup 'current-window
             org-src-fontify-natively t
             org-directory d12-path/org-home
