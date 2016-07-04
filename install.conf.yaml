@@ -26,6 +26,7 @@
   - mu
   - aspell --with-all-langs
   - fish
+  - shellcheck
 
 - shell:
   - [chmod +x emacs/bootstrap && emacs/bootstrap, Bootstrap emacs]
