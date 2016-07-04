@@ -63,6 +63,11 @@
       relink: true
       create: true
 
+    ~/.local/bin/sync_spacemacs:
+      path: utils/sync_spacemacs.sh
+      relink: true
+      create: true
+
 - brew: [haskell-stack]
 - shell:
     - stack setup

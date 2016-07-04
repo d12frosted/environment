@@ -43,5 +43,3 @@ There are some useful functions that come with my configs.
    automatically.
 5. =convert_texture= - convert input texture to specified format using
    =TexturePacker=. For more information, checkout =$ TexturePacker --help=.
-6. =spacemacs_update= - sync spacemacs fork with checkversion remote (please,
-   check out function definition to see available options).
