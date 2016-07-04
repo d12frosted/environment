@@ -27,6 +27,7 @@
     ace-window
     move-text
     alert
+    comment-dwim-2
     (composable :location (recipe
                            :fetcher github
                            :repo "paldepind/composable.el"))
@@ -168,6 +169,12 @@
     :commands (alert)
     :init
     (setq alert-default-style 'notifier)))
+
+(defun d12frosted-core/init-comment-dwim-2 ()
+  (use-package comment-dwim-2
+    :commands (comment-dwim-2)
+    :init
+    (bind-key "C-M-;" 'comment-dwim-2)))
 
 (defun d12frosted-core/init-composable ()
   (use-package composable
