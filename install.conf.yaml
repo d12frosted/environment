@@ -35,6 +35,9 @@
 - brew:
   - git
   - git-lfs
+  - gnupg
+  - gnupg2
+  - pinentry-mac
 
 - link:
     ~/.emacs.d/init.el:
@@ -60,6 +63,16 @@
 
     ~/.local/bin/ipa-install:
       path: utils/ipa-install/ipa-install
+      relink: true
+      create: true
+
+    ~/.gnupg/gpg-agent.conf:
+      path: gnupg/gpg-agent.conf
+      relink: true
+      create: true
+
+    ~/.gnupg/gpg.conf:
+      path: gnupg/gpg.conf
       relink: true
       create: true
 
