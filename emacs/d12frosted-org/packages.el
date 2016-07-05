@@ -21,8 +21,9 @@
                             :fetcher github
                             :repo "kautsig/org-weather"))))
 
-(defun d12frosted-org/pre-init-org ()
+(defun d12frosted-org/post-init-org ()
   (use-package org
+    :defer t
     :init
     (progn
       (d12-org/reload-agenda-files)
@@ -83,6 +84,7 @@
           (setq ad-return-value rlt)))
 
       ;; setup appt
+      ;; TODO: defer it's activation
       (require 'appt)
       (appt-activate t)
 
@@ -113,7 +115,7 @@
 
       ;; Update alarms when...
       ;; (1) ... Starting Emacs
-      (d12-org/agenda-to-appt)
+      ;; (d12-org/agenda-to-appt)
 
       ;; (2) ... Everyday at 12:05am (useful in case you keep Emacs always on)
       (run-at-time "12:05am" (* 24 3600) 'd12-org/agenda-to-appt)
@@ -135,7 +137,6 @@
 (defun d12frosted-org/init-org-journal ()
   "Initialize org-journal package"
   (use-package org-journal
-    :ensure t
     :mode (".*/[0-9]*-[0-9]*-[0-9]*$" . org-journal-mode)
     :init
     (evil-leader/set-key
