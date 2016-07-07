@@ -40,8 +40,81 @@
 
 (require 'org)
 
-(defvar d12-flexitime-work-day-duration 540
+;;; Configuration variables
+;;
+
+(defvar d12-flexitime-work-day-duration 480
   "Duration of a work day in minutes.")
+
+(setq d12-flexitime-work-day-duration 540)
+
+;;; Type definitions
+;;
+
+(defclass d12-flexitime-day ()
+  ((date
+    :initarg :date
+    :type list
+    :documentation
+    "Date in seconds")
+   (dayType
+    :initarg :dayType
+    :type symbol
+    :documentation
+    "Type of the day. Available types are: weekday, weekend,
+    holiday, vacation")
+   (workDayDuration
+    :initarg :workDayDuration
+    :type number
+    :documentation
+    "Duration of work day in minutes.")
+   (workedMinutes
+    :initarg :workedMinutes
+    :initform 0
+    :type number
+    :documentation
+    "Amount of worked time in minutes.")
+   (data
+    :initarg :data
+    :documentation
+    "Hash table containing all data about this day.
+Key is category name. Value category data.")))
+
+(defmethod d12-flexitime-day-get-work-balance ((day d12-flexitime-day))
+  "Get work balance in minutes.
+Positive value means overtime. Negative means that you have to
+work more!"
+  (- (oref day :workedMinutes)
+     (oref day :workDayDuration)))
+
+(defclass d12-flexitime-category-data ()
+  ((name
+    :initarg :name
+    :type string
+    :documentation
+    "Category name.")
+   (data
+    :initarg :data
+    :documentation
+    "Hash table containing all data about this category.
+Key is headline name. Value is headline data.")))
+
+(defclass d12-flexitime-headline-data ()
+  ((name
+    :initarg :name
+    :type string
+    :documentation
+    "Headline name.")
+   (clockedtime
+    :initarg :clockedtime
+    :type number
+    :documentation
+    "Clocked time in minutes.")
+   (level
+    :initarg :level
+    :type number
+    :documentation
+    "Heading level.")))
 
 ;;;###autoload
 (defun org-dblock-write:flexitime (params)
