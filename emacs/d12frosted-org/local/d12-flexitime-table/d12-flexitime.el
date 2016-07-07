@@ -80,6 +80,16 @@
     "Hash table containing all data about this day.
 Key is category name. Value category data.")))
 
+(defmethod d12-flexitime-day-update-work-balance ((day d12-flexitime-day))
+  "Update work balance.
+Should be called after :data modification."
+  (let ((total 0))
+    (maphash (lambda (name category)
+               (setq total (+ total
+                              (oref category :workedMinutes))))
+             (oref day :data))
+    (oset day :workedMinutes total)))
+
 (defmethod d12-flexitime-day-get-work-balance ((day d12-flexitime-day))
   "Get work balance in minutes.
 Positive value means overtime. Negative means that you have to
@@ -87,26 +97,53 @@ work more!"
   (- (oref day :workedMinutes)
      (oref day :workDayDuration)))
 
-(defclass d12-flexitime-category-data ()
+(defmethod d12-flexitime-day-get-category ((day d12-flexitime-day) name)
+  "Get category data by NAME."
+  (let ((category (gethash name (oref day :data))))
+    (unless category
+      (setq category
+            (puthash name
+                     (d12-flexitime-category
+                      :name name
+                      :data (make-hash-table :test 'equal))
+                     (oref day :data))))
+    category))
+
+(defclass d12-flexitime-category ()
   ((name
     :initarg :name
     :type string
     :documentation
     "Category name.")
+   (workedMinutes
+    :initarg :workedMinutes
+    :initform 0
+    :type number
+    :documentation
+    "Amount of worked time in minutes.")
    (data
     :initarg :data
     :documentation
     "Hash table containing all data about this category.
 Key is headline name. Value is headline data.")))
 
-(defclass d12-flexitime-headline-data ()
+(defmethod d12-flexitime-category-add-headline ((category d12-flexitime-category) headline)
+  "Add HEADLINE to category data."
+  (let ((name (oref headline :name)))
+    (puthash name headline (oref category :data)))
+  (when (eql 1 (oref headline :level))
+    (oset category :workedMinutes
+          (+ (oref category :workedMinutes)
+             (oref headline :time)))))
+
+(defclass d12-flexitime-headline ()
   ((name
     :initarg :name
     :type string
     :documentation
     "Headline name.")
-   (clockedtime
-    :initarg :clockedtime
+   (time
+    :initarg :time
     :type number
     :documentation
     "Clocked time in minutes.")
@@ -121,29 +158,29 @@ Key is headline name. Value is headline data.")))
   "Write the standard flexitime table."
   (plist-put params :formatter 'd12-flexitime--day-formatter)
   (plist-put params :properties '("CATEGORY" "ARCHIVE_CATEGORY"))
-  (let ((dates (d12-flexitime--generate-dates-list params)))
-    (plist-put params :dates dates)
-    (plist-put params :data (make-hash-table :test 'equal))
+  (let ((days (d12-flexitime--generate-days params)))
+    (plist-put params :days days)
     (insert "| Date | Category | Headline | Time | Overtime |\n")
     (insert "|------+----------+----------+------+----------|\n")
-    (dolist (date dates)
+    (dolist (day days)
+      (plist-put params :day day)
       (plist-put params :block nil)
       (plist-put params
                  :tstart
                  (format-time-string (car org-time-stamp-formats)
-                                     (seconds-to-time date)))
-      (plist-put params
-                 :tend
+                                     (oref day :date)))
+      (plist-put params :tend
                  (format-time-string (car org-time-stamp-formats)
-                                     (seconds-to-time (+ date 86400))))
+                                     (seconds-to-time (+ (time-to-seconds (oref day :date))
+                                                         86400))))
       (org-dblock-write:clocktable params)
       (insert "|------+----------+----------+------+----------|\n")))
   (insert "| *Total* | | | | |\n")
-  (maphash
-   (lambda (cat time)
-     (insert (format "| | *%s* | | %s | |\n" cat (d12-flexitime--format-minutes time))))
-   (plist-get params :data))
-  (insert "|------+----------+----------+------+----------|\n")
+  ;; (maphash
+  ;;  (lambda (cat time)
+  ;;    (insert (format "| | *%s* | | %s | |\n" cat (d12-flexitime--format-minutes time))))
+  ;;  (plist-get params :data))
+  ;; (insert "|------+----------+----------+------+----------|\n")
   (org-table-align)
   (delete-forward-char -1))
 
@@ -155,16 +192,8 @@ Key is headline name. Value is headline data.")))
   TABLES is a list of tables with clocking data as produced by
   `org-clock-get-table-data'. PARAMS is the parameter property
   list obtained from the dynamic block definition."
-  (let ((data (plist-get params :data)) ; global data for total section
-        ;; data for current day, where key is category name and value is another
-        ;; hash table with headline as key and plist as a value
-        (dayData (make-hash-table :test 'equal))
-        ;; total data for category for this day
-        (catTimeMap (make-hash-table :test 'equal))
-        (level 1)
-        (dayTotal 0))
-
-    ;; gather dayData
+  (let ((day (plist-get params :day)))
+    ;; gather data for day
     (while (setq tbl (pop tables))
       ;; now tbl is the table resulting from one file.
       (setq file-time (nth 1 tbl))
@@ -180,50 +209,35 @@ Key is headline name. Value is headline data.")))
                 (time (nth 3 entry))
                 (cat (or (cdr (assoc "ARCHIVE_CATEGORY" (nth 4 entry)))
                          (cdr (assoc "CATEGORY" (nth 4 entry))))))
-            (let ((catMap (gethash cat dayData)))
-              (unless catMap
-                (setq catMap (puthash cat (make-hash-table :test 'equal) dayData)))
-              (let ((pl '()))
-                (setq pl (plist-put pl :level level))
-                (setq pl (plist-put pl :time time))
-                (puthash headline pl catMap)))))))
+            (let ((category (d12-flexitime-day-get-category day cat)))
+              (d12-flexitime-category-add-headline
+               category
+               (d12-flexitime-headline
+                :name headline
+                :time time
+                :level level)))))))
 
-    ;; calculate total for this day and write it to data and catTimeMap
-    (maphash
-     (lambda (cat catMap)
-       (maphash
-        (lambda (headline pl)
-          (when (eq 1 (plist-get pl :level))
-            (mapc (lambda (table)
-                    (let ((oldCatTime (gethash cat table)))
-                      (unless oldCatTime
-                        (setq oldCatTime (puthash cat 0 table)))
-                      (puthash cat (+ (plist-get pl :time) oldCatTime) table)))
-                  `(,data ,catTimeMap))))
-        catMap))
-     dayData)
-    (maphash (lambda (cat catTotal)
-               (setq dayTotal (+ dayTotal catTotal)))
-             catTimeMap)
-
+    (d12-flexitime-day-update-work-balance day)
     ;; now print data
     (insert (format "| %s | | | *%s* | *%s* |\n"
                     (plist-get params :tstart)
-                    (d12-flexitime--format-minutes dayTotal)
-                    (d12-flexitime--format-minutes (- dayTotal d12-flexitime-work-day-duration))))
+                    (d12-flexitime--format-minutes (oref day :workedMinutes))
+                    (d12-flexitime--format-minutes (d12-flexitime-day-get-work-balance day))))
     (maphash
-     (lambda (cat catMap)
+     (lambda (category-name category)
        (insert "| | | | | |\n")
-       (insert (format "| | *%s* | | *%s* | |\n" cat (d12-flexitime--format-minutes (gethash cat catTimeMap))))
+       (insert (format "| | *%s* | | *%s* | |\n"
+                       category-name
+                       (d12-flexitime--format-minutes (oref category :workedMinutes))))
        (maphash
-        (lambda (headline pl)
-          (if (> (plist-get pl :level) level)
-              (insert (format "| | | \\_ %s | %s | |\n" headline (d12-flexitime--format-minutes (plist-get pl :time))))
-            (insert (format "| | | %s | *%s* | |\n" headline (d12-flexitime--format-minutes (plist-get pl :time))))))
-        catMap))
-     dayData)))
+        (lambda (hl-name hl)
+          (if (> (oref hl :level) 1)
+              (insert (format "| | | \\_ %s | %s | |\n" hl-name (d12-flexitime--format-minutes (oref hl :time))))
+            (insert (format "| | | %s | *%s* | |\n" hl-name (d12-flexitime--format-minutes (oref hl :time))))))
+        (oref category :data)))
+     (oref day :data))))
 
-(defun d12-flexitime--generate-dates-list (params)
+(defun d12-flexitime--generate-days (params)
   (when (not (eq 'thismonth (plist-get params :block)))
     (error "Only 'thismonth is supported as a :block"))
   (let* ((today (calendar-current-date))
@@ -233,7 +247,13 @@ Key is headline name. Value is headline data.")))
          (end (org-time-string-to-seconds (format "%4d-%02d-01" year (+ month 1))))
          (res '()))
     (while (< start end)
-      (add-to-list 'res start t)
+      (add-to-list 'res
+                   (d12-flexitime-day
+                    :date (seconds-to-time start)
+                    :dayType 'weekday
+                    :workDayDuration d12-flexitime-work-day-duration
+                    :data (make-hash-table :test 'equal))
+                   t)
       (setq start (+ start 86400)))
     res))
 
