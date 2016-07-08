@@ -180,15 +180,34 @@ Key is headline name. Value is headline data.")))
                  (format-time-string (car org-time-stamp-formats)
                                      (seconds-to-time (+ (time-to-seconds (oref day :date))
                                                          86400))))
-      (org-dblock-write:clocktable params)))
-  (insert "| *Total* | | | | |\n")
-  ;; (maphash
-  ;;  (lambda (cat time)
-  ;;    (insert (format "| | *%s* | | %s | |\n" cat (d12-flexitime--format-minutes time))))
-  ;;  (plist-get params :data))
-  ;; (insert "|------+----------+----------+------+----------|\n")
-  (org-table-align)
-  (delete-forward-char -1))
+      (org-dblock-write:clocktable params))
+
+    ;; calculate and print total
+    (let ((totalByCat (make-hash-table :test 'equal))
+          (totalWorked 0)
+          (totalBalance 0))
+      (mapc
+       (lambda (day)
+         (maphash
+          (lambda (cat-name cat)
+            (puthash cat-name
+                     (+ (gethash cat-name totalByCat 0)
+                        (oref cat :workedMinutes))
+                     totalByCat))
+          (oref day :data))
+         (setq totalWorked (+ (oref day :workedMinutes) totalWorked))
+         (setq totalBalance (+ (d12-flexitime-day-get-work-balance day) totalBalance)))
+       days)
+      (insert (format "| *Total* | | | *%s* | *%s* |\n"
+                      (d12-flexitime--format-minutes totalWorked)
+                      (d12-flexitime--format-minutes totalBalance)))
+      (maphash
+       (lambda (cat time)
+         (insert (format "| | %s | | %s | |\n" cat (d12-flexitime--format-minutes time))))
+       totalByCat)
+      (insert "|------+----------+----------+------+----------|\n"))
+    (org-table-align)
+    (delete-forward-char -1)))
 
 ;;; Gore
 ;; It's dangerous to walk further without a good portion of painkillers
