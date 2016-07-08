@@ -58,7 +58,8 @@
     (defun d12//get-state-face ()
       (let ((state (d12//get-state)))
         (intern (format "d12-spaceline-%S-face" state))))
-    (setq spaceline-highlight-face-func 'd12//get-state-face)))
+    (setq spaceline-highlight-face-func 'd12//get-state-face)
+    (spaceline-toggle-org-clock-on)))
 
 (defun d12frosted-visual/init-d12-pretty-greek ()
   (use-package d12-pretty-greek
