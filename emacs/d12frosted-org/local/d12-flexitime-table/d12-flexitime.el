@@ -49,6 +49,12 @@
 This value is used by default but can be overridden for specific
 flexitime table using :weekday minutes.")
 
+(defvar d12-flexitime-skip-empty-weekdays t
+  "When non-nil skip empty weekdays in flexitime table.
+
+This value is used by default but can be overridden for specific
+flexitime table using :skip-empty-weekdays val.")
+
 ;;; Type definitions
 ;;
 
@@ -219,7 +225,9 @@ Key is headline name. Value is headline data.")))
 
     (d12-flexitime-day-update-work-balance day)
     ;; now print data
-    (unless (hash-table-empty-p (oref day :data))
+    (unless (and d12-flexitime-skip-empty-weekdays
+                 (hash-table-empty-p (oref day :data))
+                 (eq (oref day :dayType) 'weekday))
       (insert (format "| %s | | | *%s* | *%s* |\n"
                       (plist-get params :tstart)
                       (d12-flexitime--format-minutes (oref day :workedMinutes))
