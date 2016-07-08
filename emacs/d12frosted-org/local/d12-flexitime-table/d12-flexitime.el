@@ -43,10 +43,11 @@
 ;;; Configuration variables
 ;;
 
-(defvar d12-flexitime-work-day-duration 480
-  "Duration of a work day in minutes.")
+(defvar d12-flexitime-weekday-duration 480
+  "Duration of a work day in minutes.
 
-(setq d12-flexitime-work-day-duration 540)
+This value is used by default but can be overridden for specific
+flexitime table using :weekday minutes.")
 
 ;;; Type definitions
 ;;
@@ -252,7 +253,7 @@ Key is headline name. Value is headline data.")))
                    (d12-flexitime-day
                     :date (seconds-to-time start)
                     :dayType 'weekday
-                    :workDayDuration d12-flexitime-work-day-duration
+                    :workDayDuration d12-flexitime-weekday-duration
                     :data (make-hash-table :test 'equal))
                    t)
       (setq start (+ start 86400)))
