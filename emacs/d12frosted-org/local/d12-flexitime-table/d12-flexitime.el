@@ -173,8 +173,7 @@ Key is headline name. Value is headline data.")))
                  (format-time-string (car org-time-stamp-formats)
                                      (seconds-to-time (+ (time-to-seconds (oref day :date))
                                                          86400))))
-      (org-dblock-write:clocktable params)
-      (insert "|------+----------+----------+------+----------|\n")))
+      (org-dblock-write:clocktable params)))
   (insert "| *Total* | | | | |\n")
   ;; (maphash
   ;;  (lambda (cat time)
@@ -219,23 +218,25 @@ Key is headline name. Value is headline data.")))
 
     (d12-flexitime-day-update-work-balance day)
     ;; now print data
-    (insert (format "| %s | | | *%s* | *%s* |\n"
-                    (plist-get params :tstart)
-                    (d12-flexitime--format-minutes (oref day :workedMinutes))
-                    (d12-flexitime--format-minutes (d12-flexitime-day-get-work-balance day))))
-    (maphash
-     (lambda (category-name category)
-       (insert "| | | | | |\n")
-       (insert (format "| | *%s* | | *%s* | |\n"
-                       category-name
-                       (d12-flexitime--format-minutes (oref category :workedMinutes))))
-       (maphash
-        (lambda (hl-name hl)
-          (if (> (oref hl :level) 1)
-              (insert (format "| | | \\_ %s | %s | |\n" hl-name (d12-flexitime--format-minutes (oref hl :time))))
-            (insert (format "| | | %s | *%s* | |\n" hl-name (d12-flexitime--format-minutes (oref hl :time))))))
-        (oref category :data)))
-     (oref day :data))))
+    (unless (hash-table-empty-p (oref day :data))
+      (insert (format "| %s | | | *%s* | *%s* |\n"
+                      (plist-get params :tstart)
+                      (d12-flexitime--format-minutes (oref day :workedMinutes))
+                      (d12-flexitime--format-minutes (d12-flexitime-day-get-work-balance day))))
+      (maphash
+       (lambda (category-name category)
+         (insert "| | | | | |\n")
+         (insert (format "| | *%s* | | *%s* | |\n"
+                         category-name
+                         (d12-flexitime--format-minutes (oref category :workedMinutes))))
+         (maphash
+          (lambda (hl-name hl)
+            (if (> (oref hl :level) 1)
+                (insert (format "| | | \\_ %s | %s | |\n" hl-name (d12-flexitime--format-minutes (oref hl :time))))
+              (insert (format "| | | %s | *%s* | |\n" hl-name (d12-flexitime--format-minutes (oref hl :time))))))
+          (oref category :data)))
+       (oref day :data))
+      (insert "|------+----------+----------+------+----------|\n"))))
 
 (defun d12-flexitime--generate-days (params)
   (when (not (eq 'thismonth (plist-get params :block)))
