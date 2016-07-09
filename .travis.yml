@@ -9,3 +9,6 @@ os:
 sudo: true
 install: true
 script: ./install
+
+addons:
+  ssh_known_hosts: github.com
