@@ -40,7 +40,7 @@
 
 (require 'org)
 
-;;; Configuration variables
+;;; * Configuration variables
 ;;
 
 (defvar flexitime-weekday-duration 480
@@ -55,120 +55,81 @@ flexitime table using :weekday minutes.")
 This value is used by default but can be overridden for specific
 flexitime table using :skip-empty-weekdays val.")
 
-;;; Type definitions
+;;; * Type definitions
 ;;
 
-(defclass flexitime-day ()
-  ((date
-    :initarg :date
-    :type list
-    :documentation
-    "Date in seconds")
-   (dayType
-    :initarg :dayType
-    :protection :private
-    :type symbol
-    :documentation
-    "Type of the day. Available types are: weekday, weekend,
-    holiday, vacation")
-   (workDayDuration
-    :initarg :workDayDuration
-    :type number
-    :documentation
-    "Duration of work day in minutes.")
-   (workedMinutes
-    :initarg :workedMinutes
-    :initform 0
-    :protection :private
-    :type number
-    :documentation
-    "Amount of worked time in minutes.")
-   (data
-    :initarg :data
-    :documentation
-    "Hash table containing all data about this day.
-Key is category name. Value category data.")))
+;;; ** `flexitime-day' definition
+;;
 
-(defmethod flexitime-day-set-type ((day flexitime-day) type)
-  "Set day TYPE of DAY.
-TYPE must be one of following symbols: weekday, weekend, holiday,
-vacation. Automatically setups :workDayDuration slot."
-  (message "setting type to %s" type)
-  (oset day :dayType type)
-  (oset day :workDayDuration flexitime-weekday-duration))
+(cl-defstruct (flexitime-day (:constructor flexitime-day--create))
+  (date nil :read-only t)
+  (type nil :read-only t)
+  (duration nil :read-only t)
+  (time 0)
+  (data (make-hash-table :test 'equal)))
+
+(defun flexitime-day-create (DATE)
+  "Create `flexitime-day' for a given DATE."
+  (flexitime-day--create :date DATE
+               :type 'weekday
+               :duration flexitime-weekday-duration))
 
 (defmethod flexitime-day-update-work-balance ((day flexitime-day))
   "Update work balance.
 Should be called after :data modification."
-  (let ((total 0))
-    (maphash (lambda (name category)
-               (setq total (+ total
-                              (oref category :workedMinutes))))
-             (oref day :data))
-    (oset day :workedMinutes total)))
+  (maphash (lambda (name category)
+             (cl-incf (flexitime-day-time day)
+                      (flexitime-category-time category)))
+           (flexitime-day-data day))
+  (flexitime-day-time day))
 
 (defmethod flexitime-day-get-work-balance ((day flexitime-day))
   "Get work balance in minutes.
 Positive value means overtime. Negative means that you have to
 work more!"
-  (- (oref day :workedMinutes)
-     (oref day :workDayDuration)))
+  (- (flexitime-day-time day)
+     (flexitime-day-duration day)))
 
 (defmethod flexitime-day-get-category ((day flexitime-day) name)
   "Get category data by NAME."
-  (let ((category (gethash name (oref day :data))))
+  (let ((category (gethash name (flexitime-day-data day))))
     (unless category
-      (setq category
-            (puthash name
-                     (flexitime-category
-                      :name name
-                      :data (make-hash-table :test 'equal))
-                     (oref day :data))))
+      (setq category (puthash
+                      name
+                      (flexitime-category-create name)
+                      (flexitime-day-data day))))
     category))
 
-(defclass flexitime-category ()
-  ((name
-    :initarg :name
-    :type string
-    :documentation
-    "Category name.")
-   (workedMinutes
-    :initarg :workedMinutes
-    :initform 0
-    :type number
-    :documentation
-    "Amount of worked time in minutes.")
-   (data
-    :initarg :data
-    :documentation
-    "Hash table containing all data about this category.
-Key is headline name. Value is headline data.")))
+;;; ** `flexitime-category' definition
+;;
+
+(cl-defstruct (flexitime-category (:constructor flexitime-category--create))
+  (name nil :read-only t)
+  (time 0)
+  (data (make-hash-table :test 'equal)))
+
+(defun flexitime-category-create (name)
+  "Create `flexitime-categry' for a given NAME."
+  (flexitime-category--create :name name))
 
 (defmethod flexitime-category-add-headline ((category flexitime-category) headline)
   "Add HEADLINE to category data."
-  (let ((name (oref headline :name)))
-    (puthash name headline (oref category :data)))
-  (when (eql 1 (oref headline :level))
-    (oset category :workedMinutes
-          (+ (oref category :workedMinutes)
-             (oref headline :time)))))
+  (let ((name (flexitime-headline-name headline)))
+    (puthash name headline (flexitime-category-data category)))
+  (when (eql 1 (flexitime-headline-level headline))
+    (cl-incf (flexitime-category-time category)
+             (flexitime-headline-time headline))))
 
-(defclass flexitime-headline ()
-  ((name
-    :initarg :name
-    :type string
-    :documentation
-    "Headline name.")
-   (time
-    :initarg :time
-    :type number
-    :documentation
-    "Clocked time in minutes.")
-   (level
-    :initarg :level
-    :type number
-    :documentation
-    "Heading level.")))
+;;; ** `flexitime-headline' definition
+;;
+
+(cl-defstruct (flexitime-headline (:constructor flexitime-headline-create))
+  (name nil :read-only t)
+  (time 0)
+  (level nil :read-only t))
+
+;;; * Flexitime table writer
+;;
 
 ;;;###autoload
 (defun org-dblock-write:flexitime (params)
@@ -185,10 +146,10 @@ Key is headline name. Value is headline data.")))
       (plist-put params
                  :tstart
                  (format-time-string (car org-time-stamp-formats)
-                                     (oref day :date)))
+                                     (flexitime-day-date day)))
       (plist-put params :tend
                  (format-time-string (car org-time-stamp-formats)
-                                     (seconds-to-time (+ (time-to-seconds (oref day :date))
+                                     (seconds-to-time (+ (time-to-seconds (flexitime-day-date day))
                                                          86400))))
       (org-dblock-write:clocktable params))
 
@@ -202,10 +163,10 @@ Key is headline name. Value is headline data.")))
           (lambda (cat-name cat)
             (puthash cat-name
                      (+ (gethash cat-name totalByCat 0)
-                        (oref cat :workedMinutes))
+                        (flexitime-category-time cat))
                      totalByCat))
-          (oref day :data))
-         (setq totalWorked (+ (oref day :workedMinutes) totalWorked))
+          (flexitime-day-data day))
+         (setq totalWorked (+ (flexitime-day-time day) totalWorked))
          (setq totalBalance (+ (flexitime-day-get-work-balance day) totalBalance)))
        days)
       (insert (format "| *Total* | | | *%s* | *%s* |\n"
@@ -219,8 +180,8 @@ Key is headline name. Value is headline data.")))
     (org-table-align)
     (delete-forward-char -1)))
 
-;;; Gore
-;; It's dangerous to walk further without a good portion of painkillers
+;;; * Day formatter
+;;
 
 (defun flexitime--day-formatter (ipos tables params)
   "Write out a flexitime day clock table at position IPOS in the current buffer.
@@ -247,7 +208,7 @@ Key is headline name. Value is headline data.")))
             (let ((category (flexitime-day-get-category day cat)))
               (flexitime-category-add-headline
                category
-               (flexitime-headline
+               (flexitime-headline-create
                 :name headline
                 :time time
                 :level level)))))))
@@ -255,65 +216,49 @@ Key is headline name. Value is headline data.")))
     (flexitime-day-update-work-balance day)
     ;; now print data
     (unless (and flexitime-skip-empty-weekdays
-                 (hash-table-empty-p (oref day :data))
-                 (eq (oref day :dayType) 'weekday))
+                 (hash-table-empty-p (flexitime-day-data day))
+                 (eq (flexitime-day-type day) 'weekday))
       (insert (format "| %s | | | *%s* | *%s* |\n"
                       (plist-get params :tstart)
-                      (flexitime--format-minutes (oref day :workedMinutes))
+                      (flexitime--format-minutes (flexitime-day-time day))
                       (flexitime--format-minutes (flexitime-day-get-work-balance day))))
       (maphash
        (lambda (category-name category)
          (insert "| | | | | |\n")
          (insert (format "| | *%s* | | *%s* | |\n"
                          category-name
-                         (flexitime--format-minutes (oref category :workedMinutes))))
+                         (flexitime--format-minutes (flexitime-category-time category))))
          (maphash
           (lambda (hl-name hl)
-            (if (> (oref hl :level) 1)
-                (insert (format "| | | \\_ %s | %s | |\n" hl-name (flexitime--format-minutes (oref hl :time))))
-              (insert (format "| | | %s | *%s* | |\n" hl-name (flexitime--format-minutes (oref hl :time))))))
-          (oref category :data)))
-       (oref day :data))
+            (if (> (flexitime-headline-level hl) 1)
+                (insert (format "| | | \\_ %s | %s | |\n" hl-name (flexitime--format-minutes (flexitime-headline-time hl))))
+              (insert (format "| | | %s | *%s* | |\n" hl-name (flexitime--format-minutes (flexitime-headline-time hl))))))
+          (flexitime-category-data category)))
+       (flexitime-day-data day))
       (insert "|------+----------+----------+------+----------|\n"))))
+
+;;; * Day generation
+;;
 
 (defun flexitime--generate-days (params)
   (let ((res))
     (pcase (plist-get params :block)
-      (`thismonth (let* ((today (calendar-current-date))
-                         (month (calendar-extract-month today))
-                         (year (calendar-extract-year today))
-                         (start (org-time-string-to-seconds (format "%4d-%02d-01" year month)))
-                         ;; TODO make sure that it works with 12th month
-                         (end (org-time-string-to-seconds (format "%4d-%02d-01" year (+ month 1)))))
-                    (while (< start end)
-                      (add-to-list 'res
-                                   (flexitime-day
-                                    :date (seconds-to-time start)
-                                    :dayType 'weekday
-                                    :workDayDuration flexitime-weekday-duration
-                                    :data (make-hash-table :test 'equal))
-                                   t)
-                      (setq start (+ start 86400)))))
-      (`today (let* ((today (calendar-current-date))
-                     (month (calendar-extract-month today))
-                     (year (calendar-extract-year today))
-                     (day (calendar-extract-day today))
-                     (start (org-time-string-to-seconds (format "%4d-%02d-%02d" year month day)))
-                     ;; make sure that it works with last day of the month
-                     (end (org-time-string-to-seconds (format "%4d-%02d-%02d" year month (+ 1 day)))))
-                (while (< start end)
-                  (add-to-list 'res
-                               (flexitime-day
-                                :date (seconds-to-time start)
-                                :dayType 'weekday
-                                :workDayDuration flexitime-weekday-duration
-                                :data (make-hash-table :test 'equal))
-                               t)
-                  (setq start (+ start 86400)))))
-      (t (error "Only 'thismonth and 'today are supported as a :block")))
+      (`thismonth
+       (let* ((today (calendar-current-date))
+              (month (calendar-extract-month today))
+              (year (calendar-extract-year today))
+              (start (org-time-string-to-seconds
+                      (format "%4d-%02d-01" year month)))
+              ;; TODO make sure that it works with 12th month
+              (end (org-time-string-to-seconds
+                    (format "%4d-%02d-01" year (+ month 1)))))
+         (while (< start end)
+           (add-to-list 'res (flexitime-day-create (seconds-to-time start)) t)
+           (setq start (+ start 86400)))))
+      (_ (error "Only 'thismonth and 'today are supported as a :block")))
     res))
 
-;;; Helpers
+;;; * Helpers
 ;;
 
 (defun flexitime--format-minutes (minutes)
