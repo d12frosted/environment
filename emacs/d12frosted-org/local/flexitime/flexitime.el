@@ -55,6 +55,10 @@ flexitime table using :weekday minutes.")
 This value is used by default but can be overridden for specific
 flexitime table using :skip-empty-weekdays val.")
 
+(defvar flexitime-holidays-category-name "Holidays")
+(defvar flexitime-vacation-category-name "Vacation")
+(defvar flexitime-weekends '("Sat" "Sun"))
+
 ;;; * Type definitions
 ;;
 
@@ -68,11 +72,15 @@ flexitime table using :skip-empty-weekdays val.")
   (time 0)
   (data (make-hash-table :test 'equal)))
 
-(defun flexitime-day-create (DATE)
+(defun flexitime-day-create (date)
   "Create `flexitime-day' for a given DATE."
-  (flexitime-day--create :date DATE
-               :type 'weekday
-               :duration flexitime-weekday-duration))
+  (let ((type (flexitime--figure-day-type date)))
+    (flexitime-day--create
+     :date date
+     :type type
+     :duration (if (eq type 'weekday)
+                   flexitime-weekday-duration
+                 0))))
 
 (defmethod flexitime-day-update-work-balance ((day flexitime-day))
   "Update work balance.
@@ -255,6 +263,24 @@ work more!"
       (cl-incf ts 86400))
     res))
 
+(defun flexitime--figure-day-type (time)
+  (when (format-time-string "%a" time))
+  (let ((type 'weekday))
+    (if (member (format-time-string "%a" time)
+                flexitime-weekends)
+        (setq type 'weekend)
+      (dolist (file (org-agenda-files nil 'ifmode))
+        (dolist (entry (org-agenda-get-day-entries
+                        file (flexitime--time-to-date time)))
+          (let ((category (with-temp-buffer
+                            (insert entry)
+                            (org-get-category (point-min)))))
+            (when (string= flexitime-holidays-category-name category)
+              (setq type 'holiday))
+            (when (string= flexitime-vacation-category-name category)
+              (setq type 'vacation))))))
+    type))
+
 ;;; * Helpers
 ;;
 
@@ -263,5 +289,18 @@ work more!"
   (format "%s%s"
           (if (< minutes 0) "-" "")
           (org-minutes-to-clocksum-string (abs minutes))))
+
+(defun flexitime--time-to-date (&optional time)
+  "Convert TIME to DATE.
+
+TIME as returned by `current-time'.
+DATE as returned by `calendar-current-date'.
+
+When TIME is omitted, `current-time' is used instead."
+  (let ((lt (decode-time (or time
+                             (current-time)))))
+    `(,(nth 4 lt)
+      ,(nth 3 lt)
+      ,(nth 5 lt))))
 
 ;;; flexitime.el ends here
