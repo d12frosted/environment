@@ -241,21 +241,18 @@ work more!"
 ;;
 
 (defun flexitime--generate-days (params)
-  (let ((res))
-    (pcase (plist-get params :block)
-      (`thismonth
-       (let* ((today (calendar-current-date))
-              (month (calendar-extract-month today))
-              (year (calendar-extract-year today))
-              (start (org-time-string-to-seconds
-                      (format "%4d-%02d-01" year month)))
-              ;; TODO make sure that it works with 12th month
-              (end (org-time-string-to-seconds
-                    (format "%4d-%02d-01" year (+ month 1)))))
-         (while (< start end)
-           (add-to-list 'res (flexitime-day-create (seconds-to-time start)) t)
-           (setq start (+ start 86400)))))
-      (_ (error "Only 'thismonth and 'today are supported as a :block")))
+  (let ((block (plist-get params :block))
+        (ws (plist-get params :wstart))
+        (ms (plist-get params :mstart))
+        (te (plist-get params :tend))
+        (cc) (ts) (te) (range-text) (res))
+    (setq cc (org-clock-special-range block nil t ws ms)
+          ts (org-time-string-to-seconds (car cc))
+          te (org-time-string-to-seconds (nth 1 cc))
+          range-text (nth 2 cc))
+    (while (< ts te)
+      (add-to-list 'res (flexitime-day-create (seconds-to-time ts)) t)
+      (cl-incf ts 86400))
     res))
 
 ;;; * Helpers
