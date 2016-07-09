@@ -15,6 +15,7 @@
 
 (defconst d12frosted-org-packages
   '(org
+    (flexitime :localtion local)
     org-bullets
     org-journal
     (org-weather :location (recipe
@@ -127,6 +128,12 @@
       ;; (org-weather-refresh)
 
       (d12|rename-modeline "org" org-mode "本"))))
+
+(defun d12frosted-org/init-flexitime ()
+  (use-package flexitime
+    :after org
+    :init
+    (setq flexitime-weekday-duration 540)))
 
 (defun d12frosted-org/post-init-org-bullets ()
   (use-package org-bullets
