@@ -49,11 +49,11 @@
 This value is used by default but can be overridden for specific
 flexitime table using :weekday minutes.")
 
-(defvar flexitime-skip-empty-weekdays t
-  "When non-nil skip empty weekdays in flexitime table.
+(defvar flexitime-skip-empty-days t
+  "When non-nil skip empty days in flexitime table.
 
 This value is used by default but can be overridden for specific
-flexitime table using :skip-empty-weekdays val.")
+flexitime table using :skip-empty-days val.")
 
 (defvar flexitime-holidays-category-name "Holidays")
 (defvar flexitime-vacation-category-name "Vacation")
@@ -223,9 +223,8 @@ work more!"
 
     (flexitime-day-update-work-balance day)
     ;; now print data
-    (unless (and flexitime-skip-empty-weekdays
-                 (hash-table-empty-p (flexitime-day-data day))
-                 (eq (flexitime-day-type day) 'weekday))
+    (unless (and flexitime-skip-empty-days
+                 (hash-table-empty-p (flexitime-day-data day)))
       (insert (format "| %s | | | *%s* | *%s* |\n"
                       (plist-get params :tstart)
                       (flexitime--format-minutes (flexitime-day-time day))
