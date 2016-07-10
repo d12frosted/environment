@@ -9,13 +9,14 @@ if [ ! -e $spacemacs ]; then
   }
   username=$USER
   branch="develop"
+  spacemacs_link="git@github.com:$username/spacemacs.git"
   if [ $USER != "d12frosted" ]; then
     username="syl20bnr"
     branch="master"
+    spacemacs_link="https://github.com/syl20bnr/spacemacs.git"
   fi
-  spacemacs_link="git@github.com:$username/spacemacs.git"
   git clone $spacemacs_link $spacemacs
-  cd $spacemacs
+  cd $spacemacs || exit
   git checkout $branch
 fi
 
