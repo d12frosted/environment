@@ -20,8 +20,8 @@ if [ ! -e $spacemacs ]; then
   git checkout $branch
 fi
 
-if [ $(uname -s) = "Darwin" ]; then
-  if [ $(which emacs) == "/usr/bin/emacs" ]; then
+if [ "$(uname -s)" = "Darwin" ]; then
+  if [ "$(which emacs)" == "/usr/bin/emacs" ]; then
     brew install emacs --HEAD --use-git-head --with-cocoa --with-gnutls --with-librsvg --with-imagemagick
   fi
 fi
