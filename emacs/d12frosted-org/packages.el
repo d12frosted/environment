@@ -15,7 +15,7 @@
 
 (defconst d12frosted-org-packages
   '(org
-    (flexitime :localtion local)
+    (flexitime :location local)
     org-bullets
     org-journal
     (org-weather :location (recipe

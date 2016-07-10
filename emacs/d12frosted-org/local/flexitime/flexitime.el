@@ -38,7 +38,7 @@
 ;;; Code:
 ;;
 
-(require 'org)
+(require 'org-clock)
 
 ;;; * Configuration variables
 ;;
@@ -301,5 +301,7 @@ When TIME is omitted, `current-time' is used instead."
     `(,(nth 4 lt)
       ,(nth 3 lt)
       ,(nth 5 lt))))
+
+(provide 'flexitime)
 
 ;;; flexitime.el ends here
