@@ -56,13 +56,18 @@ you have questions or any problems with my configurations - just ping me. I'll
 try to help you as much as I can. Any suggestions or pull requests are warmly
 welcome!
 
-* Acknowledgments
+* Acknowledgements
 
 These configurations would not have been possible without the work of and the
-inspiration from these people:
+inspiration from following people.
 
-- [[https://github.com/chrisdone][Chris Done]]
-- [[https://github.com/purcell][Steve Purcell]]
-- [[https://github.com/syl20bnr][Sylvain Benner]]
-- [[https://github.com/TheBB][Eivind Fonn]]
-- [[https://github.com/Malabarba][Artur Malabarba]]
+- [[https://github.com/chrisdone][Chris Done]] and his [[https://github.com/chrisdone/chrisdone-emacs][.emacs.d]] inspired me to start using Emacs.
+- [[https://github.com/syl20bnr][Sylvain Benner]] as author of Spacemacs he changed the way I use Emacs and Emacs
+  Lisp.
+- [[https://github.com/TheBB][Eivind Fonn]] is an author of Spaceline and crazy Emacs Lisper who constantly
+  helps me with my problems.
+- [[https://github.com/bmag][Bar]] made a lot of important configurations that I use on a daily basis. One of
+  those people who is always happy to help you with your problems. And believe,
+  his help is very valuable!
+- [[https://github.com/purcell][Steve Purcell]] inspires me with his overall work on improving Emacs ecosystem.
+- [[https://github.com/Malabarba][Artur Malabarba]] shares valuable pieces of advice and ideas in his blog.
