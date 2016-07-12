@@ -144,10 +144,11 @@ work more!"
   "Write the standard flexitime table."
   (plist-put params :formatter 'flexitime--day-formatter)
   (plist-put params :properties '("CATEGORY" "ARCHIVE_CATEGORY"))
-  (let ((days (flexitime--generate-days params)))
+  (let ((print-category (flexitime--plist-get params :print-category t))
+        (days (flexitime--generate-days params)))
     (plist-put params :days days)
-    (insert "| Date | Category | Headline | Time | Overtime |\n")
-    (insert "|------+----------+----------+------+----------|\n")
+    (flexitime--format-row "Date" "Category" "Headline" "Time" "Overtime")
+    (flexitime--format-row 'sep 'sep 'sep 'sep 'sep)
     (dolist (day days)
       (plist-put params :day day)
       (plist-put params :block nil)
@@ -162,29 +163,41 @@ work more!"
       (org-dblock-write:clocktable params))
 
     ;; calculate and print total
-    (let ((totalByCat (make-hash-table :test 'equal))
+    (let ((totalByKey (make-hash-table :test 'equal))
           (totalWorked 0)
           (totalBalance 0))
       (mapc
        (lambda (day)
          (maphash
           (lambda (cat-name cat)
-            (puthash cat-name
-                     (+ (gethash cat-name totalByCat 0)
-                        (flexitime-category-time cat))
-                     totalByCat))
+            (when print-category
+              (puthash cat-name
+                       (+ (gethash cat-name totalByKey 0)
+                          (flexitime-category-time cat))
+                       totalByKey))
+            (unless print-category
+              (maphash
+               (lambda (hl-name hl)
+                 (when (eql (flexitime-headline-level hl) 1)
+                   (puthash hl-name
+                          (+ (gethash hl-name totalByKey 0)
+                             (flexitime-headline-time hl))
+                          totalByKey)))
+               (flexitime-category-data cat))))
           (flexitime-day-data day))
          (setq totalWorked (+ (flexitime-day-time day) totalWorked))
          (setq totalBalance (+ (flexitime-day-get-work-balance day) totalBalance)))
        days)
-      (insert (format "| *Total* | | | *%s* | *%s* |\n"
-                      (flexitime--format-minutes totalWorked)
-                      (flexitime--format-minutes totalBalance)))
+      (flexitime--format-row
+       '(bold "Total") "" ""
+       `(bold ,totalWorked)
+       `(bold ,totalBalance))
       (maphash
-       (lambda (cat time)
-         (insert (format "| | %s | | %s | |\n" cat (flexitime--format-minutes time))))
-       totalByCat)
-      (insert "|------+----------+----------+------+----------|\n"))
+       (lambda (key time)
+         (flexitime--format-row
+          "" key (if print-category "" key) time ""))
+       totalByKey)
+      (flexitime--format-row 'sep 'sep 'sep 'sep 'sep))
     (org-table-align)
     (delete-forward-char -1)))
 
@@ -196,7 +209,8 @@ work more!"
   TABLES is a list of tables with clocking data as produced by
   `org-clock-get-table-data'. PARAMS is the parameter property
   list obtained from the dynamic block definition."
-  (let ((day (plist-get params :day)))
+  (let ((print-category (flexitime--plist-get params :print-category t))
+        (day (plist-get params :day)))
     ;; gather data for day
     (while (setq tbl (pop tables))
       ;; now tbl is the table resulting from one file.
@@ -225,24 +239,30 @@ work more!"
     ;; now print data
     (unless (and flexitime-skip-empty-days
                  (hash-table-empty-p (flexitime-day-data day)))
-      (insert (format "| %s | | | *%s* | *%s* |\n"
-                      (plist-get params :tstart)
-                      (flexitime--format-minutes (flexitime-day-time day))
-                      (flexitime--format-minutes (flexitime-day-get-work-balance day))))
+      (flexitime--format-row
+       (plist-get params :tstart) "" ""
+       (flexitime-day-time day)
+       (flexitime-day-get-work-balance day))
       (maphash
        (lambda (category-name category)
-         (insert "| | | | | |\n")
-         (insert (format "| | *%s* | | *%s* | |\n"
-                         category-name
-                         (flexitime--format-minutes (flexitime-category-time category))))
+         (flexitime--format-row "" "" "" "" "")
+         (when print-category
+           (flexitime--format-row
+            "" `(bold ,category-name)
+            "" `(bold ,(flexitime-category-time category)) ""))
          (maphash
           (lambda (hl-name hl)
-            (if (> (flexitime-headline-level hl) 1)
-                (insert (format "| | | \\_ %s | %s | |\n" hl-name (flexitime--format-minutes (flexitime-headline-time hl))))
-              (insert (format "| | | %s | *%s* | |\n" hl-name (flexitime--format-minutes (flexitime-headline-time hl))))))
+            (flexitime--format-row
+             "" ""
+             `(level ,(flexitime-headline-level hl) ,hl-name)
+             (if (or print-category
+                     (> (flexitime-headline-level hl) 1))
+                 (flexitime-headline-time hl)
+               `(bold ,(flexitime-headline-time hl)))
+             ""))
           (flexitime-category-data category)))
        (flexitime-day-data day))
-      (insert "|------+----------+----------+------+----------|\n"))))
+      (flexitime--format-row 'sep 'sep 'sep 'sep 'sep))))
 
 ;;; * Day generation
 ;;
@@ -283,6 +303,37 @@ work more!"
 ;;; * Helpers
 ;;
 
+(defun flexitime--format-cell (data)
+  "Format flexitime table cell."
+  (pcase data
+    (`sep "-")
+    (`(bold ,value)
+      (format "*%s*" (flexitime--format-cell value)))
+    (`(level ,lvl ,value)
+      (format
+       "%s%s"
+       (if (> lvl 1) "\\_ " "")
+       (flexitime--format-cell value)))
+    ((pred stringp) data)
+    ((pred numberp) (flexitime--format-minutes data))
+    (_ (format "%s" data))))
+
+(defun flexitime--format-row (date cat hl time over)
+  "Format flexitime table row using `flexitime--format-cell'."
+  (insert "|")
+  (insert (flexitime--format-cell date))
+  ;; dynamic binding makes it possible
+  (when print-category
+    (insert "|")
+    (insert (flexitime--format-cell cat)))
+  (insert "|")
+  (insert (flexitime--format-cell hl))
+  (insert "|")
+  (insert (flexitime--format-cell time))
+  (insert "|")
+  (insert (flexitime--format-cell over))
+  (insert "|\n"))
+
 (defun flexitime--format-minutes (minutes)
   "Properly format MINUTES for clock table."
   (format "%s%s"
@@ -298,9 +349,17 @@ DATE as returned by `calendar-current-date'.
 When TIME is omitted, `current-time' is used instead."
   (let ((lt (decode-time (or time
                              (current-time)))))
-    `(,(nth 4 lt)
-      ,(nth 3 lt)
-      ,(nth 5 lt))))
+    `(,(nth 4 lt) ,(nth 3 lt) ,(nth 5 lt))))
+
+(defun flexitime--plist-get (plist prop &optional default)
+  "Extract a value from a property list.
+PLIST is a property list, which is a list of the form
+(PROP1 VALUE1 PROP2 VALUE2...).  This function returns the value
+corresponding to the given PROP, or DEFAULT if PROP is not one of the
+properties on the list.  This function never signals an error."
+  (if (plist-member plist prop)
+      (plist-get plist prop)
+    default))
 
 (provide 'flexitime)
 
