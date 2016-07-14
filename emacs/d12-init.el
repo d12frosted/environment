@@ -102,6 +102,4 @@ Usage: (d12-layers|define-layer-package layer package pre|post|nil)."
               dotspacemacs-filepath d12-path/spacemacs-user-config)
 (load-file d12-path/spacemacs-init)
 
-;; keybindings
-
 ;;; d12-init.el ends here
