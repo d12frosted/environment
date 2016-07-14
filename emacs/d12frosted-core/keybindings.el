@@ -27,4 +27,7 @@
 
 (spacemacs/declare-prefix "o" "d12frosted")
 
+;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
+(unbind-key "C-x C-c")
+
 ;;; keybindings.el ends here
