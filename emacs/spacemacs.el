@@ -21,10 +21,10 @@
      dash
      erc
      (git :variables
-          git-magit-status-fullscreen t)
+      git-magit-status-fullscreen t)
      github
      (org :variables
-          org-enable-github-support t)
+      org-enable-github-support t)
      pandoc
      ranger
      restclient
@@ -48,15 +48,15 @@
      emacs-lisp
      (haskell :variables haskell-completion-backend 'ghci)
      (html :variables
-           web-mode-markup-indent-offset 2
-           web-mode-attr-indent-offset 2
-           web-mode-code-indent-offset 2
-           web-mode-css-indent-offset 2
-           web-mode-sql-indent-offset 2
-           css-indent-offset 2)
+      web-mode-markup-indent-offset 2
+      web-mode-attr-indent-offset 2
+      web-mode-code-indent-offset 2
+      web-mode-css-indent-offset 2
+      web-mode-sql-indent-offset 2
+      css-indent-offset 2)
      (javascript :variables
-                 js-indent-level 2
-                 js2-basic-offset 2)
+      js-indent-level 2
+      js2-basic-offset 2)
      lua
      markdown
      shell-scripts
