@@ -71,7 +71,6 @@
                                       reveal-in-osx-finder
                                       vimish-fold)
    dotspacemacs-excluded-packages '(emmet-mode
-                                    evil-unimpaired
                                     window-numbering)
    dotspacemacs-download-packages 'used-but-keep-unused))
 
