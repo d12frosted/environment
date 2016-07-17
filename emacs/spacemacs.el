@@ -44,6 +44,7 @@
      d12frosted-lua
      d12frosted-lisp
      d12frosted-visual
+     d12frosted-window-purpose
 
      ;; languages
      emacs-lisp
