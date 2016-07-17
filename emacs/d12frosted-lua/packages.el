@@ -24,7 +24,7 @@
     (defun moai-run-main ()
       "Run main.lua using moai."
       (interactive)
-      (let* ((buffer-name "*moai main.lua*")
+      (let* ((buffer-name d12frosted-lua-moai-buffer-name)
              (buffer (get-buffer buffer-name))
              (currentBuffer (current-buffer))
              workdir)

@@ -15,4 +15,7 @@
 ;;; Code:
 ;;
 
+(defvar d12frosted-lua-moai-buffer-name "*moai main.lua*"
+  "Name of the moai output buffer.")
+
 ;;; config.el ends here
