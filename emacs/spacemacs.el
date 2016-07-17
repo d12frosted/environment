@@ -37,6 +37,7 @@
 
      ;; private layers
      no-dots
+     window-purpose
      d12frosted-core
      d12frosted-org
      ;; d12frosted-haskell
