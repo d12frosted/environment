@@ -15,7 +15,8 @@
 
 (defconst d12frosted-lua-packages
   '(lua-mode
-    smart-ops))
+    smart-ops
+    window-purpose))
 
 (defun d12frosted-lua/post-init-lua-mode ()
   (use-package lua-mode
@@ -32,6 +33,14 @@
       (smart-ops "," :pad-before nil)
       (smart-ops ":")
       (smart-ops-default-ops))))
+
+(defun d12frosted-lua/post-init-window-purpose ()
+  (use-package window-purpose
+    :config
+    (add-to-list 'purpose-user-mode-purposes '(lua-mode . lua))
+    (add-to-list 'purpose-user-mode-purposes '(json-mode . general))
+    (add-to-list 'purpose-user-name-purposes (cons d12frosted-lua-moai-buffer-name 'terminal))
+    (purpose-compile-user-configuration)))
 
 
 ;;; packages.el ends here
