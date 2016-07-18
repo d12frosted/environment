@@ -20,6 +20,11 @@
     google-translate
     projectile
     magit
+    (magit-gcm :location
+     (recipe
+      :fetcher github
+      :repo "d12frosted/git-config-manager"
+      :files ("elisp/magit-gcm.el")))
     git-messenger
     bpr
     zoom-frm
@@ -110,6 +115,13 @@
       (interactive)
       (let ((bpr-on-success #'magit-refresh))
         (bpr-spawn "git pushall")))))
+
+(defun d12frosted-core/init-magit-gcm ()
+  (use-package magit-gcm
+      :defer (turn-on-magit-gcm)
+      :init
+      (setq-default magit-gcm-mode-lighter "")
+      (add-hook 'magit-mode-hook 'turn-on-magit-gcm)))
 
 (defun d12frosted-core/post-init-git-messenger ()
   (use-package git-messenger
