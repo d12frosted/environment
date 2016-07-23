@@ -18,7 +18,8 @@
     lispy))
 
 (defun d12frosted-lisp/post-init-emacs-lisp ()
-  (setq lisp-indent-function 'common-lisp-indent-function))
+  ;; (setq lisp-indent-function 'common-lisp-indent-function)
+  )
 
 (defun d12frosted-lisp/init-lispy ()
   (use-package lispy
