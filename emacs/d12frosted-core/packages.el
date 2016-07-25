@@ -44,6 +44,7 @@
     (smart-ops :location local)
     (fill-unfill :location local)
     persp-mode
+    (mobile-app-installer :location local)
 
     ;; completion
     helm
@@ -270,6 +271,14 @@ Supports negative arguments and repeating."
       :binding "e"
       :body
       (find-file-existing d12-path/d12frosted-init))))
+
+(defun d12frosted-core/init-mobile-app-installer ()
+  (use-package mobile-app-installer
+    :defer t
+    :commands (mai mai-install)
+    :config
+    (when (fboundp 'd12-private/setup-mai)
+      (d12-private/setup-mai))))
 
 (when (configuration-layer/layer-usedp 'helm)
   (defun d12frosted-core/post-init-helm ()
