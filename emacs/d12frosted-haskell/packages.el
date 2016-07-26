@@ -53,9 +53,6 @@
 
       (spacemacs|diminish interactive-haskell-mode "λ" "λ")
 
-      (defun d12frosted-haskell/set-indentation-step ()
-        (setq tab-width 2))
-
       (add-hook 'haskell-mode-hook #'d12frosted-haskell/set-indentation-step)
 
       ;; Make 3rd-party tools aware of common syntax extensions.
@@ -67,9 +64,6 @@
       (add-to-list 'completion-ignored-extensions ".gm")
 
       ;; Disable haskell-interactive-mode for org src blocks.
-      (defun d12frosted-haskell/maybe-haskell-interactive-mode ()
-        (unless (bound-and-true-p org-src-mode)
-          (interactive-haskell-mode)))
       (add-hook 'haskell-mode-hook #'d12frosted-haskell/maybe-haskell-interactive-mode)
 
       ;; Disable some faces.
