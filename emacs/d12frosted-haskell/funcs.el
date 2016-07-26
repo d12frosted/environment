@@ -20,4 +20,15 @@
   (unless (bound-and-true-p org-src-mode)
     (interactive-haskell-mode)))
 
+(defun d12frosted-haskell/setup-package-yaml-save ()
+  (interactive)
+  (add-hook 'after-save-hook #'d12frosted-haskell/on-package-yaml-save nil t))
+
+(defun d12frosted-haskell/on-package-yaml-save ()
+  (interactive)
+  (when (and (string-equal (file-name-nondirectory buffer-file-name) "package.yaml")
+             (file-exists-p (concat (file-name-directory buffer-file-name)
+                                    "stack.yaml")))
+    (call-process-shell-command (executable-find "hpack"))))
+
 ;;; funcs.el ends here

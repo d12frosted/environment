@@ -23,6 +23,7 @@
     indent-dwim
     intero
     llvm-mode
+    yaml-mode
 
     (ghc-dump :location local)
     (haskell-flyspell :location local)
@@ -182,6 +183,13 @@
 
 (defun d12frosted-haskell/init-llvm-mode ()
   (use-package llvm-mode))
+
+(defun d12frosted-haskell/post-init-yaml-mode ()
+  (use-package yaml-mode
+    :defer t
+    :init
+    ;; Regenerate cabal file when saving package.yaml file
+    (add-hook 'yaml-mode-hook #'d12frosted-haskell/setup-package-yaml-save)))
 
 (defun d12frosted-haskell/init-ghc-dump ()
   (use-package ghc-dump
