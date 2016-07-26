@@ -39,10 +39,10 @@
     :defer t
     :config
     (progn
-      (setq haskell-process-use-presentation-mode t
+      (setq haskell-process-use-presentation-mode nil
             haskell-interactive-mode-scroll-to-bottom t
             haskell-interactive-popup-errors nil
-            haskell-process-show-debug-tips t
+            haskell-process-show-debug-tips nil
             haskell-stylish-on-save t
             haskell-indentation-layout-offset 2
             haskell-indentation-starter-offset 2
@@ -59,31 +59,25 @@
       (add-hook 'haskell-mode-hook #'d12frosted-haskell/set-indentation-step)
 
       ;; Make 3rd-party tools aware of common syntax extensions.
-
       (setq haskell-language-extensions
             '("-XUnicodeSyntax" "-XLambdaCase" "-XRankNTypes"))
 
       ;; Ignore generated files.
-
       (add-to-list 'completion-ignored-extensions ".hi")
       (add-to-list 'completion-ignored-extensions ".gm")
 
       ;; Disable haskell-interactive-mode for org src blocks.
-
       (defun d12frosted-haskell/maybe-haskell-interactive-mode ()
         (unless (bound-and-true-p org-src-mode)
           (interactive-haskell-mode)))
-
       (add-hook 'haskell-mode-hook #'d12frosted-haskell/maybe-haskell-interactive-mode)
 
       ;; Disable some faces.
-
       (custom-set-faces
        '(haskell-interactive-face-compile-error ((t (:foreground nil))))
        '(haskell-operator-face ((t :italic nil))))
 
       ;; Set keybindings.
-
       (define-key haskell-mode-map (kbd "<backtab>") #'haskell-indentation-indent-backwards)
       (define-key haskell-mode-map (kbd "TAB")       #'haskell-indentation-indent-line)
       (define-key haskell-mode-map (kbd "M-P")       #'flymake-goto-prev-error)
@@ -126,7 +120,6 @@
       (define-key intero-mode-map (kbd "M-,") #'pop-global-mark))))
 
 (defun d12frosted-haskell/post-init-smart-ops ()
-
   (defun d12frosted-haskell/reformat-comment-at-point ()
     (-when-let ((&plist :beg beg :end end :op op) (sp-get-enclosing-sexp))
       (when (and (equal op "{")
