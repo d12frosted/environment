@@ -40,7 +40,7 @@
      window-purpose
      d12frosted-core
      d12frosted-org
-     ;; d12frosted-haskell
+     d12frosted-haskell
      d12frosted-lua
      d12frosted-lisp
      d12frosted-visual
