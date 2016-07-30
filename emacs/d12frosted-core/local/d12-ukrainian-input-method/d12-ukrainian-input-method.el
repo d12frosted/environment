@@ -1,13 +1,16 @@
-;;; d12-ukrainian-input-method.el --- custom input method
+;;; d12-ukrainian-input-method.el ---
 
 ;; Copyright (c) 2016 Boris Buliga
 
 ;; Author: Boris Buliga <d12frosted@gmail.com>
 ;; Maintainer: Boris Buliga <d12frosted@gmail.com>
-;; Created: 26 May 2016
+;; Created: 29 Jul 2016
 
 ;; Keywords:
 ;; Homepage:
+
+;; Package-Version: 0.0.1
+;; Package-Requires: ()
 
 ;; This file is not part of GNU Emacs.
 ;;; License: GPLv3
@@ -131,4 +134,5 @@
  ("»" ?Ё))
 
 (provide 'd12-ukrainian-input-method)
+
 ;;; d12-ukrainian-input-method.el ends here

@@ -1,17 +1,25 @@
-;;; d12-eww.el --- d12frosted-core layer d12-eww file for Spacemacs.
-;;
-;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
-;;
-;; Author: Boris Buliga <d12frosted@d12frosted.local>
-;; URL: https://github.com/syl20bnr/spacemacs
-;;
+;;; d12-eww.el ---
+
+;; Copyright (c) 2016 Boris Buliga
+
+;; Author: Boris Buliga <d12frosted@gmail.com>
+;; Maintainer: Boris Buliga <d12frosted@gmail.com>
+;; Created: 29 Jul 2016
+
+;; Keywords:
+;; Homepage:
+
+;; Package-Version: 0.0.1
+;; Package-Requires: ()
+
 ;; This file is not part of GNU Emacs.
-;;
 ;;; License: GPLv3
 
 ;;; Commentary:
+;;
 
 ;;; Code:
+;;
 
 (defvar-local d12-eww--display-images t)
 

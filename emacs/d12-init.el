@@ -45,16 +45,6 @@
 ;; load `private.el' file containing all the sensitive data
 (load (concat d12-path/emacs-private "private.el"))
 
-(defun d12-layers/add-extra-to-load-path (layer)
-  "Add 'extra' folder to `load-path' for a given LAYER.
-
-Load-path is modified only when such folder exists."
-  (let* ((layer-path (configuration-layer/get-layer-path layer))
-         (layer-root (format "%s%s/" layer-path layer))
-         (extra-path (concat layer-root "extra/")))
-    (when (file-exists-p extra-path)
-      (add-to-load-path extra-path))))
-
 (defun d12-layers/package-used-by-layer-p (layer package)
   (not (null (memq package
                    (configuration-layer/get-layer-property layer :packages)))))

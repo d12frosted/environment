@@ -1,18 +1,25 @@
-;;; d12-comment.el --- d12frosted-core layer d12-comment file for Spacemacs.
-;;
-;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
-;;
-;; Author: Boris Buliga <d12frosted@d12frosted.local>
-;; URL: https://github.com/syl20bnr/spacemacs
-;;
+;;; d12-comment.el ---
+
+;; Copyright (c) 2016 Boris Buliga
+
+;; Author: Boris Buliga <d12frosted@gmail.com>
+;; Maintainer: Boris Buliga <d12frosted@gmail.com>
+;; Created: 29 Jul 2016
+
+;; Keywords:
+;; Homepage:
+
+;; Package-Version: 0.0.1
+;; Package-Requires: ()
+
 ;; This file is not part of GNU Emacs.
-;;
 ;;; License: GPLv3
 
 ;;; Commentary:
-;; http://endlessparentheses.com/a-comment-or-uncomment-sexp-command.html
+;;
 
 ;;; Code:
+;;
 
 (defun d12//uncomment-sexp (&optional n)
   "Uncomment a sexp around point."
@@ -98,4 +105,4 @@ argument N, (un)comment that many sexps."
 
 (provide 'd12-comment)
 
-;;; d12-files.el ends here
+;;; d12-comment.el ends here

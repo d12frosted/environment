@@ -1,10 +1,16 @@
-;;; d12-interesting-files.el --- discover interesting files
+;;; d12-interesting-files.el ---
 
 ;; Copyright (c) 2016 Boris Buliga
 
 ;; Author: Boris Buliga <d12frosted@gmail.com>
 ;; Maintainer: Boris Buliga <d12frosted@gmail.com>
-;; Created: 26 May 2016
+;; Created: 29 Jul 2016
+
+;; Keywords:
+;; Homepage:
+
+;; Package-Version: 0.0.1
+;; Package-Requires: ()
 
 ;; This file is not part of GNU Emacs.
 ;;; License: GPLv3
@@ -21,10 +27,12 @@
 (defvar d12-interesting-files-interface #'d12-interesting-files-completing-read
   "Interface to use as completion.")
 
+;;;###autoload
 (defun d12-interesting-files-add (list)
   "Add files to `d12-interesting-files-list'"
   (setq d12-interesting-files-list (append d12-interesting-files-list list)))
 
+;;;###autoload
 (defun d12-interesting-files ()
   "Discover interesting files."
   (interactive)
@@ -33,6 +41,7 @@
 ;;;; Ivy interface
 ;;
 
+;;;###autoload
 (defun d12-interesting-files-ivy ()
   "Interesting files discovery with ivy interface."
   (ivy-read "Interesting file: " d12-interesting-files-list
@@ -42,6 +51,7 @@
 ;;;; Helm interface
 ;;
 
+;;;###autoload
 (defun d12-interesting-files-helm ()
   "Interesting files discovery with helm interface."
   (helm :buffer "*helm: d12frosted"
@@ -53,9 +63,11 @@
 ;;;; Completing read interface
 ;;
 
+;;;###autoload
 (defun d12-interesting-files-completing-read ()
   "Interesting files discovery with generic interface."
   (completing-read "Interesting file: " d12-interesting-files-list))
 
 (provide 'd12-interesting-files)
+
 ;;; d12-interesting-files.el ends here

@@ -16,33 +16,6 @@
 ;;;; Require general stuff
 ;;
 
-(require 'd12-files)
-(require 'd12-dir-settings)
-(require 'd12-copy-paste)
-(require 'd12-comment)
-(require 'd12-eww)
-(require 'd12-ukrainian-input-method)
-
-;;;; d12-interesting files
-;;
-
-(require 'd12-interesting-files)
-
-(setq d12-interesting-files-interface
-      (cond
-       ((configuration-layer/layer-usedp 'helm) #'d12-interesting-files-helm)
-       ((configuration-layer/layer-usedp 'ivy) #'d12-interesting-files-ivy)
-       (t #'d12-interesting-files-default)))
-
-(d12-interesting-files-add
- `(,d12-path/spacemacs-user-config
-   ,d12-path/d12frosted-init
-   ,d12-path/spacemacs-init
-   ,(concat d12-path/emacs-private "private.el")
-   ,(concat d12-path/fish-public "config.fish")
-   ,(concat d12-path/fish-private "preconfig.fish")
-   ,(concat d12-path/fish-private "postconfig.fish")))
-
 ;;;; Hooks
 ;;
 

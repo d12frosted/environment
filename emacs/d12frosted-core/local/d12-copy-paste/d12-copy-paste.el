@@ -1,18 +1,25 @@
-;;; d12-copy-paste.el --- d12frosted-core layer d12-copy-paste file for
-;;; Spacemacs.
-;;
-;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
-;;
-;; Author: Boris Buliga <d12frosted@d12frosted.local>
-;; URL: https://github.com/syl20bnr/spacemacs
-;;
+;;; d12-copy-paste.el ---
+
+;; Copyright (c) 2016 Boris Buliga
+
+;; Author: Boris Buliga <d12frosted@gmail.com>
+;; Maintainer: Boris Buliga <d12frosted@gmail.com>
+;; Created: 29 Jul 2016
+
+;; Keywords:
+;; Homepage:
+
+;; Package-Version: 0.0.1
+;; Package-Requires: ()
+
 ;; This file is not part of GNU Emacs.
-;;
 ;;; License: GPLv3
 
 ;;; Commentary:
+;;
 
 ;;; Code:
+;;
 
 (defun d12/copy-line-or-region (&optional copy-func)
   "Copy current line (with newline character) or region. When
@@ -62,4 +69,4 @@ instead of `kill-region'"
 
 (provide 'd12-copy-paste)
 
-;;; d12-files.el ends here
+;;; d12-copy-paste.el ends here

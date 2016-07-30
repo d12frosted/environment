@@ -45,6 +45,13 @@
     (fill-unfill :location local)
     persp-mode
     (mobile-app-installer :location local)
+    (d12-files :location local)
+    (d12-dir-settings :location local)
+    (d12-copy-paste :location local)
+    (d12-comment :location local)
+    (d12-eww :location local)
+    (d12-ukrainian-input-method :location local)
+    (d12-interesting-files :location local)
 
     ;; completion
     helm
@@ -279,6 +286,42 @@ Supports negative arguments and repeating."
     :config
     (when (fboundp 'd12-private/setup-mai)
       (d12-private/setup-mai))))
+
+(defun d12frosted-core/init-d12-files ()
+  (use-package d12-files))
+
+(defun d12frosted-core/init-d12-dir-settings ()
+  (use-package d12-dir-settings))
+
+(defun d12frosted-core/init-d12-copy-paste ()
+  (use-package d12-copy-paste))
+
+(defun d12frosted-core/init-d12-comment ()
+  (use-package d12-comment))
+
+(defun d12frosted-core/init-d12-eww ()
+  (use-package d12-eww))
+
+(defun d12frosted-core/init-d12-ukrainian-input-method ()
+  (use-package d12-ukrainian-input-method))
+
+(defun d12frosted-core/init-d12-interesting-files ()
+  (use-package d12-interesting-files
+    :config
+    (setq d12-interesting-files-interface
+      (cond
+       ((configuration-layer/layer-usedp 'helm) #'d12-interesting-files-helm)
+       ((configuration-layer/layer-usedp 'ivy) #'d12-interesting-files-ivy)
+       (t #'d12-interesting-files-default)))
+
+    (d12-interesting-files-add
+     `(,d12-path/spacemacs-user-config
+       ,d12-path/d12frosted-init
+       ,d12-path/spacemacs-init
+       ,(concat d12-path/emacs-private "private.el")
+       ,(concat d12-path/fish-public "config.fish")
+       ,(concat d12-path/fish-private "preconfig.fish")
+       ,(concat d12-path/fish-private "postconfig.fish")))))
 
 (when (configuration-layer/layer-usedp 'helm)
   (defun d12frosted-core/post-init-helm ()
