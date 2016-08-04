@@ -160,9 +160,6 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
-  (configuration-layer//declare-layers)
-  (mapc #'d12-layers/add-extra-to-load-path
-        (configuration-layer/get-layers-list))
   (setq-default spacemacs-theme-org-highlight t
                 spacemacs-theme-org-height t))
 
