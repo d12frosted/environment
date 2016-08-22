@@ -21,3 +21,4 @@ before_install:
     - mkdir -p $HOME/Dropbox/Apps/aws
     - touch $HOME/Dropbox/Apps/aws/config
     - touch $HOME/Dropbox/Apps/hgrc
+    - brew update
