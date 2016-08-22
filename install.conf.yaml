@@ -86,11 +86,6 @@
       relink: true
       create: true
 
-    ~/.hammerspoon/init.lua:
-      path: hammerspoon/init.lua
-      relink: true
-      create: true
-
 - brew: [haskell-stack]
 - shell:
     - stack setup
