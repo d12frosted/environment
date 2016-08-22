@@ -17,3 +17,7 @@ git:
 before_install:
     - sed -i '' 's/git@github.com:/https:\/\/github.com\//' .gitmodules
     - git submodule update --init --recursive
+    - mkdir -p $HOME/.aws
+    - mkdir -p $HOME/Dropbox/Apps/aws
+    - touch $HOME/Dropbox/Apps/aws/config
+    - touch $HOME/Dropbox/Apps/hgrc

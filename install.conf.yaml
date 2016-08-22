@@ -24,9 +24,14 @@
   - ledger
   - ossp-uuid
   - mu
-  - aspell --with-all-langs
   - fish
   - shellcheck
+  - aspell --with-all-langs
+  - hunspell
+
+- shell:
+  - cd ~/Library/Spelling/ && wget http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.aff
+  - cd ~/Library/Spelling/ && wget http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.dic
 
 - shell:
   - [chmod +x emacs/bootstrap && emacs/bootstrap, Bootstrap emacs]
@@ -97,10 +102,8 @@
     - stack install intero
 
 - link:
-    ~/.aws/config:
-      path: ../Dropbox/Apps/aws/config
-      create: true
-    ~/.hgrc: ../Dropbox/Apps/hgrc
+    ~/.aws/config: $HOME/Dropbox/Apps/aws/config
+    ~/.hgrc: $HOME/Dropbox/Apps/hgrc
 
 - shell:
   - [echo "set -U XDG_CONFIG_HOME ~/.environment" | fish, Setting config directory]
