@@ -86,7 +86,7 @@ values."
   (setq-default
    dotspacemacs-elpa-https nil
    dotspacemacs-elpa-timeout 5
-   dotspacemacs-check-for-update t
+   dotspacemacs-check-for-update nil
    dotspacemacs-editing-style 'emacs
    dotspacemacs-verbose-loading nil
    spacemacs-buffer-logo-title "[A N I M A C S]"
