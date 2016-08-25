@@ -161,4 +161,11 @@ Otherwise `projectile-find-file' is used."
       (counsel-git)
     (projectile-find-file)))
 
+(defun d12/calc-eval-and-replace (p1 p2)
+  "Calculate selection and replace it with result."
+  (interactive "r")
+  (let ((res (calc-eval (buffer-substring p1 p2))))
+    (delete-region p1 p2)
+    (insert res)))
+
 ;;; funcs.el ends here
