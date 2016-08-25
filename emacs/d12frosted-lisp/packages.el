@@ -19,7 +19,23 @@
 
 (defun d12frosted-lisp/post-init-emacs-lisp ()
   ;; (setq lisp-indent-function 'common-lisp-indent-function)
-  )
+
+  ;; Make Elisp regexp look nicer
+  ;; http://oremacs.com/2015/01/11/pretty-elisp-regex/
+  (defun fontify-glyph (item glyph)
+    `((,item
+       (0 font-lock-keyword-face t)
+       (0 (prog1
+              (compose-region (match-beginning 0)
+                              (match-end 0)
+                              ,glyph) nil)))))
+
+  (font-lock-add-keywords 'emacs-lisp-mode
+                          (fontify-glyph "\\\\\\\\|" "∨"))
+  (font-lock-add-keywords 'emacs-lisp-mode
+                          (fontify-glyph "\\\\\\\\(" "("))
+  (font-lock-add-keywords 'emacs-lisp-mode
+                          (fontify-glyph "\\\\\\\\)" ")")))
 
 (defun d12frosted-lisp/init-lispy ()
   (use-package lispy
