@@ -21,7 +21,7 @@
     smart-ops
     aggressive-indent
     indent-dwim
-    intero
+    ;; intero
     llvm-mode
     yaml-mode
 
