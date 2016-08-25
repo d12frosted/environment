@@ -151,6 +151,10 @@ on `projectile-replace' issue with regexps."
       (tags-query-replace old-text new-text nil (cons 'list files)))))
 
 (defun d12/find-file-in-project ()
+  "Find file in current project.
+
+If it's possible, this function uses `counsel-git' to find file.
+Otherwise `projectile-find-file' is used."
   (interactive)
   (if (and (configuration-layer/layer-usedp 'ivy)
            (locate-dominating-file default-directory ".git"))
