@@ -150,4 +150,11 @@ on `projectile-replace' issue with regexps."
            (files (-map (lambda (f) (concat (projectile-project-root) f)) (projectile-current-project-files))))
       (tags-query-replace old-text new-text nil (cons 'list files)))))
 
+(defun d12/find-file-in-project ()
+  (interactive)
+  (if (and (configuration-layer/layer-usedp 'ivy)
+           (locate-dominating-file default-directory ".git"))
+      (counsel-git)
+    (projectile-find-file)))
+
 ;;; funcs.el ends here
