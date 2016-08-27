@@ -52,6 +52,7 @@
     (d12-eww :location local)
     (d12-ukrainian-input-method :location local)
     (d12-interesting-files :location local)
+    elpa-mirror
 
     ;; completion
     helm
@@ -323,6 +324,10 @@ Supports negative arguments and repeating."
        ,(concat d12-path/fish-public "config.fish")
        ,(concat d12-path/fish-private "preconfig.fish")
        ,(concat d12-path/fish-private "postconfig.fish")))))
+
+(defun d12frosted-core/init-elpa-mirror ()
+  (use-package elpa-mirror
+    :commands (elpamr-create-mirror-for-installed)))
 
 (when (configuration-layer/layer-usedp 'helm)
   (defun d12frosted-core/post-init-helm ()
