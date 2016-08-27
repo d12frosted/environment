@@ -76,7 +76,7 @@
    dotspacemacs-excluded-packages '(emmet-mode
                                     centered-buffer-mode
                                     window-numbering)
-   dotspacemacs-download-packages 'used-but-keep-unused))
+   dotspacemacs-install-packages 'used-but-keep-unused))
 
 (defun dotspacemacs/init ()
   "Initialization function.
