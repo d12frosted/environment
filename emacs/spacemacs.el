@@ -21,10 +21,10 @@
      dash
      erc
      (git :variables
-      git-magit-status-fullscreen t)
+          git-magit-status-fullscreen t)
      github
      (org :variables
-      org-enable-github-support t)
+          org-enable-github-support t)
      pandoc
      ranger
      restclient
@@ -44,23 +44,24 @@
      d12frosted-lua
      d12frosted-lisp
      d12frosted-visual
+     d12frosted-spellchecking
      d12frosted-window-purpose
 
      ;; languages
      emacs-lisp
      (haskell :variables
-      haskell-completion-backend 'ghci
-      haskell-enable-hindent-style "chris-done")
+              haskell-completion-backend 'ghci
+              haskell-enable-hindent-style "chris-done")
      (html :variables
-      web-mode-markup-indent-offset 2
-      web-mode-attr-indent-offset 2
-      web-mode-code-indent-offset 2
-      web-mode-css-indent-offset 2
-      web-mode-sql-indent-offset 2
-      css-indent-offset 2)
+           web-mode-markup-indent-offset 2
+           web-mode-attr-indent-offset 2
+           web-mode-code-indent-offset 2
+           web-mode-css-indent-offset 2
+           web-mode-sql-indent-offset 2
+           css-indent-offset 2)
      (javascript :variables
-      js-indent-level 2
-      js2-basic-offset 2)
+                 js-indent-level 2
+                 js2-basic-offset 2)
      lua
      markdown
      shell-scripts

@@ -21,10 +21,10 @@
     projectile
     magit
     (magit-gcm :location
-     (recipe
-      :fetcher github
-      :repo "d12frosted/git-config-manager"
-      :files ("elisp/magit-gcm.el")))
+               (recipe
+                :fetcher github
+                :repo "d12frosted/git-config-manager"
+                :files ("elisp/magit-gcm.el")))
     git-messenger
     bpr
     zoom-frm
