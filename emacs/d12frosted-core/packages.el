@@ -58,9 +58,6 @@
     helm
     ivy
 
-    ;; langs
-    glsl-mode
-
     ;; flyspell / flycheck
     flycheck-package
 
@@ -346,14 +343,6 @@ Supports negative arguments and repeating."
       :defer t
       :config
       (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
-
-(defun d12frosted-core/init-glsl-mode ()
-  (use-package glsl-mode
-    :mode ("\\.fsh$"  . glsl-mode)
-    :mode ("\\.vsh$"  . glsl-mode)
-    :mode ("\\.glsl$" . glsl-mode)
-    :mode ("\\.frag$" . glsl-mode)
-    :mode ("\\.geom$" . glsl-mode)))
 
 (when (configuration-layer/layer-usedp 'syntax-checking)
   (defun d12frosted-core/init-flycheck-package ()
