@@ -14,7 +14,7 @@
    dotspacemacs-ask-for-lazy-installation t
    dotspacemacs-configuration-layer-path `(,dotspacemacs-directory)
    dotspacemacs-configuration-layers
-   '(;; utilities
+   '( ;; utilities
      (auto-completion :disabled-for org)
      better-defaults
      colors
@@ -66,6 +66,7 @@
      markdown
      shell-scripts
      yaml
+     shaders
 
      ;; frameworks
      react)
