@@ -75,6 +75,7 @@
                                       reveal-in-osx-finder
                                       vimish-fold)
    dotspacemacs-excluded-packages '(emmet-mode
+                                    dumb-jump
                                     centered-buffer-mode
                                     window-numbering)
    dotspacemacs-install-packages 'used-but-keep-unused))
