@@ -18,9 +18,6 @@
     (flexitime :location local)
     org-bullets
     org-journal
-    (org-weather :location (recipe
-                            :fetcher github
-                            :repo "kautsig/org-weather"))
     worf))
 
 (defun d12frosted-org/post-init-org ()
@@ -165,18 +162,10 @@
           org-journal-file-pattern (org-journal-format-string->regex org-journal-file-format)
           org-journal-hide-entries-p nil)))
 
-(defun d12frosted-org/init-org-weather ()
-  (use-package org-weather
-    :commands (org-weather)
-    :init
-    (setq org-weather-location d12/org-weather-location
-          org-weather-api-key d12/open-weather-api-key)))
-
 (defun d12frosted-org/init-worf ()
   (use-package worf
     :defer t
     :init
     (add-hook 'org-mode-hook 'worf-mode)))
-
 
 ;;; packages.el ends here
