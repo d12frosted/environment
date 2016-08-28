@@ -37,10 +37,10 @@
 (defun d12frosted-lua/post-init-window-purpose ()
   (use-package window-purpose
     :config
-    (add-to-list 'purpose-user-mode-purposes '(lua-mode . lua))
-    (add-to-list 'purpose-user-mode-purposes '(json-mode . general))
+    (add-to-list 'purpose-user-mode-purposes '(lua-mode . edit))
+    (add-to-list 'purpose-user-mode-purposes '(json-mode . edit))
+    (add-to-list 'purpose-user-mode-purposes '(shell-mode . edit))
     (add-to-list 'purpose-user-name-purposes (cons d12frosted-lua-moai-buffer-name 'terminal))
     (purpose-compile-user-configuration)))
-
 
 ;;; packages.el ends here
