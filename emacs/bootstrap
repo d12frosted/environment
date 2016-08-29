@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-spacemacs=~/.spacemacs
+spacemacs=$HOME/.spacemacs
 
-if [ ! -e $spacemacs ]; then
+if [ ! -e "$spacemacs" ]; then
   hash git || {
     echo "Can't properly bootstrap emacs since 'git' is not available on your system. Please, install it manually."
     exit 1
@@ -15,8 +15,9 @@ if [ ! -e $spacemacs ]; then
     branch="master"
     spacemacs_link="https://github.com/syl20bnr/spacemacs.git"
   fi
-  git clone $spacemacs_link $spacemacs
-  cd $spacemacs || exit
+  echo "$spacemacs_link -> $spacemacs"
+  git clone $spacemacs_link "$spacemacs"
+  cd "$spacemacs" || exit
   git checkout $branch
 fi
 
