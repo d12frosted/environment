@@ -35,7 +35,6 @@
 
 - shell:
   - [chmod +x emacs/bootstrap && emacs/bootstrap, Bootstrap emacs]
-  - [chmod +x emacs/switch_emacs, Promote switch_emacs to executable]
 
 - brew:
   - git
