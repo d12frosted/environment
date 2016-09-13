@@ -49,6 +49,7 @@
      d12frosted-window-purpose
 
      ;; languages
+     csharp
      emacs-lisp
      (haskell :variables
               haskell-completion-backend 'ghci
@@ -164,6 +165,10 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (setq-default
+   omnisharp-server-executable-path
+   (concat d12-path/developer
+           "Other/omnisharp-roslyn/artifacts/publish/OmniSharp/default/net451/OmniSharp.exe"))
   (setq-default spacemacs-theme-org-highlight t
                 spacemacs-theme-org-height t))
 
