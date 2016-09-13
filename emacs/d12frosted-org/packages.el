@@ -18,7 +18,9 @@
     (flexitime :location local)
     org-bullets
     org-journal
-    worf))
+    worf
+    calfw
+    org-gcal))
 
 (defun d12frosted-org/post-init-org ()
   (use-package org
@@ -34,40 +36,46 @@
       (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
 
       (evil-leader/set-key-for-mode
-       'org-mode
-       "#" 'd12-org/insert-block-template)
-      (setq org-todo-keywords
-            '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))
+        'org-mode
+        "#" 'd12-org/insert-block-template)
+      (setq
+       org-todo-keywords
+       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+         (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))
 
-            org-todo-state-tags-triggers
-            '(("CANCELLED" ("CANCELLED" . t))
-              ("WAITING" ("WAITING" . t))
-              ("HOLD" ("WAITING") ("HOLD" . t))
-              (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
+       org-todo-state-tags-triggers
+       '(("CANCELLED" ("CANCELLED" . t))
+         ("WAITING" ("WAITING" . t))
+         ("HOLD" ("WAITING") ("HOLD" . t))
+         (done ("WAITING") ("HOLD"))
+         ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+         ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+         ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
 
-            org-hide-emphasis-markers nil
-            org-agenda-window-setup 'current-window
-            org-src-fontify-natively t
-            org-directory d12-path/org-home
-            org-agenda-inhibit-startup nil
-            org-archive-location "archive/%s::"
-            org-time-clocksum-format
-            '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
-            org-property-format "%-16s %s"
-            org-agenda-prefix-format '((agenda . " %i %-24:c%?-12t% s")
-                                       (timeline . "  % s")
-                                       (todo . " %i %-24:c")
-                                       (tags . " %i %-24:c")
-                                       (search . " %i %-24:c"))
-            org-agenda-sorting-strategy '((agenda habit-up time-up scheduled-down deadline-down todo-state-up category-keep priority-down)
-                                          (todo todo-state-up priority-down category-keep)
-                                          (tags todo-state-up priority-down category-keep)
-                                          (search todo-state-up priority-down category-keep))
-            org-agenda-day-face-function 'd12/org-agenda-day-face-holidays-function)
+       org-hide-emphasis-markers nil
+       org-agenda-window-setup 'current-window
+       org-src-fontify-natively t
+       org-directory d12-path/org-home
+       org-default-notes-file (concat d12-path/org-home "notes.org")
+       org-agenda-inhibit-startup nil
+       org-archive-location "archive/%s::"
+       org-time-clocksum-format
+       '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
+       org-property-format "%-16s %s"
+       org-agenda-prefix-format '((agenda . " %i %-24:c%?-12t% s")
+                                  (timeline . "  % s")
+                                  (todo . " %i %-24:c")
+                                  (tags . " %i %-24:c")
+                                  (search . " %i %-24:c"))
+       org-agenda-sorting-strategy '((agenda habit-up time-up scheduled-down deadline-down todo-state-up category-keep priority-down)
+                                     (todo todo-state-up priority-down category-keep)
+                                     (tags todo-state-up priority-down category-keep)
+                                     (search todo-state-up priority-down category-keep))
+       org-agenda-day-face-function 'd12/org-agenda-day-face-holidays-function
+
+       org-capture-templates
+       `(("t" "todo" entry (file+headline ,org-default-notes-file "Tasks")
+          "** TODO %^{Task} %?")))
 
       ;; (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
 
@@ -169,5 +177,22 @@
     :defer t
     :init
     (add-hook 'org-mode-hook 'worf-mode)))
+
+(defun d12frosted-org/init-calfw ()
+  (use-package calfw
+    :init
+    (require 'calfw-org)))
+
+(defun d12frosted-org/init-org-gcal ()
+  (use-package org-gcal
+    :init
+    (setq
+     org-gcal-client-id d12-gcal-client-id
+     org-gcal-client-secret d12-gcal-client-secret
+     org-gcal-file-alist (mapcar
+                          (lambda (el)
+                            (cons (car el)
+                                  (concat d12-path/org-home (cdr el))))
+                          d12-gcal-calendar-alist))))
 
 ;;; packages.el ends here
