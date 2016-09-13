@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>io.d12frosted.mirror_elpa.d12frosted</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>PATH</key>
+      <string>/Users/d12frosted/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/Users/d12frosted/.local/bin/mirror_elpa</string>
+      <string>-o</string>
+      <string>/Users/d12frosted/Developer/d12frosted/elpa-mirror/</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>21600</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/d12frosted/Library/Logs/io.d12frosted.mirror_elpa.d12frosted.stdout</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/d12frosted/Library/Logs/io.d12frosted.mirror_elpa.d12frosted.stderr</string>
+  </dict>
+</plist>
