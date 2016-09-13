@@ -17,7 +17,8 @@
   '(
     beacon
     spaceline
-    (d12-pretty-greek :location local)))
+    (d12-pretty-greek :location local)
+    all-the-icons))
 
 (defun d12frosted-visual/init-beacon ()
   (use-package beacon
@@ -59,11 +60,35 @@
       (let ((state (d12//get-state)))
         (intern (format "d12-spaceline-%S-face" state))))
     (setq spaceline-highlight-face-func 'd12//get-state-face)
-    (spaceline-toggle-org-clock-on)))
+    (spaceline-toggle-org-clock-on)
+
+    (spaceline-define-segment major-mode
+      "The name of the major mode."
+      (let ((icon (all-the-icons-icon-for-buffer)))
+        (condition-case nil
+            (setq icon (all-the-icons-fileicon (file-name-extension (buffer-file-name (current-buffer)))))
+          (error nil))
+        (unless (symbolp icon) ;; This implies it's the major mode
+          (format
+           "%s"
+           (propertize
+            icon
+            'help-echo (format "Major-mode: `%s`" major-mode)
+            'display '(raise -0.1)
+            'face `(
+                    :height 1.2
+                    :family ,(all-the-icons-icon-family-for-buffer)
+                    :background ,(if (powerline-selected-window-active)
+                                     (face-background 'powerline-active1)
+                                   (face-background 'powerline-inactive1))
+                    ))))))))
 
 (defun d12frosted-visual/init-d12-pretty-greek ()
   (use-package d12-pretty-greek
     :init
     (add-hook 'prog-mode-hook #'d12-pretty-greek)))
+
+(defun d12frosted-visual/init-all-the-icons ()
+  (use-package all-the-icons))
 
 ;;; packages.el ends here
