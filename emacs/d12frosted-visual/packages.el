@@ -62,6 +62,7 @@
     (setq spaceline-highlight-face-func 'd12//get-state-face)
     (spaceline-toggle-org-clock-on)
 
+    (spaceline-toggle-minor-modes-off)
     (spaceline-define-segment major-mode
       "The name of the major mode."
       (let ((icon (all-the-icons-icon-for-buffer)))
