@@ -32,6 +32,9 @@
 If you wish to add support for more types checkout
   `d12/setup-env-shell-type'")
 
+(setq split-height-threshold nil)
+(setq split-width-threshold 160)
+
 (setq-default
  ;; Miscellaneous
  vc-follow-symlinks t
