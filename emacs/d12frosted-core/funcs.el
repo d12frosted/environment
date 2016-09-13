@@ -168,4 +168,8 @@ Otherwise `projectile-find-file' is used."
     (delete-region p1 p2)
     (insert res)))
 
+(defun d12/rename-frame (format)
+  (interactive "sFormat: ")
+  (setq frame-title-format format))
+
 ;;; funcs.el ends here
