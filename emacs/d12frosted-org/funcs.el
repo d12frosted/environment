@@ -166,4 +166,50 @@ If not, show simply the clocked time like 01:50."
   (interactive "n")
   (d12-org/insert-github-issue-link "syl20bnr/spacemacs" number))
 
+;; http://emacs.stackexchange.com/questions/16688/how-can-i-escape-the-in-org-mode-to-prevent-bold-fontification/16746#16746
+(defun d12-org/entity-get-name (char)
+  "Return the entity name for CHAR. For example, return \"ast\" for *."
+  (let ((ll (append org-entities-user
+                    org-entities))
+        e name utf8)
+    (catch 'break
+      (while ll
+        (setq e (pop ll))
+        (when (not (stringp e))
+          (setq utf8 (nth 6 e))
+          (when (string= char utf8)
+            (setq name (car e))
+            (throw 'break name)))))))
+
+;; http://emacs.stackexchange.com/questions/16688/how-can-i-escape-the-in-org-mode-to-prevent-bold-fontification/16746#16746
+(defun d12-org/insert-org-entity-maybe (&rest args)
+  "When the universal prefix C-u is used before entering any character,
+    insert the character's `org-entity' name if available.
+
+    If C-u prefix is not used and if `org-entity' name is not available, the
+    returned value `entity-name' will be nil."
+  ;; It would be fine to use just (this-command-keys) instead of
+  ;; (substring (this-command-keys) -1) below in emacs 25+.
+  ;; But if the user pressed "C-u *", then
+  ;;  - in emacs 24.5, (this-command-keys) would return "^U*", and
+  ;;  - in emacs 25.x, (this-command-keys) would return "*".
+  ;; But in both versions, (substring (this-command-keys) -1) will return
+  ;; "*", which is what we want.
+  ;; http://thread.gmane.org/gmane.emacs.orgmode/106974/focus=106996
+  (let ((pressed-key (substring (this-command-keys) -1))
+        entity-name)
+    (when (and (listp args) (eq 4 (car args)))
+      (setq entity-name (d12-org/entity-get-name pressed-key))
+      (when entity-name
+        (setq entity-name (concat "\\" entity-name "{}"))
+        (insert entity-name)
+        (message (concat "Inserted `org-entity' "
+                         (propertize entity-name
+                                     'face 'font-lock-function-name-face)
+                         " for the symbol "
+                         (propertize pressed-key
+                                     'face 'font-lock-function-name-face)
+                         "."))))
+    entity-name))
+
 ;;; funcs.el ends here

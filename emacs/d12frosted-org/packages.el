@@ -129,6 +129,11 @@
 
       ;; weather
       ;; (org-weather-refresh)
+      ;; Run `org-self-insert-command' only if `d12-org/insert-org-entity-maybe'
+      ;; returns nil.
+      ;;
+      ;; http://emacs.stackexchange.com/questions/16688/how-can-i-escape-the-in-org-mode-to-prevent-bold-fontification/16746#16746
+      (advice-add 'org-self-insert-command :before-until #'d12-org/insert-org-entity-maybe)
 
       (d12|rename-modeline "org" org-mode "本"))))
 
