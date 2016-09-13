@@ -69,7 +69,7 @@
                                           (search todo-state-up priority-down category-keep))
             org-agenda-day-face-function 'd12/org-agenda-day-face-holidays-function)
 
-      (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
+      ;; (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
 
       (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
         (let ((rlt ad-return-value)
@@ -120,22 +120,19 @@
       ;; Update alarms when...
       ;; (1) ... Starting Emacs
       ;; (d12-org/agenda-to-appt)
-
       ;; (2) ... Everyday at 12:05am (useful in case you keep Emacs always on)
       (run-at-time "12:05am" (* 24 3600) 'd12-org/agenda-to-appt)
-
       ;; (3) when agenda is displayed
       (add-hook 'org-finalize-agenda-hook 'd12-org/agenda-to-appt 'append)
 
-      ;; weather
-      ;; (org-weather-refresh)
       ;; Run `org-self-insert-command' only if `d12-org/insert-org-entity-maybe'
       ;; returns nil.
       ;;
       ;; http://emacs.stackexchange.com/questions/16688/how-can-i-escape-the-in-org-mode-to-prevent-bold-fontification/16746#16746
       (advice-add 'org-self-insert-command :before-until #'d12-org/insert-org-entity-maybe)
 
-      (d12|rename-modeline "org" org-mode "本"))))
+      ;; that's all
+      )))
 
 (defun d12frosted-org/init-flexitime ()
   (use-package flexitime
