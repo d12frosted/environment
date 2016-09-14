@@ -35,7 +35,7 @@
                                 (emacs-input "chartreuse3" box)
                                 (god "DarkGoldenrod2" box)
                                 (god-input "plum3" box))
-          "Colors assigned to several states with cursor definitions.")
+      "Colors assigned to several states with cursor definitions.")
 
     (cl-loop for (state color cursor) in d12-state-cursors
              do
@@ -63,26 +63,10 @@
     (spaceline-toggle-org-clock-on)
 
     (spaceline-toggle-minor-modes-off)
+    (spaceline-compile)
     (spaceline-define-segment major-mode
       "The name of the major mode."
-      (let ((icon (all-the-icons-icon-for-buffer)))
-        (condition-case nil
-            (setq icon (all-the-icons-fileicon (file-name-extension (buffer-file-name (current-buffer)))))
-          (error nil))
-        (unless (symbolp icon) ;; This implies it's the major mode
-          (format
-           "%s"
-           (propertize
-            icon
-            'help-echo (format "Major-mode: `%s`" major-mode)
-            'display '(raise -0.1)
-            'face `(
-                    :height 1.2
-                    :family ,(all-the-icons-icon-family-for-buffer)
-                    :background ,(if (powerline-selected-window-active)
-                                     (face-background 'powerline-active1)
-                                   (face-background 'powerline-inactive1))
-                    ))))))))
+      (d12-visual/powerline-major-mode))))
 
 (defun d12frosted-visual/init-d12-pretty-greek ()
   (use-package d12-pretty-greek
