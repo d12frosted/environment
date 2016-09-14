@@ -63,7 +63,6 @@
     (spaceline-toggle-org-clock-on)
 
     (spaceline-toggle-minor-modes-off)
-    (spaceline-compile)
     (spaceline-define-segment major-mode
       "The name of the major mode."
       (d12-visual/powerline-major-mode))))
