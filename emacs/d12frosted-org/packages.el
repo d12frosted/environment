@@ -125,19 +125,20 @@
           (dolist (i (number-sequence 0 (1- (length min-to-app))))
             (d12-org//appt-alert (nth i min-to-app) (nth i msg)))))
 
-      ;; Update alarms when...
-      ;; (1) ... Starting Emacs
-      ;; (d12-org/agenda-to-appt)
-      ;; (2) ... Everyday at 12:05am (useful in case you keep Emacs always on)
-      (run-at-time "12:05am" (* 24 3600) 'd12-org/agenda-to-appt)
-      ;; (3) when agenda is displayed
-      (add-hook 'org-finalize-agenda-hook 'd12-org/agenda-to-appt 'append)
+      (when d12-org/enable-notifications
+        ;; Update alarms when...
+        ;; (1) ... Starting Emacs
+        (d12-org/agenda-to-appt)
+        ;; (2) ... Everyday at 12:05am (useful in case you keep Emacs always on)
+        (run-at-time "12:05am" (* 24 3600) 'd12-org/agenda-to-appt)
+        ;; (3) when agenda is displayed
+        (add-hook 'org-finalize-agenda-hook 'd12-org/agenda-to-appt 'append)
 
-      ;; Run `org-self-insert-command' only if `d12-org/insert-org-entity-maybe'
-      ;; returns nil.
-      ;;
-      ;; http://emacs.stackexchange.com/questions/16688/how-can-i-escape-the-in-org-mode-to-prevent-bold-fontification/16746#16746
-      (advice-add 'org-self-insert-command :before-until #'d12-org/insert-org-entity-maybe)
+        ;; Run `org-self-insert-command' only if `d12-org/insert-org-entity-maybe'
+        ;; returns nil.
+        ;;
+        ;; http://emacs.stackexchange.com/questions/16688/how-can-i-escape-the-in-org-mode-to-prevent-bold-fontification/16746#16746
+        (advice-add 'org-self-insert-command :before-until #'d12-org/insert-org-entity-maybe))
 
       ;; that's all
       )))

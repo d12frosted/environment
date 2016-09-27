@@ -17,4 +17,7 @@
   '()
   "List of interesting org files.")
 
-;;; config.el ends here
+(defvar d12-org/enable-notifications nil
+  "Set to non-nil in order to enable native notifications.")
+
+;;; Config.el ends here
