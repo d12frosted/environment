@@ -17,7 +17,7 @@
   '(org
     (flexitime :location local)
     org-bullets
-    org-journal
+    ;; org-journal
     worf
     calfw
     org-gcal))
