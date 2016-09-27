@@ -194,6 +194,9 @@
                           (lambda (el)
                             (cons (car el)
                                   (concat d12-path/org-home (cdr el))))
-                          d12-gcal-calendar-alist))))
+                          d12-gcal-calendar-alist))
+    :config
+    (defun org-gcal--notify (title mes)
+      (message "org-gcal::%s - %s" title mes))))
 
 ;;; packages.el ends here
