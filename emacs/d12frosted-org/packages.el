@@ -27,7 +27,7 @@
     :defer t
     :init
     (progn
-      (d12-org/reload-agenda-files)
+      (d12-org/reload-files)
       (bind-key "<f12>" #'org-agenda))
     :config
     (progn
@@ -56,9 +56,11 @@
        org-agenda-window-setup 'current-window
        org-src-fontify-natively t
        org-directory d12-path/org-home
-       org-default-notes-file (concat d12-path/org-home "notes.org")
+       org-default-notes-file (d12-org/get-file-path "notes")
+       org-mobile-directory (concat d12-path/dropbox "Apps/d12-mobile-org")
+       org-mobile-inbox-for-pull (d12-org/get-file-path "inbox")
        org-agenda-inhibit-startup nil
-       org-archive-location "archive/%s::"
+       org-archive-location "archive/%s_archive::"
        org-time-clocksum-format
        '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
        org-property-format "%-16s %s"
@@ -71,13 +73,11 @@
                                      (todo todo-state-up priority-down category-keep)
                                      (tags todo-state-up priority-down category-keep)
                                      (search todo-state-up priority-down category-keep))
-       org-agenda-day-face-function 'd12/org-agenda-day-face-holidays-function
+       org-agenda-day-face-function 'd12-org/agenda-day-face-holidays-function
 
        org-capture-templates
-       `(("t" "todo" entry (file+headline ,org-default-notes-file "Tasks")
-          "** TODO %^{Task} %?")))
-
-      ;; (add-hook 'org-mode-hook 'd12//org-mode-setup-title)
+       `(("t" "todo" entry (file ,(d12-org/get-file-path "inbox"))
+          "* TODO %^{Task} %?")))
 
       (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
         (let ((rlt ad-return-value)

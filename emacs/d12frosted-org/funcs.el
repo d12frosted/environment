@@ -13,36 +13,28 @@
 
 ;;; Code:
 
-(defun d12-org/reload-agenda-files ()
-  "Reload agenda files. Useful for situations when file is added
-or removed from agenda files directory."
+(defun d12-org/get-file-path (name)
+  "Return path to org file with NAME."
+  (format "%s%s.org" d12-path/org-home name))
+
+(defun d12-org/reload-files ()
+  "Reload org files. Useful for situations when file is added or
+removed from org files directory."
   (interactive)
-  (setq d12-org/files-list (d12-files/query "*.org" d12-path/org-home 1))
+  (setq d12-org/files-list (d12-files/query "*.org" d12-path/org-home 2))
   (setq org-agenda-files d12-org/files-list)
   (d12-interesting-files-add d12-org/files-list))
 
-(when (configuration-layer/layer-usedp 'helm)
-  (defun d12-helm/gtd-source ()
-    "Construct helm source from `d12-org/files-list'."
-    `((name . "org files")
-      (candidates . d12-org/files-list)
-      (candidate-number-limit)
-      (action . (("Open file" . find-file))))))
-
-(defun org-global-props (&optional property buffer)
+(defun d12-org/global-props (&optional property buffer)
   "Get the plists of global org properties of current
 buffer."
   (unless property (setq property "PROPERTY"))
   (with-current-buffer (or buffer (current-buffer))
     (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
 
-(defun org-global-prop-value (key)
+(defun d12-org/global-prop-value (key)
   "Get global org property KEY of current buffer."
   (org-element-property :value (car (org-global-props key))))
-
-(defun d12//org-mode-setup-title ()
-  (when-let ((title (org-global-prop-value "title")))
-    (rename-buffer title)))
 
 (defun d12-org/insert-block-template ()
   "Insert block template at point."
@@ -89,7 +81,7 @@ buffer."
   "Go to upper level and sort it by TODO."
   (interactive)
   (progn (outline-up-heading 1)
-         (d12/org-sort-current-level)))
+         (d12-org/sort-current-level)))
 
 (defun d12-org/visit-journal-entry ()
   (interactive)
@@ -103,16 +95,7 @@ buffer."
         (org-back-to-heading)
         (org-update-parent-todo-statistics)))))
 
-(defadvice d12/delete-line-or-region (after fix-cookies activate)
-  (d12-org/update-parent-cookie))
-
-(defadvice d12/duplicate-line-or-region (after fix-cookies activate)
-  (d12-org/update-parent-cookie))
-
-(defadvice d12/cut-line-or-region (after fix-cookies activate)
-  (d12-org/update-parent-cookie))
-
-(defun org-clock-get-clock-string ()
+(defun d12-org/clock-get-clock-string ()
   "Form a clock-string, that will be shown in the mode line.
 If an effort estimate was defined for the current item, use
 01:30/01:50 format (clocked/estimated).
@@ -134,7 +117,7 @@ If not, show simply the clocked time like 01:50."
                       'face 'org-mode-line-clock))))
 
 ;; http://lists.gnu.org/archive/html/emacs-orgmode/2010-11/msg00542.html
-(defun d12/org-agenda-day-face-holidays-function (date)
+(defun d12-org/agenda-day-face-holidays-function (date)
   "Compute DATE face for holidays."
   (unless (org-agenda-todayp date)
     (dolist (file (org-agenda-files nil 'ifmode))
@@ -148,7 +131,7 @@ If not, show simply the clocked time like 01:50."
                    (return 'org-agenda-date-weekend))))))
         (when face (return face))))))
 
-(defun d12/toggle-org-html-export-on-save ()
+(defun d12-org/toggle-html-export-on-save ()
   (interactive)
   (if (memq 'org-html-export-to-html after-save-hook)
       (progn
@@ -211,5 +194,20 @@ If not, show simply the clocked time like 01:50."
                                      'face 'font-lock-function-name-face)
                          "."))))
     entity-name))
+
+(defun d12-org/insert-verb ()
+  "Complete and insert verb from `d12-org/verbs-list'."
+  (interactive)
+  (insert
+   (completing-read "Verb: " d12-org/verbs-list)
+   " "))
+
+(defun d12-org/save-web-page (url)
+  (interactive "Murl: ")
+  (let ((file (read-file-name "Output file:")))
+    (call-process-shell-command
+     (format "pandoc -s -r html %s -o %s"
+             (shell-quote-argument url)
+             (shell-quote-argument file)))))
 
 ;;; funcs.el ends here
