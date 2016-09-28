@@ -76,8 +76,11 @@
        org-agenda-day-face-function 'd12-org/agenda-day-face-holidays-function
 
        org-capture-templates
-       `(("t" "todo" entry (file ,(d12-org/get-file-path "inbox"))
-          "* TODO %^{Task} %?")))
+       `(("t" "todo" plain (file ,(d12-org/get-file-path "inbox"))
+          "* TODO %^{Task} %?")
+         ("j" "Journal entry" plain
+          (file+datetree+prompt ,(d12-org/get-file-path "journal"))
+          "%i\n%?\n")))
 
       (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
         (let ((rlt ad-return-value)
