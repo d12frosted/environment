@@ -180,7 +180,8 @@
   (use-package worf
     :defer t
     :init
-    (add-hook 'org-mode-hook 'worf-mode)))
+    (add-hook 'org-mode-hook 'worf-mode)
+    (add-hook 'org-capture-mode-hook (lambda () (worf-mode -1)))))
 
 (defun d12frosted-org/init-calfw ()
   (use-package calfw
