@@ -27,10 +27,14 @@
     :defer t
     :init
     (progn
+      (add-hook 'org-mode-hook #'d12-org/smart-add-ids-to-headlines-in-file)
       (d12-org/reload-files)
       (bind-key "<f12>" #'org-agenda))
     :config
     (progn
+      (require 'org-id)
+      (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+
       ;; http://emacs.stackexchange.com/questions/13820/inline-verbatim-and-code-with-quotes-in-org-mode
       (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\r\n,\"")
       (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
