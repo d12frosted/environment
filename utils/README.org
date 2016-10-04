@@ -15,3 +15,5 @@ you are interested in.
 2. =brw= - bootstrapping packages using =brew= (currently OS X only).
 3. =git-notify= - tracking updates to repository.
 4. =ipa-install= - installing =ipa= files to iOS devices (OS X only).
+5. =mirror-elpa= - mirroring ELPA archives ([[https://github.com/d12frosted/elpa-mirror][d12frosted mirror]], [[https://github.com/syl20bnr/spacemacs-elpa-mirror][Spacemacs
+   mirror)]].
