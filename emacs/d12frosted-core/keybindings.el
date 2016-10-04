@@ -23,7 +23,8 @@
 
 (evil-leader/set-key
   "p#" 'projectile-replace-regexp
-  "oj" 'd12-interesting-files)
+  "of" 'd12-interesting-files
+  "os" 'd12/sync-spacemacs)
 
 (spacemacs/declare-prefix "o" "d12frosted")
 
