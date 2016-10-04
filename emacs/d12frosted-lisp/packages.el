@@ -39,12 +39,17 @@
 
 (defun d12frosted-lisp/init-lispy ()
   (use-package lispy
-      :commands (lispy-mode)
-      :init
-      (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
-      :config
-      ;; unbind some key bindings
-      (unbind-key "M-RET" lispy-mode-map)
-      (bind-key "C-a" 'mwim-beginning-of-code-or-line lispy-mode-map)))
+    :commands (lispy-mode)
+    :init
+    (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
+    :config
+    ;; C-M-m should be used as major mode leader
+    ;; But M-<return> is lisp-meta-return
+    (unbind-key "M-RET" lispy-mode-map)
+
+    (evil-leader/set-key-for-mode 'emacs-lisp-mode
+      "m" #'lispy-mark-symbol)
+    (bind-key "C-a" 'mwim-beginning-of-code-or-line lispy-mode-map)
+    (bind-key "C-e" 'mwim-end-of-line-or-code lispy-mode-map)))
 
 ;;; packages.el ends here
