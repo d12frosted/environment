@@ -11,7 +11,8 @@
 ;;; License: GPLv3
 
 (setq window-purpose-packages '(eyebrowse
-                                (helm-purpose :toggle (configuration-layer/layer-usedp 'spacemacs-helm))
+                                (helm-purpose :toggle (configuration-layer/layer-usedp 'helm))
+                                (ivy-purpose :toggle (configuration-layer/layer-usedp 'ivy))
                                 popwin
                                 (purpose-popwin :location local)
                                 window-purpose))
@@ -51,16 +52,32 @@ Set `eyebrowse-new-workspace' value depending on the state of `purpose-mode'."
     ;; sync with eyebrowse now if window-purpose was already loaded
     (window-purpose/sync-eyebrowse)))
 
-(when (configuration-layer/layer-usedp 'spacemacs-helm)
-  (defun window-purpose/init-helm-purpose ()
-    (setq purpose-preferred-prompt 'helm)
-    ;; remap bindings defined with `spacemacs/set-leader-keys'
-    (global-set-key [remap purpose-switch-buffer-with-purpose]
-                    #'helm-purpose-switch-buffer-with-purpose)
-    (global-set-key [remap switch-buffer-without-purpose]
-                    #'helm-purpose-mini-ignore-purpose)
-    (global-set-key [remap purpose-switch-buffer-with-some-purpose]
-                    #'helm-purpose-switch-buffer-with-some-purpose)))
+(defun window-purpose/init-helm-purpose ()
+  (setq purpose-preferred-prompt 'helm)
+  ;; remap bindings defined with `spacemacs/set-leader-keys'
+  (global-set-key [remap purpose-switch-buffer-with-purpose]
+                  #'helm-purpose-switch-buffer-with-purpose)
+  (global-set-key [remap switch-buffer-without-purpose]
+                  #'helm-purpose-mini-ignore-purpose)
+  (global-set-key [remap purpose-switch-buffer-with-some-purpose]
+                  #'helm-purpose-switch-buffer-with-some-purpose))
+
+(defun window-purpose/init-ivy-purpose ()
+  ;; vanilla lets `ivy' take over
+  (use-package ivy-purpose
+    :defer t
+    :commands (ivy-purpose-switch-buffer-with-purpose
+               ivy-purpose-switch-buffer-without-purpose
+               ivy-purpose-switch-buffer-with-some-purpose)
+    :init
+    (progn
+      (setq purpose-preferred-prompt 'vanilla)
+      (global-set-key [remap purpose-switch-buffer-with-purpose]
+                      #'ivy-purpose-switch-buffer-with-purpose)
+      (global-set-key [remap purpose-switch-buffer-without-purpose]
+                      #'ivy-purpose-switch-buffer-without-purpose)
+      (global-set-key [remap purpose-switch-buffer-with-some-purpose]
+                      #'ivy-purpose-switch-buffer-with-some-purpose))))
 
 (defun window-purpose/post-init-popwin ()
   ;; when popwin creates a popup window, it removes the `purpose-dedicated'
