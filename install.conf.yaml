@@ -48,9 +48,6 @@
       path: emacs/d12-init.el
       create: true
       relink: true
-    ~/.local/bin/switch_emacs:
-      path: emacs/switch_emacs
-      create: true
 
     ~/.ghci: haskell/.ghci
     ~/.stack/global/stack.yaml:
