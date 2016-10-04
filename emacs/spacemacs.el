@@ -78,6 +78,9 @@
    dotspacemacs-additional-packages '(color-theme-sanityinc-tomorrow
                                       apropospriate-theme
                                       reveal-in-osx-finder
+                                      smart-tabs-mode
+                                      lyrics
+                                      elscreen-fr
                                       vimish-fold)
    dotspacemacs-excluded-packages '(emmet-mode
                                     dumb-jump
