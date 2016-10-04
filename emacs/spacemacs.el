@@ -15,7 +15,9 @@
    dotspacemacs-configuration-layer-path `(,dotspacemacs-directory)
    dotspacemacs-configuration-layers
    '( ;; utilities
-     (auto-completion :disabled-for org)
+     (auto-completion :disabled-for org
+                      :variables
+                      auto-completion-enable-help-tooltip t)
      better-defaults
      colors
      dash
