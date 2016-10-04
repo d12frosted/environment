@@ -171,4 +171,10 @@ Otherwise `projectile-find-file' is used."
   (interactive "sFormat: ")
   (setq frame-title-format format))
 
+(defun d12/sync-spacemacs ()
+  "Sync Spacemacs."
+  (if (configuration-layer/package-usedp 'bpr)
+      (bpr-spawn "sync_spacemacs")
+    (async-shell-command "sync_spacemacs")))
+
 ;;; funcs.el ends here
