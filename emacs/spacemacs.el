@@ -41,6 +41,7 @@
      d12frosted-core
      d12frosted-haskell
      d12frosted-lisp
+     d12frosted-csharp
      d12frosted-lua
      d12frosted-org
      d12frosted-osx
