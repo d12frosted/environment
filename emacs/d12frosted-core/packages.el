@@ -96,7 +96,6 @@
       (interactive)
       (shell-command (format "open '%s'" (projectile-project-root))))
     (spacemacs/set-leader-keys "pO" #'d12-projectile/open-root-in-finder)
-    (spacemacs/set-leader-keys "pf" #'d12/find-file-in-project)
     (setq projectile-switch-project-action #'projectile-find-file)
     (def-projectile-commander-method ?s
       "Open a *shell* buffer for the project."
