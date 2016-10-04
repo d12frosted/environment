@@ -19,7 +19,6 @@
 ;;;; Hooks
 ;;
 
-(add-hook 'company-mode-hook 'company-quickhelp-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
 (add-hook 'after-save-hook 'delete-trailing-whitespace)
 

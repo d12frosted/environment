@@ -79,8 +79,7 @@ string before that."
                            (symbol-value (intern ,(concat (symbol-name mode) "-map")))
                            (kbd "M-h")
                            nil))))
-          '(org-mode
-            company-quickhelp-mode))))
+          '(org-mode))))
 
 (defun d12/align-repeat (start end regexp)
   "Repeat alignment with respect to the given regular
