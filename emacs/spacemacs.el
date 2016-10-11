@@ -33,6 +33,7 @@
      syntax-checking
      spacemacs-layouts
      ivy
+     semantic
      spell-checking
      shell
      version-control
