@@ -18,8 +18,7 @@
     beacon
     spaceline
     (d12-pretty-greek :location local)
-    all-the-icons
-    spacemacs-theme))
+    all-the-icons))
 
 (defun d12frosted-visual/init-beacon ()
   (use-package beacon
@@ -75,16 +74,5 @@
 
 (defun d12frosted-visual/init-all-the-icons ()
   (use-package all-the-icons))
-
-(defun d12frosted-visual/post-init-spacemacs-theme ()
-  (use-package spacemacs-theme
-    :defer t
-    :config
-    (custom-set-faces
-     '(whitespace-tab ((t (:foreground "#F6ECE4")))))
-    (custom-set-faces
-     '(org-column ((t (:background "#edf1ed")))))
-    (custom-set-faces
-     '(font-lock-preprocessor-face ((t (:background "#F3F3B2")))))))
 
 ;;; packages.el ends here
