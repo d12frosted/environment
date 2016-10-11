@@ -30,8 +30,9 @@
     :after lua-mode
     :config
     (define-smart-ops-for-mode 'lua-mode
+      (smart-ops ":" :pad-before nil :pad-after nil)
       (smart-ops "," :pad-before nil)
-      (smart-ops ":")
+      (smart-ops "~=" ">=" "<=" "|")
       (smart-ops-default-ops))))
 
 (defun d12frosted-lua/post-init-window-purpose ()
