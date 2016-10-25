@@ -73,10 +73,10 @@
                                   (todo . " %i %-24:c")
                                   (tags . " %i %-24:c")
                                   (search . " %i %-24:c"))
-       org-agenda-sorting-strategy '((agenda habit-up time-up scheduled-down deadline-down todo-state-up category-keep priority-down)
-                                     (todo todo-state-up priority-down category-keep)
-                                     (tags todo-state-up priority-down category-keep)
-                                     (search todo-state-up priority-down category-keep))
+       org-agenda-sorting-strategy '((agenda habit-up time-up scheduled-down deadline-down category-keep todo-state-up priority-down)
+                                     (todo category-keep todo-state-up priority-down)
+                                     (tags category-keep todo-state-up priority-down)
+                                     (search category-keep todo-state-up priority-down))
        org-agenda-day-face-function 'd12-org/agenda-day-face-holidays-function
 
        org-capture-templates
