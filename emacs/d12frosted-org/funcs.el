@@ -165,7 +165,7 @@ If not, show simply the clocked time like 01:50."
             (throw 'break name)))))))
 
 ;; http://emacs.stackexchange.com/questions/16688/how-can-i-escape-the-in-org-mode-to-prevent-bold-fontification/16746#16746
-(defun d12-org/insert-org-entity-maybe (&rest args)
+(defun d12-org/insert-entity-maybe (&rest args)
   "When the universal prefix C-u is used before entering any character,
     insert the character's `org-entity' name if available.
 

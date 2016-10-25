@@ -145,7 +145,7 @@
         ;; returns nil.
         ;;
         ;; http://emacs.stackexchange.com/questions/16688/how-can-i-escape-the-in-org-mode-to-prevent-bold-fontification/16746#16746
-        (advice-add 'org-self-insert-command :before-until #'d12-org/insert-org-entity-maybe))
+        (advice-add 'org-self-insert-command :before-until #'d12-org/insert-entity-maybe))
 
       ;; that's all
       )))
