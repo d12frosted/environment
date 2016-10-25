@@ -3,7 +3,7 @@
 # defaults
 MIRROR_PATH=$(pwd)
 ELPA_CLONE_PATH="$HOME/.elpa-clone"
-ELPA_CLONE_URL="git@github.com:dochang/elpa-clone.git"
+ELPA_CLONE_URL="https://github.com/dochang/elpa-clone.git"
 
 while [[ $# -gt 1 ]]
 do
