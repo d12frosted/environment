@@ -40,7 +40,6 @@
 
      ;; private layers
      no-dots
-     window-purpose
      d12frosted-core
      d12frosted-csharp
      d12frosted-haskell
