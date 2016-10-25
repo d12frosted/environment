@@ -98,6 +98,16 @@ values."
   ;; no home buffer lists centring
   (defun spacemacs-buffer//center-startupify-lists ()
     (message "We don't need no centring."))
+
+  ;; setup elpa archives to my own mirrors
+  (setq configuration-layer--elpa-archives
+        '(;; ("melpa" . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/melpa/")
+          ;; ("org"   . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/org/")
+          ;; ("gnu"   . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/gnu/")
+          ("melpa" . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
+          ("org"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")
+          ("gnu"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))
+
   (setq-default
    dotspacemacs-elpa-https nil
    dotspacemacs-elpa-timeout 5
