@@ -36,6 +36,7 @@
      spell-checking
      shell
      version-control
+     xkcd
 
      ;; private layers
      no-dots
