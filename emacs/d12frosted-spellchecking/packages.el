@@ -25,7 +25,7 @@
 
 (defun d12frosted-spellchecking/post-init-flyspell-correct ()
   (setq
-   ispell-program-name (executable-find "hunspell")
+   ;; ispell-program-name (executable-find "hunspell")
    flyspell-issue-message-flag nil))
 
 (defun d12frosted-spellchecking/init-osx-dictionary ()
