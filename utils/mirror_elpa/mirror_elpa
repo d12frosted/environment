@@ -45,16 +45,20 @@ if [[ ! -d $ELPA_CLONE_PATH ]]; then
   git clone "$ELPA_CLONE_URL" "$ELPA_CLONE_PATH"
 fi
 
-git fetch origin
-git reset --hard origin/master
+if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1; then
+  git fetch origin
+  git reset --hard origin/master
+fi
 
 clone "http://orgmode.org/elpa/" "org"
 clone "https://elpa.gnu.org/packages/" "gnu"
 clone "https://melpa.org/packages/" "melpa"
 clone "https://stable.melpa.org/packages/" "stable-melpa"
 
-git add --all
-git commit -m "snapshot $(date '+%d/%m/%y %H:%M:%S')"
-git push origin master
+if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1; then
+  git add --all
+  git commit -m "snapshot $(date '+%d/%m/%y %H:%M:%S')"
+  git push origin master
+fi
 
 log "Done updating elpa mirrors"
