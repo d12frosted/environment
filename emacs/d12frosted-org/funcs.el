@@ -249,4 +249,34 @@ If not, show simply the clocked time like 01:50."
              (shell-quote-argument url)
              (shell-quote-argument file)))))
 
+;; Clock helpers
+
+(defun d12-org/clock-active-p ()
+  "Returns nil if there is no active clock."
+  (org-clocking-p))
+
+(defun d12-org/clock-get-decription ()
+  (if org-clock-effort
+      (format "[%s/%s] %s"
+              (org-minutes-to-clocksum-string (org-clock-get-clocked-time))
+              org-clock-effort
+              org-clock-heading)
+    (format "[%s] %s"
+            (org-minutes-to-clocksum-string (org-clock-get-clocked-time))
+            org-clock-heading)))
+
+(defun d12-org/clock-get-property (prop)
+  (when (org-clocking-p)
+    (org-entry-get org-clock-marker prop)))
+
+(defun d12-org/clock-get-total-time-string ()
+  (when (org-clocking-p)
+    (org-minutes-to-clocksum-string (org-clock-get-clocked-time))))
+
+(defun d12-org/clock-get-current-time-string ()
+  (when (org-clocking-p)
+    (org-minutes-to-clocksum-string
+     (- (org-clock-get-clocked-time)
+        org-clock-total-time))))
+
 ;;; funcs.el ends here
