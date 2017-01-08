@@ -52,6 +52,7 @@
     (d12-eww :location local)
     (d12-ukrainian-input-method :location local)
     (d12-interesting-files :location local)
+    (number-conversion-tooltip :location local)
     elpa-mirror
 
     ;; completion
@@ -317,6 +318,11 @@ Supports negative arguments and repeating."
        ,(concat d12-path/fish-public "config.fish")
        ,(concat d12-path/fish-private "preconfig.fish")
        ,(concat d12-path/fish-private "postconfig.fish")))))
+
+(defun d12frosted-core/init-number-conversion-tooltip ()
+  (use-package number-conversion-tooltip
+    :init
+    (global-set-key [C-down-mouse-1] #'show-conversion)))
 
 (defun d12frosted-core/init-elpa-mirror ()
   (use-package elpa-mirror
