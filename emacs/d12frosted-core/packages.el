@@ -61,10 +61,7 @@
     ;; flyspell / flycheck
     (flycheck-package :toggle (configuration-layer/layer-usedp 'syntax-checking))
 
-    ;; other
-    mu4e
-    elfeed
-    elfeed-goodies))
+    ))
 
 (defun d12frosted-core/pre-init-ranger ()
   (use-package ranger
