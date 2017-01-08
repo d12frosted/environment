@@ -182,4 +182,8 @@ Otherwise `projectile-find-file' is used."
   (interactive)
   (set (make-local-variable 'require-final-newline) nil))
 
+(defun strip-text-properties(txt)
+  "Remove text properties from TXT."
+  (set-text-properties 0 (length txt) nil txt) txt)
+
 ;;; funcs.el ends here
