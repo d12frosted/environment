@@ -55,8 +55,15 @@ flexitime table using :weekday minutes.")
 This value is used by default but can be overridden for specific
 flexitime table using :skip-empty-days val.")
 
+(defvar flexitime-ignore-future-days t
+  "When non-nil skip empty days in flexitime table.
+
+This value is used by default but can be overridden for specific
+flexitime table using :ignore-future-days val.")
+
 (defvar flexitime-holidays-category-name "Holidays")
 (defvar flexitime-vacation-category-name "Vacation")
+(defvar flexitime-sick-day-category-name "Sick Day")
 (defvar flexitime-weekends '("Sat" "Sun"))
 
 ;;; * Type definitions
@@ -78,9 +85,13 @@ flexitime table using :skip-empty-days val.")
     (flexitime-day--create
      :date date
      :type type
-     :duration (if (eq type 'weekday)
-                   flexitime-weekday-duration
-                 0))))
+     :duration
+     (if (and (eq type 'weekday)
+              (or (not flexitime-ignore-future-days)
+                  (<= (time-to-seconds date)
+                      (time-to-seconds (current-time)))))
+         flexitime-weekday-duration
+       0))))
 
 (defmethod flexitime-day-update-work-balance ((day flexitime-day))
   "Update work balance.
@@ -211,58 +222,62 @@ work more!"
   list obtained from the dynamic block definition."
   (let ((print-category (flexitime--plist-get params :print-category t))
         (day (plist-get params :day)))
-    ;; gather data for day
-    (while (setq tbl (pop tables))
-      ;; now tbl is the table resulting from one file.
-      (setq file-time (nth 1 tbl))
-      (when (or (and file-time (> file-time 0))
-                (not (plist-get params :fileskip0)))
+    (when (or
+           (not flexitime-ignore-future-days)
+           (<= (time-to-seconds (flexitime-day-date day))
+               (time-to-seconds (current-time))))
+      ;; gather data for day
+      (while (setq tbl (pop tables))
+        ;; now tbl is the table resulting from one file.
+        (setq file-time (nth 1 tbl))
+        (when (or (and file-time (> file-time 0))
+                  (not (plist-get params :fileskip0)))
 
-        ;; Get the list of node entries and iterate over it
-        (setq entries (nth 2 tbl))
-        (while (setq entry (pop entries))
-          (let ((level (nth 0 entry))
-                (headline (nth 1 entry))
-                (timestamp (nth 2 entry))
-                (time (nth 3 entry))
-                (cat (or (cdr (assoc "ARCHIVE_CATEGORY" (nth 4 entry)))
-                         (cdr (assoc "CATEGORY" (nth 4 entry))))))
-            (let ((category (flexitime-day-get-category day cat)))
-              (flexitime-category-add-headline
-               category
-               (flexitime-headline-create
-                :name headline
-                :time time
-                :level level)))))))
+          ;; Get the list of node entries and iterate over it
+          (setq entries (nth 2 tbl))
+          (while (setq entry (pop entries))
+            (let ((level (nth 0 entry))
+                  (headline (nth 1 entry))
+                  (timestamp (nth 2 entry))
+                  (time (nth 3 entry))
+                  (cat (or (cdr (assoc "ARCHIVE_CATEGORY" (nth 4 entry)))
+                           (cdr (assoc "CATEGORY" (nth 4 entry))))))
+              (let ((category (flexitime-day-get-category day cat)))
+                (flexitime-category-add-headline
+                 category
+                 (flexitime-headline-create
+                  :name headline
+                  :time time
+                  :level level)))))))
 
-    (flexitime-day-update-work-balance day)
-    ;; now print data
-    (unless (and flexitime-skip-empty-days
-                 (hash-table-empty-p (flexitime-day-data day)))
-      (flexitime--format-row
-       (plist-get params :tstart) "" ""
-       (flexitime-day-time day)
-       (flexitime-day-get-work-balance day))
-      (maphash
-       (lambda (category-name category)
-         (flexitime--format-row "" "" "" "" "")
-         (when print-category
-           (flexitime--format-row
-            "" `(bold ,category-name)
-            "" `(bold ,(flexitime-category-time category)) ""))
-         (maphash
-          (lambda (hl-name hl)
-            (flexitime--format-row
-             "" ""
-             `(level ,(flexitime-headline-level hl) ,hl-name)
-             (if (or print-category
-                     (> (flexitime-headline-level hl) 1))
-                 (flexitime-headline-time hl)
-               `(bold ,(flexitime-headline-time hl)))
-             ""))
-          (flexitime-category-data category)))
-       (flexitime-day-data day))
-      (flexitime--format-row 'sep 'sep 'sep 'sep 'sep))))
+      (flexitime-day-update-work-balance day)
+      ;; now print data
+      (unless (and flexitime-skip-empty-days
+                   (hash-table-empty-p (flexitime-day-data day)))
+        (flexitime--format-row
+         (plist-get params :tstart) "" ""
+         (flexitime-day-time day)
+         (flexitime-day-get-work-balance day))
+        (maphash
+         (lambda (category-name category)
+           (flexitime--format-row "" "" "" "" "")
+           (when print-category
+             (flexitime--format-row
+              "" `(bold ,category-name)
+              "" `(bold ,(flexitime-category-time category)) ""))
+           (maphash
+            (lambda (hl-name hl)
+              (flexitime--format-row
+               "" ""
+               `(level ,(flexitime-headline-level hl) ,hl-name)
+               (if (or print-category
+                       (> (flexitime-headline-level hl) 1))
+                   (flexitime-headline-time hl)
+                 `(bold ,(flexitime-headline-time hl)))
+               ""))
+            (flexitime-category-data category)))
+         (flexitime-day-data day))
+        (flexitime--format-row 'sep 'sep 'sep 'sep 'sep)))))
 
 ;;; * Day generation
 ;;
@@ -297,7 +312,9 @@ work more!"
             (when (string= flexitime-holidays-category-name category)
               (setq type 'holiday))
             (when (string= flexitime-vacation-category-name category)
-              (setq type 'vacation))))))
+              (setq type 'vacation))
+            (when (string= flexitime-sick-day-category-name category)
+              (setq type 'sick-day))))))
     type))
 
 ;;; * Helpers
