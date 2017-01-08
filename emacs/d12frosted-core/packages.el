@@ -170,7 +170,7 @@
   (use-package ace-window
     :defer t
     :init
-    (bind-key "M-\\" 'ace-window)))
+    (bind-key "M-`" 'ace-window)))
 
 (defun d12frosted-core/post-init-move-text ()
   (use-package move-text
