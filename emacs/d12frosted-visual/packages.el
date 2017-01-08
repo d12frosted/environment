@@ -60,7 +60,6 @@
       (let ((state (d12//get-state)))
         (intern (format "d12-spaceline-%S-face" state))))
     (setq spaceline-highlight-face-func 'd12//get-state-face)
-    (spaceline-toggle-org-clock-on)
 
     (spaceline-toggle-minor-modes-off)
     (spaceline-define-segment major-mode
