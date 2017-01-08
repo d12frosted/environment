@@ -31,7 +31,7 @@
         (let ((root (projectile-project-root)))
           (projectile-save-project-buffers)
           (setq workdir (concat root "lua"))
-          (async-shell-command (concat "cd " (shell-quote-argument workdir) "; and moai main.lua") buffer buffer))
+          (async-shell-command (concat "cd " (shell-quote-argument workdir) "; moai main.lua") buffer buffer))
       (async-shell-command (concat "moai " (buffer-file-name)) buffer buffer))
     (switch-to-buffer-other-window buffer)
     (when workdir
