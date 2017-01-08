@@ -55,11 +55,11 @@
     elpa-mirror
 
     ;; completion
-    helm
-    ivy
+    (helm :toogle (configuration-layer/layer-usedp 'helm))
+    (ivy :toogle (configuration-layer/layer-usedp 'ivy))
 
     ;; flyspell / flycheck
-    flycheck-package
+    (flycheck-package :toggle (configuration-layer/layer-usedp 'syntax-checking))
 
     ;; other
     mu4e
@@ -325,30 +325,21 @@ Supports negative arguments and repeating."
   (use-package elpa-mirror
     :commands (elpamr-create-mirror-for-installed)))
 
-(when (configuration-layer/layer-usedp 'helm)
-  (defun d12frosted-core/post-init-helm ()
-    (use-package helm
-      :defer t
-      :config
-      ;; Disable fuzzy matching to make mdfind work with helm-locate
-      (setq helm-locate-fuzzy-match nil)
-      (setq helm-locate-command "mdfind -name %s %s")
-      (bind-key "C-s" 'helm-swoop)
-      (bind-key "C-S-s" 'spacemacs/helm-swoop-region-or-symbol))))
+(defun d12frosted-core/post-init-helm ()
+  (use-package helm
+    :defer t
+    :config
+    ;; Disable fuzzy matching to make mdfind work with helm-locate
+    (setq helm-locate-fuzzy-match nil)
+    (setq helm-locate-command "mdfind -name %s %s")
+    (bind-key "C-s" 'helm-swoop)
+    (bind-key "C-S-s" 'spacemacs/helm-swoop-region-or-symbol)))
 
-(when (configuration-layer/layer-usedp 'ivy)
-  (defun d12frosted-core/post-init-ivy ()
-    (use-package ivy
-      :defer t
-      :config
-      (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol))))
+(defun d12frosted-core/post-init-ivy ()
+  (use-package ivy
+    :defer t
+    :config
+    (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol)))
 
-(when (configuration-layer/layer-usedp 'syntax-checking)
-  (defun d12frosted-core/init-flycheck-package ()
-    (use-package flycheck-package
-      :if (configuration-layer/package-usedp 'flycheck)
-      :commands flycheck-package-setup
-      :init (eval-after-load 'flycheck
-              '(flycheck-package-setup)))))
 
 ;;; packages.el ends here
