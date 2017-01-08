@@ -344,5 +344,11 @@ Supports negative arguments and repeating."
     :config
     (bind-key "C-S-s" 'spacemacs/swiper-region-or-symbol)))
 
+(defun d12frosted-core/init-flycheck-package ()
+  (use-package flycheck-package
+    :if (configuration-layer/package-usedp 'flycheck)
+    :commands flycheck-package-setup
+    :init (eval-after-load 'flycheck
+            '(flycheck-package-setup))))
 
 ;;; packages.el ends here
