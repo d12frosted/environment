@@ -177,4 +177,9 @@ Otherwise `projectile-find-file' is used."
       (bpr-spawn "sync_spacemacs")
     (async-shell-command "sync_spacemacs")))
 
+(defun d12/disable-final-newline ()
+  "Set `require-final-newline' to nil locally."
+  (interactive)
+  (set (make-local-variable 'require-final-newline) nil))
+
 ;;; funcs.el ends here
