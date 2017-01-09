@@ -26,6 +26,9 @@
     (org-agenda-date-today :height 1.3
                            :underline t)
     (org-scheduled-today :height 1.0)
-    (org-agenda-done :height 1.0))))
+    (org-agenda-done :height 1.0)
+    (org-agenda-structure :height 1.3
+                          :foreground "#3a81c3"
+                          :underline t))))
 
 ;;; config.el ends here
