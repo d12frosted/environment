@@ -13,10 +13,6 @@
 
 ;;; Code:
 
-(defvar d12-org/files-list
-  '()
-  "List of interesting org files.")
-
 (defvar d12-org/enable-notifications nil
   "Set to non-nil in order to enable native notifications.")
 

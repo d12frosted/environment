@@ -11,80 +11,50 @@
 
 ;;; Commentary:
 
-;;; Code:
+ ;;; Code:
 
 (defconst d12frosted-org-packages
   '(org
-    (flexitime :location local)
+    ;; (flexitime :location local)
+    (d12-gtd :location local)
+    (org-query :location
+               (recipe
+                :fetcher github
+                :repo "remyhonig/org-query"
+                :files ("org-query.el"
+                        "org-query-gtd.el")))
     org-bullets
-    ;; org-journal
-    worf
-    calfw
-    org-gcal))
+    worf))
 
 (defun d12frosted-org/post-init-org ()
   (use-package org
     :defer t
     :init
     (progn
-      (add-hook 'org-mode-hook #'d12-org/smart-add-ids-to-headlines-in-file)
-      (d12-org/reload-files)
-      (bind-key "<f12>" #'org-agenda))
+      (bind-key "<f12>" #'org-agenda)
+      (bind-key "C-<f12>" 'd12-capture-link))
     :config
     (progn
+      ;; setup d12-gtd
+      (require 'd12-gtd)
+
+      ;; generate unique headline ids
       (require 'org-id)
       (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+
+      ;; use return to follow/activate link
+      (setq org-return-follows-link t)
 
       ;; http://emacs.stackexchange.com/questions/13820/inline-verbatim-and-code-with-quotes-in-org-mode
       (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\r\n,\"")
       (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
 
-      (evil-leader/set-key-for-mode
-        'org-mode
-        "#" 'd12-org/insert-block-template)
+      (setq org-agenda-day-face-function #'d12-org/agenda-day-face-holidays-function)
+
       (setq
-       org-todo-keywords
-       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-         (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))
-
-       org-todo-state-tags-triggers
-       '(("CANCELLED" ("CANCELLED" . t))
-         ("WAITING" ("WAITING" . t))
-         ("HOLD" ("WAITING") ("HOLD" . t))
-         (done ("WAITING") ("HOLD"))
-         ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-         ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-         ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
-
+       org-startup-indented t
        org-hide-emphasis-markers nil
-       org-agenda-window-setup 'current-window
-       org-src-fontify-natively t
-       org-directory d12-path/org-home
-       org-default-notes-file (d12-org/get-file-path "notes")
-       org-mobile-directory (concat d12-path/dropbox "Apps/d12-mobile-org")
-       org-mobile-inbox-for-pull (d12-org/get-file-path "inbox")
-       org-agenda-inhibit-startup nil
-       org-archive-location "archive/%s_archive::"
-       org-time-clocksum-format
-       '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
-       org-property-format "%-16s %s"
-       org-agenda-prefix-format '((agenda . " %i %-24:c%?-12t% s")
-                                  (timeline . "  % s")
-                                  (todo . " %i %-24:c")
-                                  (tags . " %i %-24:c")
-                                  (search . " %i %-24:c"))
-       org-agenda-sorting-strategy '((agenda habit-up time-up scheduled-down deadline-down category-keep todo-state-up priority-down)
-                                     (todo category-keep todo-state-up priority-down)
-                                     (tags category-keep todo-state-up priority-down)
-                                     (search category-keep todo-state-up priority-down))
-       org-agenda-day-face-function 'd12-org/agenda-day-face-holidays-function
-
-       org-capture-templates
-       `(("t" "todo" plain (file ,(d12-org/get-file-path "inbox"))
-          "* TODO %^{Task} %?")
-         ("j" "Journal entry" plain
-          (file+datetree+prompt ,(d12-org/get-file-path "journal"))
-          "%i\n%?\n")))
+       org-src-fontify-natively t)
 
       (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
         (let ((rlt ad-return-value)
@@ -150,6 +120,14 @@
       ;; that's all
       )))
 
+(defun d12frosted-org/init-d12-gtd ()
+  (use-package d12-gtd
+    :defer t))
+
+(defun d12frosted-org/init-org-query ()
+  (use-package org-query
+    :defer t))
+
 (defun d12frosted-org/init-flexitime ()
   (use-package flexitime
     :after org
@@ -162,49 +140,11 @@
     :config
     (setq org-bullets-bullet-list '("◉" "◎" "●" "○" "•" "◦"))))
 
-(defun d12frosted-org/init-org-journal ()
-  "Initialize org-journal package"
-  (use-package org-journal
-    :mode (".*/[0-9]*-[0-9]*-[0-9]*$" . org-journal-mode)
-    :init
-    (evil-leader/set-key
-      ".j" 'calendar
-      ".n" 'org-journal-new-entry
-      ".v" 'd12-org/visit-journal-entry)
-    (d12|rename-modeline "org-journal" org-journal-mode "日記")
-    :config
-    (global-unset-key (kbd "C-c C-j"))
-    (setq org-journal-dir (concat d12-path/org-home "journal/")
-          org-journal-time-format "%R\n"
-          org-journal-file-format "%Y-%m-%d"
-          org-journal-file-pattern (org-journal-format-string->regex org-journal-file-format)
-          org-journal-hide-entries-p nil)))
-
 (defun d12frosted-org/init-worf ()
   (use-package worf
     :defer t
     :init
     (add-hook 'org-mode-hook 'worf-mode)
     (add-hook 'org-capture-mode-hook (lambda () (worf-mode -1)))))
-
-(defun d12frosted-org/init-calfw ()
-  (use-package calfw
-    :init
-    (require 'calfw-org)))
-
-(defun d12frosted-org/init-org-gcal ()
-  (use-package org-gcal
-    :init
-    (setq
-     org-gcal-client-id d12-gcal-client-id
-     org-gcal-client-secret d12-gcal-client-secret
-     org-gcal-file-alist (mapcar
-                          (lambda (el)
-                            (cons (car el)
-                                  (concat d12-path/org-home (cdr el))))
-                          d12-gcal-calendar-alist))
-    :config
-    (defun org-gcal--notify (title mes)
-      (message "org-gcal::%s - %s" title mes))))
 
 ;;; packages.el ends here
