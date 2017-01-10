@@ -13,4 +13,6 @@
 
 ;;; Code:
 
+(setq-default line-spacing 0.25)
+
 ;;; config.el ends here
