@@ -111,7 +111,8 @@ values."
    dotspacemacs-verbose-loading nil
    spacemacs-buffer-logo-title "[A N I M A C S]"
    dotspacemacs-startup-banner (concat d12-path/emacs-private "animacs-banner.png")
-   dotspacemacs-startup-lists '(agenda (recents . 8) bookmarks)
+   dotspacemacs-startup-lists '()
+   dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'emacs-lisp-mode
    dotspacemacs-themes (if (display-graphic-p)
                            '(spacemacs-light
