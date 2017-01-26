@@ -17,6 +17,7 @@
   '(org
     ;; (flexitime :location local)
     (d12-gtd :location local)
+    (org-generate :location local)
     (org-query :location
                (recipe
                 :fetcher github
@@ -123,6 +124,9 @@
 (defun d12frosted-org/init-d12-gtd ()
   (use-package d12-gtd
     :defer t))
+
+(defun d12frosted-org/init-org-generate ()
+  (use-package org-generate))
 
 (defun d12frosted-org/init-org-query ()
   (use-package org-query
