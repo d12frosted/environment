@@ -17,6 +17,7 @@
   '(org
     ;; (flexitime :location local)
     (d12-gtd :location local)
+    (d12-capture-link :location local)
     (org-generate :location local)
     (org-query :location
                (recipe
@@ -124,6 +125,10 @@
 (defun d12frosted-org/init-d12-gtd ()
   (use-package d12-gtd
     :defer t))
+
+(defun d12frosted-org/init-d12-capture-link ()
+  (use-package d12-capture-link
+    :commands (d12-capture-link)))
 
 (defun d12frosted-org/init-org-generate ()
   (use-package org-generate))
