@@ -1,9 +1,9 @@
 ;;; d12-gtd-query.el --- query helpers for personal GTD implementation
 
-;; Copyright (c) 2017 Boris Buliga
+;; Copyright (c) 2015-2017 Boris Buliga
 
-;; Author: Boris Buliga <d12frosted@gmail.com>
-;; Maintainer: Boris Buliga <d12frosted@gmail.com>
+;; Author: Boris Buliga <boris@d12frosted.io>
+;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;; Created: 09 Jan 2017
 
 ;; Keywords:

@@ -1,8 +1,8 @@
 ;;; d12-init.el --- init file for own configurations
 ;;
-;; Copyright (C) 2016 Boris Buliga
+;; Copyright (c) 2015-2017 Boris Buliga
 ;;
-;; Author: Boris Buliga <d12frosted@gmail.com>
+;; Author: Boris Buliga <boris@d12frosted.io>
 ;;
 ;;; Commentary:
 ;;
