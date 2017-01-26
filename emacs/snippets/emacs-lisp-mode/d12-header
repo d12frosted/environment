@@ -26,4 +26,6 @@
 
 $0
 
+(provide '`(file-name-base (file-name-nondirectory (buffer-file-name)))`)
+
 ;;; `(file-name-nondirectory (buffer-file-name))` ends here
