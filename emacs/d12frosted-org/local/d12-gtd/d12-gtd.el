@@ -101,51 +101,12 @@ or removed from org files directory."
 ;; Agenda
 (setq org-agenda-custom-commands
       `(
-
-        ;; Global queries
-        ("g" . "Global")
-        ("gr" "Review"
-         (
-          ,(d12-gtd-agendablock/completed "Yesterday" -1)
-          ,(d12-gtd-agendablock/completed "Today" 0)
-          ,(d12-gtd-agendablock/today))
-         nil
-         ("~/Dropbox/agenda/Global - Review.html"))
-
-        ;; Personal queries
-        ("p" . "Personal")
-        ("pr" "Review"
-         (
-          ,(d12-gtd-agendablock/completed "Yesterday" -1 '("personal"))
-          ,(d12-gtd-agendablock/completed "Today" 0 '("personal"))
-          ,(d12-gtd-agendablock/today '("personal")))
-         nil
-         ("~/Dropbox/agenda/Personal - Review.html"))
-
-        ;; d12frosted queries
-        ("d" . "d12frosted")
-        ("dr" "Review"
-         (
-          ,(d12-gtd-agendablock/completed "Yesterday" -1 '("d12frosted"))
-          ,(d12-gtd-agendablock/completed "Today" 0 '("d12frosted"))
-          ,(d12-gtd-agendablock/today '("d12frosted")))
-         nil
-         ("~/Dropbox/agenda/d12frosted - Review.html"))
-
-        ;; Work queries
-        ("w" . "Work")
-        ("wr" "Review"
-         (
-          ,(d12-gtd-agendablock/completed "Yesterday" -1 '("work"))
-          ,(d12-gtd-agendablock/completed "Today" 0 '("work"))
-          ,(d12-gtd-agendablock/today '("work")))
-         nil
-         ("~/Dropbox/agenda/Work - Review.html"))
-
         (" " "Agenda"
          (
           ,(d12-gtd-agendablock/today)
           ,(d12-gtd-agendablock/refile)
+          ,(d12-gtd-agendablock/completed "Yesterday" -1)
+          ,(d12-gtd-agendablock/completed "Today" 0)
           ,(d12-gtd-agendablock/stuck-projects)
           ,(d12-gtd-agendablock/projects)
           ,(d12-gtd-agendablock/next-tasks)
@@ -155,7 +116,6 @@ or removed from org files directory."
           ,(d12-gtd-agendablock/tasks-to-archive)
           )
          nil)
-
         ))
 (setq org-agenda-window-setup 'current-window)
 (setq org-agenda-dim-blocked-tasks nil)
