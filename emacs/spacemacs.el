@@ -107,6 +107,7 @@ values."
    dotspacemacs-elpa-https nil
    dotspacemacs-elpa-timeout 5
    dotspacemacs-check-for-update nil
+   ;; dotspacemacs-elpa-subdirectory emacs-version
    dotspacemacs-editing-style 'emacs
    dotspacemacs-verbose-loading nil
    spacemacs-buffer-logo-title "[A N I M A C S]"
@@ -135,6 +136,8 @@ values."
                                :width normal
                                :powerline-scale 1.0)
    dotspacemacs-leader-key "SPC"
+   dotspacemacs-emacs-command-key "SPC"
+   dotspacemacs-ex-command-key ":"
    dotspacemacs-emacs-leader-key "M-m"
    dotspacemacs-major-mode-leader-key ","
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
