@@ -191,9 +191,21 @@ user code."
   "Configuration function.
 This function is called at the very end of Spacemacs initialization after
 layers configuration."
-  ;; TODO: move me out
+  ;; setup M-h on macOS
   (d12/setup-M-h)
-  (spacemacs/toggle-camel-case-motion-globally-on)
-  (spacemacs/toggle-automatic-symbol-highlight-on))
 
-;;; init.el ends here
+  ;; restore sane meaning of M-<number>
+  (define-key winum-keymap (kbd "M-0") nil)
+  (define-key winum-keymap (kbd "M-1") nil)
+  (define-key winum-keymap (kbd "M-2") nil)
+  (define-key winum-keymap (kbd "M-3") nil)
+  (define-key winum-keymap (kbd "M-4") nil)
+  (define-key winum-keymap (kbd "M-5") nil)
+  (define-key winum-keymap (kbd "M-6") nil)
+  (define-key winum-keymap (kbd "M-7") nil)
+  (define-key winum-keymap (kbd "M-8") nil)
+  (define-key winum-keymap (kbd "M-9") nil)
+
+  (spacemacs/toggle-camel-case-motion-globally-on))
+
+;; spacemacs.el ends here
