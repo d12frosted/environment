@@ -94,10 +94,6 @@ This function is called at the very startup of Spacemacs initialization
 before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
-  ;; no home buffer lists centring
-  (defun spacemacs-buffer//center-startupify-lists ()
-    (message "We don't need no centring."))
-
   ;; setup elpa archives to my own mirrors
   (setq configuration-layer--elpa-archives
         '(;; ("melpa" . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/melpa/")
