@@ -22,8 +22,8 @@ For OS X users I recommend to install =emacs= or [[https://github.com/d12frosted
 information about different versions of Emacs on OS X in [[http://emacs.stackexchange.com/a/274/5161][this answer]].
 
 #+BEGIN_SRC
-[$ brew tap d12frosted/emacs-plus]
-$ brew install emacs[-plus] --HEAD --use-git-head --with-cocoa --with-gnutls --with-librsvg --with-imagemagick
+$ brew tap d12frosted/emacs-plus
+$ brew install emacs-plus
 #+END_SRC
 
 * Run-time dependencies
