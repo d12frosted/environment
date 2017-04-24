@@ -52,8 +52,8 @@ fi
 
 clone "http://orgmode.org/elpa/" "org"
 clone "https://elpa.gnu.org/packages/" "gnu"
-clone "https://melpa.org/packages/" "melpa"
-clone "https://stable.melpa.org/packages/" "stable-melpa"
+clone "rsync://melpa.org/packages/" "melpa"
+clone "rsync://stable.melpa.org/packages/" "stable-melpa"
 
 if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1; then
   git add --all
