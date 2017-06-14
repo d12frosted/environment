@@ -86,14 +86,6 @@
       path: utils/mirror_elpa/mirror_elpa
       relink: true
       create: true
-    ~/Library/LaunchAgents/io.d12frosted.mirror_elpa.d12frosted.plist:
-      path: utils/mirror_elpa/io.d12frosted.mirror_elpa.d12frosted.plist
-      relink: true
-      create: true
-    ~/Library/LaunchAgents/io.d12frosted.mirror_elpa.spacemacs.plist:
-      path: utils/mirror_elpa/io.d12frosted.mirror_elpa.spacemacs.plist
-      relink: true
-      create: true
 
 - brew: [haskell-stack]
 - shell:

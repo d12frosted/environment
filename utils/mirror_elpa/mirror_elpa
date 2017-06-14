@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+set -e
+
 # defaults
-MIRROR_PATH=$(pwd)
-ELPA_CLONE_PATH="$HOME/.elpa-clone"
+MIRROR_PATH=""
+MIRROR_REPO=""
+MIRROR_REPO_REMOTE_NAME="origin"
+MIRROR_REPO_BRANCH_NAME="master"
+ELPA_CLONE_PATH="$HOME/.cache/elpa-clone"
 ELPA_CLONE_URL="https://github.com/dochang/elpa-clone.git"
 
 while [[ $# -gt 1 ]]
@@ -11,6 +16,18 @@ do
   case $key in
     -o|--output)
       MIRROR_PATH="$2"
+      shift # past argument
+      ;;
+    -r|--repo)
+      MIRROR_REPO="$2"
+      shift # past argument
+      ;;
+    --remote)
+      MIRROR_REPO_REMOTE_NAME="$2"
+      shift # past argument
+      ;;
+    --branch)
+      MIRROR_REPO_BRANCH_NAME="$2"
       shift # past argument
       ;;
     *)
@@ -22,7 +39,7 @@ do
   shift # past argument or value
 done
 
-set -e
+PATH=/Users/d12frosted/.local/bin:/Users/d12frosted/.local/gem/bin:/usr/texbin:/usr/local/sbin:/Users/d12frosted/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/MacGPG2/bin
 
 function log {
   echo "[$(date '+%d/%m/%y %H:%M:%S')]" "$@"
@@ -33,25 +50,51 @@ function clone {
   emacs -l "$ELPA_CLONE_PATH/elpa-clone.el" -nw --batch --eval="(elpa-clone \"$1\" \"$MIRROR_PATH/$2\")"
 }
 
+if [[ "$MIRROR_PATH" = "" && "$MIRROR_REPO" = "" ]]; then
+  echo "Error! You must specify either mirror path or mirror repository URL."
+  exit 1
+fi
+
+if [[ ! -d "$MIRROR_PATH" && "$MIRROR_REPO" = "" ]]; then
+  log "Error! '$MIRROR_PATH' doesn't exist and you didn't specify mirror repository URL."
+  exit 1
+fi
+
+if [[ "$MIRROR_PATH" = "" ]]; then
+  MIRROR_PATH="$(mktemp -d)"
+fi
+
 trap '[ "$?" -eq 0 ] || log Error! Could not update elpa mirrors!' EXIT
 
 log "Start updating elpa mirrors"
 log "MIRROR_PATH: $MIRROR_PATH"
+if [[ "$MIRROR_REPO" != "" ]]; then
+  log "MIRROR_REPO: $MIRROR_REPO"
+fi
 log "ELPA_CLONE_PATH: $ELPA_CLONE_PATH"
+log "PATH: $PATH"
 
 if [[ ! -d $ELPA_CLONE_PATH ]]; then
-  git clone "$ELPA_CLONE_URL" "$ELPA_CLONE_PATH"
+  log "elpa-clone tool is missing, installing it..."
+  git clone --depth 1 "$ELPA_CLONE_URL" "$ELPA_CLONE_PATH"
 else
+  log "updating elpa-clone"
   cd "$ELPA_CLONE_PATH"
   git fetch origin
   git reset --hard origin/master
 fi
 
+if [[ ! -d "$MIRROR_PATH" ]]; then
+  log "cloning mirror repository"
+  git clone --depth 1 "$MIRROR_REPO" "$MIRROR_PATH"
+fi
+
 cd "$MIRROR_PATH"
 
 if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1; then
-  git fetch origin
-  git reset --hard origin/master
+  log "updating mirror repository"
+  git fetch "$MIRROR_REPO_REMOTE_NAME"
+  git reset --hard "${MIRROR_REPO_REMOTE_NAME}/${MIRROR_REPO_BRANCH_NAME}"
 fi
 
 clone "http://orgmode.org/elpa/" "org"
@@ -60,9 +103,10 @@ clone "rsync://melpa.org/packages/" "melpa"
 clone "rsync://stable.melpa.org/packages/" "stable-melpa"
 
 if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1; then
+  log "pushing changes to mirror repository"
   git add --all
   git commit -m "snapshot $(date '+%d/%m/%y %H:%M:%S')"
-  git push origin master
+  git push "$MIRROR_REPO_REMOTE_NAME" "$MIRROR_REPO_BRANCH_NAME"
 fi
 
 log "Done updating elpa mirrors"
