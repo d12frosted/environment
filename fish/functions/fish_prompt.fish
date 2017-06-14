@@ -1,7 +1,7 @@
 function fish_prompt --description 'Write out the prompt'
 	set -l last_status $status
 
-  __d12_prompt_duration
+  __d12_prompt__check_duration
 
   echo
 
@@ -62,20 +62,28 @@ function fish_prompt --description 'Write out the prompt'
   set_color normal
 end
 
-function __d12_prompt_duration
+function __d12_prompt__check_duration
   if test $CMD_DURATION
-    if test $CMD_DURATION -ge 8000
-      set_color $fish_color_command
-      echo -esn '  ~> duration: '
-      set_color $fish_color_param
-      echo -es $CMD_DURATION ' ms'
-      set_color normal
-      if command -v terminal-notifier > /dev/null
-        echo -es 'Finished in ' $CMD_DURATION ' ms' | terminal-notifier
-      end
+    if test $CMD_DURATION -ge $cmd_notification_threshold
+      __d12_prompt__on_duration_exceeded $CMD_DURATION
+      __d12_prompt__notify_completion $CMD_DURATION
     end
   end
   set CMD_DURATION 0
+end
+
+function __d12_prompt__on_duration_exceeded -a duration
+  set_color $fish_color_command
+  echo -esn '  ~> duration: '
+  set_color $fish_color_param
+  echo -es $duration ' ms'
+  set_color normal
+end
+
+function __d12_prompt__notify_completion -a duration
+  if command -v terminal-notifier > /dev/null
+    echo -es 'Finished in ' $duration ' ms' | terminal-notifier
+  end
 end
 
 function __d12_fish_venv
