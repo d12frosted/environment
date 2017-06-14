@@ -1,0 +1,27 @@
+[core]
+	excludesfile = /Users/d12frosted/.environment/git/.gitignore_global
+	editor = emacsclient
+	autocrlf = input
+	ignorecase = false
+[user]
+	useconfigonly = true
+[alias]
+	lg = log --graph --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset'
+	pushall = "!for r in $(git remote); do git push $r $(git symbolic-ref --short HEAD); done && for r in $(git remote); do git push $r --tags; done"
+[push]
+	default = simple
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[color]
+	branch = auto
+	diff = auto
+	interactive = auto
+	status = auto
+[commit]
+	gpgsign = true
+[gpg]
+	program = gpg
+[diff]
+	compactionHeuristic = true

@@ -113,7 +113,12 @@
   - [echo "set -U XDG_CONFIG_HOME ~/.environment" | fish, Setting config directory]
   - [echo "set -x XDG_CONFIG_HOME ~/.environment" | fish, Setting config directory]
   - [echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish, Setting Spacemacs directory]
-  - sh git/configure.sh
+
+- link:
+    ~/.gitconfig:
+      path: git/gitconfig
+      relink: true
+      create: true
 
 - cask:
   - slack
