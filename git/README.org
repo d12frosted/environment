@@ -10,7 +10,7 @@ Personal git configurations.
 * What's inside
 
 - global gitignore file
-- script for setting global configurations
+- user-wide configuration file
 
 * Dependencies
 
