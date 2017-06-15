@@ -186,4 +186,14 @@ Otherwise `projectile-find-file' is used."
   "Remove text properties from TXT."
   (set-text-properties 0 (length txt) nil txt) txt)
 
+;; https://www.emacswiki.org/emacs/ChangingEncodings
+(defun recode-region (start end &optional coding-system)
+  "Replace the region with a recoded text."
+  (interactive "r\n\zCoding System (utf-8): ")
+  (setq coding-system (or coding-system 'utf-8))
+  (let ((buffer-read-only nil)
+        (text (buffer-substring start end)))
+    (delete-region start end)
+    (insert (decode-coding-string (string-make-unibyte text) coding-system))))
+
 ;;; funcs.el ends here

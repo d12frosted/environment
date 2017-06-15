@@ -132,17 +132,16 @@ or removed from org files directory."
 (setq org-capture-templates
       `(("t" "todo" plain (file ,(d12-gtd/get-file-path "inbox"))
          "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-        ("r" "respond" entry (file ,(d12-gtd/get-file-path "inbox"))
-         "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-        ("n" "note" entry (file ,(d12-gtd/get-file-path "inbox"))
-         "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
         ("m" "Meeting" entry (file ,(d12-gtd/get-file-path "inbox"))
          "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
         ("j" "Journal" entry (file+datetree+prompt ,(d12-gtd/get-file-path "journal"))
-         "* %?\n%U\n" :clock-in t :clock-resume t)))
+         "* %?\n%U\n" :clock-in t :clock-resume t)
+        ("w" "Web site" entry
+         (file "")
+         "* %a :website:\n\n%U %?\n\n%:initial")))
 
 ;; MobileOrg
-(setq org-mobile-directory (concat d12-path/dropbox "Apps/d12-mobile-org"))
+(setq org-mobile-directory (concat d12-path-dropbox "Apps/d12-mobile-org"))
 (setq org-mobile-inbox-for-pull (d12-gtd/get-file-path "inbox"))
 
 ;; Use C-c C-t for state change (when worf is not available)

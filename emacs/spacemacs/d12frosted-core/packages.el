@@ -114,7 +114,7 @@
   (use-package magit
     :defer t
     :init
-    (setq magit-repo-dirs `(,d12-path/developer))
+    (setq magit-repo-dirs `(,d12-path-projects-home))
     (defun d12-magit/push-all ()
       (interactive)
       (let ((bpr-on-success #'magit-refresh))
@@ -215,7 +215,7 @@ Supports negative arguments and repeating."
     :init
     (setq counsel-osx-app-location
           `("/Applications"
-            ,(concat user-home-directory "Applications")))
+            ,(concat d12-path-home "Applications")))
     (bind-key "M-<f12>" 'counsel-osx-app)))
 
 (defun d12frosted-core/init-cider ()
@@ -311,13 +311,13 @@ Supports negative arguments and repeating."
        (t #'d12-interesting-files-default)))
 
     (d12-interesting-files-add
-     `(,d12-path/spacemacs-user-config
-       ,d12-path/d12frosted-init
-       ,d12-path/spacemacs-init
-       ,(concat d12-path/emacs-private "private.el")
-       ,(concat d12-path/fish-public "config.fish")
-       ,(concat d12-path/fish-private "preconfig.fish")
-       ,(concat d12-path/fish-private "postconfig.fish")))))
+     `(,user-init-file
+       ,d12-path-spacemacs-user-config-file
+       ,d12-path-spacemacs-distr-init-file
+       ,(concat d12-path-emacs-private "private.el")
+       ,(concat d12-path-fish-config-home "config.fish")
+       ,(concat d12-path-fish-private-config-home "preconfig.fish")
+       ,(concat d12-path-fish-private-config-home "postconfig.fish")))))
 
 (defun d12frosted-core/init-number-conversion-tooltip ()
   (use-package number-conversion-tooltip

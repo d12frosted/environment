@@ -21,17 +21,27 @@
 ;;; Code:
 ;;
 
+(defvar d12-capture-link-verbs-github
+  '("Fix" "Merge" "Review" "Answer" "Close"))
+
+(defvar d12-capture-link-verbs-generic
+  '("Read" "Checkout"))
+
+(defvar d12-capture-link-nouns-generic
+  '("Article" "Post" "Message" "Project" "Library"))
+
 (defun d12-capture-link (link)
   (interactive "MLink: ")
   (cond
    ((and (s-starts-with? "https://github.com/" link)
          (or (s-contains? "/issues/" link) (s-contains? "/pull/" link)))
     (d12-capture-link--github link))
-   (t (message "Not implemented"))))
+   (t
+    (d12-capture-link--generic link))))
 
 (defun d12-capture-link--github (link)
-  (let ((verb (completing-read "Choose verb: " '("Fix" "Merge" "Review" "Answer" "Close")))
-        url short heading)
+  (let ((verb (completing-read "Choose verb: " d12-capture-link-verbs-github))
+        short project url heading)
     (if (string-match "\\(https?://github\\.com/\\([a-zA-Z0-9\\-]+\\)/\\([a-zA-Z0-9\\-]+\\)/[a-zA-Z]+/\\([0-9]+\\)\\).*" link)
         (progn (setq short (format "%s/%s#%s"
                                    (match-string 2 link)
@@ -46,6 +56,13 @@
                              heading
                              (format "** TODO %s" heading)))
       (user-error "Could not capture GitHub link %s" link))))
+
+(defun d12-capture-link--generic (link)
+  (let ((verb (completing-read "Choose verb: " d12-capture-link-verbs-generic))
+        (noun (completing-read "Choose noun: " d12-capture-link-nouns-generic)))
+    (org-generate 'entry
+                  (d12-org/get-file-path "inbox")
+                  (format "TODO %s: [[%s][%s]]" verb link noun))))
 
 (provide 'd12-capture-link)
 

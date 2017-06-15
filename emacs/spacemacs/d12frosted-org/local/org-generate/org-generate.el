@@ -22,9 +22,34 @@
 ;;; Code:
 ;;
 
-(defun org-generate (type org-file level-one
-  &optional level-two full-level-two plain-list)
-"Formating options for `org-capture-entry` are similar to `org-capture-templates`.
+;; org-capture-templates
+;; (org-generate2 'entry '(file "/Users/d12frosted/Dropbox/org/inbox.org") '(:empty-lines 1 :immediate-finish t) "* %?" "Help me")
+
+(defun org-generate2 (type target props template content)
+  (require 'org-capture)
+  (let ((orig-buf (current-buffer))
+        (org-capture-plist props))
+    (org-capture-put :type type)
+    (org-capture-put :target target)
+    (org-capture-put :template template)
+    (org-capture-get-template)
+    (org-capture-put :original-buffer orig-buf)
+    (org-capture-put :original-file (or (buffer-file-name orig-buf)
+                                        (and (featurep 'dired)
+                                             (car (rassq orig-buf
+                                                         dired-buffers)))))
+    (org-capture-put :original-file-nondirectory
+                     (and (buffer-file-name orig-buf)
+                          (file-name-nondirectory
+                           (buffer-file-name orig-buf))))
+    (org-capture-put :return-to-wconf (current-window-configuration))
+    (org-capture-set-target-location)
+    (org-capture-put :template (org-capture-fill-template))
+    (if (org-capture-get :immediate-finish)
+        (org-capture-finalize))))
+
+(defun org-generate (type org-file level-one &optional level-two full-level-two plain-list)
+  "Formating options for `org-capture-entry` are similar to `org-capture-templates`.
 However, the first two elements (i.e., `:key` and `:description`) are NOT used.
 Please see the doc-string of the variable `org-capture-templates` for more info.
   (1) `type`:  required -- 'entry | 'item

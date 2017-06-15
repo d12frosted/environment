@@ -18,44 +18,30 @@
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
   (setq-default
+   ;; spacemacs--custom-file ""
    dotspacemacs-distribution 'spacemacs
    dotspacemacs-enable-lazy-installation nil
    dotspacemacs-ask-for-lazy-installation t
    dotspacemacs-configuration-layer-path `(,dotspacemacs-directory)
    dotspacemacs-configuration-layers
    '( ;; utilities
-     (auto-completion :disabled-for org
-                      :variables
-                      auto-completion-enable-help-tooltip t)
+     (auto-completion :disabled-for org spacemacs-org)
      better-defaults
-     colors
      dash
-     erc
      (git :variables
           git-magit-status-fullscreen t)
      github
-     (org :variables
-          org-enable-github-support t)
-     pandoc
      ranger
-     restclient
-     syntax-checking
      spacemacs-layouts
      ivy
      spell-checking
-     shell
      version-control
-     xkcd
 
      ;; private layers
      d12frosted-core
      d12frosted-csharp
-     d12frosted-haskell
      d12frosted-lisp
-     d12frosted-lua
-     d12frosted-org
      d12frosted-osx
-     d12frosted-spellchecking
      d12frosted-theming
      d12frosted-visual
      d12frosted-window-purpose
@@ -63,38 +49,24 @@
      ;; languages
      csharp
      emacs-lisp
-     (haskell :variables
-              haskell-completion-backend 'ghci
-              haskell-enable-hindent-style "chris-done")
-     (html :variables
-           web-mode-markup-indent-offset 2
-           web-mode-attr-indent-offset 2
-           web-mode-code-indent-offset 2
-           web-mode-css-indent-offset 2
-           web-mode-sql-indent-offset 2
-           css-indent-offset 2)
-     (javascript :variables
-                 js-indent-level 2
-                 js2-basic-offset 2)
-     lua
-     markdown
      shell-scripts
-     yaml
-     shaders
-
-     ;; frameworks
-     react)
+     )
    dotspacemacs-additional-packages '(color-theme-sanityinc-tomorrow
                                       apropospriate-theme
                                       reveal-in-osx-finder
                                       smart-tabs-mode
-                                      lyrics
+                                      spaceline-all-the-icons
+                                      ;; lyrics
                                       elscreen-fr
+                                      apples-mode
                                       vimish-fold)
+
    dotspacemacs-excluded-packages '(emmet-mode
+                                    smart-ops
                                     dumb-jump
                                     centered-buffer-mode
-                                    window-numbering)
+                                    emoji-cheat-sheet-plus
+                                    )
    dotspacemacs-install-packages 'used-but-keep-unused))
 
 (defun dotspacemacs/init ()
@@ -105,9 +77,9 @@ You should not put any user code in there besides modifying the variable
 values."
   ;; setup elpa archives to my own mirrors
   (setq configuration-layer--elpa-archives
-        '(;; ("melpa" . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/melpa/")
-          ;; ("org"   . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/org/")
-          ;; ("gnu"   . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/gnu/")
+        '(("melpa" . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/melpa/")
+          ("org"   . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/org/")
+          ("gnu"   . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/gnu/")
           ("melpa" . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
           ("org"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")
           ("gnu"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))
@@ -120,7 +92,7 @@ values."
    dotspacemacs-editing-style 'emacs
    dotspacemacs-verbose-loading nil
    spacemacs-buffer-logo-title "[A N I M A C S]"
-   dotspacemacs-startup-banner (concat d12-path/emacs-private "animacs-banner.png")
+   dotspacemacs-startup-banner (concat d12-path-emacs-private "animacs-banner.png")
    dotspacemacs-startup-lists '()
    dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'emacs-lisp-mode
@@ -140,7 +112,7 @@ values."
    dotspacemacs-default-font '("Source Code Pro"
                                ;; "M+ 1m" ; http://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html
                                ;; "Fira Mono"
-                               :size 10
+                               :size 12
                                :weight normal
                                :width normal
                                :powerline-scale 1.0)
@@ -194,10 +166,21 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
-  (setq-default
-   omnisharp-server-executable-path
-   (concat d12-path/developer
-           "Other/omnisharp-roslyn/artifacts/publish/OmniSharp/default/net451/OmniSharp.exe"))
+  (add-to-list 'auto-mode-alist '("\\.\\(applescri\\|sc\\)pt\\'" . apples-mode))
+  (setq apples-indent-offset 2)
+  ;; # mac 上 emacs 直接编辑二进制applescript
+  ;; Allow editing of binary .scpt files (applescript) on mac.
+  (add-to-list 'jka-compr-compression-info-list
+               `["\\.scpt\\'"
+                 "converting text applescript to binary applescprit "
+                 ,(executable-find "applescript-helper") nil
+                 "converting binary applescript to text applescprit "
+                 ,(executable-find "applescript-helper") ("-d")
+                 nil t "FasdUAS"])
+  ;; It is necessary to perform an update!
+  (jka-compr-update)
+
+  (setq-default omnisharp-server-executable-path "/usr/local/bin/omnisharp")
   (setq-default spacemacs-theme-org-highlight t
                 spacemacs-theme-org-height t))
 

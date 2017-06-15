@@ -26,6 +26,10 @@
                 :files ("org-query.el"
                         "org-query-gtd.el")))
     org-bullets
+    (org-protocol-capture-html :location
+                               (recipe
+                                :fetcher github
+                                :repo "alphapapa/org-protocol-capture-html"))
     worf))
 
 (defun d12frosted-org/post-init-org ()
@@ -148,6 +152,10 @@
     :defer t
     :config
     (setq org-bullets-bullet-list '("◉" "◎" "●" "○" "•" "◦"))))
+
+(defun d12frosted-org/init-org-protocol-capture-html ()
+  (use-package org-protocol-capture-html
+    :defer t))
 
 (defun d12frosted-org/init-worf ()
   (use-package worf

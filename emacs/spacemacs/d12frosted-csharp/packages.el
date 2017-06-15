@@ -14,9 +14,17 @@
 ;;; Code:
 
 (defconst d12frosted-csharp-packages
-  '(omnisharp
+  '(
     csharp-mode
-    smart-ops))
+    smart-ops
+    omnisharp
+    ;; (omnisharp :location
+    ;;            (recipe
+    ;;             :fetcher github
+    ;;             :repo "OmniSharp/omnisharp-emacs"
+    ;;             :branch "feature-omnisharp-roslyn-support"
+    ;;             ))
+    ))
 
 (defun d12frosted-csharp/post-init-csharp-mode ()
   (use-package csharp-mode
