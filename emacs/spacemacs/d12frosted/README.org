@@ -1,0 +1,18 @@
+#+TITLE: d12frosted layer
+
+# The maximum height of the logo should be 200 pixels.
+[[img/d12frosted.png]]
+
+# TOC links should be GitHub style anchors.
+* Table of Contents                                        :TOC_4_gh:noexport:
+ - [[#decsription][Description]]
+ - [[#install][Install]]
+
+* Description
+This layer is a =d12frosted= distribution for Spacemacs. Please refer to
+=layers.el= file to see what's included.
+
+* Install
+To use this configuration layer, add it to your =~/.spacemacs=. You will need to
+add =d12frosted= to the existing =dotspacemacs-configuration-layers= list in this
+file.

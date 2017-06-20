@@ -5,28 +5,45 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-Personal emacs configurations based on develop branch of [[https://github.com/syl20bnr/spacemacs][Spacemacs]], but for some
-odd reasons called Animacs.
+Personal Emacs configurations. Tremendously boosted by [[http://spacemacs.org][Spacemacs]].
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="images/animacs.png"
-       alt="[A N I M A C S]"
-       title="Welcome to Animacs!">
+  <img src="images/animacs.png">
 </p>
 #+END_HTML
 
-* Install emacs
+* Install Emacs
 
-For OS X users I recommend to install =emacs= or [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]]. You can find more
-information about different versions of Emacs on OS X in [[http://emacs.stackexchange.com/a/274/5161][this answer]].
+For OS X users I recommend to install [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]] - GNU Emacs with some sane
+defaults, available via [[https://brew.sh][brew]] package manager.
 
 #+BEGIN_SRC
 $ brew tap d12frosted/emacs-plus
 $ brew install emacs-plus
 #+END_SRC
 
+But you are free™ to use whatever Emacs variant you wish to use, though I don't
+give any guarantees that it will work with these configurations. In case you
+wish to investigate more on this topic, please refer to [[http://emacs.stackexchange.com/a/274/5161][this answer]].
+
+* Install configurations
+
+/Section is under construction. Please return in -2147483648 seconds./
+
 * Run-time dependencies
 
 Emacs domain has lots of run-time dependencies. It's better to install them
 using global install script.
+
+* Key bindings
+
+Most of the key bindings are set by [[http://spacemacs.org][Spacemacs]] and enabled layers. Please refer
+to [[file:spacemacs/spacemacs.el][spacemacs.el]] file for more hints.
+
+** Reveal
+
+ | Key Binding   | Description                    |
+ |---------------+--------------------------------|
+ | ~SPC o r f~   | reveal current file in Finder  |
+ | ~SPC o r r /~ | reveal root of current project |

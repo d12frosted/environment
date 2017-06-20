@@ -1,4 +1,4 @@
-;;; d12-path.el --- d12-path file for personal configurations
+;;; d12-path.el --- d12-path file for personal configurations -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2017 Boris Buliga
 ;;

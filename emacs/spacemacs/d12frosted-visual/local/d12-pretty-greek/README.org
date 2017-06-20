@@ -1,9 +1,0 @@
-* =d12-pretty-greek=
-
-Display Greek letters in place of their names. Supports names in lower case,
-capital case and upper case. This is generalisation of [[https://www.emacswiki.org/emacs/PrettyGreek][PrettyGreek]] by
-BenignoUria. To use, just add a hook to any related mode.
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook #'d12-pretty-greek)
-#+END_SRC
