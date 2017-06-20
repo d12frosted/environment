@@ -34,6 +34,7 @@
    d12-visual
    d12-emacs-lisp
    d12-csharp
+   d12-applescript
 
    ;; languages
    shell-scripts

@@ -121,3 +121,10 @@
   - gfxcardstatus
   - spectacle
   - hammerspoon
+
+- link:
+    ~/.local/bin/applescript-helper:
+      path: utils/applescript-helper.sh
+      relink: true
+      create: true
+

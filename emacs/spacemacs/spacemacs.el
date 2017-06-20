@@ -31,20 +31,6 @@
         ;;  "* %a :website:\n\n%U %?\n\n%:initial")
         ))
 
-(add-to-list 'auto-mode-alist '("\\.\\(applescri\\|sc\\)pt\\'" . apples-mode))
-(setq apples-indent-offset 2)
-;; # mac 上 emacs 直接编辑二进制applescript
-;; Allow editing of binary .scpt files (applescript) on mac.
-(add-to-list 'jka-compr-compression-info-list
-             `["\\.scpt\\'"
-               "converting text applescript to binary applescprit "
-               ,(executable-find "applescript-helper") nil
-               "converting binary applescript to text applescprit "
-               ,(executable-find "applescript-helper") ("-d")
-               nil t "FasdUAS"])
-;; It is necessary to perform an update!
-(jka-compr-update)
-
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
   (setq-default
