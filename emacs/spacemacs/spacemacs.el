@@ -75,11 +75,11 @@ This function is called at the very startup of Spacemacs initialization
 before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
-  ;; setup elpa archives to my own mirrors
+  ;; Use my own ELPA archives.
   (setq configuration-layer--elpa-archives
-        '(("melpa" . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/melpa/")
-          ("org"   . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/org/")
-          ("gnu"   . "/Users/d12frosted/Developer/d12frosted/elpa-mirror/gnu/")
+        `(("melpa" . ,(concat d12-path-elpa-mirror-home "melpa/"))
+          ("org"   . ,(concat d12-path-elpa-mirror-home "org/"))
+          ("gnu"   . ,(concat d12-path-elpa-mirror-home "gnu/"))
           ("melpa" . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
           ("org"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")
           ("gnu"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))

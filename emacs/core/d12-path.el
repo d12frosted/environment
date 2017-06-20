@@ -94,5 +94,9 @@ non-nil.")
   (concat d12-path-emacs-private "custom.el")
   "Path to 'custom.el' file.")
 
+(defconst d12-path-elpa-mirror-home
+  (concat d12-path-projects-home "d12frosted/elpa-mirror/")
+  "Path to ELPA mirror directory")
+
 (provide 'd12-path)
 ;;; d12-path.el ends here
