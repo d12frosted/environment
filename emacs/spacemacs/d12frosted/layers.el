@@ -1,4 +1,4 @@
-;;; layers.el --- d12frosted layer layers file for Spacemacs.
+;;; layers.el --- d12frosted layer layers file for Spacemacs. -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2017 Boris Buliga
 ;;

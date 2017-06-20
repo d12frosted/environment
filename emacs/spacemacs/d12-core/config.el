@@ -1,4 +1,4 @@
-;;; config.el --- d12-core layer config file for Spacemacs.
+;;; config.el --- d12-core layer config file for Spacemacs. -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2017 Boris Buliga
 ;;

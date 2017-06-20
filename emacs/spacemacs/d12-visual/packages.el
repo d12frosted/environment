@@ -1,4 +1,4 @@
-;;; packages.el --- d12-visual layer packages file for Spacemacs.
+;;; packages.el --- d12-visual layer packages file for Spacemacs. -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2017 Boris Buliga
 ;;

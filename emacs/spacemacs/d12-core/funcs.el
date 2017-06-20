@@ -1,4 +1,4 @@
-;;; funcs.el --- d12-core layer funcs file for Spacemacs.
+;;; funcs.el --- d12-core layer funcs file for Spacemacs. -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2017 Boris Buliga
 ;;

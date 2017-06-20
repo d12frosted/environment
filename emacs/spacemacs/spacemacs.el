@@ -1,4 +1,4 @@
-;;; init.el --- Spacemacs dotfile
+;;; init.el --- Spacemacs dotfile -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2017 Boris Buliga
 ;;
