@@ -21,6 +21,7 @@
     (d12-dir-settings :location (recipe :fetcher local))
     ace-window
     projectile
+    evil-nerd-commenter
     )
   "The list of Lisp packages required by the d12-core layer.")
 
@@ -52,5 +53,16 @@
     ;; Disable projectile caching as it slows down file switching in huge
     ;; projects. TODO: investigate if it's still the case.
     (setq projectile-enable-caching nil)))
+
+(defun d12-core/init-evil-nerd-commenter ()
+  (use-package evil-nerd-commenter
+    :commands (evilnc-comment-or-uncomment-lines
+               evilnc-quick-comment-or-uncomment-to-the-line
+               evilnc-copy-and-comment-lines
+               evilnc-comment-or-uncomment-paragraphs)
+    :init
+    (d12-key-bind "M-;" #'evilnc-comment-or-uncomment-lines)
+    (d12-key-bind "C-M-;" #'evilnc-comment-or-uncomment-paragraphs)
+    ))
 
 ;;; packages.el ends here
