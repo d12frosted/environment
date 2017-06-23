@@ -15,7 +15,8 @@
 ;;; Code:
 
 (defconst d12-visual-packages
-  '(spaceline-all-the-icons)
+  '(;; spaceline-all-the-icons
+    )
   "The list of Lisp packages required by the d12-visual layer.")
 
 (defun d12-visual/init-spaceline-all-the-icons ()
