@@ -7,7 +7,7 @@ end
 
 # variables
 set -x XDG_CONFIG_HOME ~/.environment
-set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs
+set -x SPACEMACSDIR $HOME/.spacemacs
 set -x GEM_HOME $HOME/.local/gem
 set -x GEM_PATH $HOME/.local/gem
 set -x PATH $HOME/.local/bin $GEM_HOME/bin /usr/texbin /usr/local/sbin $PATH
@@ -19,12 +19,15 @@ set cmd_notification_threshold 8000
 alias ghci "stack ghci"
 alias ecl "emacsclient"
 alias eclt "emacsclient -c"
-alias emt "emacs -nw --insecure"
 alias cenv "cd $XDG_CONFIG_HOME"
 alias cem  "cd $HOME/.emacs.d"
 
 function em
-  emacs --insecure $argv &
+  emacs -q --load $HOME/.environment/emacs/init.el $argv &
+end
+
+function emt
+  emacs -nw -q --load $HOME/.environment/emacs/init.el $argv
 end
 
 # theme
