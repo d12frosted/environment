@@ -64,6 +64,7 @@
     :init
     (d12-key-bind "M-;" #'evilnc-comment-or-uncomment-lines)
     (d12-key-bind "C-M-;" #'evilnc-comment-or-uncomment-paragraphs)
+    ;; (d12-key-bind "C-c c" #'evilnc-copy-and-comment-lines)
     ))
 
 ;;; packages.el ends here
