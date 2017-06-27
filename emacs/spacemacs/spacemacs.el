@@ -15,22 +15,6 @@
 ;;
 ;;; Code:
 
-(defun d12-gtd/get-file-path (name)
-  (format "%sorg/%s.org"
-          d12-path-dropbox
-          name))
-(setq org-capture-templates
-      `(("t" "todo" plain (file ,(d12-gtd/get-file-path "inbox"))
-         "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-        ;; ("m" "Meeting" entry (file ,(d12-gtd/get-file-path "inbox"))
-        ;;  "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-        ("j" "Journal" entry (file+datetree+prompt ,(d12-gtd/get-file-path "journal"))
-         "* %?\n%U\n" :clock-in t :clock-resume t)
-        ;; ("w" "Web site" entry
-        ;;  (file "")
-        ;;  "* %a :website:\n\n%U %?\n\n%:initial")
-        ))
-
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
   (setq-default

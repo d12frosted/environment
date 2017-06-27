@@ -32,6 +32,7 @@
    ;; private layers
    d12-core
    d12-visual
+   d12-org
    d12-emacs-lisp
    d12-csharp
    d12-applescript

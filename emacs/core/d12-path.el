@@ -50,6 +50,10 @@ non-nil.")
   (concat d12-path-home "Dropbox/")
   "Path to Dropbox directory.")
 
+(defconst d12-path-org-home
+  (concat d12-path-dropbox "org/")
+  "Path to Org directory.")
+
 (defconst d12-path-emacs-home
   (concat d12-path-config-home "emacs/")
   "Path to Emacs configurations directory.")
@@ -97,6 +101,15 @@ non-nil.")
 (defconst d12-path-elpa-mirror-home
   (concat d12-path-projects-home "d12frosted/elpa-mirror/")
   "Path to ELPA mirror directory")
+
+(defun d12-path/get-org-file (file)
+  "Locate org FILE relative to `d12-path-org-home'."
+  (concat d12-path-org-home file ".org"))
+
+(defun d12-path/get-org-dir (dir)
+  "Locate org DIR relative to `d12-path-org-home'."
+  (file-name-as-directory
+   (concat d12-path-org-home dir)))
 
 (provide 'd12-path)
 ;;; d12-path.el ends here
