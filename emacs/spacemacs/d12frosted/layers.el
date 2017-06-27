@@ -17,17 +17,17 @@
 (configuration-layer/declare-layers
  '(
    ;; utilities
-   spacemacs-editing
-   (auto-completion :disabled-for org spacemacs-org)
    better-defaults
-   dash
+   ivy
+   spacemacs-editing
+   spacemacs-layouts
+   version-control
    (git :variables
         git-magit-status-fullscreen t)
-   spacemacs-layouts
-   ivy
+   (auto-completion :disabled-for org spacemacs-org)
    spell-checking
    (syntax-checking :variables syntax-checking-enable-tooltips nil)
-   version-control
+   dash
 
    ;; private layers
    d12-core
@@ -38,7 +38,6 @@
    d12-applescript
 
    ;; languages
-   shell-scripts
-   ))
+   shell-scripts))
 
 ;;; layers.el ends here
