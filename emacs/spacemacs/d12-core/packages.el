@@ -44,6 +44,7 @@
   (use-package ace-window
     :defer t
     :init
+    (bind-key "M-`" 'ace-window)
     (bind-key "M-p" 'ace-window)))
 
 (defun d12-core/pre-init-projectile ()
