@@ -52,6 +52,9 @@
     (d12-key-bind "<f11>" 'org-clock-goto)
     (d12-key-bind "<f12>" 'org-agenda)
 
+    ;; Setup indent mode
+    (setq org-startup-indented t)
+
     ;; Setup `org-agenda-files'. Prefer using directories as files add to them
     ;; will automatically get into `org-agenda-files'.
     (setq org-agenda-files `(,d12-path-org-home
