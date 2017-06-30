@@ -39,6 +39,9 @@
   (use-package org
     :commands (orgtbl-mode)
     :init
+    ;; Setup directory for all org files
+    (setq org-directory d12-path-org-home)
+
     ;; Setup useful global key bindings.
     (d12-key-bind "C-c c" 'org-capture)
     (d12-key-bind "C-c b" 'org-iswitchb)
