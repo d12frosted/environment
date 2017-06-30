@@ -37,7 +37,7 @@
 
 (defun d12-org/init-org ()
   (use-package org
-    :commands (orgtbl-mode)
+    :commands (orgtbl-mode org-mobile-push org-mobile-pull)
     :init
     ;; Setup directory for all org files
     (setq org-directory d12-path-org-home)
@@ -57,6 +57,10 @@
 
     ;; Setup indent mode
     (setq org-startup-indented t)
+
+    ;; Setup org-mobile
+    (setq org-mobile-directory (concat d12-path-dropbox "Apps/d12-mobile-org/"))
+    (setq org-mobile-inbox-for-pull (d12-path/get-org-file "inbox"))
 
     ;; Setup `org-agenda-files'. Prefer using directories as files add to them
     ;; will automatically get into `org-agenda-files'.

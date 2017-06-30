@@ -14,6 +14,8 @@
 ;;
 ;;; Code:
 
+(defvar d12-org--mobile-sync-timer nil)
+(defvar d12-org-mobile-sync-idle-secs (* 60 5))
 (defvar d12-org-refile-ignore-tags '("JOURNAL" "REFILE"))
 (defvar d12-org-hide-scheduled-and-waiting-next-tasks t)
 

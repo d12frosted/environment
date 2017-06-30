@@ -17,6 +17,28 @@
 ;;
 ;;; Code:
 
+(defun d12-org-mobile-sync ()
+  "Sync org-mobile."
+  (interactive)
+  (org-mobile-pull)
+  (org-mobile-push))
+
+(defun d12-org-mobile-sync-enable ()
+  "Enable org-mobile sync."
+  (interactive)
+  (d12-org-mobile-sync-disable)
+  (setq d12-org--mobile-sync-timer
+        (run-with-idle-timer
+         d12-org-mobile-sync-idle-secs t
+         'org-mobile-sync)))
+
+(defun d12-org-mobile-sync-disable ()
+  "Disable org-mobile sync."
+  (interactive)
+  (when d12-org--mobile-sync-timer
+    (cancel-timer d12-org--mobile-sync-timer)
+    (setq d12-org--mobile-sync-timer nil)))
+
 (defun d12-org/hide-other ()
   (interactive)
   (save-excursion
