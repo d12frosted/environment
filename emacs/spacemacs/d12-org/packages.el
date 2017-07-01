@@ -60,7 +60,7 @@
 
     ;; Setup org-mobile
     (setq org-mobile-directory (concat d12-path-dropbox "Apps/d12-mobile-org/"))
-    (setq org-mobile-inbox-for-pull (d12-path/get-org-file "inbox"))
+    (setq org-mobile-inbox-for-pull (d12-path/get-org-file "mobile-inbox"))
 
     ;; Setup `org-agenda-files'. Prefer using directories as files add to them
     ;; will automatically get into `org-agenda-files'.
