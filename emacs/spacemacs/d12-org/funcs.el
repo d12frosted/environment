@@ -30,7 +30,7 @@
   (setq d12-org--mobile-sync-timer
         (run-with-idle-timer
          d12-org-mobile-sync-idle-secs t
-         'org-mobile-sync)))
+         'd12-org-mobile-sync)))
 
 (defun d12-org-mobile-sync-disable ()
   "Disable org-mobile sync."
