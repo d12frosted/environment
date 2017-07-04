@@ -145,14 +145,11 @@
     ;; Compact the block agenda view
     (setq org-agenda-compact-blocks t)
 
-    ;; Show day agenda by default
-    (setq org-agenda-span 'day)
-
     ;; Custom agenda command definitions
     (setq org-agenda-custom-commands
           `((" " "Agenda"
              (
-              (agenda "" nil)
+              (agenda "" ((org-agenda-span 'day)))
               (tags "REFILE"
                     ((org-agenda-overriding-header "Tasks to Refile")
                      (org-tags-match-list-sublevels nil)))
