@@ -92,7 +92,7 @@
     ;; Setup capture templates.
     (setq org-capture-templates
           `(("t" "todo" plain (file ,(d12-path/get-org-file "inbox"))
-             "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+             "* TODO %?\n%U\n" :clock-in t :clock-resume t)
             ("j" "Journal" entry (file+datetree+prompt ,(d12-path/get-org-file "journal"))
              "* %?\n%U\n" :clock-in t :clock-resume t)
             ("r" "respond" entry (file ,(d12-path/get-org-file "inbox"))
