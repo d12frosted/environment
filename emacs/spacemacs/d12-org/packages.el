@@ -55,6 +55,12 @@
     (d12-key-bind "<f11>" 'org-clock-goto)
     (d12-key-bind "<f12>" 'org-agenda)
 
+    ;; Setup org-mode key bindings
+    (d12-key-bind "C-c o r" 'org-refile org-mode-map)
+
+    ;; Setup org-agenda key bindings
+    (d12-key-bind "r" 'org-agenda-refile org-agenda-mode-map)
+
     ;; Setup indent mode
     (setq org-startup-indented t)
 
