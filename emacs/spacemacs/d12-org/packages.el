@@ -26,6 +26,7 @@
       :repo "remyhonig/org-query"
       :files ("org-query.el"
               "org-query-gtd.el")))
+    persp-mode
     )
   "The list of Lisp packages required by the d12-org layer.")
 
@@ -240,5 +241,13 @@
     :config
     (require 'org-query-gtd)))
 
+(defun d12-core/post-init-persp-mode ()
+  (use-package persp-mode
+    :defer t
+    :init
+    (spacemacs|define-custom-layout "@Org"
+      :binding "o"
+      :body
+      (find-file-existing (d12-path/get-org-file "inbox")))))
 
 ;;; packages.el ends here
