@@ -19,6 +19,7 @@
     (org-plus-contrib :step pre)
     org
     worf
+    (d12-org-capture-url :location (recipe :fetcher local))
     (org-query
      :location
      (recipe
@@ -107,7 +108,7 @@
             ("n" "note" entry (file ,(d12-path/get-org-file "inbox"))
              "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
             ("w" "org-protocol" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Review %c\n%U\n" :immediate-finish t)
+             "* TODO Review %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
             ("m" "Meeting" entry (file ,(d12-path/get-org-file "inbox"))
              "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
             ("p" "Phone call" entry (file ,(d12-path/get-org-file "inbox"))
@@ -234,6 +235,10 @@
     :init
     (add-hook 'org-mode-hook 'worf-mode)
     (add-hook 'org-capture-mode-hook (lambda () (worf-mode -1)))))
+
+(defun d12-org/init-d12-org-capture-url ()
+  (use-package d12-org-capture-url
+    :commands (d12-org-capture-url)))
 
 (defun d12-org/init-org-query ()
   (use-package org-query
