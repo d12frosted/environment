@@ -23,9 +23,8 @@
   (use-package haskell-mode
     :defer t
     :init
-    ;; This block executes before the package has been loaded
+    (setq haskell-hoogle-command "hoogle -i")
     :config
-    ;; This block executes after the package has been loaded
     ))
 
 (defun d12-haskell/init-intero ()
