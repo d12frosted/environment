@@ -18,4 +18,7 @@
 (setq mouse-wheel-scroll-amount '(3 ((shift) . 1) ((control) . nil)))
 (setq mouse-wheel-progressive-speed nil)
 
+;; Delete selection mode is my friend. Sorry, no-lifers!
+(delete-selection-mode 1)
+
 ;;; config.el ends here
