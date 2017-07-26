@@ -95,14 +95,40 @@
     (setq org-capture-templates
           `(("t" "todo" plain (file ,(d12-path/get-org-file "inbox"))
              "* TODO %?\n%U\n" :clock-in t :clock-resume t)
+            ("T" "todo (annotated)" plain (file ,(d12-path/get-org-file "inbox"))
+             "* TODO %?\n%U%a\n" :clock-in t :clock-resume t)
+
             ("j" "Journal" entry (file+datetree+prompt ,(d12-path/get-org-file "journal"))
              "* %?\n%U\n" :clock-in t :clock-resume t)
+
             ("r" "respond" entry (file ,(d12-path/get-org-file "inbox"))
              "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+
             ("n" "note" entry (file ,(d12-path/get-org-file "inbox"))
              "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-            ("w" "org-protocol" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Review %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
+
+            ("w" "Web site" entry
+             (file "")
+             "* %a :website:\n\n%U %?\n\n%:initial")
+
+            ("a" "Actions on url")
+            ("ar" "Action: Review" entry (file ,(d12-path/get-org-file "inbox"))
+             "* TODO Review: %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
+            ("aR" "Action: Schedule Review" entry (file ,(d12-path/get-org-file "inbox"))
+             "* TODO Review: %(d12-org-capture-url \"%c\")\n%U\nSCHEDULED: %^T\n" :immediate-finish t)
+            ("ac" "Action: Close" entry (file ,(d12-path/get-org-file "inbox"))
+             "* TODO Close: %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
+            ("aC" "Action: Schedule Close" entry (file ,(d12-path/get-org-file "inbox"))
+             "* TODO Close: %(d12-org-capture-url \"%c\")\n%U\nSCHEDULED: %^T\n" :immediate-finish t)
+            ("am" "Action: Merge" entry (file ,(d12-path/get-org-file "inbox"))
+             "* TODO Merge: %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
+            ("aM" "Action: Schedule Merge" entry (file ,(d12-path/get-org-file "inbox"))
+             "* TODO Merge: %(d12-org-capture-url \"%c\")\n%U\nSCHEDULED: %^T\n" :immediate-finish t)
+            ("af" "Action: Fix" entry (file ,(d12-path/get-org-file "inbox"))
+             "* TODO Fix: %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
+            ("aF" "Action: Schedule Fix" entry (file ,(d12-path/get-org-file "inbox"))
+             "* TODO Fix: %(d12-org-capture-url \"%c\")\n%U\nSCHEDULED: %^T\n" :immediate-finish t)
+
             ("m" "Meeting" entry (file ,(d12-path/get-org-file "inbox"))
              "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
             ("p" "Phone call" entry (file ,(d12-path/get-org-file "inbox"))
