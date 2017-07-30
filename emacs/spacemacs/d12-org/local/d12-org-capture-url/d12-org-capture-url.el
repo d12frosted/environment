@@ -18,28 +18,28 @@
 
 (require 'ghub)
 
-(defconst d12-org-capture-github-issue-regex
+(defconst d12-org-capture-url-github-issue-regex
   "\\(https://github.com/\\([[:alnum:]]+\\)/\\([[:alnum:]\-]+\\)/issues/\\([[:digit:]]+\\)\\).*")
 
-(defconst d12-org-capture-github-pull-regex
+(defconst d12-org-capture-url-github-pull-regex
   "\\(https://github.com/\\([[:alnum:]]+\\)/\\([[:alnum:]\-]+\\)/pull/\\([[:digit:]]+\\)\\).*")
 
-(defconst d12-org-capture-github-commit-regex
+(defconst d12-org-capture-url-github-commit-regex
   "\\(https://github.com/\\([[:alnum:]]+\\)/\\([[:alnum:]\-]+\\)/commit/\\([[:alnum:]]+\\)\\).*")
 
-(defconst d12-org-capture-github-commit-length 8)
+(defconst d12-org-capture-url-github-commit-length 8)
 
 (defun d12-org-capture-url (url)
   "Format url for capture template."
   (cond
-   ((or (string-match d12-org-capture-github-issue-regex url)
-        (string-match d12-org-capture-github-pull-regex url))
+   ((or (string-match d12-org-capture-url-github-issue-regex url)
+        (string-match d12-org-capture-url-github-pull-regex url))
     (d12-org-capture-url--github-issue-or-pull
      (match-string 1 url)
      (match-string 2 url)
      (match-string 3 url)
      (match-string 4 url)))
-   ((string-match d12-org-capture-github-commit-regex url)
+   ((string-match d12-org-capture-url-github-commit-regex url)
     (d12-org-capture-url--github-commit
      (match-string 1 url)
      (match-string 2 url)
@@ -60,7 +60,7 @@
          (commit (alist-get 'commit response))
          (message (alist-get 'message commit))
          (title (car (split-string message "\n")))
-         (short-hash-length (min d12-org-capture-github-commit-length
+         (short-hash-length (min d12-org-capture-url-github-commit-length
                                  (length hash)))
          (short-hash (substring hash 0 short-hash-length)))
     (format "[[%s][%s/%s#%s]] - %s"
