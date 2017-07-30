@@ -28,6 +28,7 @@
       :files ("org-query.el"
               "org-query-gtd.el")))
     persp-mode
+    toc-org
     )
   "The list of Lisp packages required by the d12-org layer.")
 
@@ -285,5 +286,13 @@
       :binding "o"
       :body
       (find-file-existing (d12-path/get-org-file "inbox")))))
+
+(defun d12-org/init-toc-org ()
+  (use-package toc-org
+    :defer t
+    :init
+    (progn
+      (setq toc-org-max-depth 10)
+      (add-hook 'org-mode-hook 'toc-org-enable))))
 
 ;;; packages.el ends here
