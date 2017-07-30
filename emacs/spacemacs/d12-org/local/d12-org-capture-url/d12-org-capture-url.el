@@ -27,6 +27,8 @@
 (defconst d12-org-capture-github-commit-regex
   "\\(https://github.com/\\([[:alnum:]]+\\)/\\([[:alnum:]\-]+\\)/commit/\\([[:alnum:]]+\\)\\).*")
 
+(defconst d12-org-capture-github-commit-length 8)
+
 (defun d12-org-capture-url (url)
   "Format url for capture template."
   (cond
@@ -52,12 +54,17 @@
     (format "[[%s][%s/%s#%s]] - %s"
             url user repo issue title)))
 
-(defun d12-org-capture-url--github-commit (url user repo commit)
-  (let* ((api (format "/repos/%s/%s/commits/%s" user repo commit))
+(defun d12-org-capture-url--github-commit (url user repo hash)
+  (let* ((api (format "/repos/%s/%s/commits/%s" user repo hash))
          (response (ghub-get api))
-         (title (car (split-string (alist-get 'message (alist-get 'commit response)) "\n"))))
+         (commit (alist-get 'commit response))
+         (message (alist-get 'message commit))
+         (title (car (split-string message "\n")))
+         (short-hash-length (min d12-org-capture-github-commit-length
+                                 (length hash)))
+         (short-hash (substring hash 0 short-hash-length)))
     (format "[[%s][%s/%s#%s]] - %s"
-            url user repo commit title)))
+            url user repo short-hash title)))
 
 (provide 'd12-org-capture-url)
 
