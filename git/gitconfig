@@ -25,3 +25,5 @@
 	program = gpg
 [diff]
 	compactionHeuristic = true
+[github]
+	user = d12frosted
