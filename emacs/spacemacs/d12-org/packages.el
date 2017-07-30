@@ -278,9 +278,8 @@
     :config
     (require 'org-query-gtd)))
 
-(defun d12-core/post-init-persp-mode ()
+(defun d12-org/post-init-persp-mode ()
   (use-package persp-mode
-    :defer t
     :init
     (spacemacs|define-custom-layout "@Org"
       :binding "o"
