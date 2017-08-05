@@ -39,6 +39,12 @@
     (cancel-timer d12-org--mobile-sync-timer)
     (setq d12-org--mobile-sync-timer nil)))
 
+(defun d12-org/agenda-redo ()
+  (interactive)
+  (with-current-buffer "*Org Agenda*"
+    (org-agenda-maybe-redo)
+    (message "[org agenda] refreshed!")))
+
 (defun d12-org/hide-other ()
   (interactive)
   (save-excursion

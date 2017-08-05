@@ -93,6 +93,9 @@
             ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
             ("DONE" ("WAITING") ("CANCELLED") ("HOLD"))))
 
+    ;; refresh agenda after capturing
+    (add-hook 'org-capture-after-finalize-hook #'d12-org/agenda-redo)
+
     ;; Setup capture templates.
     (setq org-capture-templates
           `(("t" "todo" plain (file ,(d12-path/get-org-file "inbox"))
