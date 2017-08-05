@@ -46,16 +46,18 @@
     (setq org-directory d12-path-org-home)
 
     ;; Setup useful global key bindings.
-    (d12-key-bind "C-c c" 'org-capture)
-    (d12-key-bind "C-c b" 'org-iswitchb)
-    (d12-key-bind "C-c l" 'org-store-link)
+    (spacemacs/declare-prefix "oo" "org")
+    (d12-key-bind-personal "c" 'org-capture)
+    (d12-key-bind-personal "ob" 'org-iswitchb)
+    (d12-key-bind-personal "ol" 'org-store-link)
+    (d12-key-bind-personal "og" 'org-clock-goto)
+    (d12-key-bind "C-<f11>" 'org-clock-in)
+    (d12-key-bind "C-<f12>" 'org-clock-out)
     (d12-key-bind "<f9> c" 'calendar)
     (d12-key-bind "<f9> h" 'd12-org/hide-other)
     (d12-key-bind "<f9> i" 'org-toggle-inline-images)
     (d12-key-bind "<f9> l" 'org-toggle-link-display)
     (d12-key-bind "<f9> v" 'visible-mode)
-    (d12-key-bind "C-<f11>" 'org-clock-in)
-    (d12-key-bind "<f11>" 'org-clock-goto)
     (d12-key-bind "<f12>" 'org-agenda)
 
     ;; Setup indent mode
