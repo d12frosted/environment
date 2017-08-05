@@ -178,6 +178,10 @@
     ;; When inhibiting org-agenda, show it full screen
     (setq org-agenda-window-setup 'only-window)
 
+    ;; tune visuals of agenda
+    (setq org-agenda-block-separator "")
+    (setq org-agenda-compact-blocks nil)
+
     ;; Custom agenda command definitions
     (setq org-agenda-custom-commands
           `((" " "Agenda"
