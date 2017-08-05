@@ -14,6 +14,11 @@
 ;;
 ;;; Code:
 
+(defface d12-flycheck-mode-line
+  '()
+  "Face for flycheck status in mode line."
+  :group 'custom-faces)
+
 (setq-default
  mode-line-format
  '("%e"
@@ -30,6 +35,9 @@
    mode-line-process
    ")"
    (vc-mode vc-mode)
+   " "
+   (:eval
+    (propertize (flycheck-mode-line-status-text) 'face 'd12-flycheck-mode-line))
    " "
    mode-line-position
    mode-line-end-spaces))

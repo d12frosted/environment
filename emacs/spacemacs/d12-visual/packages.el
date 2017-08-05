@@ -15,7 +15,8 @@
 ;;; Code:
 
 (defconst d12-visual-packages
-  '(;; spaceline-all-the-icons
+  '( ;; spaceline-all-the-icons
+    (flycheck-color-mode-line :requires flycheck)
     )
   "The list of Lisp packages required by the d12-visual layer.")
 
@@ -49,5 +50,21 @@
     (spaceline-toggle-all-the-icons-battery-status-off)
     (spaceline-toggle-all-the-icons-time-off)
     :config (spaceline-all-the-icons-theme)))
+
+(defun d12-visual/init-flycheck-color-mode-line ()
+  (use-package flycheck-color-mode-line
+    :defer t
+    :init
+    (eval-after-load "flycheck"
+      '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
+    :config
+    (set-face-attribute 'flycheck-color-mode-line-info-face nil
+                        :foreground nil)
+    (set-face-attribute 'flycheck-color-mode-line-warning-face nil
+                        :foreground nil)
+    (set-face-attribute 'flycheck-color-mode-line-error-face nil
+                        :foreground nil)
+
+    (setq flycheck-color-mode-line-face-to-color 'd12-flycheck-mode-line)))
 
 ;;; packages.el ends here
