@@ -70,7 +70,6 @@
     ;; Setup `org-agenda-files'. Prefer using directories as files add to them
     ;; will automatically get into `org-agenda-files'.
     (setq org-agenda-files `(,d12-path-org-home
-                             ,(d12-path/get-org-dir "personal")
                              ,(d12-path/get-org-dir "work")))
 
     ;; Setup `org-todo-keywords'.
