@@ -14,6 +14,14 @@
 ;;
 ;;; Code:
 
+(defun d12-key-bind-leader (key def &rest bindings)
+  "Bind KEY-NAME to COMMAND in under leader key."
+  (spacemacs/set-leader-keys key def bindings))
+
+(defun d12-key-bind-personal (key def)
+  "Bind KEY-NAME to COMMAND in under leader key."
+  (spacemacs/set-leader-keys (concat "o" key) def))
+
 (defun d12-key-bind (key-name command &optional keymap)
   "Bind KEY-NAME to COMMAND in the KEYMAP."
   (bind-key key-name command keymap))
