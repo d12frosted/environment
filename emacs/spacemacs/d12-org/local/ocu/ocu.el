@@ -1,4 +1,4 @@
-;;; d12-org-capture-url.el --- Parse and capture URL -*- lexical-binding: t; -*-
+;;; ocu.el --- Parse and capture URL -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2017 Boris Buliga
 ;;
@@ -18,54 +18,57 @@
 
 (require 'ghub)
 
-(defconst d12-org-capture-url-github-issue-regex
+(defconst ocu-github-issue-regex
   "\\(https://github.com/\\([[:alnum:]]+\\)/\\([[:alnum:]\-]+\\)/issues/\\([[:digit:]]+\\)\\).*")
 
-(defconst d12-org-capture-url-github-pull-regex
+(defconst ocu-github-pull-regex
   "\\(https://github.com/\\([[:alnum:]]+\\)/\\([[:alnum:]\-]+\\)/pull/\\([[:digit:]]+\\)\\).*")
 
-(defconst d12-org-capture-url-github-commit-regex
+(defconst ocu-github-commit-regex
   "\\(https://github.com/\\([[:alnum:]]+\\)/\\([[:alnum:]\-]+\\)/commit/\\([[:alnum:]]+\\)\\).*")
 
-(defconst d12-org-capture-url-github-commit-length 8)
+(defconst ocu-github-commit-length 8)
 
-(defun d12-org-capture-url (url)
+(defconst ocu-assembla-issue-regex
+  "https://app.assembla.com/spaces/\\([[:alnum:]\-]+\\)/tickets/.*ticket=\\([[:digit:]]+\\)")
+
+(defun ocu (url)
   "Format url for capture template."
   (cond
-   ((or (string-match d12-org-capture-url-github-issue-regex url)
-        (string-match d12-org-capture-url-github-pull-regex url))
-    (d12-org-capture-url--github-issue-or-pull
+   ((or (string-match ocu-github-issue-regex url)
+        (string-match ocu-github-pull-regex url))
+    (ocu--github-issue-or-pull
      (match-string 1 url)
      (match-string 2 url)
      (match-string 3 url)
      (match-string 4 url)))
-   ((string-match d12-org-capture-url-github-commit-regex url)
-    (d12-org-capture-url--github-commit
+   ((string-match ocu-github-commit-regex url)
+    (ocu--github-commit
      (match-string 1 url)
      (match-string 2 url)
      (match-string 3 url)
      (match-string 4 url)))
    (t (format "%s" url))))
 
-(defun d12-org-capture-url--github-issue-or-pull (url user repo issue)
+(defun ocu--github-issue-or-pull (url user repo issue)
   (let* ((api (format "/repos/%s/%s/issues/%s" user repo issue))
          (response (ghub-get api))
          (title (alist-get 'title response)))
     (format "[[%s][%s/%s#%s]] - %s"
             url user repo issue title)))
 
-(defun d12-org-capture-url--github-commit (url user repo hash)
+(defun ocu--github-commit (url user repo hash)
   (let* ((api (format "/repos/%s/%s/commits/%s" user repo hash))
          (response (ghub-get api))
          (commit (alist-get 'commit response))
          (message (alist-get 'message commit))
          (title (car (split-string message "\n")))
-         (short-hash-length (min d12-org-capture-url-github-commit-length
+         (short-hash-length (min ocu-github-commit-length
                                  (length hash)))
          (short-hash (substring hash 0 short-hash-length)))
     (format "[[%s][%s/%s#%s]] - %s"
             url user repo short-hash title)))
 
-(provide 'd12-org-capture-url)
+(provide 'ocu)
 
-;;; d12-org-capture-url.el ends here
+;;; ocu.el ends here

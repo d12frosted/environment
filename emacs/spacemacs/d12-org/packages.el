@@ -19,7 +19,7 @@
     (org-plus-contrib :step pre)
     org
     worf
-    (d12-org-capture-url :location (recipe :fetcher local))
+    (ocu :location (recipe :fetcher local))
     (org-query
      :location
      (recipe
@@ -115,21 +115,21 @@
 
             ("a" "Actions on url")
             ("ar" "Action: Review" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Review: %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
+             "* TODO Review: %(ocu \"%c\")\n%U\n" :immediate-finish t)
             ("aR" "Action: Schedule Review" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Review: %(d12-org-capture-url \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
+             "* TODO Review: %(ocu \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
             ("ac" "Action: Close" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Close: %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
+             "* TODO Close: %(ocu \"%c\")\n%U\n" :immediate-finish t)
             ("aC" "Action: Schedule Close" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Close: %(d12-org-capture-url \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
+             "* TODO Close: %(ocu \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
             ("am" "Action: Merge" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Merge: %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
+             "* TODO Merge: %(ocu \"%c\")\n%U\n" :immediate-finish t)
             ("aM" "Action: Schedule Merge" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Merge: %(d12-org-capture-url \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
+             "* TODO Merge: %(ocu \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
             ("af" "Action: Fix" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Fix: %(d12-org-capture-url \"%c\")\n%U\n" :immediate-finish t)
+             "* TODO Fix: %(ocu \"%c\")\n%U\n" :immediate-finish t)
             ("aF" "Action: Schedule Fix" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Fix: %(d12-org-capture-url \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
+             "* TODO Fix: %(ocu \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
 
             ("m" "Meeting" entry (file ,(d12-path/get-org-file "inbox"))
              "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
@@ -269,9 +269,10 @@
     (add-hook 'org-mode-hook 'worf-mode)
     (add-hook 'org-capture-mode-hook (lambda () (worf-mode -1)))))
 
-(defun d12-org/init-d12-org-capture-url ()
-  (use-package d12-org-capture-url
-    :commands (d12-org-capture-url)))
+(defun d12-org/init-ocu ()
+  "Init function for `ocu' package."
+  (use-package ocu
+    :commands (ocu)))
 
 (defun d12-org/init-org-query ()
   (use-package org-query
