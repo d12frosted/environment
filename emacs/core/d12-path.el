@@ -74,6 +74,10 @@ non-nil.")
   (concat d12-path-spacemacs-config-home "spacemacs.el")
   "Path to Spacemacs user configuration file.")
 
+(defconst d12-path-spacemacs-user-config-test-file
+  (concat d12-path-spacemacs-config-home "spacemacs-test.el")
+  "Path to Spacemacs user configuration test file.")
+
 (defconst d12-path-spacemacs-distr-home
   (concat d12-path-home ".spacemacs/")
   "Path to Spacemacs distribution directory.")

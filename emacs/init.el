@@ -24,6 +24,9 @@
 ;; (package-initialize)
 (defconst package--initialized nil)
 
+(defvar d12-debug-mode nil
+  "Non nil enables debug mode. Whatever that means.")
+
 ;; setup emacs configuration
 (setq user-init-file (or load-file-name (buffer-file-name)))
 (setq user-emacs-directory (file-name-directory user-init-file))
@@ -31,6 +34,7 @@
 ;; load some core features
 (require 'd12-path (concat user-emacs-directory "core/d12-path"))
 (require 'd12-spacemacs (concat user-emacs-directory "core/d12-spacemacs"))
+(require 'd12-command-line (concat user-emacs-directory "core/d12-command-line"))
 
 ;; setup and load `custom-file'
 (setq custom-file d12-path-custom-file)
@@ -45,11 +49,12 @@
        (concat d12-path-emacs-cache "elpa/" emacs-version)))
 
 ;; load spacemacs
-;; (setq d12-path-spacemacs-user-config-file "/Users/d12frosted/.spacemacs_cfg.el")
 (d12-spacemacs-load
  d12-path-spacemacs-distr-home
  d12-path-spacemacs-distr-init-file
- d12-path-spacemacs-user-config-file)
+ (if d12-debug-mode
+     d12-path-spacemacs-user-config-test-file
+   d12-path-spacemacs-user-config-file))
 
 ;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
 (unbind-key "C-x C-c")
