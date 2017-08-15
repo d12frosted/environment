@@ -20,6 +20,7 @@
     org
     worf
     (ocu :location (recipe :fetcher local))
+    (d12-auto-id :location (recipe :fetcher local))
     (org-query
      :location
      (recipe
@@ -263,6 +264,9 @@
     (require 'org-habit)
     (require 'org-agenda)
 
+    ;; Enable auto-id
+    (d12-auto-id-enable)
+
     ;; Setup org-mode key bindings
     (d12-key-bind "C-c o r" 'org-refile org-mode-map)
 
@@ -280,6 +284,11 @@
   "Init function for `ocu' package."
   (use-package ocu
     :commands (ocu)))
+
+(defun d12-org/init-d12-auto-id ()
+  "Init function for `d12-auto-id' package."
+  (use-package d12-auto-id
+    :defer t))
 
 (defun d12-org/init-org-query ()
   (use-package org-query
