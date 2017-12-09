@@ -1,10 +1,11 @@
+# General trash
+*.log
 .DS_Store
 .AppleDouble
 .LSOverride
 
 # Icon must end with two \r
 Icon
-
 
 # Thumbnails
 ._*
@@ -27,3 +28,6 @@ Temporary Items
 # cabal sandboxes
 .cabal-sandbox/
 cabal.sandbox.config
+
+# ItelliJ Idea
+*.iml

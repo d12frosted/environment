@@ -1,0 +1,6 @@
+[user]
+	name = Borys Bulyha
+	email = borysb@wix.com
+
+[commit]
+	gpgsign = false
