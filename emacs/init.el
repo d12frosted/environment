@@ -41,7 +41,9 @@
 (load custom-file t)
 
 ;; load `private.el' file containing all the sensitive data
-(load (concat d12-path-emacs-private "private.el"))
+(let ((private-file (concat d12-path-emacs-private "private.el")))
+  (when (file-exists-p private-file)
+    (load private-file)))
 
 ;; setup package-user-dir to allow seamless switch between emacs versions
 (setq package-user-dir
