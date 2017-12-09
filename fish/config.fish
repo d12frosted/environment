@@ -75,3 +75,5 @@ function stack-install -a git_url
   stack install
   popd
 end
+
+set -g fish_user_paths "/usr/local/opt/scala@2.11/bin" $fish_user_paths
