@@ -10,10 +10,20 @@ set -x XDG_CONFIG_HOME ~/.environment
 set -x SPACEMACSDIR $HOME/.spacemacs
 set -x GEM_HOME $HOME/.local/gem
 set -x GEM_PATH $HOME/.local/gem
-set -x PATH $HOME/.local/bin $GEM_HOME/bin /usr/texbin /usr/local/sbin $PATH
 set -x EDITOR "emacsclient"
 set fish_greeting ""
 set cmd_notification_threshold 8000
+
+# PATH
+function __append_to_path -a path
+  if test -d $path
+    set -x PATH $path $PATH
+  end
+end
+set -x PATH $HOME/.local/bin $PATH
+__append_to_path $GEM_HOME/bin
+__append_to_path /usr/texbin
+__append_to_path /usr/local/sbin
 
 # aliases
 alias ghci "stack ghci"
