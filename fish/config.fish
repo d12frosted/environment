@@ -6,7 +6,6 @@ if test -f $PRIVATE_FISH_CONFIGS_HOME/preconfig.fish
 end
 
 # variables
-set -x XDG_CONFIG_HOME ~/.environment
 set -x SPACEMACSDIR $HOME/.spacemacs
 set -x GEM_HOME $HOME/.local/gem
 set -x GEM_PATH $HOME/.local/gem
@@ -33,11 +32,11 @@ alias cenv "cd $XDG_CONFIG_HOME"
 alias cem  "cd $HOME/.emacs.d"
 
 function em
-  emacs -q --load $HOME/.environment/emacs/init.el $argv &
+  emacs -q --load $XDG_CONFIG_HOME/emacs/init.el $argv &
 end
 
 function emt
-  emacs -nw -q --load $HOME/.environment/emacs/init.el $argv
+  emacs -nw -q --load $XDG_CONFIG_HOME/emacs/init.el $argv
 end
 
 # theme
