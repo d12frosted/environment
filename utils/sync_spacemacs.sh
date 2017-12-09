@@ -27,7 +27,10 @@ popd () {
 
 set -e
 pushd "$(pwd)"
-cd $REPO
+if [[ ! -d "$REPO" ]]; then
+  git clone "$REMOTE_URL" "$REPO"
+fi
+cd "$REPO"
 git diff-index --quiet HEAD -- || {
   echo "Your working directory is not clean."
   echo "Please commit or stash all changes before proceeding."
