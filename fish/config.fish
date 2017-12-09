@@ -62,9 +62,6 @@ set fish_pager_color_description yellow
 set fish_pager_color_prefix cyan
 set fish_pager_color_progress cyan
 
-# python
-eval (python -m virtualfish)
-
 # private post-configs
 if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
   source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
