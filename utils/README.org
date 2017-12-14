@@ -5,15 +5,15 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-Some of utilities I use. For more information checkout =README= file for utility
-you are interested in.
+Some random utilities I use time to time. They don't belong to separate
+repositories, so I store them here.
 
 * Available utilities
 
 1. =dump= - dumping files or directories by either copying or moving them with
-   appended timestamp
-2. =brw= - bootstrapping packages using =brew= (currently OS X only).
-3. =git-notify= - tracking updates to repository.
-4. =ipa-install= - installing =ipa= files to iOS devices (OS X only).
-5. =mirror-elpa= - mirroring ELPA archives ([[https://github.com/d12frosted/elpa-mirror][d12frosted mirror]], [[https://github.com/syl20bnr/spacemacs-elpa-mirror][Spacemacs
-   mirror)]].
+   appended timestamp.
+2. =git-notify= - tracking updates to repository.
+3. =ipa-install= - installing =ipa= files to iOS devices (OS X only).
+4. =sync_spacemacs= - update (and setup if necessary) Spacemacs installation.
+5. =stack-install= - install stack package from git URL. Useful for binary
+   packages only (obviously?).

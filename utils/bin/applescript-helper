@@ -1,5 +1,6 @@
-#/bin/sh
+#!/usr/bin/env sh
 # mac 上 emacs 直接编辑二进制applescript
+
 if [ "$1" = "-d" ]; then
   RANDOMFILE="applescript${RANDOM}.scpt"
   cat /dev/stdin >"/tmp/$RANDOMFILE"
