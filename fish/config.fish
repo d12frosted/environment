@@ -5,6 +5,14 @@ if test -f $PRIVATE_FISH_CONFIGS_HOME/preconfig.fish
   source $PRIVATE_FISH_CONFIGS_HOME/preconfig.fish
 end
 
+# verify bin directories
+if test ! -d $HOME/.local/bin
+  mkdir -p $HOME/.local/bin
+end
+if test ! -d $XDG_CONFIG_HOME/utils/bin
+  mkdir -p $XDG_CONFIG_HOME/utils/bin
+end
+
 # variables
 set -x SPACEMACSDIR $HOME/.spacemacs
 set -x GEM_HOME $HOME/.local/gem
@@ -20,6 +28,7 @@ function __append_to_path -a path
   end
 end
 set -x PATH $HOME/.local/bin $PATH
+set -x PATH $XDG_CONFIG_HOME/utils/bin $PATH
 __append_to_path $GEM_HOME/bin
 __append_to_path /usr/texbin
 __append_to_path /usr/local/sbin
@@ -65,15 +74,6 @@ set fish_pager_color_progress cyan
 # private post-configs
 if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
   source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
-end
-
-function stack-install -a git_url
-  pushd (pwd)
-  set -l wd (echo -s "$TMPDIR" (date "+%Y_%m_%d_%H_%M_%S"))
-  git clone $git_url $wd
-  cd $wd
-  stack install
-  popd
 end
 
 set -g fish_user_paths "/usr/local/opt/scala@2.11/bin" $fish_user_paths
