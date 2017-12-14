@@ -28,7 +28,7 @@
   "Non nil enables debug mode. Whatever that means.")
 
 ;; setup emacs configuration
-(setq user-init-file (or load-file-name (buffer-file-name)))
+(setq user-init-file (file-truename (or load-file-name (buffer-file-name))))
 (setq user-emacs-directory (file-name-directory user-init-file))
 
 ;; load some core features
