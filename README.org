@@ -5,6 +5,7 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
+[[https://travis-ci.org/d12frosted/environment.svg?branch=master][file:https://travis-ci.org/d12frosted/environment.svg?branch=master]]
 [[http://www.gnu.org/licenses/gpl-3.0.txt][file:https://img.shields.io/badge/license-GPL_3-green.svg]]
 [[http://spacemacs.org][file:https://cdn.rawgit.com/syl20bnr/spacemacs/442d025779da2f62fc86c2082703697714db6514/assets/spacemacs-badge.svg]]
 [[https://gitter.im/d12frosted/environment?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge][file:https://badges.gitter.im/Join%20Chat.svg]]
