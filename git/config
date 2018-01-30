@@ -4,8 +4,11 @@
 	ignorecase = false
 
 [user]
-	name = Borys Bulyha
-	email = borysb@wix.com
+	name = Boris Buliga
+	email = boris@d12frosted.io
+
+[commit]
+	gpgsign = false
 
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset'

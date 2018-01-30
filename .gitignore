@@ -29,3 +29,7 @@ tags
 # csharp
 NuGet/
 xbuild/
+
+# git
+git/config_personal
+git/config_work
