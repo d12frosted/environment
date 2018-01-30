@@ -1,51 +1,47 @@
-- shell:
-  # TODO: make sure that this dir is added to $PATH
-  - [mkdir -p ~/.local/bin, Create directory for user-wide binaries]
-  - [chmod +x utils/brw/brw, Promote brw to executable]
+#- shell:
+#  - [mkdir -p ~/.local/bin, Create directory for user-wide binaries]
+#
+#- link:
+#    ~/.local/bin/brw:
+#      path: utils/brw/brw
+#      relink: true
+#    ~/.local/bin/git-notify:
+#      path: utils/git-notify/git-notify.sh
+#      relink: true
+#
+#- brew:
+#  - coreutils
+#  - wget
+#  - ack
+#  - ag
+#  - tree
+#  - ncdu
+#  - lynx
+#  - terminal-notifier
+#  - ossp-uuid
+#  - mu
+#  - fish
+#  - shellcheck
+#  - aspell --with-all-langs
+#  - hunspell
 
-- link:
-    ~/.local/bin/brw:
-      path: utils/brw/brw
-      relink: true
-    ~/.local/bin/git-notify:
-      path: utils/git-notify/git-notify.sh
-      relink: true
-
-- brew:
-  - coreutils
-  - wget
-  - ack
-  - ag
-  - lua
-  - tree
-  - ncdu
-  - lynx
-  - terminal-notifier
-  - ledger
-  - ossp-uuid
-  - mu
-  - fish
-  - shellcheck
-  - aspell --with-all-langs
-  - hunspell
-
-- shell:
-  - cd ~/Library/Spelling/ && wget http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.aff
-  - cd ~/Library/Spelling/ && wget http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.dic
-
-- shell:
-  - [chmod +x emacs/bootstrap && emacs/bootstrap, Bootstrap emacs]
-
-- brew:
-  - git
-  - git-lfs
-  - gnupg
-  - gnupg2
-  - pinentry-mac
+#- shell:
+#  - cd ~/Library/Spelling/ && wget http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.aff
+#  - cd ~/Library/Spelling/ && wget http://cgit.freedesktop.org/libreoffice/dictionaries/plain/en/en_GB.dic
+#
+#- shell:
+#  - [chmod +x emacs/bootstrap && emacs/bootstrap, Bootstrap emacs]
+#
+#- brew:
+#  - git
+#  - git-lfs
+#  - gnupg
+#  - gnupg2
+#  - pinentry-mac
 
 - link:
     ~/.emacs.d/init.el:
-      path: emacs/d12-init.el
+      path: emacs/init.el
       create: true
       relink: true
 
@@ -62,44 +58,44 @@
       path: haskell/cabal-config
       create: true
 
-    ~/.local/bin/ipa-install:
-      path: utils/ipa-install/ipa-install
-      relink: true
-      create: true
-
-    ~/.gnupg/gpg-agent.conf:
-      path: gnupg/gpg-agent.conf
-      relink: true
-      create: true
-
-    ~/.gnupg/gpg.conf:
-      path: gnupg/gpg.conf
-      relink: true
-      create: true
+#    ~/.local/bin/ipa-install:
+#      path: utils/ipa-install/ipa-install
+#      relink: true
+#      create: true
+#
+#    ~/.gnupg/gpg-agent.conf:
+#      path: gnupg/gpg-agent.conf
+#      relink: true
+#      create: true
+#
+#    ~/.gnupg/gpg.conf:
+#      path: gnupg/gpg.conf
+#      relink: true
+#      create: true
 
     ~/.local/bin/sync_spacemacs:
       path: utils/sync_spacemacs.sh
       relink: true
       create: true
 
-    ~/.local/bin/mirror_elpa:
-      path: utils/mirror_elpa/mirror_elpa
-      relink: true
-      create: true
+#    ~/.local/bin/mirror_elpa:
+#      path: utils/mirror_elpa/mirror_elpa
+#      relink: true
+#      create: true
 
-- brew: [haskell-stack]
-- shell:
-    - stack setup
-    - stack install pandoc
-    - stack install hindent
-    - stack install hlint
-    - stack install stylish-haskell
-    - stack install hasktags
-    - stack install intero
+#- brew: [haskell-stack]
+#- shell:
+#    - stack setup
+#    - stack install pandoc
+#    - stack install hindent
+#    - stack install hlint
+#    - stack install stylish-haskell
+#    - stack install hasktags
+#    - stack install intero
 
-- link:
-    ~/.aws/config: $HOME/Dropbox/Apps/aws/config
-    ~/.hgrc: $HOME/Dropbox/Apps/hgrc
+#- link:
+#    ~/.aws/config: $HOME/Dropbox/Apps/aws/config
+#    ~/.hgrc: $HOME/Dropbox/Apps/hgrc
 
 - shell:
   - [echo "set -U XDG_CONFIG_HOME ~/.environment" | fish, Setting config directory]
@@ -113,18 +109,12 @@
       create: true
 
 - cask:
-  - slack
-  - mplayerx
   - colorpicker
-  - flux
-  - gitter
-  - gfxcardstatus
   - spectacle
-  - hammerspoon
 
-- link:
-    ~/.local/bin/applescript-helper:
-      path: utils/applescript-helper.sh
-      relink: true
-      create: true
+#- link:
+#    ~/.local/bin/applescript-helper:
+#      path: utils/applescript-helper.sh
+#      relink: true
+#      create: true
 
