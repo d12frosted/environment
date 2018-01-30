@@ -21,13 +21,13 @@
     worf
     (ocu :location (recipe :fetcher local))
     (d12-auto-id :location (recipe :fetcher local))
-    (org-query
-     :location
-     (recipe
-      :fetcher github
-      :repo "remyhonig/org-query"
-      :files ("org-query.el"
-              "org-query-gtd.el")))
+    ;; (org-query
+    ;;  :location
+    ;;  (recipe
+    ;;   :fetcher github
+    ;;   :repo "remyhonig/org-query"
+    ;;   :files ("org-query.el"
+    ;;           "org-query-gtd.el")))
     persp-mode
     toc-org
     )
