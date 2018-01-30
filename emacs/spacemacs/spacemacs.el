@@ -39,13 +39,15 @@ before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
   ;; Use my own ELPA archives.
-  (setq configuration-layer--elpa-archives
-        `(("melpa" . ,(concat d12-path-elpa-mirror-home "melpa/"))
-          ("org"   . ,(concat d12-path-elpa-mirror-home "org/"))
-          ("gnu"   . ,(concat d12-path-elpa-mirror-home "gnu/"))
-          ("melpa" . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
+  (if (file-exists-p d12-path-elpa-mirror-home)
+      (setq configuration-layer-elpa-archives
+            `(("melpa" . ,(concat d12-path-elpa-mirror-home "melpa/"))
+              ("org"   . ,(concat d12-path-elpa-mirror-home "org/"))
+              ("gnu"   . ,(concat d12-path-elpa-mirror-home "gnu/"))))
+    (setq configuration-layer-elpa-archives
+        `(("melpa" . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
           ("org"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")
-          ("gnu"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")))
+          ("gnu"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/"))))
 
   (setq-default
    spacemacs-buffer-logo-title "======= SPACEMACS ======"
