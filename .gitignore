@@ -31,5 +31,5 @@ NuGet/
 xbuild/
 
 # git
-git/config_personal
-git/config_work
+git/local.config
+git/local/*

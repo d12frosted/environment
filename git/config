@@ -38,8 +38,5 @@
 [github]
 	user = d12frosted
 
-[includeIf "gitdir:~/Developer/personal/"]
-	path = config_personal
-
-[includeIf "gitdir:~/Developer/work/"]
-	path = config_work
+[include]
+	path = local.config
