@@ -103,7 +103,7 @@ non-nil.")
   "Path to 'custom.el' file.")
 
 (defconst d12-path-elpa-mirror-home
-  (concat d12-path-projects-home "d12frosted/elpa-mirror/")
+  (concat d12-path-projects-home "elpa-mirror/")
   "Path to ELPA mirror directory.")
 
 (defun d12-path/get-org-file (file)
