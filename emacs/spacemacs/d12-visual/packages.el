@@ -17,6 +17,7 @@
 (defconst d12-visual-packages
   '( ;; spaceline-all-the-icons
     (flycheck-color-mode-line :requires flycheck)
+    visual-fill-column
     )
   "The list of Lisp packages required by the d12-visual layer.")
 
@@ -66,5 +67,17 @@
                         :foreground nil)
 
     (setq flycheck-color-mode-line-face-to-color 'd12-flycheck-mode-line)))
+
+(defun d12-visual/init-visual-fill-column ()
+  (use-package visual-fill-column
+    :defer t
+    :init
+    (defun d12-visual/line-mode ()
+      (interactive)
+      (if visual-line-mode
+          (progn (visual-line-mode -1)
+                 (visual-fill-column-mode -1))
+        (progn (visual-line-mode 1)
+               (visual-fill-column-mode 1))))))
 
 ;;; packages.el ends here
