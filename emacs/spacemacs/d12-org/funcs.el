@@ -340,4 +340,18 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
             (or subtree-end (point-max)))
         next-headline))))
 
+(defun d12-org/yank-markdown ()
+  "Insert converted markdown from macOS clipboard to org-mode."
+  (interactive)
+  (insert
+   (shell-command-to-string
+    "pbpaste | pandoc --wrap=none --from=markdown --to=org")))
+
+(defun d12-org/yank-html ()
+  "Insert converted html from macOS clipboard to org-mode."
+  (interactive)
+  (insert
+   (shell-command-to-string
+    "pbpaste | pandoc --wrap=none --from=html --to=org")))
+
 ;;; funcs.el ends here
