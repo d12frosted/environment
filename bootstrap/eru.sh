@@ -7,10 +7,15 @@ if [[ "$target" = "" ]]; then
   target="$HOME/.config"
 fi
 
+repo="git@github.com:d12frosted/environment.git"
+if [[ "$USE_HTTPS" = "true" ]]; then
+  repo="https://github.com/d12frosted/environment.git"
+fi
+
 if [[ -d "$target" ]]; then
   echo "$target already exists"
 else
-  git clone "git@github.com:d12frosted/environment.git" "$target"
+  git clone "$repo" "$target"
 fi
 
 
