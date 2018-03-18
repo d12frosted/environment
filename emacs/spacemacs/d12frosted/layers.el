@@ -19,8 +19,12 @@
    ;; utilities
    better-defaults
    ivy
+   spacemacs-completion
    spacemacs-editing
    spacemacs-layouts
+   spacemacs-project
+   spacemacs-navigation
+   spacemacs-visual
    version-control
    (git :variables
         git-magit-status-fullscreen t)
@@ -39,6 +43,7 @@
    d12-applescript
 
    ;; languages
-   shell-scripts))
+   shell-scripts
+   yaml))
 
 ;;; layers.el ends here
