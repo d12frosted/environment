@@ -23,8 +23,8 @@ cd "$target" && {
   bash "bootstrap/manwe.sh"
 }
 
-cd "$target/bootstrap/melkor" && {
-  stack clean
-  stack build --pedantic
-  stack exec melkor
-}
+# cd "$target/bootstrap/melkor" && {
+#   stack clean
+#   stack build --pedantic
+#   stack exec melkor
+# }
