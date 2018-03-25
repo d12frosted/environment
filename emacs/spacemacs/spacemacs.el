@@ -25,6 +25,7 @@
    dotspacemacs-configuration-layer-path `(,d12-path-spacemacs-config-home)
    dotspacemacs-configuration-layers '(d12frosted)
    dotspacemacs-additional-packages '(color-theme-sanityinc-tomorrow
+                                      doom-themes
                                       elscreen-fr)
    dotspacemacs-excluded-packages '(emmet-mode
                                     dumb-jump
@@ -65,7 +66,7 @@ values."
    dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'emacs-lisp-mode
    dotspacemacs-themes (if (display-graphic-p)
-                           '(leuven spacemacs-light)
+                           '(doom-one-light leuven)
                          '(sanityinc-tomorrow-eighties))
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Source Code Pro"
