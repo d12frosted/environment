@@ -77,3 +77,4 @@ if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
 end
 
 set -g fish_user_paths "/usr/local/opt/scala@2.11/bin" $fish_user_paths
+set -g fish_user_paths "/usr/local/opt/node@8/bin" $fish_user_paths
