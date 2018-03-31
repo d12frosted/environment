@@ -20,8 +20,11 @@
       create: true
       relink: true
 
-    ~/.ghci: haskell/.ghci
-    ~/.stack/global/stack.yaml:
+    ~/.ghci:
+      path: haskell/.ghci
+      create: true
+      relink: true
+    ~/.stack/global-project/stack.yaml:
       path: haskell/stack-global.yaml
       create: true
       relink: true
