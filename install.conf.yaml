@@ -1,19 +1,16 @@
-- shell:
- - [mkdir -p ~/.local/bin, Create directory for user-wide binaries]
-
 - brew:
- - wget
- - ack
- - ag
- - tree
- - ncdu
- - terminal-notifier
- - ossp-uuid
- - mu
- - fish
- - shellcheck
- - aspell --with-all-langs
- - hunspell
+  - wget
+  - ack
+  - ag
+  - tree
+  - ncdu
+  - terminal-notifier
+  - ossp-uuid
+  - mu
+  - fish
+  - shellcheck
+  - aspell --with-all-langs
+  - hunspell
 
 - link:
     ~/.emacs.d/init.el:
@@ -40,6 +37,7 @@
       create: true
 
 - shell:
+  - [mkdir -p ~/.local/bin, Create directory for user-wide binaries]
   - [echo "set -U XDG_CONFIG_HOME ~/.config" | fish, Setting config directory]
   - [echo "set -x XDG_CONFIG_HOME ~/.config" | fish, Setting config directory]
   - [echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish, Setting Spacemacs directory]
