@@ -11,6 +11,8 @@
   - shellcheck
   - aspell --with-all-langs
   - hunspell
+  - sbt
+  - scala
 
 - link:
     ~/.emacs.d/init.el:
@@ -33,6 +35,11 @@
 
     ~/.local/bin/sync_spacemacs:
       path: utils/sync_spacemacs.sh
+      relink: true
+      create: true
+
+    ~/.sbt/1.0/plugins/plugins.sbt:
+      path: scala/plugins.sbt
       relink: true
       create: true
 
