@@ -43,6 +43,7 @@
    d12-applescript
 
    ;; languages
+   scala
    shell-scripts
    yaml))
 
