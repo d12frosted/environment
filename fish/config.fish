@@ -75,3 +75,12 @@ set fish_pager_color_progress cyan
 if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
   source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
 end
+
+set fish_greeting "
+             ;,'
+     _o_    ;:;'
+ ,-.'---`.__ ;
+((j`~=~=~',-'
+ `-\     /
+    `-=-'
+"
