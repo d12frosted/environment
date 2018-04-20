@@ -27,6 +27,7 @@
     ace-window
     projectile
     evil-nerd-commenter
+    ediff
     )
   "The list of Lisp packages required by the d12-core layer.")
 
@@ -74,5 +75,19 @@
     (d12-key-bind "C-M-;" #'evilnc-comment-or-uncomment-paragraphs)
     ;; (d12-key-bind "C-c c" #'evilnc-copy-and-comment-lines)
     ))
+
+(defun d12-core/post-init-ediff ()
+  (use-package ediff
+    :init
+    (defun ediff-copy-A-and-B-to-C ()
+      (interactive)
+      (ediff-copy-diff ediff-current-difference nil 'C nil
+                       (concat
+                        (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
+                        (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
+    (defun add-d-to-ediff-mode-map ()
+      (define-key ediff-mode-map "d" #'ediff-copy-A-and-B-to-C))
+    (add-hook 'ediff-keymap-setup-hook #'add-d-to-ediff-mode-map)
+    :config))
 
 ;;; packages.el ends here
