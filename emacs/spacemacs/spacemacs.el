@@ -29,6 +29,7 @@
                                       elscreen-fr)
    dotspacemacs-excluded-packages '(emmet-mode
                                     dumb-jump
+                                    info+
                                     centered-buffer-mode
                                     emoji-cheat-sheet-plus)
    dotspacemacs-install-packages 'used-but-keep-unused))
