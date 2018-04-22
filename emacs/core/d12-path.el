@@ -115,5 +115,11 @@ non-nil.")
   (file-name-as-directory
    (concat d12-path-org-home dir)))
 
+(defun d12-path/make-directory-safe (path &optional parents)
+  "Create the directory PATH and optionally any nonexistent parent dirs.
+If PATH already exists as a directory, just do nothing."
+  (unless (file-directory-p path)
+    (make-directory path parents)))
+
 (provide 'd12-path)
 ;;; d12-path.el ends here
