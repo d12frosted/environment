@@ -28,6 +28,7 @@
     projectile
     evil-nerd-commenter
     ediff
+    yasnippet
     )
   "The list of Lisp packages required by the d12-core layer.")
 
@@ -89,5 +90,13 @@
       (define-key ediff-mode-map "d" #'ediff-copy-A-and-B-to-C))
     (add-hook 'ediff-keymap-setup-hook #'add-d-to-ediff-mode-map)
     :config))
+
+(defun d12-core/post-init-yasnippet ()
+  (use-package yasnippet
+    :defer t
+    :init
+    (add-to-list 'yas-snippet-dirs (concat d12-path-emacs-home "snippets"))
+    (mapc #'d12-path/make-directory-safe (yas-snippet-dirs))
+    ))
 
 ;;; packages.el ends here
