@@ -96,6 +96,7 @@
     :defer t
     :init
     (add-to-list 'yas-snippet-dirs (concat d12-path-emacs-home "snippets"))
+    :config
     (mapc #'d12-path/make-directory-safe (yas-snippet-dirs))
     ))
 
