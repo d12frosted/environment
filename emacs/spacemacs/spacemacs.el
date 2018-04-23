@@ -30,6 +30,7 @@
    dotspacemacs-excluded-packages '(emmet-mode
                                     dumb-jump
                                     info+
+                                    help-fns+
                                     centered-buffer-mode
                                     emoji-cheat-sheet-plus)
    dotspacemacs-install-packages 'used-but-keep-unused))
