@@ -135,12 +135,7 @@
             ("h" "Habit" entry (file ,(d12-path/get-org-file "inbox"))
              "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")))
 
-    ;; Remove empty LOGBOOK drawers on clock out
-    (defun d12-org/remove-empty-drawer-on-clock-out ()
-      (interactive)
-      (save-excursion
-        (beginning-of-line 0)
-        (org-remove-empty-drawer-at "LOGBOOK" (point))))
+    ;; Remove empty drawers on clock out
     (add-hook 'org-clock-out-hook 'd12-org/remove-empty-drawer-on-clock-out 'append)
 
     ;; Refiling

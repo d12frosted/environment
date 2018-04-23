@@ -340,6 +340,12 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
             (or subtree-end (point-max)))
         next-headline))))
 
+(defun d12-org/remove-empty-drawer-on-clock-out ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line 0)
+    (org-remove-empty-drawer-at (point))))
+
 (defun d12-org/yank-markdown ()
   "Insert converted markdown from macOS clipboard to org-mode."
   (interactive)
