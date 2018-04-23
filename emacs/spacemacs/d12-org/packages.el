@@ -135,6 +135,9 @@
             ("h" "Habit" entry (file ,(d12-path/get-org-file "inbox"))
              "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")))
 
+    ;; remove clocked tasks with 0:00 duration
+    (setq org-clock-out-remove-zero-time-clocks t)
+
     ;; Remove empty drawers on clock out
     (add-hook 'org-clock-out-hook 'd12-org/remove-empty-drawer-on-clock-out 'append)
 
