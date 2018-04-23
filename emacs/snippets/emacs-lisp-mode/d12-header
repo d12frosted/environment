@@ -6,8 +6,8 @@
 
 ;; Copyright (c) `(format-time-string "%Y")` Boris Buliga
 
-;; Author: `d12/full-name` <`d12/email`>
-;; Maintainer: `d12/full-name` <`d12/email`>
+;; Author: `user-full-name` <`user-mail-address`>
+;; Maintainer: `user-full-name` <`user-mail-address`>
 ;; Created: `(format-time-string "%d %b %Y")`
 
 ;; Keywords:
