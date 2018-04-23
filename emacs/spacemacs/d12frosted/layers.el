@@ -45,6 +45,7 @@
    ;; languages
    scala
    shell-scripts
-   yaml))
+   yaml
+   latex))
 
 ;;; layers.el ends here
