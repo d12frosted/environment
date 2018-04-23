@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
 # name: d12-emacs-lisp-header
+# key: head
 # --
 ;;; `(file-name-nondirectory (buffer-file-name))` --- $1
 
