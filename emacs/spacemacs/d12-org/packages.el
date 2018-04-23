@@ -21,13 +21,6 @@
     worf
     (ocu :location (recipe :fetcher local))
     (d12-auto-id :location (recipe :fetcher local))
-    ;; (org-query
-    ;;  :location
-    ;;  (recipe
-    ;;   :fetcher github
-    ;;   :repo "remyhonig/org-query"
-    ;;   :files ("org-query.el"
-    ;;           "org-query-gtd.el")))
     persp-mode
     toc-org
     )
@@ -289,12 +282,6 @@
   "Init function for `d12-auto-id' package."
   (use-package d12-auto-id
     :defer t))
-
-(defun d12-org/init-org-query ()
-  (use-package org-query
-    :commands (org-query-select)
-    :config
-    (require 'org-query-gtd)))
 
 (defun d12-org/post-init-persp-mode ()
   (use-package persp-mode
