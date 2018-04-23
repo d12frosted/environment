@@ -51,7 +51,7 @@ non-nil.")
   "Path to Dropbox directory.")
 
 (defconst d12-path-org-home
-  (concat d12-path-dropbox "org/")
+  (concat d12-path-dropbox "vulpea/")
   "Path to Org directory.")
 
 (defconst d12-path-emacs-home

@@ -64,8 +64,7 @@
 
     ;; Setup `org-agenda-files'. Prefer using directories as files add to them
     ;; will automatically get into `org-agenda-files'.
-    (setq org-agenda-files `(,d12-path-org-home
-                             ,(d12-path/get-org-dir "work")))
+    (setq org-agenda-files `(,d12-path-org-home))
 
     ;; Setup `org-todo-keywords'.
     (setq org-todo-keywords
@@ -288,7 +287,7 @@
   (use-package org-brain
     :defer t
     :init
-    (setq org-brain-path (concat d12-path-home "brain"))
+    (setq org-brain-path (d12-path/get-org-dir "brain/"))
     :config
     (setq org-id-track-globally t)
     (setq org-id-locations-file (concat d12-path-emacs-home ".org-id-locations"))
