@@ -21,6 +21,7 @@
     worf
     (ocu :location (recipe :fetcher local))
     (d12-auto-id :location (recipe :fetcher local))
+    org-brain
     persp-mode
     toc-org
     )
@@ -282,6 +283,20 @@
   "Init function for `d12-auto-id' package."
   (use-package d12-auto-id
     :defer t))
+
+(defun d12-org/init-org-brain ()
+  (use-package org-brain
+    :defer t
+    :init
+    (setq org-brain-path (concat d12-path-home "brain"))
+    :config
+    (setq org-id-track-globally t)
+    (setq org-id-locations-file (concat d12-path-emacs-home ".org-id-locations"))
+    (push '("b" "Brain" plain (function org-brain-goto-end)
+            "* %i%?" :empty-lines 1)
+          org-capture-templates)
+    (setq org-brain-visualize-default-choices 'all)
+    (setq org-brain-title-max-length 0)))
 
 (defun d12-org/post-init-persp-mode ()
   (use-package persp-mode
