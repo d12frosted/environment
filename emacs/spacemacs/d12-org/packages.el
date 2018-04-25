@@ -288,6 +288,7 @@
     :defer t
     :init
     (setq org-brain-path (d12-path/get-org-dir "brain/"))
+    (d12-key-bind-personal "v" 'org-brain-visualize)
     :config
     (setq org-id-track-globally t)
     (setq org-id-locations-file (concat d12-path-emacs-home ".org-id-locations"))
