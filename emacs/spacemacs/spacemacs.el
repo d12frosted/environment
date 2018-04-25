@@ -68,7 +68,7 @@ values."
    dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'emacs-lisp-mode
    dotspacemacs-themes (if (display-graphic-p)
-                           '(doom-one-light leuven)
+                           '(leuven doom-one-light)
                          '(sanityinc-tomorrow-eighties))
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Source Code Pro"
