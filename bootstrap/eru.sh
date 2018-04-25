@@ -79,4 +79,7 @@ echo "set -U XDG_CONFIG_HOME ~/.config" | fish
 echo "set -x XDG_CONFIG_HOME ~/.config" | fish
 echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 
-test "4" = $(emacs --batch --eval="(print (+ 2 2))")
+if [ "4" != $(emacs --batch --eval="(print (+ 2 2))") ]; then
+  error "the world shall burn without Emacs on your side"
+  exit 1
+fi
