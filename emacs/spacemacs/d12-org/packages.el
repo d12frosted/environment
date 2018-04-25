@@ -68,8 +68,8 @@
 
     ;; Setup `org-todo-keywords'.
     (setq org-todo-keywords
-          '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
             (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING")))
+          '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
 
     ;; Enable fast todo selection.
     (setq org-use-fast-todo-selection t)
