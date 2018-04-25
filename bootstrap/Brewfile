@@ -1,0 +1,20 @@
+tap "d12frosted/emacs-plus"
+
+brew "haskell-stack"
+brew "emacs-plus", args: ["devel", "without-spacemacs-icon"]
+brew "wget"
+brew "ack"
+brew "ag"
+brew "tree"
+brew "ncdu"
+brew "terminal-notifier"
+brew "ossp-uuid"
+brew "mu"
+brew "fish"
+brew "shellcheck"
+# brew "aspell", args: ["with-all-langs"]
+brew "hunspell"
+brew "sbt"
+brew "scala"
+
+cask "spectacle"

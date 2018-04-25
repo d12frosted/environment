@@ -1,6 +1,0 @@
-[submodule "dotbot"]
-	path = dotbot
-	url = git@github.com:anishathalye/dotbot.git
-[submodule "dotbot-brew"]
-	path = dotbot-brew
-	url = git@github.com:d12frosted/dotbot-brew.git

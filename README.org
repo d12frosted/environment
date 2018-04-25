@@ -14,7 +14,6 @@ This repository contains configurations to various tools that I am trying to
 keep clean and organized.
 
 * What's inside?
-
 All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for
 sure). Configurations are divided into domains like =emacs=, =git=, =haskell=,
 =fish= etc. Every domain has it's own readme file, so make sure to check them as
@@ -23,7 +22,6 @@ There are things that are no more used but has little value for me. Time to time
 I clean that domain, so don't be surprised to see it's missing.
 
 * Dependencies
-
 My configurations are expecting that a lot of stuff is installed on your system.
 As it was already told, every domain has it's own readme file where the full
 list of dependencies is written down.
@@ -37,17 +35,14 @@ found in the root of =environment= and in some of domains. For example, root
 =bootstrap= script will install =brew= if you don't have one.
 
 * Usage
-
-The most important thing - you need to clone this repo into =~/.environment=.
-Otherwise fish and emacs will not work properly. I am using [[https://github.com/anishathalye/dotbot][dotbot]] to bootstrap
-my configuration, so it's very easy to install them all. Just do
+The most important thing - you need to clone this repo into =~/.config=.
+Otherwise fish and emacs will not work properly. Then call
 
 #+BEGIN_SRC sh
-$ ./install
+$ ./bootstrap/eru.sh
 #+END_SRC
 
 * Can I use your files?
-
 Sure you can. But should you? :D
 
 OK, jokes aside. It would be a pleasure to me knowing that someone finds
@@ -59,7 +54,6 @@ try to help you as much as I can. Any suggestions or pull requests are warmly
 welcome!
 
 * Acknowledgements
-
 These configurations would not have been possible without the work of and the
 inspiration from following people.
 
