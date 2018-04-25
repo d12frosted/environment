@@ -68,8 +68,8 @@
 
     ;; Setup `org-todo-keywords'.
     (setq org-todo-keywords
-            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING")))
           '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+            (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING")))
 
     ;; Enable fast todo selection.
     (setq org-use-fast-todo-selection t)
@@ -130,8 +130,6 @@
 
             ("m" "Meeting" entry (file ,(d12-path/get-org-file "inbox"))
              "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-            ("p" "Phone call" entry (file ,(d12-path/get-org-file "inbox"))
-             "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
             ("h" "Habit" entry (file ,(d12-path/get-org-file "inbox"))
              "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")))
 
