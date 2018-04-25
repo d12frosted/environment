@@ -21,6 +21,9 @@
     worf
     (ocu :location (recipe :fetcher local))
     (d12-auto-id :location (recipe :fetcher local))
+    (fancy-yank :location (recipe
+                           :fetcher github
+                           :repo "d12frosted/fancy-yank"))
     org-brain
     persp-mode
     toc-org
@@ -282,6 +285,20 @@
   "Init function for `d12-auto-id' package."
   (use-package d12-auto-id
     :defer t))
+
+(defun d12-org/init-fancy-yank ()
+  (use-package fancy-yank
+    :defer t
+    :init
+    (spacemacs|use-package-add-hook org
+      :post-config
+      (d12-key-bind "C-c y" #'fancy-yank org-capture-mode-map))
+    (setq fancy-yank-rules
+          '(("\\(https?://github.com/d12frosted/\\([-[:alnum:]]+\\)/milestone/\\([[:digit:]]+\\).*\\)" . "[[\\1][\\2/m\\3]]")
+            ("\\(https?://github.com/d12frosted/\\([-[:alnum:]]+\\)/[[:alpha:]]+/\\([[:digit:]]+\\).*\\)" . "[[\\1][\\2#\\3]]")
+            ("\\(https?://github.com/\\([[:alnum:]-]+\\)/\\([-[:alnum:]]+\\)/milestone/\\([[:digit:]]+\\).*\\)" . "[[\\1][\\2/\\3/m\\4]]")
+            ("\\(https?://github.com/\\([[:alnum:]-]+\\)/\\([-[:alnum:]]+\\)/[[:alpha:]]+/\\([[:digit:]]+\\).*\\)" . "[[\\1][\\2/\\3#\\4]]")))
+    (d12-private/setup-fancy-yank-rules)))
 
 (defun d12-org/init-org-brain ()
   (use-package org-brain
