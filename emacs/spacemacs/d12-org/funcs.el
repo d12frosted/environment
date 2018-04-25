@@ -41,9 +41,11 @@
 
 (defun d12-org/agenda-redo ()
   (interactive)
-  (with-current-buffer "*Org Agenda*"
-    (org-agenda-maybe-redo)
-    (message "[org agenda] refreshed!")))
+  (when-let ((name "*Org Agenda*")
+             (_ (get-buffer name)))
+    (with-current-buffer name
+      (org-agenda-maybe-redo)
+      (message "[org agenda] refreshed!"))))
 
 (defun d12-org/hide-other ()
   (interactive)
