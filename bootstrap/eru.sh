@@ -7,7 +7,7 @@ function error() {
 }
 
 if [[ "$(uname)" != "Darwin" ]]; then
-  error "Unsupported operating system: $(uname). This script works on Darwin only."
+  error "unsupported operating system: $(uname). This script works on Darwin only."
   exit 1
 fi
 
@@ -29,7 +29,7 @@ fi
 
 function ensureDir() {
   if [[ ! -d "$1" ]]; then
-    echo "Create $1"
+    echo "create $1"
     mkdir -p "$1"
   fi
 }
@@ -50,7 +50,7 @@ function safe_link() {
   t="${2/#\~/$HOME}"
   d=$(dirname $t)
   if [[ ! -f "$s" ]]; then
-    error "Can not link '$s' as it does not exist"
+    error "can not link '$s' as it does not exist"
     exit 1
   fi
 
