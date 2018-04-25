@@ -255,6 +255,7 @@
     ;; (add-to-list 'org-modules 'org-agenda)
     (require 'org-habit)
     (require 'org-agenda)
+    (require 'org-capture)
 
     ;; Enable auto-id
     (d12-auto-id-enable)
