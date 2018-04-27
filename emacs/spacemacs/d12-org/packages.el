@@ -252,6 +252,12 @@
              nil)
             ))
 
+    (setq org-agenda-prefix-format
+          '((agenda . " %i %-16:c%?-12t% s")
+            (todo . " %i %-16:c")
+            (tags . " %i %-16:c")
+            (search . " %i %-16:c")))
+
     :config
     ;; setup org modules
     ;; (add-to-list 'org-modules 'org-habit)
