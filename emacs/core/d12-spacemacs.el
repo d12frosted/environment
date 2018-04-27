@@ -1,6 +1,6 @@
 ;;; d12-spacemacs.el --- d12-spacemacs file for personal configurations -*- lexical-binding: t; -*-
 ;;
-;;; Copyright (c) 2015-2017 Boris Buliga
+;;; Copyright (c) 2015-2018 Boris Buliga
 ;;
 ;;; Author: Boris Buliga <boris@d12frosted.io>
 ;;

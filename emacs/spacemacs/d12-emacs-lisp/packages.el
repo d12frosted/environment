@@ -1,6 +1,6 @@
 ;;; packages.el --- d12-emacs-lisp layer packages file for Spacemacs. -*- lexical-binding: t; -*-
 ;;
-;;; Copyright (c) 2015-2017 Boris Buliga
+;;; Copyright (c) 2015-2018 Boris Buliga
 ;;
 ;;; Author: Boris Buliga <boris@d12frosted.io>
 ;;
