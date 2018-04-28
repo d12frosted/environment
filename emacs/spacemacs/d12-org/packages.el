@@ -258,6 +258,9 @@
             (tags . " %i %-16:c")
             (search . " %i %-16:c")))
 
+    ;; dvisvgm looks much better
+    (setq org-latex-create-formula-image-program 'dvisvgm)
+
     :config
     ;; setup org modules
     ;; (add-to-list 'org-modules 'org-habit)
