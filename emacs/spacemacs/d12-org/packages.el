@@ -273,7 +273,7 @@
     (d12-auto-id-enable)
 
     ;; Setup org-mode key bindings
-    (d12-key-bind "C-c o r" 'org-refile org-mode-map)
+    (d12-key-bind "C-c o r" #'org-refile org-mode-map)
 
     ;; Setup org-agenda key bindings
     (add-hook 'org-agenda-mode-hook
