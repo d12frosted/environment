@@ -2,6 +2,7 @@ tap "d12frosted/emacs-plus"
 
 brew "haskell-stack"
 brew "emacs-plus", args: ["devel", "without-spacemacs-icon"]
+brew "cask", args: ["ignore-dependencies"]
 brew "wget"
 brew "ack"
 brew "ag"
