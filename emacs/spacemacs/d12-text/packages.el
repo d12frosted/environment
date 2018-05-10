@@ -25,6 +25,7 @@
      (recipe
       :fetcher github
       :repo "d12frosted/emacs-ukrainian-input-method"))
+    langtool
     )
   "The list of Lisp packages required by the d12-text layer.")
 
@@ -59,5 +60,15 @@
 
 (defun d12-text/init-ukrainian-input-method ()
   (use-package ukrainian-input-method))
+
+(defun d12-core/init-langtool ()
+  (use-package langtool
+    :defer t
+    :init
+    (setq
+     langtool-language-tool-jar
+     "/usr/local/Cellar/languagetool/4.1/libexec/languagetool.jar"
+     langtool-language-tool-server-jar
+     "/usr/local/Cellar/languagetool/4.1/libexec/languagetool-server.jar")))
 
 ;;; packages.el ends here
