@@ -15,9 +15,17 @@
 ;;; Code:
 
 (defconst d12-text-packages
-  '((fancy-yank :location (recipe
-                           :fetcher github
-                           :repo "d12frosted/fancy-yank")))
+  '((fancy-yank
+     :location
+     (recipe
+      :fetcher github
+      :repo "d12frosted/fancy-yank"))
+    (ukrainian-input-method
+     :location
+     (recipe
+      :fetcher github
+      :repo "d12frosted/emacs-ukrainian-input-method"))
+    )
   "The list of Lisp packages required by the d12-text layer.")
 
 (defun d12-text/init-fancy-yank ()
@@ -48,5 +56,8 @@
                      (list #'fancy-yank-extract-regex
                            #'fancy-yank-format-link)))
           d12-text-jira-regexps)))
+
+(defun d12-text/init-ukrainian-input-method ()
+  (use-package ukrainian-input-method))
 
 ;;; packages.el ends here

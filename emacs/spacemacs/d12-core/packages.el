@@ -19,11 +19,6 @@
     (d12-macos-reveal :location (recipe :fetcher local)
                       :toggle (spacemacs/system-is-mac))
     (d12-dir-settings :location (recipe :fetcher local))
-    (ukrainian-input-method
-     :location
-     (recipe
-      :fetcher github
-      :repo "d12frosted/emacs-ukrainian-input-method"))
     ace-window
     projectile
     evil-nerd-commenter
@@ -46,9 +41,6 @@
     :defer t
     :init
     (add-hook 'find-file-hook #'d12-dir-settings/load)))
-
-(defun d12-core/init-ukrainian-input-method ()
-  (use-package ukrainian-input-method))
 
 (defun d12-core/post-init-ace-window ()
   (use-package ace-window
