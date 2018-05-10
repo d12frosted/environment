@@ -36,6 +36,7 @@
    ;; private layers
    d12-core
    d12-visual
+   d12-text
    d12-org
    d12-emacs-lisp
    d12-haskell
