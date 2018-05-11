@@ -24,6 +24,7 @@
     org-brain
     persp-mode
     toc-org
+    (orgability :location built-in)
     )
   "The list of Lisp packages required by the d12-org layer.")
 
@@ -328,5 +329,15 @@
     (progn
       (setq toc-org-max-depth 10)
       (add-hook 'org-mode-hook 'toc-org-enable))))
+
+(defun d12-org/init-orgability ()
+  (add-to-load-path-if-exists (concat d12-path-projects-home "personal/orgability"))
+  (add-to-load-path-if-exists (concat d12-path-projects-home "orgability"))
+  (use-package orgability
+    :defer t
+    :commands (orgability-clip)
+    :init
+    (setq orgability-file (d12-path/get-org-file "orgability"))))
+
 
 ;;; packages.el ends here
