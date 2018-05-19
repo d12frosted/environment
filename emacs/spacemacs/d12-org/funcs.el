@@ -363,7 +363,7 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
     "pbpaste | pandoc --wrap=none --from=html --to=org")))
 
 (defun d12-org/enable-latex-preview ()
-      (interactive)
-      (org-toggle-latex-fragment '(16)))
+  (interactive)
+  (org-toggle-latex-fragment '(16)))
 
 ;;; funcs.el ends here
