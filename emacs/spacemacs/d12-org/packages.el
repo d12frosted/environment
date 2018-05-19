@@ -279,7 +279,13 @@
     ;; Setup org-agenda key bindings
     (add-hook 'org-agenda-mode-hook
               (lambda ()
-                (d12-key-bind "r" #'org-agenda-refile org-agenda-mode-map)))))
+                (d12-key-bind "r" #'org-agenda-refile org-agenda-mode-map)))
+
+    ;; automatically save all org files on certain actions
+    (defadvice org-agenda-refile (after d12-org-agenda-refile-auto-save activate)
+      (org-save-all-org-buffers))
+    (defadvice org-agenda-todo (after d12-org-agenda-todo-auto-save activate)
+      (org-save-all-org-buffers))))
 
 (defun d12-org/init-worf ()
   (use-package worf
