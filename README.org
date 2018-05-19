@@ -1,7 +1,6 @@
 #+TITLE:        d12frosted environment
 #+AUTHOR:       Boris Buliga
-#+EMAIL:        d12frosted@icloud.com
-#+DATE:         <2015-04-17 Fri>
+#+EMAIL:        boris@d12frosted.io
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
