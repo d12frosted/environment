@@ -343,8 +343,9 @@
   (add-to-load-path-if-exists (concat d12-path-projects-home "orgability"))
   (use-package orgability
     :defer t
-    :commands (orgability-clip)
+    :commands (orgability-clip orgability-add-relation orgability-delete-relation)
     :init
+    (d12-key-bind-personal "l" 'orgability-clip)
     (setq orgability-file (d12-path/get-org-file "orgability"))))
 
 (defun d12-org/init-org-board ()
