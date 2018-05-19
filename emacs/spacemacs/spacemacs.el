@@ -28,7 +28,6 @@
                                       doom-themes
                                       elscreen-fr
                                       org-cliplink
-                                      org-brain
                                       el-mock)
    dotspacemacs-excluded-packages '(emmet-mode
                                     dumb-jump

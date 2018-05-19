@@ -366,4 +366,10 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
   (interactive)
   (org-toggle-latex-fragment '(16)))
 
+(defun d12-org/board-open ()
+  "Call `org-board-open` on entry at point."
+  (interactive)
+  (orgability-with-entry
+   (call-interactively #'org-board-open)))
+
 ;;; funcs.el ends here

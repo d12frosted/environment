@@ -25,6 +25,7 @@
     persp-mode
     toc-org
     (orgability :location built-in)
+    org-board
     )
   "The list of Lisp packages required by the d12-org layer.")
 
@@ -346,5 +347,14 @@
     :init
     (setq orgability-file (d12-path/get-org-file "orgability"))))
 
+(defun d12-org/init-org-board ()
+  (use-package org-board
+    :commands (org-board-archive org-board-open)
+    :init
+    (d12-key-bind-personal "oo" #'d12-org/board-open)
+    (add-hook 'org-agenda-mode-hook
+              (lambda ()
+                (d12-key-bind "o" #'d12-org/board-open org-agenda-mode-map)))
+    (setq org-board-wget-show-buffer nil)))
 
 ;;; packages.el ends here
