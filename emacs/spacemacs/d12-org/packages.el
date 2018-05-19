@@ -278,7 +278,8 @@
 
     ;; Setup org-agenda key bindings
     (add-hook 'org-agenda-mode-hook
-              (d12-key-bind "r" #'org-agenda-refile org-agenda-mode-map))))
+              (lambda ()
+                (d12-key-bind "r" #'org-agenda-refile org-agenda-mode-map)))))
 
 (defun d12-org/init-worf ()
   (use-package worf
