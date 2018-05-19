@@ -19,3 +19,4 @@ brew "sbt"
 brew "scala"
 
 cask "spectacle"
+cask "itsycal"
