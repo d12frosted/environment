@@ -278,9 +278,10 @@
     (d12-key-bind "C-c y" #'fancy-yank org-capture-mode-map)
 
     ;; Setup org-agenda key bindings
-    (add-hook 'org-agenda-mode-hook
-              (lambda ()
-                (d12-key-bind "r" #'org-agenda-refile org-agenda-mode-map)))
+    (defun d12-org/setup-agenda ()
+      "Setup agenda."
+      (d12-key-bind "r" #'org-agenda-refile org-agenda-mode-map))
+    (add-hook 'org-agenda-mode-hook #'d12-org/setup-agenda)
 
     ;; automatically save all org files on certain actions
     (defadvice org-agenda-refile (after d12-org-agenda-refile-auto-save activate)
