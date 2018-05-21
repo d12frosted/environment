@@ -277,6 +277,9 @@
     ;; fancy-yank
     (d12-key-bind "C-c y" #'fancy-yank org-capture-mode-map)
 
+    ;; meta-return is so meta
+    (d12-key-bind "<return>" 'd12-org/meta-return org-mode-map)
+
     ;; Setup org-agenda key bindings
     (defun d12-org/setup-agenda ()
       "Setup agenda."

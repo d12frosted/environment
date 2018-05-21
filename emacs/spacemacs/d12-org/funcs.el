@@ -372,4 +372,23 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
   (orgability-with-entry
    (call-interactively #'org-board-open)))
 
+(defun d12-org/goto-body ()
+  "Goto body of header at point."
+  (interactive)
+  (when (eq 'headline (org-element-type (org-element-at-point)))
+    (org-show-set-visibility 'local)
+    (forward-line 1)
+    (while (and (not (eq (point) (point-max)))
+                (not (looking-at org-outline-regexp)))
+      (forward-line 1))
+    (newline-and-indent)
+    (newline-and-indent)
+    (forward-line -1)))
+
+(defun d12-org/meta-return ()
+  (interactive)
+  (if (eq 'headline (org-element-type (org-element-at-point)))
+      (call-interactively #'d12-org/goto-body)
+    (call-interactively #'org-return)))
+
 ;;; funcs.el ends here
