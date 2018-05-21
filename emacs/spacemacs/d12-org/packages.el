@@ -315,8 +315,7 @@
     :init
     (setq org-brain-path (d12-path/get-org-dir "brain/"))
     (d12-key-bind-personal "v" 'org-brain-visualize)
-    (defadvice org-brain-visualize (after latex-fragments activate)
-      (d12-org/enable-latex-preview))
+    (add-hook 'org-brain-visualize-text-hook #'d12-org/enable-latex-preview)
     :config
     (setq org-id-track-globally t)
     (setq org-id-locations-file (concat d12-path-emacs-home ".org-id-locations"))
