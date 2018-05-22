@@ -348,16 +348,23 @@
     :commands (orgability-clip orgability-add-relation orgability-delete-relation)
     :init
     (d12-key-bind-personal "l" 'orgability-clip)
+
+    (defun d12-org/setup-agenda-orgability ()
+      "Setup orgability in agenda buffer."
+      (d12-key-unbind "o" org-agenda-mode-map)
+      (d12-key-bind "oo" #'d12-org/board-open org-agenda-mode-map)
+      (d12-key-bind "ol" #'orgability-clip org-agenda-mode-map)
+      (d12-key-bind "oa" #'orgability-add-relation org-agenda-mode-map)
+      (d12-key-bind "od" #'orgability-delete-relation org-agenda-mode-map)
+      (d12-key-bind "or" #'orgability-list-relations org-agenda-mode-map))
+    (add-hook 'org-agenda-mode-hook #'d12-org/setup-agenda-orgability)
+
     (setq orgability-file (d12-path/get-org-file "orgability"))))
 
 (defun d12-org/init-org-board ()
   (use-package org-board
     :commands (org-board-archive org-board-open)
     :init
-    (d12-key-bind-personal "oo" #'d12-org/board-open)
-    (add-hook 'org-agenda-mode-hook
-              (lambda ()
-                (d12-key-bind "o" #'d12-org/board-open org-agenda-mode-map)))
     (setq org-board-wget-show-buffer nil)))
 
 ;;; packages.el ends here
