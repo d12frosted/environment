@@ -375,7 +375,7 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
 (defun d12-org/goto-body ()
   "Goto body of header at point."
   (interactive)
-  (when (eq 'headline (org-element-type (org-element-at-point)))
+  (when (d12-org/at-headline-p)
     (org-show-set-visibility 'local)
     (forward-line 1)
     (while (and (not (eq (point) (point-max)))
@@ -386,9 +386,19 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
     (forward-line -1)))
 
 (defun d12-org/meta-return ()
+  "Meta return.
+
+If the point is on header, then goto-body. Otherwise behave like
+a regular return."
   (interactive)
-  (if (eq 'headline (org-element-type (org-element-at-point)))
+  (if (d12-org/at-headline-p)
       (call-interactively #'d12-org/goto-body)
     (call-interactively #'org-return)))
+
+(defun d12-org/at-headline-p ()
+  "Returns non-nil when point is on header."
+  (save-excursion
+    (beginning-of-line)
+    (looking-at org-outline-regexp)))
 
 ;;; funcs.el ends here
