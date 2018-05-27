@@ -104,6 +104,7 @@ check brew || {
 
 # create local directory for binaries
 ensure_dir "$HOME/.local/bin"
+ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
 # run the Linkfile
 map_lines "$target/bootstrap/Linkfile" safe_link
