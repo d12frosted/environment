@@ -112,8 +112,8 @@ map_lines "$target/bootstrap/Linkfile" safe_link
 cd "$target/bootstrap" && brew bundle
 
 # setup fish shell
-echo "set -U XDG_CONFIG_HOME ~/.config" | fish
-echo "set -x XDG_CONFIG_HOME ~/.config" | fish
+echo "set -U XDG_CONFIG_HOME $target" | fish
+echo "set -x XDG_CONFIG_HOME $target" | fish
 echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 
 # ensure that Emacs runs normally
