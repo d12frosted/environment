@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+################################################################################
+# Fast failure
+################################################################################
+
 set -e
 
 function error() {
@@ -11,11 +15,18 @@ if [[ "$(uname)" != "Darwin" ]]; then
   exit 1
 fi
 
+################################################################################
+# Helpers
+################################################################################
+
 function require_repo() {
   if [[ -d "$1" ]]; then
      echo "$1 already exists"
   else
     git clone "$2" "$1"
+  fi
+  if [[ "$3" != "" ]]; then
+    git checkout "$3"
   fi
 }
 
@@ -27,29 +38,15 @@ function require_github_repo() {
   fi
 }
 
-target=$XDG_CONFIG_HOME
-if [[ "$target" = "" ]]; then
-  target="$HOME/.config"
-fi
-
-require_github_repo "$target" "d12frosted" "environment"
-
-function ensureDir() {
+function ensure_dir() {
   if [[ ! -d "$1" ]]; then
     echo "create $1"
     mkdir -p "$1"
   fi
 }
 
-ensureDir "$HOME/.local/bin"
-
 function check() {
   command -v "$1" >/dev/null 2>&1
-}
-
-check brew || {
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-  brew update
 }
 
 function safe_link() {
@@ -76,14 +73,48 @@ function safe_link() {
   ln -s "$s" "$t"
 }
 
-while IFS='' read -r line || [[ -n "$line" ]]; do
-  safe_link $line
-done < "$target/bootstrap/Linkfile"
+function map_lines() {
+  while IFS='' read -r line || [[ -n "$line" ]]; do
+    $2 $line
+  done < "$1"
+}
 
+################################################################################
+# Setup variables
+################################################################################
+
+target=$XDG_CONFIG_HOME
+if [[ "$target" = "" ]]; then
+  target="$HOME/.config"
+fi
+
+################################################################################
+# Actual bootstrap
+################################################################################
+
+# clone dependencies
+require_github_repo "$target" "d12frosted" "environment"
+require_github_repo "$HOME/.spacemacs" "syl20bnr" "spacemacs" "develop"
+
+# install brew
+check brew || {
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  brew update
+}
+
+# create local directory for binaries
+ensure_dir "$HOME/.local/bin"
+
+# run the Linkfile
+map_lines "$target/bootstrap/Linkfile" safe_link
+
+# run the Brewfile
 cd "$target/bootstrap" && brew bundle
 
+# setup fish shell
 echo "set -U XDG_CONFIG_HOME ~/.config" | fish
 echo "set -x XDG_CONFIG_HOME ~/.config" | fish
 echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 
+# ensure that Emacs runs normally
 emacs --batch -l "$target/emacs/test.el"
