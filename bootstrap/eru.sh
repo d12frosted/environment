@@ -11,21 +11,28 @@ if [[ "$(uname)" != "Darwin" ]]; then
   exit 1
 fi
 
+function require_repo() {
+  if [[ -d "$1" ]]; then
+     echo "$1 already exists"
+  else
+    git clone "$2" "$1"
+  fi
+}
+
+function require_github_repo() {
+  if [[ "$USE_HTTPS" = "true" ]]; then
+    require_repo "$1" "https://github.com/$2/$3.git"
+  else
+    require_repo "$1" "git@github.com:$2/$3.git"
+  fi
+}
+
 target=$XDG_CONFIG_HOME
 if [[ "$target" = "" ]]; then
   target="$HOME/.config"
 fi
 
-repo="git@github.com:d12frosted/environment.git"
-if [[ "$USE_HTTPS" = "true" ]]; then
-  repo="https://github.com/d12frosted/environment.git"
-fi
-
-if [[ -d "$target" ]]; then
-  echo "$target already exists"
-else
-  git clone "$repo" "$target"
-fi
+require_github_repo "$target" "d12frosted" "environment"
 
 function ensureDir() {
   if [[ ! -d "$1" ]]; then
