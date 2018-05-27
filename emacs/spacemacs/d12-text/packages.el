@@ -15,11 +15,7 @@
 ;;; Code:
 
 (defconst d12-text-packages
-  '((fancy-yank
-     :location
-     (recipe
-      :fetcher github
-      :repo "d12frosted/fancy-yank"))
+  '((fancy-yank :location built-in)
     (ukrainian-input-method
      :location
      (recipe
@@ -30,6 +26,8 @@
   "The list of Lisp packages required by the d12-text layer.")
 
 (defun d12-text/init-fancy-yank ()
+  (add-to-load-path-if-exists (concat d12-path-projects-home "personal/fancy-yank"))
+  (add-to-load-path-if-exists (concat d12-path-projects-home "fancy-yank"))
   (use-package fancy-yank
     :defer t
     :init
