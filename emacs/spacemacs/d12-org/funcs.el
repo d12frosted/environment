@@ -57,7 +57,7 @@
     (org-cycle)))
 
 (defun d12-org--find-project-task ()
-  "Move point to the parent (project) task if any"
+  "Move point to the parent (project) task if any."
   (save-restriction
     (widen)
     (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
@@ -68,7 +68,7 @@
       parent-task)))
 
 (defun d12-org--is-project-p ()
-  "Any task with a todo keyword subtask"
+  "Any task with a todo keyword subtask."
   (save-restriction
     (widen)
     (let ((has-subtask)
@@ -85,6 +85,7 @@
 
 (defun d12-org--is-project-subtree-p ()
   "Any task with a todo keyword that is in a project subtree.
+
 Callers of this function already widen the buffer view."
   (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
                               (point))))
@@ -95,7 +96,7 @@ Callers of this function already widen the buffer view."
         t))))
 
 (defun d12-org--is-task-p ()
-  "Any task with a todo keyword and no subtask"
+  "Any task with a todo keyword and no subtask."
   (save-restriction
     (widen)
     (let ((has-subtask)
@@ -111,7 +112,7 @@ Callers of this function already widen the buffer view."
       (and is-a-task (not has-subtask)))))
 
 (defun d12-org--is-subproject-p ()
-  "Any task which is a subtask of another project"
+  "Any task which is a subtask of another project."
   (let ((is-subproject)
         (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
     (save-excursion
@@ -122,7 +123,9 @@ Callers of this function already widen the buffer view."
 
 (defun d12-org--list-sublevels-for-projects-indented ()
   "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-  This is normally used by skipping functions where this variable is already local to the agenda."
+
+  This is normally used by skipping functions where this variable
+  is already local to the agenda."
   (if (marker-buffer org-agenda-restrict-begin)
       (setq org-tags-match-list-sublevels 'indented)
     (setq org-tags-match-list-sublevels nil))
@@ -130,7 +133,9 @@ Callers of this function already widen the buffer view."
 
 (defun d12-org--list-sublevels-for-projects ()
   "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
-  This is normally used by skipping functions where this variable is already local to the agenda."
+
+  This is normally used by skipping functions where this variable
+  is already local to the agenda."
   (if (marker-buffer org-agenda-restrict-begin)
       (setq org-tags-match-list-sublevels t)
     (setq org-tags-match-list-sublevels nil))
@@ -144,7 +149,7 @@ Callers of this function already widen the buffer view."
   (message "%s WAITING and SCHEDULED NEXT Tasks" (if d12-org-hide-scheduled-and-waiting-next-tasks "Hide" "Show")))
 
 (defun d12-org--skip-stuck-projects ()
-  "Skip trees that are not stuck projects"
+  "Skip trees that are not stuck projects."
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
@@ -162,7 +167,7 @@ Callers of this function already widen the buffer view."
         nil))))
 
 (defun d12-org--skip-non-stuck-projects ()
-  "Skip trees that are not stuck projects"
+  "Skip trees that are not stuck projects."
   ;; (d12-org--list-sublevels-for-projects-indented)
   (save-restriction
     (widen)
@@ -181,7 +186,7 @@ Callers of this function already widen the buffer view."
         next-headline))))
 
 (defun d12-org--skip-non-projects ()
-  "Skip trees that are not projects"
+  "Skip trees that are not projects."
   ;; (d12-org--list-sublevels-for-projects-indented)
   (if (save-excursion (d12-org--skip-non-stuck-projects))
       (save-restriction
@@ -198,7 +203,9 @@ Callers of this function already widen the buffer view."
 
 (defun d12-org--skip-non-tasks ()
   "Show non-project tasks.
-Skip project and sub-project tasks, habits, and project related tasks."
+
+Skip project and sub-project tasks, habits, and project related
+tasks."
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
@@ -209,7 +216,7 @@ Skip project and sub-project tasks, habits, and project related tasks."
         next-headline)))))
 
 (defun d12-org--skip-project-trees-and-habits ()
-  "Skip trees that are projects"
+  "Skip trees that are projects."
   (save-restriction
     (widen)
     (let ((subtree-end (save-excursion (org-end-of-subtree t))))
@@ -222,7 +229,8 @@ Skip project and sub-project tasks, habits, and project related tasks."
         nil)))))
 
 (defun d12-org--skip-projects-and-habits-and-single-tasks ()
-  "Skip trees that are projects, tasks that are habits, single non-project tasks"
+  "Skip trees that are projects, tasks that are habits, single
+non-project tasks."
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
@@ -241,8 +249,10 @@ Skip project and sub-project tasks, habits, and project related tasks."
 
 (defun d12-org--skip-project-tasks-maybe ()
   "Show tasks related to the current restriction.
-When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
-When not restricted, skip project and sub-project tasks, habits, and project related tasks."
+
+When restricted to a project, skip project and sub project tasks,
+habits, and loose tasks. When not restricted, skip project and
+sub-project tasks, habits, and project related tasks."
   (save-restriction
     (widen)
     (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
@@ -265,7 +275,9 @@ When not restricted, skip project and sub-project tasks, habits, and project rel
 
 (defun d12-org--skip-project-tasks ()
   "Show non-project tasks.
-Skip project and sub-project tasks, habits, and project related tasks."
+
+Skip project and sub-project tasks, habits, and project related
+tasks."
   (save-restriction
     (widen)
     (let* ((subtree-end (save-excursion (org-end-of-subtree t))))
@@ -281,7 +293,9 @@ Skip project and sub-project tasks, habits, and project related tasks."
 
 (defun d12-org--skip-non-project-tasks ()
   "Show project tasks.
-Skip project and sub-project tasks, habits, and loose non-project tasks."
+
+Skip project and sub-project tasks, habits, and loose non-project
+tasks."
   (save-restriction
     (widen)
     (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
@@ -300,7 +314,7 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
         nil)))))
 
 (defun d12-org--skip-projects-and-habits ()
-  "Skip trees that are projects and tasks that are habits"
+  "Skip trees that are projects and tasks that are habits."
   (save-restriction
     (widen)
     (let ((subtree-end (save-excursion (org-end-of-subtree t))))
@@ -313,14 +327,14 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
         nil)))))
 
 (defun d12-org--skip-non-subprojects ()
-  "Skip trees that are not projects"
+  "Skip trees that are not projects."
   (let ((next-headline (save-excursion (outline-next-heading))))
     (if (d12-org--is-subproject-p)
         nil
       next-headline)))
 
 (defun d12-org--skip-non-archivable-tasks ()
-  "Skip trees that are not available for archiving"
+  "Skip trees that are not available for archiving."
   (save-restriction
     (widen)
     ;; Consider only tasks with done todo headings as archivable candidates
@@ -367,7 +381,7 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
   (org-toggle-latex-fragment '(16)))
 
 (defun d12-org/board-open ()
-  "Call `org-board-open` on entry at point."
+  "Call `org-board-open' on entry at point."
   (interactive)
   (orgability-with-entry
    (call-interactively #'org-board-open)))
