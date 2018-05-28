@@ -7,11 +7,12 @@
 set -e
 
 function error() {
-  echo -e "\033[0;31m$@\033[0m"
+  echo -e "\033[0;31m$*\033[0m"
 }
 
-if [[ "$(uname)" != "Darwin" ]]; then
-  error "unsupported operating system: $(uname). This script works on Darwin only."
+supported_os="Darwin"
+if [[ "$(uname)" != "$supported_os" ]]; then
+  error "unsupported operating system: $(uname). This script works on $supported_os only."
   exit 1
 fi
 
@@ -52,7 +53,7 @@ function check() {
 function safe_link() {
   s="$target/$1"
   t="${2/#\~/$HOME}"
-  d=$(dirname $t)
+  d=$(dirname "$t")
   if [[ ! -f "$s" ]]; then
     error "can not link '$s' as it does not exist"
     exit 1
@@ -60,7 +61,7 @@ function safe_link() {
 
   if [[ ! -d $d ]]; then
     echo "create $d"
-    mkdir -p $d
+    mkdir -p "$d"
   fi
 
   if [[ -L "$t" ]]; then
