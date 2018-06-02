@@ -107,28 +107,6 @@
             ("n" "note" entry (file ,(d12-path/get-org-file "inbox"))
              "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
 
-            ("w" "Web site" entry
-             (file "")
-             "* %a :website:\n\n%U %?\n\n%:initial")
-
-            ("a" "Actions on url")
-            ("ar" "Action: Review" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Review: %(ocu \"%c\")\n%U\n" :immediate-finish t)
-            ("aR" "Action: Schedule Review" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Review: %(ocu \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
-            ("ac" "Action: Close" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Close: %(ocu \"%c\")\n%U\n" :immediate-finish t)
-            ("aC" "Action: Schedule Close" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Close: %(ocu \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
-            ("am" "Action: Merge" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Merge: %(ocu \"%c\")\n%U\n" :immediate-finish t)
-            ("aM" "Action: Schedule Merge" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Merge: %(ocu \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
-            ("af" "Action: Fix" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Fix: %(ocu \"%c\")\n%U\n" :immediate-finish t)
-            ("aF" "Action: Schedule Fix" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Fix: %(ocu \"%c\")\nSCHEDULED: %^T\n%U\n" :immediate-finish t)
-
             ("m" "Meeting" entry (file ,(d12-path/get-org-file "inbox"))
              "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
             ("h" "Habit" entry (file ,(d12-path/get-org-file "inbox"))
