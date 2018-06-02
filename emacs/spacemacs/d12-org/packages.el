@@ -230,10 +230,10 @@
             ))
 
     (setq org-agenda-prefix-format
-          '((agenda . " %i %-16:c%?-12t% s")
-            (todo . " %i %-16:c")
-            (tags . " %i %-16:c")
-            (search . " %i %-16:c")))
+          '((agenda . " %i %-24:c%?-12t% s")
+            (todo . " %i %-24:c")
+            (tags . " %i %-24:c")
+            (search . " %i %-24:c")))
 
     ;; dvisvgm looks much better
     (setq org-latex-create-formula-image-program 'dvisvgm)
