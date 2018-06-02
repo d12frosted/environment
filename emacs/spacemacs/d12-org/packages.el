@@ -187,6 +187,7 @@
                           (org-agenda-todo-ignore-scheduled d12-org-hide-scheduled-and-waiting-next-tasks)
                           (org-agenda-todo-ignore-deadlines d12-org-hide-scheduled-and-waiting-next-tasks)
                           (org-agenda-todo-ignore-with-date d12-org-hide-scheduled-and-waiting-next-tasks)
+                          (org-agenda-tags-todo-honor-ignore-options t)
                           (org-agenda-sorting-strategy
                            '(todo-state-down effort-up category-keep))))
               (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
