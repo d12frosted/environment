@@ -344,6 +344,7 @@
   (use-package org-board
     :commands (org-board-archive org-board-open)
     :init
-    (setq org-board-wget-show-buffer nil)))
+    (setq org-board-wget-show-buffer nil
+          org-board-default-browser 'system)))
 
 ;;; packages.el ends here
