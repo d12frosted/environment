@@ -230,6 +230,10 @@
                      (org-tags-match-list-sublevels nil)))
               )
              nil)
+            ("h" "Habits" tags-todo "STYLE=\"habit\""
+             ((org-agenda-overriding-header "Habits")
+              (org-agenda-sorting-strategy
+               '(todo-state-down effort-up category-keep))))
             ))
 
     (setq org-property-format "%-24s %s")
