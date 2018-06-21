@@ -1,4 +1,5 @@
 tap "d12frosted/emacs-plus"
+tap "caskroom/fonts
 
 brew "haskell-stack"
 brew "emacs-plus", args: ["devel", "without-spacemacs-icon"]
@@ -19,3 +20,4 @@ brew "sbt"
 brew "scala"
 
 cask "spectacle"
+cask "font-source-code-pro"
