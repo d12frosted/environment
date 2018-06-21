@@ -150,6 +150,9 @@
     ;; also show state change in log mode
     (setq org-agenda-log-mode-items '(closed clock state))
 
+    ;; use drawer for state changes
+    (setq org-log-into-drawer t)
+
     ;; When inhibiting org-agenda, show it full screen
     (setq org-agenda-window-setup 'only-window)
 
