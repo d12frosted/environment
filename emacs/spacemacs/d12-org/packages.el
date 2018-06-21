@@ -229,6 +229,7 @@
              nil)
             ))
 
+    (setq org-property-format "%-24s %s")
     (setq org-agenda-prefix-format
           '((agenda . " %i %-24:c%?-12t% s")
             (todo . " %i %-24:c")
