@@ -28,6 +28,7 @@
    version-control
    (git :variables
         git-magit-status-fullscreen t)
+   github
    (auto-completion :disabled-for org spacemacs-org)
    spell-checking
    (syntax-checking :variables syntax-checking-enable-tooltips nil)
