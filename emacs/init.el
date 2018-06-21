@@ -20,6 +20,9 @@
 ;;
 ;;; Code:
 
+(add-to-list 'default-frame-alist '(undecorated . t))
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
 ;; Without this comment emacs25 adds (package-initialize) here
 ;; (package-initialize)
 (defconst package--initialized nil)
