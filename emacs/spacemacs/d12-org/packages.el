@@ -164,6 +164,9 @@
     (setq org-agenda-custom-commands
           `((" " "Agenda"
              (
+              (tags "important"
+                    ((org-agenda-overriding-header "Milestones")
+                     (org-tags-match-list-sublevels nil)))
               (agenda "" ((org-agenda-span 'day)))
               (tags "REFILE"
                     ((org-agenda-overriding-header "Tasks to Refile")
