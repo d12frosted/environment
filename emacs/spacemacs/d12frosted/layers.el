@@ -39,6 +39,7 @@
    d12-visual
    d12-text
    d12-org
+   vulpea
    d12-emacs-lisp
    d12-haskell
    d12-csharp
