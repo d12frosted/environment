@@ -356,6 +356,19 @@ tasks."
             (or subtree-end (point-max)))
         next-headline))))
 
+(defun d12-org--skip-future-tasks ()
+  "Skip trees that are scheduled in the future."
+  (ignore-errors
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (scheduled-seconds
+           (time-to-seconds
+            (org-time-string-to-time
+             (org-entry-get nil "SCHEDULED"))))
+          (now (time-to-seconds (current-time))))
+      (and scheduled-seconds
+           (>= scheduled-seconds now)
+           subtree-end))))
+
 (defun d12-org/remove-empty-drawer-on-clock-out ()
   (interactive)
   (save-excursion

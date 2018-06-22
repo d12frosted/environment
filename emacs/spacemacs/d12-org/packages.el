@@ -166,6 +166,7 @@
              (
               (tags "important"
                     ((org-agenda-overriding-header "Milestones")
+                     (org-agenda-skip-function 'd12-org--skip-future-tasks)
                      (org-tags-match-list-sublevels nil)))
               (agenda "" ((org-agenda-span 'day)))
               (tags "REFILE"
