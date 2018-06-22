@@ -239,6 +239,7 @@
                '(todo-state-down effort-up category-keep))))
             ))
 
+    (setq org-habit-graph-column 60)
     (setq org-property-format "%-24s %s")
     (setq org-agenda-prefix-format
           '((agenda . " %i %-24:c%?-12t% s")
