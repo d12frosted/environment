@@ -9,7 +9,7 @@ Personal Emacs configurations. Tremendously boosted by [[http://spacemacs.org][S
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="images/animacs.png">
+  <img src="images/daomacs.png">
 </p>
 #+END_HTML
 

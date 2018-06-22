@@ -20,6 +20,12 @@ well before running installation script. There is also =deprecated= domain.
 There are things that are no more used but has little value for me. Time to time
 I clean that domain, so don't be surprised to see it's missing.
 
+#+BEGIN_HTML
+<p align="center">
+  <img src="emacs/images/daomacs.png">
+</p>
+#+END_HTML
+
 * Dependencies
 My configurations are expecting that a lot of stuff is installed on your system.
 As it was already told, every domain has it's own readme file where the full
