@@ -1,5 +1,5 @@
 tap "d12frosted/emacs-plus"
-tap "caskroom/fonts
+tap "caskroom/fonts"
 
 brew "haskell-stack"
 brew "emacs-plus", args: ["devel", "without-spacemacs-icon"]
