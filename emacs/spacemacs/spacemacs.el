@@ -55,7 +55,7 @@ values."
           ("gnu"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/"))))
 
   (setq-default
-   spacemacs-buffer-logo-title "======= SPACEMACS ======"
+   spacemacs-buffer-logo-title "======= D A O M A C S ======"
    spacemacs-cache-directory  d12-path-emacs-cache
 
    ;; dotspacemacs configuration
