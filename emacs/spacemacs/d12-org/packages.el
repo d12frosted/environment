@@ -176,18 +176,18 @@
               (tags "REFILE"
                     ((org-agenda-overriding-header "Tasks to Refile")
                      (org-tags-match-list-sublevels nil)))
-              (tags-todo "-CANCELLED/!"
+              (tags-todo "-CANCELLED-READING/!"
                          ((org-agenda-overriding-header "Stuck Projects")
                           (org-agenda-skip-function 'd12-org--skip-non-stuck-projects)
                           (org-agenda-sorting-strategy
                            '(category-keep))))
-              (tags-todo "-HOLD-CANCELLED/!"
+              (tags-todo "-HOLD-CANCELLED-READING/!"
                          ((org-agenda-overriding-header "Projects")
                           (org-agenda-skip-function 'd12-org--skip-non-projects)
                           (org-tags-match-list-sublevels 'indented)
                           (org-agenda-sorting-strategy
                            '(category-keep))))
-              (tags-todo "-CANCELLED/!TODO"
+              (tags-todo "-CANCELLED-READING/!TODO"
                          ((org-agenda-overriding-header
                            (concat "Project Next Tasks"
                                    (if d12-org-hide-scheduled-and-waiting-next-tasks
@@ -201,7 +201,7 @@
                           (org-agenda-tags-todo-honor-ignore-options t)
                           (org-agenda-sorting-strategy
                            '(todo-state-down effort-up category-keep))))
-              (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
+              (tags-todo "-REFILE-CANCELLED-WAITING-HOLD-READING/!"
                          ((org-agenda-overriding-header (concat "Project Subtasks"
                                                                 (if d12-org-hide-scheduled-and-waiting-next-tasks
                                                                     ""
@@ -212,7 +212,7 @@
                           (org-agenda-todo-ignore-with-date d12-org-hide-scheduled-and-waiting-next-tasks)
                           (org-agenda-sorting-strategy
                            '(category-keep))))
-              (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
+              (tags-todo "-REFILE-CANCELLED-WAITING-HOLD-READING/!"
                          ((org-agenda-overriding-header (concat "Standalone Tasks"
                                                                 (if d12-org-hide-scheduled-and-waiting-next-tasks
                                                                     ""
@@ -223,7 +223,7 @@
                           (org-agenda-todo-ignore-with-date d12-org-hide-scheduled-and-waiting-next-tasks)
                           (org-agenda-sorting-strategy
                            '(category-keep))))
-              (tags-todo "-CANCELLED+WAITING|HOLD/!"
+              (tags-todo "-CANCELLED+WAITING-READING|HOLD/!"
                          ((org-agenda-overriding-header (concat "Waiting and Postponed Tasks"
                                                                 (if d12-org-hide-scheduled-and-waiting-next-tasks
                                                                     ""
@@ -232,12 +232,16 @@
                           (org-tags-match-list-sublevels nil)
                           (org-agenda-todo-ignore-scheduled d12-org-hide-scheduled-and-waiting-next-tasks)
                           (org-agenda-todo-ignore-deadlines d12-org-hide-scheduled-and-waiting-next-tasks)))
-              (tags "-REFILE/"
+              (tags "-REFILE-READING/"
                     ((org-agenda-overriding-header "Tasks to Archive")
                      (org-agenda-skip-function 'd12-org--skip-non-archivable-tasks)
                      (org-tags-match-list-sublevels nil)))
               )
              nil)
+            ("r" "Reading List" tags "READING"
+             ((org-agenda-overriding-header "Reading List")
+              (org-agenda-sorting-strategy
+               '(todo-state-down effort-up category-keep))))
             ("h" "Habits" tags-todo "STYLE=\"habit\""
              ((org-agenda-overriding-header "Habits")
               (org-agenda-sorting-strategy
