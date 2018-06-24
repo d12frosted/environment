@@ -347,7 +347,7 @@
     :defer t
     :commands (orgability-clip orgability-add-relation orgability-delete-relation)
     :init
-    (d12-key-bind-personal "l" 'orgability-clip)
+    (d12-key-bind-personal "C" 'orgability-clip)
 
     (defun d12-org/setup-agenda-orgability ()
       "Setup orgability in agenda buffer."
