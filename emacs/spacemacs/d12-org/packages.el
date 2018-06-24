@@ -161,6 +161,9 @@
     (setq org-agenda-block-separator "")
     (setq org-agenda-compact-blocks nil)
 
+    ;; better image inlining
+    (setq org-image-actual-width 512)
+
     ;; Custom agenda command definitions
     (setq org-agenda-custom-commands
           `((" " "Agenda"
