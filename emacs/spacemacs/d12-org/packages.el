@@ -26,6 +26,7 @@
     toc-org
     (orgability :location built-in)
     org-board
+    org-download
     )
   "The list of Lisp packages required by the d12-org layer.")
 
@@ -359,5 +360,14 @@
     :init
     (setq org-board-wget-show-buffer nil
           org-board-default-browser 'system)))
+
+(defun d12-org/init-org-download ()
+  (use-package org-download
+    :defer t
+    :init
+    (setq-default org-download-image-dir (d12-path/get-org-dir "images/"))
+    (spacemacs|use-package-add-hook org
+      :post-config
+      (require 'org-download))))
 
 ;;; packages.el ends here
