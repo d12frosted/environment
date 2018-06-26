@@ -172,10 +172,10 @@
     (setq org-agenda-custom-commands
           `((" " "Agenda"
              (
-              (tags "important"
-                    ((org-agenda-overriding-header "Milestones")
-                     (org-agenda-skip-function 'd12-org--skip-future-tasks)
-                     (org-tags-match-list-sublevels nil)))
+              (tags-todo "important"
+                         ((org-agenda-overriding-header "Milestones")
+                          (org-agenda-skip-function 'd12-org--skip-future-tasks)
+                          (org-tags-match-list-sublevels nil)))
               (agenda "" ((org-agenda-span 'day)))
               (tags "REFILE"
                     ((org-agenda-overriding-header "Tasks to Refile")
