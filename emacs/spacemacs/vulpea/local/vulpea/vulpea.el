@@ -26,23 +26,24 @@
 
 ;;; Commentary:
 
-;; commentary
-
 ;;; Code:
 
-(defun vulpea/insert-brain-link ()
+(defun vulpea-brain/insert-link ()
   "Insert a link to brain entry."
   (interactive)
-  (insert (vulpea--make-brain-link (vulpea--choose-brain-entry))))
+  (insert (vulpea-brain--make-link (vulpea-brain--choose-entry))))
 
-(defun vulpea--make-brain-link (entry)
+(defun vulpea-brain--make-link (entry-or-id)
   "Make an org-mode link to ENTRY."
+  (let ((id (if (stringp entry-or-id)
+                entry-or-id
+              (org-brain-entry-identifier entry)))))
   (org-make-link-string
    (concat "brain:"
            (org-brain-entry-identifier entry))
    (org-brain-title entry)))
 
-(defun vulpea--choose-brain-entry ()
+(defun vulpea-brain--choose-entry ()
   "Choose a brain entry."
   (org-brain-choose-entry
    "Entry: "
@@ -50,7 +51,7 @@
    nil
    t))
 
-(defun vulpea--choose-brain-entry-by-parent (parent-id)
+(defun vulpea-brain--choose-entry-by-parent (parent-id)
   "Choose a brain entry from children of PARENT-ID."
   (org-brain-choose-entry
    "Entry: "
@@ -58,19 +59,63 @@
    nil
    t))
 
+(defun vulpea-brain--is-recursive-child-of (child-id parent-id)
+  "Returns non-nil, when CHILD-ID is recursive child of PARENT-ID."
+  (seq-contains (seq-map #'org-brain-entry-identifier
+                         (vulpea-brain--recursive-children parent-id))
+                child-id))
+
+(defun vulpea-brain--recursive-children (parent-id)
+  "Returns list of recursive children of PARENT-ID."
+  (seq-mapcat
+   (lambda (entry)
+     (seq-concatenate
+      'list
+      (list entry)
+      (vulpea--recursive-children (org-brain-entry-identifier entry))))
+   (org-brain-children (org-brain-entry-from-id parent-id))))
+
 
 
 (defvar vulpea-places-config
-  '(("country" . "EC4A5BD7-71C4-479A-8BBB-8F022E78F52D")))
+  '(("country" . "EC4A5BD7-71C4-479A-8BBB-8F022E78F52D")
+    ("province" . "5C3F532B-4BB6-46F5-8A0C-741501299EC2")
+    ("prefecture" . "9BF13CFD-A3FB-4103-8C8D-4B4ABCA2566C")
+    ("county" . "F758B504-77A7-4919-9D98-BF555BC61E3F")
+    ("township" . "915880E1-B7AE-4013-A11A-BA99D8DB929F")
+    ("village" . "342CB150-A231-41D9-B275-334F0EC057FE")
+    ("mountain" . "D8D1A193-81A3-47AE-9E14-892948FA4A1F")
+    ("lake" . "D190F748-9223-4AAC-844F-0F3AEECBBF14")))
 
-(defun vulpea/set-place ()
-  "Set place properties to org entry at point."
+(defun vulpea/set-place-dwim ()
   (interactive)
-  (seq-each
-   (lambda (cfg)
-     (unless (org-entry-get nil (car cfg))
-       (org-set-property (upcase (car cfg)) (vulpea--make-brain-link (vulpea--choose-brain-entry-by-parent (cdr cfg))))))
-   vulpea-places-config))
+  (let* ((level (completing-read "Level: " (seq-map #'car vulpea-places-config) nil t))
+         (level-id (cdr (assoc-string level vulpea-places-config)))
+         (entry (vulpea-brain--choose-entry-by-parent parent-id))
+         (entry-id (org-brain-entry-identifier entry)))
+    (seq-do
+     (lambda (x)
+       (org-set-property (upcase (car x))
+                         (vulpea-brain--make-link (cdr x))))
+     ;; list of (level . specific-place-id) to set
+     (seq-map
+      (lambda (level-cfg)
+        (cons (car level-cfg)
+              (car (seq-filter
+                    (lambda (e)
+                      (vulpea-brain--is-recursive-child-of entry-id (org-brain-entry-identifier e)))
+                    (org-brain-children (org-brain-entry-from-id (cdr level-cfg)))))))
+      ;; list of levels to set
+      (seq-filter
+       (lambda (level-cfg)
+         (and (not (string-equal level (car level-cfg)))
+              (vulpea-brain--is-recursive-child-of entry-id (cdr level-cfg))))
+       vulpea-places-config)))
+
+    ;; set the level value
+    (org-set-property (upcase level)
+                      (vulpea-brain--make-link entry)))
+  (vulpea/pretty-entry-properties))
 
 
 
