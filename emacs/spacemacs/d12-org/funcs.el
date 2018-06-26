@@ -393,12 +393,6 @@ tasks."
   (interactive)
   (org-toggle-latex-fragment '(16)))
 
-(defun d12-org/board-open ()
-  "Call `org-board-open' on entry at point."
-  (interactive)
-  (orgability--with-entry
-   (call-interactively #'org-board-open)))
-
 (defun d12-org/goto-body ()
   "Goto body of header at point."
   (interactive)

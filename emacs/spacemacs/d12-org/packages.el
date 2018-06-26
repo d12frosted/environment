@@ -348,15 +348,14 @@
   (add-to-load-path-if-exists (concat d12-path-projects-home "personal/orgability"))
   (add-to-load-path-if-exists (concat d12-path-projects-home "orgability"))
   (use-package orgability
-    :defer t
-    :commands (orgability-clip orgability-add-relation orgability-delete-relation)
+    :commands (orgability-clip orgability-open orgability-add-relation orgability-delete-relation)
     :init
     (d12-key-bind-personal "C" 'orgability-clip)
 
     (defun d12-org/setup-agenda-orgability ()
       "Setup orgability in agenda buffer."
       (d12-key-unbind "o" org-agenda-mode-map)
-      (d12-key-bind "oo" #'d12-org/board-open org-agenda-mode-map)
+      (d12-key-bind "oo" #'orgability-open org-agenda-mode-map)
       (d12-key-bind "ol" #'orgability-clip org-agenda-mode-map)
       (d12-key-bind "oa" #'orgability-add-relation org-agenda-mode-map)
       (d12-key-bind "od" #'orgability-delete-relation org-agenda-mode-map)
