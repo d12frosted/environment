@@ -114,8 +114,7 @@
 
     ;; set the level value
     (org-set-property (upcase level)
-                      (vulpea-brain--make-link entry)))
-  (vulpea/pretty-entry-properties))
+                      (vulpea-brain--make-link entry))))
 
 
 
