@@ -164,6 +164,10 @@
     ;; better image inlining
     (setq org-image-actual-width 512)
 
+    ;; setup 'cache' directories
+    (setq org-attach-directory ".data")
+    (setq org-latex-preview-ltxpng-directory ".ltximg")
+
     ;; Custom agenda command definitions
     (setq org-agenda-custom-commands
           `((" " "Agenda"
