@@ -75,6 +75,18 @@
       (vulpea--recursive-children (org-brain-entry-identifier entry))))
    (org-brain-children (org-brain-entry-from-id parent-id))))
 
+(defun vulpea-brain--as-entry (entry-or-id)
+  "Returns brain entry."
+  (if (stringp entry-or-id)
+      (org-brain-entry-from-id entry-or-id)
+    entry-or-id))
+
+(defun vulpea-brain--as-id (entry-or-id)
+  "Returns identifier of ENTRY-OR-ID."
+  (if (stringp entry-or-id)
+      entry-or-id
+    (org-brain-entry-identifier entry-or-id)))
+
 
 
 (defvar vulpea-places-config
