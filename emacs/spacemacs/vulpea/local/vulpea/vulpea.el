@@ -105,6 +105,10 @@
   (interactive)
   (let* ((level (completing-read "Level: " (seq-map #'car vulpea-places-config) nil t))
          (level-id (cdr (assoc-string level vulpea-places-config)))
+         (level-entries (seq-map (lambda (x)
+                                   (cons (car x)
+                                         (org-brain-entry-from-id (cdr x))))
+                                 vulpea-places-config))
          (entry (vulpea-brain--choose-entry-by-parent level-id))
          (entry-id (org-brain-entry-identifier entry)))
     (seq-do
@@ -117,14 +121,14 @@
         (cons (car level-cfg)
               (car (seq-filter
                     (lambda (e)
-                      (vulpea-brain--is-recursive-child-of entry-id (org-brain-entry-identifier e)))
-                    (org-brain-children (org-brain-entry-from-id (cdr level-cfg)))))))
+                      (vulpea-brain--is-recursive-child-of entry-id e))
+                    (org-brain-children (cdr level-cfg))))))
       ;; list of levels to set
       (seq-filter
        (lambda (level-cfg)
          (and (not (string-equal level (car level-cfg)))
               (vulpea-brain--is-recursive-child-of entry-id (cdr level-cfg))))
-       vulpea-places-config)))
+       level-entries)))
 
     ;; set the level value
     (org-set-property (upcase level)
