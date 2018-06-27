@@ -48,29 +48,29 @@
    nil
    t))
 
-(defun vulpea-brain--choose-entry-by-parent (parent-id)
-  "Choose a brain entry from children of PARENT-ID."
+(defun vulpea-brain--choose-entry-by-parent (parent)
+  "Choose a brain entry from children of PARENT."
   (org-brain-choose-entry
    "Entry: "
-   (org-brain-children (org-brain-entry-from-id parent-id))
+   (org-brain-children (vulpea-brain--as-entry parent))
    nil
    t))
 
-(defun vulpea-brain--is-recursive-child-of (child-id parent-id)
-  "Returns non-nil, when CHILD-ID is recursive child of PARENT-ID."
-  (seq-contains (seq-map #'org-brain-entry-identifier
-                         (vulpea-brain--recursive-children parent-id))
-                child-id))
+(defun vulpea-brain--is-recursive-child-of (child parent)
+  "Returns non-nil, when CHILD is recursive child of PARENT."
+  (seq-contains (vulpea-brain--recursive-children parent)
+                child
+                #'vulpea-brain--entry-id-equal))
 
-(defun vulpea-brain--recursive-children (parent-id)
-  "Returns list of recursive children of PARENT-ID."
+(defun vulpea-brain--recursive-children (parent)
+  "Returns list of recursive children of PARENT."
   (seq-mapcat
    (lambda (entry)
      (seq-concatenate
       'list
       (list entry)
-      (vulpea--recursive-children (org-brain-entry-identifier entry))))
-   (org-brain-children (org-brain-entry-from-id parent-id))))
+      (vulpea-brain--recursive-children entry)))
+   (org-brain-children (vulpea-brain--as-entry parent))))
 
 (defun vulpea-brain--as-entry (entry-or-id)
   "Returns brain entry."
@@ -83,6 +83,11 @@
   (if (stringp entry-or-id)
       entry-or-id
     (org-brain-entry-identifier entry-or-id)))
+
+(defun vulpea-brain--entry-id-equal (a b)
+  "Returns non-nil, when id of A equals id of B."
+  (string-equal (vulpea-brain--as-id a)
+                (vulpea-brain--as-id b)))
 
 
 
