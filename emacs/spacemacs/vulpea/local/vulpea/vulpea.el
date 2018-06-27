@@ -91,7 +91,7 @@
   (interactive)
   (let* ((level (completing-read "Level: " (seq-map #'car vulpea-places-config) nil t))
          (level-id (cdr (assoc-string level vulpea-places-config)))
-         (entry (vulpea-brain--choose-entry-by-parent parent-id))
+         (entry (vulpea-brain--choose-entry-by-parent level-id))
          (entry-id (org-brain-entry-identifier entry)))
     (seq-do
      (lambda (x)
