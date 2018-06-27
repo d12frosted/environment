@@ -35,13 +35,10 @@
 
 (defun vulpea-brain--make-link (entry-or-id)
   "Make an org-mode link to ENTRY."
-  (let ((id (if (stringp entry-or-id)
-                entry-or-id
-              (org-brain-entry-identifier entry)))))
   (org-make-link-string
    (concat "brain:"
-           (org-brain-entry-identifier entry))
-   (org-brain-title entry)))
+           (vulpea-brain--as-id entry-or-id))
+   (org-brain-title (vulpea-brain--as-entry entry-or-id))))
 
 (defun vulpea-brain--choose-entry ()
   "Choose a brain entry."
