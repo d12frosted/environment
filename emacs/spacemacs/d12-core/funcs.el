@@ -39,4 +39,9 @@
                             (kbd key-name))
                 keymap-target))
 
+(defun d12-save-all ()
+  "Save all modified file-visiting buffers."
+  (interactive)
+  (save-some-buffers t))
+
 ;;; funcs.el ends here

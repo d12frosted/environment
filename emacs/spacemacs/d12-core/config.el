@@ -21,4 +21,9 @@
 ;; Delete selection mode is my friend. Sorry, no-lifers!
 (delete-selection-mode 1)
 
+;; Aggressive auto-save
+(setq auto-save-timeout 1)
+(setq auto-save-interval 30)
+(add-hook 'focus-out-hook #'d12-save-all)
+
 ;;; config.el ends here
