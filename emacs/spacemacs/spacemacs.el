@@ -57,6 +57,7 @@ values."
   (setq-default
    spacemacs-buffer-logo-title "======= D A O M A C S ======"
    spacemacs-cache-directory  d12-path-emacs-cache
+   spacemacs-auto-save-directory (concat d12-path-emacs-private "auto-save/")
 
    ;; dotspacemacs configuration
    dotspacemacs-elpa-https nil
