@@ -30,6 +30,8 @@ Strong points of my custom [[file:functions/fish_prompt.fish][fish_prompt]] are:
    function for more information)
 4. minimalistic
 
+[[file:images/notification.png]]
+
 * Batteries
 
 There are some useful functions that come with my configs.
