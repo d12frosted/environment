@@ -56,20 +56,23 @@
    nil
    t))
 
-(defun vulpea-brain--is-recursive-child-of (child parent)
-  "Returns non-nil, when CHILD is recursive child of PARENT."
-  (seq-contains (vulpea-brain--recursive-children parent)
-                child
-                #'vulpea-brain--entry-id-equal))
+(defun vulpea-brain--is-transitive-child-of (child parent)
+  "Returns non-nil, when CHILD is a transitive child of PARENT."
+  (let ((children (org-brain-children (vulpea-brain--as-entry parent))))
+    (if (seq-contains children child #'vulpea-brain--entry-id-equal)
+        t
+      (seq-some (lambda (new-parent)
+                  (vulpea-brain--is-transitive-child-of child new-parent))
+                children))))
 
-(defun vulpea-brain--recursive-children (parent)
-  "Returns list of recursive children of PARENT."
+(defun vulpea-brain--transitive-children (parent)
+  "Returns list of transitive children of PARENT."
   (seq-mapcat
    (lambda (entry)
      (seq-concatenate
       'list
       (list entry)
-      (vulpea-brain--recursive-children entry)))
+      (vulpea-brain--transitive-children entry)))
    (org-brain-children (vulpea-brain--as-entry parent))))
 
 (defun vulpea-brain--as-entry (entry-or-id)
@@ -121,13 +124,13 @@
         (cons (car level-cfg)
               (car (seq-filter
                     (lambda (e)
-                      (vulpea-brain--is-recursive-child-of entry-id e))
+                      (vulpea-brain--is-transitive-child-of entry-id e))
                     (org-brain-children (cdr level-cfg))))))
       ;; list of levels to set
       (seq-filter
        (lambda (level-cfg)
          (and (not (string-equal level (car level-cfg)))
-              (vulpea-brain--is-recursive-child-of entry-id (cdr level-cfg))))
+              (vulpea-brain--is-transitive-child-of entry-id (cdr level-cfg))))
        level-entries)))
 
     ;; set the level value
