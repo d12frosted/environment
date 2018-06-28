@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'org-brain)
+
 (defun vulpea-brain/insert-link ()
   "Insert a link to brain entry."
   (interactive)

@@ -23,6 +23,9 @@
   (use-package vulpea
     :defer t
     :init
+    (spacemacs|use-package-add-hook org
+      :post-config
+      (require 'vulpea))
     :config))
 
 ;;; packages.el ends here
