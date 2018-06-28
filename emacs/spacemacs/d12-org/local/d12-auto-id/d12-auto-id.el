@@ -36,6 +36,7 @@
    case, the CUSTOM_ID of the entry is returned."
   (interactive)
   (org-with-point-at pom
+    (org-id-get-create)
     (let ((id (org-entry-get nil "CUSTOM_ID")))
       (cond
        ((and id (stringp id) (string-match "\\S-" id))
