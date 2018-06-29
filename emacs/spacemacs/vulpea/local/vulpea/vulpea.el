@@ -116,6 +116,12 @@
                                  vulpea-places-config))
          (entry (vulpea-brain--choose-entry-by-parent level-id))
          (entry-id (org-brain-entry-identifier entry)))
+
+    ;; clear all levels
+    (seq-do (lambda (level-cfg)
+              (org-entry-delete nil (upcase (car level-cfg))))
+            vulpea-places-config)
+
     (seq-do
      (lambda (x)
        (org-set-property (upcase (car x))
