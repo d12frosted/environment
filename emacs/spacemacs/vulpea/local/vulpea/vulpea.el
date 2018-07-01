@@ -94,6 +94,30 @@
   (string-equal (vulpea-brain--as-id a)
                 (vulpea-brain--as-id b)))
 
+(defun vulpea-brain--new-child (entry-or-id name)
+  "Insert new entry with NAME as a child of ENTRY-OR-ID."
+  (let ((entry (vulpea-brain--as-entry entry-or-id)))
+    (if (org-brain-filep entry)
+        ;; File entry
+        (with-current-buffer (find-file-noselect (org-brain-entry-path entry))
+          (goto-char (point-min))
+          (if (re-search-forward (concat "^\\(" org-outline-regexp "\\)") nil t)
+              (progn
+                (beginning-of-line)
+                (open-line 1))
+            (goto-char (point-max)))
+          (insert (concat "* " name))
+          (org-id-get-create))
+      ;; Headline entry
+      (org-with-point-at (org-brain-entry-marker entry)
+        (if (org-goto-first-child)
+            (open-line 1)
+          (org-end-of-subtree t))
+        (org-insert-heading)
+        (org-do-demote)
+        (insert name)
+        (org-id-get-create)))))
+
 
 
 ;;;###autoload
@@ -101,7 +125,17 @@
   "Note taking utilities."
   :lighter " vulpea"
   (setq-local vulpea-properties-order (vulpea--get-buffer-properties-order))
-  (setq-local vulpea-places-config (vulpea--get-buffer-places-config)))
+  (setq-local vulpea-places-config (vulpea--get-buffer-places-config))
+
+  (setq-local vulpea-cha-tea-groups-parent-id
+              (vulpea--get-buffer-setting "TEA_GROUPS_PARENT"))
+  (setq-local vulpea-cha--tea-groups-parent
+              (vulpea-brain--as-entry vulpea-cha-tea-groups-parent-id))
+
+  (setq-local vulpea-cha-fermentation-types-parent-id
+              (vulpea--get-buffer-setting "FERMENTATION_TYPES_PARENT"))
+  (setq-local vulpea-cha--fermentation-types-parent
+              (vulpea-brain--as-entry vulpea-cha-fermentation-types-parent-id)))
 
 
 
@@ -234,6 +268,42 @@ top of the file:
 
 
 
+(defvar-local vulpea-cha-tea-groups-parent-id ""
+  "ID of Tea Groups parent entry.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+TEA_GROUPS_PARENT: ID")
+
+(defvar-local vulpea-cha-fermentation-types-parent-id ""
+  "ID of Fermentation types parent entry.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+FERMENTATION_TYPES_PARENT: ID")
+
+(defvar-local vulpea-cha--fermentation-types-parent nil)
+(defvar-local vulpea-cha--tea-groups-parent nil)
+
+(defun vulpea-cha/new-tea-group ()
+  "Create a new tea group."
+  (interactive)
+  (let* ((name (read-string "Tea group name: "))
+         (id (vulpea-brain--new-child vulpea-cha--tea-groups-parent name)))
+    (org-with-point-at (org-id-find id t)
+      (vulpea--set-property-string "NAME_ORIGINAL")
+      (vulpea--set-property-string "NAME_TRANSCRIPTION")
+      (vulpea--set-property-string "NAME_MEANING")
+      (vulpea--set-property-link "FERMENTATION"
+                                 vulpea-cha--fermentation-types-parent)
+      (save-buffer)
+      (vulpea/pretty-entry-properties)
+      (save-buffer))))
+
+
+
 (defun vulpea--get-buffer-setting (name)
   "Get a setting called NAME from buffer as a string."
   (save-excursion
@@ -263,6 +333,15 @@ SEPARATORS."
              (buffer-substring (car val) (cdr val)))))
     (string-match regexp s)
     (match-string 1 s)))
+
+(defun vulpea--set-property-string (name)
+  (org-set-property name (read-string (concat name ": "))))
+
+(defun vulpea--set-property-link (name parent)
+  (org-set-property
+   name
+   (vulpea-brain--make-link
+    (vulpea-brain--choose-entry-by-parent parent))))
 
 (provide 'vulpea)
 
