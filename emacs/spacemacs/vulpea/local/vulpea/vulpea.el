@@ -154,17 +154,11 @@ top of the file:
 
 (defun vulpea--get-buffer-places-config ()
   "Get the `vulpea-places-config' from current buffer."
-  (save-excursion
-    (widen)
-    (goto-char (point-min))
-    (when (re-search-forward "^#\\+PLACES_CONFIG: \\(.*\\)" (point-max) t)
-      (seq-map
-       (lambda (x)
-         (let ((pairs (split-string x ":")))
-           (cons (car pairs) (cdr pairs))))
-       (split-string (buffer-substring-no-properties
-                      (match-beginning 1)
-                      (match-end 1)))))))
+  (seq-map
+   (lambda (x)
+     (let ((pairs (split-string x ":")))
+       (cons (car pairs) (cdr pairs))))
+   (vulpea--get-buffer-settings "PLACES_CONFIG")))
 
 
 
@@ -204,13 +198,7 @@ top of the file:
 
 (defun vulpea--get-buffer-properties-order ()
   "Get the `vulpea-properties-order' from current buffer."
-  (save-excursion
-    (widen)
-    (goto-char (point-min))
-    (when (re-search-forward "^#\\+PROPERTIES_ORDER: \\(.*\\)" (point-max) t)
-      (split-string (buffer-substring-no-properties
-                     (match-beginning 1)
-                     (match-end 1))))))
+  (vulpea--get-buffer-settings "PROPERTIES_ORDER"))
 
 (defun vulpea/format-entry-properties ()
   "Format properties in entry at point."
@@ -245,6 +233,21 @@ top of the file:
      (vulpea/sort-entry-properties))))
 
 
+
+(defun vulpea--get-buffer-setting (name)
+  "Get a setting called NAME from buffer as a string."
+  (save-excursion
+    (widen)
+    (goto-char (point-min))
+    (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)") (point-max) t)
+      (buffer-substring-no-properties
+       (match-beginning 1)
+       (match-end 1)))))
+
+(defun vulpea--get-buffer-settings (name &optional separators)
+  "Get a setting called NAME from buffer as a list using
+SEPARATORS."
+  (split-string (vulpea--get-buffer-setting name)))
 
 (defun vulpea--map-outline (f)
   "Call function F on every outline in buffer."
