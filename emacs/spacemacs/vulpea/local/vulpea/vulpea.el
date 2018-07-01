@@ -99,19 +99,13 @@
 (define-minor-mode vulpea-mode
   "Note taking utilities."
   :lighter " vulpea"
-  (setq-local vulpea-properties-order (vulpea--get-buffer-properties-order)))
+  (setq-local vulpea-properties-order (vulpea--get-buffer-properties-order))
+  (setq-local vulpea-properties-order (vulpea--get-buffer-places-config)))
 
 
 
-(defvar vulpea-places-config
-  '(("country" . "EC4A5BD7-71C4-479A-8BBB-8F022E78F52D")
-    ("province" . "5C3F532B-4BB6-46F5-8A0C-741501299EC2")
-    ("prefecture" . "9BF13CFD-A3FB-4103-8C8D-4B4ABCA2566C")
-    ("county" . "F758B504-77A7-4919-9D98-BF555BC61E3F")
-    ("township" . "915880E1-B7AE-4013-A11A-BA99D8DB929F")
-    ("village" . "342CB150-A231-41D9-B275-334F0EC057FE")
-    ("mountain" . "D8D1A193-81A3-47AE-9E14-892948FA4A1F")
-    ("lake" . "D190F748-9223-4AAC-844F-0F3AEECBBF14")))
+(defvar-local vulpea-places-config '()
+  "Association list of place level and it's entry ID.")
 
 (defun vulpea/set-place-dwim ()
   (interactive)
@@ -151,6 +145,20 @@
     ;; set the level value
     (org-set-property (upcase level)
                       (vulpea-brain--make-link entry))))
+
+(defun vulpea--get-buffer-places-config ()
+  "Get the `vulpea-places-config' from current buffer."
+  (save-excursion
+    (widen)
+    (goto-char (point-min))
+    (when (re-search-forward "^#\\+PLACES_CONFIG: \\(.*\\)" (point-max) t)
+      (seq-map
+       (lambda (x)
+         (let ((pairs (split-string x ":")))
+           (cons (car pairs) (cdr pairs))))
+       (split-string (buffer-substring-no-properties
+                      (match-beginning 1)
+                      (match-end 1)))))))
 
 
 
