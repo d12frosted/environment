@@ -58,6 +58,11 @@
    nil
    t))
 
+(defun vulpea-brain--is-child-of (child parent)
+  "Returns non-nil, when CHILD is a child of PARENT."
+  (let ((children (org-brain-children (vulpea-brain--as-entry parent))))
+    (seq-contains children child #'vulpea-brain--entry-id-equal)))
+
 (defun vulpea-brain--is-transitive-child-of (child parent)
   "Returns non-nil, when CHILD is a transitive child of PARENT."
   (let ((children (org-brain-children (vulpea-brain--as-entry parent))))
@@ -135,7 +140,18 @@
   (setq-local vulpea-cha-fermentation-types-parent-id
               (vulpea--get-buffer-setting "FERMENTATION_TYPES_PARENT"))
   (setq-local vulpea-cha--fermentation-types-parent
-              (vulpea-brain--as-entry vulpea-cha-fermentation-types-parent-id)))
+              (vulpea-brain--as-entry vulpea-cha-fermentation-types-parent-id))
+
+  (setq-local vulpea-cha-tea-parent-id
+              (vulpea--get-buffer-setting "TEA_PARENT"))
+  (setq-local vulpea-cha--tea-parent
+              (vulpea-brain--as-entry vulpea-cha-tea-parent-id))
+
+  (setq-local vulpea-cha-tea-title-format
+              (vulpea--get-buffer-setting "TEA_TITLE_FORMAT"))
+
+  (setq-local vulpea-default-currency
+              (vulpea--get-buffer-setting "DEFAULT_CURRENCY")))
 
 
 
@@ -191,8 +207,35 @@ top of the file:
   (seq-map
    (lambda (x)
      (let ((pairs (split-string x ":")))
-       (cons (car pairs) (cdr pairs))))
+       (cons (car pairs) (cadr pairs))))
    (vulpea--get-buffer-settings "PLACES_CONFIG")))
+
+(defun vulpea--get-location-id ()
+  "Get LOCATION id of entry at point."
+  (seq-reduce
+   (lambda (res level-cfg)
+     (let ((val (org-entry-get nil (car level-cfg))))
+       (if (or (null val) (string-empty-p val))
+           res
+         (vulpea--extract-id-from-link val))))
+   vulpea-places-config
+   nil))
+
+(defun vulpea--get-location ()
+  "Get LOCATION name of entry at point."
+  (org-brain-title (vulpea-brain--as-entry (vulpea--get-location-id))))
+
+
+
+(defun vulpea--get-year ()
+  "Get YEAR of entry at point."
+  (let ((year-gathered (org-entry-get nil "YEAR_GATHERED"))
+        (year-manufactured (org-entry-get nil "YEAR_MANUFACTURED")))
+    (cond
+     ((string-equal year-gathered year-manufactured) year-gathered)
+     ((null year-gathered) year-manufactured)
+     ((null year-manufactured) year-gathered)
+     (t (concat year-gathered " - " year-manufactured)))))
 
 
 
@@ -255,16 +298,28 @@ top of the file:
   (vulpea/format-entry-properties)
   (vulpea/sort-entry-properties))
 
-(defun vulpea/pretty-buffer-properties ()
-  "Prettify properties of all entries in buffer.
+
 
-- `vulpea/format-entry-properties'
-- `vulpea/sort-entry-properties'"
+(defun vulpea/pretty-buffer ()
+  "Prettify all entries in the buffer."
   (interactive)
   (vulpea--map-outline
    (lambda ()
      (vulpea/format-entry-properties)
-     (vulpea/sort-entry-properties))))
+     (vulpea/sort-entry-properties)
+     (when (vulpea-brain--is-child-of (org-id-get)
+                                      vulpea-cha-tea-parent-id)
+       (vulpea-cha/pretty-tea)))))
+
+
+
+(defvar-local vulpea-default-currency ""
+  "Default currency.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+DEFAULT_CURRENCY: currency")
 
 
 
@@ -284,11 +339,28 @@ top of the file:
 
   #+FERMENTATION_TYPES_PARENT: ID")
 
+(defvar-local vulpea-cha-tea-parent-id ""
+  "ID of Tea parent entry.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+TEA_PARENT: ID")
+
 (defvar-local vulpea-cha--fermentation-types-parent nil)
 (defvar-local vulpea-cha--tea-groups-parent nil)
+(defvar-local vulpea-cha--tea-parent nil)
+
+(defvar-local vulpea-cha-tea-title-format nil
+  "
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+TEA_TITLE_FORMAT: {LOCATION} {NAME} | {YEAR} | {TAG}")
 
 (defun vulpea-cha/new-tea-group ()
-  "Create a new tea group."
+  "Create a new tea group entry."
   (interactive)
   (let* ((name (read-string "Tea group name: "))
          (id (vulpea-brain--new-child vulpea-cha--tea-groups-parent name)))
@@ -301,6 +373,60 @@ top of the file:
       (save-buffer)
       (vulpea/pretty-entry-properties)
       (save-buffer))))
+
+(defun vulpea-cha/new-tea ()
+  "Create a new tea entry."
+  (interactive)
+  (let* ((name (read-string "Tea name: "))
+         (id (vulpea-brain--new-child vulpea-cha--tea-parent name)))
+    (org-with-point-at (org-id-find id t)
+      (vulpea--set-property-link "TEA_GROUP"
+                                 vulpea-cha--tea-groups-parent)
+      (vulpea--set-property-string "TAG")
+      (org-set-property "NAME" name)
+      (vulpea--set-property-string "NAME_ORIGINAL")
+      (vulpea--set-property-string "NAME_TRANSCRIPTION")
+      (vulpea--set-property-string "NAME_MEANING")
+      (vulpea--set-property-string "YEAR_GATHERED")
+      (vulpea--set-property-string "YEAR_MANUFACTURED")
+      (vulpea/set-place-dwim)
+      (org-set-property "RATE" "n/a")
+      (org-set-property "PRICE"
+                        (concat vulpea-default-currency
+                                (read-string "Price: ")))
+      (vulpea--set-property-string "AVAILABLE")
+      (org-set-property "TOTAL_IN" (org-entry-get nil "AVAILABLE"))
+      (org-set-property "TOTAL_OUT" "0")
+      (save-buffer)
+      (vulpea-cha/pretty-tea)
+      (save-buffer))))
+
+(defun vulpea-cha/pretty-tea ()
+  "Prettify tea entry at point."
+  (interactive)
+  (vulpea/pretty-entry-properties)
+  (org-edit-headline
+   (vulpea--format-title vulpea-cha-tea-title-format)))
+
+
+
+(defun vulpea--format-title (format)
+  (let ((properties (org-entry-properties))
+        (val-regexp "{\\([a-zA-Z0-9\\-_]+\\)")
+        (prop "")
+        (val "")
+        (result format))
+    (map-put properties "LOCATION" (vulpea--get-location))
+    (map-put properties "YEAR" (vulpea--get-year))
+    (while (string-match val-regexp result)
+      (setq prop (match-string 1 result))
+      (setq val (cdr (assoc-string prop properties)))
+      (setq result (replace-regexp-in-string
+                    (concat "{" prop "}")
+                    val
+                    result
+                    t)))
+    result))
 
 
 
@@ -335,13 +461,18 @@ SEPARATORS."
     (match-string 1 s)))
 
 (defun vulpea--set-property-string (name)
-  (org-set-property name (read-string (concat name ": "))))
+  (org-set-property
+   name
+   (read-string (concat (capitalize name) ": "))))
 
 (defun vulpea--set-property-link (name parent)
   (org-set-property
    name
    (vulpea-brain--make-link
     (vulpea-brain--choose-entry-by-parent parent))))
+
+(defun vulpea--extract-id-from-link (link)
+  (vulpea--match-regexp "\\[\\[.+:\\(.+\\)\\]\\[.*\\]\\]" link))
 
 (provide 'vulpea)
 
