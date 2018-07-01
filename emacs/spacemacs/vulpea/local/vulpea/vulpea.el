@@ -105,7 +105,12 @@
 
 
 (defvar-local vulpea-places-config '()
-  "Association list of place level and it's entry ID.")
+  "Association list of place level and it's entry ID.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+PROPERTIES_ORDER: LEVEL1:ID1 LEVEL2:ID2 LEVEL3:ID3 ...")
 
 (defun vulpea/set-place-dwim ()
   (interactive)
