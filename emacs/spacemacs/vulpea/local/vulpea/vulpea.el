@@ -96,6 +96,13 @@
 
 
 
+(define-minor-mode vulpea-mode
+  "Note taking utilities."
+  :lighter " vulpea"
+  (setq-local vulpea-properties-order (vulpea--get-buffer-properties-order)))
+
+
+
 (defvar vulpea-places-config
   '(("country" . "EC4A5BD7-71C4-479A-8BBB-8F022E78F52D")
     ("province" . "5C3F532B-4BB6-46F5-8A0C-741501299EC2")
@@ -147,26 +154,22 @@
 
 
 
-(defvar vulpea-properties-order
-  '("ID" "CUSTOM_ID"
-    "TEA_GROUP"
-    "TAG"
-    "NAME" "NAME_ORIGINAL" "NAME_TRANSCRIPTION" "NAME_MEANING"
-    "YEAR_GATHERED" "YEAR_MANUFACTURED"
-    "PRESSING"
-    "COUNTRY" "PROVINCE" "PREFECTURE" "COUNTY" "TOWNSHIP" "VILLAGE" "MOUNTAIN" "LAKE" "PLACE"
-    "RATE"
-    "PRICE"
-    "AVAILABLE" "TOTAL_IN" "TOTAL_OUT"))
+(defvar-local vulpea-properties-order '()
+  "List of properties used for ordering.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+PROPERTIES_ORDER: PROP1 PROP2 PROP3 ...")
 
 (defun vulpea/sort-entry-properties ()
   "Sort properties in entry at point."
   (interactive)
   (let ((p0 (car (org-get-property-block)))
-        (p1 (- (cdr (org-get-property-block)) 1))
-        (props (org-entry-properties))
-        (maxv (seq-length vulpea-properties-order))
-        (pregx "^:\\([a-zA-Z_\\-]+\\):.*$"))
+         (p1 (- (cdr (org-get-property-block)) 1))
+         (props (org-entry-properties))
+         (maxv (seq-length vulpea-properties-order))
+         (pregx "^:\\([a-zA-Z_\\-]+\\):.*$"))
     (save-excursion
       (save-restriction
         (narrow-to-region p0 p1)
@@ -184,6 +187,16 @@
                  (seq-position vulpea-properties-order
                                (vulpea--match-regexp pregx l2))
                  maxv)))))))))
+
+(defun vulpea--get-buffer-properties-order ()
+  "Get the `vulpea-properties-order' from current buffer."
+  (save-excursion
+    (widen)
+    (goto-char (point-min))
+    (when (re-search-forward "^#\\+PROPERTIES_ORDER: \\(.*\\)" (point-max) t)
+      (split-string (buffer-substring-no-properties
+                     (match-beginning 1)
+                     (match-end 1))))))
 
 (defun vulpea/format-entry-properties ()
   "Format properties in entry at point."
