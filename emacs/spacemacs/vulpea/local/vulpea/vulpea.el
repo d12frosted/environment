@@ -96,11 +96,12 @@
 
 
 
+;;;###autoload
 (define-minor-mode vulpea-mode
   "Note taking utilities."
   :lighter " vulpea"
   (setq-local vulpea-properties-order (vulpea--get-buffer-properties-order))
-  (setq-local vulpea-properties-order (vulpea--get-buffer-places-config)))
+  (setq-local vulpea-places-config (vulpea--get-buffer-places-config)))
 
 
 
