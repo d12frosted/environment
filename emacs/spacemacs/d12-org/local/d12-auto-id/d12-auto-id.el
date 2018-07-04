@@ -59,7 +59,10 @@
       (widen)
       (goto-char (point-min))
       (when (re-search-forward "^#\\+OPTIONS:.*auto-id:t" (point-max) t)
-        (org-map-entries (lambda () (d12-auto-id-get (point) 'create)))))))
+        (org-map-entries (lambda ()
+                           (d12-auto-id-get (point) 'create)
+                           (org-id-get-create)
+                           ))))))
 
 (provide 'd12-auto-id)
 
