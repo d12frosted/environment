@@ -21,8 +21,8 @@
 (defun vulpea/init-vulpea ()
   (add-to-load-path-if-exists (concat d12-path-spacemacs-config-home "vulpea/local/vulpea/"))
   (use-package vulpea
-    :commands (vulpea-mode)
+    :commands (vulpea-mode-enable)
     :init
-    (add-hook 'org-mode-hook #'vulpea-mode)))
+    (add-hook 'org-mode-hook #'vulpea-mode-enable)))
 
 ;;; packages.el ends here

@@ -153,6 +153,22 @@
   (setq-local vulpea-default-currency
               (vulpea--get-buffer-setting "DEFAULT_CURRENCY")))
 
+;;;###autoload
+(defun vulpea-mode-enable ()
+  "Conditionally enable `vulpea-mode' in `org-mode' buffer.
+
+Enables the `vulpea-mode' iff the buffer has 'vulpea-mode:t'
+option set in the options section.
+
+#+OPTIONS: vulpea-mode:t"
+  (when (and (eq major-mode 'org-mode)
+             (eq buffer-read-only nil))
+    (save-excursion
+      (widen)
+      (goto-char (point-min))
+      (when (re-search-forward "^#\\+OPTIONS:.*vulpea-mode:t" (point-max) t)
+        (vulpea-mode)))))
+
 
 
 (defvar-local vulpea-places-config '()
