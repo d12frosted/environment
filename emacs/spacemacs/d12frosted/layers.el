@@ -47,7 +47,8 @@
 
    ;; languages
    scala
-   shell-scripts
+   (shell-scripts :variables
+                  sh-basic-offset 2)
    yaml
    latex))
 
