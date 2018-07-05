@@ -50,6 +50,7 @@
    (shell-scripts :variables
                   sh-basic-offset 2)
    yaml
+   json
    latex))
 
 ;;; layers.el ends here
