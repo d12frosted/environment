@@ -479,13 +479,16 @@ SEPARATORS."
 (defun vulpea--set-property-string (name)
   (org-set-property
    name
-   (read-string (concat (capitalize name) ": "))))
+   (read-string (concat (vulpea--prettify-prompt-string name) ": "))))
 
 (defun vulpea--set-property-link (name parent)
   (org-set-property
    name
    (vulpea-brain--make-link
     (vulpea-brain--choose-entry-by-parent parent))))
+
+(defun vulpea--prettify-prompt-string (prompt)
+  (capitalize (replace-regexp-in-string "_" " " prompt)))
 
 (defun vulpea--extract-id-from-link (link)
   (vulpea--match-regexp "\\[\\[.+:\\(.+\\)\\]\\[.*\\]\\]" link))
