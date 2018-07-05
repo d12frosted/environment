@@ -60,6 +60,7 @@ values."
    spacemacs-auto-save-directory (concat d12-path-emacs-private "auto-save/")
 
    ;; dotspacemacs configuration
+   dotspacemacs-frame-title-format ""
    dotspacemacs-elpa-https nil
    dotspacemacs-elpa-timeout 5
    dotspacemacs-check-for-update nil
