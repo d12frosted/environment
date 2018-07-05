@@ -168,6 +168,10 @@
     (setq org-attach-directory ".data")
     (setq org-latex-preview-ltxpng-directory ".ltximg")
 
+    ;; setup archive
+    (setq org-archive-location (concat (d12-path/get-org-file "archive") "::"))
+    (setq org-archive-save-context-info '(time file ltags itags todo category olpath))
+
     ;; Custom agenda command definitions
     (setq org-agenda-custom-commands
           `((" " "Agenda"
