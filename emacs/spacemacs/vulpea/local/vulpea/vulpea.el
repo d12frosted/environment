@@ -319,13 +319,14 @@ top of the file:
 (defun vulpea/pretty-buffer ()
   "Prettify all entries in the buffer."
   (interactive)
-  (vulpea--map-outline
+  (org-map-entries
    (lambda ()
      (vulpea/format-entry-properties)
      (vulpea/sort-entry-properties)
      (when (vulpea-brain--is-child-of (org-id-get)
                                       vulpea-cha-tea-parent-id)
-       (vulpea-cha/pretty-tea)))))
+       (vulpea-cha/pretty-tea)))
+   t 'file))
 
 
 
@@ -460,13 +461,6 @@ top of the file:
   "Get a setting called NAME from buffer as a list using
 SEPARATORS."
   (split-string (vulpea--get-buffer-setting name)))
-
-(defun vulpea--map-outline (f)
-  "Call function F on every outline in buffer."
-  (save-excursion
-    (beginning-of-buffer)
-    (while (search-forward-regexp outline-regexp)
-      (funcall f))))
 
 (defun vulpea--match-regexp (regexp val)
   "Get the 1 match from the VAL."
