@@ -263,7 +263,7 @@
     (setq org-habit-graph-column 60)
     (setq org-property-format "%-24s %s")
     (setq org-agenda-prefix-format
-          '((agenda . " %i %-24:c%?-12t")
+          '((agenda . " %i %-24:c%?-12t% s")
             (todo . " %i %-24:c")
             (tags . " %i %-24:c")
             (search . " %i %-24:c")))
