@@ -169,7 +169,7 @@
     (setq org-latex-preview-ltxpng-directory ".ltximg")
 
     ;; setup archive
-    (setq org-archive-location (concat (d12-path/get-org-file "archive") "::"))
+    (setq org-archive-location (concat (d12-path/get-org-file ".archive/archive") "::"))
     (setq org-archive-save-context-info '(time file ltags itags todo category olpath))
 
     ;; Custom agenda command definitions
@@ -384,7 +384,7 @@
   (use-package org-download
     :defer t
     :init
-    (setq-default org-download-image-dir (d12-path/get-org-dir "images/"))
+    (setq-default org-download-image-dir (d12-path/get-org-dir ".images/"))
     (spacemacs|use-package-add-hook org
       :post-config
       (require 'org-download))))
