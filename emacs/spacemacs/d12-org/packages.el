@@ -246,8 +246,12 @@
                      (org-tags-match-list-sublevels nil)))
               )
              nil)
-            ("r" "Reading List" tags "READING"
+            ("r" "Reading List" tags-todo "READING"
              ((org-agenda-overriding-header "Reading List")
+              (org-agenda-remove-tags t)
+              (org-agenda-prefix-format
+               '((tags . "%(orgability-agenda-list-relations)")
+                 ))
               (org-agenda-sorting-strategy
                '(todo-state-down effort-up category-keep))))
             ("h" "Habits" tags-todo "STYLE=\"habit\""
@@ -259,7 +263,7 @@
     (setq org-habit-graph-column 60)
     (setq org-property-format "%-24s %s")
     (setq org-agenda-prefix-format
-          '((agenda . " %i %-24:c%?-12t% s")
+          '((agenda . " %i %-24:c%?-12t")
             (todo . " %i %-24:c")
             (tags . " %i %-24:c")
             (search . " %i %-24:c")))
