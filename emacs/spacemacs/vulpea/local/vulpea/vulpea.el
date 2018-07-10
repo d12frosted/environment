@@ -323,10 +323,9 @@ top of the file:
    (lambda ()
      (vulpea/format-entry-properties)
      (vulpea/sort-entry-properties)
-     (when (vulpea-brain--is-child-of (org-id-get)
-                                      vulpea-cha-tea-parent-id)
+     (when (vulpea-cha--tea-entry-p)
        (vulpea-cha/pretty-tea)))
-   t 'file))
+   "prettify" 'file))
 
 
 
@@ -340,7 +339,7 @@ top of the file:
 
 
 
-(defvar-local vulpea-cha-tea-groups-parent-id ""
+(defvar vulpea-cha-tea-groups-parent-id ""
   "ID of Tea Groups parent entry.
 
 Can be set in the org-mode buffer by adding following line in the
@@ -348,7 +347,7 @@ top of the file:
 
   #+TEA_GROUPS_PARENT: ID")
 
-(defvar-local vulpea-cha-fermentation-types-parent-id ""
+(defvar vulpea-cha-fermentation-types-parent-id ""
   "ID of Fermentation types parent entry.
 
 Can be set in the org-mode buffer by adding following line in the
@@ -356,7 +355,7 @@ top of the file:
 
   #+FERMENTATION_TYPES_PARENT: ID")
 
-(defvar-local vulpea-cha-tea-parent-id ""
+(defvar vulpea-cha-tea-parent-id ""
   "ID of Tea parent entry.
 
 Can be set in the org-mode buffer by adding following line in the
@@ -417,6 +416,32 @@ top of the file:
       (save-buffer)
       (vulpea-cha/pretty-tea)
       (save-buffer))))
+
+(defun vulpea-cha/pretty ()
+  "Prettify tea entries."
+  (interactive)
+  (let ((loc-groups (org-id-find vulpea-cha-tea-groups-parent-id))
+        (loc-tea (org-id-find vulpea-cha-tea-parent-id)))
+
+    (vulpea-with-file
+     (car loc-groups)
+     (org-with-point-at (cdr loc-groups)
+       (org-map-entries
+        (lambda ()
+          (vulpea/format-entry-properties)
+          (vulpea/sort-entry-properties))
+        nil 'tree)))
+
+    (vulpea-with-file
+     (car loc-tea)
+     (org-with-point-at (cdr loc-tea)
+       (org-map-entries (lambda ()
+                          (if (string-equal (org-id-get)
+                                            vulpea-cha-tea-parent-id)
+                              (progn (vulpea/format-entry-properties)
+                                     (vulpea/sort-entry-properties))
+                            (vulpea-cha/pretty-tea)))
+                        nil 'tree)))))
 
 (defun vulpea-cha/pretty-tea ()
   "Prettify tea entry at point."
@@ -486,6 +511,10 @@ SEPARATORS."
 
 (defun vulpea--extract-id-from-link (link)
   (vulpea--match-regexp "\\[\\[.+:\\(.+\\)\\]\\[.*\\]\\]" link))
+
+(defmacro vulpea-with-file (file &rest body)
+  `(with-current-buffer (find-file-noselect ,file)
+     ,@body))
 
 (provide 'vulpea)
 

@@ -23,6 +23,8 @@
   (use-package vulpea
     :commands (vulpea-mode-enable)
     :init
-    (add-hook 'org-mode-hook #'vulpea-mode-enable)))
+    (add-hook 'org-mode-hook #'vulpea-mode-enable)
+    (setq vulpea-cha-tea-groups-parent-id "A023CFA4-E68B-48E5-BF97-AFA34936F57A")
+    (setq vulpea-cha-tea-parent-id "F01A4D43-F79E-4640-B98A-9A7E07B86773")))
 
 ;;; packages.el ends here
