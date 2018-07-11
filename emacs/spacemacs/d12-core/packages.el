@@ -24,6 +24,7 @@
     evil-nerd-commenter
     ediff
     yasnippet
+    ghub
     exec-path-from-shell
     )
   "The list of Lisp packages required by the d12-core layer.")
@@ -92,6 +93,21 @@
     :config
     (mapc #'d12-path/make-directory-safe (yas-snippet-dirs))
     ))
+
+(defun d12-core/init-ghub ()
+  (use-package ghub
+    :defer t
+    :init
+    (defun d12-ghub/get-issue-title (owner repo type number)
+      "Get the title of the issue/pr."
+      (let ((ptype (cond
+                    ((string-prefix-p "issue" type) "issues")
+                    ((string-prefix-p "pull" type) "pulls")
+                    ((string-prefix-p "pr" type) "pulls")
+                    (t (user-error "unsupported issue type: %s" type)))))
+        (alist-get 'title
+                   (ghub-get (format "/repos/%s/%s/%s/%s"
+                                     owner repo ptype number)))))))
 
 (defun d12-core/init-exec-path-from-shell ()
   (use-package exec-path-from-shell
