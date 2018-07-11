@@ -24,7 +24,6 @@
     evil-nerd-commenter
     ediff
     yasnippet
-    exec-path-from-shell
     )
   "The list of Lisp packages required by the d12-core layer.")
 
@@ -92,8 +91,5 @@
     :config
     (mapc #'d12-path/make-directory-safe (yas-snippet-dirs))
     ))
-
-(defun d12-core/init-exec-path-from-shell ()
-  (use-package exec-path-from-shell))
 
 ;;; packages.el ends here
