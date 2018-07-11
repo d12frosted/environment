@@ -143,4 +143,6 @@ layers configuration."
   ;; (d12/setup-M-h)
   (spacemacs/toggle-camel-case-motion-globally-on))
 
+(defun dotspacemacs/user-env ())
+
 ;; spacemacs.el ends here
