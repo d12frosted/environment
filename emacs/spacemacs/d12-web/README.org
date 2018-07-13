@@ -1,0 +1,18 @@
+#+TITLE: d12-web layer
+
+# The maximum height of the logo should be 200 pixels.
+[[img/d12-web.png]]
+
+# TOC links should be GitHub style anchors.
+* Table of Contents                                        :TOC_4_gh:noexport:
+- [[#description][Description]]
+- [[#install][Install]]
+
+* Description
+This layer contains configurations for =eww= and some =web= helpers, like
+retrieving title of a Web page.
+
+* Install
+To use this configuration layer, add it to your =~/.spacemacs=. You will need to
+add =d12-web= to the existing =dotspacemacs-configuration-layers= list in this
+file.
