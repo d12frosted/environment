@@ -23,18 +23,43 @@
    dotspacemacs-enable-lazy-installation nil
    dotspacemacs-ask-for-lazy-installation t
    dotspacemacs-configuration-layer-path `(,d12-path-spacemacs-config-home)
-   dotspacemacs-configuration-layers '(d12frosted)
+
+   dotspacemacs-configuration-layers '(d12-core
+                                       d12-visual
+                                       d12-text
+                                       d12-org
+                                       d12-emacs-lisp
+                                       d12-haskell
+                                       d12-csharp
+                                       d12-applescript
+                                       d12-web
+                                       d12-git
+                                       vulpea
+
+                                       ;; languages
+                                       scala
+                                       (shell-scripts :variables
+                                                      sh-basic-offset 2)
+                                       yaml
+                                       json
+                                       latex
+
+                                       ;; other
+                                       dash)
+
    dotspacemacs-additional-packages '(color-theme-sanityinc-tomorrow
                                       doom-themes
                                       elscreen-fr
                                       org-cliplink
                                       el-mock)
+
    dotspacemacs-excluded-packages '(emmet-mode
                                     dumb-jump
                                     info+
                                     help-fns+
                                     centered-buffer-mode
                                     emoji-cheat-sheet-plus)
+
    dotspacemacs-install-packages 'used-but-keep-unused))
 
 (defun dotspacemacs/init ()
