@@ -14,6 +14,8 @@
 ;;
 ;;; Code:
 
+
+
 ;; https://emacs.stackexchange.com/a/566/5161
 (defun d12-web/toggle-image-display ()
   "Toggle images display on current buffer."
@@ -45,5 +47,17 @@ buffer."
                       (point-max)))
         (when (eq (car prop) 'image)
           (add-text-properties left pos (list from nil to prop) object))))))
+
+
+
+(defun d12-web/get-title (url)
+  "Get title of a Web page by URL."
+  (let ((raw-title (org-web-tools--html-title
+                    (org-web-tools--get-url url))))
+    (seq-reduce
+     (lambda (r x)
+       (replace-regexp-in-string x "" r))
+     d12-web-title-substring-blacklist
+     raw-title)))
 
 ;;; funcs.el ends here

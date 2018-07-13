@@ -27,6 +27,7 @@
     (orgability :location built-in)
     org-board
     org-download
+    org-web-tools
     )
   "The list of Lisp packages required by the d12-org layer.")
 
@@ -392,5 +393,9 @@
     (spacemacs|use-package-add-hook org
       :post-config
       (require 'org-download))))
+
+(defun d12-org/init-org-web-tools ()
+  (use-package org-web-tools
+    :commands (org-web-tools--html-title)))
 
 ;;; packages.el ends here

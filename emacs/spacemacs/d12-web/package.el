@@ -15,9 +15,13 @@
 ;;; Code:
 
 (defconst d12-web-packages
-  '((eww :location built-in))
+  '((eww :location built-in)
+    org-web-tools)
   "The list of Lisp packages required by the d12-web layer.")
 
 (defun d12-web/init-eww ())
+
+(defun d12-web/post-init-org-web-tools ()
+  (use-package org-web-tools))
 
 ;;; packages.el ends here
