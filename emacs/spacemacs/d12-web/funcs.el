@@ -1,4 +1,4 @@
-;;; funcs.el --- d12-core layer funcs file for Spacemacs. -*- lexical-binding: t; -*-
+;;; funcs.el --- d12-web layer funcs file for Spacemacs. -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2018 Boris Buliga
 ;;
@@ -14,14 +14,15 @@
 ;;
 ;;; Code:
 
-(defun d12-eww/toggle-image-display ()
+;; https://emacs.stackexchange.com/a/566/5161
+(defun d12-web/toggle-image-display ()
   "Toggle images display on current buffer."
   (interactive)
-  (setq d12-eww-display-images
-        (null d12-eww-display-images))
-  (d12-eww/backup-display-property d12-eww-display-images))
+  (setq d12-web-display-images
+        (null d12-web-display-images))
+  (d12-web/backup-display-property d12-web-display-images))
 
-(defun d12-eww/backup-display-property (invert &optional object)
+(defun d12-web/backup-display-property (invert &optional object)
   "Move the 'display property at POS to 'display-backup.
 Only applies if display property is an image.
 If INVERT is non-nil, move from 'display-backup to 'display

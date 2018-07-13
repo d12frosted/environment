@@ -18,8 +18,6 @@
   '((eww :location built-in))
   "The list of Lisp packages required by the d12-web layer.")
 
-(defun d12-eww/init-eww ()
-  ;; https://emacs.stackexchange.com/a/566/5161
-  (defvar-local d12-eww-display-images t))
+(defun d12-web/init-eww ())
 
 ;;; packages.el ends here
