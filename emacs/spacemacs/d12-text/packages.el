@@ -31,6 +31,7 @@
   (use-package fancy-yank
     :defer t
     :init
+    (setq fancy-yank-extract-http-title-f 'd12-web/get-title)
     (setq fancy-yank-rules
           `((,d12-text-github-regexp
              . (fancy-yank-extract-regex
