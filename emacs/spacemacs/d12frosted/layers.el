@@ -25,10 +25,6 @@
    spacemacs-project
    spacemacs-navigation
    spacemacs-visual
-   version-control
-   (git :variables
-        git-magit-status-fullscreen t)
-   github
    (auto-completion :disabled-for org spacemacs-org)
    spell-checking
    (syntax-checking :variables syntax-checking-enable-tooltips nil)
@@ -39,12 +35,13 @@
    d12-visual
    d12-text
    d12-org
-   vulpea
    d12-emacs-lisp
    d12-haskell
    d12-csharp
    d12-applescript
    d12-web
+   d12-git
+   vulpea
 
    ;; languages
    scala
