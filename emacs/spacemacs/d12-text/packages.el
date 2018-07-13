@@ -31,16 +31,6 @@
   (use-package fancy-yank
     :defer t
     :init
-    (defun fancy-yank-extract-github-link (url owner repo type number &rest args)
-      (list url
-            (concat
-             (if (string-equal owner d12-text-github-user)
-                 repo
-               (concat owner "/" repo))
-             (if (string-equal type "milestone")
-                 "m"
-               "#")
-             number)))
     (setq fancy-yank-rules
           `((,d12-text-github-regexp
              . (fancy-yank-extract-regex
