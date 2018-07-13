@@ -44,6 +44,7 @@
    d12-haskell
    d12-csharp
    d12-applescript
+   d12-web
 
    ;; languages
    scala
