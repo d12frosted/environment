@@ -357,7 +357,11 @@
   (add-to-load-path-if-exists (concat d12-path-projects-home "personal/orgability"))
   (add-to-load-path-if-exists (concat d12-path-projects-home "orgability"))
   (use-package orgability
-    :commands (orgability-clip orgability-open orgability-add-relation orgability-delete-relation)
+    :commands (orgability-clip
+               orgability-open
+               orgability-add-relation
+               orgability-delete-relation
+               orgability-agenda-list-relations)
     :init
     (d12-key-bind-personal "C" 'orgability-clip)
 
