@@ -17,7 +17,8 @@
 (defun fancy-yank-extract-github-link (url owner repo type number &rest args)
   (list url
         (concat
-         (if (string-equal d12-text-github-user owner)
+         (if (or (string-equal d12-text-github-user owner)
+                 (seq-contains d12-text-known-github-owners owner))
              repo
            (concat owner "/" repo))
          (if (string-equal type "milestone")

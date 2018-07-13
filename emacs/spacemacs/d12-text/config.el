@@ -23,5 +23,7 @@
     "\\(https?://jira.[-[:alnum:]]+\\.[[:alpha:]]+/.*selectedIssue=\\([-[:alnum:]]+\\).*\\)"
     "\\(https?://jira.[-[:alnum:]]+\\.[[:alpha:]]+/projects/[[:alpha:]]+/issues/\\([-[:alnum:]]+\\).*\\)"))
 (defvar d12-text-github-user "d12frosted")
+;; for private.el usage
+(defvar d12-text-known-github-owners '())
 
 ;;; config.el ends here
