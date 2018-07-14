@@ -47,9 +47,7 @@
                                        ;; other
                                        dash)
 
-   dotspacemacs-additional-packages '(color-theme-sanityinc-tomorrow
-                                      doom-themes
-                                      elscreen-fr
+   dotspacemacs-additional-packages '(elscreen-fr
                                       org-cliplink
                                       el-mock)
 
@@ -97,8 +95,8 @@ values."
    dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'emacs-lisp-mode
    dotspacemacs-themes (if (display-graphic-p)
-                           '(leuven doom-one-light)
-                         '(sanityinc-tomorrow-eighties))
+                           '(leuven)
+                         '(spacemacs-dark))
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Source Code Pro"
                                ;; "M+ 1m" ; http://mplus-fonts.osdn.jp/mplus-outline-fonts/index-en.html
