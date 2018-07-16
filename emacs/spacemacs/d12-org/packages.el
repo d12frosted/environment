@@ -251,7 +251,7 @@
              ((org-agenda-overriding-header "Reading List")
               (org-agenda-remove-tags t)
               (org-agenda-prefix-format
-               '((tags . "%(orgability-agenda-list-relations)")
+               '((tags . "%(orgability-agenda-list-topics)")
                  ))
               (org-agenda-sorting-strategy
                '(todo-state-down effort-up category-keep))))
@@ -360,9 +360,9 @@
   (use-package orgability
     :commands (orgability-clip
                orgability-open
-               orgability-add-relation
-               orgability-delete-relation
-               orgability-agenda-list-relations)
+               orgability-add-topic
+               orgability-delete-topic
+               orgability-agenda-list-topics)
     :init
     (d12-key-bind-personal "C" 'orgability-clip)
 
@@ -371,9 +371,8 @@
       (d12-key-unbind "o" org-agenda-mode-map)
       (d12-key-bind "oo" #'orgability-open org-agenda-mode-map)
       (d12-key-bind "ol" #'orgability-clip org-agenda-mode-map)
-      (d12-key-bind "oa" #'orgability-add-relation org-agenda-mode-map)
-      (d12-key-bind "od" #'orgability-delete-relation org-agenda-mode-map)
-      (d12-key-bind "or" #'orgability-list-relations org-agenda-mode-map))
+      (d12-key-bind "oa" #'orgability-add-topic org-agenda-mode-map)
+      (d12-key-bind "od" #'orgability-delete-topic org-agenda-mode-map))
     (add-hook 'org-agenda-mode-hook #'d12-org/setup-agenda-orgability)
 
     (setq orgability-file (d12-path/get-org-file "orgability"))))
