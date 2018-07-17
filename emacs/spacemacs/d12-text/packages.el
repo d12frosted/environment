@@ -29,7 +29,7 @@
   (add-to-load-path-if-exists (concat d12-path-projects-home "personal/fancy-yank"))
   (add-to-load-path-if-exists (concat d12-path-projects-home "fancy-yank"))
   (use-package fancy-yank
-    :defer t
+    :commands (fancy-yank)
     :init
     (setq fancy-yank-extract-http-title-f 'd12-web/get-title)
     (setq fancy-yank-rules
