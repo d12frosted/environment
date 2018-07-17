@@ -16,8 +16,9 @@
 
 (defvar-local d12-web-display-images t)
 
-(defvar d12-web-title-substring-blacklist
-  '("  ")
-  "List of string to remove from the web page title.")
+(defvar d12-web-title-replace-rules
+  '((" "  . " ")
+    ("  " . ""))
+  "List of cons for replacement in web page title.")
 
 ;;; config.el ends here

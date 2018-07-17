@@ -56,8 +56,8 @@ buffer."
                     (org-web-tools--get-url url))))
     (seq-reduce
      (lambda (r x)
-       (replace-regexp-in-string x "" r))
-     d12-web-title-substring-blacklist
+       (replace-regexp-in-string (car x) (cdr x) r))
+     d12-web-title-replace-rules
      raw-title)))
 
 ;;; funcs.el ends here
