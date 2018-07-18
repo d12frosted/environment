@@ -16,6 +16,7 @@
 
 (defconst d12-web-packages
   '((eww :location built-in)
+    restclient
     org-web-tools)
   "The list of Lisp packages required by the d12-web layer.")
 
