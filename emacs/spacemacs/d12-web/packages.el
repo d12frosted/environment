@@ -16,13 +16,28 @@
 
 (defconst d12-web-packages
   '((eww :location built-in)
+    (company-restclient :requires company)
     restclient
     org-web-tools)
   "The list of Lisp packages required by the d12-web layer.")
 
+(defun d12-web/init-restclient ()
+  (use-package restclient
+    :defer t
+    :init
+    (add-to-list 'auto-mode-alist '("\\.http\\'" . restclient-mode))))
+
+(defun d12-web/init-company-restclient ()
+  (use-package company-restclient
+    :defer t
+    :init (spacemacs|add-company-backends
+            :backends company-restclient
+            :modes restclient-mode)))
+
 (defun d12-web/init-eww ())
 
 (defun d12-web/post-init-org-web-tools ()
-  (use-package org-web-tools))
+  (use-package org-web-tools
+    :defer t))
 
 ;;; packages.el ends here
