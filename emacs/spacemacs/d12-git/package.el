@@ -19,7 +19,7 @@
     )
   "The list of Lisp packages required by the d12-git layer.")
 
-(defun d12-core/init-ghub ()
+(defun d12-git/init-ghub ()
   (use-package ghub
     :defer t))
 
