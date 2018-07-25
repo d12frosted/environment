@@ -22,6 +22,7 @@
       :fetcher github
       :repo "d12frosted/emacs-ukrainian-input-method"))
     langtool
+    move-text
     )
   "The list of Lisp packages required by the d12-text layer.")
 
@@ -59,5 +60,10 @@
      "/usr/local/Cellar/languagetool/4.1/libexec/languagetool.jar"
      langtool-language-tool-server-jar
      "/usr/local/Cellar/languagetool/4.1/libexec/languagetool-server.jar")))
+
+(defun d12-text/post-init-move-text ()
+  (use-package move-text
+    (move-text-default-bindings)))
+
 
 ;;; packages.el ends here
