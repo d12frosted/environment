@@ -32,6 +32,7 @@
   (use-package fancy-yank
     :commands (fancy-yank)
     :init
+    (require 'map)
     (setq fancy-yank-extract-http-title-f 'd12-web/get-title)
     (setq fancy-yank-rules
           `((,d12-text-github-regexp
@@ -41,12 +42,30 @@
             (,d12-text-http-regexp
              . (fancy-yank-extract-url-title
                 fancy-yank-format-link))))
-    (mapc (lambda (regexp)
-            (map-put fancy-yank-rules
-                     regexp
-                     (list #'fancy-yank-extract-regex
-                           #'fancy-yank-format-link)))
-          d12-text-jira-regexps)))
+    (seq-do (lambda (regexp)
+              (map-put fancy-yank-rules
+                       regexp
+                       (list #'fancy-yank-extract-regex
+                             #'fancy-yank-format-link)))
+            d12-text-jira-regexps)
+    (setq fancy-yank-format-link-rules
+          '((org-mode . (lambda (url description &rest args)
+                          (format "[[%s][%s]]%s"
+                                  url
+                                  (if description description url)
+                                  (apply #'concat args))))
+            (org-capture-mode . (lambda (url description &rest args)
+                                  (format "[[%s][%s]]%s"
+                                          url
+                                          (if description description url)
+                                          (apply #'concat args))))
+            (markdown-mode . (lambda (url description &rest args)
+                               (format "[%s](%s)%s"
+                                       (if description description url)
+                                       (apply #'concat args)
+                                       url)))
+            (text-mode . (lambda (url description &rest args)
+                           description))))))
 
 (defun d12-text/init-ukrainian-input-method ()
   (use-package ukrainian-input-method))
