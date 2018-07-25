@@ -43,6 +43,7 @@
                                        yaml
                                        json
                                        latex
+                                       sql
 
                                        ;; other
                                        dash)
