@@ -165,9 +165,12 @@
     ;; better image inlining
     (setq org-image-actual-width 512)
 
-    ;; setup 'cache' directories
+    ;; setup attachment directory
     (setq org-attach-directory ".data")
-    (setq org-latex-preview-ltxpng-directory ".ltximg")
+
+    ;; setup 'cache' directories
+    (setq org-preview-latex-image-directory ".ltximg/")
+    (setq org-preview-latex-default-process 'dvisvgm)
 
     ;; setup archive
     (setq org-archive-location (concat (d12-path/get-org-file ".archive/archive") "::"))
