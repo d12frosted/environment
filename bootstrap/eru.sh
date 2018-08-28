@@ -93,15 +93,15 @@ fi
 # Actual bootstrap
 ################################################################################
 
-# clone dependencies
-require_github_repo "$target" "d12frosted" "environment"
-require_github_repo "$HOME/.spacemacs" "syl20bnr" "spacemacs" "develop"
-
 # install brew
 check brew || {
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   brew update
 }
+
+# clone dependencies
+require_github_repo "$target" "d12frosted" "environment"
+require_github_repo "$HOME/.spacemacs" "syl20bnr" "spacemacs" "develop"
 
 # create local directory for binaries
 ensure_dir "$HOME/.local/bin"
