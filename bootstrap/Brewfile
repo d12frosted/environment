@@ -1,6 +1,7 @@
 tap "d12frosted/emacs-plus"
 tap "caskroom/fonts"
 
+brew "git"
 brew "haskell-stack"
 brew "emacs-plus", args: ["devel", "without-spacemacs-icon"]
 brew "cask", args: ["ignore-dependencies"]
