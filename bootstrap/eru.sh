@@ -21,7 +21,7 @@ fi
 ################################################################################
 
 function require_repo() {
-  if [[ -d "$1" ]]; then
+  if [[ -d "$1/.git" ]]; then
      echo "$1 already exists"
   else
     git clone "$2" "$1"
