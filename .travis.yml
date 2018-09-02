@@ -15,4 +15,4 @@ git:
 
 before_install:
   - brew update
-  - rm '/usr/local/bin/terminal-notifier'
+  - rm -f '/usr/local/bin/terminal-notifier'
