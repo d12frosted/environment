@@ -447,6 +447,11 @@ top of the file:
   "Prettify tea entry at point."
   (interactive)
   (vulpea/pretty-entry-properties)
+  (org-set-property
+   "AVAILABLE"
+   (number-to-string
+    (- (string-to-number (or (org-entry-get nil "TOTAL_IN") ""))
+       (string-to-number (or (org-entry-get nil "TOTAL_OUT") "")))))
   (org-edit-headline
    (vulpea--format-title vulpea-cha-tea-title-format)))
 
