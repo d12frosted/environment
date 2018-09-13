@@ -82,6 +82,7 @@
 
 (defun d12-text/post-init-move-text ()
   (use-package move-text
+    :init
     (move-text-default-bindings)))
 
 
