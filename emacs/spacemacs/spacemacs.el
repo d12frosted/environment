@@ -41,7 +41,9 @@
                                        (shell-scripts :variables
                                                       sh-basic-offset 2)
                                        yaml
-                                       json
+                                       (json :variables
+                                             json-reformat:indent-width 2
+                                             js-indent-level 2)
                                        latex
                                        sql
 
