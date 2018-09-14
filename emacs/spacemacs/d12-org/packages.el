@@ -180,11 +180,13 @@
     (setq org-agenda-custom-commands
           `((" " "Agenda"
              (
-              (tags-todo "important"
-                         ((org-agenda-overriding-header "Milestones")
+              (tags-todo "notifications"
+                         ((org-agenda-overriding-header "Notifications")
                           (org-agenda-skip-function 'd12-org--skip-future-tasks)
                           (org-tags-match-list-sublevels 'indented)))
-              (agenda "" ((org-agenda-span 'day)))
+              (agenda "" ((org-agenda-span 'day)
+                          (org-agenda-sorting-strategy
+                           '(habit-down time-up priority-down category-keep todo-state-down))))
               (tags "REFILE"
                     ((org-agenda-overriding-header "Tasks to Refile")
                      (org-tags-match-list-sublevels nil)))
