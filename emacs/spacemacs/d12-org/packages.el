@@ -372,6 +372,8 @@
     :init
     (d12-key-bind-personal "C" 'orgability-clip)
 
+    (setq orgability-agenda-topics-column 36)
+
     (defun d12-org/setup-agenda-orgability ()
       "Setup orgability in agenda buffer."
       (d12-key-unbind "o" org-agenda-mode-map)
