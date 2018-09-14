@@ -52,6 +52,7 @@
 
    dotspacemacs-additional-packages '(elscreen-fr
                                       org-cliplink
+                                      protobuf-mode
                                       el-mock)
 
    dotspacemacs-excluded-packages '(emmet-mode
