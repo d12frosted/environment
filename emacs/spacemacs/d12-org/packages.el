@@ -73,6 +73,7 @@
     ;; Setup `org-todo-keywords'.
     (setq org-todo-keywords
           '((sequence "TODO(t)" "|" "DONE(d!)")
+            (sequence "PENDING_REVIEW(R)" "PENDING_DEPLOY(D!)" "|")
             (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING")))
 
     ;; Enable fast todo selection.
