@@ -388,7 +388,7 @@
     :commands (org-board-archive org-board-open)
     :init
     (setq org-board-wget-show-buffer nil
-          org-board-default-browser 'system)))
+          org-board-default-browser 'eww)))
 
 (defun d12-org/init-org-download ()
   (use-package org-download
