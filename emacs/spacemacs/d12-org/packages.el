@@ -274,6 +274,8 @@
             (todo . " %i %-24:c")
             (tags . " %i %-24:c")
             (search . " %i %-24:c")))
+    (setq org-agenda-todo-keyword-format "%-1s")
+    (setq org-agenda-tags-column 0)
 
     ;; dvisvgm looks much better
     (setq org-latex-create-formula-image-program 'dvisvgm)
