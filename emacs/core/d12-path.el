@@ -130,5 +130,10 @@ If PATH already exists as a directory, just do nothing."
   (unless (file-directory-p path)
     (make-directory path parents)))
 
+(defun d12-path/load-project (name)
+  "If project with NAME exists in the `d12-path-projects-home',
+add it to `load-path'."
+  (add-to-load-path-if-exists (concat d12-path-projects-home name)))
+
 (provide 'd12-path)
 ;;; d12-path.el ends here

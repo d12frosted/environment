@@ -29,8 +29,7 @@
   "The list of Lisp packages required by the d12-text layer.")
 
 (defun d12-text/init-fancy-yank ()
-  (add-to-load-path-if-exists (concat d12-path-projects-home "personal/fancy-yank"))
-  (add-to-load-path-if-exists (concat d12-path-projects-home "fancy-yank"))
+  (d12-path/load-project "fancy-yank")
   (use-package fancy-yank
     :commands (fancy-yank)
     :init
@@ -70,8 +69,7 @@
                            description))))))
 
 (defun d12-text/pre-init-flyspell-correct ()
-  (add-to-load-path-if-exists (concat d12-path-projects-home "personal/flyspell-correct"))
-  (add-to-load-path-if-exists (concat d12-path-projects-home "flyspell-correct"))
+  (d12-path/load-project "flyspell-correct")
   (use-package flyspell-correct
     :commands (flyspell-correct-at-point
                flyspell-correct-wrapper)
@@ -79,8 +77,7 @@
     (spacemacs/set-leader-keys "Sc" #'flyspell-correct-wrapper)))
 
 (defun d12-text/pre-init-flyspell-correct-ivy ()
-  (add-to-load-path-if-exists (concat d12-path-projects-home "personal/flyspell-correct"))
-  (add-to-load-path-if-exists (concat d12-path-projects-home "flyspell-correct"))
+  (d12-path/load-project "flyspell-correct")
   (use-package flyspell-correct-ivy
     :commands (flyspell-correct-ivy)
     :init

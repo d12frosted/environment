@@ -363,8 +363,7 @@
       (add-hook 'org-mode-hook 'toc-org-enable))))
 
 (defun d12-org/init-orgability ()
-  (add-to-load-path-if-exists (concat d12-path-projects-home "personal/orgability"))
-  (add-to-load-path-if-exists (concat d12-path-projects-home "orgability"))
+  (d12-path/load-project "orgability")
   (use-package orgability
     :commands (orgability-clip
                orgability-open
