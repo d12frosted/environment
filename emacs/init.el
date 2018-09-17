@@ -48,6 +48,11 @@
   (when (file-exists-p private-file)
     (load private-file)))
 
+;; load `local.el' file containing all the machine specific configurations
+(let ((local-file (concat d12-path-emacs-local "local.el")))
+  (when (file-exists-p local-file)
+    (load local-file)))
+
 ;; setup package-user-dir to allow seamless switch between emacs versions
 (setq package-user-dir
       (file-name-as-directory

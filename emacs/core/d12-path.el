@@ -66,6 +66,15 @@ non-nil.")
   (concat d12-path-dropbox "Apps/Emacs/")
   "Path to Emacs private configurations directory.")
 
+(defconst d12-path-emacs-local
+  (file-name-as-directory
+   (or (getenv "XDG_DATA_HOME")
+       (concat d12-path-home ".local/share")))
+  "Path to Emacs local configurations directory.
+
+Defaults to $XDG_DATA_HOME when the variable is present and
+non-nil.")
+
 (defconst d12-path-spacemacs-config-home
   (concat d12-path-emacs-home "spacemacs/")
   "Path to Spacemacs configurations directory.")
