@@ -16,6 +16,8 @@
 
 (defconst d12-text-packages
   '((fancy-yank :location built-in)
+    (flyspell-correct :location built-in)
+    (flyspell-correct-ivy :location built-in)
     (ukrainian-input-method
      :location
      (recipe
@@ -66,6 +68,23 @@
                                        url)))
             (text-mode . (lambda (url description &rest args)
                            description))))))
+
+(defun d12-text/pre-init-flyspell-correct ()
+  (add-to-load-path-if-exists (concat d12-path-projects-home "personal/flyspell-correct"))
+  (add-to-load-path-if-exists (concat d12-path-projects-home "flyspell-correct"))
+  (use-package flyspell-correct
+    :commands (flyspell-correct-at-point
+               flyspell-correct-wrapper)
+    :init
+    (spacemacs/set-leader-keys "Sc" #'flyspell-correct-wrapper)))
+
+(defun d12-text/pre-init-flyspell-correct-ivy ()
+  (add-to-load-path-if-exists (concat d12-path-projects-home "personal/flyspell-correct"))
+  (add-to-load-path-if-exists (concat d12-path-projects-home "flyspell-correct"))
+  (use-package flyspell-correct-ivy
+    :commands (flyspell-correct-ivy)
+    :init
+    (setq flyspell-correct-interface #'flyspell-correct-ivy)))
 
 (defun d12-text/init-ukrainian-input-method ()
   (use-package ukrainian-input-method))
