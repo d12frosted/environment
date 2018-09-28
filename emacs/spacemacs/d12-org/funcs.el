@@ -158,7 +158,7 @@ Callers of this function already widen the buffer view."
                  (has-next ))
             (save-excursion
               (forward-line 1)
-              (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ TODO " subtree-end t))
+              (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
                 (unless (member "WAITING" (org-get-tags-at))
                   (setq has-next t))))
             (if has-next
@@ -177,7 +177,7 @@ Callers of this function already widen the buffer view."
                  (has-next ))
             (save-excursion
               (forward-line 1)
-              (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ TODO " subtree-end t))
+              (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
                 (unless (member "WAITING" (org-get-tags-at))
                   (setq has-next t))))
             (if has-next
@@ -268,7 +268,7 @@ sub-project tasks, habits, and project related tasks."
         subtree-end)
        ((and limit-to-project
              (d12-org--is-project-subtree-p)
-             (member (org-get-todo-state) (list "TODO")))
+             (member (org-get-todo-state) (list "NEXT")))
         subtree-end)
        (t
         nil)))))
@@ -306,7 +306,7 @@ tasks."
        ((org-is-habit-p)
         subtree-end)
        ((and (d12-org--is-project-subtree-p)
-             (member (org-get-todo-state) (list "TODO")))
+             (member (org-get-todo-state) (list "NEXT")))
         subtree-end)
        ((not (d12-org--is-project-subtree-p))
         subtree-end)

@@ -72,7 +72,7 @@
 
     ;; Setup `org-todo-keywords'.
     (setq org-todo-keywords
-          '((sequence "TODO(t)" "|" "DONE(d!)")
+          '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
             (sequence "PENDING_REVIEW(R)" "PENDING_DEPLOY(D!)" "|")
             (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING")))
 
@@ -89,6 +89,7 @@
             ("HOLD" ("WAITING") ("HOLD" . t))
             (done ("WAITING") ("HOLD"))
             ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+            ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
             ("DONE" ("WAITING") ("CANCELLED") ("HOLD"))))
 
     ;; refresh agenda after capturing
@@ -105,7 +106,7 @@
              "* %?\n%U\n" :clock-in t :clock-resume t)
 
             ("r" "respond" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+             "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
 
             ("n" "note" entry (file ,(d12-path/get-org-file "inbox"))
              "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
@@ -113,7 +114,7 @@
             ("m" "Meeting" entry (file ,(d12-path/get-org-file "inbox"))
              "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
             ("h" "Habit" entry (file ,(d12-path/get-org-file "inbox"))
-             "* TODO %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: TODO\n:END:\n")))
+             "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")))
 
     ;; remove clocked tasks with 0:00 duration
     (setq org-clock-out-remove-zero-time-clocks t)
@@ -202,7 +203,7 @@
                           (org-tags-match-list-sublevels 'indented)
                           (org-agenda-sorting-strategy
                            '(category-keep))))
-              (tags-todo "-CANCELLED-READING/!TODO"
+              (tags-todo "-CANCELLED-READING/!NEXT"
                          ((org-agenda-overriding-header
                            (concat "Project Next Tasks"
                                    (if d12-org-hide-scheduled-and-waiting-next-tasks
