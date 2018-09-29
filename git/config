@@ -37,5 +37,13 @@
 [github]
 	user = d12frosted
 
+[magithub]
+	online = true
+
+[magithub "status"]
+	includeStatusHeader = true
+	includePullRequestsSection = true
+	includeIssuesSection = true
+
 [include]
 	path = local.config
