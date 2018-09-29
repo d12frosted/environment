@@ -50,14 +50,6 @@
     (bind-key "M-`" 'ace-window)
     (bind-key "M-p" 'ace-window)))
 
-(defun d12-core/pre-init-projectile ()
-  (use-package projectile
-    :defer t
-    :init
-    ;; Disable projectile caching as it slows down file switching in huge
-    ;; projects. TODO: investigate if it's still the case.
-    (setq projectile-enable-caching nil)))
-
 (defun d12-core/init-evil-nerd-commenter ()
   (use-package evil-nerd-commenter
     :commands (evilnc-comment-or-uncomment-lines
