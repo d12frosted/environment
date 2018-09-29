@@ -3,6 +3,9 @@
 	autocrlf = input
 	ignorecase = false
 
+[user]
+	useconfigonly = true
+
 [commit]
 	gpgsign = false
 
