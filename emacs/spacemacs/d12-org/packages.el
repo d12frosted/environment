@@ -187,7 +187,21 @@
                           (org-tags-match-list-sublevels 'indented)))
               (agenda "" ((org-agenda-span 'day)
                           (org-agenda-sorting-strategy
-                           '(habit-down time-up priority-down category-keep todo-state-down))))
+                           '(habit-down time-up category-keep todo-state-down priority-down))))
+              (tags-todo "-CANCELLED-READING/!NEXT"
+                         ((org-agenda-overriding-header
+                           (concat "Next Tasks"
+                                   (if d12-org-hide-scheduled-and-waiting-next-tasks
+                                       ""
+                                     " (including WAITING and SCHEDULED tasks)")))
+                          (org-agenda-skip-function 'd12-org--skip-projects-and-habits)
+                          (org-tags-match-list-sublevels t)
+                          (org-agenda-todo-ignore-scheduled d12-org-hide-scheduled-and-waiting-next-tasks)
+                          (org-agenda-todo-ignore-deadlines d12-org-hide-scheduled-and-waiting-next-tasks)
+                          (org-agenda-todo-ignore-with-date d12-org-hide-scheduled-and-waiting-next-tasks)
+                          (org-agenda-tags-todo-honor-ignore-options t)
+                          (org-agenda-sorting-strategy
+                           '(todo-state-down effort-up category-keep))))
               (tags "REFILE"
                     ((org-agenda-overriding-header "Tasks to Refile")
                      (org-tags-match-list-sublevels nil)))
@@ -202,20 +216,6 @@
                           (org-tags-match-list-sublevels 'indented)
                           (org-agenda-sorting-strategy
                            '(category-keep))))
-              (tags-todo "-CANCELLED-READING/!NEXT"
-                         ((org-agenda-overriding-header
-                           (concat "Project Next Tasks"
-                                   (if d12-org-hide-scheduled-and-waiting-next-tasks
-                                       ""
-                                     " (including WAITING and SCHEDULED tasks)")))
-                          (org-agenda-skip-function 'd12-org--skip-projects-and-habits-and-single-tasks)
-                          (org-tags-match-list-sublevels t)
-                          (org-agenda-todo-ignore-scheduled d12-org-hide-scheduled-and-waiting-next-tasks)
-                          (org-agenda-todo-ignore-deadlines d12-org-hide-scheduled-and-waiting-next-tasks)
-                          (org-agenda-todo-ignore-with-date d12-org-hide-scheduled-and-waiting-next-tasks)
-                          (org-agenda-tags-todo-honor-ignore-options t)
-                          (org-agenda-sorting-strategy
-                           '(todo-state-down effort-up category-keep))))
               (tags-todo "-REFILE-CANCELLED-WAITING-HOLD-READING/!"
                          ((org-agenda-overriding-header (concat "Project Subtasks"
                                                                 (if d12-org-hide-scheduled-and-waiting-next-tasks

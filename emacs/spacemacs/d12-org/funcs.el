@@ -288,6 +288,8 @@ tasks."
         subtree-end)
        ((d12-org--is-project-subtree-p)
         subtree-end)
+       ((member (org-get-todo-state) (list "NEXT"))
+        subtree-end)
        (t
         nil)))))
 
