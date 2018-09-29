@@ -18,6 +18,7 @@
 
 (defvar d12-web-title-replace-rules
   '((" "  . " ")
+    ("  " . "")
     ("  " . ""))
   "List of cons for replacement in web page title.")
 
