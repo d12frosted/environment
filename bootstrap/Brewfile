@@ -1,6 +1,8 @@
+# taps
 tap "d12frosted/emacs-plus"
 tap "caskroom/fonts"
 
+# important
 brew "git"
 brew "haskell-stack"
 brew "emacs-plus", args: ["without-spacemacs-icon"]
@@ -15,10 +17,22 @@ brew "ossp-uuid"
 brew "mu"
 brew "fish"
 brew "shellcheck"
-# brew "aspell", args: ["with-all-langs"]
 brew "hunspell"
+
+# scala
+cask "java"
 brew "sbt"
 brew "scala"
 
+# applications
+cask "dropbox"
 cask "spectacle"
+cask "alfred"
+cask "bartender"
+cask "google-chrome"
+cask "firefox"
+cask "gpg-suite"
+cask "xquartz"
+
+# fonts
 cask "font-source-code-pro"
