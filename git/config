@@ -7,7 +7,7 @@
 	useconfigonly = true
 
 [commit]
-	gpgsign = false
+	gpgsign = true
 
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset'
