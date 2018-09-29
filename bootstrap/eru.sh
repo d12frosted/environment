@@ -118,5 +118,8 @@ echo "set -U XDG_CONFIG_HOME $target" | fish
 echo "set -x XDG_CONFIG_HOME $target" | fish
 echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 
+# setup local git config
+touch "$target/git/local.config"
+
 # ensure that Emacs runs normally
 emacs --batch -l "$target/emacs/test.el"
