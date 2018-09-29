@@ -3,10 +3,6 @@
 	autocrlf = input
 	ignorecase = false
 
-[user]
-	name = Boris Buliga
-	email = boris@d12frosted.io
-
 [commit]
 	gpgsign = false
 
