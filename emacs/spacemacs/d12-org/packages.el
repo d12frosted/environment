@@ -15,8 +15,7 @@
 ;;; Code:
 
 (defconst d12-org-packages
-  '((flyspell :toggle (configuration-layer/layer-usedp 'spell-checking))
-    (org-plus-contrib :step pre)
+  '((org-plus-contrib :step pre)
     org
     worf
     (ocu :location (recipe :fetcher local))
@@ -31,8 +30,6 @@
     )
   "The list of Lisp packages required by the d12-org layer.")
 
-(defun d12-org/post-init-flyspell ()
-  (spell-checking/add-flyspell-hook 'org-mode-hook))
 
 ;; dummy init function to force installation of `org-plus-contrib'
 (defun d12-org/init-org-plus-contrib ())
