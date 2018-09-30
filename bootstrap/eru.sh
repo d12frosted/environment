@@ -52,7 +52,8 @@ function check() {
 
 function safe_link() {
   s="$target/$1"
-  t="${2/#\~/$HOME}"
+  shift
+  t="${*/#\~/$HOME}"
   d=$(dirname "$t")
 
   if [[ ! -f "$s" && ! -d "$s" ]]; then
