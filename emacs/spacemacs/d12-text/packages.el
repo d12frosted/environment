@@ -16,6 +16,7 @@
 
 (defconst d12-text-packages
   '((fancy-yank :location built-in)
+    flyspell
     (flyspell-correct :location built-in)
     (flyspell-correct-ivy :location built-in)
     (ukrainian-input-method
@@ -24,8 +25,7 @@
       :fetcher github
       :repo "d12frosted/emacs-ukrainian-input-method"))
     langtool
-    move-text
-    )
+    move-text)
   "The list of Lisp packages required by the d12-text layer.")
 
 (defun d12-text/init-fancy-yank ()
@@ -67,6 +67,11 @@
                                        url)))
             (text-mode . (lambda (url description &rest args)
                            description))))))
+
+(defun d12-text/post-init-flyspell ()
+  (use-package flyspell
+    :config
+    (setq ispell-program-name (executable-find "aspell"))))
 
 (defun d12-text/pre-init-flyspell-correct ()
   (d12-path/load-project "flyspell-correct")
