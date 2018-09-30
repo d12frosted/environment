@@ -74,6 +74,7 @@
     :commands (flyspell-correct-at-point
                flyspell-correct-wrapper)
     :init
+    (setq flyspell-issue-message-flag nil)
     (spacemacs/set-leader-keys "Sc" #'flyspell-correct-wrapper)))
 
 (defun d12-text/pre-init-flyspell-correct-ivy ()
