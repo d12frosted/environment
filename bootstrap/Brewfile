@@ -17,7 +17,7 @@ brew "ossp-uuid"
 brew "mu"
 brew "fish"
 brew "shellcheck"
-brew "hunspell"
+brew "aspell"
 
 # scala
 cask "java"
