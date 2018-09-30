@@ -20,7 +20,6 @@
                       :toggle (spacemacs/system-is-mac))
     (d12-dir-settings :location (recipe :fetcher local))
     ace-window
-    projectile
     evil-nerd-commenter
     ediff
     yasnippet

@@ -87,7 +87,7 @@
 (defun d12-text/init-ukrainian-input-method ()
   (use-package ukrainian-input-method))
 
-(defun d12-core/init-langtool ()
+(defun d12-text/init-langtool ()
   (use-package langtool
     :defer t
     :init
