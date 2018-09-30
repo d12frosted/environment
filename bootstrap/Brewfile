@@ -1,6 +1,8 @@
 # taps
 tap "d12frosted/emacs-plus"
 tap "caskroom/fonts"
+tap "crisidev/homebrew-chunkwm"
+tap "koekeishiya/formulae"
 
 # important
 brew "git"
@@ -18,6 +20,8 @@ brew "mu"
 brew "fish"
 brew "shellcheck"
 brew "aspell"
+brew "chunkwm"
+brew "skhd", args: ["with-logging"]
 
 # scala
 cask "java"
