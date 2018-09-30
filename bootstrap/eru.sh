@@ -54,7 +54,8 @@ function safe_link() {
   s="$target/$1"
   t="${2/#\~/$HOME}"
   d=$(dirname "$t")
-  if [[ ! -f "$s" ]]; then
+
+  if [[ ! -f "$s" && ! -d "$s" ]]; then
     error "can not link '$s' as it does not exist"
     exit 1
   fi
