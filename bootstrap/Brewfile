@@ -37,6 +37,8 @@ cask "google-chrome"
 cask "firefox"
 cask "gpg-suite"
 cask "xquartz"
+cask "font-fontawesome"
+cask "font-awesome-terminal-fonts"
 cask "ubersicht"
 
 # fonts
