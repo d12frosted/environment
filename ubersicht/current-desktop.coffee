@@ -17,7 +17,7 @@ render: (output) ->
       when '2' then txt = ""
       when '3' then txt = ""
       else txt = ""
-    htmlString += "<li id=\"desktop#{spaces[i]}\"><span class='white big_text'>#{txt}</span></li>"
+    htmlString += "<li id=\"desktop#{spaces[i]}\"><span class='icon white big_text'>#{txt}</span></li>"
 
   htmlString += """
       <ul>
@@ -26,7 +26,7 @@ render: (output) ->
 
 style: """
   position: relative
-  margin-top: 0px
+  margin-top: 2px
   ul
     list-style: none
     margin: 0 0 0 10px
@@ -52,7 +52,7 @@ update: (output, domEl) ->
       when '2' then txt = ""
       when '3' then txt = ""
       else txt = ""
-    htmlString += "<li id=\"desktop#{spaces[i]}\"><span class='white big_text'>#{txt}</span></li>"
+    htmlString += "<li id=\"desktop#{spaces[i]}\"><span class='white big_text icon'>#{txt}</span></li>"
 
   if ($(domEl).find('.currentDesktop-container').attr('data-count') != spaces.length.toString())
      $(domEl).find('.currentDesktop-container').attr('data-count', "#{spaces.length}")
