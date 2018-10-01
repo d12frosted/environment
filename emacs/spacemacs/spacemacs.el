@@ -55,6 +55,7 @@
    dotspacemacs-additional-packages '(elscreen-fr
                                       org-cliplink
                                       protobuf-mode
+                                      fontawesome
                                       el-mock)
 
    dotspacemacs-excluded-packages '(emmet-mode
