@@ -6,4 +6,5 @@ haskell/cabal-config ~/.cabal/config
 utils/bin/sync_spacemacs ~/.local/bin/sync_spacemacs
 utils/bin/inactive-repo-notifier.sh ~/.local/bin/inactive-repo-notifier
 scala/plugins.sbt ~/.sbt/1.0/plugins/plugins.sbt
+chunkwm/chunkwmrc ~/.chunkwmrc
 ubersicht/ ~/Library/Application Support/Übersicht/widgets
