@@ -33,3 +33,6 @@ xbuild/
 # git
 git/local.config
 git/local/*
+
+# output files
+*.out
