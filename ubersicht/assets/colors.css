@@ -21,6 +21,7 @@
 .orange {
   color: #dc752f;
 }
+
 .orangebg {
   background: #dc752f;
   color: #292b2e;
@@ -59,20 +60,6 @@
 
 .teal {
   color: #2aa1ae;
-}
-
-.sicon {
-  position: relative;
-  font: 10px FontAwesome;
-}
-.icon {
-  position: relative;
-  top: 1px;
-  font: 14px FontAwesome;
-}
-.volume {
-  position: relative;
-  font: 14px FontAwesome;
 }
 
 .grey {

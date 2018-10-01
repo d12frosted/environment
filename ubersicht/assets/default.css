@@ -9,6 +9,22 @@ table, span {
   font-size: 16px;
 }
 
+.sicon {
+  position: relative;
+  font: 10px FontAwesome;
+}
+
+.icon {
+  position: relative;
+  top: 1px;
+  font: 14px FontAwesome;
+}
+
+.volume {
+  position: relative;
+  font: 14px FontAwesome;
+}
+
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   input[type='range'] {
     overflow: hidden;
