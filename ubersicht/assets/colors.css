@@ -1,0 +1,84 @@
+.white {
+  color: #a5a5a5;
+}
+
+.black {
+  color: #292b2e;
+}
+
+.background {
+  background-color: #292b2e;
+}
+
+.red {
+  color: #e0211d;
+}
+
+.purple {
+  color: #5d4d7a;
+}
+
+.orange {
+  color: #dc752f;
+}
+.orangebg {
+  background: #dc752f;
+  color: #292b2e;
+}
+
+.yellow {
+  color: #b1951d;
+}
+
+.yellowbg {
+  background: #b1951d;
+  color: #292b2e;
+}
+
+.green {
+  color: #67b11d;
+}
+
+.greenbg {
+  background: #67b11d;
+  color: #292b2e;
+}
+
+.cyan {
+  color: #2d9574;
+}
+
+.cyanbg {
+  background: #2d9574;
+  color: #292b2e;
+}
+
+.blue {
+  color: #4f97d7;
+}
+
+.teal {
+  color: #2aa1ae;
+}
+
+.sicon {
+  position: relative;
+  font: 10px FontAwesome;
+}
+.icon {
+  position: relative;
+  top: 1px;
+  font: 14px FontAwesome;
+}
+.volume {
+  position: relative;
+  font: 14px FontAwesome;
+}
+
+.grey {
+  color: #b3b9be;
+}
+
+.greybg {
+  background: #999999;
+}

@@ -1,0 +1,128 @@
+table, span {
+    color: #22b86f;
+    font: 12px SFMono-Medium;
+    text-transform: lowercase;
+    -webkit-font-smoothing: antialiased;
+}
+.white {
+    color: #fdfed2;}
+
+.black {
+  color: #4a3857;
+}
+
+.background {
+    background-color: #4a3857;
+}
+
+.red {
+    color: #ff5549;
+}
+
+.purple {
+    color: #ee4fc9;
+}
+
+.orange {
+    color: #ef883b;
+}
+.orangebg {
+    background: #ef883b;
+    color: #4a3857;
+}
+
+.yellow {
+    color: #e19758;
+}
+
+.yellowbg {
+    background: #e19758;
+    color: #4a3857;
+}
+
+.green {
+    color: #22b86f;
+}
+
+.greenbg {
+    background: #22b86f;
+    color: #4a3857;
+}
+
+.cyan {
+    color: #6fc6a1;
+}
+
+.cyanbg {
+    background: #6fc6a1;
+    color: #4a3857;
+}
+
+.blue {
+    color: #7afdff;
+}
+
+.teal {
+    color: #6fc6a1;
+}
+
+.sicon {
+    position: relative;
+    font: 10px FontAwesome;
+}
+.icon {
+    position: relative;
+    top: 1px;
+    font: 14px FontAwesome;
+}
+.vol_icon {
+   position: relative;
+   font: 18px FontAwesome;
+}
+.weather {
+    font: 16px WeatherIcons-Regular;
+    position: relative;
+    top: 2px;
+}
+
+.grey {
+    color: #999999;
+}
+
+.greybg {
+    background: #999999;
+}
+
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    input[type='range'] {
+      overflow: hidden;
+       width: 140px;
+      -webkit-appearance: none;
+      background-color: #999999;
+    }
+    
+    input[type='range']::-webkit-slider-thumb {
+      overflow: visible;
+      width: 16px;
+      -webkit-appearance: none;
+      height: 16px;
+      /* border-radius: 8px; */
+      top: 10px
+      cursor: ew-resize;
+      background: #fdfed2;
+      box-shadow: -140px 0 0 140px;
+      color: #22b86f;
+      margin-top: -4.5px;
+      z-index: 99;
+    }
+    input[type=range]:focus{
+      outline: none
+    }
+    input[type=range]::-webkit-slider-runnable-track{
+      width: 100%;
+      height: 8px;
+      overflow: visible;
+      cursor: ew-resize;
+}
+}

@@ -1,0 +1,86 @@
+table, span {
+    color: #3a81c3;
+    font: 12px SFMono-Medium;
+    text-transform: lowercase;
+    -webkit-font-smoothing: antialiased;
+}
+.white {
+    color: #655370;}
+
+.black {
+  color: #fbf8ef;
+}
+
+.background {
+    background-color: #fbf8ef;
+}
+
+.red {
+    color: #f2241f;
+}
+
+.purple {
+    color: #9380b2;
+}
+
+.orange {
+    color: #dc752f;
+}
+.orangebg {
+    background: #dc752f;
+    color: #fbf8ef;
+}
+
+.yellow {
+    color: #b1951d;
+}
+
+.yellowbg {
+    background: #b1951d;
+    color: #fbf8ef;
+}
+
+.green {
+    color: #67b11d;
+}
+
+.greenbg {
+    background: #67b11d;
+    color: #fbf8ef;
+}
+
+.cyan {
+    color: #2d9574;
+}
+
+.cyanbg {
+    background: #2d9574;
+    color: #fbf8ef;
+}
+
+.blue {
+    color: #3a81c3;
+}
+
+.teal {
+    color: #2aa1ae;
+}
+
+.sicon {
+    position: relative;
+    font: 10px FontAwesome;
+}
+.icon {
+    position: relative;
+    top: 1px;
+    font: 14px FontAwesome;
+}
+.weather {
+    font: 16px WeatherIcons-Regular;
+    position: relative;
+    top: 2px;
+}
+
+.grey {
+    color: #b3b9be;
+}

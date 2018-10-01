@@ -1,0 +1,97 @@
+table, span {
+    color: #9d9d9d;
+    font: 12px FiraMonoForPowerline-Regular;
+    text-transform: lowercase;
+    -webkit-font-smoothing: antialiased;
+}
+.white {
+    color: #f9f9f9;
+}
+
+.black {
+  color: #161616;
+}
+
+.background {
+    background-color: #161616;
+}
+
+.red {
+    color: #3c3c3c;
+}
+
+.purple {
+    color: #d9d9d9;
+}
+
+.orange {
+    color: #9d9d9d;
+}
+.orangebg {
+    background: #9d9d9d;
+    color: #161616;
+}
+
+.yellow {
+    color: #9d9d9d;
+}
+
+.yellowbg {
+    background: #9d9d9d;
+    color: #161616;
+}
+
+.green {
+    color: #616161;
+}
+
+.greenbg {
+    background: #616161;
+    color: #161616;
+}
+
+.bluebg {
+    background: #c2c2c2;
+    color: #161616;
+}
+
+.cyan {
+    color: #e8e8e8;
+}
+
+.cyanbg {
+    background: #e8e8e8;
+    color: #161616;
+}
+
+.blue {
+    color: #e8e8e8;
+}
+
+.teal {
+    color: #149c92;
+}
+
+.sicon {
+    position: relative;
+    font: 10px FontAwesome;
+}
+.icon {
+    position: relative;
+    top: 1px;
+    font: 14px FontAwesome;
+}
+.weather {
+    font: 16px WeatherIcons-Regular;
+    position: relative;
+    top: 2px;
+}
+
+.vol_icon {
+   position: relative;
+   font: 18px FontAwesome;
+}
+
+.grey {
+    color: #c2c2c2;
+}

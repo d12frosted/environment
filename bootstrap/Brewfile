@@ -37,6 +37,7 @@ cask "google-chrome"
 cask "firefox"
 cask "gpg-suite"
 cask "xquartz"
+cask "ubersicht"
 
 # fonts
 cask "font-source-code-pro"
