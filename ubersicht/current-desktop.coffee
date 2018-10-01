@@ -15,7 +15,8 @@ render: (output) ->
     switch spaces[i]
       when '1' then txt = ""
       when '2' then txt = ""
-      when '3' then txt = ""
+      when '3' then txt = ""
+      when '4' then txt = ""
       else txt = ""
     htmlString += "<li id=\"desktop#{spaces[i]}\"><span class='icon white big_text'>#{txt}</span></li>"
 
@@ -48,7 +49,8 @@ update: (output, domEl) ->
     switch spaces[i]
       when '1' then txt = ""
       when '2' then txt = ""
-      when '3' then txt = ""
+      when '3' then txt = ""
+      when '4' then txt = ""
       else txt = ""
     htmlString += "<li id=\"desktop#{spaces[i]}\"><span class='white big_text icon'>#{txt}</span></li>"
 
