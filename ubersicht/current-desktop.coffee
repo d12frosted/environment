@@ -36,8 +36,6 @@ style: """
     margin: 0 10px
   li span
     font-size: 18px
-  li.active span
-    color: #dc752f;
 """
 
 update: (output, domEl) ->
@@ -57,7 +55,7 @@ update: (output, domEl) ->
   if ($(domEl).find('.currentDesktop-container').attr('data-count') != spaces.length.toString())
      $(domEl).find('.currentDesktop-container').attr('data-count', "#{spaces.length}")
      $(domEl).find('ul').html(htmlString)
-     $(domEl).find("li#desktop#{space}").addClass('active')
+     $(domEl).find("li#desktop#{space}").addClass('active').children('span').addClass('orange');
   else
-    $(domEl).find('li.active').removeClass('active')
-    $(domEl).find("li#desktop#{space}").addClass('active')
+    $(domEl).find('li.active').removeClass('active').children('span').removeClass('orange');
+    $(domEl).find("li#desktop#{space}").addClass('active').children('span').addClass('orange');
