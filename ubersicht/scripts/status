@@ -9,6 +9,7 @@ data=(
   "$(sh ./scripts/battery_charging_script)"
   "$(sh ./scripts/wifi_status_script)"
   "$(sh ./scripts/get_volume_stat)"
+  "$(sh ./scripts/get_input_source)"
 )
 result=$(join_by '@' "${data[@]}")
 

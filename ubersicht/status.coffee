@@ -66,9 +66,12 @@ getWifiStatus: (status, netName, netIP) ->
 
 getVolume: (str) ->
   if str == "muted\n"
-    return "<span class='volume'>&nbsp;&nbsp;</span><span class='white'>#{str}&nbsp</span>"
+    return "<span class='volume'>&nbsp&nbsp&nbsp;&nbsp;</span><span class='white'>#{str}&nbsp</span>"
   else
-    return "<span class='volume'>&nbsp;&nbsp;</span><span class='white'>#{str}&nbsp</span>"
+    return "<span class='volume'>&nbsp&nbsp&nbsp;&nbsp;</span><span class='white'>#{str}&nbsp</span>"
+
+inputSource: (str) ->
+  return "<span class='white'>#{str}&nbsp</span>"
 
 update: (output, domEl) ->
 
@@ -83,9 +86,11 @@ update: (output, domEl) ->
   netName = values[5]
   netIP = values[6]
   volume = values[7]
+  inputSource = values[8]
 
   # create an HTML string to be displayed by the widget
-  htmlString = @getVolume(volume) + "<span>" + " | " + "</span>" +
+  htmlString = @inputSource(inputSource) + "<span>" + " | " + "</span>" +
+               @getVolume(volume) + "<span>" + " | " + "</span>" +
                @getWifiStatus(netStatus, netName, netIP) + "<span>" + " ⎢ " + "</span>" +
                @batteryStatus(battery, isCharging) + "<span>" + " ⎢ " + "</span>" +
                @timeAndDate(date,time)
