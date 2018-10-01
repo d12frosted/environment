@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+cmd="$1"
+case $cmd in
+  "info" )
+    result=$(/usr/bin/osascript -e 'try' -e 'tell application "iTunes" to {artist, name, start, finish} of current track & {player position} & {player state}' -e 'end try')
+    echo "$result"
+    ;;
+
+  "pause" )
+    /usr/bin/osascript -e 'tell application "iTunes" to pause'
+    ;;
+
+  "play" )
+    /usr/bin/osascript -e 'tell application "iTunes" to play'
+    ;;
+
+  "next" )
+    /usr/bin/osascript -e 'tell application "iTunes" to next track'
+    ;;
+
+  "prev" )
+    /usr/bin/osascript -e 'tell application "iTunes" to previous track'
+    ;;
+esac
