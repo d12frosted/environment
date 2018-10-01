@@ -1,4 +1,5 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+
 function getBytes {
     netstat -w1 > ./scripts/network.out & sleep 1.5; kill $!;
 }

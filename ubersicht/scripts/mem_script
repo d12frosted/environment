@@ -1,4 +1,5 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+
 ps -A -o %mem | awk '{s+=$1} END {print "" s}'
 
 # FREE=$(memory_pressure | grep "Pages free" | grep -o -E '[0-9]+');

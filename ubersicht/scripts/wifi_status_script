@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 services=$(networksetup -listnetworkserviceorder | grep 'Hardware Port')
 

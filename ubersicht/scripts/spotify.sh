@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 RESULTX="$(/usr/local/bin/spotify status 2>/dev/null; echo x)"
 RESULT="${RESULTX%x}"
 

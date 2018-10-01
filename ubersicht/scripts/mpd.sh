@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 RESULTX="$(/usr/local/bin/mpc; echo x)"
 RESULT="${RESULTX%x}"
 

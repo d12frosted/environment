@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 isMute=$( /usr/bin/osascript -e 'output muted of (get volume settings)' )
 
