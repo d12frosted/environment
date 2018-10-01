@@ -1,3 +1,15 @@
 #!/usr/bin/env bash
 
-echo $(sh ./scripts/time_script)@$(sh ./scripts/date_script)@$(sh ./scripts/battery_percentage_script)%@$(sh ./scripts/battery_charging_script)@$(sh ./scripts/wifi_status_script)@$(sh ./scripts/get_volume_stat)
+function join_by { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
+
+data=(
+  "$(sh ./scripts/time_script)"
+  "$(sh ./scripts/date_script)"
+  "$(sh ./scripts/battery_percentage_script)"
+  "$(sh ./scripts/battery_charging_script)"
+  "$(sh ./scripts/wifi_status_script)"
+  "$(sh ./scripts/get_volume_stat)"
+)
+result=$(join_by '@' "${data[@]}")
+
+echo "$result"
