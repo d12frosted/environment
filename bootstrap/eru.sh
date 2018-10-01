@@ -129,6 +129,9 @@ defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.dock tilesize -int 35
 defaults write com.apple.dock minimize-to-application -bool true
 defaults write com.apple.dock autohide -bool true
+defaults write NSGlobalDomain _HIHideMenuBar -bool true
+killall Finder
+killall Terminal
 killall Dock
 
 # ensure that Emacs runs normally
