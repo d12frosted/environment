@@ -163,7 +163,8 @@ values."
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
   (push '("melpa-stable" . "stable.melpa.org/packages/") configuration-layer-elpa-archives)
-  (push '(ensime . "melpa-stable") package-pinned-packages))
+  (push '(ensime . "melpa-stable") package-pinned-packages)
+  (setq css-indent-offset 2))
 
 (defun dotspacemacs/user-config ()
   "Configuration function.
