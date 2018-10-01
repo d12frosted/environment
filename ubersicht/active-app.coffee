@@ -1,4 +1,4 @@
-command: "sh ./scripts/get_active_app.sh"
+command: "./scripts/get_active_app"
 
 refreshFrequency: 1000
 

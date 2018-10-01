@@ -1,4 +1,4 @@
-command: "sh ./scripts/stats.sh"
+command: "./scripts/stats"
 
 refreshFrequency: 10000 # ms
 
