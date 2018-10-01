@@ -17,6 +17,7 @@ brew "ncdu"
 brew "terminal-notifier", link: true
 brew "ossp-uuid"
 brew "mu"
+brew "jq"
 brew "fish"
 brew "shellcheck"
 brew "aspell"
