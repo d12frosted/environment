@@ -5,7 +5,7 @@ refreshFrequency: 1000
 render: (output) ->
   """
     <link rel="stylesheet" type="text/css" href="./assets/default.css">
-    <link rel="stylesheet" type="text/css" href="./assets/colors.css">
+    <link rel="stylesheet" type="text/css" href="./assets/alternate colors/compsci_colors.css">
     <div class="activeApp white"></div>
   """
 
