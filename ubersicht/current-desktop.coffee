@@ -26,7 +26,7 @@ render: (output) ->
 
 style: """
   position: relative
-  margin-top: 2px
+  margin-top: 0px
   ul
     list-style: none
     margin: 0 0 0 10px
@@ -34,9 +34,10 @@ style: """
   li
     display: inline
     margin: 0 10px
-  li.active
-    color: #ededed
-    border-bottom: 2px solid #ededed
+  li span
+    font-size: 18px
+  li.active span
+    color: #dc752f;
 """
 
 update: (output, domEl) ->
