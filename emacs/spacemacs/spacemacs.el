@@ -24,7 +24,10 @@
    dotspacemacs-ask-for-lazy-installation t
    dotspacemacs-configuration-layer-path `(,d12-path-spacemacs-config-home)
 
-   dotspacemacs-configuration-layers '(d12-core
+   dotspacemacs-configuration-layers '(
+
+                                       ;; private
+                                       d12-core
                                        d12-visual
                                        d12-text
                                        d12-org
@@ -36,7 +39,7 @@
                                        d12-git
                                        vulpea
 
-                                       ;; languages
+                                       ;; spacemacs
                                        scala
                                        (shell-scripts :variables
                                                       sh-basic-offset 2)
@@ -45,9 +48,8 @@
                                              json-reformat:indent-width 2
                                              js-indent-level 2)
                                        latex
+                                       coffeescript
                                        sql
-
-                                       ;; other
                                        dash)
 
    dotspacemacs-additional-packages '(elscreen-fr
