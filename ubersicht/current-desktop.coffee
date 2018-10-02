@@ -26,8 +26,10 @@ render: (output) ->
   """
 
 style: """
-  position: relative
-  margin-top: 2px
+  width: 100%
+  position: absolute
+  bottom: 2px
+  text-align: center
   ul
     list-style: none
     margin: 0 0 0 10px
