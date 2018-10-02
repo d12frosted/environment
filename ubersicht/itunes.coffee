@@ -21,7 +21,6 @@ cutWhiteSpace: (text) ->
 update: (output, domEl) ->
 
   values = output.split(',')
-  console.log(values)
   if values.length == 6
     artist = @cutWhiteSpace(values[0])
     song = @cutWhiteSpace(values[1])
