@@ -123,17 +123,8 @@ echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 # setup local git config
 touch "$target/git/local.config"
 
-# write some defaults
-defaults write com.apple.dock orientation left
-defaults write com.apple.dock show-recents -bool false
-defaults write com.apple.dock tilesize -int 35
-defaults write com.apple.dock minimize-to-application -bool true
-defaults write com.apple.dock autohide -bool true
-defaults write NSGlobalDomain _HIHideMenuBar -bool true
-defaults write com.apple.dock mru-spaces -bool false
-killall Finder
-killall Terminal
-killall Dock
+# write macOS defaults
+source "$target/macos/defaults.sh"
 
 # ensure that Emacs runs normally
 emacs --batch -l "$target/emacs/test.el"
