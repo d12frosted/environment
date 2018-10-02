@@ -41,3 +41,11 @@ shift + alt - 1 : chunkc tiling::window --send-to-desktop 1
 shift + alt - 2 : chunkc tiling::window --send-to-desktop 2
 shift + alt - 3 : chunkc tiling::window --send-to-desktop 3
 shift + alt - 4 : chunkc tiling::window --send-to-desktop 4
+
+# change workspace
+alt - 1 : chunkc tiling::desktop --focus 1
+alt - 2 : chunkc tiling::desktop --focus 2
+alt - 3 : chunkc tiling::desktop --focus 3
+alt - 4 : chunkc tiling::desktop --focus 4
+ctrl - right : chunkc tiling::desktop --focus next
+ctrl - left : chunkc tiling::desktop --focus prev
