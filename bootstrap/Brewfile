@@ -21,7 +21,7 @@ brew "jq"
 brew "fish"
 brew "shellcheck"
 brew "aspell"
-brew "chunkwm"
+brew "chunkwm", args: ["with-purify", "HEAD"]
 brew "skhd", args: ["with-logging"]
 
 # scala
