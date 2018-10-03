@@ -1,6 +1,6 @@
 command: "./scripts/status"
 
-refreshFrequency: 1000 # ms
+refreshFrequency: 10000 # ms
 
 render: (output) ->
   """
