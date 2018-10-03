@@ -81,7 +81,7 @@ update: (output, domEl) ->
 
     $(domEl).find('.itunes').html(mpdHtmlString)
 
-    $(".pause").on "click", => console.log("funny") # @run "./scripts/itunes pause"
+    $(".pause").on "click", => @run "./scripts/itunes pause"
     $(".play").on "click",  => @run "./scripts/itunes play"
     $(".next").on "click",  => @run "./scripts/itunes next"
     $(".prev").on "click",  => @run "./scripts/itunes prev"
