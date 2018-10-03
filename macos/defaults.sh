@@ -36,6 +36,9 @@ defaults write com.apple.Finder FXPreferredViewStyle Nlsv
 # Finder: show all filename extensions.
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
+# Disable desktop.
+defaults write com.apple.finder CreateDesktop -bool false
+
 # Show the ~/Library folder.
 chflags nohidden ~/Library
 
