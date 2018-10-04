@@ -185,7 +185,7 @@
               (agenda "" ((org-agenda-span 'day)
                           (org-agenda-sorting-strategy
                            '(habit-down time-up category-keep todo-state-down priority-down))))
-              (tags-todo "-CANCELLED-READING/!NEXT"
+              (tags-todo "-CANCELLED/!NEXT"
                          ((org-agenda-overriding-header
                            (concat "Next Tasks"
                                    (if d12-org-hide-scheduled-and-waiting-next-tasks
