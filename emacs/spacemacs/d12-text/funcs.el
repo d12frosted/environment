@@ -24,6 +24,9 @@
          (if (string-equal type "milestone")
              "m"
            "#")
-         number)))
+         number)
+        (when (string-empty-p (buffer-substring (point) (line-end-position)))
+          (concat " - "
+                  (d12-git/get-issue-title owner repo type number)))))
 
 ;;; funcs.el ends here
