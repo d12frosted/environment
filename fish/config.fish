@@ -33,6 +33,10 @@ __append_to_path $GEM_HOME/bin
 __append_to_path /usr/texbin
 __append_to_path /usr/local/sbin
 
+# locale
+export LC_ALL=en_GB.UTF-8
+export LANG=en_GB.UTF-8
+
 # aliases
 alias ghci "stack ghci"
 alias ecl "emacsclient"
