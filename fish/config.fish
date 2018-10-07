@@ -40,14 +40,6 @@ alias eclt "emacsclient -c"
 alias cenv "cd $XDG_CONFIG_HOME"
 alias cem  "cd $HOME/.emacs.d"
 
-function em
-  emacs -q --load $XDG_CONFIG_HOME/emacs/init.el $argv &
-end
-
-function emt
-  emacs -nw -q --load $XDG_CONFIG_HOME/emacs/init.el $argv
-end
-
 # theme
 set fish_color_autosuggestion gray
 set fish_color_command purple
