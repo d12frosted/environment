@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-date "+%H:%M"
-# @$(date +%d%b%y)

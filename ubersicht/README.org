@@ -1,0 +1,8 @@
+#+TITLE:        Übersicht domain
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+Personal Übersicht configurations based on the following configurations:
+
+- [[https://github.com/koekeishiya/Statusbar][koekeishiya/Statusbar]]
+- [[https://github.com/blahsd/supernerd.widget][blahsd/supernerd.widget]]
