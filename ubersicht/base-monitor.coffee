@@ -3,7 +3,7 @@ commands =
   ismuted : "osascript -e 'output muted of (get volume settings)'"
   battery : "pmset -g batt | egrep '([0-9]+\%).*' -o --colour=auto | cut -f1 -d';'"
   ischarging : "./scripts/ischarging"
-  wifi: "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | sed -e \"s/^ *SSID: //p\" -e d"
+  network: "./scripts/network"
   isconnected: "echo true"
   focus : "/usr/local/bin/chunkc tiling::query --window name"
   playing: "osascript -e 'tell application \"iTunes\" to if player state is playing then artist of current track & \" - \" & name of current track'"
@@ -15,7 +15,7 @@ command: "echo " +
          "$(#{commands.ismuted}):::" +
          "$(#{commands.battery}):::" +
          "$(#{commands.ischarging}):::" +
-         "$(#{commands.wifi}):::" +
+         "$(#{commands.network}):::" +
          "$(#{commands.isconnected}):::" +
          "$(#{commands.time}):::"
 
@@ -40,9 +40,9 @@ render: ( ) ->
 
       <div class="widg" id="wifi">
         <div class="icon-container" id='wifi-icon-container'>
-          <i class="fa fa-wifi"></i>
+          <i class="fa fa-wifi" id='wifi-icon'></i>
         </div>
-        <span class="output" id='wifi-output'></span>
+        <span class="output" id='wifi-output'>Unknown</span>
       </div>
 
       <div class="widg pinned" id="battery">
@@ -64,28 +64,35 @@ update: ( output, domEl ) ->
 
   values = []
 
-  values.volume   = output[ 0 ]
-  values.ismuted  = output[ 1 ]
+  values.volume = output[ 0 ]
+  values.ismuted = output[ 1 ]
   values.battery = output[ 2 ]
-  values.ischarging  = output[ 3 ]
-  values.wifi = output[ 4 ]
-  values.isconnected = output[ 5 ]
-  values.time = output[ 6 ]
+  values.ischarging = output[ 3 ]
+  values.wifi = {
+    netStatus: output[ 4 ]
+    netName: output[ 5 ]
+    netIP: output[ 6 ]
+  }
+  values.isconnected = output[ 7 ]
+  values.time = output[ 8 ]
 
-  controls = ['battery','volume','wifi','time']
+  controls = ['battery', 'volume', 'wifi', 'time']
   for control in controls
     outputId = "#"+control+"-output"
     currentValue = $("#{outputId}").value
     updatedValue = values[control]
 
     if updatedValue != currentValue
-      $("#{ outputId }").text("#{ updatedValue }")
+      $("#{outputId}").text("#{updatedValue}")
 
       if control is 'battery'
-         @handleBattery( domEl, Number( values["battery"].replace( /%/g, "" ) ), values["ischarging"] )
-      else if control is 'wifi' then @handleWifi( domEl, values["wifi"] )
-      else if control is  'volume' then @handleVolume( domEl, Number( values["volume"]), values["ismuted"] )
-      else if control is 'brightness' then @handleBrightness( domEl, values["brightness"] )
+        @handleBattery(domEl, Number(values["battery"].replace( /%/g, "" ) ), values["ischarging"])
+      else if control is 'wifi'
+        @handleWifi(domEl, values[control])
+      else if control is 'volume'
+        @handleVolume(domEl, Number( values["volume"]), values["ismuted"])
+      else if control is 'brightness'
+        @handleBrightness(domEl, values[control])
 
 #
 # ─── HANDLE BRIGHTNESS ─────────────────────────────────────────────────────────
@@ -165,14 +172,16 @@ handleBattery: ( domEl, percentage, ischarging ) ->
 # ─── HANDLE WIFI ─────────────────────────────────────────────────────────
 #
 
-handleWifi: (domEl, wifi ) ->
-  $( "#wifi-output").text("#{ wifi }")
-
-  if wifi == ''
-    wifiIcon = 'fas fa-exclamation-circle'
+handleWifi: (domEl, data) ->
+  if data.netStatus == "Wi-Fi"
+    icon = 'fas fa-wifi'
+  else if data.netStatus == 'USB 10/100/1000 LAN' or data.netStatus == 'Apple USB Ethernet Adapter'
+    icon = 'fas fa-sitemap'
   else
-    wifiIcon = 'fa fa-wifi'
-  $(domEl).find( ".wifi-icon" ).html( "<i class=\"fa #{ wifiIcon }\"></i>" )
+    icon = 'fas fa-exclamation-circle'
+
+  $("#wifi-output").text(data.netName)
+  $(domEl).find("#wifi-icon").removeClass().addClass(icon)
 
 
 #

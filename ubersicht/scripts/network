@@ -18,8 +18,8 @@ while read line; do
 done <<< "$(echo "$services")"
 
 if [ -n "$currentservice" ] ; then
-    echo "$currentservice@$(networksetup -getairportnetwork $currentsdev | cut -c 24-)@$(networksetup -getinfo "Apple USB Ethernet Adapter" | grep "IP address" | grep "\." | cut -c 13-)"
+    echo "$currentservice:::$(networksetup -getairportnetwork $currentsdev | cut -c 24-):::$(networksetup -getinfo "Apple USB Ethernet Adapter" | grep "IP address" | grep "\." | cut -c 13-)"
 else
-    >&1 echo "none@none@"
+    >&1 echo "none:::none:::"
     exit 1
 fi
