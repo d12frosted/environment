@@ -42,8 +42,8 @@
 
 [magithub "status"]
 	includeStatusHeader = true
-	includePullRequestsSection = true
-	includeIssuesSection = true
+	includePullRequestsSection = false
+	includeIssuesSection = false
 
 [include]
 	path = local.config
