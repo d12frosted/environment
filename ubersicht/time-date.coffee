@@ -16,17 +16,17 @@ makeCommand: () -> "echo " +
   "$(#{@makeWeatherCommand()}):::"
 
 iconMapping:
-  "rain"                : "fas fa-tint"
-  "snow"                : "fas fa-snowflake"
-  "fog"                 : "fas fa-braille"
-  "cloudy"              : "fas fa-cloud"
-  "wind"                : "fas fa-align-left"
+  "rain"                : "fa fa-tint"
+  "snow"                : "fa fa-snowflake"
+  "fog"                 : "fa fa-braille"
+  "cloudy"              : "fa fa-cloud"
+  "wind"                : "fa fa-align-left"
   "clear-day"           : "fas fa-sun"
-  "mostly-clear-day"    : "fas fa-adjust"
-  "partly-cloudy-day"   : "fas fa-cloud"
-  "clear-night"         : "fas fa-star"
-  "partly-cloudy-night" : "fal fa-adjust"
-  "unknown"             : "fas fa-question"
+  "mostly-clear-day"    : "fa fa-adjust"
+  "partly-cloudy-day"   : "fa fa-cloud"
+  "clear-night"         : "fa fa-star"
+  "partly-cloudy-night" : "fa fa-adjust"
+  "unknown"             : "fa fa-question"
 
 refreshFrequency: '30m'
 
@@ -38,7 +38,7 @@ render: () ->
           </div>
           <div class="widg open" id="weather">
             <div class="icon-container" id="weather-icon-container">
-              <i class="fa fa-sun"></i>
+              <i class="fa fa-sun" id="weather-icon-day"></i>
             </div>
             <span class="output" id="weather-output">Loading...</span>
           </div>
@@ -72,26 +72,25 @@ update: ( output, domEl ) ->
 # ─── HANDLE WEATHER ─────────────────────────────────────────────────────────
 #
 handleWeather: ( domEl, weatherdata ) ->
-  data  = JSON.parse(weatherdata)
+  data = JSON.parse(weatherdata)
   $(domEl).find('#weather-output').text(weatherdata)
-  today = data.daily?.data[0]
 
-  return unless today?
+  return unless data.currently?
 
-  date = @getDate today.time
+  date = @getDate data.currently.time
 
-  $(domEl).find('#weather-output').text(String (Math.round(today.temperatureMax)+'°'))
-  $(domEl).find('#weather-ext-output').text(String(today.summary))
-  $(domEl).find( ".weather-icon" ).html( "<i class=\"fa #{ @getIcon(today) }\"></i>" )
-
+  $(domEl).find('#weather-output').text(String (Math.round(data.currently.temperature)+'°'))
+  $(domEl).find('#weather-ext-output').text(String(data.currently.summary))
+  $(domEl).find("#weather-icon-day").removeClass().addClass("#{@getIcon(data.currently)}")
+  $(domEl).find("#weather-icon-cloud").removeClass().addClass("#{@getIcon(data.currently)}")
 
   $(domEl).find("#weather").removeClass('red')
   $(domEl).find("#weather").removeClass('white')
   $(domEl).find("#weather").removeClass('cyan')
-  if data.temperatureMax >= 26
+  if data.currently.temperature >= 26
     $(domEl).find('#weather').addClass('red')
     $(domEl).find('#weather-icon-container').addClass('red')
-  else if data.temperatureMax >= 6
+  else if data.currently.temperature >= 6
     $(domEl).find('#weather').addClass('white')
     $(domEl).find('#weather-icon-container').addClass('white')
   else
@@ -100,6 +99,7 @@ handleWeather: ( domEl, weatherdata ) ->
 
 getIcon: (data) ->
   return @iconMapping['unknown'] unless data
+  return @iconMapping[data.icon]
 
   if data.icon.indexOf('cloudy') > -1
     if data.cloudCover < 0.25
