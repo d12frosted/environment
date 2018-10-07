@@ -19,12 +19,12 @@ ctrl + alt - s : chunkc tiling::desktop --layout monocle
 ctrl + alt - d : chunkc tiling::desktop --layout float
 
 # change focus
-alt - h : chunkc tiling::window --focus west
-alt - j : chunkc tiling::window --focus south
-alt - k : chunkc tiling::window --focus north
-alt - l : chunkc tiling::window --focus east
-alt - p : chunkc tiling::window --focus prev
-alt - n : chunkc tiling::window --focus next
+alt - h : chunkc tiling::window --focus west; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
+alt - j : chunkc tiling::window --focus south; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
+alt - k : chunkc tiling::window --focus north; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
+alt - l : chunkc tiling::window --focus east; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
+alt - p : chunkc tiling::window --focus prev; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
+alt - n : chunkc tiling::window --focus next; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
 
 # move focused window
 shift + alt - h : chunkc tiling::window --warp west
@@ -35,13 +35,13 @@ shift + alt - l : chunkc tiling::window --warp east
 alt - r : chunkc tiling::desktop --rotate 90
 
 # fast focus desktop
-cmd + alt - x : chunkc tiling::desktop --focus $(chunkc get _last_active_desktop)
-cmd + alt - z : chunkc tiling::desktop --focus prev
-cmd + alt - c : chunkc tiling::desktop --focus next
-cmd + alt - 1 : chunkc tiling::desktop --focus 1
-cmd + alt - 2 : chunkc tiling::desktop --focus 2
-cmd + alt - 3 : chunkc tiling::desktop --focus 3
-cmd + alt - 4 : chunkc tiling::desktop --focus 4
+cmd + alt - x : chunkc tiling::desktop --focus $(chunkc get _last_active_desktop); osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+cmd + alt - z : chunkc tiling::desktop --focus prev; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+cmd + alt - c : chunkc tiling::desktop --focus next; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+cmd + alt - 1 : chunkc tiling::desktop --focus 1; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+cmd + alt - 2 : chunkc tiling::desktop --focus 2; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+cmd + alt - 3 : chunkc tiling::desktop --focus 3; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+cmd + alt - 4 : chunkc tiling::desktop --focus 4; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
 
 # send window to desktop
 shift + alt - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop)
@@ -53,10 +53,10 @@ shift + alt - 3 : chunkc tiling::window --send-to-desktop 3
 shift + alt - 4 : chunkc tiling::window --send-to-desktop 4
 
 # send window to desktop and follow focus
-shift + cmd - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop); chunkc tiling::desktop --focus $(chunkc get _last_active_desktop)
-shift + cmd - z : chunkc tiling::window --send-to-desktop prev; chunkc tiling::desktop --focus prev
-shift + cmd - c : chunkc tiling::window --send-to-desktop next; chunkc tiling::desktop --focus next
-shift + cmd - 1 : chunkc tiling::window --send-to-desktop 1; chunkc tiling::desktop --focus 1
-shift + cmd - 2 : chunkc tiling::window --send-to-desktop 2; chunkc tiling::desktop --focus 2
-shift + cmd - 3 : chunkc tiling::window --send-to-desktop 3; chunkc tiling::desktop --focus 3
-shift + cmd - 4 : chunkc tiling::window --send-to-desktop 4; chunkc tiling::desktop --focus 4
+shift + cmd - x : chunkc tiling::window --send-to-desktop $(chunkc get _last_active_desktop); chunkc tiling::desktop --focus $(chunkc get _last_active_desktop); osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+shift + cmd - z : chunkc tiling::window --send-to-desktop prev; chunkc tiling::desktop --focus prev; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+shift + cmd - c : chunkc tiling::window --send-to-desktop next; chunkc tiling::desktop --focus next; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+shift + cmd - 1 : chunkc tiling::window --send-to-desktop 1; chunkc tiling::desktop --focus 1; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+shift + cmd - 2 : chunkc tiling::window --send-to-desktop 2; chunkc tiling::desktop --focus 2; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+shift + cmd - 3 : chunkc tiling::window --send-to-desktop 3; chunkc tiling::desktop --focus 3; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
+shift + cmd - 4 : chunkc tiling::window --send-to-desktop 4; chunkc tiling::desktop --focus 4; osascript -e 'tell application "Übersicht"' -e 'refresh widget id "desktop-coffee"' -e 'refresh widget id "window-coffee"' -e 'end tell'
