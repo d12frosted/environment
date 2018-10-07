@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 check=$(pmset -g batt)
 
 substring='AC'
