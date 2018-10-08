@@ -4,6 +4,7 @@ commands =
   battery : "pmset -g batt | egrep '([0-9]+\%).*' -o --colour=auto | cut -f1 -d';'"
   ischarging : "./scripts/ischarging"
   network: "./scripts/network"
+  vpn: "ifconfig -a | grep 'gpd0: flags=8863'"
   isconnected: "echo true"
   focus : "/usr/local/bin/chunkc tiling::query --window name"
   playing: "osascript -e 'tell application \"iTunes\" to if player state is playing then artist of current track & \" - \" & name of current track'"
@@ -16,6 +17,7 @@ command: "echo " +
          "$(#{commands.battery}):::" +
          "$(#{commands.ischarging}):::" +
          "$(#{commands.network}):::" +
+         "$(#{commands.vpn}):::" +
          "$(#{commands.isconnected}):::" +
          "$(#{commands.time}):::"
 
@@ -39,6 +41,9 @@ render: ( ) ->
       </div>
 
       <div class="widg" id="wifi">
+        <div class="icon-container" id='vpn-icon-container'>
+          <i class="fa fa-globe" id='vpn-icon'></i>
+        </div>
         <div class="icon-container" id='wifi-icon-container'>
           <i class="fa fa-wifi" id='wifi-icon'></i>
         </div>
@@ -74,18 +79,19 @@ update: ( output, domEl ) ->
 
   values = []
 
-  values.volume = output[ 0 ]
-  values.ismuted = output[ 1 ]
-  values.battery = output[ 2 ]
-  values.ischarging = output[ 3 ]
+  values.volume = output[0]
+  values.ismuted = output[1]
+  values.battery = output[2]
+  values.ischarging = output[3]
   values.wifi = {
-    netStatus: output[ 4 ]
-    netName: output[ 5 ]
-    netIP: output[ 6 ]
+    netStatus: output[4]
+    netName: output[5]
+    netIP: output[6]
+    vpn: output[7]
   }
-  values.isconnected = output[ 7 ]
-  values.date = output[ 8 ]
-  values.time = output[ 9 ]
+  values.isconnected = output[8]
+  values.date = output[9]
+  values.time = output[10]
 
   controls = ['battery', 'volume', 'wifi', 'date', 'time']
   for control in controls
@@ -190,6 +196,11 @@ handleWifi: (domEl, data) ->
     icon = 'fas fa-sitemap'
   else
     icon = 'fas fa-exclamation-circle'
+
+  if data.vpn == ""
+    $("#vpn-icon").addClass("blue")
+  else
+    $("#vpn-icon").removeClass("blue")
 
   $("#wifi-output").text(data.netName)
   $(domEl).find("#wifi-icon").removeClass().addClass(icon)
