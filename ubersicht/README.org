@@ -6,3 +6,81 @@ Personal Übersicht configurations based on the following configurations:
 
 - [[https://github.com/koekeishiya/Statusbar][koekeishiya/Statusbar]]
 - [[https://github.com/blahsd/supernerd.widget][blahsd/supernerd.widget]]
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/ubersicht.png">
+</p>
+#+END_HTML
+
+Key features:
+
+- Consumes not very much energy (average is less than 3).
+- Easy to style (comes with two themes - =white= and =dark=, which can be
+  switched in =bar-top.coffee=).
+
+You can force refresh certain widgets (like =desktop= and =window=) on specific
+actions via =skhd=. Please see =skhd= domain for more information.
+
+* Requirements
+
+In order to make it work you need to install =chunkwm= and =ubersicht=.
+
+* Widgets
+
+** =desktop-coffee=
+
+Shows all available desktops and currently selected one.
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/desktop-coffee.png">
+</p>
+#+END_HTML
+
+** =window-coffee=
+
+Shows currently selected application name.
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/window-coffee.png">
+</p>
+#+END_HTML
+
+** =base-monitor-coffee=
+
+Shows some basic information:
+
+- volume level
+- network status (Wi-Fi or LAN)
+- battery status (is charging, battery level)
+- date
+- time
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee.png">
+</p>
+#+END_HTML
+
+** =music-player-coffee=
+
+Shows information about music player (only iTunes is supported out of box, but
+it's easy to extend). You can click on buttons to play/pause/next/prev.
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/music-player-coffee.png">
+</p>
+#+END_HTML
+
+** =system-monitor-coffee=
+
+Shows information about processor usage, RAM usage and HDD/SDD usage.
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/system-monitor-coffee.png">
+</p>
+#+END_HTML
