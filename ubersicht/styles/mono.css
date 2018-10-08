@@ -193,9 +193,14 @@ the script. So don't think of sanitizing them to classes */
   text-overflow: ellipsis;
 }
 
-#time {
+#time-icon-container {
   color: var(--background);
   background-color: var(--color4);
+}
+
+#date-icon-container {
+  color: var(--background);
+  background-color: var(--color3);
 }
 
 /* ––––––––––––––––
@@ -243,8 +248,10 @@ the script. So don't think of sanitizing them to classes */
 
 #base-monitor-coffee {
   top: var(--global_margin);
-  right: calc(var(--right-margin) + 130px);
+  right: var(--right-margin);
   width: auto;
+}
+#wifi-icon-container {
 }
 #wifi .output {
   width: 100%;
@@ -253,7 +260,6 @@ the script. So don't think of sanitizing them to classes */
 #system-monitor-coffee {
   bottom: var(--global_margin);
   right: var(--right-margin);
-
 }
 
 #app-switch-coffee {
@@ -263,9 +269,10 @@ the script. So don't think of sanitizing them to classes */
   justify-content: center;
 }
 
-#time-date-coffee {
+#weather-coffee {
   top: var(--global_margin);
-  right: var(--left-margin);
+  margin-left: 20px; /* var(--left-margin); */
+  right: var(--right-margin);
   display: flex;
   justify-content: center;
 }
