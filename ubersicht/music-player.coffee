@@ -8,7 +8,7 @@ command: "echo " +
          "$(#{ commands.isPlaying}):::" +
          "$(#{ commands.iTunes}):::"
 
-refreshFrequency: false
+refreshFrequency: '10s'
 
 render: ( ) ->
   """
@@ -38,15 +38,35 @@ update: ( output, domEl ) ->
   isPlaying = output[1]
   iTunes = output[2]
 
+  isRunningChanged = @cache("isRunning", isRunning)
+  isPlayingChanged = @cache("isPlaying", isPlaying)
+  iTunesChanged = @cache("iTunes", iTunes)
 
-  if isPlaying
-    @handlePlayIcon(domEl, true)
-    @handlePlayIcon(domEl, true)
-    @run "osascript -e 'if application \"iTunes\" is running then tell application \"iTunes\" to if player state is playing then artist of current track & \" - \" & name of current track'", (err, output) ->
-      $(domEl).find('#play-output').text(output)
+  if isRunningChanged or isPlayingChanged or iTunesChanged
+    if isRunning
+      if isPlaying
+        @handlePlayIcon(domEl, true)
+        @handlePlayIcon(domEl, true)
+        $(domEl).find('#play-output').text(iTunes)
+      else
+        @handlePlayIcon(domEl, false)
+        $("#play-output").text("Paused")
+    else
+      $("#play-output").text("")
+
+#
+# ─── CACHE ─────────────────────────────────────────────────────────
+#
+
+cache_storage: {}
+
+cache: (key, value) ->
+  if @cache_storage and @cache_storage[key] == value
+    return false
   else
-    @handlePlayIcon(domEl, false)
-    $( "#play-output").text("Paused")
+    @cache_storage[key] = value
+    return true
+
 #
 # ─── HANDLES  ─────────────────────────────────────────────────────────
 #
