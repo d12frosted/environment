@@ -49,6 +49,7 @@
                                              js-indent-level 2)
                                        latex
                                        coffeescript
+                                       typescript
                                        sql
                                        dash)
 
