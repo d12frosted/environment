@@ -3,16 +3,12 @@ currentLocation: "50.4501,30.5241"
 setLocation: (coords) ->
   @currentLocation = "#{coords.latitude},#{coords.longitude}"
 
-command: "echo " +
-  "$(date +\"%a %d %b\")::::::"
-
-makeDateCommand: () -> "date +\"%a %d %b\""
+command: "echo :::"
 
 makeWeatherCommand: () ->
   "./scripts/getweather '#{@currentLocation}'"
 
 makeCommand: () -> "echo " +
-  "$(#{@makeDateCommand()}):::" +
   "$(#{@makeWeatherCommand()}):::"
 
 iconMapping:
@@ -33,9 +29,6 @@ refreshFrequency: '30m'
 render: () ->
   """
     <div class="container">
-          <div class="widg nohidden" id="date">
-            <span class="output" id="date-output"></span>
-          </div>
           <div class="widg open" id="weather">
             <div class="icon-container" id="weather-icon-container">
               <i class="fa fa-sun" id="weather-icon-day"></i>
@@ -50,10 +43,9 @@ update: ( output, domEl ) ->
 
   values = []
 
-  values.date = output[ 0 ]
-  values.weather = output[ 1 ]
+  values.weather = output[ 0 ]
 
-  controls = ['date', 'weather']
+  controls = ['weather']
   for control in controls
     outputId = "#"+control+"-output"
     currentValue = $("#{outputId}").value
@@ -76,8 +68,6 @@ handleWeather: ( domEl, weatherdata ) ->
   $(domEl).find('#weather-output').text(weatherdata)
 
   return unless data.currently?
-
-  date = @getDate data.currently.time
 
   $(domEl).find('#weather-output').text(String (Math.round(data.currently.temperature)+'°'))
   $(domEl).find('#weather-ext-output').text(String(data.currently.summary))
@@ -112,11 +102,6 @@ getIcon: (data) ->
       @iconMapping["cloudy"]
   else
     @iconMapping[data.icon]
-
-getDate: (utcTime) ->
-  date  = new Date(0)
-  date.setUTCSeconds(utcTime)
-  date
 
 #
 # ─── UNIVERSAL CLICK AND ANIMATION HANDLING  ─────────────────────────────────────────────────────────

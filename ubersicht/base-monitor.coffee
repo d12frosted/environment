@@ -7,7 +7,7 @@ commands =
   isconnected: "echo true"
   focus : "/usr/local/bin/chunkc tiling::query --window name"
   playing: "osascript -e 'tell application \"iTunes\" to if player state is playing then artist of current track & \" - \" & name of current track'"
-  time: "date +\"%H:%M\""
+  time: "date +\"%a %d %b:::%H:%M\""
 
 
 command: "echo " +
@@ -52,8 +52,18 @@ render: ( ) ->
         <span class="output" id='battery-output'></span>
       </div>
 
-      <div class="widg pinned red" id="time">
-        <span class="output pinned" id="time-output"></span>
+      <div class="widg nohidden" id="date">
+        <div class="icon-container" id='date-icon-container'>
+          <i class="fa fa-calendar-alt" id='date-icon'></i>
+        </div>
+        <span class="output" id="date-output"></span>
+      </div>
+
+      <div class="widg" id="time">
+        <div class="icon-container" id='time-icon-container'>
+          <i class="fa fa-clock" id='time-icon'></i>
+        </div>
+        <span class="output" id="time-output"></span>
       </div>
 
     </div>
@@ -74,9 +84,10 @@ update: ( output, domEl ) ->
     netIP: output[ 6 ]
   }
   values.isconnected = output[ 7 ]
-  values.time = output[ 8 ]
+  values.date = output[ 8 ]
+  values.time = output[ 9 ]
 
-  controls = ['battery', 'volume', 'wifi', 'time']
+  controls = ['battery', 'volume', 'wifi', 'date', 'time']
   for control in controls
     outputId = "#"+control+"-output"
     currentValue = $("#{outputId}").value
