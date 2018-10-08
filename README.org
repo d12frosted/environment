@@ -22,7 +22,7 @@ I clean that domain, so don't be surprised to see it's missing.
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="emacs/images/daomacs.png">
+  <img src="ubersicht/images/ubersicht.png">
 </p>
 #+END_HTML
 
