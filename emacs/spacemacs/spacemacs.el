@@ -51,7 +51,8 @@
                                        coffeescript
                                        typescript
                                        sql
-                                       dash)
+                                       dash
+                                       ranger)
 
    dotspacemacs-additional-packages '(elscreen-fr
                                       org-cliplink
