@@ -198,7 +198,7 @@
                           (org-agenda-todo-ignore-with-date d12-org-hide-scheduled-and-waiting-next-tasks)
                           (org-agenda-tags-todo-honor-ignore-options t)
                           (org-agenda-sorting-strategy
-                           '(todo-state-down effort-up category-keep))))
+                           '(todo-state-down priority-down effort-up category-keep))))
               (tags "REFILE"
                     ((org-agenda-overriding-header "Tasks to Refile")
                      (org-tags-match-list-sublevels nil)))
