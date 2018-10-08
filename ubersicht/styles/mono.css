@@ -224,7 +224,7 @@ the script. So don't think of sanitizing them to classes */
 
 .active-desktop {
   color: var(--background);
-  background-color: var(--color4);
+  background-color: var(--foreground);
 }
 
 #music-player-coffee {
