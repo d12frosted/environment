@@ -222,6 +222,11 @@ the script. So don't think of sanitizing them to classes */
   top: var(--global_margin);
 }
 
+.active-desktop {
+  color: var(--background);
+  background-color: var(--color4);
+}
+
 #music-player-coffee {
   bottom: var(--global_margin);
   left: var(--left-margin);

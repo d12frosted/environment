@@ -1,8 +1,10 @@
 commands =
-  activeSpace: "echo $(/usr/local/bin/chunkc tiling::query -d id)"
+  allDesktops: "/usr/local/bin/chunkc tiling::query -D $(/usr/local/bin/chunkc tiling::query -m id)"
+  activeDesktop: "/usr/local/bin/chunkc tiling::query -d id"
 
 command: "echo " +
-         "$(#{commands.activeSpace}):::"
+         "$(#{commands.allDesktops}):::" +
+         "$(#{commands.activeDesktop}):::"
 
 refreshFrequency: '10s'
 
@@ -12,40 +14,61 @@ icons:
   "3" : "fas fa-comments"
   "4" : "fas fa-film"
 
+defaultIcon: "fas fa-expand"
+
 render: ( ) ->
   """
-    <div class="container pinned" id="desktop">
-      <div class="widg " id="home">
-        <div class="icon-container" id="home-icon-container">
-         <i class="far fa-home" id="home-current-icon"></i>
-        </div>
-        <span class="output" id="desktop-output">1</span>
+    <div class="container" id="desktop">
+      <div class="widg " id="desktop">
       </div>
-
     </div>
   """
 
-currentValue: 0
-
-update: ( output, domEl ) ->
+update: (output, domEl) ->
   values = []
-  values.desktop = output.split( /:::/g )[ 0 ]
+  values.desktops = output.split(/:::/g)[0].split(/ /g)
+  values.desktop = output.split(/:::/g)[1]
 
-  controls = ['desktop']
-  for control in controls
-    icon = @icons[values.desktop]
-    outputId = "#"+control+"-output"
-    updatedValue = values[control]
+  desktopsChanged = @cache('desktops', values.desktops)
+  desktopChanged = @cache('desktop', values.desktop)
 
-    if updatedValue != @currentValue
-      @currentValue = updatedValue
-      $("#{outputId}").text("#{ updatedValue }")
-      $("#home-current-icon").removeClass()
-      $("#home-current-icon").addClass(icon)
+  if (desktopsChanged or desktopChanged)
+    @handleDesktop(values.desktop, values.desktops)
 
-  #$(domEl).find("#desktop-output").text("#{activeSpace}")
-  #$(domEl).on 'click', "#home-icon-container", (e) -> #switch to desktop 1??
+handleDesktop: (desktop, desktops) ->
+  html = ""
+  for i in desktops
+    html = html + @createDesktop(i, i == desktop)
+  $("#desktop").html(html)
+
+createDesktop: (desktop, active) ->
+  cs = "icon-container"
+  if active
+    cs = cs + " active-desktop"
+  """
+  <div class="#{cs}" id="desktop-icon-#{desktop}-container">
+    <i class="#{@getIcon(desktop)}" id="desktop-icon-#{desktop}"></i>
+  </div>
+  """
+
+getIcon: (desktop) ->
+  if @icons[desktop]
+    @icons[desktop]
+  else
+    @defaultIcon
+
+cache_storage: {}
+
+cache: (key, value) ->
+  if @cache_storage and @cache_storage[key] == value
+    return false
+  else
+    @cache_storage[key] = value
+    return true
+
+  #$(domEl).find("#desktop-output").text("#{activeDesktop}")
+  #$(domEl).on 'click', "#desktop-icon-container", (e) -> #switch to desktop 1??
 
 
   #$(domEl).find(".active").removeClass("active")
-  #$(domEl).find("#desk"+activeSpace).addClass('active')
+  #$(domEl).find("#desk"+activeDesktop).addClass('active')
