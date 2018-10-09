@@ -19,6 +19,5 @@ render: () ->
   """
 
 update: ( output, domEl ) ->
-  console.log(output)
   window = output.split( /:::/g )[ 0 ]
   $("#window-output").text(window)
