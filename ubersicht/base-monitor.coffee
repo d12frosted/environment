@@ -44,6 +44,9 @@ render: ( ) ->
         <div class="icon-container" id='vpn-icon-container'>
           <i class="fa fa-globe" id='vpn-icon'></i>
         </div>
+      </div>
+
+      <div class="widg" id="wifi">
         <div class="icon-container" id='wifi-icon-container'>
           <i class="fa fa-wifi" id='wifi-icon'></i>
         </div>
