@@ -24,8 +24,7 @@
    dotspacemacs-ask-for-lazy-installation t
    dotspacemacs-configuration-layer-path `(,d12-path-spacemacs-config-home)
 
-   dotspacemacs-configuration-layers '(
-
+   dotspacemacs-configuration-layers `(
                                        ;; private
                                        d12-core
                                        d12-visual
@@ -48,7 +47,9 @@
                                        latex
                                        ranger
                                        scala
-                                       (shell :variables shell-default-shell 'multi-term)
+                                       (shell :variables
+                                              shell-default-shell 'multi-term
+                                              multi-term-program ,(executable-find "fish"))
                                        (shell-scripts :variables
                                                       sh-basic-offset 2)
                                        sql
