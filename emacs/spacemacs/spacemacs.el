@@ -40,19 +40,21 @@
                                        vulpea
 
                                        ;; spacemacs
-                                       scala
-                                       (shell-scripts :variables
-                                                      sh-basic-offset 2)
-                                       yaml
+                                       coffeescript
+                                       dash
                                        (json :variables
                                              json-reformat:indent-width 2
                                              js-indent-level 2)
                                        latex
-                                       coffeescript
-                                       typescript
+                                       ranger
+                                       scala
+                                       (shell-scripts :variables
+                                                      sh-basic-offset 2)
                                        sql
-                                       dash
-                                       ranger)
+                                       treemacs
+                                       typescript
+                                       yaml
+                                       )
 
    dotspacemacs-additional-packages '(elscreen-fr
                                       org-cliplink
