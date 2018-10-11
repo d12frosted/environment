@@ -12,23 +12,32 @@ refreshFrequency: '10s'
 
 render: ( ) ->
   """
-    <div class="container">
-        <div class="widg" id="play">
-          <div class="icon-container" id="play-icon-container">
-            <i class="fas fa-music""></i>
-          </div>
-          <div class="icon-container" id="prev-icon-container">
-            <i class="fas fa-step-backward" id="prev-button"></i>
-          </div>
-          <div class="icon-container" id="play-icon-container">
-            <i class="fas fa-play" id="play-button"></i>
-          </div>
-          <div class="icon-container" id="next-icon-container">
-            <i class="fas fa-step-forward" id="next-button"></i>
-          </div>
-          <span class="static-output" id='play-output'></span>
+    <div class="widg" id="play">
+      <div class="widg"">
+        <div class="icon-container" id="play-icon-container">
+          <i class="fas fa-music""></i>
         </div>
+      </div>
 
+      <div class="widg"">
+        <div class="icon-container" id="prev-icon-container">
+          <i class="fas fa-step-backward" id="prev-button"></i>
+        </div>
+      </div>
+
+      <div class="widg"">
+        <div class="icon-container" id="play-icon-container">
+          <i class="fas fa-play" id="play-button"></i>
+        </div>
+      </div>
+
+      <div class="widg"">
+        <div class="icon-container" id="next-icon-container">
+          <i class="fas fa-step-forward" id="next-button"></i>
+        </div>
+      </div>
+
+      <span class="static-output" id='play-output'></span>
     </div>
   """
 
