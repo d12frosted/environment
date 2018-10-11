@@ -48,6 +48,7 @@
                                        latex
                                        ranger
                                        scala
+                                       (shell :variables shell-default-shell 'multi-term)
                                        (shell-scripts :variables
                                                       sh-basic-offset 2)
                                        sql
