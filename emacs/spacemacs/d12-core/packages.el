@@ -24,6 +24,7 @@
     ediff
     yasnippet
     exec-path-from-shell
+    persp-mode
     )
   "The list of Lisp packages required by the d12-core layer.")
 
@@ -89,5 +90,17 @@
     :init
     (require 'exec-path-from-shell)
     (exec-path-from-shell-initialize)))
+
+(defun d12-core/post-init-persp-mode ()
+  (use-package persp-mode
+    :init
+    (spacemacs|define-custom-layout "@config"
+      :binding "c"
+      :body
+      (find-file-existing (concat d12-path-emacs-home "init.el")))
+    (spacemacs|define-custom-layout "@spacemacs"
+      :binding "s"
+      :body
+      (find-file-existing (concat d12-path-spacemacs-distr-home "init.el")))))
 
 ;;; packages.el ends here

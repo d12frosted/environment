@@ -346,7 +346,7 @@
 (defun d12-org/post-init-persp-mode ()
   (use-package persp-mode
     :init
-    (spacemacs|define-custom-layout "@Org"
+    (spacemacs|define-custom-layout "@org"
       :binding "o"
       :body
       (find-file-existing (d12-path/get-org-file "inbox")))))
