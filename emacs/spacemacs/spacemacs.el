@@ -26,17 +26,17 @@
 
    dotspacemacs-configuration-layers '(
                                        ;; private
-                                       d12-core
-                                       d12-visual
-                                       d12-text
-                                       d12-org
-                                       d12-emacs-lisp
-                                       d12-haskell
-                                       d12-csharp
                                        d12-applescript
-                                       d12-shell
-                                       d12-web
+                                       d12-core
+                                       d12-csharp
+                                       d12-emacs-lisp
                                        d12-git
+                                       d12-haskell
+                                       d12-org
+                                       d12-shell
+                                       d12-text
+                                       d12-visual
+                                       d12-web
                                        vulpea
 
                                        ;; spacemacs
