@@ -53,8 +53,11 @@ Shows currently selected application name.
 Shows some basic information:
 
 - volume level
+  - colourful!
 - network status (Wi-Fi or LAN)
 - battery status (is charging, battery level)
+  - changes icon depending on connection to power
+  - changes colour depending on battery level
 - date
 - time
 
