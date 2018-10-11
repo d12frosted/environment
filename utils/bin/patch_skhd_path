@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+plist_path=$(brew --prefix skhd)/homebrew.mxcl.skhd.plist
+temp_plist_path=$TMPDIR/homebrew.mxcl.skhd.plist
+path_value="\$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+echo "Patching skhd PATH"
+
+rm -rf "$temp_plist_path"
+
+found_path_var=0
+while IFS='' read -r line || [[ -n "$line" ]]; do
+  if [[ "$found_path_var" == "1" ]]; then
+    echo "    <string>$path_value</string>" >> "$temp_plist_path"
+    found_path_var=0
+  else
+    echo "$line" >> "$temp_plist_path"
+  fi
+
+  if [[ $line == *"<key>PATH</key>"* ]]; then
+    found_path_var="1"
+  fi
+done < "$plist_path"
+
+mv "$temp_plist_path" "$plist_path"
+
+echo "Done patching skhd PATH"
+
+echo "Restart skhd"
+brew services restart skhd
