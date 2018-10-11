@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+osascript -e 'tell application "Übersicht"' \
+          -e 'refresh widget id "desktop-coffee"' \
+          -e 'refresh widget id "window-coffee"' \
+          -e 'end tell'
