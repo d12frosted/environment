@@ -19,12 +19,12 @@ ctrl + alt - s : chunkc tiling::desktop --layout monocle
 ctrl + alt - d : chunkc tiling::desktop --layout float
 
 # change focus
-alt - h : chunkc tiling::window --focus west; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
-alt - j : chunkc tiling::window --focus south; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
-alt - k : chunkc tiling::window --focus north; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
-alt - l : chunkc tiling::window --focus east; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
-alt - p : chunkc tiling::window --focus prev; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
-alt - n : chunkc tiling::window --focus next; osascript -e 'tell application "Übersicht" to refresh widget id "window-coffee"'
+alt - h : chunkc tiling::window --focus west; on_window_switch
+alt - j : chunkc tiling::window --focus south; on_window_switch
+alt - k : chunkc tiling::window --focus north; on_window_switch
+alt - l : chunkc tiling::window --focus east; on_window_switch
+alt - p : chunkc tiling::window --focus prev; on_window_switch
+alt - n : chunkc tiling::window --focus next; on_window_switch
 
 # move focused window
 shift + alt - h : chunkc tiling::window --warp west
