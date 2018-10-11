@@ -162,13 +162,15 @@ color: var(--color2);
 
 #play {
   width: 480px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 #play .pinned {
   color: var(--foreground);
   background-color: var(--background);
+}
+#play-output {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /* These have to be defined by ID because they are acted upon individually by
