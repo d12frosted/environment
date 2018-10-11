@@ -16,7 +16,7 @@ icons:
 
 defaultIcon: "fas fa-expand"
 
-render: ( ) ->
+render: () ->
   """
     <div class="container" id="desktop">
       <div class="widg " id="desktop">
@@ -65,10 +65,3 @@ cache: (key, value) ->
   else
     @cache_storage[key] = value
     return true
-
-  #$(domEl).find("#desktop-output").text("#{activeDesktop}")
-  #$(domEl).on 'click', "#desktop-icon-container", (e) -> #switch to desktop 1??
-
-
-  #$(domEl).find(".active").removeClass("active")
-  #$(domEl).find("#desk"+activeDesktop).addClass('active')
