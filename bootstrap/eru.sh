@@ -126,5 +126,10 @@ touch "$target/git/local.config"
 # write macOS defaults
 source "$target/macos/defaults.sh"
 
+# patch skhd
+check skhd && {
+  "$target/utils/bin/patch_skhd_path"
+}
+
 # ensure that Emacs runs normally
 emacs --batch -l "$target/emacs/test.el"
