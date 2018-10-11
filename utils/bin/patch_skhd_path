@@ -2,7 +2,7 @@
 
 plist_path=$(brew --prefix skhd)/homebrew.mxcl.skhd.plist
 temp_plist_path=$TMPDIR/homebrew.mxcl.skhd.plist
-path_value="\$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+path_value="~/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 echo "Patching skhd PATH"
 
