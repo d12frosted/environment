@@ -149,8 +149,8 @@ handleVolume: ( domEl, volume, ismuted ) ->
   #   div.find('#volume-icon-container').addClass('red')
 
   $("#volume-output").text("#{volume}")
-  $( "#volume-icon" ).html( "<i class=\"fa #{ volumeIcon }\"></i>" )
-  $( "#volume-bar-color-output" ).width( "#{volume}%" )
+  $("#volume-icon").html("<i class=\"fa #{ volumeIcon }\"></i>")
+  $("#volume-bar-color-output").width("#{volume}%")
 
 
 #
