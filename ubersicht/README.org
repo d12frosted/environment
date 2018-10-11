@@ -63,7 +63,73 @@ Shows some basic information:
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="images/base-monitor-coffee.png">
+  <img src="images/base-monitor-coffee-1.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-2.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-3.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-4.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-5.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-6.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-7.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-8.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-9.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-10.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-11.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/base-monitor-coffee-12.png">
 </p>
 #+END_HTML
 
@@ -74,7 +140,25 @@ it's easy to extend). You can click on buttons to play/pause/next/prev.
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="images/music-player-coffee.png">
+  <img src="images/music-player-coffee-1.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/music-player-coffee-2.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/music-player-coffee-3.png">
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/music-player-coffee-4.png">
 </p>
 #+END_HTML
 
