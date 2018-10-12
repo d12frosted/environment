@@ -261,7 +261,7 @@ the script. So don't think of sanitizing them to classes */
 #wifi-icon-container {
 }
 #wifi .output {
-  width: 100%;
+  min-width: 0px;
 }
 
 #system-monitor-coffee {
