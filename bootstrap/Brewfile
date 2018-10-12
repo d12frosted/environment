@@ -23,6 +23,7 @@ brew "shellcheck"
 brew "aspell"
 brew "chunkwm", args: ["with-purify", "HEAD"]
 brew "skhd", args: ["with-logging"]
+brew "ffmpeg"
 
 # scala
 cask "java"
