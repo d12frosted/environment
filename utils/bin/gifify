@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+set -e
+
+POSITIONAL=()
+SCALE=1
+
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+    -i|--input)
+      INPUT="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -s|--scale)
+      SCALE="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+OUTPUT="${INPUT%.*}.gif"
+PALETTE="${INPUT%.*}.png"
+
+echo "input  = ${INPUT}"
+echo "output = ${OUTPUT}"
+echo "scale  = ${SCALE}"
+echo "args   = ${POSITIONAL[*]}"
+
+function cleanup () {
+  rm -f "$PALETTE"
+}
+
+trap cleanup INT TERM EXIT
+
+ffmpeg ${POSITIONAL[*]} \
+       -i "$INPUT" \
+       -vf "scale=iw*${SCALE}:ih*${SCALE}:flags=lanczos,palettegen" \
+       "$PALETTE"
+
+ffmpeg ${POSITIONAL[*]} \
+       -i "$INPUT" \
+       -i "$PALETTE" \
+       -filter_complex "scale=iw*${SCALE}:ih*${SCALE}:flags=lanczos[x];[x][1:v]paletteuse" \
+       "$OUTPUT"
+
+cleanup

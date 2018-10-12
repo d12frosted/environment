@@ -7,6 +7,7 @@ utils/bin/sync_spacemacs ~/.local/bin/sync_spacemacs
 utils/bin/inactive-repo-notifier.sh ~/.local/bin/inactive-repo-notifier
 utils/bin/on_window_switch ~/.local/bin/on_window_switch
 utils/bin/on_desktop_switch ~/.local/bin/on_desktop_switch
+utils/bin/gifify ~/.local/bin/gifify
 scala/plugins.sbt ~/.sbt/1.0/plugins/plugins.sbt
 chunkwm/chunkwmrc ~/.chunkwmrc
 skhd/skhdrc ~/.skhdrc
