@@ -4,6 +4,9 @@ set -e
 
 POSITIONAL=()
 SCALE=1
+FPS=24
+PALETTE="custom"
+COMPRESS=0
 
 while [[ $# -gt 0 ]]
 do
@@ -15,10 +18,28 @@ do
       shift # past argument
       shift # past value
       ;;
+    -o|--output)
+      OUTPUT="$2"
+      shift # past argument
+      shift # past value
+      ;;
     -s|--scale)
       SCALE="$2"
       shift # past argument
       shift # past value
+      ;;
+    --fps)
+      FPS="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    --default-palette)
+      PALETTE="default"
+      shift # past argument
+      ;;
+    --compress)
+      COMPRESS=1
+      shift # past argument
       ;;
     *)    # unknown option
       POSITIONAL+=("$1") # save it in an array for later
@@ -28,29 +49,57 @@ do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
-OUTPUT="${INPUT%.*}.gif"
-PALETTE="${INPUT%.*}.png"
+if [[ -z $OUTPUT ]]; then
+  OUTPUT="${INPUT%.*}.gif"
+fi
 
-echo "input  = ${INPUT}"
-echo "output = ${OUTPUT}"
-echo "scale  = ${SCALE}"
-echo "args   = ${POSITIONAL[*]}"
+if [[ $COMPRESS == "1" ]]; then
+  OUTPUT_TEMP="tmp_$OUTPUT"
+else
+  OUTPUT_TEMP="$OUTPUT"
+fi
+
+PALETTE_FILE="${INPUT%.*}.png"
+
+echo "input    = ${INPUT}"
+echo "output   = ${OUTPUT}"
+echo "scale    = ${SCALE}"
+echo "fps      = ${FPS}"
+echo "palette  = ${PALETTE}"
+echo "compress = ${COMPRESS}"
+echo "args     = ${POSITIONAL[*]}"
+echo
 
 function cleanup () {
-  rm -f "$PALETTE"
+  rm -f "$PALETTE_FILE"
 }
 
 trap cleanup INT TERM EXIT
 
-ffmpeg ${POSITIONAL[*]} \
-       -i "$INPUT" \
-       -vf "scale=iw*${SCALE}:ih*${SCALE}:flags=lanczos,palettegen" \
-       "$PALETTE"
+filters="fps=${FPS},scale=iw*${SCALE}:ih*${SCALE}:flags=lanczos"
 
-ffmpeg ${POSITIONAL[*]} \
-       -i "$INPUT" \
-       -i "$PALETTE" \
-       -filter_complex "scale=iw*${SCALE}:ih*${SCALE}:flags=lanczos[x];[x][1:v]paletteuse" \
-       "$OUTPUT"
+case $PALETTE in
+  custom)
+    ffmpeg ${POSITIONAL[*]} \
+           -i "$INPUT" \
+           -vf "$filters,palettegen" \
+           "$PALETTE_FILE"
 
-cleanup
+    ffmpeg ${POSITIONAL[*]} \
+           -i "$INPUT" \
+           -i "$PALETTE_FILE" \
+           -filter_complex "$filters [x]; [x][1:v] paletteuse" \
+           "$OUTPUT_TEMP"
+    ;;
+
+  default)
+    ffmpeg ${POSITIONAL[*]} \
+           -i "$INPUT" \
+           -filter_complex "$filters" \
+           "$OUTPUT_TEMP"
+    ;;
+esac
+
+if [[ $COMPRESS == "1" ]]; then
+  gifsicle --optimize=3 --delay=3 "$OUTPUT_TEMP" -o "$OUTPUT"
+fi
