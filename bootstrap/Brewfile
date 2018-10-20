@@ -6,6 +6,7 @@ tap "koekeishiya/formulae"
 
 # important
 brew "git"
+brew "git-lfs"
 brew "haskell-stack"
 brew "emacs-plus", args: ["without-spacemacs-icon"]
 brew "cask", args: ["ignore-dependencies"]
