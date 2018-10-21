@@ -3,7 +3,7 @@
 ––––––––––––––––––– */
 
 :root {
-  --global_margin: 0px;
+  --global-margin: 0px;
   --left-margin: 0px;
   --right-margin: 0px;
   --line-size: 24px;
@@ -209,10 +209,10 @@ the script. So don't think of sanitizing them to classes */
 ––––––––––––––––––– POSITIONS & SIZE
 ––––––––––––––––––– */
 #bar-top-coffee {
-  top: var(--global_margin);
+  top: var(--global-margin);
 }
 #bar-bottom-coffee {
-  bottom: var(--global_margin);
+  bottom: var(--global-margin);
 }
 #bar-top-coffee, #bar-bottom-coffee {
   left: var(--left-margin);
@@ -221,7 +221,7 @@ the script. So don't think of sanitizing them to classes */
 
 #desktop-coffee {
   left: var(--left-margin);
-  top: var(--global_margin);
+  top: var(--global-margin);
 }
 
 .active-desktop {
@@ -230,7 +230,7 @@ the script. So don't think of sanitizing them to classes */
 }
 
 #music-player-coffee {
-  bottom: var(--global_margin);
+  bottom: var(--global-margin);
   left: var(--left-margin);
   display: inline;
   white-space: nowrap;
@@ -246,7 +246,7 @@ the script. So don't think of sanitizing them to classes */
 }
 
 #window-coffee {
-  top: var(--global_margin);
+  top: var(--global-margin);
   width: 100%;
   display: flex;
   align-items: center;
@@ -254,7 +254,7 @@ the script. So don't think of sanitizing them to classes */
 }
 
 #base-monitor-coffee {
-  top: var(--global_margin);
+  top: var(--global-margin);
   right: var(--right-margin);
   width: auto;
 }
@@ -268,19 +268,19 @@ the script. So don't think of sanitizing them to classes */
 }
 
 #system-monitor-coffee {
-  bottom: var(--global_margin);
+  bottom: var(--global-margin);
   right: var(--right-margin);
 }
 
 #app-switch-coffee {
-  top: var(--global_margin);
+  top: var(--global-margin);
   width: 100%;
   display: flex;
   justify-content: center;
 }
 
 #weather-coffee {
-  top: var(--global_margin);
+  top: var(--global-margin);
   margin-left: 20px; /* var(--left-margin); */
   right: var(--right-margin);
   display: flex;
