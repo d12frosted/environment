@@ -22,6 +22,10 @@
 
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . light))
+;; (add-to-list 'default-frame-alist '(undecorated . t))
+;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+;; (add-to-list 'default-frame-alist '(fullscreen . fullboth))
+
 
 ;; Without this comment emacs25 adds (package-initialize) here
 ;; (package-initialize)
