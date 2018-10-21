@@ -204,9 +204,9 @@ handleWifi: (domEl, data) ->
     icon = 'fas fa-exclamation-circle'
 
   if data.vpn == ""
-    $("#vpn-icon").addClass("blue")
+    $("#vpn").addClass("hidden")
   else
-    $("#vpn-icon").removeClass("blue")
+    $("#vpn").removeClass("hidden")
 
   if connected
     $(domEl).find("#wifi-output").removeClass("hidden")
