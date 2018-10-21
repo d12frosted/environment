@@ -193,14 +193,18 @@ handleBattery: ( domEl, percentage, ischarging ) ->
 #
 
 handleWifi: (domEl, data) ->
-  connected = false
+  connected = true
+  showTitle = false
+
   if data.netStatus == "Wi-Fi"
-    connected = true
     icon = 'fas fa-wifi'
+    showTitle = true
   else if data.netStatus == 'USB 10/100/1000 LAN' or data.netStatus == 'Apple USB Ethernet Adapter'
-    connected = true
     icon = 'fas fa-sitemap'
+  else if data.netStatus == 'iPhone USB'
+    icon = 'fas fa-mobile-alt'
   else
+    connected = false
     icon = 'fas fa-exclamation-circle'
 
   if data.vpn == ""
@@ -208,7 +212,7 @@ handleWifi: (domEl, data) ->
   else
     $("#vpn").removeClass("hidden")
 
-  if connected
+  if showTitle
     $("#wifi-output").removeClass("hidden")
   else
     $("#wifi-output").addClass("hidden")
