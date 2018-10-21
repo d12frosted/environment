@@ -52,7 +52,6 @@
   overflow: hidden;
   white-space: nowrap;
   display: inline;
-  min-width: var(--line-size);
   width: auto;
   padding-left: 4px;
   padding-right: 4px;
