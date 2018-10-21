@@ -98,6 +98,11 @@
 .nohidden .output {
   display: inline;
 }
+
+.hidden {
+  display: none;
+}
+
 .alt {
   display: none;
 }
