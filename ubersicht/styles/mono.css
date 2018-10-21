@@ -258,6 +258,9 @@ the script. So don't think of sanitizing them to classes */
   right: var(--right-margin);
   width: auto;
 }
+#wifi {
+  padding-right: 4px;
+}
 #wifi-icon-container {
 }
 #wifi .output {
