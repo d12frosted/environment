@@ -40,7 +40,7 @@ render: ( ) ->
         <span class="output" id='volume-output'></span>
       </div>
 
-      <div class="widg" id="wifi">
+      <div class="widg" id="vpn">
         <div class="icon-container" id='vpn-icon-container'>
           <i class="fa fa-globe" id='vpn-icon'></i>
         </div>
