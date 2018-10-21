@@ -209,12 +209,12 @@ handleWifi: (domEl, data) ->
     $("#vpn").removeClass("hidden")
 
   if connected
-    $(domEl).find("#wifi-output").removeClass("hidden")
+    $("#wifi-output").removeClass("hidden")
   else
-    $(domEl).find("#wifi-output").addClass("hidden")
+    $("#wifi-output").addClass("hidden")
 
   $("#wifi-output").text(data.netName)
-  $(domEl).find("#wifi-icon").removeClass().addClass(icon)
+  $("#wifi-icon").removeClass().addClass(icon)
 
 
 #
