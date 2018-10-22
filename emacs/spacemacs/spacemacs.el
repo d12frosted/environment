@@ -42,6 +42,7 @@
                                        ;; spacemacs
                                        coffeescript
                                        dash
+                                       docker
                                        (json :variables
                                              json-reformat:indent-width 2
                                              js-indent-level 2)
