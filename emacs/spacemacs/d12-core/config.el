@@ -26,4 +26,7 @@
 (setq auto-save-interval 30)
 (add-hook 'focus-out-hook #'d12-save-all)
 
+;; Add trailing newline to the files on save
+(setq require-final-newline t)
+
 ;;; config.el ends here
