@@ -12,3 +12,4 @@ scala/plugins.sbt ~/.sbt/1.0/plugins/plugins.sbt
 chunkwm/chunkwmrc ~/.chunkwmrc
 skhd/skhdrc ~/.skhdrc
 ubersicht/ ~/Library/Application Support/Übersicht/widgets
+maven/mavenrc ~/.mavenrc
