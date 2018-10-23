@@ -1,1 +1,1 @@
--Xmx8g
+MAVEN_OPTS="-Xmx8g"
