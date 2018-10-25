@@ -44,6 +44,7 @@ cask "font-awesome-terminal-fonts"
 cask "ubersicht"
 cask "mactex"
 cask "cyberduck"
+cask "cryptomator"
 
 # fonts
 cask "font-source-code-pro"
