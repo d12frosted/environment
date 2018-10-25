@@ -91,6 +91,59 @@ if [[ "$target" = "" ]]; then
   target="$HOME/.config"
 fi
 
+ALL=YES
+REPO=NO
+LINK=NO
+BREW=NO
+MACOS=NO
+SKHD=NO
+TESTS=NO
+
+POSITIONAL=()
+
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+    repo)
+      ALL=NO
+      REPO=YES
+      shift # past argument
+      ;;
+    link)
+      ALL=NO
+      LINK=YES
+      shift # past argument
+      ;;
+    brew)
+      ALL=NO
+      BREW=YES
+      shift # past argument
+      ;;
+    macos)
+      ALL=NO
+      MACOS=YES
+      shift # past argument
+      ;;
+    skhd)
+      ALL=NO
+      SKHD=YES
+      shift # past argument
+      ;;
+    tests)
+      ALL=NO
+      TESTS=YES
+      shift # past argument
+      ;;
+    *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
 ################################################################################
 # Actual bootstrap
 ################################################################################
@@ -102,18 +155,24 @@ check brew || {
 }
 
 # clone dependencies
-require_github_repo "$target" "d12frosted" "environment"
-require_github_repo "$HOME/.spacemacs" "syl20bnr" "spacemacs" "develop"
+if [[ "$ALL" = "YES" || "$REPO" = "YES" ]]; then
+  require_github_repo "$target" "d12frosted" "environment"
+  require_github_repo "$HOME/.spacemacs" "syl20bnr" "spacemacs" "develop"
+fi
 
 # create local directory for binaries
 ensure_dir "$HOME/.local/bin"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
 # run the Linkfile
-map_lines "$target/bootstrap/Linkfile" safe_link
+if [[ "$ALL" = "YES" || "$LINK" = "YES" ]]; then
+  map_lines "$target/bootstrap/Linkfile" safe_link
+fi
 
 # run the Brewfile
-cd "$target/bootstrap" && brew bundle
+if [[ "$ALL" = "YES" || "$BREW" = "YES" ]]; then
+  cd "$target/bootstrap" && brew bundle
+fi
 
 # setup fish shell
 echo "set -U XDG_CONFIG_HOME $target" | fish
@@ -124,12 +183,18 @@ echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 touch "$target/git/local.config"
 
 # write macOS defaults
-source "$target/macos/defaults.sh"
+if [[ "$ALL" = "YES" || "$MACOS" = "YES" ]]; then
+  "$target/macos/defaults.sh"
+fi
 
 # patch skhd
-check skhd && {
-  "$target/utils/bin/patch_skhd_path"
-}
+if [[ "$ALL" = "YES" || "$SKHD" = "YES" ]]; then
+  check skhd && {
+    "$target/utils/bin/patch_skhd_path"
+  }
+fi
 
 # ensure that Emacs runs normally
-emacs --batch -l "$target/emacs/test.el"
+if [[ "$ALL" = "YES" || "$TESTS" = "YES" ]]; then
+  emacs --batch -l "$target/emacs/test.el"
+fi
