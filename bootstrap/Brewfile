@@ -33,7 +33,6 @@ brew "scala"
 
 # applications
 cask "dropbox"
-cask "spectacle"
 cask "alfred"
 cask "bartender"
 cask "google-chrome"
