@@ -8,6 +8,7 @@
 # with his own thoughts and devices, if he will. But I win sit and hearken, and
 # be glad that through you great beauty has been wakened into song.
 #
+#   John Ronald Reuel Tolkien (c)
 #
 ################################################################################
 #
