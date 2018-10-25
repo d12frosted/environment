@@ -15,10 +15,7 @@
 ;;; Code:
 
 (defconst d12-csharp-packages
-  '(
-    csharp-mode
-    omnisharp
-    )
+  '(csharp-mode)
   "The list of Lisp packages required by the d12-csharp layer.")
 
 (defun d12-csharp/post-init-csharp-mode ()
@@ -34,11 +31,5 @@
      :map csharp-mode-map
      ("M-." . d12-csharp/go-to-definition-at-center)
      ("M-," . pop-tag-mark))))
-
-(defun d12-csharp/post-init-omnisharp ()
-  (use-package omnisharp
-    :defer t
-    :init
-    (setq-default omnisharp-server-executable-path (executable-find "omnisharp"))))
 
 ;;; packages.el ends here
