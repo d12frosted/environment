@@ -22,8 +22,8 @@ brew "jq"
 brew "fish"
 brew "shellcheck"
 brew "aspell"
-brew "chunkwm", args: ["with-purify", "HEAD"]
-brew "skhd", args: ["with-logging"]
+brew "chunkwm", args: ["with-purify", "HEAD"], restart_service: :changed
+brew "skhd", args: ["with-logging", "HEAD"], restart_service: :changed
 brew "ffmpeg"
 
 # scala
