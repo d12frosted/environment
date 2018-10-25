@@ -1,8 +1,25 @@
 #!/usr/bin/env bash
+#
+################################################################################
+#
+# Of the theme that I have declared to you, I will now that ye make in harmony
+# together a Great Music. And since I have kindled you with the Flame
+# Imperishable, ye shall show forth your powers in adorning this theme, each
+# with his own thoughts and devices, if he will. But I win sit and hearken, and
+# be glad that through you great beauty has been wakened into song.
+#
+#
+################################################################################
+#
+# Run this script to install all dependencies and configurations. If you wish to
+# perform only specific task or tasks pass them as arguments, space-separated.
+#
+# ./eru.sh brew link
+#
 
-################################################################################
+#
 # Fast failure
-################################################################################
+#
 
 set -e
 
@@ -16,9 +33,9 @@ if [[ "$(uname)" != "$supported_os" ]]; then
   exit 1
 fi
 
-################################################################################
+#
 # Helpers
-################################################################################
+#
 
 function require_repo() {
   if [[ -d "$1/.git" ]]; then
@@ -82,9 +99,9 @@ function map_lines() {
   done < "$1"
 }
 
-################################################################################
+#
 # Setup variables
-################################################################################
+#
 
 target=$XDG_CONFIG_HOME
 if [[ "$target" = "" ]]; then
@@ -144,9 +161,9 @@ do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
-################################################################################
+#
 # Actual bootstrap
-################################################################################
+#
 
 # install brew
 check brew || {
