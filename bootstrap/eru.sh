@@ -124,6 +124,10 @@ if [[ "$target" = "" ]]; then
 fi
 XDG_CONFIG_HOME=$target
 
+DEVELOPER=$HOME/Developer
+if [[ "$USER" != "d12frosted" ]]; then
+  DEVELOPER=$HOME/Developer/personal
+fi
 
 ALL="true"
 SSH_KEY="false"
@@ -235,6 +239,7 @@ fi
 
 # create local directory for binaries
 ensure_dir "$HOME/.local/bin"
+ensure_dir "$DEVELOPER"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
 # run the Linkfile
