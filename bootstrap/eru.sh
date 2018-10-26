@@ -61,9 +61,9 @@ function require_repo() {
 
 function require_github_repo() {
   if [[ "$USE_HTTPS" = "true" ]]; then
-    require_repo "$1" "https://github.com/$2/$3.git" "${@:4}"
+    require_repo "$1" "https://github.com/$2.git" "${@:3}"
   else
-    require_repo "$1" "git@github.com:$2/$3.git" "${@:4}"
+    require_repo "$1" "git@github.com:$2.git" "${@:3}"
   fi
 }
 
