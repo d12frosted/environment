@@ -106,8 +106,8 @@ function safe_link() {
 
 function map_lines() {
   while IFS='' read -r line || [[ -n "$line" ]]; do
-    $2 $line
-  done < "$1"
+    $1 $line
+  done < "$2"
 }
 
 #
@@ -234,7 +234,7 @@ ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
 # run the Linkfile
 if [[ "$ALL" = "true" || "$LINK" = "true" ]]; then
-  map_lines "$target/bootstrap/Linkfile" safe_link
+  map_lines safe_link "$target/bootstrap/Linkfile"
 fi
 
 # run the Brewfile
