@@ -202,7 +202,7 @@ touch "$target/git/local.config"
 
 # write macOS defaults
 if [[ "$ALL" = "YES" || "$MACOS" = "YES" ]]; then
-  "$target/macos/defaults.sh"
+  source "$target/macos/defaults.sh"
 fi
 
 # patch skhd
