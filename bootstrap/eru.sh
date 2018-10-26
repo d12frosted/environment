@@ -110,6 +110,7 @@ if [[ "$target" = "" ]]; then
 fi
 
 ALL=YES
+SSH_KEY=NO
 REPO=NO
 LINK=NO
 BREW=NO
@@ -124,6 +125,11 @@ do
   key="$1"
 
   case $key in
+    ssh-key)
+      ALL=NO
+      SSH_KEY=YES
+      shift # past argument
+      ;;
     repo)
       ALL=NO
       REPO=YES
@@ -171,6 +177,40 @@ check brew || {
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   brew update
 }
+
+# setup SSH key
+if [[ "$ALL" = "YES" || "$SSH_KEY" = "YES" ]]; then
+  ssh_key_add_url="https://github.com/settings/ssh/new"
+  ssh_key_path="$HOME/.ssh/id_rsa"
+  ssh_key_pub_path="${ssh_key_path}.pub"
+  ssh_config_path="$HOME/.ssh/config"
+
+  if [[ -f "$ssh_key_path" ]]; then
+    echo "SSH key found at $ssh_key_path."
+  else
+    echo "No SSH key found."
+    mkdir -p $(dirname "$ssh_key_path")
+    ssh-keygen -t rsa -b 4096 -C "$USER" -f "$ssh_key_path"
+    echo "SSH key was generated."
+  fi
+
+  echo "Starting ssh-agent"
+  eval "$(ssh-agent -s)"
+
+  echo "Automatically load SSH key and use Keychain"
+  echo "Host *
+ AddKeysToAgent yes
+ UseKeychain yes
+ IdentityFile $ssh_key_path" > "$ssh_config_path"
+
+  echo "Add SSH key to ssh-agent"
+  ssh-add -K ~/.ssh/id_rsa
+
+  echo "Make sure to add SSH key to GitHub"
+  pbcopy < "$ssh_key_pub_path"
+  open "$ssh_key_add_url"
+  read -p "Press enter to continue"
+fi
 
 # clone dependencies
 if [[ "$ALL" = "YES" || "$REPO" = "YES" ]]; then
