@@ -44,7 +44,13 @@ The most important thing - you need to clone this repo into =~/.config=.
 Otherwise fish and emacs will not work properly. Then call
 
 #+BEGIN_SRC sh
-$ ./bootstrap/eru.sh
+  $ ./bootstrap/eru.sh
+#+END_SRC
+
+If you are on a new laptop,
+
+#+BEGIN_SRC bash
+  $ curl https://raw.githubusercontent.com/d12frosted/environment/master/bootstrap/eru.sh | bash
 #+END_SRC
 
 * Can I use your files?
