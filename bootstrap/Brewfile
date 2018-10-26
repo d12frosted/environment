@@ -48,6 +48,7 @@ cask "mactex"
 cask "cyberduck"
 cask "cryptomator"
 cask "slack"
+cask "telegram"
 
 # fonts
 cask "font-source-code-pro"
