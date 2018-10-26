@@ -30,6 +30,8 @@ brew "ffmpeg"
 cask "java"
 brew "sbt"
 brew "scala"
+brew "maven"
+cask "intellij-idea"
 
 # applications
 cask "dropbox"
