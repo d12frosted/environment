@@ -1,54 +1,54 @@
 # taps
-tap "d12frosted/emacs-plus"
 tap "caskroom/fonts"
 tap "crisidev/homebrew-chunkwm"
+tap "d12frosted/emacs-plus"
 tap "koekeishiya/formulae"
 
 # important
+brew "ack"
+brew "ag"
+brew "aspell"
+brew "cask", args: ["ignore-dependencies"]
+brew "chunkwm", args: ["with-purify", "HEAD"], restart_service: :changed
+brew "emacs-plus", args: ["without-spacemacs-icon"]
+brew "ffmpeg"
+brew "fish"
 brew "git"
 brew "git-lfs"
 brew "haskell-stack"
-brew "emacs-plus", args: ["without-spacemacs-icon"]
-brew "cask", args: ["ignore-dependencies"]
-brew "wget"
-brew "ack"
-brew "ag"
-brew "tree"
-brew "ncdu"
-brew "terminal-notifier", link: true
-brew "ossp-uuid"
-brew "mu"
 brew "jq"
-brew "fish"
+brew "mu"
+brew "ncdu"
+brew "ossp-uuid"
 brew "shellcheck"
-brew "aspell"
-brew "chunkwm", args: ["with-purify", "HEAD"], restart_service: :changed
 brew "skhd", args: ["with-logging", "HEAD"], restart_service: :changed
-brew "ffmpeg"
+brew "terminal-notifier", link: true
+brew "tree"
+brew "wget"
 
 # scala
-cask "java"
+brew "maven"
 brew "sbt"
 brew "scala"
-brew "maven"
 cask "intellij-idea"
+cask "java"
 
 # applications
-cask "dropbox"
 cask "alfred"
 cask "bartender"
-cask "google-chrome"
-cask "firefox"
-cask "gpg-suite"
-cask "xquartz"
-cask "font-fontawesome"
-cask "font-awesome-terminal-fonts"
-cask "ubersicht"
-cask "mactex"
-cask "cyberduck"
 cask "cryptomator"
+cask "cyberduck"
+cask "dropbox"
+cask "firefox"
+cask "font-awesome-terminal-fonts"
+cask "font-fontawesome"
+cask "google-chrome"
+cask "gpg-suite"
+cask "mactex"
 cask "slack"
 cask "telegram"
+cask "ubersicht"
+cask "xquartz"
 
 # fonts
 cask "font-source-code-pro"
