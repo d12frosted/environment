@@ -1,2 +1,4 @@
 $XDG_CONFIG_HOME d12frosted/environment
 $HOME/.spacemacs syl20bnr/spacemacs develop
+$DEVELOPER/fancy-yank d12frosted/fancy-yank
+$DEVELOPER/flyspell-correct d12frosted/flyspell-correct
