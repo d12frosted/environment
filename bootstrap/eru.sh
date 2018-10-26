@@ -119,14 +119,14 @@ if [[ "$target" = "" ]]; then
   target="$HOME/.config"
 fi
 
-ALL=YES
-SSH_KEY=NO
-REPO=NO
-LINK=NO
-BREW=NO
-MACOS=NO
-SKHD=NO
-TESTS=NO
+ALL="true"
+SSH_KEY="false"
+REPO="false"
+LINK="false"
+BREW="false"
+MACOS="false"
+SKHD="false"
+TESTS="false"
 
 POSITIONAL=()
 
@@ -136,38 +136,38 @@ do
 
   case $key in
     ssh-key)
-      ALL=NO
-      SSH_KEY=YES
+      ALL="false"
+      SSH_KEY="true"
       shift # past argument
       ;;
     repo)
-      ALL=NO
-      REPO=YES
+      ALL="false"
+      REPO="true"
       shift # past argument
       ;;
     link)
-      ALL=NO
-      LINK=YES
+      ALL="false"
+      LINK="true"
       shift # past argument
       ;;
     brew)
-      ALL=NO
-      BREW=YES
+      ALL="false"
+      BREW="true"
       shift # past argument
       ;;
     macos)
-      ALL=NO
-      MACOS=YES
+      ALL="false"
+      MACOS="true"
       shift # past argument
       ;;
     skhd)
-      ALL=NO
-      SKHD=YES
+      ALL="false"
+      SKHD="true"
       shift # past argument
       ;;
     tests)
-      ALL=NO
-      TESTS=YES
+      ALL="false"
+      TESTS="true"
       shift # past argument
       ;;
     *)    # unknown option
@@ -189,7 +189,7 @@ check brew || {
 }
 
 # setup SSH key
-if [[ "$ALL" = "YES" || "$SSH_KEY" = "YES" ]]; then
+if [[ "$ALL" = "true" || "$SSH_KEY" = "true" ]]; then
   ssh_key_add_url="https://github.com/settings/ssh/new"
   ssh_key_path="$HOME/.ssh/id_rsa"
   ssh_key_pub_path="${ssh_key_path}.pub"
@@ -223,7 +223,7 @@ if [[ "$ALL" = "YES" || "$SSH_KEY" = "YES" ]]; then
 fi
 
 # clone dependencies
-if [[ "$ALL" = "YES" || "$REPO" = "YES" ]]; then
+if [[ "$ALL" = "true" || "$REPO" = "true" ]]; then
   require_github_repo "$target" "d12frosted" "environment"
   require_github_repo "$HOME/.spacemacs" "syl20bnr" "spacemacs" "develop"
 fi
@@ -233,12 +233,12 @@ ensure_dir "$HOME/.local/bin"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
 # run the Linkfile
-if [[ "$ALL" = "YES" || "$LINK" = "YES" ]]; then
+if [[ "$ALL" = "true" || "$LINK" = "true" ]]; then
   map_lines "$target/bootstrap/Linkfile" safe_link
 fi
 
 # run the Brewfile
-if [[ "$ALL" = "YES" || "$BREW" = "YES" ]]; then
+if [[ "$ALL" = "true" || "$BREW" = "true" ]]; then
   cd "$target/bootstrap" && brew bundle
 fi
 
@@ -251,18 +251,18 @@ echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 touch "$target/git/local.config"
 
 # write macOS defaults
-if [[ "$ALL" = "YES" || "$MACOS" = "YES" ]]; then
+if [[ "$ALL" = "true" || "$MACOS" = "true" ]]; then
   source "$target/macos/defaults.sh"
 fi
 
 # patch skhd
-if [[ "$ALL" = "YES" || "$SKHD" = "YES" ]]; then
+if [[ "$ALL" = "true" || "$SKHD" = "true" ]]; then
   check skhd && {
     "$target/utils/bin/patch_skhd_path"
   }
 fi
 
 # ensure that Emacs runs normally
-if [[ "$ALL" = "YES" || "$TESTS" = "YES" ]]; then
+if [[ "$ALL" = "true" || "$TESTS" = "true" ]]; then
   emacs --batch -l "$target/emacs/test.el"
 fi
