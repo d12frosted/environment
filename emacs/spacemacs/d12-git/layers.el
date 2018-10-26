@@ -18,6 +18,7 @@
  '(version-control
    (git :variables
         git-magit-status-fullscreen t)
-   github))
+   ;; github
+   ))
 
 ;;; layers.el ends here
