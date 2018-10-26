@@ -55,7 +55,7 @@ function require_repo() {
     git clone "$2" "$1"
   fi
   if [[ "$3" != "" ]]; then
-    git checkout "$3"
+    cd "$1" && git checkout "$3"
   fi
 }
 
