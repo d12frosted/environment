@@ -122,6 +122,8 @@ target=$XDG_CONFIG_HOME
 if [[ "$target" = "" ]]; then
   target="$HOME/.config"
 fi
+XDG_CONFIG_HOME=$target
+
 
 ALL="true"
 SSH_KEY="false"
