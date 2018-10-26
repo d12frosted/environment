@@ -67,6 +67,10 @@ function require_github_repo() {
   fi
 }
 
+function sync_repo() {
+  require_github_repo $(eval echo "$1") "${@:2}"
+}
+
 function ensure_dir() {
   if [[ ! -d "$1" ]]; then
     echo "create $1"
@@ -224,8 +228,7 @@ fi
 
 # clone dependencies
 if [[ "$ALL" = "true" || "$REPO" = "true" ]]; then
-  require_github_repo "$target" "d12frosted" "environment"
-  require_github_repo "$HOME/.spacemacs" "syl20bnr" "spacemacs" "develop"
+  map_lines sync_repo "$target/bootstrap/Repofile"
 fi
 
 # create local directory for binaries
