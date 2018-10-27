@@ -4,13 +4,13 @@ commands =
   iTunes: "osascript -e 'if application \"iTunes\" is running then tell application \"iTunes\" to if player state is playing then artist of current track & \" - \" & name of current track'"
 
 command: "echo " +
-         "$(#{ commands.isRunning}):::" +
-         "$(#{ commands.isPlaying}):::" +
-         "$(#{ commands.iTunes}):::"
+         "$(#{commands.isRunning}):::" +
+         "$(#{commands.isPlaying}):::" +
+         "$(#{commands.iTunes}):::"
 
 refreshFrequency: '10s'
 
-render: ( ) ->
+render: () ->
   """
     <div class="widg" id="play">
       <div class="widg"">
@@ -41,8 +41,8 @@ render: ( ) ->
     </div>
   """
 
-update: ( output, domEl ) ->
-  output = output.split( /:::/g )
+update: (output, domEl) ->
+  output = output.split(/:::/g)
   isRunning = output[0]
   isPlaying = output[1]
   iTunes = output[2]
@@ -124,25 +124,25 @@ afterRender: (domEl) ->
 # ─── ANIMATION  ─────────────────────────────────────────────────────────
 #
   # ---- OPEN
-  $(domEl).on 'mouseover', ".widg", (e) => $(domEl).find( $($(e.target))).addClass('open')
-  $(domEl).on 'mouseover', ".icon-container", (e) => $(domEl).find( $($(e.target))).parent().addClass('open')
-  $(domEl).on 'mouseover', ".output", (e) => $(domEl).find( $($(e.target))).parent().addClass('open')
+  $(domEl).on 'mouseover', ".widg", (e) => $(domEl).find($($(e.target))).addClass('open')
+  $(domEl).on 'mouseover', ".icon-container", (e) => $(domEl).find($($(e.target))).parent().addClass('open')
+  $(domEl).on 'mouseover', ".output", (e) => $(domEl).find($($(e.target))).parent().addClass('open')
 
-  $(domEl).on 'mouseout', ".widg", (e) => $(domEl).find( $($(e.target))).removeClass('open')
-  $(domEl).on 'mouseout', ".icon-container", (e) => $(domEl).find( $($(e.target))).parent().removeClass('open')
-  $(domEl).on 'mouseout', ".output", (e) => $(domEl).find( $($(e.target))).parent().removeClass('open')
+  $(domEl).on 'mouseout', ".widg", (e) => $(domEl).find($($(e.target))).removeClass('open')
+  $(domEl).on 'mouseout', ".icon-container", (e) => $(domEl).find($($(e.target))).parent().removeClass('open')
+  $(domEl).on 'mouseout', ".output", (e) => $(domEl).find($($(e.target))).parent().removeClass('open')
 
-  #$(domEl).on 'click', ".widg", (e) => @toggleOption( domEl, e, 'pinned')
+  #$(domEl).on 'click', ".widg", (e) => @toggleOption(domEl, e, 'pinned')
 #
 # ─── CLICKS  ─────────────────────────────────────────────────────────
 #
 
 toggleOption: (domEl, e, option) ->
-  target = $(domEl).find( $($(e.target))).parent()
+  target = $(domEl).find($($(e.target))).parent()
 
-  if target.hasClass("#{ option }")
-    $(target).removeClass("#{ option }")
-    $(output).removeClass("#{ option }")
+  if target.hasClass("#{option}")
+    $(target).removeClass("#{option}")
+    $(output).removeClass("#{option}")
   else
-    $(target).addClass("#{ option }")
-    $(output).addClass("#{ option }")
+    $(target).addClass("#{option}")
+    $(output).addClass("#{option}")
