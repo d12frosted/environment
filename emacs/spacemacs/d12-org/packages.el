@@ -65,7 +65,9 @@
 
     ;; Setup `org-agenda-files'. Prefer using directories as files add to them
     ;; will automatically get into `org-agenda-files'.
-    (setq org-agenda-files `(,d12-path-org-home))
+    (setq org-agenda-files `(,d12-path-org-home
+                             ,d12-path-org-notes-home
+                             ,d12-path-org-tasks-home))
 
     ;; Setup `org-todo-keywords'.
     (setq org-todo-keywords
@@ -98,7 +100,7 @@
             ("T" "todo (annotated)" plain (file ,(d12-path/get-org-file "inbox"))
              "* TODO %?\n%U%a\n" :clock-in t :clock-resume t)
 
-            ("j" "Journal" entry (file+datetree+prompt ,(d12-path/get-org-file "journal"))
+            ("j" "Journal" entry (file+datetree+prompt ,(d12-path/get-org-note-file "journal"))
              "* %?\n%U\n" :clock-in t :clock-resume t)
 
             ("r" "respond" entry (file ,(d12-path/get-org-file "inbox"))
@@ -330,7 +332,7 @@
   (use-package org-brain
     :defer t
     :init
-    (setq org-brain-path (d12-path/get-org-dir "brain/"))
+    (setq org-brain-path d12-path-org-notes-home)
     (d12-key-bind-personal "v" 'org-brain-visualize)
     (add-hook 'org-brain-visualize-text-hook #'d12-org/enable-latex-preview)
     :config

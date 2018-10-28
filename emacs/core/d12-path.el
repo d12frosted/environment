@@ -54,6 +54,14 @@ non-nil.")
   (concat d12-path-dropbox "vulpea/")
   "Path to Org directory.")
 
+(defconst d12-path-org-notes-home
+  (concat d12-path-org-home "notes/")
+  "Path to Org Notes directory.")
+
+(defconst d12-path-org-tasks-home
+  (concat d12-path-org-home "gtd/")
+  "Path to Org Tasks directory.")
+
 (defconst d12-path-emacs-home
   (concat d12-path-config-home "emacs/")
   "Path to Emacs configurations directory.")
@@ -118,6 +126,14 @@ non-nil.")
 (defun d12-path/get-org-file (file)
   "Locate org FILE relative to `d12-path-org-home'."
   (concat d12-path-org-home file ".org"))
+
+(defun d12-path/get-org-note-file (file)
+  "Locate org FILE relative to `d12-path-org-home'."
+  (concat d12-path-org-notes-home file ".org"))
+
+(defun d12-path/get-org-task-file (file)
+  "Locate org FILE relative to `d12-path-org-home'."
+  (concat d12-path-org-tasks-home file ".org"))
 
 (defun d12-path/get-org-dir (dir)
   "Locate org DIR relative to `d12-path-org-home'."
