@@ -20,6 +20,7 @@ brew "jq"
 brew "mu"
 brew "ncdu"
 brew "ossp-uuid"
+brew "pandoc"
 brew "shellcheck"
 brew "skhd", args: ["with-logging", "HEAD"], restart_service: :changed
 brew "terminal-notifier", link: true
