@@ -336,7 +336,7 @@
     (d12-key-bind-personal "v" 'org-brain-visualize)
     (add-hook 'org-brain-visualize-text-hook #'d12-org/enable-latex-preview)
     :config
-    (setq org-brain-visualize-sort-function 'ignore)
+    (setq org-brain-visualize-sort-function 'org-brain-title<)
     (setq org-brain-visualize-one-child-per-line t)
     (setq org-id-track-globally t)
     (setq org-id-locations-file (concat d12-path-emacs-home ".org-id-locations"))
