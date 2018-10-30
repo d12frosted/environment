@@ -68,7 +68,57 @@ function require_github_repo() {
 }
 
 function sync_repo() {
-  require_github_repo $(eval echo "$1") "${@:2}"
+  echo "sync_repo $*"
+
+  wd=$(eval echo "$1")
+  require_github_repo "$wd" "${@:2}"
+
+  # branch="$3"
+  # if [[ $branch = "" ]]; then
+  #   branch="master"
+  # fi
+
+  # remote=origin
+  # remote_url="git@github.com:$2.git"
+
+  # if [[ "$USE_HTTPS" = "true" ]]; then
+  #   remote_url="https://github.com/$2.git"
+  # fi
+
+  # cd "$wd" && {
+  #   git diff-index --quiet HEAD -- || {
+  #     echo "Your working directory is not clean."
+  #     echo "Please commit or stash all changes before proceeding."
+  #     exit 1
+  #   }
+
+  #   current_branch=$(git symbolic-ref --short HEAD)
+  #   if [[ $branch != "$current_branch" ]]; then
+  #     echo "Switching from $current_branch to $branch"
+  #     git checkout "$branch"
+  #   fi
+
+  #   if [[ -d .git/refs/remotes/$remote ]]; then
+  #     url=$(git remote get-url $remote)
+  #     if [[ $url != "$remote_url" ]]; then
+  #       echo "Remote '$branch' has wrong url, so updating it"
+  #       echo "  $url -> $remote_url"
+  #       git remote set-url $remote "$remote_url"
+  #     fi
+  #   else
+  #     echo "Could not find remote '$remote', so adding it"
+  #     git remote add $remote "$remote_url"
+  #   fi
+
+  #   git fetch $remote
+  #   if [[ $(git rev-parse HEAD) == $(git rev-parse $remote/$branch) ]]; then
+  #     echo "Everything up-to-date"
+  #     exit 0
+  #   fi
+  #   echo "Fetched changes:"
+  #   git --no-pager lg HEAD..$remote/$branch
+  #   git reset --hard $remote/$branch
+  # }
 }
 
 function ensure_dir() {
