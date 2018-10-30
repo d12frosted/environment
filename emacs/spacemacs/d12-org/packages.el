@@ -23,6 +23,7 @@
     org-brain
     persp-mode
     toc-org
+    (org-drawer-list :location built-in)
     (orgability :location built-in)
     org-board
     org-download
@@ -361,6 +362,13 @@
     (progn
       (setq toc-org-max-depth 10)
       (add-hook 'org-mode-hook 'toc-org-enable))))
+
+(defun d12-org/init-org-drawer-list ()
+  (d12-path/load-project "org-drawer-list")
+  (use-package org-drawer-list
+    :commands (org-drawer-list
+               org-drawer-list-add
+               org-drawer-list-remove)))
 
 (defun d12-org/init-orgability ()
   (d12-path/load-project "orgability")
