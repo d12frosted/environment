@@ -54,6 +54,10 @@ function theme() {
   echo -e "\033[1;32m=> $1 Theme :: ${@:2}\033[0m"
 }
 
+function sign() {
+  echo -e "\033[1;37m=> $1 Theme :: ${@:2}\033[0m"
+}
+
 #
 # Greetings
 #
@@ -81,6 +85,17 @@ fi
 #
 
 theme "Supporting" "Defining helpers"
+
+function theme_guard() {
+  guard=$(eval echo "\$$1")
+  if [[ "$ALL" = "true" || "$guard" = "true" ]]; then
+    theme "$2" "${@:3}"
+    return 0
+  else
+    sign "$2" "${@:3}"
+    return 1
+  fi
+}
 
 function require_repo() {
   if [[ -d "$1/.git" ]]; then
@@ -283,8 +298,7 @@ ensure_dir "$HOME/.local/bin"
 ensure_dir "$DEVELOPER"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
-theme "SSH" "Checking SSH keys"
-if [[ "$ALL" = "true" || "$SSH_KEY" = "true" ]]; then
+theme_guard "SSH_KEY" "SSH" "Checking SSH keys" && {
   ssh_key_add_url="https://github.com/settings/ssh/new"
   ssh_key_path="$HOME/.ssh/id_rsa"
   ssh_key_pub_path="${ssh_key_path}.pub"
@@ -315,29 +329,27 @@ if [[ "$ALL" = "true" || "$SSH_KEY" = "true" ]]; then
   pbcopy < "$ssh_key_pub_path"
   open "$ssh_key_add_url"
   read -p "Press enter to continue"
-fi
-
-theme "Repositories" "Sync repositories from Repofile"
-if [[ "$ALL" = "true" || "$REPO" = "true" ]]; then
-  map_lines sync_repo "$target/bootstrap/Repofile"
-fi
-
-theme "Linking" "Link all files as defined in Linkfile"
-if [[ "$ALL" = "true" || "$LINK" = "true" ]]; then
-  map_lines safe_link "$target/bootstrap/Linkfile"
-fi
-
-theme "Brew" "Ensure brew exists"
-check brew || {
-  info "Installing brew"
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-  brew update
 }
 
-theme "Brew" "Install all dependencies"
-if [[ "$ALL" = "true" || "$BREW" = "true" ]]; then
+theme_guard "REPO" "Repositories" "Sync repositories from Repofile" && {
+  map_lines sync_repo "$target/bootstrap/Repofile"
+}
+
+theme_guard "LINK" "Linking" "Link all files as defined in Linkfile" && {
+  map_lines safe_link "$target/bootstrap/Linkfile"
+}
+
+theme_guard "BREW" "Brew" "Ensure brew exists" && {
+  check brew || {
+    info "Installing brew"
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    brew update
+  }
+}
+
+theme_guard "BREW" "Brew" "Install all dependencies" && {
   cd "$target/bootstrap" && brew bundle
-fi
+}
 
 theme "Fish" "Setup fish variables"
 echo "set -U XDG_CONFIG_HOME $target" | fish
@@ -347,19 +359,18 @@ echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 theme "Git" "Create a local git config file"
 touch "$target/git/local.config"
 
-theme "macOS" "Write all defaults"
-if [[ "$ALL" = "true" || "$MACOS" = "true" ]]; then
+theme_guard "MACOS" "macOS" "Write all defaults" && {
   source "$target/macos/defaults.sh"
-fi
+}
 
-theme "skhd" "Patch skhd application PATH"
-if [[ "$ALL" = "true" || "$SKHD" = "true" ]]; then
+theme_guard "SKHD" "skhd" "Patch skhd application PATH" && {
   check skhd && {
     "$target/utils/bin/patch_skhd_path"
   }
-fi
+}
 
-theme "Guarding" "Check that Emacs runs as expected"
-if [[ "$ALL" = "true" || "$TESTS" = "true" ]]; then
+theme_guard "TESTS" "Guardian" "Check that Emacs runs as expected" && {
   emacs --batch -l "$target/emacs/test.el"
-fi
+}
+
+true
