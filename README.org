@@ -53,6 +53,12 @@ If you are on a new laptop,
   $ curl https://raw.githubusercontent.com/d12frosted/environment/master/bootstrap/eru.sh | bash
 #+END_SRC
 
+#+BEGIN_HTML
+<p align="center">
+  <img src="bootstrap/images/eru.png">
+</p>
+#+END_HTML
+
 * Can I use your files?
 Sure you can. But should you? :D
 
