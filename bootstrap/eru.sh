@@ -240,6 +240,10 @@ do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
+if [[ "$INTERACTIVE" = "" ]]; then
+  INTERACTIVE=true
+fi
+
 #
 # Actual bootstrap
 #
@@ -278,8 +282,10 @@ theme_guard "SSH" "Checking SSH keys" && {
 
   log "Make sure to add SSH key to GitHub"
   pbcopy < "$ssh_key_pub_path"
-  open "$ssh_key_add_url"
-  read -p "Press enter to continue"
+  if [[ "$INTERACTIVE" = "true" ]]; then
+    open "$ssh_key_add_url"
+    read -p "Press enter to continue"
+  fi
 }
 
 theme_guard "Repositories" "Sync repositories from Repofile" && {
