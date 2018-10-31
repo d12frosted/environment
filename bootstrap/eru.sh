@@ -23,6 +23,12 @@
 #
 
 #
+# Hi, my name is
+#
+
+fellow="d12frosted"
+
+#
 # Fast failure
 #
 
@@ -96,77 +102,73 @@ function theme_guard() {
   fi
 }
 
-function require_repo() {
-  if [[ -d "$1/.git" ]]; then
-    log "$1 already exists"
+function qualify_repo_url() {
+  if [[ "$1" = "https://"* || "$1" = "git@"* ]]; then
+    echo "$1"
+  elif [[ "$USE_HTTPS" = "true" ]]; then
+    echo  "https://github.com/$1.git"
   else
-    git clone "$2" "$1"
-  fi
-  if [[ "$3" != "" ]]; then
-    cd "$1" && git checkout "$3"
-  fi
-}
-
-function require_github_repo() {
-  if [[ "$USE_HTTPS" = "true" ]]; then
-    require_repo "$1" "https://github.com/$2.git" "${@:3}"
-  else
-    require_repo "$1" "git@github.com:$2.git" "${@:3}"
+    echo "git@github.com:$1.git"
   fi
 }
 
 function sync_repo() {
   section "sync_repo $*"
 
+  remote=origin
   wd=$(eval echo "$1")
-  require_github_repo "$wd" "${@:2}"
+  url=$(qualify_repo_url "$2")
+  branch="$3"
+  if [[ $branch = "" ]]; then
+    branch="master"
+  fi
 
-  # branch="$3"
-  # if [[ $branch = "" ]]; then
-  #   branch="master"
-  # fi
+  if [[ -d "$wd/.git" ]]; then
+    log "$wd already exists"
+  else
+    git clone "$url" "$wd" -b "$branch"
+  fi
 
-  # remote=origin
-  # remote_url="git@github.com:$2.git"
+  cd "$wd" && {
+    git diff-index --quiet HEAD -- || {
+      error "Your working directory is not clean."
+      error "Please commit or stash all changes before proceeding."
+      return 1
+    }
 
-  # if [[ "$USE_HTTPS" = "true" ]]; then
-  #   remote_url="https://github.com/$2.git"
-  # fi
+    current_branch=$(git symbolic-ref --short HEAD)
+    if [[ $branch != "$current_branch" ]]; then
+      log "Switching from $current_branch to $branch"
+      git checkout "$branch"
+    fi
 
-  # cd "$wd" && {
-  #   git diff-index --quiet HEAD -- || {
-  #     echo "Your working directory is not clean."
-  #     echo "Please commit or stash all changes before proceeding."
-  #     exit 1
-  #   }
+    if [[ -d .git/refs/remotes/$remote ]]; then
+      current_url=$(git remote get-url $remote)
+      if [[ $current_url != "$url" ]]; then
+        log "Remote '$branch' has wrong url, so updating it"
+        log "  $current_url -> $url"
+        git remote set-url $remote "$url"
+      fi
+    else
+      log "Could not find remote '$remote', so adding it"
+      git remote add $remote "$url"
+    fi
 
-  #   current_branch=$(git symbolic-ref --short HEAD)
-  #   if [[ $branch != "$current_branch" ]]; then
-  #     echo "Switching from $current_branch to $branch"
-  #     git checkout "$branch"
-  #   fi
-
-  #   if [[ -d .git/refs/remotes/$remote ]]; then
-  #     url=$(git remote get-url $remote)
-  #     if [[ $url != "$remote_url" ]]; then
-  #       echo "Remote '$branch' has wrong url, so updating it"
-  #       echo "  $url -> $remote_url"
-  #       git remote set-url $remote "$remote_url"
-  #     fi
-  #   else
-  #     echo "Could not find remote '$remote', so adding it"
-  #     git remote add $remote "$remote_url"
-  #   fi
-
-  #   git fetch $remote
-  #   if [[ $(git rev-parse HEAD) == $(git rev-parse $remote/$branch) ]]; then
-  #     echo "Everything up-to-date"
-  #     exit 0
-  #   fi
-  #   echo "Fetched changes:"
-  #   git --no-pager lg HEAD..$remote/$branch
-  #   git reset --hard $remote/$branch
-  # }
+    log "fetch $remote"
+    git fetch $remote
+    if [[ $(git rev-parse HEAD) == $(git rev-parse $remote/$branch) ]]; then
+      log "Everything up-to-date"
+      return 0
+    fi
+    log "Fetched changes:"
+    git --no-pager lg HEAD..$remote/$branch
+    log "rebase onto $remote/$branch"
+    git rebase $remote/$branch
+    if [[ "$url" = *"$fellow"* ]]; then
+      log "pushing changes"
+      git push $remote $branch
+    fi
+  }
 }
 
 function ensure_dir() {
@@ -225,7 +227,7 @@ fi
 XDG_CONFIG_HOME=$target
 
 DEVELOPER=$HOME/Developer
-if [[ "$USER" != "d12frosted" ]]; then
+if [[ "$USER" != "$fellow" ]]; then
   DEVELOPER=$HOME/Developer/personal
 fi
 
