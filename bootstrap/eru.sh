@@ -47,14 +47,18 @@ function intro() {
 }
 
 function log() {
-  echo -e "\033[0;36m   $*\033[0m"
+  echo -e "\033[0;30m$*\033[0m"
+}
+
+function section() {
+  echo -e "\033[0;34m=> $*\033[0m"
 }
 
 function theme() {
   echo -e "\033[1;32m=> $1 Theme :: ${@:2}\033[0m"
 }
 
-function sign() {
+function inactive_theme() {
   echo -e "\033[1;37m=> $1 Theme :: ${@:2}\033[0m"
 }
 
@@ -93,7 +97,7 @@ function theme_guard() {
     theme "$1" "${@:2}"
     return 0
   else
-    sign "$2" "${@:3}"
+    inactive_theme "$1" "${@:2}"
     return 1
   fi
 }
@@ -118,7 +122,7 @@ function require_github_repo() {
 }
 
 function sync_repo() {
-  log "sync_repo $*"
+  section "sync_repo $*"
 
   wd=$(eval echo "$1")
   require_github_repo "$wd" "${@:2}"
