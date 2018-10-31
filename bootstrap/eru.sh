@@ -162,8 +162,8 @@ function sync_repo() {
     fi
 
     log "Fetched changes:"
-    git log \
-        --no-pager \
+    git --no-pager \
+        log \
         --graph \
         --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' \
         HEAD..$remote/$branch
