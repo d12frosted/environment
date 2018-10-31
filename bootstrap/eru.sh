@@ -299,11 +299,11 @@ theme_guard "SSH" "Checking SSH keys" && {
 }
 
 theme_guard "Repositories" "Sync environment repository" && {
-  sync_repo "$XDG_CONFIG_HOME" "d12frosted/environment"
+  sync_repo "$XDG_CONFIG_HOME" "d12frosted/environment" || true
 }
 
 theme_guard "Repositories" "Sync repositories from Repofile" && {
-  map_lines sync_repo "$target/bootstrap/Repofile"
+  map_lines sync_repo "$target/bootstrap/Repofile" || true
 }
 
 theme_guard "Linking" "Link all files as defined in Linkfile" && {
