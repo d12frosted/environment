@@ -33,7 +33,7 @@ brew "sbt"
 brew "scala"
 cask "intellij-idea"
 cask "java"
-cask "java8"
+cask "homebrew/cask-versions/java8"
 
 # applications
 cask "alfred"
