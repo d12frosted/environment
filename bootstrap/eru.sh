@@ -87,7 +87,7 @@ theme "Supporting" "Defining helpers"
 function theme_guard() {
   key=$(echo "$1" | awk '{print tolower($0)}')
   guard=$(eval echo "\$guard_$key")
-  if [[ "$ALL" = "trues" || "$guard" = "true" ]]; then
+  if [[ "$ALL" = "true" || "$guard" = "true" ]]; then
     theme "$1" "${@:2}"
     return 0
   else
