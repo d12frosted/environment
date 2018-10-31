@@ -234,7 +234,8 @@ ALL="true"
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
-  eval "guard_$1=true"
+  key=$(echo "$1" | awk '{print tolower($0)}')
+  declare -r "guard_$key=true"
   shift
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
