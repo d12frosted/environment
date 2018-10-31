@@ -254,35 +254,35 @@ ensure_dir "$DEVELOPER"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
 theme_guard "SSH" "Checking SSH keys" && {
-  ssh_key_add_url="https://github.com/settings/ssh/new"
-  ssh_key_path="$HOME/.ssh/id_rsa"
-  ssh_key_pub_path="${ssh_key_path}.pub"
-  ssh_config_path="$HOME/.ssh/config"
+  if [[ "$INTERACTIVE" = "true" ]]; then
+    ssh_key_add_url="https://github.com/settings/ssh/new"
+    ssh_key_path="$HOME/.ssh/id_rsa"
+    ssh_key_pub_path="${ssh_key_path}.pub"
+    ssh_config_path="$HOME/.ssh/config"
 
-  if [[ -f "$ssh_key_path" ]]; then
-    log "SSH key found at $ssh_key_path."
-  else
-    log "No SSH key found."
-    mkdir -p $(dirname "$ssh_key_path")
-    ssh-keygen -t rsa -b 4096 -C "$USER" -f "$ssh_key_path"
-    log "SSH key was generated."
-  fi
+    if [[ -f "$ssh_key_path" ]]; then
+      log "SSH key found at $ssh_key_path."
+    else
+      log "No SSH key found."
+      mkdir -p $(dirname "$ssh_key_path")
+      ssh-keygen -t rsa -b 4096 -C "$USER" -f "$ssh_key_path"
+      log "SSH key was generated."
+    fi
 
-  log "Starting ssh-agent"
-  eval "$(ssh-agent -s)"
+    log "Starting ssh-agent"
+    eval "$(ssh-agent -s)"
 
-  log "Automatically load SSH key and use Keychain"
-  log "Host *
+    log "Automatically load SSH key and use Keychain"
+    log "Host *
  AddKeysToAgent yes
  UseKeychain yes
  IdentityFile $ssh_key_path" > "$ssh_config_path"
 
-  log "Add SSH key to ssh-agent"
-  ssh-add -K ~/.ssh/id_rsa
+    log "Add SSH key to ssh-agent"
+    ssh-add -K ~/.ssh/id_rsa
 
-  log "Make sure to add SSH key to GitHub"
-  pbcopy < "$ssh_key_pub_path"
-  if [[ "$INTERACTIVE" = "true" ]]; then
+    log "Make sure to add SSH key to GitHub"
+    pbcopy < "$ssh_key_pub_path"
     open "$ssh_key_add_url"
     read -p "Press enter to continue"
   fi
