@@ -87,9 +87,10 @@ fi
 theme "Supporting" "Defining helpers"
 
 function theme_guard() {
-  guard=$(eval echo "\$$1")
-  if [[ "$ALL" = "true" || "$guard" = "true" ]]; then
-    theme "$2" "${@:3}"
+  key=$(echo "$1" | awk '{print tolower($0)}')
+  guard=$(eval echo "\$guard_$key")
+  if [[ "$ALL" = "trues" || "$guard" = "true" ]]; then
+    theme "$1" "${@:2}"
     return 0
   else
     sign "$2" "${@:3}"
@@ -231,61 +232,12 @@ if [[ "$USER" != "d12frosted" ]]; then
 fi
 
 ALL="true"
-SSH_KEY="false"
-REPO="false"
-LINK="false"
-BREW="false"
-MACOS="false"
-SKHD="false"
-TESTS="false"
 
 POSITIONAL=()
-
 while [[ $# -gt 0 ]]
 do
-  key="$1"
-
-  case $key in
-    ssh-key)
-      ALL="false"
-      SSH_KEY="true"
-      shift # past argument
-      ;;
-    repo)
-      ALL="false"
-      REPO="true"
-      shift # past argument
-      ;;
-    link)
-      ALL="false"
-      LINK="true"
-      shift # past argument
-      ;;
-    brew)
-      ALL="false"
-      BREW="true"
-      shift # past argument
-      ;;
-    macos)
-      ALL="false"
-      MACOS="true"
-      shift # past argument
-      ;;
-    skhd)
-      ALL="false"
-      SKHD="true"
-      shift # past argument
-      ;;
-    tests)
-      ALL="false"
-      TESTS="true"
-      shift # past argument
-      ;;
-    *)    # unknown option
-      POSITIONAL+=("$1") # save it in an array for later
-      shift # past argument
-      ;;
-  esac
+  eval "guard_$1=true"
+  shift
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
@@ -298,7 +250,7 @@ ensure_dir "$HOME/.local/bin"
 ensure_dir "$DEVELOPER"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
-theme_guard "SSH_KEY" "SSH" "Checking SSH keys" && {
+theme_guard "SSH" "Checking SSH keys" && {
   ssh_key_add_url="https://github.com/settings/ssh/new"
   ssh_key_path="$HOME/.ssh/id_rsa"
   ssh_key_pub_path="${ssh_key_path}.pub"
@@ -331,15 +283,15 @@ theme_guard "SSH_KEY" "SSH" "Checking SSH keys" && {
   read -p "Press enter to continue"
 }
 
-theme_guard "REPO" "Repositories" "Sync repositories from Repofile" && {
+theme_guard "Repositories" "Sync repositories from Repofile" && {
   map_lines sync_repo "$target/bootstrap/Repofile"
 }
 
-theme_guard "LINK" "Linking" "Link all files as defined in Linkfile" && {
+theme_guard "Linking" "Link all files as defined in Linkfile" && {
   map_lines safe_link "$target/bootstrap/Linkfile"
 }
 
-theme_guard "BREW" "Brew" "Ensure brew exists" && {
+theme_guard "Brew" "Ensure brew exists" && {
   check brew || {
     info "Installing brew"
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -347,7 +299,7 @@ theme_guard "BREW" "Brew" "Ensure brew exists" && {
   }
 }
 
-theme_guard "BREW" "Brew" "Install all dependencies" && {
+theme_guard "Brew" "Install all dependencies" && {
   cd "$target/bootstrap" && brew bundle
 }
 
@@ -359,17 +311,17 @@ echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 theme "Git" "Create a local git config file"
 touch "$target/git/local.config"
 
-theme_guard "MACOS" "macOS" "Write all defaults" && {
+theme_guard "macOS" "Write all defaults" && {
   source "$target/macos/defaults.sh"
 }
 
-theme_guard "SKHD" "skhd" "Patch skhd application PATH" && {
+theme_guard "skhd" "Patch skhd application PATH" && {
   check skhd && {
     "$target/utils/bin/patch_skhd_path"
   }
 }
 
-theme_guard "TESTS" "Guardian" "Check that Emacs runs as expected" && {
+theme_guard "Guardian" "Check that Emacs runs as expected" && {
   emacs --batch -l "$target/emacs/test.el"
 }
 
