@@ -234,8 +234,11 @@ ALL="true"
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
-  key=$(echo "$1" | awk '{print tolower($0)}')
-  declare -r "guard_$key=true"
+  if [[ "$1" != "" ]]; then
+    key=$(echo "$1" | awk '{print tolower($0)}')
+    declare -r "guard_$key=true"
+    ALL="false"
+  fi
   shift
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
