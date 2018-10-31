@@ -160,8 +160,13 @@ function sync_repo() {
       log "Everything up-to-date"
       return 0
     fi
+
     log "Fetched changes:"
-    git --no-pager lg HEAD..$remote/$branch
+    git --no-pager \
+        --graph \
+        --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' \
+        HEAD..$remote/$branch
+
     log "rebase onto $remote/$branch"
     git rebase $remote/$branch
     if [[ "$url" = *"$fellow"* ]]; then
