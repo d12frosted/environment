@@ -112,6 +112,14 @@ function qualify_repo_url() {
   fi
 }
 
+function git_lg() {
+  git --no-pager \
+      log \
+      --graph \
+      --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' \
+      "$*"
+}
+
 function sync_repo() {
   section "sync_repo $*"
 
@@ -162,14 +170,16 @@ function sync_repo() {
     fi
 
     log "Fetched changes:"
-    git --no-pager \
-        log \
-        --graph \
-        --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' \
-        HEAD..$remote/$branch
+    git_lg HEAD..$remote/$branch
+    log
 
     log "rebase onto $remote/$branch"
     git rebase $remote/$branch
+
+    log "Changes to push:"
+    git_lg $remote/$branch..HEAD
+    log
+
     if [[ "$url" = *"$fellow"* ]]; then
       log "pushing changes"
       git push $remote $branch
