@@ -15,17 +15,11 @@
 # Run this script to install all dependencies and configurations. If you wish to
 # perform only specific task or tasks pass them as arguments, space-separated.
 #
-#   ./eru.sh brew link
+#   ./eru.sh [theme] [theme] ...
 #
-# Available tasks:
+# For example,
 #
-# - ssh-key
-# - repo
-# - link
-# - brew
-# - macos
-# - skhd
-# - tests
+#   ./eru.sh linking repositories brew
 #
 
 #
