@@ -342,7 +342,7 @@ theme "Git" "Create a local git config file"
 touch "$target/git/local.config"
 
 theme_guard "macOS" "Write all defaults" && {
-  source "$target/macos/defaults.sh"
+  sudo "$target/macos/defaults.sh"
 }
 
 theme_guard "skhd" "Patch skhd application PATH" && {
