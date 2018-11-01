@@ -53,7 +53,7 @@ defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 # Kill affected applications
-for app in "Activity Monitor" "Dock" "Finder" "Safari" "SystemUIServer" "cfprefsd" "Terminal";
+for app in "Activity Monitor" "Dock" "Finder" "Safari" "SystemUIServer" "cfprefsd";
 do
   echo "Killing $app"
   killall "${app}" &> /dev/null || true
