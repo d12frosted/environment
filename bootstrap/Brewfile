@@ -17,7 +17,7 @@ brew "git"
 brew "git-lfs"
 brew "haskell-stack"
 brew "jq"
-brew "mu"
+brew "mu", args: ["with-emacs"]
 brew "ncdu"
 brew "ossp-uuid"
 brew "pandoc"
