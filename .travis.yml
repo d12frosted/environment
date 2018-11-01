@@ -9,10 +9,6 @@ sudo: true
 install: true
 script: ./bootstrap/eru.sh
 
-# Handle git submodules yourself
-git:
-  submodules: false
-
 before_install:
   - brew update
   - rm -f '/usr/local/bin/terminal-notifier'
