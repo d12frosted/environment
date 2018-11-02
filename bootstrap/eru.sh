@@ -294,7 +294,7 @@ theme_guard "SSH" "Checking SSH keys" && {
     eval "$(ssh-agent -s)"
 
     log "Automatically load SSH key and use Keychain"
-    log "Host *
+    echo "Host *
  AddKeysToAgent yes
  UseKeychain yes
  IdentityFile $ssh_key_path" > "$ssh_config_path"
