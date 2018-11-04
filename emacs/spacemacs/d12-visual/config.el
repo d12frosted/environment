@@ -42,4 +42,6 @@
    mode-line-position
    mode-line-end-spaces))
 
+(add-hook 'window-setup-hook 'd12-patch-background)
+
 ;;; config.el ends here
