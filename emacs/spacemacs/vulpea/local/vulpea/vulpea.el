@@ -123,6 +123,14 @@
         (insert name)
         (org-id-get-create)))))
 
+(defun vulpea-brain--get-property (entry-or-id name)
+  "Returns property with NAME of ENTRY-OR-ID."
+  (vulpea-brain--map-entry
+   entry-or-id
+   (lambda (entry)
+     (org-entry-get nil name))
+   nil))
+
 (defun vulpea-brain--map-entry (entry-or-id entry-fn file-fn)
   "Execute ENTRY-FN or FILE-FN on ENTRY-OR-ID.
 
