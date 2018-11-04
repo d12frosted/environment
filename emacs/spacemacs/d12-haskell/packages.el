@@ -15,24 +15,10 @@
 ;;; Code:
 
 (defconst d12-haskell-packages
-  '(intero
-    haskell-mode)
+  '(haskell-mode)
   "The list of Lisp packages required by the d12-haskell layer.")
 
-(defun d12-haskell/init-haskell-mode ()
-  (use-package haskell-mode
-    :defer t
-    :init
-    (setq haskell-hoogle-command "hoogle -i")
-    :config
-    ))
-
-(defun d12-haskell/init-intero ()
-  (use-package intero
-    :defer t
-    :init
-    (add-hook 'haskell-mode-hook 'intero-mode)
-    :config))
-
+(defun d12-haskell/post-init-haskell-mode ()
+  (setq haskell-hoogle-command "hoogle -i"))
 
 ;;; packages.el ends here
