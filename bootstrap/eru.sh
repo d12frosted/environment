@@ -234,6 +234,13 @@ function map_lines() {
   done < "$2"
 }
 
+function download_bin() {
+  fp="$HOME/.local/bin/$1"
+  curl --silent -o "$fp" "$2"
+  chmod a+x "$HOME/.local/bin/$1"
+  hash -r
+}
+
 #
 # Setup variables
 #
@@ -337,6 +344,10 @@ theme_guard "Brew" "Install all dependencies" && {
   cd "$target/bootstrap" && brew bundle
 }
 
+theme_guard "Utils" "Install all utilities" && {
+  download_bin "defaults+" "https://raw.githubusercontent.com/boochtek/defaults_plus/master/defaults+"
+}
+
 theme "Fish" "Setup fish variables"
 echo "set -U XDG_CONFIG_HOME $target" | fish
 echo "set -x XDG_CONFIG_HOME $target" | fish
@@ -347,6 +358,10 @@ touch "$target/git/local.config"
 
 theme_guard "macOS" "Write all defaults" && {
   sudo "$target/macos/defaults.sh"
+}
+
+theme_guard "Terminal" "Setup Terminal.app" && {
+  "$target/macos/terminal.sh"
 }
 
 theme_guard "skhd" "Patch skhd application PATH" && {
