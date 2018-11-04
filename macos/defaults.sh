@@ -36,6 +36,34 @@ defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 #
+# Setup Trackpad
+#
+
+# Enable tap to click. (Don't have to press down on the trackpad -- just tap it.)
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+
+# Disable three finger vertical swipe gesture
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerVertSwipeGesture 0
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerVertSwipeGesture 0
+
+# Enable secondary click
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
+defaults write com.apple.AppleMultitouchTrackpad TrackpadRightClick -bool true
+
+# Disable four fingers vertical swipe
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerVertSwipeGesture 0
+defaults write com.apple.AppleMultitouchTrackpad TrackpadFourFingerVertSwipeGesture 0
+
+# Swipe full-screen apps with four fingers
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadFourFingerHorizSwipeGesture 2
+defaults write com.apple.AppleMultitouchTrackpad TrackpadFourFingerHorizSwipeGesture 2
+
+# Enable three finger drag
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+
+#
 # Finder
 #
 
@@ -71,10 +99,10 @@ defaults write com.apple.NetworkBrowser BrowseAllInterfaces 1
 # Kill affected applications
 #
 
-for app in "Activity Monitor" "Dock" "Finder" "Safari" "SystemUIServer" "cfprefsd";
+for app in "Activity Monitor" "Dock" "Finder" "Safari" "SystemUIServer" "Terminal" "cfprefsd";
 do
   echo "Killing $app"
-  killall "${app}" &> /dev/null || true
+  killall "${app}"
 done
 
 echo "Done. Note that some of these changes require a logout/restart to take effect."
