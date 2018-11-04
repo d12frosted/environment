@@ -58,8 +58,12 @@ function theme() {
   echo -e "\033[1;32m=> $1 Theme :: ${@:2}\033[0m"
 }
 
+function optional_theme() {
+  echo -e "\033[1;32m-> $1 Theme :: ${@:2}\033[0m"
+}
+
 function inactive_theme() {
-  echo -e "\033[1;37m=> $1 Theme :: ${@:2}\033[0m"
+  echo -e "\033[1;37m-> $1 Theme :: ${@:2}\033[0m"
 }
 
 #
@@ -94,7 +98,7 @@ function theme_guard() {
   key=$(echo "$1" | awk '{print tolower($0)}')
   guard=$(eval echo "\$guard_$key")
   if [[ "$ALL" = "true" || "$guard" = "true" ]]; then
-    theme "$1" "${@:2}"
+    optional_theme "$1" "${@:2}"
     return 0
   else
     inactive_theme "$1" "${@:2}"
