@@ -67,6 +67,3 @@ write_integer "Window Settings.$profile_name.useOptionAsMetaKey" 1
 # Set "$profile_name" as default
 write_string "Default Window Settings" "$profile_name"
 write_string "Startup Window Settings" "$profile_name"
-
-killall Terminal
-killall cfprefsd

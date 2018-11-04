@@ -83,6 +83,12 @@ chflags nohidden ~/Library
 sudo chflags nohidden /Volumes
 
 #
+# Terminal
+#
+
+source "terminal.sh"
+
+#
 # Other
 #
 
