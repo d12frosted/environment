@@ -123,6 +123,25 @@
         (insert name)
         (org-id-get-create)))))
 
+(defun vulpea-brain--map-entry (entry-or-id entry-fn file-fn)
+  "Execute ENTRY-FN or FILE-FN on ENTRY-OR-ID.
+
+If ENTRY-OR-ID points to file entry, then FILE-FN is executed.
+Otherwise ENTRY-FN is executed.
+
+Entry is passed to both functions as argument.
+
+For the duration of every function, point is set on entry."
+  (let ((entry (vulpea-brain--as-entry entry-or-id)))
+    (if (org-brain-filep entry)
+        (with-current-buffer (find-file-noselect (org-brain-entry-path entry))
+          (goto-char (point-min))
+          (unless (null file-fn)
+            (funcall file-fn entry)))
+      (org-with-point-at (org-brain-entry-marker entry)
+        (unless (null entry-fn)
+          (funcall entry-fn entry))))))
+
 
 
 ;;;###autoload
