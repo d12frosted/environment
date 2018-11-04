@@ -420,16 +420,24 @@ top of the file:
 (defun vulpea-cha/new-tea ()
   "Create a new tea entry."
   (interactive)
-  (let* ((name (read-string "Tea name: "))
+  (let* ((tea-group (vulpea-cha--read-tea-group))
+         (name (cadr tea-group))
+         (name-original
+          (vulpea-brain--get-property tea-group "NAME_ORIGINAL"))
+         (name-transcription
+          (vulpea-brain--get-property tea-group "NAME_TRANSCRIPTION"))
+         (name-meaning
+          (vulpea-brain--get-property tea-group "NAME_MEANING"))
+         (name (read-string "Tea name: " name))
          (id (vulpea-brain--new-child vulpea-cha--tea-parent name)))
     (org-with-point-at (org-id-find id t)
-      (vulpea--set-property-link "TEA_GROUP"
-                                 vulpea-cha--tea-groups-parent)
+      (org-set-property "TEA_GROUP"
+                        (vulpea-brain--make-link tea-group))
       (vulpea--set-property-string "TAG")
       (org-set-property "NAME" name)
-      (vulpea--set-property-string "NAME_ORIGINAL")
-      (vulpea--set-property-string "NAME_TRANSCRIPTION")
-      (vulpea--set-property-string "NAME_MEANING")
+      (vulpea--set-property-string "NAME_ORIGINAL" name-original)
+      (vulpea--set-property-string "NAME_TRANSCRIPTION" name-transcription)
+      (vulpea--set-property-string "NAME_MEANING" name-meaning)
       (vulpea--set-property-string "YEAR_GATHERED")
       (vulpea--set-property-string "YEAR_MANUFACTURED")
       (vulpea/set-place-dwim)
@@ -481,6 +489,10 @@ top of the file:
        (string-to-number (or (org-entry-get nil "TOTAL_OUT") "")))))
   (org-edit-headline
    (vulpea--format-title vulpea-cha-tea-title-format)))
+
+(defun vulpea-cha--read-tea-group ()
+  "Read Tea Group."
+  (vulpea-brain--choose-entry-by-parent vulpea-cha--tea-groups-parent))
 
 
 
