@@ -50,10 +50,10 @@
    nil
    t))
 
-(defun vulpea-brain--choose-entry-by-parent (parent)
+(defun vulpea-brain--choose-entry-by-parent (prompt parent)
   "Choose a brain entry from children of PARENT."
   (org-brain-choose-entry
-   "Entry: "
+   prompt
    (org-brain-children (vulpea-brain--as-entry parent))
    nil
    t))
@@ -214,7 +214,7 @@ top of the file:
                                    (cons (car x)
                                          (org-brain-entry-from-id (cdr x))))
                                  vulpea-places-config))
-         (entry (vulpea-brain--choose-entry-by-parent level-id))
+         (entry (vulpea-brain--choose-entry-by-parent "Level: " level-id))
          (entry-id (org-brain-entry-identifier entry)))
 
     ;; clear all levels
@@ -492,7 +492,9 @@ top of the file:
 
 (defun vulpea-cha--read-tea-group ()
   "Read Tea Group."
-  (vulpea-brain--choose-entry-by-parent vulpea-cha--tea-groups-parent))
+  (vulpea-brain--choose-entry-by-parent
+   "Tea group: "
+   vulpea-cha--tea-groups-parent))
 
 
 
@@ -548,7 +550,9 @@ SEPARATORS."
   (org-set-property
    name
    (vulpea-brain--make-link
-    (vulpea-brain--choose-entry-by-parent parent))))
+    (vulpea-brain--choose-entry-by-parent
+     (format "%s: " (capitalize name))
+     parent))))
 
 (defun vulpea--prettify-prompt-string (prompt)
   (capitalize (replace-regexp-in-string "_" " " prompt)))
