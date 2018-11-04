@@ -55,7 +55,7 @@ If you are on a new laptop,
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="bootstrap/images/eru.png">
+  <img src="bootstrap/images/eru-example-1.png">
 </p>
 #+END_HTML
 
