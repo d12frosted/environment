@@ -519,10 +519,10 @@ SEPARATORS."
     (string-match regexp s)
     (match-string 1 s)))
 
-(defun vulpea--set-property-string (name)
+(defun vulpea--set-property-string (name &optional initial)
   (org-set-property
    name
-   (read-string (concat (vulpea--prettify-prompt-string name) ": "))))
+   (read-string (concat (vulpea--prettify-prompt-string name) ": ") initial)))
 
 (defun vulpea--set-property-link (name parent)
   (org-set-property
