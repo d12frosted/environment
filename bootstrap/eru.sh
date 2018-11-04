@@ -344,10 +344,6 @@ theme_guard "Brew" "Install all dependencies" && {
   cd "$target/bootstrap" && brew bundle
 }
 
-theme_guard "Utils" "Install all utilities" && {
-  download_bin "defaults+" "https://raw.githubusercontent.com/boochtek/defaults_plus/master/defaults+"
-}
-
 theme "Fish" "Setup fish variables"
 echo "set -U XDG_CONFIG_HOME $target" | fish
 echo "set -x XDG_CONFIG_HOME $target" | fish
