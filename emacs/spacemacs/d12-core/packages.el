@@ -25,6 +25,7 @@
     yasnippet
     exec-path-from-shell
     persp-mode
+    (emacs-addiction-mode :location built-in)
     )
   "The list of Lisp packages required by the d12-core layer.")
 
@@ -102,5 +103,11 @@
       :binding "s"
       :body
       (find-file-existing (concat d12-path-spacemacs-distr-home "init.el")))))
+
+(defun d12-core/init-emacs-addiction-mode ()
+  (d12-path/load-project "emacs-addiction-mode")
+  (require 'emacs-addiction-mode)
+  (global-emacs-addiction-mode)
+  (setq emacs-addiction-level 'brian))
 
 ;;; packages.el ends here

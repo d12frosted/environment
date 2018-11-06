@@ -71,51 +71,10 @@
    d12-path-spacemacs-user-config-file))
 
 ;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
-;; (unbind-key "C-x C-c")
+(unbind-key "C-x C-c")
 
 ;; I use meta a lot, and command key is much easier to hit than option.
 (setq mac-command-modifier 'meta
       mac-option-modifier  'none)
-
-;; (defun d12*kill-emacs (orig-fun &optional arg)
-;;   (when (y-or-n-p "Who dares to kill emacs? Are you sure?")
-;;     (apply orig-fun arg)))
-;; (advice-add 'kill-emacs :around #'d12*kill-emacs)
-
-;; (defun d12*message (orig-fun format-string &rest args)
-;;   (apply orig-fun (format "[%s] %s" (format-time-string "%H:%M:%S.%6N") format-string) args))
-;; (advice-add 'message :around #'d12*message)
-
-(define-minor-mode emacs-addiction-mode
-  "Toggle Emacs addiction mode.
-
-Interactively with no argument, this command toggles the mode. A
-positive prefix argument enables the mode, any other prefix
-argument disables it. From Lisp, argument omitted or nil enables
-the mode, `toggle' toggles the state.
-
-When Emacs addiction mode is enabled, you can't quit Emacs.
-
-Literally."
-  :init-value nil
-  :lighter " Addiction"
-  :keymap '()
-  :group 'emacs-addiction)
-
-(define-key emacs-addiction-mode-map
-  (kbd "C-x C-c")
-  #'emacs-addiction-quit)
-
-(define-globalized-minor-mode
-  global-emacs-addiction-mode
-  emacs-addiction-mode
-  (lambda ()
-    (emacs-addiction-mode 1)))
-
-(defun emacs-addiction-quit ()
-  (interactive)
-  (message "Please contact your doctor."))
-
-(global-emacs-addiction-mode)
 
 ;;; init.el ends here
