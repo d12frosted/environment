@@ -173,16 +173,20 @@ function sync_repo() {
       return 0
     fi
 
-    log "Fetched changes:"
-    git_lg HEAD..$remote/$branch
-    log
+    if [ `git rev-list HEAD..$remote/$branch --count` != 0 ]; then
+      log "Fetched changes:"
+      git_lg HEAD..$remote/$branch
+      log
+    fi
 
     log "rebase onto $remote/$branch"
     git rebase $remote/$branch
 
-    log "Changes to push:"
-    git_lg $remote/$branch..HEAD
-    log
+    if [ `git rev-list $remote/$branch..HEAD --count` != 0 ]; then
+      log "Changes to push:"
+      git_lg $remote/$branch..HEAD
+      log
+    fi
 
     if [[ "$url" = *"$fellow"* ]]; then
       log "pushing changes"
