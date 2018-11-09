@@ -233,9 +233,11 @@ function safe_link() {
 }
 
 function map_lines() {
-  while IFS='' read -r line || [[ -n "$line" ]]; do
-    $1 $line
-  done < "$2"
+  if [[ -f "$2" ]]; then
+    while IFS='' read -r line || [[ -n "$line" ]]; do
+      $1 $line
+    done < "$2"
+  fi
 }
 
 function download_bin() {
