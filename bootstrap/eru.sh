@@ -259,6 +259,10 @@ if [[ "$target" = "" ]]; then
 fi
 XDG_CONFIG_HOME=$target
 
+if [[ "$XDG_CONFIG_CACHE" = "" ]]; then
+  XDG_CONFIG_CACHE="$HOME/.cache"
+fi
+
 DEVELOPER=$HOME/Developer
 if [[ "$USER" != "$fellow" ]]; then
   DEVELOPER=$HOME/Developer/personal
@@ -332,6 +336,7 @@ theme_guard "Repositories" "Sync environment repository" && {
 
 theme_guard "Repositories" "Sync repositories from Repofile" && {
   map_lines sync_repo "$target/bootstrap/Repofile" || true
+  map_lines sync_repo "$XDG_CONFIG_CACHE/eru/Repofile" || true
 }
 
 theme_guard "Linking" "Link all files as defined in Linkfile" && {
