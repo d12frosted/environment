@@ -341,6 +341,7 @@ theme_guard "Repositories" "Sync repositories from Repofile" && {
 
 theme_guard "Linking" "Link all files as defined in Linkfile" && {
   map_lines safe_link "$target/bootstrap/Linkfile"
+  map_lines sync_repo "$XDG_CONFIG_CACHE/eru/Linkfile" || true
 }
 
 theme_guard "Brew" "Ensure brew exists" && {
