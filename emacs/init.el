@@ -12,11 +12,11 @@
 ;;
 ;; Naming conventions:
 ;;
-;;   d12-...   public variables or non-interactive functions
-;;   d12--...  private anything (non-interactive), not safe for direct use
-;;   d12/...   an interactive function; safe for M-x or keybinding
-;;   d12|...   hook function
-;;   d12*...   advising functions
+;;   bb-...   public variables or non-interactive functions
+;;   bb:...   private anything (non-interactive), not safe for direct use
+;;   bb/...   an interactive function; safe for M-x or keybinding
+;;   bb|...   hook function
+;;   bb*...   advising functions
 ;;
 ;;; Code:
 
@@ -31,7 +31,7 @@
 ;; (package-initialize)
 (defconst package--initialized nil)
 
-(defvar d12-debug-mode nil
+(defvar bb-debug-mode nil
   "Non nil enables debug mode. Whatever that means.")
 
 ;; setup emacs configuration
@@ -39,36 +39,36 @@
 (setq user-emacs-directory (file-name-directory user-init-file))
 
 ;; load some core features
-(require 'd12-path (concat user-emacs-directory "core/d12-path"))
-(require 'd12-spacemacs (concat user-emacs-directory "core/d12-spacemacs"))
-(require 'd12-command-line (concat user-emacs-directory "core/d12-command-line"))
+(require 'bb-path (concat user-emacs-directory "core/bb-path"))
+(require 'bb-spacemacs (concat user-emacs-directory "core/bb-spacemacs"))
+(require 'bb-command-line (concat user-emacs-directory "core/bb-command-line"))
 
 ;; setup and load `custom-file'
-(setq custom-file d12-path-custom-file)
+(setq custom-file bb-path-custom-file)
 (load custom-file t)
 
 ;; load `private.el' file containing all the sensitive data
-(let ((private-file (concat d12-path-emacs-private "private.el")))
+(let ((private-file (concat bb-path-emacs-private "private.el")))
   (when (file-exists-p private-file)
     (load private-file)))
 
 ;; load `local.el' file containing all the machine specific configurations
-(let ((local-file (concat d12-path-emacs-local "local.el")))
+(let ((local-file (concat bb-path-emacs-local "local.el")))
   (when (file-exists-p local-file)
     (load local-file)))
 
 ;; setup package-user-dir to allow seamless switch between emacs versions
 (setq package-user-dir
       (file-name-as-directory
-       (concat d12-path-emacs-cache "elpa/" emacs-version)))
+       (concat bb-path-emacs-cache "elpa/" emacs-version)))
 
 ;; load spacemacs
-(d12-spacemacs-load
- d12-path-spacemacs-distr-home
- d12-path-spacemacs-distr-init-file
- (if d12-debug-mode
-     d12-path-spacemacs-user-config-test-file
-   d12-path-spacemacs-user-config-file))
+(bb:spacemacs-load
+ bb-path-spacemacs-distr-home
+ bb-path-spacemacs-distr-init-file
+   (if bb-debug-mode
+       bb-path-spacemacs-user-config-test-file
+     bb-path-spacemacs-user-config-file))
 
 ;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
 (unbind-key "C-x C-c")

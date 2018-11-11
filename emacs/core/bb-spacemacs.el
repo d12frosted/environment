@@ -1,4 +1,4 @@
-;;; d12-spacemacs.el --- d12-spacemacs file for personal configurations -*- lexical-binding: t; -*-
+;;; bb-spacemacs.el --- bb-spacemacs file for personal configurations -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2018 Boris Buliga
 ;;
@@ -12,11 +12,11 @@
 ;;
 ;; Spacemacs loading module.
 ;;
-;; Call `d12-spacemacs-load` in order to load Spacemacs.
+;; Call `bb:spacemacs-load` in order to load Spacemacs.
 ;;
 ;;; Code:
 
-(defun d12-spacemacs-load (distr-home distr-init-file user-config-file)
+(defun bb:spacemacs-load (distr-home distr-init-file user-config-file)
   "Load Spacemacs distribution."
   (setq-default
    spacemacs-start-directory distr-home
@@ -24,5 +24,6 @@
   (message "Loading Spacemacs: " distr-init-file)
   (load-file distr-init-file))
 
-(provide 'd12-spacemacs)
-;;; d12-spacemacs.el ends here
+(provide 'bb-spacemacs)
+
+;;; bb-spacemacs.el ends here

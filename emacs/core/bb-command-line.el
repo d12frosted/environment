@@ -1,4 +1,4 @@
-;;; d12-command-line.el --- d12-command-line file for personal configurations -*- lexical-binding: t; -*-
+;;; bb-command-line.el --- command-line file for personal configurations -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2018 Boris Buliga
 ;;
@@ -12,7 +12,7 @@
 ;;
 ;;; Code:
 
-(defun d12--parse-command-line (args)
+(defun bb:parse-command-line (args)
   "Handle some command line arguments."
   (let ((i 0) new-args)
     (while (< i (length args))
@@ -23,14 +23,14 @@
         (when (or (null next-arg-digit) (= 0 next-arg-digit))
           (setq next-arg-digit nil))
         (pcase arg
-          ("--d12-debug"
-           (setq d12-debug-mode t))
+          ("--debug"
+           (setq bb-debug-mode t))
           (_ (push arg new-args))))
       (setq i (1+ i)))
     (nreverse new-args)))
 
-(setq command-line-args (d12--parse-command-line command-line-args))
+(setq command-line-args (bb:parse-command-line command-line-args))
 
-(provide 'd12-command-line)
+(provide 'bb-command-line)
 
-;;; d12-command-line.el ends here
+;;; bb-command-line.el ends here
