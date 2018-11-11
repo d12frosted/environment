@@ -145,15 +145,15 @@ non-nil.")
    (concat bb-path-org-home dir)))
 
 (defun bb-path/make-directory-safe (path &optional parents)
-  "Create the directory PATH and optionally any nonexistent parent dirs.
+  "Create the directory PATH and optionally any nonexistent PARENTS.
 If PATH already exists as a directory, just do nothing."
   (unless (file-directory-p path)
     (make-directory path parents)))
 
 (defun bb-path/load-project (name)
-  "If project with NAME exists in the `bb-path-projects-home',
-add it to `load-path'."
+  "Add project NAME from `bb-path-projects-home' to `load-path'."
   (add-to-load-path-if-exists (concat bb-path-projects-home name)))
 
 (provide 'bb-path)
+
 ;;; bb-path.el ends here
