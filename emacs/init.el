@@ -27,9 +27,9 @@
 ;; (add-to-list 'default-frame-alist '(fullscreen . fullboth))
 
 
-;; Without this comment emacs25 adds (package-initialize) here
-;; (package-initialize)
-(defconst package--initialized nil)
+;; disable package initialisation
+(setq package-enable-at-startup nil
+      package--init-file-ensured t)
 
 (defvar bb-debug-mode nil
   "Non nil enables debug mode. Whatever that means.")
