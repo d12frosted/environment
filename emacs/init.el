@@ -49,6 +49,32 @@
 (require 'bb-spacemacs (concat user-emacs-directory "core/bb-spacemacs"))
 (require 'bb-command-line (concat user-emacs-directory "core/bb-command-line"))
 
+;; parse command line arguments
+(defun bb:parse-command-line (args)
+  "Handle some command line ARGS."
+  (let ((i 0) new-args)
+    (while (< i (length args))
+      (let ((arg (nth i args))
+            (next-arg-digit
+             (when (< (1+ i) (length args))
+               (string-to-number (nth (1+ i) args)))))
+        (when (or (null next-arg-digit) (= 0 next-arg-digit))
+          (setq next-arg-digit nil))
+        (pcase arg
+          ("--debug"
+           (setq bb-debug-mode t))
+          ("--spacemacs"
+           (setq bb-use-spacemacs t
+                 bb-use-doom nil))
+          ("--doom"
+           (setq bb-use-spacemacs nil
+                 bb-use-doom t))
+          (_ (push arg new-args))))
+      (setq i (1+ i)))
+    (nreverse new-args)))
+
+(setq command-line-args (bb:parse-command-line command-line-args))
+
 ;; setup and load `custom-file'
 (setq custom-file bb-path-custom-file)
 (load custom-file t)
@@ -70,12 +96,13 @@
 
 ;; load spacemacs
 (when bb-use-spacemacs
-  (bb:spacemacs-load
-   bb-path-spacemacs-distr-home
-   bb-path-spacemacs-distr-init-file
-   (if bb-debug-mode
-       bb-path-spacemacs-user-config-test-file
-     bb-path-spacemacs-user-config-file)))
+  (message "Loading Spacemacs: " bb-path-spacemacs-distr-home)
+  (setq-default
+   spacemacs-start-directory bb-path-spacemacs-distr-home
+   dotspacemacs-filepath (if bb-debug-mode
+                             bb-path-spacemacs-user-config-test-file
+                           bb-path-spacemacs-user-config-file))
+  (load-file bb-path-spacemacs-distr-init-file))
 
 ;; load doom
 (when bb-use-doom
@@ -83,7 +110,7 @@
   (load-file (concat bb-path-doom-distr-home "init.el")))
 
 ;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
-;; (define-key global-map (kbd "C-x C-c") nil)
+(define-key global-map (kbd "C-x C-c") nil)
 
 ;; I use meta a lot, and command key is much easier to hit than option.
 (setq mac-command-modifier 'meta
