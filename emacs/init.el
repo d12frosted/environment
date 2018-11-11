@@ -46,8 +46,6 @@
 
 ;; load some core features
 (require 'bb-path (concat user-emacs-directory "core/bb-path"))
-(require 'bb-spacemacs (concat user-emacs-directory "core/bb-spacemacs"))
-(require 'bb-command-line (concat user-emacs-directory "core/bb-command-line"))
 
 ;; parse command line arguments
 (defun bb:parse-command-line (args)
