@@ -31,14 +31,23 @@
 (setq package-enable-at-startup nil
       package--init-file-ensured t)
 
-(defvar bb-debug-mode nil
+;;
+;; Variables
+
+(defvar debug-mode (getenv "DEBUG_EMACS")
   "Non nil enables debug mode. Whatever that means.")
 
-(defvar bb-use-spacemacs nil
+(defvar use-spacemacs (getenv "EMACS_SPACEMACS")
   "Automatically load Spacemacs.")
 
-(defvar bb-use-doom t
+(defvar use-doom (getenv "EMACS_DOOM")
   "Automatically load doom.")
+
+;; normalize distribution
+(when use-spacemacs
+  (setq use-doom nil))
+(when use-doom
+  (setq use-spacemacs nil))
 
 ;; setup emacs configuration
 (setq user-init-file (file-truename (or load-file-name (buffer-file-name))))
@@ -46,32 +55,6 @@
 
 ;; load some core features
 (require 'bb-path (concat user-emacs-directory "core/bb-path"))
-
-;; parse command line arguments
-(defun bb:parse-command-line (args)
-  "Handle some command line ARGS."
-  (let ((i 0) new-args)
-    (while (< i (length args))
-      (let ((arg (nth i args))
-            (next-arg-digit
-             (when (< (1+ i) (length args))
-               (string-to-number (nth (1+ i) args)))))
-        (when (or (null next-arg-digit) (= 0 next-arg-digit))
-          (setq next-arg-digit nil))
-        (pcase arg
-          ("--debug"
-           (setq bb-debug-mode t))
-          ("--spacemacs"
-           (setq bb-use-spacemacs t
-                 bb-use-doom nil))
-          ("--doom"
-           (setq bb-use-spacemacs nil
-                 bb-use-doom t))
-          (_ (push arg new-args))))
-      (setq i (1+ i)))
-    (nreverse new-args)))
-
-(setq command-line-args (bb:parse-command-line command-line-args))
 
 ;; setup and load `custom-file'
 (setq custom-file bb-path-custom-file)
@@ -93,17 +76,17 @@
        (concat bb-path-emacs-cache "elpa/" emacs-version)))
 
 ;; load spacemacs
-(when bb-use-spacemacs
+(when use-spacemacs
   (message "Loading Spacemacs: " bb-path-spacemacs-distr-home)
   (setq-default
    spacemacs-start-directory bb-path-spacemacs-distr-home
-   dotspacemacs-filepath (if bb-debug-mode
+   dotspacemacs-filepath (if debug-mode
                              bb-path-spacemacs-user-config-test-file
                            bb-path-spacemacs-user-config-file))
   (load-file bb-path-spacemacs-distr-init-file))
 
 ;; load doom
-(when bb-use-doom
+(when use-doom
   (message "Loading doom: %s" bb-path-doom-distr-home)
   (load-file (concat bb-path-doom-distr-home "init.el")))
 
