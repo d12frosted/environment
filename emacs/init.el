@@ -34,6 +34,12 @@
 (defvar bb-debug-mode nil
   "Non nil enables debug mode. Whatever that means.")
 
+(defvar bb-use-spacemacs nil
+  "Automatically load Spacemacs.")
+
+(defvar bb-use-doom t
+  "Automatically load doom.")
+
 ;; setup emacs configuration
 (setq user-init-file (file-truename (or load-file-name (buffer-file-name))))
 (setq user-emacs-directory (file-name-directory user-init-file))
@@ -63,15 +69,21 @@
        (concat bb-path-emacs-cache "elpa/" emacs-version)))
 
 ;; load spacemacs
-(bb:spacemacs-load
- bb-path-spacemacs-distr-home
- bb-path-spacemacs-distr-init-file
+(when bb-use-spacemacs
+  (bb:spacemacs-load
+   bb-path-spacemacs-distr-home
+   bb-path-spacemacs-distr-init-file
    (if bb-debug-mode
        bb-path-spacemacs-user-config-test-file
-     bb-path-spacemacs-user-config-file))
+     bb-path-spacemacs-user-config-file)))
+
+;; load doom
+(when bb-use-doom
+  (message "Loading doom: %s" bb-path-doom-distr-home)
+  (load-file (concat bb-path-doom-distr-home "init.el")))
 
 ;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
-(unbind-key "C-x C-c")
+;; (define-key global-map (kbd "C-x C-c") nil)
 
 ;; I use meta a lot, and command key is much easier to hit than option.
 (setq mac-command-modifier 'meta

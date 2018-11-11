@@ -25,6 +25,12 @@
         (pcase arg
           ("--debug"
            (setq bb-debug-mode t))
+          ("--spacemacs"
+           (setq bb-use-spacemacs t
+                 bb-use-doom nil))
+          ("--doom"
+           (setq bb-use-spacemacs nil
+                 bb-use-doom t))
           (_ (push arg new-args))))
       (setq i (1+ i)))
     (nreverse new-args)))

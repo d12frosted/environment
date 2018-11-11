@@ -103,6 +103,10 @@ non-nil.")
   (concat bb-path-spacemacs-distr-home "init.el")
   "Path to Spacemacs distribution init file.")
 
+(defconst bb-path-doom-distr-home
+  (concat bb-path-home ".doom-emacs/")
+  "Path to doom distribution directory.")
+
 (defconst bb-path-fish-config-home
   (concat bb-path-config-home "fish/")
   "Path to fish configurations directory.")
