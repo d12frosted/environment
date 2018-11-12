@@ -1,4 +1,5 @@
 $HOME/.spacemacs syl20bnr/spacemacs develop
+$HOME/.doom-emacs hlissner/doom-emacs develop
 $DEVELOPER/fancy-yank d12frosted/fancy-yank
 $DEVELOPER/orgability d12frosted/orgability
 $DEVELOPER/org-drawer-list d12frosted/org-drawer-list
