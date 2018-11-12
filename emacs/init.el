@@ -37,17 +37,17 @@
 (defvar debug-mode (getenv "DEBUG_EMACS")
   "Non nil enables debug mode. Whatever that means.")
 
-(defvar use-spacemacs (getenv "EMACS_SPACEMACS")
+(defvar use-spacemacs (or (getenv "EMACS_SPACEMACS") t)
   "Automatically load Spacemacs.")
 
 (defvar use-doom (getenv "EMACS_DOOM")
   "Automatically load doom.")
 
 ;; normalize distribution
-(when use-spacemacs
-  (setq use-doom nil))
 (when use-doom
   (setq use-spacemacs nil))
+(when use-spacemacs
+  (setq use-doom nil))
 
 ;; ensure we are running out of this file's directory
 (setq user-emacs-directory (file-name-directory (file-truename load-file-name)))
