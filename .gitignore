@@ -36,3 +36,6 @@ git/local/*
 
 # output files
 *.out
+
+# some .mono files
+.mono/
