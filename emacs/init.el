@@ -49,46 +49,45 @@
 (when use-doom
   (setq use-spacemacs nil))
 
-;; setup emacs configuration
-(setq user-init-file (file-truename (or load-file-name (buffer-file-name))))
-(setq user-emacs-directory (file-name-directory user-init-file))
+;; ensure we are running out of this file's directory
+(setq user-emacs-directory (file-name-directory (file-truename load-file-name)))
 
-;; load some core features
-(require 'bb-path (concat user-emacs-directory "core/bb-path"))
+;; load path.el
+(require 'path (concat user-emacs-directory "core/path"))
 
 ;; setup and load `custom-file'
-(setq custom-file bb-path-custom-file)
+(setq custom-file path-custom-file)
 (load custom-file t)
 
 ;; load `private.el' file containing all the sensitive data
-(let ((private-file (concat bb-path-emacs-private "private.el")))
+(let ((private-file (concat path-emacs-private "private.el")))
   (when (file-exists-p private-file)
     (load private-file)))
 
 ;; load `local.el' file containing all the machine specific configurations
-(let ((local-file (concat bb-path-emacs-local "local.el")))
+(let ((local-file (concat path-emacs-local "local.el")))
   (when (file-exists-p local-file)
     (load local-file)))
 
 ;; setup package-user-dir to allow seamless switch between emacs versions
 (setq package-user-dir
       (file-name-as-directory
-       (concat bb-path-emacs-cache "elpa/" emacs-version)))
+       (concat path-emacs-cache "elpa/" emacs-version)))
 
 ;; load spacemacs
 (when use-spacemacs
-  (message "Loading Spacemacs: " bb-path-spacemacs-distr-home)
+  (message "Loading Spacemacs: " path-spacemacs-distr-home)
   (setq-default
-   spacemacs-start-directory bb-path-spacemacs-distr-home
+   spacemacs-start-directory path-spacemacs-distr-home
    dotspacemacs-filepath (if debug-mode
-                             bb-path-spacemacs-user-config-test-file
-                           bb-path-spacemacs-user-config-file))
-  (load-file bb-path-spacemacs-distr-init-file))
+                             path-spacemacs-user-config-test-file
+                           path-spacemacs-user-config-file))
+  (load-file path-spacemacs-distr-init-file))
 
 ;; load doom
 (when use-doom
-  (message "Loading doom: %s" bb-path-doom-distr-home)
-  (load-file (concat bb-path-doom-distr-home "init.el")))
+  (message "Loading doom: %s" path-doom-distr-home)
+  (load-file (concat path-doom-distr-home "init.el")))
 
 ;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
 (define-key global-map (kbd "C-x C-c") nil)

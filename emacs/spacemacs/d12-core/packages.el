@@ -81,9 +81,9 @@
   (use-package yasnippet
     :defer t
     :init
-    (add-to-list 'yas-snippet-dirs (concat d12-path-emacs-home "snippets"))
+    (add-to-list 'yas-snippet-dirs (concat path-emacs-home "snippets"))
     :config
-    (mapc #'d12-path/make-directory-safe (yas-snippet-dirs))
+    (mapc #'path-make-directory-safe (yas-snippet-dirs))
     ))
 
 (defun d12-core/init-exec-path-from-shell ()
@@ -98,14 +98,14 @@
     (spacemacs|define-custom-layout "@config"
       :binding "c"
       :body
-      (find-file-existing (concat d12-path-emacs-home "init.el")))
+      (find-file-existing (concat path-emacs-home "init.el")))
     (spacemacs|define-custom-layout "@spacemacs"
       :binding "s"
       :body
-      (find-file-existing (concat d12-path-spacemacs-distr-home "init.el")))))
+      (find-file-existing (concat path-spacemacs-distr-home "init.el")))))
 
 (defun d12-core/init-emacs-addiction-mode ()
-  (d12-path/load-project "emacs-addiction-mode")
+  (path-load-project "emacs-addiction-mode")
   (require 'emacs-addiction-mode)
   (global-emacs-addiction-mode)
   (setq emacs-addiction-level 'brian))

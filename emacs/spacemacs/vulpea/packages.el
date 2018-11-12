@@ -20,7 +20,7 @@
   "The list of Lisp packages required by the vulpea layer.")
 
 (defun vulpea/init-vulpea ()
-  (add-to-load-path-if-exists (concat d12-path-spacemacs-config-home "vulpea/local/vulpea/"))
+  (add-to-load-path-if-exists (concat path-spacemacs-config-home "vulpea/local/vulpea/"))
   (use-package vulpea
     :commands (vulpea-mode-enable)
     :init

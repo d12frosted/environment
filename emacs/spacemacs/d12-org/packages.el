@@ -40,7 +40,7 @@
     :commands (orgtbl-mode org-mobile-push org-mobile-pull)
     :init
     ;; Setup directory for all org files
-    (setq org-directory d12-path-org-home)
+    (setq org-directory path-org-home)
 
     ;; Setup useful global key bindings.
     (spacemacs/declare-prefix "oo" "org")
@@ -61,14 +61,14 @@
     (setq org-startup-indented t)
 
     ;; Setup org-mobile
-    (setq org-mobile-directory (concat d12-path-dropbox "Apps/d12-mobile-org/"))
-    (setq org-mobile-inbox-for-pull (d12-path/get-org-file "mobile"))
+    (setq org-mobile-directory (concat path-dropbox "Apps/d12-mobile-org/"))
+    (setq org-mobile-inbox-for-pull (path-get-org-file "mobile"))
 
     ;; Setup `org-agenda-files'. Prefer using directories as files add to them
     ;; will automatically get into `org-agenda-files'.
-    (setq org-agenda-files `(,d12-path-org-home
-                             ,d12-path-org-notes-home
-                             ,d12-path-org-tasks-home))
+    (setq org-agenda-files `(,path-org-home
+                             ,path-org-notes-home
+                             ,path-org-tasks-home))
 
     ;; Setup `org-todo-keywords'.
     (setq org-todo-keywords
@@ -96,23 +96,23 @@
 
     ;; Setup capture templates.
     (setq org-capture-templates
-          `(("t" "todo" plain (file ,(d12-path/get-org-file "inbox"))
+          `(("t" "todo" plain (file ,(path-get-org-file "inbox"))
              "* TODO %?\n%U\n" :clock-in t :clock-resume t)
-            ("T" "todo (annotated)" plain (file ,(d12-path/get-org-file "inbox"))
+            ("T" "todo (annotated)" plain (file ,(path-get-org-file "inbox"))
              "* TODO %?\n%U%a\n" :clock-in t :clock-resume t)
 
-            ("j" "Journal" entry (file+datetree+prompt ,(d12-path/get-org-note-file "journal"))
+            ("j" "Journal" entry (file+datetree+prompt ,(path-get-org-note-file "journal"))
              "* %?\n%U\n" :clock-in t :clock-resume t)
 
-            ("r" "respond" entry (file ,(d12-path/get-org-file "inbox"))
+            ("r" "respond" entry (file ,(path-get-org-file "inbox"))
              "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
 
-            ("n" "note" entry (file ,(d12-path/get-org-file "inbox"))
+            ("n" "note" entry (file ,(path-get-org-file "inbox"))
              "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
 
-            ("m" "Meeting" entry (file ,(d12-path/get-org-file "inbox"))
+            ("m" "Meeting" entry (file ,(path-get-org-file "inbox"))
              "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-            ("h" "Habit" entry (file ,(d12-path/get-org-file "inbox"))
+            ("h" "Habit" entry (file ,(path-get-org-file "inbox"))
              "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")))
 
     ;; remove clocked tasks with 0:00 duration
@@ -174,7 +174,7 @@
     (setq org-preview-latex-default-process 'dvisvgm)
 
     ;; setup archive
-    (setq org-archive-location (concat (d12-path/get-org-file ".archive/archive") "::"))
+    (setq org-archive-location (concat (path-get-org-file ".archive/archive") "::"))
     (setq org-archive-save-context-info '(time file ltags itags todo category olpath))
 
     ;; Custom agenda command definitions
@@ -333,14 +333,14 @@
   (use-package org-brain
     :defer t
     :init
-    (setq org-brain-path d12-path-org-notes-home)
+    (setq org-brain-path path-org-notes-home)
     (d12-key-bind-personal "v" 'org-brain-visualize)
     (add-hook 'org-brain-visualize-text-hook #'d12-org/enable-latex-preview)
     :config
     (setq org-brain-visualize-sort-function 'org-brain-title<)
     (setq org-brain-visualize-one-child-per-line t)
     (setq org-id-track-globally t)
-    (setq org-id-locations-file (concat d12-path-emacs-home ".org-id-locations"))
+    (setq org-id-locations-file (concat path-emacs-home ".org-id-locations"))
     (push '("b" "Brain" plain (function org-brain-goto-end)
             "* %i%?" :empty-lines 1)
           org-capture-templates)
@@ -353,7 +353,7 @@
     (spacemacs|define-custom-layout "@org"
       :binding "o"
       :body
-      (find-file-existing (d12-path/get-org-file "inbox")))))
+      (find-file-existing (path-get-org-file "inbox")))))
 
 (defun d12-org/init-toc-org ()
   (use-package toc-org
@@ -364,14 +364,14 @@
       (add-hook 'org-mode-hook 'toc-org-enable))))
 
 (defun d12-org/init-org-drawer-list ()
-  (d12-path/load-project "org-drawer-list")
+  (path-load-project "org-drawer-list")
   (use-package org-drawer-list
     :commands (org-drawer-list
                org-drawer-list-add
                org-drawer-list-remove)))
 
 (defun d12-org/init-orgability ()
-  (d12-path/load-project "orgability")
+  (path-load-project "orgability")
   (use-package orgability
     :commands (orgability-clip
                orgability-open
@@ -392,7 +392,7 @@
       (d12-key-bind "od" #'orgability-delete-topic org-agenda-mode-map))
     (add-hook 'org-agenda-mode-hook #'d12-org/setup-agenda-orgability)
 
-    (setq orgability-file (d12-path/get-org-file "orgability"))))
+    (setq orgability-file (path-get-org-file "orgability"))))
 
 (defun d12-org/init-org-board ()
   (use-package org-board
@@ -405,7 +405,7 @@
   (use-package org-download
     :defer t
     :init
-    (setq-default org-download-image-dir (d12-path/get-org-dir ".images/"))
+    (setq-default org-download-image-dir (path-get-org-dir ".images/"))
     (spacemacs|use-package-add-hook org
       :post-config
       (require 'org-download))))

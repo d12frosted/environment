@@ -22,7 +22,7 @@
    dotspacemacs-distribution 'spacemacs-base
    dotspacemacs-enable-lazy-installation nil
    dotspacemacs-ask-for-lazy-installation t
-   dotspacemacs-configuration-layer-path `(,d12-path-spacemacs-config-home)
+   dotspacemacs-configuration-layer-path `(,path-spacemacs-config-home)
 
    dotspacemacs-configuration-layers '(
                                        ;; private
@@ -77,11 +77,11 @@ before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
   ;; Use my own ELPA archives.
-  (if (file-exists-p d12-path-elpa-mirror-home)
+  (if (file-exists-p path-elpa-mirror-home)
       (setq configuration-layer-elpa-archives
-            `(("melpa" . ,(concat d12-path-elpa-mirror-home "melpa/"))
-              ("org"   . ,(concat d12-path-elpa-mirror-home "org/"))
-              ("gnu"   . ,(concat d12-path-elpa-mirror-home "gnu/"))))
+            `(("melpa" . ,(concat path-elpa-mirror-home "melpa/"))
+              ("org"   . ,(concat path-elpa-mirror-home "org/"))
+              ("gnu"   . ,(concat path-elpa-mirror-home "gnu/"))))
     (setq configuration-layer-elpa-archives
         `(("melpa" . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
           ("org"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/")
@@ -89,8 +89,8 @@ values."
 
   (setq-default
    spacemacs-buffer-logo-title "======= D A O M A C S ======"
-   spacemacs-cache-directory  d12-path-emacs-cache
-   spacemacs-auto-save-directory (concat d12-path-emacs-private "auto-save/")
+   spacemacs-cache-directory  path-emacs-cache
+   spacemacs-auto-save-directory (concat path-emacs-private "auto-save/")
 
    ;; dotspacemacs configuration
    dotspacemacs-frame-title-format ""
@@ -100,7 +100,7 @@ values."
    ;; dotspacemacs-elpa-subdirectory emacs-version
    dotspacemacs-editing-style 'emacs
    dotspacemacs-verbose-loading nil
-   dotspacemacs-startup-banner (concat d12-path-emacs-private "banner.png")
+   dotspacemacs-startup-banner (concat path-emacs-private "banner.png")
    dotspacemacs-startup-lists '()
    dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'emacs-lisp-mode
