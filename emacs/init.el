@@ -12,11 +12,11 @@
 ;;
 ;; Naming conventions:
 ;;
-;;   bb-...   public variables or non-interactive functions
-;;   bb:...   private anything (non-interactive), not safe for direct use
-;;   bb/...   an interactive function; safe for M-x or keybinding
-;;   bb|...   hook function
-;;   bb*...   advising functions
+;;   vulpea-...   public variables or non-interactive functions
+;;   vulpea:...   private anything (non-interactive), not safe for direct use
+;;   vulpea/...   an interactive function; safe for M-x or keybinding
+;;   vulpea|...   hook function
+;;   vulpea*...   advising functions
 ;;
 ;;; Code:
 
@@ -37,17 +37,12 @@
 (defvar debug-mode (getenv "DEBUG_EMACS")
   "Non nil enables debug mode. Whatever that means.")
 
-(defvar use-spacemacs (or (getenv "EMACS_SPACEMACS") t)
-  "Automatically load Spacemacs.")
+(defconst known-bases '("spacemacs" "doom" "vulpea")
+  "List of the known bases to load from.")
 
-(defvar use-doom (getenv "EMACS_DOOM")
-  "Automatically load doom.")
-
-;; normalize distribution
-(when use-doom
-  (setq use-spacemacs nil))
-(when use-spacemacs
-  (setq use-doom nil))
+(defvar basis (or (car (member (getenv "EMACS_BASIS") known-bases))
+                  (car known-bases))
+  "Emacs basis to load from.")
 
 ;; ensure we are running out of this file's directory
 (setq user-emacs-directory (file-name-directory (file-truename load-file-name)))
@@ -75,7 +70,7 @@
        (concat path-emacs-cache "elpa/" emacs-version)))
 
 ;; load spacemacs
-(when use-spacemacs
+(when (string-equal basis "spacemacs")
   (message "Loading Spacemacs: " path-spacemacs-distr-home)
   (setq-default
    spacemacs-start-directory path-spacemacs-distr-home
@@ -85,7 +80,7 @@
   (load-file path-spacemacs-distr-init-file))
 
 ;; load doom
-(when use-doom
+(when (string-equal basis "doom")
   (message "Loading doom: %s" path-doom-distr-home)
   (load-file (concat path-doom-distr-home "init.el")))
 
