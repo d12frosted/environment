@@ -169,6 +169,11 @@ For the duration of every function, point is set on entry."
   (setq-local vulpea-cha--fermentation-types-parent
               (vulpea-brain--as-entry vulpea-cha-fermentation-types-parent-id))
 
+  (setq-local vulpea-cha-pressing-types-parent-id
+              (vulpea--get-buffer-setting "PRESSING_TYPES_PARENT"))
+  (setq-local vulpea-cha--pressing-types-parent
+              (vulpea-brain--as-entry vulpea-cha-pressing-types-parent-id))
+
   (setq-local vulpea-cha-tea-parent-id
               (vulpea--get-buffer-setting "TEA_PARENT"))
   (setq-local vulpea-cha--tea-parent
@@ -382,6 +387,14 @@ top of the file:
 
   #+FERMENTATION_TYPES_PARENT: ID")
 
+(defvar vulpea-cha-pressing-types-parent-id ""
+  "ID of Pressing types parent entry.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+PRESSING_TYPES_PARENT: ID")
+
 (defvar vulpea-cha-tea-parent-id ""
   "ID of Tea parent entry.
 
@@ -390,8 +403,9 @@ top of the file:
 
   #+TEA_PARENT: ID")
 
-(defvar-local vulpea-cha--fermentation-types-parent nil)
 (defvar-local vulpea-cha--tea-groups-parent nil)
+(defvar-local vulpea-cha--fermentation-types-parent nil)
+(defvar-local vulpea-cha--pressing-types-parent nil)
 (defvar-local vulpea-cha--tea-parent nil)
 
 (defvar-local vulpea-cha-tea-title-format nil
@@ -421,6 +435,7 @@ top of the file:
   "Create a new tea entry."
   (interactive)
   (let* ((tea-group (vulpea-cha--read-tea-group))
+         (pressing (vulpea-cha--read-pressing))
          (name (cadr tea-group))
          (name-original
           (vulpea-brain--get-property tea-group "NAME_ORIGINAL"))
@@ -433,6 +448,7 @@ top of the file:
     (org-with-point-at (org-id-find id t)
       (org-set-property "TEA_GROUP"
                         (vulpea-brain--make-link tea-group))
+      (vulpea-cha/set-pressing pressing)
       (vulpea--set-property-string "TAG")
       (org-set-property "NAME" name)
       (vulpea--set-property-string "NAME_ORIGINAL" name-original)
@@ -495,6 +511,20 @@ top of the file:
   (vulpea-brain--choose-entry-by-parent
    "Tea group: "
    vulpea-cha--tea-groups-parent))
+
+(defun vulpea-cha--read-pressing ()
+  "Read Tea Group."
+  (vulpea-brain--choose-entry-by-parent
+   "Pressing: "
+   vulpea-cha--pressing-types-parent))
+
+(defun vulpea-cha/set-pressing (&optional pressing)
+  "Set PRESSING of tea entry at point"
+  (interactive)
+  (unless pressing
+    (setq pressing (vulpea-cha--read-pressing)))
+  (org-set-property "PRESSING"
+                    (vulpea-brain--make-link pressing)))
 
 
 
