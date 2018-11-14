@@ -52,11 +52,12 @@
 
 (defun vulpea-brain--choose-entry-by-parent (prompt parent)
   "Choose a brain entry from children of PARENT."
-  (org-brain-choose-entry
-   prompt
-   (org-brain-children (vulpea-brain--as-entry parent))
-   nil
-   t))
+  (let ((org-brain-file-entries-use-title nil))
+    (org-brain-choose-entry
+     prompt
+     (org-brain-children (vulpea-brain--as-entry parent))
+     nil
+     t)))
 
 (defun vulpea-brain--is-child-of (child parent)
   "Returns non-nil, when CHILD is a child of PARENT."
