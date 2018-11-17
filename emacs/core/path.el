@@ -84,7 +84,7 @@ Defaults to $XDG_DATA_HOME when the variable is present and
 non-nil.")
 
 (defconst path-spacemacs-config-home
-  (concat path-emacs-home "spacemacs/")
+  (concat path-config-home "spacemacs/")
   "Path to Spacemacs configurations directory.")
 
 (defconst path-spacemacs-user-config-file
