@@ -1,0 +1,12 @@
+#+TITLE: :feature snippets
+
+This module adds snippets to Emacs, powered by yasnippet.
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+
+* Install
+There are no extra dependencies for this module.
+
+By default, =private/default= installs a snippet library tailored exclusively
+for Doom Emacs.

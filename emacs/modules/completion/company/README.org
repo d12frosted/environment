@@ -1,0 +1,48 @@
+#+TITLE: :completion company
+
+This module adds code-completion support, powered by [[https://github.com/company-mode/company-mode][company]].
+
++ Uses ~company-quickhelp~ for documentation tooltips
++ Uses ~company-statistics~ to order results by usage frequency
+
+[[/../screenshots/company.png]]
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+- [[#configure][Configure]]
+  - [[#auto-completion][Auto-completion]]
+- [[#troubleshooting][Troubleshooting]]
+
+* Install
+Some languages require additional setup, and some languages may have no
+completion support at all.
+
+Check the README.org in that language's module for details.
+
+* Configure
+** Auto-completion
+By default, I've disabled auto-completion. This is my preference. I prefer to
+invoke company when I need it by calling ~company-complete~ manually (typically,
+bound to =C-SPC= in insert mode). However, some may not share my preference.
+
+To enable auto-completion you must:
+
+1. Load ~company~,
+2. and change ~company-idle-delay~ to a non-nil float (the default is 0.5)
+
+For example:
+
+#+BEGIN_SRC emacs-lisp
+(require 'company)
+(setq company-idle-delay 0.2
+      company-minimum-prefix-length 3)
+#+END_SRC
+
+* Troubleshooting
+If completion isn't working for you, please consider the following before
+posting a bug report:
+
++ If what you are expecting is popup-as-you-type completion (which is disabled
+  by default), see the "Configure > Auto-completion" section above, which will
+  instruct you on how to enable this.
++ Some languages don't have any auto-completion support at all.

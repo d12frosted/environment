@@ -1,0 +1,45 @@
+#+TITLE: :ui window-select
+
+This module provides the user with a visual way to switch windows. By default, the module only kicks in if there are more than two windows open at the same time.
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#module-flags][Module flags]]
+- [[#usage][Usage]]
+- [[#configuration][Configuration]]
+  - [[#ace-window][ace-window]]
+  - [[#switch-window][switch-window]]
+
+* Install
+Add =:feature lookup= to your init.el.
+
+** Module flags
+This module provides two flags:
+
++ ~+ace-window~ Use avy (and ace-window) as the backend.
++ ~+switch-window~ Use switch-window as the backend.
+
+If neither flag is specified, ~+ace-window~ will be used.
+
+* Usage
+This module remaps the function ~other-window~ to either ~switch-window~ or
+~ace-window~, depending on which backend you've enabled.
+
+~other-window~ is bound to ~C-x o~ and ~SPC w o~.
+
+* Configuration
+This module provides two backends, both providing the same functionality, but
+with different visual cues. They are =ace-window= and =switch-window=.
+
+** ace-window
+The first character of the buffers changes to a highlighted, user-selectable
+character.
+
+ + Pros: The content of the buffers are always visible.
+ + Cons: The displayed characters are small and difficult to see.
+
+** switch-window
+Replaces the entire buffer with large letters.
+
+ + Pros: The displayed characters are /really/ easy to see.
+ + Cons: You can't see the contents of the buffers.
