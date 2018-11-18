@@ -268,7 +268,7 @@
           (after-init-time (current-time))
           noninteractive)
       (delq 'nucleus features)
-      (load-file (concat user-emacs-directory "init.el"))
+      (load-file (concat (getenv "HOME") "/.config/emacs/init.el"))
       (require 'nucleus-packages)
       (nucleus-initialize-packages)
       (success! "Attempt to load NUCLEUS: success!"))
