@@ -273,7 +273,7 @@
       (nucleus-initialize-packages)
       (success! "Attempt to load NUCLEUS: success!"))
   (error
-   (warn! "Attempt to load NUCLEUS: failed\n  %s\n"
+   (error! "Attempt to load NUCLEUS: failed\n  %s\n"
           (or (cdr-safe ex) (car ex)))
    (setq nucleus-modules nil)))
 
