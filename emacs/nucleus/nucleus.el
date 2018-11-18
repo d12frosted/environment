@@ -24,7 +24,7 @@ line or use --debug-init to enable this.")
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 
 (defconst nucleus-projects-dir (concat user-home-directory "Developer/")
-  "Directory for personal projects.")
+  "The root directory for personal projects.")
 
 (defvar nucleus-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
