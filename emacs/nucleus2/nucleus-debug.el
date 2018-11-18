@@ -60,7 +60,7 @@ clipboard for easy pasting into a bug report or discord."
       (insert
        (prin1-to-string
         `(cond (,load-nucleus-p
-                (setq nucleus-private-dir "/tmp/does/not/exist"
+                (setq nucleus-emacs-dir "/tmp/does/not/exist"
                       nucleus-modules ,nucleus-modules)
                 (load ,user-init-file))
                ((setq package--init-file-ensured t

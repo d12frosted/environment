@@ -63,7 +63,7 @@ size.")
  confirm-nonexistent-file-or-buffer t
  confirm-kill-emacs #'nucleus-quit-p   ; custom confirmation when killing Emacs
  cursor-in-non-selected-windows nil ; hide cursors in other windows
- custom-theme-directory (expand-file-name "themes/" nucleus-private-dir)
+ custom-theme-directory (expand-file-name "themes/" nucleus-emacs-dir)
  display-line-numbers-width 3
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t

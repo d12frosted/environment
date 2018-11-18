@@ -124,11 +124,11 @@ even if it doesn't need reloading!"
 
 (defun nucleus--expand-autoloads ()
   (let ((load-path
-         ;; NOTE With `nucleus-private-dir' in `load-path', Doom autoloads files
+         ;; NOTE With `nucleus-emacs-dir' in `load-path', Doom autoloads files
          ;; will be unable to declare autoloads for the built-in autoload.el
          ;; Emacs package, should $DOOMDIR/autoload.el exist. Not sure why
          ;; they'd want to though, so it's an acceptable compromise.
-         (append (list nucleus-private-dir)
+         (append (list nucleus-emacs-dir)
                  nucleus-modules-dirs
                  load-path))
         cache)
@@ -160,7 +160,7 @@ even if it doesn't need reloading!"
                   (type (car sexp))
                   (name (nucleus-unquote (cadr sexp)))
                   (origin (cond ((nucleus-module-from-path path))
-                                ((file-in-directory-p path nucleus-private-dir)
+                                ((file-in-directory-p path nucleus-emacs-dir)
                                  `(:private . ,(intern (file-name-base path))))
                                 ((file-in-directory-p path nucleus-emacs-dir)
                                  `(:core . ,(intern (file-name-base path))))))
@@ -250,7 +250,7 @@ modified."
              (auto-file (expand-file-name "autoload.el" path))
              (module    (nucleus-module-from-path auto-file))
              (module-p  (or (nucleus-module-p (car module) (cdr module))
-                            (file-equal-p path nucleus-private-dir))))
+                            (file-equal-p path nucleus-emacs-dir))))
         (when (file-exists-p auto-file)
           (push auto-file targets)
           (if module-p (push auto-file enabled-targets)))
@@ -260,7 +260,7 @@ modified."
     (if (and (not force-p)
              (not nucleus-emacs-changed-p)
              (file-exists-p nucleus-autoload-file)
-             (not (file-newer-than-file-p (expand-file-name "dna.el" nucleus-private-dir)
+             (not (file-newer-than-file-p (expand-file-name "dna.el" nucleus-emacs-dir)
                                           nucleus-autoload-file))
              (not (cl-loop for file in targets
                            if (file-newer-than-file-p file nucleus-autoload-file)

@@ -47,7 +47,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
     (dolist (module (delete-dups modules) (nreverse targets))
       (pcase module
         (":core"    (push nucleus-core-dir targets))
-        (":private" (push nucleus-private-dir targets))
+        (":private" (push nucleus-emacs-dir targets))
         (":plugins"
          (cl-loop for (_name . desc) in (nucleus-get-package-alist)
                   do (package--compile desc))
@@ -121,7 +121,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                                   (eval pred t)))))
                     use-package-defaults)
               ;; Always compile private init file
-              (push (expand-file-name "init.el" nucleus-private-dir) target-files)
+              (push (expand-file-name "init.el" nucleus-emacs-dir) target-files)
               (push (expand-file-name "init.el" nucleus-emacs-dir)   target-files)
               (dolist (target (cl-delete-duplicates (mapcar #'file-truename target-files) :test #'equal))
                 (if (or (not recompile-p)
@@ -164,7 +164,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
 module. This does not include your byte-compiled, third party packages.'"
   (cl-loop with default-directory = nucleus-emacs-dir
            for path in (append (nucleus-files-in nucleus-emacs-dir :match "\\.elc$" :depth 0)
-                               (nucleus-files-in nucleus-private-dir :match "\\.elc$" :depth 1)
+                               (nucleus-files-in nucleus-emacs-dir :match "\\.elc$" :depth 1)
                                (nucleus-files-in nucleus-core-dir :match "\\.elc$")
                                (nucleus-files-in nucleus-modules-dirs :match "\\.elc$" :depth 4))
            for truepath = (file-truename path)

@@ -410,8 +410,8 @@ exist."
         (let* ((source (file-name-sans-extension ,file))
                (err (cond ((file-in-directory-p source nucleus-core-dir)
                            (cons 'nucleus-error nucleus-core-dir))
-                          ((file-in-directory-p source nucleus-private-dir)
-                           (cons 'nucleus-private-error nucleus-private-dir))
+                          ((file-in-directory-p source nucleus-emacs-dir)
+                           (cons 'nucleus-private-error nucleus-emacs-dir))
                           ((cons 'nucleus-module-error nucleus-emacs-dir)))))
           (signal (car err)
                   (list (file-relative-name

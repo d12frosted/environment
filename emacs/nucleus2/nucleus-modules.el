@@ -52,7 +52,7 @@ unless FORCE-P is non-nil."
                        (nucleus--current-flags (plist-get plist :flags)))
                    (load! "config" (plist-get plist :path) t)))
                nucleus-modules)
-      (load! "config" nucleus-private-dir t)
+      (load! "config" nucleus-emacs-dir t)
       (unless custom-file
         (setq custom-file (concat nucleus-local-dir "custom.el")))
       (when (stringp custom-file)
@@ -165,7 +165,7 @@ non-nil, return paths of possible modules, activated or otherwise."
                              :full t)
             (cl-loop for plist being the hash-values of (nucleus-modules)
                      collect (plist-get plist :path)))
-          (list nucleus-private-dir)))
+          (list nucleus-emacs-dir)))
 
 (defun nucleus-modules (&optional refresh-p)
   "Minimally initialize `nucleus-modules' (a hash table) and return it."
@@ -174,7 +174,7 @@ non-nil, return paths of possible modules, activated or otherwise."
             nucleus-modules
             nucleus-init-modules-p)
         (message "Initializing modules")
-        (load! "init" nucleus-private-dir t)
+        (load! "init" nucleus-emacs-dir t)
         (or nucleus-modules
             (make-hash-table :test 'equal
                              :size 20

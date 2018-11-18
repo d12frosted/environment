@@ -290,7 +290,7 @@ Used by `nucleus-packages-update'."
                         (nucleus-modules ',nucleus-modules)
                         (quelpa-cache ',quelpa-cache)
                         (user-emacs-directory ,user-emacs-directory)
-                        nucleus-private-dir)
+                        nucleus-emacs-dir)
                     (load ,(expand-file-name "core.el" nucleus-core-dir))
                     (load ,(expand-file-name "autoload/packages.el" nucleus-core-dir))
                     (require 'package)

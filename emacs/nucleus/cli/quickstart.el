@@ -18,14 +18,14 @@ exists.")
 (defun nucleus-quickstart ()
   "Quickly deploy a private module and Doom.
 
-This deploys a barebones config to `nucleus-private-dir', installs all missing
+This deploys a barebones config to `nucleus-emacs-dir', installs all missing
 packages and regenerates the autoloads file."
-  ;; Create `nucleus-private-dir'
-  (let ((short-private-dir (abbreviate-file-name nucleus-private-dir)))
-    (if (file-directory-p nucleus-private-dir)
+  ;; Create `nucleus-emacs-dir'
+  (let ((short-private-dir (abbreviate-file-name nucleus-emacs-dir)))
+    (if (file-directory-p nucleus-emacs-dir)
         (print! (yellow "%s directory already exists. Skipping.") short-private-dir)
       (print! "Creating %s" short-private-dir)
-      (make-directory nucleus-private-dir t)
+      (make-directory nucleus-emacs-dir t)
       (print! (green "Done!"))
       ;; Create init.el, config.el & packages.el
       (dolist (file (list (cons "init.el"
@@ -46,7 +46,7 @@ packages and regenerates the autoloads file."
                                           ";; (package! builtin-package :disable t)\n")))))
         (cl-destructuring-bind (path . fn) file
           (print! "Creating %s%s" short-private-dir path)
-          (with-temp-file (expand-file-name path nucleus-private-dir)
+          (with-temp-file (expand-file-name path nucleus-emacs-dir)
             (funcall fn))
           (print! (green "Done!"))))))
   ;; Ask if Emacs.app should be patched

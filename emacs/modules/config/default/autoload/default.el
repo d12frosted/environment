@@ -36,15 +36,15 @@
 
 ;;;###autoload
 (defun +default/find-in-config ()
-  "Open a file somewhere in `nucleus-private-dir' via a fuzzy filename search."
+  "Open a file somewhere in `nucleus-emacs-dir' via a fuzzy filename search."
   (interactive)
-  (nucleus-project-find-file nucleus-private-dir))
+  (nucleus-project-find-file nucleus-emacs-dir))
 
 ;;;###autoload
 (defun +default/browse-config ()
-  "Browse the files in `nucleus-private-dir'."
+  "Browse the files in `nucleus-emacs-dir'."
   (interactive)
-  (nucleus-project-browse nucleus-private-dir))
+  (nucleus-project-browse nucleus-emacs-dir))
 
 ;;;###autoload
 (defun +default/compile (arg)

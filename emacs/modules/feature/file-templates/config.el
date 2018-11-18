@@ -104,7 +104,7 @@ information.")
 
 (defun +file-templates-in-emacs-dirs-p (file)
   "Returns t if FILE is in Doom or your private directory."
-  (or (file-in-directory-p file nucleus-private-dir)
+  (or (file-in-directory-p file nucleus-emacs-dir)
       (file-in-directory-p file nucleus-emacs-dir)))
 
 (defun +file-templates|check ()

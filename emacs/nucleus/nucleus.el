@@ -31,10 +31,6 @@ line or use --debug-init to enable this.")
   "The path to this emacs directory. Must end in a slash.")
 
 ;; TODO remove me
-(defvar nucleus-private-dir nucleus-emacs-dir
-  "The path to this emacs directory. Must end in a slash.")
-
-;; TODO remove me
 (defvar nucleus-docs-dir (concat nucleus-emacs-dir "doc/"))
 
 (defvar nucleus-core-dir (concat nucleus-emacs-dir "nucleus/")

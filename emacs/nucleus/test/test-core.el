@@ -3,11 +3,11 @@
 
 (describe "core"
   (xdescribe "initialize"
-    :var (nucleus-init-p nucleus-init-modules-p nucleus-private-dir)
+    :var (nucleus-init-p nucleus-init-modules-p nucleus-emacs-dir)
     (before-each
       (setq nucleus-init-p nil
             nucleus-init-modules-p nil
-            nucleus-private-dir nucleus-emacs-dir)
+            nucleus-emacs-dir nucleus-emacs-dir)
 
       (spy-on 'require)
       (spy-on 'load)

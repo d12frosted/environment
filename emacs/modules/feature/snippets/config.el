@@ -1,6 +1,6 @@
 ;;; feature/snippets/config.el -*- lexical-binding: t; -*-
 
-(defvar +snippets-dir (expand-file-name "snippets/" nucleus-private-dir)
+(defvar +snippets-dir (expand-file-name "snippets/" nucleus-emacs-dir)
   "Directory where `yasnippet' will search for your private snippets.")
 
 

@@ -124,7 +124,7 @@ current file is in, or d) the module associated with the current major mode (see
    (let* ((module
            (cond ((and buffer-file-name
                        (eq major-mode 'emacs-lisp-mode)
-                       (file-in-directory-p buffer-file-name nucleus-private-dir)
+                       (file-in-directory-p buffer-file-name nucleus-emacs-dir)
                        (save-excursion (goto-char (point-min))
                                        (re-search-forward "^\\s-*(nucleus! " nil t))
                        (thing-at-point 'sexp t)))

@@ -149,7 +149,7 @@ them."
             ;; We load the private packages file twice to ensure disabled
             ;; packages are seen ASAP, and a second time to ensure privately
             ;; overridden packages are properly overwritten.
-            (let ((private-packages (expand-file-name "packages.el" nucleus-private-dir)))
+            (let ((private-packages (expand-file-name "packages.el" nucleus-emacs-dir)))
               (_load private-packages t)
               (cl-loop for key being the hash-keys of nucleus-modules
                        for path = (nucleus-module-path (car key) (cdr key) "packages.el")
@@ -227,7 +227,7 @@ elsewhere."
         (setq plist (plist-put plist :recipe (cons name recipe))))
       (setq pin nil
             plist (plist-put plist :pin nil)))
-    (when (file-in-directory-p (FILE!) nucleus-private-dir)
+    (when (file-in-directory-p (FILE!) nucleus-emacs-dir)
       (setq plist (plist-put plist :private t)))
     (let (newplist)
       (while plist

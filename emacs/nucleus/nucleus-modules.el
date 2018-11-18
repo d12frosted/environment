@@ -7,7 +7,7 @@
   "A hash table of enabled modules. Set by `nucleus-initialize-modules'.")
 
 (defvar nucleus-modules-dirs
-  (list (expand-file-name "modules/" nucleus-private-dir)
+  (list (expand-file-name "modules/" nucleus-emacs-dir)
         nucleus-modules-dir)
   "A list of module root directories. Order determines priority.")
 
@@ -32,13 +32,13 @@ A warning will be put out if these deprecated modules are used.")
 ;; Bootstrap API
 
 (defun nucleus-initialize-modules (&optional force-p)
-  "Loads the dna.el in `nucleus-private-dir' and sets up hooks for a healthy
+  "Loads the dna.el in `nucleus-emacs-dir' and sets up hooks for a healthy
 session of Dooming. Will noop if used more than once, unless FORCE-P is
 non-nil."
   (when (or force-p (not nucleus-init-modules-p))
     (setq nucleus-init-modules-p t)
 
-    (load! "dna" nucleus-private-dir t)
+    (load! "dna" nucleus-emacs-dir t)
     (unless nucleus-modules
       (setq nucleus-modules (make-hash-table :test 'equal)))
 
@@ -54,7 +54,7 @@ non-nil."
                        (nucleus--current-flags (plist-get plist :flags)))
                    (load! "config" (plist-get plist :path) t)))
                nucleus-modules)
-      (load! "config" nucleus-private-dir t)
+      (load! "config" nucleus-emacs-dir t)
       (unless custom-file
         (setq custom-file (concat nucleus-local-dir "custom.el")))
       (when (stringp custom-file)
@@ -165,7 +165,7 @@ non-nil, return paths of possible modules, activated or otherwise."
                              :full t)
             (cl-loop for plist being the hash-values of (nucleus-modules)
                      collect (plist-get plist :path)))
-          (list nucleus-private-dir)))
+          (list nucleus-emacs-dir)))
 
 (defun nucleus-modules (&optional refresh-p)
   "Minimally initialize `nucleus-modules' (a hash table) and return it."
@@ -174,7 +174,7 @@ non-nil, return paths of possible modules, activated or otherwise."
             nucleus-modules
             nucleus-init-modules-p)
         (message "Initializing modules")
-        (load! "dna" nucleus-private-dir t)
+        (load! "dna" nucleus-emacs-dir t)
         (or nucleus-modules
             (make-hash-table :test 'equal
                              :size 20

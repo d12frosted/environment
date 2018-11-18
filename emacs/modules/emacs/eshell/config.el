@@ -7,7 +7,7 @@
 ;;     config when quitting the last eshell buffer)
 
 (defvar +eshell-config-dir
-  (expand-file-name "eshell/" nucleus-private-dir)
+  (expand-file-name "eshell/" nucleus-emacs-dir)
   "Where to store eshell configuration files, as opposed to
 `eshell-directory-name', which is where Doom will store temporary/data files.")
 
