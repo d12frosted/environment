@@ -18,12 +18,18 @@
   "An alist of themes that support `solaire-mode'. If CDR is t, then use
 `solaire-mode-swap-bg'.")
 
+(defun nucleus-patch-background ()
+  "Patch background in Terminal."
+  (unless (display-graphic-p (selected-frame))
+    (set-face-background 'default "unspecified-bg" (selected-frame))))
+
 ;;
 ;; Packages
 
 (def-package! leuven-theme
   :defer t
   :init
+  (add-hook 'window-setup-hook 'nucleus-patch-background)
   (unless nucleus-theme
     (setq nucleus-theme 'leuven)))
 
