@@ -31,7 +31,12 @@
   :init
   (add-hook 'window-setup-hook 'nucleus-patch-background)
   (unless nucleus-theme
-    (setq nucleus-theme 'leuven)))
+    (setq nucleus-theme 'leuven))
+  :config
+  (custom-theme-set-faces
+   'leuven
+   '(nucleus-modeline-info ((t (:foreground "PaleGreen1"))))
+   '(nucleus-modeline-stale ((t (:foreground "PaleGreen3"))))))
 
 (def-package! doom-themes
   :defer t
