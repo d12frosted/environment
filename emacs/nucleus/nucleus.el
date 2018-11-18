@@ -23,6 +23,12 @@ line or use --debug-init to enable this.")
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 
+(defconst nucleus-config-dir
+  (file-name-as-directory
+   (or (getenv "XDG_CONFIG_HOME")
+       (concat path-home ".config")))
+  "The root directory for personal configurations.")
+
 (defconst nucleus-projects-dir (concat user-home-directory "Developer/")
   "The root directory for personal projects.")
 
