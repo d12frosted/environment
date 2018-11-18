@@ -307,8 +307,8 @@
         :n "RET" #'flycheck-error-list-goto-error)
 
       ;; flyspell
-      :m  "]S" #'flyspell-correct-word-generic
-      :m  "[S" #'flyspell-correct-previous-word-generic
+      :m  "]S" #'flyspell-correct-next
+      :m  "[S" #'flyspell-correct-wrapper
       (:after flyspell
         ;; Press RET on misspelled words to correct them
         (:map flyspell-mouse-map

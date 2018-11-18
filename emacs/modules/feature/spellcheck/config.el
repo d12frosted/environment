@@ -28,8 +28,8 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
 
 
 (def-package! flyspell-correct
-  :commands (flyspell-correct-word-generic
-             flyspell-correct-previous-word-generic)
+  :commands (flyspell-correct-wrapper
+             flyspell-correct-previous)
   :config
   (cond ((featurep! :completion helm)
          (require 'flyspell-correct-helm))
