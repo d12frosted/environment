@@ -74,7 +74,6 @@ Use this for files that change often, like cache files.")
   "Where `nucleus-reload-package-autoloads' will generate its
 package.el autoloads file.")
 
-
 ;;
 ;; Doom core variables
 

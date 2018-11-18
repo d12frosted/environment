@@ -88,6 +88,7 @@
  markdown
  nix
  (org
+  +agenda
   +attach
   +babel
   +capture

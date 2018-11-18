@@ -3,8 +3,15 @@
 ;; FIXME deprecated
 (define-obsolete-variable-alias '+org-dir 'org-directory "2.1.0")
 
-;; Changed org defaults (should be set before org loads)
-(defvar org-directory "~/org/")
+(defvar org-directory (concat user-home-directory "Dropbox/vulpea/")
+  "The root directory for org/vulpea files.")
+
+(defvar +org-tasks-dir (concat org-directory "gtd/")
+  "The root directory for all tasks files.")
+
+(defvar +org-notes-dir (concat org-directory "notes/")
+  "The root directory for all notes files.")
+
 (defvar org-modules
   '(org-w3m
     ;; org-bbdb
@@ -12,6 +19,7 @@
     org-docview
     ;; org-gnus
     org-info
+    org-habit
     ;; org-irc
     ;; org-mhe
     ;; org-rmail
@@ -23,13 +31,13 @@
 (if (featurep! +capture) (load! "+capture"))
 (if (featurep! +export)  (load! "+export"))
 (if (featurep! +present) (load! "+present"))
+(if (featurep! +agenda)  (load! "+agenda"))
 ;; TODO (if (featurep! +publish) (load! "+publish"))
 
 (nucleus-load-packages-incrementally
- '(calendar find-func format-spec org-macs org-compat
-   org-faces org-entities org-list org-pcomplete org-src
-   org-footnote org-macro ob org org-agenda org-capture))
-
+ '(calendar find-func format-spec org-macs org-compat org-faces
+   org-entities org-list org-pcomplete org-src org-footnote
+   org-macro ob org org-agenda org-capture))
 
 ;;
 ;; Packages
@@ -85,14 +93,12 @@
   (org-link-set-parameters "https" :image-data-fun #'+org-image-link)
   (org-link-set-parameters "img"   :image-data-fun #'+org-inline-data-image))
 
-
 ;;
 ;; Bootstrap
 
 (add-hook! 'org-load-hook
   #'(+org|setup-ui
      +org|setup-popup-rules
-     +org|setup-agenda
      +org|setup-keybinds
      +org|setup-hacks
      +org|setup-pretty-code
@@ -112,7 +118,6 @@
      +org|enable-auto-update-cookies
      +org|smartparens-compatibility-config
      +org|unfold-to-2nd-level-or-point))
-
 
 ;;
 ;; `org-mode' hooks
@@ -162,23 +167,8 @@ unfold to point on startup."
     (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t))
   (add-hook 'before-save-hook #'+org|update-cookies nil t))
 
-
 ;;
 ;; `org-load' hooks
-
-(defun +org|setup-agenda ()
-  (unless org-agenda-files
-    (setq org-agenda-files (list org-directory)))
-  (setq-default
-   org-agenda-dim-blocked-tasks nil
-   org-agenda-inhibit-startup t
-   org-agenda-skip-unavailable-files t
-   ;; Move the agenda to show the previous 3 days and the next 7 days for a bit
-   ;; better context instead of just the current week which is a bit confusing
-   ;; on, for example, a sunday
-   org-agenda-span 10
-   org-agenda-start-on-weekday nil
-   org-agenda-start-day "-3d"))
 
 (defun +org|setup-popup-rules ()
   "Defines popup rules for org-mode (does nothing if :ui popup is disabled)."
@@ -274,14 +264,17 @@ unfold to point on startup."
    org-startup-with-inline-images nil
    org-tags-column 0
    org-todo-keywords
-   '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
-     (sequence "TODO(T)" "|" "DONE(D)")
-     (sequence "NEXT(n)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
-   org-todo-keyword-faces
-   '(("[-]" :inherit font-lock-constant-face :weight bold)
-     ("[?]" :inherit warning :weight bold)
-     ("WAITING" :inherit default :weight bold)
-     ("LATER" :inherit warning :weight bold))
+   '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+     (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING"))
+   org-todo-state-tags-triggers
+   '(("CANCELLED" ("CANCELLED" . t))
+     ("WAITING" ("WAITING" . t))
+     ("HOLD" ("WAITING") ("HOLD" . t))
+     (done ("WAITING") ("HOLD"))
+     ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+     ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+     ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
+
    org-use-sub-superscripts '{}
 
    ;; Scale up LaTeX previews a bit (default is too small)
@@ -459,7 +452,6 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
   (advice-add #'org-get-agenda-file-buffer
               :around #'+org*exclude-agenda-buffers-from-recentf))
 
-
 ;;
 ;; Built-in libraries
 
@@ -482,7 +474,6 @@ conditions where a window's buffer hasn't changed at the time this hook is run."
         org-clock-persist-file (concat nucleus-etc-dir "org-clock-save.el"))
   :config
   (add-hook 'kill-emacs-hook #'org-clock-save))
-
 
 ;; In case org has already been loaded (or you're running `nucleus/reload')
 (when (featurep 'org)

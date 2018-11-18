@@ -433,7 +433,6 @@ with `org-cycle')."
     (org-remove-occur-highlights)
     t))
 
-
 ;;
 ;; Advice
 

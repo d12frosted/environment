@@ -11,17 +11,20 @@
 ;;    ~/.emacs.d/bin/org-capture script). This can be invoked from qutebrowser,
 ;;    vimperator, dmenu or a global keybinding.
 
-(defvar +org-capture-todo-file "todo.org"
+(defvar +org-capture-todo-file "inbox.org"
   "The path to your personal todo file.
 
-Is relative to `org-directory', unless it is absolute. Is used in Doom's default
-`org-capture-templates'.")
+Is relative to `org-directory', unless it is absolute.")
 
-(defvar +org-capture-notes-file "notes.org"
+(defvar +org-capture-notes-file "inbox.org"
   "The path to your personal notes file.
 
-Is relative to `org-directory', unless it is absolute. Is used in Doom's default
-`org-capture-templates'.")
+Is relative to `org-directory', unless it is absolute.")
+
+(defvar +org-capture-journal-file "journal.org"
+  "The path to your personal journal file.
+
+Is relative to `org-directory', unless it is absolute.")
 
 (defvar +org-capture-changelog-file "changelog.org"
   "The filename to use for project changelog files.
@@ -30,8 +33,15 @@ It is used in Doom's default `org-capture-templates'.")
 
 (defvar org-capture-templates
   '(("t" "Personal todo" entry
-     (file+headline +org-capture-todo-file "Inbox")
-     "* [ ] %?\n%i\n%a" :prepend t :kill-buffer t)
+     (file +org-capture-todo-file)
+     "* TODO %?\n%U\n" :clock-in t :clock-resume t)
+
+    ("j" "Journal" entry (file+datetree+prompt +org-capture-journal-file)
+     "* %?\n%U\n" :clock-in t :clock-resume t)
+
+     ("m" "Meeting" entry (file +org-capture-todo-file)
+      "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+
     ("n" "Personal notes" entry
      (file+headline +org-capture-notes-file "Inbox")
      "* %u %?\n%i\n%a" :prepend t :kill-buffer t)
@@ -52,8 +62,6 @@ It is used in Doom's default `org-capture-templates'.")
 
 (defvar org-default-notes-file nil)  ; defined in org.el
 
-
-;;
 (defun +org|init-capture ()
   (dolist (var '(+org-capture-todo-file
                  +org-capture-notes-file))
@@ -62,6 +70,11 @@ It is used in Doom's default `org-capture-templates'.")
     (setq org-default-notes-file +org-capture-notes-file))
 
   (add-hook 'org-capture-after-finalize-hook #'+org-capture|cleanup-frame)
+
+  (setq org-clock-out-remove-zero-time-clocks t)
+
+  ;; Remove empty drawers on clock out
+  (add-hook 'org-clock-out-hook '+org/remove-empty-drawer 'append)
 
   (defun +org*expand-variable-paths (file)
     "If a variable is used for a file path in `org-capture-template', it is used
@@ -93,3 +106,8 @@ underlying, modified buffer. This fixes that."
 
   (when (featurep! :ui nucleus-dashboard)
     (add-hook '+nucleus-dashboard-inhibit-functions #'+org-capture-frame-p)))
+
+(defun +org/remove-empty-drawer ()
+  "Remove empty drawer."
+  (beginning-of-line 0)
+  (org-remove-empty-drawer-at (point)))
