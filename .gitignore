@@ -2,6 +2,7 @@
 *.elc
 
 # ignore emacs cache
+emacs/.local
 emacs/.cache
 
 # haskell
