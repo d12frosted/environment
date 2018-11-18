@@ -36,7 +36,8 @@
   (custom-theme-set-faces
    'leuven
    '(nucleus-modeline-info ((t (:foreground "PaleGreen1"))))
-   '(nucleus-modeline-stale ((t (:foreground "PaleGreen3"))))))
+   '(nucleus-modeline-stale ((t (:foreground "PaleGreen3"))))
+   '(hl-line ((t (:background "#F6FECD" :underline nil))))))
 
 (def-package! doom-themes
   :defer t
