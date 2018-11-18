@@ -2,8 +2,8 @@
 ":"; [[ $EMACS = *"term"* ]] && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
 ":"; command -v $EMACS >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; }
 ":"; NUCLEUSBASE=$(dirname "${BASH_SOURCE:-${(%):-%x}}")/../..
-":"; [[ $1 == doc || $1 == doctor ]] && { cd "$NUCLEUSBASE"; exec $EMACS --script bin/nucleus-doctor; exit 0; }
-":"; [[ $1 == run ]] && { cd "$NUCLEUSBASE"; shift; exec $EMACS -q --no-splash -l bin/nucleus "$@"; exit 0; }
+":"; [[ $1 == doc || $1 == doctor ]] && { cd "$NUCLEUSBASE"; exec $EMACS --script nucleus/bin/nucleus-doctor; exit 0; }
+":"; [[ $1 == run ]] && { cd "$NUCLEUSBASE"; shift; exec $EMACS -q --no-splash -l nucleus/bin/nucleus "$@"; exit 0; }
 ":"; exec $EMACS --script "$0" -- $@
 ":"; exit 0
 

@@ -1,0 +1,317 @@
+#!/usr/bin/env bash
+":"; command -v emacs >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; } # -*-emacs-lisp-*-
+":"; VERSION=$(emacs --version | head -n1)
+":"; exec emacs --quick --script "$0"; exit 0
+
+;; Uses a couple simple heuristics to locate issues with your
+;; environment that could interfere with running or setting up Emacs.
+
+;; In case it isn't defined (in really old versions of Emacs, like the
+;; one that ships with MacOS).
+
+(defvar user-emacs-directory
+  (expand-file-name "../../" (file-name-directory load-file-name)))
+
+(unless (file-directory-p user-emacs-directory)
+  (error "Couldn't find a Emacs config!"))
+
+(unless noninteractive
+  (error "This script must not be run from an interactive session."))
+
+(require 'pp)
+
+;;
+(defvar nucleus-init-p nil)
+(defvar nucleus-warnings 0)
+(defvar nucleus-errors 0)
+(defmacro when! (cond &rest body)
+  (declare (indent defun))
+  `(let ((it ,cond))
+     (when it ,@body)))
+
+(defun indented (spc msg)
+  (declare (indent defun))
+  (with-temp-buffer
+    (insert msg)
+    (let ((fill-column 80))
+      (fill-region (point-min) (point-max))
+      (indent-rigidly (point-min) (point-max) spc))
+    (when (> spc 2)
+      (goto-char (point-min))
+      (beginning-of-line-text)
+      (delete-char -2)
+      (insert "> "))
+    (buffer-string)))
+
+(defun autofill (&rest msgs)
+  (declare (indent defun))
+  (let ((fill-column 70))
+    (with-temp-buffer
+      (dolist (line msgs)
+        (when line
+          (insert line)))
+      (fill-region (point-min) (point-max))
+      (buffer-string))))
+
+(defun sh (cmd)
+  (string-trim-right (shell-command-to-string cmd)))
+
+(defun color (code msg &rest args)
+  (format "\e[%dm%s\e[%dm" code (apply #'format msg args) 0))
+
+(defvar indent 0)
+(defvar prefix "")
+(defmacro msg! (msg &rest args)
+  `(message
+    (indented indent
+              (format (concat prefix ,msg)
+                      ,@args))))
+(defmacro error!   (&rest args) `(progn (msg! (color 31 ,@args)) (setq nucleus-errors (+ nucleus-errors 1))))
+(defmacro warn!    (&rest args) `(progn (msg! (color 33 ,@args)) (setq nucleus-warnings (+ nucleus-warnings 1))))
+(defmacro success! (&rest args) `(msg! (color 32 ,@args)))
+(defmacro section! (&rest args)
+  `(msg! (color 1 (color 34 ,@args))))
+
+(defmacro explain! (&rest args)
+  `(message (indented (+ indent 2) (autofill ,@args))))
+
+;;; Polyfills
+;; early versions of emacs won't have this
+(unless (fboundp 'string-match-p)
+  (defun string-match-p (regexp string &optional start)
+    (save-match-data
+      (string-match regexp string &optional start))))
+
+;; subr-x may not exist in the current version of Emacs
+(unless (fboundp 'string-trim-right)
+  (defsubst string-trim-right (string &optional regexp)
+    (if (string-match (concat "\\(?:" (or regexp "[ \t\n\r]+") "\\)\\'") string)
+        (replace-match "" t t string)
+      string)))
+
+
+;; --- start a'doctorin' --------------------------------------
+
+(msg! (color 1 "Nucleus Doctor"))
+(msg! "Emacs v%s" emacs-version)
+(msg! "shell: %s%s"
+      (getenv "SHELL")
+      (if (equal (getenv "SHELL") (sh "echo $SHELL"))
+          ""
+        (color 31 " (mismatch)")))
+(when (boundp 'system-configuration-features)
+  (message "Compiled with:\n%s" (indented 2 system-configuration-features)))
+(message "uname -a:\n%s\n" (indented 2 (sh "uname -a")))
+
+;; --- is emacs set up properly? ------------------------------
+
+(when (version< emacs-version "25.1")
+  (error! "Important: Emacs %s detected [%s]" emacs-version (executable-find "emacs"))
+  (explain!
+   "NUCLEUS only supports >= 25.1. Perhaps your PATH wasn't set up properly."
+   (when (eq system-type 'darwin)
+     (concat "\nMacOS users should use homebrew (https://brew.sh) to install Emacs\n"
+             "  brew install emacs --with-modules --with-imagemagick --with-cocoa"))))
+
+(let ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
+                           "~/.config")
+                       "/nucleus/"))
+      (nucleus-dir "~/.nucleus.d/"))
+  (when (and (file-directory-p xdg-dir)
+             (file-directory-p nucleus-dir))
+    (warn! "Detected two private configs, in %s and %s"
+           (abbreviate-file-name xdg-dir)
+           nucleus-dir)
+    (explain! "The second directory will be ignored, as it has lower precedence.")))
+
+
+;; --- is the environment set up properly? --------------------
+
+;; on windows?
+(section! "Checking your OS...")
+(when (memq system-type '(windows-nt ms-dos cygwin))
+  (warn! "Warning: Windows detected")
+  (explain! "NUCLEUS was designed for MacOS and Linux. Expect a bumpy ride!"))
+
+;; are all default fonts present?
+(section! "Checking your fonts...")
+(if (not (fboundp 'find-font))
+    (progn
+      (warn! "Warning: unable to detect font")
+      (explain! "The `find-font' function is missing. This could indicate the incorrect "
+                "version of Emacs is being used!"))
+  ;; all-the-icons fonts
+  (let ((font-dest (pcase system-type
+                     ('gnu/linux (concat (or (getenv "XDG_DATA_HOME")
+                                             "~/.local/share")
+                                         "/fonts/"))
+                     ('darwin "~/Library/Fonts/"))))
+    (when (and font-dest (require 'all-the-icons nil t))
+      (dolist (font all-the-icons-font-names)
+        (if (file-exists-p (expand-file-name font font-dest))
+            (success! "Found font %s" font)
+          (warn! "Warning: couldn't find %s font in %s"
+                 font font-dest)
+          (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
+                    "This could also mean you've installed them in non-standard locations, in which "
+                    "case, ignore this warning."))))))
+
+;; gnutls-cli & openssl
+(section! "Checking gnutls/openssl...")
+(cond ((executable-find "gnutls-cli"))
+      ((executable-find "openssl")
+       (let* ((output (sh "openssl ciphers -v"))
+              (protocols
+               (let (protos)
+                 (mapcar (lambda (row)
+                           (add-to-list 'protos (cadr (split-string row " " t))))
+                         (split-string (sh "openssl ciphers -v") "\n"))
+                 (delq nil protos))))
+         (unless (or (member "TLSv1.1" protocols)
+                     (member "TLSv1.2" protocols))
+           (let ((version (cadr (split-string (sh "openssl version") " " t))))
+             (warn! "Warning: couldn't find gnutls-cli, and OpenSSL is out-of-date (v%s)" version)
+             (explain!
+              "This may not affect your Emacs experience, but there are security "
+              "vulnerabilities in the SSL2/3 & TLS1.0 protocols. You should use "
+              "TLS 1.1+, which wasn't introduced until OpenSSL v1.0.1.\n\n"
+
+              "Please consider updating (or install gnutls-cli, which is preferred).")))))
+      (t
+       (error! "Important: couldn't find either gnutls-cli nor openssl")
+       (explain!
+        "You won't be able to install/update packages because Emacs won't be able to "
+        "verify HTTPS ELPA sources. Install gnutls-cli or openssl v1.0.0+. If for some "
+        "reason you can't, you can bypass this verification with the INSECURE flag:\n\n"
+
+        "  INSECURE=1 make install\n\n"
+
+        "Or change `package-archives' to use non-https sources.\n\n"
+
+        "But remember that you're leaving your security in the hands of your "
+        "network, provider, government, neckbearded mother-in-laws, geeky roommates, "
+        "or just about anyone who knows more about computers than you do!")))
+
+;; are certificates validated properly?
+(section! "Testing your root certificates...")
+(cond ((not (string-match-p "\\_<GNUTLS\\_>" system-configuration-features))
+       (warn! "Warning: You didn't install Emacs with gnutls support")
+       (explain!
+        "This may cause 'pecular error' errors with the Nucleus doctor, and is likely to "
+        "interfere with package management. Your mileage may vary."
+        (when (eq system-type 'darwin)
+          (concat "\nMacOS users are advised to install Emacs via homebrew with one of the following:\n"
+                  "    brew install emacs --with-gnutls"
+                  "      or"
+                  "    brew tap d12frosted/emacs-plus"
+                  "    brew install emacs-plus"))))
+
+      ((not (fboundp 'url-retrieve-synchronously))
+       (error! "Can't find url-retrieve-synchronously function. Are you running Emacs 24+?"))
+
+      ((or (executable-find "gnutls-cli")
+           (executable-find "openssl"))
+       (let ((tls-checktrust t)
+             (gnutls-verify-error t))
+         (dolist (url '("https://elpa.gnu.org" "https://melpa.org"))
+           (when! (condition-case-unless-debug e
+                      (unless (let ((inhibit-message t)) (url-retrieve-synchronously url))
+                        'empty)
+                    ('timed-out 'timeout)
+                    ('error e))
+             (pcase it
+               (`empty (error! "Couldn't reach %s" url))
+               (`timeout (error! "Timed out trying to contact %s" ex))
+               (_
+                (error! "Failed to validate %s" url)
+                (explain! (pp-to-string it))))))
+         (dolist (url '("https://self-signed.badssl.com"
+                        "https://wrong.host.badssl.com/"))
+           (when! (condition-case-unless-debug e
+                      (if (let ((inhibit-message t)) (url-retrieve-synchronously url))
+                          t
+                        'empty)
+                    ('timed-out 'timeout)
+                    ('error))
+             (pcase it
+               (`empty (error! "Couldn't reach %s" url))
+               (`timeout (error! "Timed out trying to contact %s" ex))
+               (_
+                (error! "Validated %s (this shouldn't happen!)" url)))))))
+
+      ((error! "Nope!")))
+
+;; which variant of tar is on your system? bsd or gnu tar?
+(section! "Checking for GNU/BSD tar...")
+(let ((tar-bin (or (executable-find "gtar")
+                   (executable-find "tar"))))
+  (if tar-bin
+      (unless (string-match-p "(GNU tar)" (sh (format "%s --version" tar-bin)))
+        (warn! "Warning: BSD tar detected")
+        (explain!
+         "QUELPA (through package-build) uses the system tar to build plugins, but it "
+         "expects GNU tar. BSD tar *could* cause errors during package installation or "
+         "updating from non-ELPA sources."
+         (when (eq system-type 'darwin)
+           (concat "\nMacOS users can install gnu-tar via homebrew:\n"
+                   "    brew install gnu-tar"))))
+    (error! "Important: Couldn't find tar")
+    (explain!
+     "This is required by package.el and QUELPA to build packages and will "
+     "prevent you from installing & updating packages.")))
+
+
+;; --- are your modules set up properly? ----------------------
+
+(condition-case ex
+    (let ((inhibit-message t)
+          (after-init-time (current-time))
+          noninteractive)
+      (delq 'nucleus features)
+      (load-file (concat user-emacs-directory "init.el"))
+      (require 'nucleus-packages)
+      (nucleus-initialize-packages)
+      (success! "Attempt to load NUCLEUS: success!"))
+  (error
+   (warn! "Attempt to load NUCLEUS: failed\n  %s\n"
+          (or (cdr-safe ex) (car ex)))
+   (setq nucleus-modules nil)))
+
+(when (bound-and-true-p nucleus-modules)
+  (section! "Checking your enabled modules...")
+  (let ((indent 4))
+    (advice-add #'require :around #'nucleus*shut-up)
+    (maphash
+     (lambda (key plist)
+       (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key)))))
+         (condition-case ex
+             (let ((doctor-file   (nucleus-module-path (car key) (cdr key) "doctor.el"))
+                   (packages-file (nucleus-module-path (car key) (cdr key) "packages.el"))
+                   nucleus-packages)
+               (when (or (file-exists-p doctor-file)
+                         (file-exists-p packages-file))
+                 (let ((nucleus--stage 'packages))
+                   (when (load packages-file t t)
+                     (cl-loop for (name . plist) in nucleus-packages
+                              unless (or (nucleus-package-prop name :disable)
+                                         (nucleus-package-prop name :ignore t)
+                                         (package-built-in-p name)
+                                         (package-installed-p name))
+                              do (error! "%s is not installed" name)))
+                   (let ((nucleus--stage 'doctor))
+                     (load doctor-file t t)))))
+           (file-missing (error! "%s" (error-message-string ex)))
+           (error (error! "Syntax error: %s" ex)))))
+     nucleus-modules)))
+
+;;
+(message "\n")
+(dolist (msg (list (list nucleus-errors "error" 31)
+                   (list nucleus-warnings "warning" 33)))
+  (when (> (car msg) 0)
+    (message (color (nth 2 msg) (if (= (car msg) 1) "There is %d %s!" "There are %d %ss!")
+                    (car msg) (nth 1 msg)))))
+
+(when (and (zerop nucleus-errors)
+           (zerop nucleus-warnings))
+  (success! "Everything seems fine, happy Emacs'ing!"))
