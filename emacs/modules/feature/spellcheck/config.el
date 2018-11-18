@@ -31,10 +31,5 @@ Since spellchecking can be slow in some buffers, this can be disabled with:
   :commands (flyspell-correct-wrapper
              flyspell-correct-previous)
   :config
-  (cond ((featurep! :completion helm)
-         (require 'flyspell-correct-helm))
-        ((featurep! :completion ivy)
-         (require 'flyspell-correct-ivy))
-        ((require 'flyspell-correct-popup)
-         (setq flyspell-popup-correct-delay 0.8)
-         (define-key popup-menu-keymap [escape] #'keyboard-quit))))
+  (cond (featurep! :completion ivy)
+         (require 'flyspell-correct-ivy)))
