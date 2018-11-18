@@ -1,8 +1,8 @@
-DOOM = "bin/nucleus"
+NUCLEUS = "nucleus/bin/nucleus"
 MODULES = $(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
 
 all:
-	@$(DOOM) refresh
+	@$(NUCLEUS) refresh
 
 ## Shortcuts
 a: autoloads
@@ -17,61 +17,58 @@ re: recompile
 d: doctor
 
 quickstart:
-	@$(DOOM) quickstart
-
+	@$(NUCLEUS) quickstart
 
 ## Package management
 install:
-	@$(DOOM) install
+	@$(NUCLEUS) install
 update:
-	@$(DOOM) update
+	@$(NUCLEUS) update
 autoremove:
-	@$(DOOM) autoremove
+	@$(NUCLEUS) autoremove
 autoloads:
-	@$(DOOM) autoloads
+	@$(NUCLEUS) autoloads
 upgrade:
-	@$(DOOM) upgrade
+	@$(NUCLEUS) upgrade
 
 ## Byte compilation
 compile:
-	@$(DOOM) compile
+	@$(NUCLEUS) compile
 compile-core:
-	@$(DOOM) compile :core
+	@$(NUCLEUS) compile :core
 compile-private:
-	@$(DOOM) compile :private
+	@$(NUCLEUS) compile :private
 compile-plugins:
-	@$(DOOM) compile :plugins
+	@$(NUCLEUS) compile :plugins
 recompile:
-	@$(DOOM) recompile
+	@$(NUCLEUS) recompile
 clean:
-	@$(DOOM) clean
+	@$(NUCLEUS) clean
 # compile-module
 # compile-module/submodule
 $(patsubst %, compile-%, $(MODULES)): | .local/autoloads.el
-	@$(DOOM) $@ $(subst compile-, , $@)
-
+	@$(NUCLEUS) $@ $(subst compile-, , $@)
 
 ## Unit tests
 test:
-	@$(DOOM) test
+	@$(NUCLEUS) test
 test-core:
-	@$(DOOM) test :core
+	@$(NUCLEUS) test :core
 # test-module
 # test-module/submodule
 $(patsubst %, test-%, $(MODULES)):
-	@$(DOOM) test $(subst test-, , $@)
-
+	@$(NUCLEUS) test $(subst test-, , $@)
 
 ## Utility tasks
 # Runs Emacs from a different folder than ~/.emacs.d; only use this for testing!
 run:
-	@$(DOOM) run $(ARGS)
+	@$(NUCLEUS) run $(ARGS)
 # Prints debug info about your current setup
 info:
-	@$(DOOM) info
+	@$(NUCLEUS) info
 
 # Diagnoses potential OS/environment issues
 doctor:
-	@$(DOOM) doctor
+	@$(NUCLEUS) doctor
 
 .PHONY: all compile test testi clean
