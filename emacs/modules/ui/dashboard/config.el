@@ -348,25 +348,45 @@ controlled by `+nucleus-dashboard-pwd-policy'."
             (insert (propertize (+nucleus-dashboard--center +nucleus-dashboard--width line)
                                 'face 'font-lock-comment-face) " ")
             (insert "\n"))
-          '("=================     ===============     ===============   ========  ========"
-            "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //"
-            "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||"
-            "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||"
-            "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||"
-            "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||"
-            "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||"
-            "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||"
-            "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||"
-            "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||"
-            "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||"
-            "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||"
-            "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||"
-            "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||"
-            "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||"
-            "||.=='    _-'                                                     `' |  /==.||"
-            "=='    _-'                         E M A C S                          \\/   `=="
-            "\\   _-'                                                                `-_   /"
-            " `''                                                                      ``'"))
+          '("                                            WW                                  "
+            "                                           WkxN                                 "
+            "                                           O'.xW                                "
+            "                                          Xc  ,0                                "
+            "                                         Wx.   lN                               "
+            "                                         K; .. 'O                               "
+            "                                       WWx. cl. oW                              "
+            "                                       XO: .kO' ;K                              "
+            "                                       Oc. ;XX: .O                              "
+            "                                      Wo.  oWNl .x                              "
+            "                                      Nc  .k Nl .x                              "
+            "                                      K,  '0 X: .O                              "
+            "                                      O'  ;K O' ;K                              "
+            "            WNNXXNWW                  k.  :XXc .dW                              "
+            "        N0dl;'....,:lxKN              x.  :x: .lN                               "
+            "     W0l'...;clool:,. .;dKW           x.     'xN                                "
+            "   Nk:. 'lkXW WWWWWN0x:. .l0W         x.  .lkX           WNX0Oxdoollllllooddxk0N"
+            " W0:.  ,lolcc:;;;,,;;::,.  .lK        x.  cN         NKxl:'.........''....   .lX"
+            "Wx.           .';::::;,'..   'oON     k.  :N      NOl,...,:ldk0KXXKXNNNXXx. .oX "
+            "Wkc::;;,,'..  ..,cok0XNNX0ko:. .,dX   O.  ;X    Nk;..'lkKN    WKxc,:O   O, .xW  "
+            "   WWWWWWNXKOxoc;.. .':okXW WXk:. ,kW 0'  ,K   K:  ;kN     W0d;. .;oK  K; .xW   "
+            "                WNKko:'. .;okXWWO, .dWK;  .O  K; .dN     Xx;. .:xKW   Nl .oW    "
+            "                     WX0dc'. .:d0O, .kNc  .x Nl .oW   WKo' .;xXW      O. ;K     "
+            "                         WN0d:. .,'  :Xd.  oW0' ,K  WXo. .cONW       Nl .dW     "
+            "                             WKxc.   .kk:. :XO. :X Nx'   .',,;ckN    0' ,K      "
+            "                                WXk:. .,,. '00' ,KKc.  .,;:c:;;dN   Nc .dW      "
+            "                                   WKo'    .dXc .;' .lkKNW   WW   WXc. lX       "
+            "                                      Xd:.  cXk.   ,OW         WN0o' .oN        "
+            "                                       WWO' 'OX:  :KWX0OOOkkxdl:'..'l0W         "
+            "                                         Nl  lo. :K Wd.........,:oOXW           "
+            "                                          O.    ;K   N0OOOOO0KXW                "
+            "                                          X:   '0                               "
+            "                                          Wk. .kW                               "
+            "                                           X: .k                                "
+            "                                           Wk. :X                               "
+            "                                            Xc .xW                              "
+            "                                             O. ,K                              "
+            "                                             No  oW                             "
+            "                                              XdckW                             "))
     (when (and (stringp +nucleus-dashboard-banner-file)
                (display-graphic-p)
                (file-exists-p! +nucleus-dashboard-banner-file +nucleus-dashboard-banner-dir))
@@ -450,8 +470,8 @@ controlled by `+nucleus-dashboard-pwd-policy'."
       ;; (insert (propertize " x " 'face 'font-lock-comment-face))
       (insert-text-button (or (all-the-icons-octicon "octoface" :face 'all-the-icons-green :height 1.3 :v-adjust -0.15)
                               (propertize "github" 'face 'font-lock-keyword-face))
-                          'action (lambda (_) (browse-url "https://github.com/hlissner/nucleus-emacs"))
+                          'action (lambda (_) (browse-url "https://github.com/d12frosted/environment"))
                           'follow-link t
-                          'help-echo "Open Doom Emacs github page")
+                          'help-echo "Open environment repository")
       (buffer-string)))
    "\n"))
