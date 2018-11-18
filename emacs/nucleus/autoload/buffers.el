@@ -1,14 +1,28 @@
-;;; core/autoload/buffers.el -*- lexical-binding: t; -*-
+;;; buffers.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 ;;;###autoload
 (defvar nucleus-real-buffer-functions
   '(nucleus-dired-buffer-p)
-  "A list of predicate functions run to determine if a buffer is real, unlike
-`nucleus-unreal-buffer-functions'. They are passed one argument: the buffer to be
-tested.
+  "A list of predicate functions run to determine if a buffer is
+real, unlike `nucleus-unreal-buffer-functions'. They are passed
+one argument: the buffer to be tested.
 
-Should any of its function returns non-nil, the rest of the functions are
-ignored and the buffer is considered real.
+Should any of its function returns non-nil, the rest of the
+functions are ignored and the buffer is considered real.
 
 See `nucleus-real-buffer-p' for more information.")
 
@@ -16,44 +30,45 @@ See `nucleus-real-buffer-p' for more information.")
 (defvar nucleus-unreal-buffer-functions
   '(minibufferp nucleus-special-buffer-p nucleus-non-file-visiting-buffer-p)
   "A list of predicate functions run to determine if a buffer is *not* real,
-unlike `nucleus-real-buffer-functions'. They are passed one argument: the buffer to
-be tested.
+unlike `nucleus-real-buffer-functions'. They are passed one
+argument: the buffer to be tested.
 
-Should any of these functions return non-nil, the rest of the functions are
-ignored and the buffer is considered unreal.
+Should any of these functions return non-nil, the rest of the
+functions are ignored and the buffer is considered unreal.
 
 See `nucleus-real-buffer-p' for more information.")
 
 ;;;###autoload
 (defvar-local nucleus-real-buffer-p nil
-  "If non-nil, this buffer should be considered real no matter what. See
-`nucleus-real-buffer-p' for more information.")
+  "If non-nil, this buffer should be considered real no matter
+what. See `nucleus-real-buffer-p' for more information.")
 
 ;;;###autoload
 (defvar nucleus-fallback-buffer-name "*scratch*"
-  "The name of the buffer to fall back to if no other buffers exist (will create
-it if it doesn't exist).")
+  "The name of the buffer to fall back to if no other buffers
+exist (will create it if it doesn't exist).")
 
 ;;;###autoload
 (defvar nucleus-cleanup-hook ()
-  "A list of hooks run when `nucleus/cleanup-session' is run, meant to clean up
-leftover buffers and processes.")
-
+  "A list of hooks run when `nucleus/cleanup-session' is run,
+meant to clean up leftover buffers and processes.")
 
 ;;
 ;; Functions
 
 ;;;###autoload
 (defun nucleus-buffer-frame-predicate (buf)
-  "To be used as the default frame buffer-predicate parameter. Returns nil if
-BUF should be skipped over by functions like `next-buffer' and `other-buffer'."
+  "To be used as the default frame buffer-predicate
+parameter. Returns nil if BUF should be skipped over by functions
+like `next-buffer' and `other-buffer'."
   (or (nucleus-real-buffer-p buf)
       (eq buf (nucleus-fallback-buffer))))
 
 ;;;###autoload
 (defun nucleus-fallback-buffer ()
-  "Returns the fallback buffer, creating it if necessary. By default this is the
-scratch buffer. See `nucleus-fallback-buffer-name' to change this."
+  "Returns the fallback buffer, creating it if necessary. By
+default this is the scratch buffer. See
+`nucleus-fallback-buffer-name' to change this."
   (get-buffer-create nucleus-fallback-buffer-name))
 
 ;;;###autoload
@@ -88,7 +103,8 @@ If no project is active, return all buffers."
 
 ;;;###autoload
 (defun nucleus-non-file-visiting-buffer-p (buf)
-  "Returns non-nil if BUF does not have a value for `buffer-file-name'."
+  "Returns non-nil if BUF does not have a value for
+`buffer-file-name'."
   (not (buffer-file-name buf)))
 
 ;;;###autoload
@@ -100,20 +116,22 @@ If no project is active, return all buffers."
 (defun nucleus-real-buffer-p (buffer-or-name)
   "Returns t if BUFFER-OR-NAME is a 'real' buffer.
 
-A real buffer is a useful buffer; a first class citizen in Doom. Real ones
-should get special treatment, because we will be spending most of our time in
-them. Unreal ones should be low-profile and easy to cast aside, so we can focus
-on real ones.
+A real buffer is a useful buffer; a first class citizen in
+nucleus. Real ones should get special treatment, because we will
+be spending most of our time in them. Unreal ones should be
+low-profile and easy to cast aside, so we can focus on real ones.
 
 The exact criteria for a real buffer is:
 
-  1. A non-nil value for the buffer-local value of the `nucleus-real-buffer-p'
-     variable OR
-  2. Any function in `nucleus-real-buffer-functions' returns non-nil OR
-  3. None of the functions in `nucleus-unreal-buffer-functions' must return
-     non-nil.
+  1. A non-nil value for the buffer-local value of the
+     `nucleus-real-buffer-p' variable OR
+  2. Any function in `nucleus-real-buffer-functions' returns
+     non-nil OR
+  3. None of the functions in `nucleus-unreal-buffer-functions'
+     must return non-nil.
 
-If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
+If BUFFER-OR-NAME is omitted or nil, the current buffer is
+tested."
   (or (bufferp buffer-or-name)
       (stringp buffer-or-name)
       (signal 'wrong-type-argument (list '(bufferp stringp) buffer-or-name)))
@@ -187,12 +205,11 @@ If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
 
 ;;;###autoload
 (defun nucleus-kill-matching-buffers (pattern &optional buffer-list)
-  "Kill all buffers (in current workspace OR in BUFFER-LIST) that match the
-regex PATTERN. Returns the number of killed buffers."
+  "Kill all buffers (in current workspace OR in BUFFER-LIST) that
+match the regex PATTERN. Returns the number of killed buffers."
   (let ((buffers (nucleus-matching-buffers pattern buffer-list)))
     (dolist (buf buffers (length buffers))
       (kill-buffer buf))))
-
 
 ;;
 ;; Hooks
@@ -202,15 +219,15 @@ regex PATTERN. Returns the number of killed buffers."
   "Hook function that marks the current buffer as real."
   (nucleus-set-buffer-real (current-buffer) t))
 
-
 ;;
 ;; Advice
 
 ;;;###autoload
 (defun nucleus*switch-to-fallback-buffer-maybe (orig-fn)
-  "Advice for `kill-this-buffer'. If in a dedicated window, delete it. If there
-are no real buffers left OR if all remaining buffers are visible in other
-windows, switch to `nucleus-fallback-buffer'. Otherwise, delegate to original
+  "Advice for `kill-this-buffer'. If in a dedicated window,
+delete it. If there are no real buffers left OR if all remaining
+buffers are visible in other windows, switch to
+`nucleus-fallback-buffer'. Otherwise, delegate to original
 `kill-this-buffer'."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
@@ -235,14 +252,13 @@ windows, switch to `nucleus-fallback-buffer'. Otherwise, delegate to original
              (kill-buffer buf)))
           ((funcall orig-fn)))))
 
-
 ;;
 ;; Interactive commands
 
 ;;;###autoload
 (defun nucleus/kill-this-buffer-in-all-windows (buffer &optional dont-save)
-  "Kill BUFFER globally and ensure all windows previously showing this buffer
-have switched to a real buffer.
+  "Kill BUFFER globally and ensure all windows previously showing
+this buffer have switched to a real buffer.
 
 If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
   (interactive
@@ -261,8 +277,8 @@ If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
 (defun nucleus/kill-all-buffers (&optional project-p)
   "Kill all buffers and closes their windows.
 
-If PROJECT-P (universal argument), don't close windows and only kill buffers
-that belong to the current project."
+If PROJECT-P (universal argument), don't close windows and only
+kill buffers that belong to the current project."
   (interactive "P")
   (unless project-p
     (delete-other-windows))
@@ -273,8 +289,8 @@ that belong to the current project."
 (defun nucleus/kill-other-buffers (&optional project-p)
   "Kill all other buffers (besides the current one).
 
-If PROJECT-P (universal argument), kill only buffers that belong to the current
-project."
+If PROJECT-P (universal argument), kill only buffers that belong
+to the current project."
   (interactive "P")
   (let ((buffers (if project-p (nucleus-project-buffer-list) (nucleus-buffer-list)))
         (current-buffer (current-buffer)))
@@ -288,8 +304,8 @@ project."
 (defun nucleus/kill-matching-buffers (pattern &optional project-p)
   "Kill buffers that match PATTERN in BUFFER-LIST.
 
-If PROJECT-P (universal argument), only kill matching buffers in the current
-project."
+If PROJECT-P (universal argument), only kill matching buffers in
+the current project."
   (interactive
    (list (read-regexp "Buffer pattern: ")
          current-prefix-arg))
@@ -300,8 +316,9 @@ project."
 
 ;;;###autoload
 (defun nucleus/cleanup-session (&optional buffer-list)
-  "Clean up buried buries and orphaned processes in the current workspace. If
-ALL-P (universal argument), clean them up globally."
+  "Clean up buried buries and orphaned processes in the current
+workspace. If ALL-P (universal argument), clean them up
+globally."
   (interactive)
   (let ((buffers (nucleus-buried-buffers buffer-list))
         (n 0))
@@ -319,8 +336,8 @@ ALL-P (universal argument), clean them up globally."
 
 ;;;###autoload
 (defun nucleus/cleanup-buffer-processes ()
-  "Kill all processes that have no visible associated buffers. Return number of
-processes killed."
+  "Kill all processes that have no visible associated
+buffers. Return number of processes killed."
   (interactive)
   (let ((n 0))
     (dolist (p (process-list))

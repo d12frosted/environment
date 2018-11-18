@@ -1,4 +1,18 @@
-;;; core/autoload/help.el -*- lexical-binding: t; -*-
+;;; help.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 (defvar nucleus--module-mode-alist
   '((c-mode :lang cc)
@@ -42,7 +56,6 @@
     (stylus-mode :lang web))
   "TODO")
 
-
 ;;
 ;; Helpers
 
@@ -53,17 +66,12 @@
            if (and (boundp mode) (symbol-value mode))
            collect mode))
 
-
-
 ;;
 ;; Commands
 
 ;;;###autoload
-(define-obsolete-function-alias 'nucleus/describe-setting 'nucleus/describe-setters "2.1.0")
-
-;;;###autoload
 (defun nucleus/describe-setters (setting)
-  "Open the documentation of Doom functions and configuration macros."
+  "Open the documentation of functions and configuration macros."
   (interactive
    (let* ((settings
            (cl-loop with case-fold-search = nil
@@ -86,10 +94,10 @@
                      (format (format "%%-%ds%%s" (+ maxwidth 4))
                              def (propertize (format "%s %s" (car it) (cdr it))
                                              'face 'font-lock-comment-face))
-                     else if (file-in-directory-p (symbol-file def) nucleus-core-dir)
+                     else if (file-in-directory-p (symbol-file def) nucleus-dir)
                      collect
                      (format (format "%%-%ds%%s" (+ maxwidth 4))
-                             def (propertize (format "%s %s" :core (file-name-sans-extension (file-relative-name (symbol-file def) nucleus-core-dir)))
+                             def (propertize (format "%s %s" :core (file-name-sans-extension (file-relative-name (symbol-file def) nucleus-dir)))
                                              'face 'font-lock-comment-face))
                      else
                      collect (symbol-name def))
@@ -105,7 +113,7 @@
                 setting
               (intern-soft setting))))
     (or (fboundp fn)
-        (error "'%s' is not a valid DOOM setting" setting))
+        (error "'%s' is not a valid setting" setting))
     (if (fboundp 'helpful-callable)
         (helpful-callable fn)
       (describe-function fn))))
@@ -114,11 +122,13 @@
 (defun nucleus/describe-module (category module)
   "Open the documentation of CATEGORY MODULE.
 
-CATEGORY is a keyword and MODULE is a symbol. e.g. :feature and 'evil.
+CATEGORY is a keyword and MODULE is a symbol. e.g. :feature and
+'evil.
 
-Automatically selects a) the module at point (in private init files), b) the
-module derived from a `featurep!' or `require!' call, c) the module that the
-current file is in, or d) the module associated with the current major mode (see
+Automatically selects a) the module at point (in private init
+files), b) the module derived from a `featurep!' or `require!'
+call, c) the module that the current file is in, or d) the module
+associated with the current major mode (see
 `nucleus--module-mode-alist')."
   (interactive
    (let* ((module
@@ -169,8 +179,9 @@ current file is in, or d) the module associated with the current major mode (see
 
 ;;;###autoload
 (defun nucleus/describe-active-minor-mode (mode)
-  "Get information on an active minor mode. Use `describe-minor-mode' for a
-selection of all minor-modes, active or not."
+  "Get information on an active minor mode. Use
+`describe-minor-mode' for a selection of all minor-modes, active
+or not."
   (interactive
    (list (completing-read "Minor mode: " (nucleus-active-minor-modes))))
   (describe-minor-mode-from-symbol
@@ -182,8 +193,9 @@ selection of all minor-modes, active or not."
 (defun nucleus/what-face (arg &optional pos)
   "Shows all faces and overlay faces at point.
 
-Interactively prints the list to the echo area. Noninteractively, returns a list
-whose car is the list of faces and cadr is the list of overlay faces."
+Interactively prints the list to the echo area. Noninteractively,
+returns a list whose car is the list of faces and cadr is the
+list of overlay faces."
   (interactive "P")
   (let* ((pos (or pos (point)))
          (faces (let ((face (get-text-property pos 'face)))
@@ -211,12 +223,3 @@ whose car is the list of faces and cadr is the list of overlay faces."
           (t
            (and (or faces overlays)
                 (list faces overlays))))))
-
-;;;###autoload
-(defalias 'nucleus/help 'nucleus/open-manual)
-
-;;;###autoload
-(defun nucleus/open-manual ()
-  "TODO"
-  (interactive)
-  (find-file (expand-file-name "index.org" nucleus-docs-dir)))

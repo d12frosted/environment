@@ -1,4 +1,18 @@
-;;; -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; nucleus-cli.el --- the heart of every cell -*- lexical-binding: t; no-byte-compile: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 ;; Eagerly load these libraries because this module may be loaded in a session
 ;; that hasn't been fully initialized (where autoloads files haven't been
@@ -8,14 +22,13 @@
 (load! "autoload/message")
 (load! "autoload/packages")
 
-
 ;;
 ;; Dispatcher API
 
 (defvar nucleus-auto-accept (getenv "YES")
-  "If non-nil, Doom will auto-accept any confirmation prompts during batch
-commands like `nucleus-packages-install', `nucleus-packages-update' and
-`nucleus-packages-autoremove'.")
+  "If non-nil, nucleus will auto-accept any confirmation prompts
+during batch commands like `nucleus-packages-install',
+`nucleus-packages-update' and `nucleus-packages-autoremove'.")
 
 (defconst nucleus--dispatch-command-alist ())
 (defconst nucleus--dispatch-alias-alist ())
@@ -35,8 +48,9 @@ commands like `nucleus-packages-install', `nucleus-packages-update' and
        (line-end-position)))))
 
 (defun nucleus--dispatch-help (&optional command desc &rest args)
-  "Display help documentation for a dispatcher command. If COMMAND and DESC are
-omitted, show all available commands, their aliases and brief descriptions."
+  "Display help documentation for a dispatcher command. If
+COMMAND and DESC are omitted, show all available commands, their
+aliases and brief descriptions."
   (if command
       (princ (nucleus--dispatch-format desc))
     (print! (bold "%-10s\t%s\t%s") "Command:" "Alias" "Description")
@@ -53,7 +67,8 @@ omitted, show all available commands, their aliases and brief descriptions."
 (defun nucleus-dispatch (cmd args &optional show-help)
   "Parses ARGS and invokes a dispatcher.
 
-If SHOW-HELP is non-nil, show the documentation for said dispatcher."
+If SHOW-HELP is non-nil, show the documentation for said
+dispatcher."
   (when (equal cmd "help")
     (setq show-help t)
     (when args
@@ -70,10 +85,10 @@ If SHOW-HELP is non-nil, show the documentation for said dispatcher."
       (funcall body args))))
 
 (defmacro dispatcher! (command form &optional docstring)
-  "Define a dispatcher command. COMMAND is a symbol or a list of symbols
-representing the aliases for this command. DESC is a string description. The
-first line should be short (under 60 letters), as it will be displayed for
-bin/nucleus help.
+  "Define a dispatcher command. COMMAND is a symbol or a list of
+symbols representing the aliases for this command. DESC is a
+string description. The first line should be short (under 60
+letters), as it will be displayed for bin/nucleus help.
 
 BODY will be run when this dispatcher is called."
   (declare (indent defun) (doc-string 3))
@@ -93,44 +108,39 @@ BODY will be run when this dispatcher is called."
 ;; Dummy dispatch commands (no-op because they're handled especially)
 
 (dispatcher! run :noop
-  "Run Doom Emacs from bin/nucleus's parent directory.
+  "Run Emacs from bin/nucleus's parent directory.
 
 All arguments are passed on to Emacs (except for -p and -e).
 
   nucleus run
   nucleus run -nw init.el
 
-WARNING: this command exists for convenience and testing. Doom will suffer
-additional overhead by being started this way. For the best performance, it is
-best to run Doom out of ~/.emacs.d and ~/.nucleus.d.")
+WARNING: this command exists for convenience and testing. Nucleus
+will suffer additional overhead by being started this way. For
+the best performance, it is best to run Emacs out of
+~/.emacs.d.")
 
 (dispatcher! (doctor doc) :noop
-  "Checks for issues with your environment & Doom config.
+  "Checks for issues with your environment and configurations.
 
 Also checks for missing dependencies for any enabled modules.")
 
 (dispatcher! (help h) :noop
   "Look up additional information about a command.")
 
-
 ;;
 ;; Real dispatch commands
 
 (load! "cli/autoloads")
 (load! "cli/byte-compile")
-(load! "cli/debug")
 (load! "cli/packages")
 (load! "cli/patch-macos")
-(load! "cli/quickstart")
-(load! "cli/upgrade")
 (load! "cli/test")
 
-
-;;
 (defun nucleus-refresh (&optional force-p)
-  "Ensure Doom is in a working state by checking autoloads and packages, and
-recompiling any changed compiled files. This is the shotgun solution to most
-problems with nucleus."
+  "Ensure nucleus is in a working state by checking autoloads and
+packages, and recompiling any changed compiled files. This is the
+shotgun solution to most problems with nucleus."
   (nucleus-reload-nucleus-autoloads force-p)
   (unwind-protect
       (progn
@@ -142,15 +152,17 @@ problems with nucleus."
     (nucleus-byte-compile nil 'recompile)))
 
 (dispatcher! (refresh re) (nucleus-refresh 'force)
-  "Refresh Doom. Same as autoremove+install+autoloads.
+  "Refresh nucleus. Same as autoremove+install+autoloads.
 
-This is the equivalent of running autoremove, install, autoloads, then
-recompile. Run this whenever you:
+This is the equivalent of running autoremove, install, autoloads,
+then recompile. Run this whenever you:
 
   1. Modify your `nucleus!' block,
   2. Add or remove `package!' blocks to your config,
-  3. Add or remove autoloaded functions in module autoloaded files.
-  4. Update Doom outside of Doom (e.g. with git)")
+  3. Add or remove autoloaded functions in module autoloaded
+     files.
+  4. Update nucleus outside of nucleus (e.g. with git)")
 
 (provide 'nucleus-cli)
-;;; core-cli.el ends here
+
+;;; nucleus-cli.el ends here

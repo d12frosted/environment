@@ -1,28 +1,41 @@
-;;; core/cli/autoloads.el -*- lexical-binding: t; -*-
+;;; autoloads.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 (dispatcher! (autoloads a) (nucleus-reload-autoloads nil 'force)
-  "Regenerates Doom's autoloads file.
+  "Regenerates autoloads file.
 
-This file tells Emacs where to find your module's autoloaded functions and
-plugins.")
+This file tells Emacs where to find your module's autoloaded
+functions and plugins.")
 
 ;; external variables
 (defvar autoload-timestamps)
 (defvar generated-autoload-load-name)
 (defvar generated-autoload-file)
 
-
 ;;
 ;; Helpers
 
 (defvar nucleus-autoload-excluded-packages '(marshal gh)
-  "Packages that have silly or destructive autoload files that try to load
-everyone in the universe and their dog, causing errors that make babies cry. No
-one wants that.")
+  "Packages that have silly or destructive autoload files that
+try to load everyone in the universe and their dog, causing
+errors that make babies cry. No one wants that.")
 
 (defun nucleus-delete-autoloads-file (file)
-  "Delete FILE (an autoloads file), and delete the accompanying *.elc file, if
-it exists."
+  "Delete FILE (an autoloads file), and delete the accompanying
+*.elc file, if it exists."
   (cl-check-type file string)
   (when (file-exists-p file)
     (when-let* ((buf (find-buffer-visiting nucleus-autoload-file)))
@@ -36,7 +49,7 @@ it exists."
 (defun nucleus--warn-refresh-session ()
   (print! (bold (green "\nFinished!")))
   (message "If you have a running Emacs Session, you will need to restart it or")
-  (message "reload Doom for changes to take effect:\n")
+  (message "reload Emacs for changes to take effect:\n")
   (when (fboundp '+workspace/restart-emacs-then-restore)
     (message "  M-x +workspace/restart-emacs-then-restore"))
   (message "  M-x restart-emacs")
@@ -70,9 +83,10 @@ it exists."
 (defun nucleus-reload-autoloads (&optional file force-p)
   "Reloads FILE (an autoload file), if it needs reloading.
 
-FILE should be one of `nucleus-autoload-file' or `nucleus-package-autoload-file'. If
-it is nil, it will try to reload both. If FORCE-P (universal argument) do it
-even if it doesn't need reloading!"
+FILE should be one of `nucleus-autoload-file' or
+`nucleus-package-autoload-file'. If it is nil, it will try to
+reload both. If FORCE-P (universal argument) do it even if it
+doesn't need reloading!"
   (or (null file)
       (stringp file)
       (signal 'wrong-type-argument (list 'stringp file)))
@@ -85,12 +99,12 @@ even if it doesn't need reloading!"
     (nucleus-reload-nucleus-autoloads force-p)
     (nucleus-reload-package-autoloads force-p)))
 
-
 ;;
-;; Doom autoloads
+;; Nucleus autoloads
 
 (defun nucleus--file-cookie-p (file)
-  "Returns the return value of the ;;;###if predicate form in FILE."
+  "Returns the return value of the ;;;###if predicate form in
+FILE."
   (with-temp-buffer
     (insert-file-contents-literally file nil 0 256)
     (if (and (re-search-forward "^;;;###if " nil t)
@@ -124,10 +138,11 @@ even if it doesn't need reloading!"
 
 (defun nucleus--expand-autoloads ()
   (let ((load-path
-         ;; NOTE With `nucleus-emacs-dir' in `load-path', Doom autoloads files
-         ;; will be unable to declare autoloads for the built-in autoload.el
-         ;; Emacs package, should $DOOMDIR/autoload.el exist. Not sure why
-         ;; they'd want to though, so it's an acceptable compromise.
+         ;; NOTE With `nucleus-emacs-dir' in `load-path', nucleus
+         ;; autoloads files will be unable to declare autoloads for
+         ;; the built-in autoload.el Emacs package, should
+         ;; ~/.emacs.d/autoload.el exist. Not sure why they'd want to
+         ;; though, so it's an acceptable compromise.
          (append (list nucleus-emacs-dir)
                  nucleus-modules-dirs
                  load-path))
@@ -152,7 +167,7 @@ even if it doesn't need reloading!"
      (with-temp-buffer
        (insert-file-contents path)
        (let ((member-p (or (member path enabled-targets)
-                           (file-in-directory-p path nucleus-core-dir)))
+                           (file-in-directory-p path nucleus-dir)))
              forms)
          (while (re-search-forward "^;;;###autodef *\\([^\n]+\\)?\n" nil t)
            (let* ((sexp (sexp-at-point))
@@ -229,20 +244,21 @@ even if it doesn't need reloading!"
     (replace-match "" t t)))
 
 (defun nucleus-reload-nucleus-autoloads (&optional force-p)
-  "Refreshes the autoloads.el file, specified by `nucleus-autoload-file', if
-necessary (or if FORCE-P is non-nil).
+  "Refreshes the autoloads.el file, specified by
+`nucleus-autoload-file', if necessary (or if FORCE-P is non-nil).
 
-It scans and reads core/autoload/*.el, modules/*/*/autoload.el and
-modules/*/*/autoload/*.el, and generates `nucleus-autoload-file'. This file tells
-Emacs where to find lazy-loaded functions.
+It scans and reads core/autoload/*.el, modules/*/*/autoload.el
+and modules/*/*/autoload/*.el, and generates
+`nucleus-autoload-file'. This file tells Emacs where to find
+lazy-loaded functions.
 
-This should be run whenever your `nucleus!' block, or a module autoload file, is
-modified."
+This should be run whenever your `nucleus!' block, or a module
+autoload file, is modified."
   (let* ((default-directory nucleus-emacs-dir)
          (nucleus-modules (nucleus-modules))
          (targets
           (file-expand-wildcards
-           (expand-file-name "autoload/*.el" nucleus-core-dir)))
+           (expand-file-name "autoload/*.el" nucleus-dir)))
          (enabled-targets (copy-sequence targets))
          case-fold-search)
     (dolist (path (nucleus-module-load-path t))
@@ -265,7 +281,7 @@ modified."
              (not (cl-loop for file in targets
                            if (file-newer-than-file-p file nucleus-autoload-file)
                            return t)))
-        (progn (print! (green "Doom core autoloads is up-to-date"))
+        (progn (print! (green "Nucleus autoloads is up-to-date"))
                (nucleus-initialize-autoloads nucleus-autoload-file)
                nil)
       (nucleus-delete-autoloads-file nucleus-autoload-file)
@@ -275,26 +291,26 @@ modified."
         (nucleus--generate-header 'nucleus-reload-nucleus-autoloads)
         (save-excursion
           (nucleus--generate-autoloads (reverse enabled-targets)))
-          ;; Replace autoload paths (only for module autoloads) with absolute
-          ;; paths for faster resolution during load and simpler `load-path'
+          ;; Replace autoload paths (only for module autoloads) with
+          ;; absolute paths for faster resolution during load and
+          ;; simpler `load-path'
         (save-excursion
           (nucleus--expand-autoloads)
           (print! (green "✓ Expanded module autoload paths")))
-        ;; Generates stub definitions for functions/macros defined in disabled
-        ;; modules, so that you will never get a void-function when you use
-        ;; them.
+        ;; Generates stub definitions for functions/macros defined in
+        ;; disabled modules, so that you will never get a
+        ;; void-function when you use them.
         (save-excursion
           (nucleus--generate-autodefs (reverse targets) enabled-targets)
           (print! (green "✓ Generated autodefs")))
-        ;; Remove byte-compile inhibiting file variables so we can byte-compile
-        ;; the file, and autoload comments.
+        ;; Remove byte-compile inhibiting file variables so we can
+        ;; byte-compile the file, and autoload comments.
         (nucleus--cleanup-autoloads)
         (print! (green "✓ Clean up autoloads")))
       ;; Byte compile it to give the file a chance to reveal errors.
       (nucleus--byte-compile-file nucleus-autoload-file)
       (nucleus--do-load nucleus-autoload-file)
       t)))
-
 
 ;;
 ;; Package autoloads
@@ -330,14 +346,17 @@ modified."
     (kill-sexp)))
 
 (defun nucleus-reload-package-autoloads (&optional force-p)
-  "Compiles `nucleus-package-autoload-file' from the autoloads files of all
-installed packages. It also caches `load-path', `Info-directory-list',
-`nucleus-disabled-packages', `package-activated-list' and `auto-mode-alist'.
+  "Compiles `nucleus-package-autoload-file' from the autoloads
+files of all installed packages. It also caches `load-path',
+`Info-directory-list', `nucleus-disabled-packages',
+`package-activated-list' and `auto-mode-alist'.
 
-Will do nothing if none of your installed packages have been modified. If
-FORCE-P (universal argument) is non-nil, regenerate it anyway.
+Will do nothing if none of your installed packages have been
+modified. If FORCE-P (universal argument) is non-nil, regenerate
+it anyway.
 
-This should be run whenever your `nucleus!' block or update your packages."
+This should be run whenever your `nucleus!' block or update your
+packages."
   (if (and (not force-p)
            (not nucleus-emacs-changed-p)
            (file-exists-p nucleus-package-autoload-file)
@@ -347,22 +366,24 @@ This should be run whenever your `nucleus!' block or update your packages."
                            for path = (nucleus-module-path (car key) (cdr key) "packages.el")
                            if (file-newer-than-file-p path nucleus-package-autoload-file)
                            return t))))
-      (ignore (print! (green "Doom package autoloads is up-to-date"))
+      (ignore (print! (green "Nucleus package autoloads is up-to-date"))
               (nucleus-initialize-autoloads nucleus-package-autoload-file))
     (let (case-fold-search)
       (nucleus-delete-autoloads-file nucleus-package-autoload-file)
       (with-temp-file nucleus-package-autoload-file
         (nucleus--generate-header 'nucleus-reload-package-autoloads)
         (save-excursion
-          ;; Cache the important and expensive-to-initialize state here.
+          ;; Cache the important and expensive-to-initialize state
+          ;; here.
           (nucleus--generate-var-cache)
           (print! (green "✓ Cached package state"))
-          ;; Loop through packages and concatenate all their autoloads files.
+          ;; Loop through packages and concatenate all their autoloads
+          ;; files.
           (nucleus--generate-package-autoloads)
           (print! (green "✓ Package autoloads included")))
-        ;; Remove `load-path' and `auto-mode-alist' modifications (most of them,
-        ;; at least); they are cached later, so all those membership checks are
-        ;; unnecessary overhead.
+        ;; Remove `load-path' and `auto-mode-alist' modifications
+        ;; (most of them, at least); they are cached later, so all
+        ;; those membership checks are unnecessary overhead.
         (nucleus--cleanup-package-autoloads)
         (print! (green "✓ Removed load-path/auto-mode-alist entries"))))
     (nucleus--byte-compile-file nucleus-package-autoload-file)

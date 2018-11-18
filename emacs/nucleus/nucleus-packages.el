@@ -1,52 +1,55 @@
-;;; nucleus/nucleus-packages.el -*- lexical-binding: t; -*-
-
-;; Emacs package management is opinionated, and so am I. I've bound together
-;; `use-package', `quelpa' and package.el to create my own, rolling-release,
-;; lazily-loaded package management system for Emacs.
+;;; nucleus-packages.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;; > Emacs package management is opinionated, and so am I. I've bound
+;; > together `use-package', `quelpa' and package.el to create my own,
+;; > rolling-release, lazily-loaded package management system for
+;; > Emacs.
+;; >
+;; > (c) hlissner
 ;;
 ;; The three key commands are:
 ;;
-;; + `bin/nucleus install`: Installs packages that are wanted, but not installed.
-;; + `bin/nucleus update`: Updates packages that are out-of-date.
-;; + `bin/nucleus autoremove`: Uninstalls packages that are no longer needed.
+;; - `bin/nucleus install`: Installs packages that are wanted, but not
+;;   installed.
+;; - `bin/nucleus update`: Updates packages that are out-of-date.
+;; - `bin/nucleus autoremove`: Uninstalls packages that are no longer
+;;   needed.
 ;;
-;; This system reads packages.el files located in each activated module (and one
-;; in `nucleus-core-dir'). These contain `package!' blocks that tell DOOM what
-;; plugins to install and where from.
+;; This system reads packages.el files located in each activated
+;; module (and one in `nucleus-dir'). These contain `package!' blocks
+;; that tell nucleus what plugins to install and where from.
 ;;
-;; Why all the trouble? Because:
-;; 1. Scriptability: I live in the command line. I want a programmable
-;;    alternative to `list-packages' for updating and installing packages.
-;; 2. Flexibility: I want packages from sources other than ELPA. Primarily
-;;    github, because certain plugins are out-of-date through official channels,
-;;    have changed hands, have a superior fork, or simply aren't in any ELPA
-;;    repo.
-;; 3. Stability: I used Cask before this. It would error out with cyrptic errors
-;;    depending on the version of Emacs I used and the alignment of the planets.
-;;    No more.
-;; 4. Performance: A minor point, but this system is lazy-loaded (more so if you
-;;    byte-compile). Not having to initialize package.el (or check that your
-;;    packages are installed) every time you start up Emacs affords us precious
-;;    seconds.
-;; 5. Simplicity: No Cask, no external dependencies (unless you count make),
-;;    just Emacs. Arguably, my config is still over-complicated, but shhh, it's
-;;    fine. Everything is fine.
-;;
-;; You should be able to use package.el commands without any conflicts.
+;; You should be able to use package.el commands without any
+;; conflicts.
 ;;
 ;; See nucleus/autoload/packages.el for more functions.
+;;
+;;; Code:
 
 (defconst nucleus-elpa-mirror-dir (concat nucleus-projects-dir "elpa-mirror/")
   "Directory for elpa-mirror.")
 
 (defvar nucleus-packages ()
-  "A list of enabled packages. Each element is a sublist, whose CAR is the
-package's name as a symbol, and whose CDR is the plist supplied to its
-`package!' declaration. Set by `nucleus-initialize-packages'.")
+  "A list of enabled packages. Each element is a sublist, whose
+CAR is the package's name as a symbol, and whose CDR is the plist
+supplied to its `package!' declaration. Set by
+`nucleus-initialize-packages'.")
 
 (defvar nucleus-core-packages '(persistent-soft use-package quelpa async)
-  "A list of packages that must be installed (and will be auto-installed if
-missing) and shouldn't be deleted.")
+  "A list of packages that must be installed (and will be
+auto-installed if missing) and shouldn't be deleted.")
 
 (defvar nucleus-disabled-packages ()
   "A list of packages that should be ignored by `def-package!'.")
@@ -93,23 +96,29 @@ and orgmode.org.")
 ;; accommodate INSECURE setting
 (unless gnutls-verify-error
   (dolist (archive package-archives)
-    (setcdr archive (replace-regexp-in-string "^https://" "http://" (cdr archive) t nil))))
-
+    (setcdr archive
+	    (replace-regexp-in-string
+	     "^https://"
+	     "http://"
+	     (cdr archive)
+	     t
+	     nil))))
 
 ;;
 ;; Bootstrapper
 
 (defun nucleus-initialize-packages (&optional force-p)
-  "Ensures that Doom's package management system, package.el and quelpa are
-initialized, and `nucleus-packages', `packages-alist' and `quelpa-cache' are
-populated, if they aren't already.
+  "Ensures that package management system, package.el and quelpa
+are initialized, and `nucleus-packages', `packages-alist' and
+`quelpa-cache' are populated, if they aren't already.
 
 If FORCE-P is non-nil, do it anyway.
+
 If FORCE-P is 'internal, only (re)populate `nucleus-packages'.
 
-Use this before any of package.el, quelpa or Doom's package management's API to
-ensure all the necessary package metadata is initialized and available for
-them."
+Use this before any of package.el, quelpa or package management's
+API to ensure all the necessary package metadata is initialized
+and available for them."
   (with-temp-buffer ; prevent buffer-local settings from propagating
     (let ((load-prefer-newer t)) ; reduce stale code issues
       ;; package.el and quelpa handle themselves if their state changes during
@@ -145,7 +154,7 @@ them."
                 (nucleus--stage 'packages)
                 (noninteractive t))
             (setq nucleus-packages nil)
-            (_load (expand-file-name "packages.el" nucleus-core-dir))
+            (_load (expand-file-name "packages.el" nucleus-dir))
             ;; We load the private packages file twice to ensure disabled
             ;; packages are seen ASAP, and a second time to ensure privately
             ;; overridden packages are properly overwritten.
@@ -156,7 +165,6 @@ them."
                        do (let ((nucleus--current-module key)) (_load path t)))
               (_load private-packages t)
               (setq nucleus-packages (reverse nucleus-packages)))))))))
-
 
 ;;
 ;; Package API
@@ -188,37 +196,41 @@ them."
         (error "✕ Couldn't install %s" package)))
     (message "Installing core packages...done")))
 
-
 ;;
 ;; Module package macros
 
 (cl-defmacro package! (name &rest plist &key recipe pin disable _ignore _freeze)
   "Declares a package and how to install it (if applicable).
 
-This macro is declarative and does not load nor install packages. It is used to
-populate `nucleus-packages' with metadata about the packages Doom needs to keep
-track of.
+This macro is declarative and does not load nor install
+packages. It is used to populate `nucleus-packages' with metadata
+about the packages nucleus needs to keep track of.
 
 Only use this macro in a module's packages.el file.
 
 Accepts the following properties:
 
  :recipe RECIPE
-   Takes a MELPA-style recipe (see `quelpa-recipe' in `quelpa' for an example);
-   for packages to be installed from external sources.
+   Takes a MELPA-style recipe (see `quelpa-recipe' in `quelpa'
+   for an example); for packages to be installed from external
+   sources.
+
  :pin ARCHIVE-NAME
-   Instructs ELPA to only look for this package in ARCHIVE-NAME. e.g. \"org\".
-   Ignored if RECIPE is present.
- :disable BOOL
-   Do not install or update this package AND disable all of its `def-package!'
-   blocks.
+   Instructs ELPA to only look for this package in
+   ARCHIVE-NAME. e.g. \"org\".  Ignored if RECIPE is present.
+
+ :disable BOOL 
+   Do not install or update this package AND disable all of its
+   `def-package!'  blocks.
+
  :ignore FORM
    Do not install this package.
+
  :freeze FORM
    Do not update this package if FORM is non-nil.
 
-Returns t if package is successfully registered, and nil if it was disabled
-elsewhere."
+Returns t if package is successfully registered, and nil if it
+was disabled elsewhere."
   (declare (indent defun))
   (nucleus--assert-stage-p 'packages #'package!)
   (let ((plist (append plist (cdr (assq name nucleus-packages)))))
@@ -244,16 +256,16 @@ elsewhere."
                (not (memq ',name nucleus-disabled-packages)))))))
 
 (defmacro packages! (&rest packages)
-  "A convenience macro like `package!', but allows you to declare multiple
-packages at once.
+  "A convenience macro like `package!', but allows you to declare
+multiple packages at once.
 
 Only use this macro in a module's packages.el file."
   (nucleus--assert-stage-p 'packages #'packages!)
   `(progn ,@(cl-loop for desc in packages collect `(package! ,@(nucleus-enlist desc)))))
 
 (defmacro disable-packages! (&rest packages)
-  "A convenience macro like `package!', but allows you to disable multiple
-packages at once.
+  "A convenience macro like `package!', but allows you to disable
+multiple packages at once.
 
 Only use this macro in a module's packages.el file."
   (nucleus--assert-stage-p 'packages #'disable-packages!)
@@ -264,8 +276,8 @@ Only use this macro in a module's packages.el file."
 
 Only use this macro in a module's packages.el file.
 
-MODULE is a keyword, and SUBMODULE is a symbol. Under the hood, this simply
-loads MODULE SUBMODULE's packages.el file."
+MODULE is a keyword, and SUBMODULE is a symbol. Under the hood,
+this simply loads MODULE SUBMODULE's packages.el file."
   (nucleus--assert-stage-p 'packages #'depends-on!)
   `(let ((nucleus-modules ,nucleus-modules)
          (flags ,flags))
@@ -274,4 +286,5 @@ loads MODULE SUBMODULE's packages.el file."
      (load! "packages" ,(nucleus-module-locate-path module submodule) t)))
 
 (provide 'nucleus-packages)
+
 ;;; nucleus-packages.el ends here

@@ -1,40 +1,43 @@
-;;; nucleus-modules.el --- module & package management system -*- lexical-binding: t; -*-
+;;; nucleus-modules.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 (defvar nucleus-init-modules-p nil
   "Non-nil if `nucleus-initialize-modules' has run.")
 
 (defvar nucleus-modules ()
-  "A hash table of enabled modules. Set by `nucleus-initialize-modules'.")
+  "A hash table of enabled modules. Set by
+  `nucleus-initialize-modules'.")
 
 (defvar nucleus-modules-dirs
   (list (expand-file-name "modules/" nucleus-emacs-dir)
         nucleus-modules-dir)
-  "A list of module root directories. Order determines priority.")
+  "A list of module root directories.
 
-(defconst nucleus-obsolete-modules
-  '((:tools (rotate-text (:editor rotate-text)))
-    (:emacs (electric-indent (:emacs electric)))
-    (:feature (version-control (:emacs vc) (:ui vc-gutter))))
-  "An alist of deprecated modules, mapping deprecated modules to an optional new
-location (which will create an alias). Each CAR and CDR is a (CATEGORY .
-MODULES). E.g.
-
-  ((:emacs . electric-indent) . (:emacs electric))
-  ((:feature . version-control) (:emacs vc) (:ui . vc-gutter))
-
-A warning will be put out if these deprecated modules are used.")
+Order determines priority.")
 
 (defvar nucleus--current-module nil)
 (defvar nucleus--current-flags nil)
-
 
 ;;
 ;; Bootstrap API
 
 (defun nucleus-initialize-modules (&optional force-p)
-  "Loads the dna.el in `nucleus-emacs-dir' and sets up hooks for a healthy
-session of Dooming. Will noop if used more than once, unless FORCE-P is
-non-nil."
+  "Loads the dna.el in `nucleus-emacs-dir' and sets up hooks for
+a healthy session of living. Will noop if used more than once,
+unless FORCE-P is non-nil."
   (when (or force-p (not nucleus-init-modules-p))
     (setq nucleus-init-modules-p t)
 
@@ -61,19 +64,22 @@ non-nil."
         (load custom-file t t t))
       (run-hook-wrapped 'nucleus-post-init-hook #'nucleus-try-run-hook))))
 
-
 ;;
 ;; Module API
 
 (defun nucleus-module-p (category module)
-  "Returns t if CATEGORY MODULE is enabled (ie. present in `nucleus-modules')."
+  "Returns t if CATEGORY MODULE is enabled.
+
+Ie. present in `nucleus-modules'."
   (declare (pure t) (side-effect-free t))
   (and (hash-table-p nucleus-modules)
        (gethash (cons category module) nucleus-modules)
        t))
 
 (defun nucleus-module-get (category module &optional property)
-  "Returns the plist for CATEGORY MODULE. Gets PROPERTY, specifically, if set."
+  "Returns the plist for CATEGORY MODULE.
+
+Gets PROPERTY, specifically, if set."
   (declare (pure t) (side-effect-free t))
   (when-let* ((plist (gethash (cons category module) nucleus-modules)))
     (if property
@@ -81,8 +87,9 @@ non-nil."
       plist)))
 
 (defun nucleus-module-put (category module &rest plist)
-  "Set a PROPERTY for CATEGORY MODULE to VALUE. PLIST should be additional pairs
-of PROPERTY and VALUEs.
+  "Set a PROPERTY for CATEGORY MODULE to VALUE.
+
+PLIST should be additional pairs of PROPERTY and VALUEs.
 
 \(fn CATEGORY MODULE PROPERTY VALUE &rest [PROPERTY VALUE [...]])"
   (if-let* ((old-plist (nucleus-module-get category module)))
@@ -98,8 +105,8 @@ of PROPERTY and VALUEs.
 (defun nucleus-module-set (category module &rest plist)
   "Enables a module by adding it to `nucleus-modules'.
 
-CATEGORY is a keyword, module is a symbol, PLIST is a plist that accepts the
-following properties:
+CATEGORY is a keyword, module is a symbol, PLIST is a plist that
+accepts the following properties:
 
   :flags [SYMBOL LIST]  list of enabled category flags
   :path  [STRING]       path to category root directory
@@ -111,11 +118,11 @@ Example:
            nucleus-modules))
 
 (defun nucleus-module-path (category module &optional file)
-  "Like `expand-file-name', but expands FILE relative to CATEGORY (keywordp) and
-MODULE (symbol).
+  "Like `expand-file-name', but expands FILE relative to
+CATEGORY (keywordp) and MODULE (symbol).
 
-If the category isn't enabled this will always return nil. For finding disabled
-modules use `nucleus-module-locate-path'."
+If the category isn't enabled this will always return nil. For
+finding disabled modules use `nucleus-module-locate-path'."
   (let ((path (nucleus-module-get category module :path))
         file-name-handler-alist)
     (if file (expand-file-name file path)
@@ -124,12 +131,13 @@ modules use `nucleus-module-locate-path'."
 (defun nucleus-module-locate-path (category &optional module file)
   "Searches `nucleus-modules-dirs' to find the path to a module.
 
-CATEGORY is a keyword (e.g. :lang) and MODULE is a symbol (e.g. 'python). FILE
-is a string that will be appended to the resulting path. If no path exists, this
-returns nil, otherwise an absolute path.
+CATEGORY is a keyword (e.g. :lang) and MODULE is a symbol (e.g.
+'python). FILE is a string that will be appended to the resulting
+path. If no path exists, this returns nil, otherwise an absolute
+path.
 
-This doesn't require modules to be enabled. For enabled modules us
-`nucleus-module-path'."
+This doesn't require modules to be enabled. For enabled modules
+us `nucleus-module-path'."
   (when (keywordp category)
     (setq category (nucleus-keyword-name category)))
   (when (and module (symbolp module))
@@ -141,7 +149,8 @@ This doesn't require modules to be enabled. For enabled modules us
            return (expand-file-name path)))
 
 (defun nucleus-module-from-path (&optional path)
-  "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a file path)."
+  "Returns a cons cell (CATEGORY . MODULE) derived from PATH (a
+file path)."
   (or nucleus--current-module
       (let* (file-name-handler-alist
              (path (or path (FILE!))))
@@ -154,8 +163,9 @@ This doesn't require modules to be enabled. For enabled modules us
                     (intern module))))))))
 
 (defun nucleus-module-load-path (&optional all-p)
-  "Return a list of absolute file paths to activated modules. If ALL-P is
-non-nil, return paths of possible modules, activated or otherwise."
+  "Return a list of absolute file paths to activated modules. If
+ALL-P is non-nil, return paths of possible modules, activated or
+otherwise."
   (declare (pure t) (side-effect-free t))
   (append (if all-p
               (nucleus-files-in nucleus-modules-dirs
@@ -168,7 +178,8 @@ non-nil, return paths of possible modules, activated or otherwise."
           (list nucleus-emacs-dir)))
 
 (defun nucleus-modules (&optional refresh-p)
-  "Minimally initialize `nucleus-modules' (a hash table) and return it."
+  "Minimally initialize `nucleus-modules' (a hash table) and
+return it."
   (or (unless refresh-p nucleus-modules)
       (let ((noninteractive t)
             nucleus-modules
@@ -179,7 +190,6 @@ non-nil, return paths of possible modules, activated or otherwise."
             (make-hash-table :test 'equal
                              :size 20
                              :rehash-threshold 1.0)))))
-
 
 ;;
 ;; Use-package modifications
@@ -250,27 +260,27 @@ non-nil, return paths of possible modules, activated or otherwise."
                   '(,@hooks)))
          (use-package-process-keywords name rest state))))))
 
-
 ;;
 ;; Module config macros
 
 (defmacro nucleus! (&rest modules)
-  "Bootstraps DOOM Emacs and its modules.
+  "Bootstraps Emacs and its modules.
 
-The bootstrap process involves making sure the essential directories exist, core
-packages are installed, `nucleus-autoload-file' is loaded, `nucleus-packages-file'
-cache exists (and is loaded) and, finally, loads your private init.el (which
-should contain your `nucleus!' block).
+The bootstrap process involves making sure the essential
+directories exist, core packages are installed,
+`nucleus-autoload-file' is loaded, `nucleus-packages-file' cache
+exists (and is loaded) and, finally, loads your private
+init.el (which should contain your `nucleus!' block).
 
 If the cache exists, much of this function isn't run, which substantially
 reduces startup time.
 
-The overall load order of Doom is as follows:
+The overall load order of nucleus is as follows:
 
   ~/.emacs.d/init.el
-  ~/.emacs.d/core/core.el
+  ~/.emacs.d/nucleus/nucleus.el
   `nucleus-pre-init-hook'
-  ~/.nucleus.d/init.el
+  ~/.emacs.d/dna.el
   Module init.el files
   `nucleus-init-hook'
   Module config.el files
@@ -279,9 +289,9 @@ The overall load order of Doom is as follows:
   `emacs-startup-hook'
   `nucleus-post-init-hook' (at end of `emacs-startup-hook')
 
-Module load order is determined by your `nucleus!' block. See `nucleus-modules-dirs'
-for a list of all recognized module trees. Order defines precedence (from most
-to least)."
+Module load order is determined by your `nucleus!' block. See
+`nucleus-modules-dirs' for a list of all recognized module trees.
+Order defines precedence (from most to least)."
   (unless nucleus-modules
     (setq nucleus-modules
           (make-hash-table :test 'equal
@@ -295,17 +305,6 @@ to least)."
             ((catch 'nucleus-modules
                (let* ((module (if (listp m) (car m) m))
                       (flags  (if (listp m) (cdr m))))
-                 (when-let* ((obsolete (assq category nucleus-obsolete-modules))
-                             (new (assq module obsolete)))
-                   (let ((newkeys (cdr new)))
-                     (if (null newkeys)
-                         (message "Warning: the %s module is deprecated" key)
-                       (message "Warning: the %s module is deprecated. Use %s instead."
-                                (list category module) newkeys)
-                       (push category modules)
-                       (dolist (key newkeys)
-                         (setq modules (append key modules)))
-                       (throw 'nucleus-modules t))))
                  (if-let* ((path (nucleus-module-locate-path category module)))
                      (nucleus-module-set category module :flags flags :path path)
                    (message "Warning: couldn't find the %s %s module" category module))))))))
@@ -323,15 +322,18 @@ to least)."
 
 Only use this macro in a module's init.el file.
 
-Under the hood, this uses use-package's `use-package-inject-hooks'.
+Under the hood, this uses use-package's
+`use-package-inject-hooks'.
 
 PACKAGE is a symbol; the package's name.
+
 WHEN should be one of the following:
   :pre-init :post-init :pre-config :post-config
 
-WARNING: If :pre-init or :pre-config hooks return nil, the original
-`def-package!''s :init/:config block (respectively) is overwritten, so remember
-to have them return non-nil (or exploit that to overwrite Doom's config)."
+WARNING: If :pre-init or :pre-config hooks return nil, the
+original `def-package!''s :init/:config block (respectively) is
+overwritten, so remember to have them return non-nil (or exploit
+that to overwrite nucleus's config)."
   (declare (indent defun))
   (nucleus--assert-stage-p 'init #'package!)
   (unless (memq when '(:pre-init :post-init :pre-config :post-config))
@@ -345,7 +347,8 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
        ,@body)))
 
 (defmacro require! (category module &rest plist)
-  "Loads the module specified by CATEGORY (a keyword) and MODULE (a symbol)."
+  "Loads the module specified by CATEGORY (a keyword) and
+MODULE (a symbol)."
   `(let ((module-path (nucleus-module-locate-path ,category ',module)))
      (nucleus-module-set
       ,category ',module
@@ -372,18 +375,18 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
              ,category ',module))))
 
 (defmacro featurep! (category &optional module flag)
-  "Returns t if CATEGORY MODULE is enabled. If FLAG is provided, returns t if
-CATEGORY MODULE has FLAG enabled.
+  "Returns t if CATEGORY MODULE is enabled. If FLAG is provided,
+returns t if CATEGORY MODULE has FLAG enabled.
 
   (featurep! :config default)
 
-Module FLAGs are set in your config's `nucleus!' block, typically in
-~/.emacs.d/init.el. Like so:
+Module FLAGs are set in your config's `nucleus!' block, typically
+in ~/.emacs.d/init.el. Like so:
 
   :config (default +flag1 -flag2)
 
-When this macro is used from inside a module, CATEGORY and MODULE can be
-omitted. eg. (featurep! +flag1)"
+When this macro is used from inside a module, CATEGORY and MODULE
+can be omitted. eg. (featurep! +flag1)"
   (and (cond (flag (memq flag (nucleus-module-get category module :flags)))
              (module (nucleus-module-p category module))
              (nucleus--current-flags (memq category nucleus--current-flags))
@@ -394,7 +397,6 @@ omitted. eg. (featurep! +flag1)"
                   (error "featurep! couldn't detect what module its in! (in %s)" (FILE!)))
                 (memq category (nucleus-module-get (car module-pair) (cdr module-pair) :flags)))))
        t))
-
 
 ;;
 ;; FIXME Cross-module configuration (deprecated)
@@ -410,7 +412,7 @@ when called with `set!'. FORMS are not evaluated until `set!' calls it.
 
 See `nucleus/describe-setting' for a list of available settings.
 
-Do not use this for configuring Doom core."
+Do not use this for configuring nucleus."
   (declare (indent defun) (doc-string 3))
   (or (keywordp keyword)
       (signal 'wrong-type-argument (list 'keywordp keyword)))
@@ -447,4 +449,5 @@ VALUES doesn't get evaluated if the KEYWORD setting doesn't exist."
         nil))))
 
 (provide 'nucleus-modules)
+
 ;;; nucleus-modules.el ends here

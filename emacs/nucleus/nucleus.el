@@ -1,20 +1,25 @@
-;;; nucleus.el --- the heart of the beast -*- lexical-binding: t; -*-
-
-(eval-when-compile
-  (and (version< emacs-version "25")
-       (error "Detected Emacs %s. Doom only supports Emacs 25.1 and higher"
-              emacs-version)))
+;;; nucleus.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 (defvar nucleus-debug-mode (or (getenv "DEBUG") init-file-debug)
-  "If non-nil, all nucleus functions will be verbose. Set DEBUG=1 in the command
-line or use --debug-init to enable this.")
-
+  "If non-nil, all nucleus functions will be verbose. Set DEBUG=1
+in the command line or use --debug-init to enable this.")
 
 ;;
 ;; Constants
-
-(defconst nucleus-version "2.0.9"
-  "Current version of DOOM emacs.")
 
 (defconst EMACS26+ (> emacs-major-version 25))
 (defconst EMACS27+ (> emacs-major-version 26))
@@ -29,18 +34,15 @@ line or use --debug-init to enable this.")
        (concat path-home ".config")))
   "The root directory for personal configurations.")
 
-(defconst nucleus-projects-dir (concat user-home-directory "Developer/")
+(defvar nucleus-projects-dir (concat user-home-directory "Developer/")
   "The root directory for personal projects.")
 
 (defvar nucleus-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
-  "The path to this emacs directory. Must end in a slash.")
+  "The path to this emacs directory.")
 
-;; TODO remove me
-(defvar nucleus-docs-dir (concat nucleus-emacs-dir "doc/"))
-
-(defvar nucleus-core-dir (concat nucleus-emacs-dir "nucleus/")
-  "The root directory of Nucleus files.")
+(defvar nucleus-dir (concat nucleus-emacs-dir "nucleus/")
+  "The root directory of nucleus.")
 
 (defvar nucleus-modules-dir (concat nucleus-emacs-dir "modules/")
   "The root directory for modules.")
@@ -64,7 +66,8 @@ external dependencies or long-term shared data.")
 Use this for files that change often, like cache files.")
 
 (defvar nucleus-packages-dir (concat nucleus-local-dir "packages/")
-  "Where package.el and quelpa plugins (and their caches) are stored.")
+  "Where package.el and quelpa plugins (and their caches) are
+  stored.")
 
 (defvar nucleus-autoload-file (concat nucleus-local-dir "autoloads.el")
   "Where `nucleus-reload-nucleus-autoloads' will generate its
@@ -75,56 +78,56 @@ Use this for files that change often, like cache files.")
 package.el autoloads file.")
 
 ;;
-;; Doom core variables
+;; Variables
 
 (defvar nucleus-init-p nil
   "Non-nil if `nucleus-initialize' has run.")
 
 (defvar nucleus-init-time nil
-  "The time it took, in seconds, for DOOM Emacs to initialize.")
+  "The time it took, in seconds, for Emacs to initialize.")
 
 (defvar nucleus-emacs-changed-p nil
-  "If non-nil, the running version of Emacs is different from the first time
-Doom was setup, which can cause problems.")
+  "If non-nil, the running version of Emacs is different from the
+first time nucleus was setup, which can cause problems.")
 
 (defvar nucleus-site-load-path load-path
-  "The starting load-path, before it is altered by `nucleus-initialize'.")
+  "The starting load-path, before it is altered by
+  `nucleus-initialize'.")
 
 (defvar nucleus--last-emacs-file (concat nucleus-local-dir "emacs-version.el"))
 (defvar nucleus--last-emacs-version nil)
 (defvar nucleus--refreshed-p nil)
 (defvar nucleus--stage 'init)
 
-
 ;;
 ;; Custom error types
 
-(define-error 'nucleus-error "Error in Doom Emacs core")
-(define-error 'nucleus-hook-error "Error in a Doom startup hook" 'nucleus-error)
+(define-error 'nucleus-error "Error in nucleus")
+(define-error 'nucleus-hook-error "Error in a startup hook" 'nucleus-error)
 (define-error 'nucleus-autoload-error "Error in an autoloads file" 'nucleus-error)
-(define-error 'nucleus-module-error "Error in a Doom module" 'nucleus-error)
+(define-error 'nucleus-module-error "Error in a module" 'nucleus-error)
 (define-error 'nucleus-private-error "Error in private config" 'nucleus-error)
 (define-error 'nucleus-package-error "Error with packages" 'nucleus-error)
-
 
 ;;
 ;; Custom hooks
 
 (defvar nucleus-init-hook nil
-  "Hooks run after all init.el files are loaded, including your private and all
-module init.el files, but before their config.el files are loaded.")
+  "Hooks run after all init.el files are loaded, including main
+and all module init.el files, but before their config.el files
+are loaded.")
 
 (defvar nucleus-post-init-hook nil
-  "A list of hooks run when Doom is fully initialized. Fires near the end of
-`emacs-startup-hook', as late as possible. Guaranteed to run after everything
-else (except for `window-setup-hook').")
+  "A list of hooks run when Emacs is fully initialized. Fires near
+the end of `emacs-startup-hook', as late as possible. Guaranteed
+to run after everything else (except for `window-setup-hook').")
 
 (defvar nucleus-reload-hook nil
   "A list of hooks to run when `nucleus/reload' is called.")
 
 (defvar nucleus-load-theme-hook nil
-  "Hook run after the theme is loaded with `load-theme' or reloaded with
-`nucleus/reload-theme'.")
+  "Hook run after the theme is loaded with `load-theme' or
+reloaded with `nucleus/reload-theme'.")
 
 (defvar nucleus-exit-window-hook nil
   "Hook run before `switch-window' or `switch-frame' are called.
@@ -137,20 +140,23 @@ Also see `nucleus-enter-window-hook'.")
 Also see `nucleus-exit-window-hook'.")
 
 (defvar nucleus-exit-buffer-hook nil
-  "Hook run after `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
+  "Hook run after `switch-to-buffer', `pop-to-buffer' or
+`display-buffer' are called. The buffer to be switched to is
+current when these hooks run.
 
 Also see `nucleus-enter-buffer-hook'.")
 
 (defvar nucleus-enter-buffer-hook nil
-  "Hook run before `switch-to-buffer', `pop-to-buffer' or `display-buffer' are
-called. The buffer to be switched to is current when these hooks run.
+  "Hook run before `switch-to-buffer', `pop-to-buffer' or
+`display-buffer' are called. The buffer to be switched to is
+current when these hooks run.
 
 Also see `nucleus-exit-buffer-hook'.")
 
 (defvar nucleus-inhibit-switch-buffer-hooks nil
   "Letvar for inhibiting `nucleus-enter-buffer-hook' and `nucleus-exit-buffer-hook'.
 Do not set this directly.")
+
 (defvar nucleus-inhibit-switch-window-hooks nil
   "Letvar for inhibiting `nucleus-enter-window-hook' and `nucleus-exit-window-hook'.
 Do not set this directly.")
@@ -182,8 +188,8 @@ Do not set this directly.")
 (defun nucleus|init-switch-hooks (&optional disable)
   "Set up enter/exit hooks for windows and buffers.
 
-See `nucleus-enter-buffer-hook', `nucleus-enter-window-hook', `nucleus-exit-buffer-hook'
-and `nucleus-exit-window-hook'."
+See `nucleus-enter-buffer-hook', `nucleus-enter-window-hook',
+`nucleus-exit-buffer-hook' and `nucleus-exit-window-hook'."
   (dolist (spec '((select-window . nucleus*switch-window-hooks)
                   (switch-to-buffer . nucleus*switch-buffer-hooks)
                   (display-buffer . nucleus*switch-buffer-hooks)
@@ -193,33 +199,37 @@ and `nucleus-exit-window-hook'."
       (advice-add (car spec) :around (cdr spec)))))
 
 (defun nucleus*load-theme-hooks (theme &rest _)
-  "Set up `nucleus-load-theme-hook' to run after `load-theme' is called."
+  "Set up `nucleus-load-theme-hook' to run after `load-theme' is
+called."
   (setq nucleus-theme theme)
   (run-hooks 'nucleus-load-theme-hook))
 (advice-add #'load-theme :after #'nucleus*load-theme-hooks)
-
 
 ;;
 ;; Emacs core configuration
 
 ;; UTF-8 as the default coding system
 (when (fboundp 'set-charset-priority)
-  (set-charset-priority 'unicode))     ; pretty
-(prefer-coding-system        'utf-8)   ; pretty
-(set-terminal-coding-system  'utf-8)   ; pretty
-(set-keyboard-coding-system  'utf-8)   ; pretty
-(set-selection-coding-system 'utf-8)   ; perdy
-(setq locale-coding-system   'utf-8)   ; please
-(setq-default buffer-file-coding-system 'utf-8) ; with sugar on top
+  (set-charset-priority 'unicode))
+(prefer-coding-system        'utf-8)
+(set-terminal-coding-system  'utf-8)
+(set-keyboard-coding-system  'utf-8)
+(set-selection-coding-system 'utf-8)
+(setq locale-coding-system   'utf-8)
+(setq-default buffer-file-coding-system 'utf-8)
 
 (setq-default
- ad-redefinition-action 'accept   ; silence advised function warnings
- apropos-do-all t                 ; make `apropos' more useful
+ ;; silence advised function warnings
+ ad-redefinition-action 'accept
+ ;; make `apropos' more useful
+ apropos-do-all t
  auto-mode-case-fold nil
  autoload-compute-prefixes nil
  debug-on-error nucleus-debug-mode
- ffap-machine-p-known 'reject     ; don't ping things that look like domain names
- idle-update-delay 2              ; update ui less often
+ ;; don't ping things that look like domain names
+ ffap-machine-p-known 'reject
+ ;; update ui less often
+ idle-update-delay 2
  ;; be quiet at startup; don't load or display anything unnecessary
  inhibit-startup-message t
  inhibit-startup-echo-area-message user-login-name
@@ -228,7 +238,7 @@ and `nucleus-exit-window-hook'."
  initial-scratch-message nil
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
- ;; History & backup settings (save nothing, that's what git is for)
+ ;; History & backup settings (do not save everything)
  auto-save-default nil
  create-lockfiles nil
  history-length 500
@@ -243,26 +253,32 @@ and `nucleus-exit-window-hook'."
                    ;; compatibility fallbacks
                    "gnutls-cli -p %p %h"
                    "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof")
+ ;; clipboard
+ x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)
+ ;; Use a shared clipboard
+ select-enable-clipboard t
+ select-enable-primary t
  ;; files
- abbrev-file-name             (concat nucleus-local-dir "abbrev.el")
- auto-save-list-file-name     (concat nucleus-cache-dir "autosave")
- backup-directory-alist       (list (cons "." (concat nucleus-cache-dir "backup/")))
- mc/list-file                 (concat nucleus-etc-dir "mc-lists.el")
- pcache-directory             (concat nucleus-cache-dir "pcache/")
- request-storage-directory    (concat nucleus-cache-dir "request")
- server-auth-dir              (concat nucleus-cache-dir "server/")
- shared-game-score-directory  (concat nucleus-etc-dir "shared-game-score/")
- tramp-auto-save-directory    (concat nucleus-cache-dir "tramp-auto-save/")
+ abbrev-file-name (concat nucleus-local-dir "abbrev.el")
+ auto-save-list-file-name (concat nucleus-cache-dir "autosave")
+ backup-directory-alist (list (cons "." (concat nucleus-cache-dir "backup/")))
+ mc/list-file (concat nucleus-etc-dir "mc-lists.el")
+ pcache-directory (concat nucleus-cache-dir "pcache/")
+ request-storage-directory (concat nucleus-cache-dir "request")
+ server-auth-dir (concat nucleus-cache-dir "server/")
+ shared-game-score-directory (concat nucleus-etc-dir "shared-game-score/")
+ tramp-auto-save-directory (concat nucleus-cache-dir "tramp-auto-save/")
  tramp-backup-directory-alist backup-directory-alist
- tramp-persistency-file-name  (concat nucleus-cache-dir "tramp-persistency.el")
- url-cache-directory          (concat nucleus-cache-dir "url/")
- url-configuration-directory  (concat nucleus-etc-dir "url/")
+ tramp-persistency-file-name (concat nucleus-cache-dir "tramp-persistency.el")
+ url-cache-directory (concat nucleus-cache-dir "url/")
+ url-configuration-directory (concat nucleus-etc-dir "url/")
  gamegrid-user-score-file-directory (concat nucleus-etc-dir "games/"))
 
 (defvar nucleus-auto-minor-mode-alist '()
-  "Alist mapping filename patterns to corresponding minor mode functions, like
-`auto-mode-alist'. All elements of this alist are checked, meaning you can
-enable multiple minor modes for the same regexp.")
+  "Alist mapping filename patterns to corresponding minor mode
+functions, like `auto-mode-alist'. All elements of this alist are
+checked, meaning you can enable multiple minor modes for the same
+regexp.")
 
 (defun nucleus|enable-minor-mode-maybe ()
   "Check file name against `nucleus-auto-minor-mode-alist'."
@@ -280,13 +296,15 @@ enable multiple minor modes for the same regexp.")
         (if (string-match-p (caar alist) name)
             (funcall (cdar alist) 1))
         (setq alist (cdr alist))))))
+
 (add-hook 'find-file-hook #'nucleus|enable-minor-mode-maybe)
 
 (defun nucleus*symbol-file (orig-fn symbol &optional type)
-  "If a `nucleus-file' symbol property exists on SYMBOL, use that instead of the
-original value of `symbol-file'."
+  "If a `nucleus-file' symbol property exists on SYMBOL, use that
+instead of the original value of `symbol-file'."
   (or (if (symbolp symbol) (get symbol 'nucleus-file))
       (funcall orig-fn symbol type)))
+
 (advice-add #'symbol-file :around #'nucleus*symbol-file)
 
 ;; To speed up minibuffer commands (like helm and ivy), defer garbage collection
@@ -303,27 +321,27 @@ original value of `symbol-file'."
 ;; have run. If you want hook functions to be aware of these customizations, add
 ;; them to MODE-local-vars-hook instead.
 (defun nucleus|run-local-var-hooks ()
-  "Run MODE-local-vars-hook after local variables are initialized."
+  "Run MODE-local-vars-hook after local variables are
+initialized."
   (run-hook-wrapped (intern-soft (format "%s-local-vars-hook" major-mode))
                     #'nucleus-try-run-hook))
-(add-hook 'hack-local-variables-hook #'nucleus|run-local-var-hooks)
 
+(add-hook 'hack-local-variables-hook #'nucleus|run-local-var-hooks)
 
 ;;
 ;; Incremental lazy-loading
 
 (defvar nucleus-incremental-packages '(t)
-  "A list of packages to load incrementally after startup. Any large packages
-here may cause noticable pauses, so it's recommended you break them up into
-sub-packages. For example, `org' is comprised of many packages, and can be broken up into:
+  "A list of packages to load incrementally after startup. Any
+large packages here may cause noticable pauses, so it's
+recommended you break them up into sub-packages. For example,
+`org' is comprised of many packages, and can be broken up into:
 
   (nucleus-load-packages-incrementally
    '(calendar find-func format-spec org-macs org-compat
      org-faces org-entities org-list org-pcomplete org-src
      org-footnote org-macro ob org org-clock org-agenda
      org-capture))
-
-This is already done by the lang/org module, however.
 
 If you want to disable incremental loading altogether, either remove
 `nucleus|load-packages-incrementally' from `emacs-startup-hook' or set
@@ -335,13 +353,14 @@ If you want to disable incremental loading altogether, either remove
 Set this to nil to disable incremental loading.")
 
 (defvar nucleus-incremental-idle-timer 1.5
-  "How long (in idle seconds) in between incrementally loading packages.")
+  "How long (in idle seconds) in between incrementally loading
+  packages.")
 
 (defun nucleus-load-packages-incrementally (packages &optional now)
   "Registers PACKAGES to be loaded incrementally.
 
-If NOW is non-nil, load PACKAGES incrementally, in `nucleus-incremental-idle-timer'
-intervals."
+If NOW is non-nil, load PACKAGES incrementally, in
+`nucleus-incremental-idle-timer' intervals."
   (if (not now)
       (nconc nucleus-incremental-packages packages)
     (when packages
@@ -372,13 +391,12 @@ If this is a daemon session, load them all immediately instead."
 
 (add-hook 'emacs-startup-hook #'nucleus|load-packages-incrementally)
 
-
 ;;
 ;; Bootstrap helpers
 
 (defun nucleus-try-run-hook (hook)
-  "Run HOOK (a hook function), but handle errors better, to make debugging
-issues easier.
+  "Run HOOK (a hook function), but handle errors better, to make
+debugging issues easier.
 
 Meant to be used with `run-hook-wrapped'."
   (when nucleus-debug-mode
@@ -413,27 +431,28 @@ Meant to be used with `run-hook-wrapped'."
         ((kill-emacs))))
 
 (defun nucleus-ensure-core-directories-exist ()
-  "Make sure all Doom's essential local directories (in and including
+  "Make sure all essential local directories (in and including
 `nucleus-local-dir') exist."
   (dolist (dir (list nucleus-local-dir nucleus-etc-dir nucleus-cache-dir nucleus-packages-dir))
     (unless (file-directory-p dir)
       (make-directory dir t))))
 
 (defun nucleus|display-benchmark (&optional return-p)
-  "Display a benchmark, showing number of packages and modules, and how quickly
-they were loaded at startup.
+  "Display a benchmark, showing number of packages and modules,
+and how quickly they were loaded at startup.
 
-If RETURN-P, return the message as a string instead of displaying it."
+If RETURN-P, return the message as a string instead of displaying
+it."
   (funcall (if return-p #'format #'message)
-           "Doom loaded %s packages across %d modules in %.03fs"
+           "Emacs loaded %s packages across %d modules in %.03fs"
            (length package-activated-list)
            (if nucleus-modules (hash-table-count nucleus-modules) 0)
            (or nucleus-init-time
                (setq nucleus-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
 (defun nucleus|run-all-startup-hooks ()
-  "Run all startup Emacs hooks. Meant to be executed after starting Emacs with
--q or -Q, for example:
+  "Run all startup Emacs hooks. Meant to be executed after
+starting Emacs with -q or -Q, for example:
 
   emacs -Q -l init.el -f nucleus|run-all-startup-hooks"
   (run-hook-wrapped 'after-init-hook #'nucleus-try-run-hook)
@@ -443,29 +462,31 @@ If RETURN-P, return the message as a string instead of displaying it."
                       'window-setup-hook))
     (run-hook-wrapped hook #'nucleus-try-run-hook)))
 
-
 ;;
 ;; Bootstrap functions
 
 (defun nucleus-initialize (&optional force-p force-load-core-p)
-  "Bootstrap Doom, if it hasn't already (or if FORCE-P is non-nil).
+  "Bootstrap nucleus, if it hasn't already (or if FORCE-P is non-nil).
 
-Loads Doom core files if in an interactive session or FORCE-LOAD-CORE-P is
-non-nil.
+Loads nucleus files if in an interactive session or
+FORCE-LOAD-CORE-P is non-nil.
 
-The bootstrap process involves making sure 1) the essential directories exist,
-2) the core packages are installed, 3) `nucleus-autoload-file' and
-`nucleus-package-autoload-file' exist and have been loaded, and 4) Doom's core
-files are loaded.
+The bootstrap process involves making sure
 
-If the cache exists, much of this function isn't run, which substantially
-reduces startup time.
+1) the essential directories exist
+2) the core packages are installed
+3) `nucleus-autoload-file' and `nucleus-package-autoload-file'
+exist and have been loaded
+4) nucleus files are loaded.
 
-The overall load order of Doom is as follows:
+If the cache exists, much of this function isn't run, which
+substantially reduces startup time.
+
+The overall load order of Emacs is as follows:
 
   ~/.emacs.d/init.el
-  ~/.emacs.d/core/core.el
-  ~/.nucleus.d/init.el
+  ~/.emacs.d/nucleus/nucleus.el
+  ~/.nucleus.d/dna.el
   Module init.el files
   `nucleus-init-hook'
   Module config.el files
@@ -474,9 +495,9 @@ The overall load order of Doom is as follows:
   `after-init-hook'
   `emacs-startup-hook'
 
-Module load order is determined by your `nucleus!' block. See `nucleus-modules-dirs'
-for a list of all recognized module trees. Order defines precedence (from most
-to least)."
+Module load order is determined by your `nucleus!' block. See
+`nucleus-modules-dirs' for a list of all recognized module trees.
+Order defines precedence (from most to least)."
   (when (or force-p (not nucleus-init-p))
     (setq nucleus-init-p t)  ; Prevent infinite recursion
 
@@ -503,19 +524,14 @@ to least)."
                 noninteractive)
       (user-error "Your package autoloads are missing! Run `bin/nucleus refresh' to regenerate them")))
 
-  (require 'nucleus-os)
   (when (or force-load-core-p (not noninteractive))
     (add-hook! 'emacs-startup-hook
-      #'(nucleus|init-switch-hooks nucleus|display-benchmark))
-
-    (require 'nucleus-ui)
-    (require 'nucleus-editor)
-    (require 'nucleus-projects)
-    (require 'nucleus-keybinds)))
+      #'(nucleus|init-switch-hooks nucleus|display-benchmark))))
 
 (defun nucleus-initialize-autoloads (file)
-  "Tries to load FILE (an autoloads file). Return t on success, throws an error
-in interactive sessions, nil otherwise (but logs a warning)."
+  "Tries to load FILE (an autoloads file). Return t on success,
+throws an error in interactive sessions, nil otherwise (but logs
+a warning)."
   (condition-case e
       (load (file-name-sans-extension file) 'noerror 'nomessage)
     ((debug error)
@@ -523,11 +539,10 @@ in interactive sessions, nil otherwise (but logs a warning)."
          (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
        (signal 'nucleus-autoload-error (list (file-name-nondirectory file) e))))))
 
-
 ;;
-;; Bootstrap Doom
+;; Bootstrap
 
-(add-to-list 'load-path nucleus-core-dir)
+(add-to-list 'load-path nucleus-dir)
 
 (require 'nucleus-lib)
 (require 'nucleus-modules)
@@ -541,4 +556,5 @@ in interactive sessions, nil otherwise (but logs a warning)."
   (nucleus-initialize-modules))
 
 (provide 'nucleus)
+
 ;;; nucleus.el ends here

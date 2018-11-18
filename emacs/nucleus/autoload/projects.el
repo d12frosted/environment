@@ -1,12 +1,29 @@
-;;; core/autoload/projects.el -*- lexical-binding: t; -*-
+;;; projects.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
+
+;; TODO: move me to the modules
 
 ;;
 ;; Macros
 
 ;;;###autoload
 (defmacro without-project-cache! (&rest body)
-  "Run BODY with projectile's project-root cache disabled. This is necessary if
-you want to interactive with a project other than the one you're in."
+  "Run BODY with projectile's project-root cache disabled. This
+is necessary if you want to interactive with a project other than
+the one you're in."
   `(let ((projectile-project-root-cache (make-hash-table :test 'equal))
          projectile-project-name
          projectile-require-project-root)
@@ -15,11 +32,11 @@ you want to interactive with a project other than the one you're in."
 ;;;###autoload
 (defmacro project-file-exists-p! (files)
   "Checks if the project has the specified FILES.
-Paths are relative to the project root, unless they start with ./ or ../ (in
-which case they're relative to `default-directory'). If they start with a slash,
-they are absolute."
+Paths are relative to the project root, unless they start with ./
+or ../ (in which case they're relative to
+`default-directory'). If they start with a slash, they are
+absolute."
   `(file-exists-p! ,files (nucleus-project-root)))
-
 
 ;;
 ;; Commands
@@ -32,7 +49,6 @@ they are absolute."
   (setq-default projectile-project-root nil)
   (dolist (fn projectile-project-root-files-functions)
     (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
-
 
 ;;
 ;; Library

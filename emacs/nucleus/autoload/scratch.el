@@ -1,12 +1,28 @@
-;;; core/autoload/scratch.el -*- lexical-binding: t; -*-
+;;; scratch.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
+
+;; TODO: move to the module
 
 (defvar nucleus-scratch-files-dir (concat nucleus-etc-dir "scratch/")
   "Where to store project scratch files, created by
 `nucleus/open-project-scratch-buffer'.")
 
 (defvar nucleus-scratch-buffer-display-fn #'display-buffer
-  "The function to use to display the scratch buffer. Must accept one argument:
-the buffer to display.")
+  "The function to use to display the scratch buffer. Must accept
+one argument: the buffer to display.")
 
 (defvar nucleus-scratch-buffer-major-mode nil
   "What major mode to use in scratch buffers. This can be one of the
@@ -19,7 +35,6 @@ following:
 (defvar nucleus-scratch-buffer-hook ()
   "The hooks to run after a scratch buffer is made.")
 
-
 ;;
 ;; Library
 
@@ -27,7 +42,8 @@ following:
 (defun nucleus-scratch-buffer (&optional file mode text)
   "Return a scratchpad buffer in major MODE with TEXT in it.
 
-If FILE is a valid path, open it as if it were a persistent scratchpad."
+If FILE is a valid path, open it as if it were a persistent
+scratchpad."
   (if file (setq file (file-truename file)))
   (let ((buffer
          (if file
@@ -48,9 +64,9 @@ If FILE is a valid path, open it as if it were a persistent scratchpad."
 (defun nucleus/open-scratch-buffer (&optional arg)
   "Opens a scratch pad window in the same major-mode.
 
-If ARG (universal argument), then open a persistent scratch pad buffer. You'll
-be prompted for its name, or to open a previously created. These are stored in
-`nucleus-scratch-files-dir'.
+If ARG (universal argument), then open a persistent scratch pad
+buffer. You'll be prompted for its name, or to open a previously
+created. These are stored in `nucleus-scratch-files-dir'.
 
 If a region is active, copy its contents to the scratch pad."
   (interactive "P")

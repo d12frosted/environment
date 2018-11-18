@@ -14,110 +14,107 @@
 
 (nucleus!
  :feature
- debugger
- eval
- (evil +everywhere)
- file-templates
- (lookup
-  +docsets)
- snippets
- spellcheck
- (syntax-checker
-  +childframe)
- workspaces
+ ;; debugger
+ ;; eval
+ ;; (evil +everywhere)
+ ;; file-templates
+ ;; (lookup
+ ;;  +docsets)
+ ;; snippets
+ ;; spellcheck
+ ;; (syntax-checker
+ ;;  +childframe)
+ ;; workspaces
 
  :completion
- (company
-  +auto)
- (ivy
-  +fuzzy)
+ ;; (company
+ ;;  +auto)
+ ;; (ivy
+ ;;  +fuzzy)
 
  :ui
- theme
- dashboard
- doom-quit
- evil-goggles
+ ;; theme
+ ;; dashboard
+ ;; doom-quit
+ ;; evil-goggles
  ;;fci
- hl-todo
- modeline
- nav-flash
- treemacs
- (popup
-  +all
-  +defaults)
- vc-gutter
- vi-tilde-fringe
- window-select
+ ;; hl-todo
+ ;; modeline
+ ;; nav-flash
+ ;; treemacs
+ ;; (popup
+ ;;  +all
+ ;;  +defaults)
+ ;; vc-gutter
+ ;; vi-tilde-fringe
+ ;; window-select
 
  :editor
- (format +onsave)
- multiple-cursors
- ;;parinfer
- rotate-text
+ ;; (format +onsave)
+ ;; multiple-cursors
+ ;; parinfer
+ ;; rotate-text
 
  :emacs
- dired
- ediff
- electric
- eshell
- hideshow
- imenu
- term
- vc
+ ;; dired
+ ;; ediff
+ ;; electric
+ ;; eshell
+ ;; hideshow
+ ;; imenu
+ ;; term
+ ;; vc
 
  :tools
- ;;docker
- editorconfig
- gist
- ;;macos
- make
- magit
- ;;password-store
- ;;pdf
- ;;rgb
- ;;terraform
- ;;tmux
+ ;; docker
+ ;; editorconfig
+ ;; gist
+ ;; macos
+ ;; make
+ ;; magit
+ ;; password-store
+ ;; pdf
+ ;; rgb
+ ;; terraform
+ ;; tmux
 
  :lang
- data
- emacs-lisp
- (haskell +intero)
- latex
- ledger
- lua
- markdown
- nix
- (org-deprecated
-  +agenda
-  +attach
-  +babel
-  +capture
-  +export
-  +present)
- plantuml
- rest
- ruby
- scala
- (sh +fish)
+ ;; data
+ ;; emacs-lisp
+ ;; (haskell +intero)
+ ;; latex
+ ;; ledger
+ ;; lua
+ ;; markdown
+ ;; nix
+ ;; (org-deprecated
+ ;;  +agenda
+ ;;  +attach
+ ;;  +babel
+ ;;  +capture
+ ;;  +export
+ ;;  +present)
+ ;; plantuml
+ ;; rest
+ ;; ruby
+ ;; scala
+ ;; (sh +fish)
 
- ;; Applications are complex and opinionated modules that transform Emacs
- ;; toward a specific purpose. They may have additional dependencies and
- ;; should be loaded late.
  :app
- ;;(email +gmail)
- ;;irc
- ;;(rss +org)
- ;;twitter
- ;;(write
- ;; +wordnut
- ;; +langtool)
+ ;; (email +gmail)
+ ;; irc
+ ;; (rss +org)
+ ;; twitter
+ ;; (write
+ ;;  +wordnut
+ ;;  +langtool)
 
  :collab
- ;;floobits
- ;;impatient-mode
+ ;; floobits
+ ;; impatient-mode
 
  :config
- (default +bindings +snippets +evil-commands))
+ default)
 
 (setq nucleus-theme 'leuven
       nucleus-font (font-spec :family "Source Code Pro" :size 12)

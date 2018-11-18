@@ -1,4 +1,18 @@
-;;; core/autoload/files.el -*- lexical-binding: t; -*-
+;;; files.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 ;;
 ;; Public library
@@ -20,23 +34,25 @@
   "Returns a list of files/directories in PATH-OR-PATHS (one string path or a
 list of them).
 
-FILTER is a function or symbol that takes one argument (the path). If it returns
-non-nil, the entry will be excluded.
+FILTER is a function or symbol that takes one argument (the
+path). If it returns non-nil, the entry will be excluded.
 
-MAP is a function or symbol which will be used to transform each entry in the
-results.
+MAP is a function or symbol which will be used to transform each
+entry in the results.
 
 TYPE determines what kind of path will be included in the results. This can be t
 (files and folders), 'files or 'dirs.
 
-By default, this function returns paths relative to PATH-OR-PATHS if it is a
-single path. If it a list of paths, this function returns absolute paths.
-Otherwise, by setting RELATIVE-TO to a path, the results will be transformed to
-be relative to it.
+By default, this function returns paths relative to PATH-OR-PATHS
+if it is a single path. If it a list of paths, this function
+returns absolute paths. Otherwise, by setting RELATIVE-TO to a
+path, the results will be transformed to be relative to it.
 
-The search recurses up to DEPTH and no further. DEPTH is an integer.
+The search recurses up to DEPTH and no further. DEPTH is an
+integer.
 
-MATCH is a string regexp. Only entries that match it will be included."
+MATCH is a string regexp. Only entries that match it will be
+included."
   (cond
    ((listp path-or-paths)
     (cl-loop for path in path-or-paths
@@ -76,7 +92,6 @@ MATCH is a string regexp. Only entries that match it will be included."
                              fullpath)
                            result))))))
         result)))))
-
 
 ;;
 ;; Helpers
@@ -128,7 +143,6 @@ MATCH is a string regexp. Only entries that match it will be included."
            (copy-file old-path new-path t)
            short-new-name)
           (short-new-name))))
-
 
 ;;
 ;; Commands

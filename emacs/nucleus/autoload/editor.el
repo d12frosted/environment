@@ -1,14 +1,29 @@
-;;; core/autoload/editor.el -*- lexical-binding: t; -*-
+;;; editor.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 ;;;###autoload
 (defun nucleus-surrounded-p (pair &optional inline balanced)
   "Returns t if point is surrounded by a brace delimiter: {[(
 
-If INLINE is non-nil, only returns t if braces are on the same line, and
-whitespace is balanced on either side of the cursor.
+If INLINE is non-nil, only returns t if braces are on the same
+line, and whitespace is balanced on either side of the cursor.
 
-If INLINE is nil, returns t if the opening and closing braces are on adjacent
-lines, above and below, with only whitespace in between."
+If INLINE is nil, returns t if the opening and closing braces are
+on adjacent lines, above and below, with only whitespace in
+between."
   (when pair
     (let ((beg (plist-get pair :beg))
           (end (plist-get pair :end))
@@ -31,8 +46,8 @@ lines, above and below, with only whitespace in between."
 
 ;;;###autoload
 (defun nucleus/backward-to-bol-or-indent ()
-  "Jump between the indentation column (first non-whitespace character) and the
-beginning of the line. The opposite of
+  "Jump between the indentation column (first non-whitespace
+character) and the beginning of the line. The opposite of
 `nucleus/forward-to-last-non-comment-or-eol'."
   (interactive)
   (let ((pos (point))
@@ -47,8 +62,9 @@ beginning of the line. The opposite of
 
 ;;;###autoload
 (defun nucleus/forward-to-last-non-comment-or-eol ()
-  "Jumps between the last non-blank, non-comment character in the line and the
-true end of the line. The opposite of `nucleus/backward-to-bol-or-indent'."
+  "Jumps between the last non-blank, non-comment character in the
+line and the true end of the line. The opposite of
+`nucleus/backward-to-bol-or-indent'."
   (interactive)
   (let ((eol (save-excursion (if visual-line-mode
                                  (end-of-visual-line)
@@ -117,8 +133,8 @@ afterwards, kill line to beginning of line."
 
 ;;;###autoload
 (defun nucleus/backward-delete-whitespace-to-column ()
-  "Delete back to the previous column of whitespace, or as much whitespace as
-possible, or just one char if that's not possible."
+  "Delete back to the previous column of whitespace, or as much
+whitespace as possible, or just one char if that's not possible."
   (interactive)
   (let* ((context (ignore-errors (sp-get-thing)))
          (op (plist-get context :op))
@@ -153,17 +169,18 @@ possible, or just one char if that's not possible."
 
 ;;;###autoload
 (defun nucleus/delete-backward-char (n &optional killflag)
-  "Same as `delete-backward-char', but preforms these additional checks:
+  "Same as `delete-backward-char', but preforms these additional
+  checks:
 
-+ If point is surrounded by (balanced) whitespace and a brace delimiter ({} []
+- If point is surrounded by (balanced) whitespace and a brace delimiter ({} []
   ()), delete a space on either side of the cursor.
-+ If point is at BOL and surrounded by braces on adjacent lines, collapse
+- If point is at BOL and surrounded by braces on adjacent lines, collapse
   newlines:
   {
   |
   } => {|}
-+ Otherwise, resort to `nucleus/backward-delete-whitespace-to-column'.
-+ Resorts to `delete-char' if n > 1"
+- Otherwise, resort to `nucleus/backward-delete-whitespace-to-column'.
+- Resorts to `delete-char' if n > 1"
   (interactive "p\nP")
   (or (integerp n)
       (signal 'wrong-type-argument (list 'integerp n)))
@@ -215,12 +232,13 @@ possible, or just one char if that's not possible."
 
 ;;;###autoload
 (defun nucleus/retab (arg &optional beg end)
-  "Converts tabs-to-spaces or spaces-to-tabs within BEG and END (defaults to
-buffer start and end, to make indentation consistent. Which it does depends on
-the value of `indent-tab-mode'.
+  "Converts tabs-to-spaces or spaces-to-tabs within BEG and
+END (defaults to buffer start and end, to make indentation
+consistent. Which it does depends on the value of
+`indent-tab-mode'.
 
-If ARG (universal argument) is non-nil, retab the current buffer using the
-opposite indentation style."
+If ARG (universal argument) is non-nil, retab the current buffer
+using the opposite indentation style."
   (interactive "Pr")
   (unless (and beg end)
     (setq beg (point-min)
@@ -234,8 +252,8 @@ opposite indentation style."
 ;;;###autoload
 (defun nucleus/clone-and-narrow-buffer (beg end &optional clone-p)
   "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
-clone the buffer and hard-narrow the selection. If mark isn't active, then widen
-the buffer (if narrowed).
+clone the buffer and hard-narrow the selection. If mark isn't
+active, then widen the buffer (if narrowed).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (interactive "rP")
@@ -276,9 +294,9 @@ Respects `require-final-newline'."
 
 ;;;###autoload
 (defun nucleus*newline-indent-and-continue-comments (_orig-fn)
-  "Inserts a newline and possibly indents it. Also continues comments if
-executed from a commented line; handling special cases for certain languages
-with weak native support."
+  "Inserts a newline and possibly indents it. Also continues
+comments if executed from a commented line; handling special
+cases for certain languages with weak native support."
   (interactive)
   (cond ((sp-point-in-string) (newline))
         ((and (sp-point-in-comment)

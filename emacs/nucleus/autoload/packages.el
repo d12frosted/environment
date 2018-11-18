@@ -1,4 +1,18 @@
-;;; core/autoload/packages.el -*- lexical-binding: t; -*-
+;;; packages.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 (load! "cache")
 
@@ -31,7 +45,6 @@
   (setq nucleus--refreshed-p nil)
   (nucleus-cache-set 'last-pkg-refresh nil))
 
-
 ;;
 ;; Library
 
@@ -53,8 +66,9 @@
 
 ;;;###autoload
 (defun nucleus-package-backend (name &optional noerror)
-  "Get which backend the package NAME was installed with. Can either be elpa or
-quelpa. Throws an error if NOERROR is nil and the package isn't installed."
+  "Get which backend the package NAME was installed with. Can
+either be elpa or quelpa. Throws an error if NOERROR is nil and
+the package isn't installed."
   (cl-check-type name symbol)
   (cond ((assq name quelpa-cache)  'quelpa)
         ((assq name package-alist) 'elpa)
@@ -63,9 +77,9 @@ quelpa. Throws an error if NOERROR is nil and the package isn't installed."
 
 ;;;###autoload
 (defun nucleus-package-outdated-p (name)
-  "Determine whether NAME (a symbol) is outdated or not. If outdated, returns a
-list, whose car is NAME, and cdr the current version list and latest version
-list of the package."
+  "Determine whether NAME (a symbol) is outdated or not. If
+outdated, returns a list, whose car is NAME, and cdr the current
+version list and latest version list of the package."
   (cl-check-type name symbol)
   (when-let* ((desc (cadr (assq name package-alist))))
     (let* ((old-version (package-desc-version desc))
@@ -106,8 +120,9 @@ list of the package."
 
 ;;;###autoload
 (defun nucleus-package-different-backend-p (name)
-  "Return t if a package named NAME (a symbol) has a new backend than what it
-was installed with. Returns nil otherwise, or if package isn't installed."
+  "Return t if a package named NAME (a symbol) has a new backend
+than what it was installed with. Returns nil otherwise, or if
+package isn't installed."
   (cl-check-type name symbol)
   (nucleus-initialize-packages)
   (and (package-installed-p name)
@@ -118,8 +133,8 @@ was installed with. Returns nil otherwise, or if package isn't installed."
 
 ;;;###autoload
 (defun nucleus-package-different-recipe-p (name)
-  "Return t if a package named NAME (a symbol) has a different recipe than it
-was installed with."
+  "Return t if a package named NAME (a symbol) has a different
+recipe than it was installed with."
   (cl-check-type name symbol)
   (nucleus-initialize-packages)
   (and (package-installed-p name)
@@ -130,41 +145,51 @@ was installed with."
 
 ;;;###autoload
 (cl-defun nucleus-get-packages (&key (installed 'any)
-                                  (private 'any)
-                                  (disabled 'any)
-                                  (pinned 'any)
-                                  (ignored 'any)
-                                  (sort t)
-                                  changed
-                                  backend
-                                  deps)
-  "Retrieves a list of primary packages (i.e. non-dependencies). Each element is
-a cons cell, whose car is the package symbol and whose cdr is the quelpa recipe
+                                     (private 'any)
+                                     (disabled 'any)
+                                     (pinned 'any)
+                                     (ignored 'any)
+                                     (sort t)
+                                     changed
+                                     backend
+                                     deps)
+  "Retrieves a list of primary packages (i.e. non-dependencies).
+Each element is a cons cell, whose car is the package symbol and
+whose cdr is the quelpa recipe
 (if any).
 
-You can build a filtering criteria using one or more of the following
-properties:
+You can build a filtering criteria using one or more of the
+following properties:
 
   :backend BACKEND
     Can be 'quelpa, 'elpa or 'emacs
+
   :installed BOOL
-    Only return installed packages (t) or uninstalled packages (nil)
+    Only return installed packages (t) or uninstalled
+    packages (nil)
+
   :private BOOL
-    Only return private packages (t) or non-private packages (nil)
+    Only return private packages (t) or non-private
+    packages (nil)
+
   :disabled BOOL
     Only return packages that are disabled (t) or otherwise (nil)
+
   :ignored BOOL
     Only return packages that are ignored (t) or otherwise (nil)
+
   :pinned BOOL|ARCHIVE
-    Only return packages that are pinned (t), not pinned (nil) or pinned to a
-    specific archive (stringp)
+    Only return packages that are pinned (t), not pinned (nil) or
+    pinned to a specific archive (stringp)
+
   :deps BOOL
     Includes the package's dependencies (t).
 
-The resulting list is sorted unless :sort nil is passed to this function.
+The resulting list is sorted unless :sort nil is passed to this
+function.
 
-Warning: this function is expensive, as it re-evaluates your all packages.el
-files."
+Warning: this function is expensive, as it re-evaluates your all
+packages.el files."
   (nucleus-initialize-packages)
   (cl-remove-duplicates
    (cl-loop with packages = (append (mapcar #'list nucleus-core-packages)
@@ -210,8 +235,8 @@ files."
 
 ;;;###autoload
 (defun nucleus-get-package-alist ()
-  "Returns a list of all desired packages, their dependencies and their desc
-objects, in the order of their `package! blocks.'"
+  "Returns a list of all desired packages, their dependencies and
+their desc objects, in the order of their `package! blocks.'"
   (nucleus-initialize-packages)
   (cl-remove-duplicates
    (cl-loop for name in (append nucleus-core-packages (mapcar #'car nucleus-packages))
@@ -225,7 +250,8 @@ objects, in the order of their `package! blocks.'"
 
 ;;;###autoload
 (defun nucleus-get-depending-on (name &optional noerror)
-  "Return a list of packages that depend on the package named NAME."
+  "Return a list of packages that depend on the package named
+NAME."
   (cl-check-type name symbol)
   (unless (package-built-in-p name)
     (if-let* ((desc (cadr (assq name package-alist))))
@@ -291,8 +317,8 @@ Used by `nucleus-packages-update'."
                         (quelpa-cache ',quelpa-cache)
                         (user-emacs-directory ,user-emacs-directory)
                         nucleus-emacs-dir)
-                    (load ,(expand-file-name "core.el" nucleus-core-dir))
-                    (load ,(expand-file-name "autoload/packages.el" nucleus-core-dir))
+                    (load ,(expand-file-name "nucleus.el" nucleus-dir))
+                    (load ,(expand-file-name "autoload/packages.el" nucleus-dir))
                     (require 'package)
                     (require 'quelpa)
                     (nucleus-package-outdated-p ',pkg))))
@@ -303,8 +329,8 @@ Used by `nucleus-packages-update'."
 
 ;;;###autoload
 (defun nucleus-get-orphaned-packages ()
-  "Return a list of symbols representing packages that are no longer needed or
-depended on.
+  "Return a list of symbols representing packages that are no
+longer needed or depended on.
 
 Used by `nucleus-packages-autoremove'."
   (let ((package-selected-packages
@@ -317,13 +343,13 @@ Used by `nucleus-packages-autoremove'."
 
 ;;;###autoload
 (defun nucleus-get-missing-packages (&optional include-ignored-p)
-  "Return a list of requested packages that aren't installed or built-in, but
-are enabled (with a `package!' directive). Each element is a list whose CAR is
-the package symbol, and whose CDR is a plist taken from that package's
-`package!' declaration.
+  "Return a list of requested packages that aren't installed or
+built-in, but are enabled (with a `package!' directive). Each
+element is a list whose CAR is the package symbol, and whose CDR
+is a plist taken from that package's `package!' declaration.
 
-If INCLUDE-IGNORED-P is non-nil, includes missing packages that are ignored,
-i.e. they have an :ignore property.
+If INCLUDE-IGNORED-P is non-nil, includes missing packages that
+are ignored, i.e. they have an :ignore property.
 
 Used by `nucleus-packages-install'."
   (nucleus-initialize-packages)
@@ -339,7 +365,6 @@ Used by `nucleus-packages-install'."
                        (nucleus-package-different-recipe-p name)))
            collect (cons name plist)))
 
-
 ;;
 ;; Main functions
 
@@ -353,8 +378,9 @@ Used by `nucleus-packages-install'."
 
 ;;;###autoload
 (defun nucleus-install-package (name &optional plist)
-  "Installs package NAME with optional quelpa RECIPE (see `quelpa-recipe' for an
-example; the package name can be omitted)."
+  "Installs package NAME with optional quelpa RECIPE (see
+`quelpa-recipe' for an example; the package name can be
+omitted)."
   (cl-check-type name symbol)
   (nucleus-initialize-packages)
   (when (and (package-installed-p name)
@@ -380,8 +406,8 @@ example; the package name can be omitted)."
 
 ;;;###autoload
 (defun nucleus-update-package (name &optional force-p)
-  "Updates package NAME (a symbol) if it is out of date, using quelpa or
-package.el as appropriate."
+  "Updates package NAME (a symbol) if it is out of date, using
+quelpa or package.el as appropriate."
   (cl-check-type name symbol)
   (nucleus-initialize-packages)
   (unless (package-installed-p name)
@@ -412,7 +438,8 @@ package.el as appropriate."
 
 ;;;###autoload
 (defun nucleus-delete-package (name &optional force-p)
-  "Uninstalls package NAME if it exists, and clears it from `quelpa-cache'."
+  "Uninstalls package NAME if it exists, and clears it from
+`quelpa-cache'."
   (cl-check-type name symbol)
   (nucleus-initialize-packages)
   (unless (package-installed-p name)
@@ -428,15 +455,14 @@ package.el as appropriate."
     (nucleus--delete-package-files name)
     (not (package-installed-p name))))
 
-
 ;;
 ;; Interactive commands
 
 ;;;###autoload
 (defun nucleus/update-package (pkg)
-  "Prompts the user with a list of outdated packages and updates the selected
-package. Use this interactively. Use `nucleus-update-package' for direct
-calls."
+  "Prompts the user with a list of outdated packages and updates
+the selected package. Use this interactively. Use
+`nucleus-update-package' for direct calls."
   (declare (interactive-only t))
   (interactive
    (let* ((packages (nucleus-get-outdated-packages))
@@ -459,7 +485,6 @@ calls."
             (message "Aborted")))
       (message "%s is up-to-date" package))))
 
-
 ;;
 ;; Advice
 
@@ -474,18 +499,20 @@ calls."
         (quelpa-save-cache)
         (nucleus--delete-package-files name)))))
 
-
 ;;
-;; Make package.el cooperate with Doom
+;; Make package.el cooperate with nucleus
 
 ;; Updates QUELPA after deleting a package
 ;;;###autoload
-(advice-add #'package-delete :after #'nucleus*package-delete)
+(advice-add #'package-delete
+ :after #'nucleus*package-delete)
 
-;; Replace with Doom variants
+;; Replace with nucleus variants
 ;;;###autoload
-(advice-add #'package-autoremove :override (λ! (nucleus-packages-autoremove current-prefix-arg)))
+(advice-add #'package-autoremove
+ :override (λ! (nucleus-packages-autoremove current-prefix-arg)))
 
 ;;;###autoload
-(advice-add #'package-install-selected-packages :override (λ! (nucleus-packages-install current-prefix-arg)))
+(advice-add #'package-install-selected-packages
+ :override (λ! (nucleus-packages-install current-prefix-arg)))
 

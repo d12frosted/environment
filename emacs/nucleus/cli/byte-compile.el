@@ -1,22 +1,35 @@
-;;; core/cli/byte-compile.el -*- lexical-binding: t; -*-
+;;; byte-compiles.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 (dispatcher! (compile c) (nucleus-byte-compile args)
   "Byte-compiles your config or selected modules.
 
   compile [TARGETS...]
-  compile :core :private lang/python
+  compile :nucleus :private lang/haskell
   compile feature lang
 
-Accepts :core, :private and :plugins as special arguments, indicating you want
-to byte-compile Doom's core files, your private config or your ELPA plugins,
-respectively.")
+Accepts :nucleus, :private and :plugins as special arguments,
+indicating you want to byte-compile nucleus files, your
+private config or your ELPA plugins, respectively.")
 
 (dispatcher! (recompile rc) (nucleus-byte-compile args 'recompile)
   "Re-byte-compiles outdated *.elc files.")
 
 (dispatcher! clean (nucleus-clean-byte-compiled-files)
   "Delete all *.elc files.")
-
 
 ;;
 ;; Helpers
@@ -26,9 +39,10 @@ respectively.")
 
 init.el is always byte-compiled by this.
 
-If MODULES is specified (a list of module strings, e.g. \"lang/php\"), those are
-byte-compiled. Otherwise, all enabled modules are byte-compiled, including Doom
-core. It always ignores unit tests and files with `no-byte-compile' enabled.
+If MODULES is specified (a list of module strings,
+e.g. \"lang/php\"), those are byte-compiled. Otherwise, all
+enabled modules are byte-compiled, including nucleus. It always
+ignores unit tests and files with `no-byte-compile' enabled.
 
 WARNING: byte-compilation yields marginal gains and makes debugging new issues
 difficult. It is recommended you don't use it unless you understand the
@@ -46,7 +60,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
         targets)
     (dolist (module (delete-dups modules) (nreverse targets))
       (pcase module
-        (":core"    (push nucleus-core-dir targets))
+        (":core"    (push nucleus-dir targets))
         (":private" (push nucleus-emacs-dir targets))
         (":plugins"
          (cl-loop for (_name . desc) in (nucleus-get-package-alist)
@@ -65,7 +79,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       (and (not modules)
            compile-plugins-p
            (cl-return-from 'byte-compile t))
-      (unless (or (equal modules '(":core"))
+      (unless (or (equal modules '(":nucleus"))
                   recompile-p)
         (unless (or nucleus-auto-accept
                     (y-or-n-p
@@ -73,19 +87,20 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                              "efforts to debug issues. It is not recommended you do it if you frequently\n"
                              "tinker with your Emacs config.\n\n"
                              "Alternatively, use `bin/nucleus compile :core` instead to byte-compile only the\n"
-                             "Doom core files, as these don't change often.\n\n"
+                             "nucleus files, as these don't change often.\n\n"
                              "If you have issues, please make sure byte-compilation isn't the cause by using\n"
                              "`bin/nucleus clean` to clear out your *.elc files.\n\n"
                              "Byte-compile anyway?")))
           (message "Aborting.")
           (cl-return-from 'byte-compile)))
       (and (not recompile-p)
-           (or (null modules) (equal modules '(":core")))
+           (or (null modules) (equal modules '(":nucleus")))
            (nucleus-clean-byte-compiled-files))
       (let (nucleus-emacs-changed-p
             noninteractive)
-        ;; But first we must be sure that Doom and your private config have been
-        ;; fully loaded. Which usually aren't so in an noninteractive session.
+        ;; But first we must be sure that nucleus and config have been
+        ;; fully loaded. Which usually aren't so in an noninteractive
+        ;; session.
         (unless (and (nucleus-initialize-autoloads nucleus-autoload-file)
                      (nucleus-initialize-autoloads nucleus-package-autoload-file))
           (nucleus-reload-autoloads))
@@ -93,7 +108,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
         (nucleus-initialize-modules 'force))
       ;; If no targets were supplied, then we use your module list.
       (unless modules
-        (setq targets (append (list nucleus-core-dir)
+        (setq targets (append (list nucleus-dir)
                               (nucleus-module-load-path))))
       ;; Assemble el files we want to compile; taking into account that
       ;; MODULES may be a list of MODULE/SUBMODULE strings from the command
@@ -165,7 +180,7 @@ module. This does not include your byte-compiled, third party packages.'"
   (cl-loop with default-directory = nucleus-emacs-dir
            for path in (append (nucleus-files-in nucleus-emacs-dir :match "\\.elc$" :depth 0)
                                (nucleus-files-in nucleus-emacs-dir :match "\\.elc$" :depth 1)
-                               (nucleus-files-in nucleus-core-dir :match "\\.elc$")
+                               (nucleus-files-in nucleus-dir :match "\\.elc$")
                                (nucleus-files-in nucleus-modules-dirs :match "\\.elc$" :depth 4))
            for truepath = (file-truename path)
            if (file-exists-p path)

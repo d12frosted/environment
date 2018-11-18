@@ -1,4 +1,20 @@
-;;; core/autoload/hydras.el -*- lexical-binding: t; -*-
+;;; hydras.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
+
+;; TODO: move me to modules
 
 ;;;###autoload (autoload 'nucleus-text-zoom-hydra/body "core/autoload/hydras" nil nil)
 (defhydra nucleus-text-zoom-hydra (:hint t :color red)

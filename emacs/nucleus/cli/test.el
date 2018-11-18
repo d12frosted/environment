@@ -1,16 +1,30 @@
-;;; core/cli/test.el -*- lexical-binding: t; -*-
+;;; test.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
+
 
 (dispatcher! test (nucleus-run-tests args)
-  "Run Doom unit tests.")
-
+  "Run unit tests.")
 
 ;;
 ;; Library
 
 (defun nucleus-run-tests (&optional modules)
-  "Run all loaded tests, specified by MODULES (a list of module cons cells) or
-command line args following a double dash (each arg should be in the
-'module/submodule' format).
+  "Run all loaded tests, specified by MODULES (a list of module
+cons cells) or command line args following a double dash (each
+arg should be in the 'module/submodule' format).
 
 If neither is available, run all tests in all enabled modules."
   ;; Core libraries aren't fully loaded in a noninteractive session, so we
@@ -24,7 +38,7 @@ If neither is available, run all tests in all enabled modules."
          (cond ((stringp (car modules)) ; command line
                 (save-match-data
                   (cl-loop for arg in modules
-                           if (string= arg ":core") collect nucleus-core-dir
+                           if (string= arg ":core") collect nucleus-dir
                            else if (string-match-p "/" arg)
                            nconc (mapcar (apply-partially #'expand-file-name arg)
                                          nucleus-modules-dirs)
@@ -40,7 +54,7 @@ If neither is available, run all tests in all enabled modules."
                          if (nucleus-module-locate-path module submodule)
                          collect it))
 
-               ((append (list nucleus-core-dir)
+               ((append (list nucleus-dir)
                         (nucleus-module-load-path))))))
     ;; Load all the unit test files...
     (require 'buttercup)

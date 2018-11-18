@@ -1,4 +1,18 @@
-;;; core/autoload/cli.el -*- lexical-binding: t; -*-
+;;; cli.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 (require 'core-cli)
 
@@ -9,7 +23,7 @@
       (compile (format "bin/nucleus %s" command) t))
     (while compilation-in-progress
       (sit-for 1))
-    (when (y-or-n-p "Reload Doom config?")
+    (when (y-or-n-p "Reload Emacs config?")
       (nucleus/reload))
     (message "Done")))
 
@@ -48,12 +62,14 @@
 (defun nucleus/reload (&optional force-p)
   "Reloads your config. This is experimental!
 
-If called from a noninteractive session, this will try to communicate with a
-live server (if one is found) to tell it to run this function.
+If called from a noninteractive session, this will try to
+communicate with a live server (if one is found) to tell it to
+run this function.
 
-If called from an interactive session, tries to reload autoloads files (if
-necessary), reinistalize nucleus (via `nucleus-initialize') and reloads your private
-init.el and config.el. Then runs `nucleus-reload-hook'."
+If called from an interactive session, tries to reload autoloads
+files (if necessary), reinistalize nucleus (via
+`nucleus-initialize') and reloads your private init.el and
+config.el. Then runs `nucleus-reload-hook'."
   (interactive "P")
   (require 'core-cli)
   (nucleus-reload-autoloads force-p)

@@ -77,7 +77,14 @@
    dotspacemacs-filepath (if debug-mode
                              path-spacemacs-user-config-test-file
                            path-spacemacs-user-config-file))
-  (load-file path-spacemacs-distr-init-file))
+  (load-file path-spacemacs-distr-init-file)
+
+  ;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
+  (define-key global-map (kbd "C-x C-c") nil)
+
+  ;; I use meta a lot, and command key is much easier to hit than option.
+  (setq mac-command-modifier 'meta
+        mac-option-modifier  'none))
 
 ;; load doom
 (when (string-equal emacs-basis "doom")
@@ -126,12 +133,5 @@ decrease this. If you experience stuttering, increase this.")
 
   ;; Assemble!
   (require 'nucleus (concat user-emacs-directory "nucleus/nucleus")))
-
-;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
-(define-key global-map (kbd "C-x C-c") nil)
-
-;; I use meta a lot, and command key is much easier to hit than option.
-(setq mac-command-modifier 'meta
-      mac-option-modifier  'none)
 
 ;;; init.el ends here

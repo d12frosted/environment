@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/test-autoload-help.el
 
-(load! "autoload/help" nucleus-core-dir)
+(load! "autoload/help" nucleus-dir)
 
 ;;
 (describe "core/autoload/help"

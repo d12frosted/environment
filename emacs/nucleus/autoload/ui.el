@@ -1,4 +1,20 @@
-;;; core/autoload/ui.el -*- lexical-binding: t; -*-
+;;; ui.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
+
+;; TODO: move me to the module
 
 ;;
 ;; Public library
@@ -6,7 +22,8 @@
 ;;;###autoload
 (defun nucleus-resize-window (window new-size &optional horizontal force-p)
   "Resize a window to NEW-SIZE. If HORIZONTAL, do it width-wise.
-If FORCE-P is omitted when `window-size-fixed' is non-nil, resizing will fail."
+If FORCE-P is omitted when `window-size-fixed' is non-nil,
+resizing will fail."
   (with-selected-window (or window (selected-window))
     (let ((window-size-fixed (unless force-p window-size-fixed)))
       (enlarge-window (- new-size (if horizontal (window-width) (window-height)))
@@ -16,26 +33,25 @@ If FORCE-P is omitted when `window-size-fixed' is non-nil, resizing will fail."
 (defun nucleus-quit-p (&optional prompt)
   "Prompt the user for confirmation when killing Emacs.
 
-Returns t if it is safe to kill this session. Does not prompt if no real buffers
-are open."
+Returns t if it is safe to kill this session. Does not prompt if
+no real buffers are open."
   (or (not (ignore-errors (nucleus-real-buffer-list)))
       (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
       (ignore (message "Aborted"))))
-
 
 ;;
 ;; Advice
 
 ;;;###autoload
 (defun nucleus*recenter (&rest _)
-  "Generic advisor for recentering window (typically :after other functions)."
+  "Generic advisor for recentering window (typically :after other
+functions)."
   (recenter))
 
 ;;;###autoload
 (defun nucleus*shut-up (orig-fn &rest args)
   "Generic advisor for silencing noisy functions."
   (quiet! (apply orig-fn args)))
-
 
 ;;
 ;; Hooks
@@ -47,7 +63,6 @@ are open."
   (with-silent-modifications
     (ansi-color-apply-on-region compilation-filter-start (point))))
 
-
 ;;
 ;; Commands
 
@@ -55,9 +70,10 @@ are open."
 (defun nucleus/toggle-line-numbers ()
   "Toggle line numbers.
 
-Cycles through regular, relative and no line numbers. The order depends on what
-`display-line-numbers-type' is set to. If you're using Emacs 26+, and
-visual-line-mode is on, this skips relative and uses visual instead.
+Cycles through regular, relative and no line numbers. The order
+depends on what `display-line-numbers-type' is set to. If you're
+using Emacs 26+, and visual-line-mode is on, this skips relative
+and uses visual instead.
 
 See `display-line-numbers' for what these values mean."
   (interactive)
@@ -93,7 +109,8 @@ See `display-line-numbers' for what these values mean."
 
 ;;;###autoload
 (defun nucleus/delete-frame ()
-  "Delete the current frame, but ask for confirmation if it isn't empty."
+  "Delete the current frame, but ask for confirmation if it isn't
+empty."
   (interactive)
   (if (cdr (frame-list))
       (when (nucleus-quit-p "Close frame?")
@@ -102,8 +119,8 @@ See `display-line-numbers' for what these values mean."
 
 ;;;###autoload
 (defun nucleus/window-zoom ()
-  "Close other windows to focus on this one. Activate again to undo this. If the
-window changes before then, the undo expires.
+  "Close other windows to focus on this one. Activate again to
+undo this. If the window changes before then, the undo expires.
 
 Alternatively, use `nucleus/window-enlargen'."
   (interactive)
@@ -116,8 +133,9 @@ Alternatively, use `nucleus/window-enlargen'."
 (defvar nucleus--window-enlargened nil)
 ;;;###autoload
 (defun nucleus/window-enlargen ()
-  "Enlargen the current window to focus on this one. Does not close other
-windows (unlike `nucleus/window-zoom') Activate again to undo."
+  "Enlargen the current window to focus on this one. Does not
+close other windows (unlike `nucleus/window-zoom') Activate again
+to undo."
   (interactive)
   (setq nucleus--window-enlargened
         (if (and nucleus--window-enlargened
@@ -143,8 +161,8 @@ windows (unlike `nucleus/window-zoom') Activate again to undo."
 
 ;;;###autoload
 (defun nucleus/reload-font ()
-  "Reload `nucleus-font', `nucleus-variable-pitch-font', and `nucleus-unicode-font', if
-set."
+  "Reload `nucleus-font', `nucleus-variable-pitch-font', and
+`nucleus-unicode-font', if set."
   (interactive)
   (when nucleus-font
     (set-frame-font nucleus-font t))
@@ -161,14 +179,13 @@ OPACITY is an integer between 0 to 100, inclusive."
                           100))))
   (set-frame-parameter nil 'alpha opacity))
 
-
 ;;
 ;; Modes
 
 ;;;###autoload
 (define-minor-mode nucleus-big-font-mode
-  "A global mode that resizes the font, for streams, screen-sharing and
-presentations.
+  "A global mode that resizes the font, for streams,
+screen-sharing and presentations.
 
 Uses `nucleus-big-font' when enabled."
   :init-value nil

@@ -1,4 +1,18 @@
-;;; core/cli/patch-macos.el -*- lexical-binding: t; -*-
+;;; patch-macos.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;
+;;; Copyright (c) 2015-2018 Boris Buliga
+;;
+;;; Author: Boris Buliga <boris@d12frosted.io>
+;;; URL: https://github.com/d12frosted/environment/emacs
+;;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 (dispatcher! (patch-macos)
   (nucleus-patch-macos (or (member "--undo" args)
@@ -6,30 +20,32 @@
                     (nucleus--find-emacsapp-path))
   "Patches Emacs.app to respect your shell environment.
 
-A common issue with GUI Emacs on MacOS is that it launches in an environment
-independent of your shell configuration, including your PATH and any other
-utilities like rbenv, rvm or virtualenv.
+A common issue with GUI Emacs on MacOS is that it launches in an
+environment independent of your shell configuration, including
+your PATH and any other utilities like rbenv, rvm or virtualenv.
 
 This patch fixes this by patching Emacs.app (in /Applications or
 ~/Applications). It will:
 
   1. Move Contents/MacOS/Emacs to Contents/MacOS/RunEmacs
-  2. And replace Contents/MacOS/Emacs with the following wrapper script:
+
+  2. And replace Contents/MacOS/Emacs with the following wrapper
+     script:
 
      #!/bin/bash
      args=\"$@\"
      pwd=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\"; pwd -P)\"
      exec \"$SHELL\" -l -c \"$pwd/RunEmacs $args\"
 
-This ensures that Emacs is always aware of your shell environment, regardless of
-how it is launched.
+This ensures that Emacs is always aware of your shell
+environment, regardless of how it is launched.
 
 It can be undone with the --undo or -u options.
 
-Alternatively, you can install the exec-path-from-shell Emacs plugin, which will
-scrape your shell environment remotely, at startup. However, this can be slow
-depending on your shell configuration and isn't always reliable.")
-
+Alternatively, you can install the exec-path-from-shell Emacs
+plugin, which will scrape your shell environment remotely, at
+startup. However, this can be slow depending on your shell
+configuration and isn't always reliable.")
 
 ;;
 ;; Library
@@ -67,7 +83,7 @@ depending on your shell configuration and isn't always reliable.")
 
           ((or nucleus-auto-accept
                (y-or-n-p
-                (concat "Doom would like to patch your Emacs.app bundle so that it respects\n"
+                (concat "nucleus would like to patch your Emacs.app bundle so that it respects\n"
                         "your shell configuration. For more information on why and how, run\n\n"
                         "  bin/nucleus help patch-macos\n\n"
                         "Patch Emacs.app?")))
