@@ -72,7 +72,6 @@ Currently available functions:
 (defvar all-the-icons-scale-factor)
 (defvar all-the-icons-default-adjust)
 
-
 ;;
 ;; Custom faces
 
@@ -122,6 +121,10 @@ Currently available functions:
 
 (defface nucleus-modeline-urgent `((t (:inherit (error bold))))
   "Face for errors in the modeline. Used by `*flycheck'"
+  :group '+modeline)
+
+(defface nucleus-modeline-stale `((t (:inherit (font-lock-doc-face))))
+  "Face for stale messages in the modeline. Used by `*vc'."
   :group '+modeline)
 
 (defface nucleus-modeline-bar '((t (:inherit highlight)))
@@ -469,7 +472,7 @@ Meant for `+modeline-buffer-path-function'."
                        (if active (setq face 'nucleus-modeline-urgent))
                        (all-the-icons-octicon "alert" :face face))
                       (t
-                       (if active (setq face 'font-lock-doc-face))
+                       (if active (setq face 'nucleus-modeline-stale))
                        (all-the-icons-octicon
                         "git-compare"
                         :face face
