@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; ui/nucleus-dashboard/test/test-nucleus-dashboard.el
+;;; ui/dashboard/test/test-dashboard.el
 
 (require 'core-projects)
 (require 'projectile)

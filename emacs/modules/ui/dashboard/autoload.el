@@ -1,4 +1,4 @@
-;;; ui/nucleus-dashboard/autoload.el -*- lexical-binding: t; -*-
+;;; ui/dashboard/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +nucleus-dashboard/open (frame)

@@ -1,4 +1,4 @@
-;;; ui/nucleus-dashboard/config.el -*- lexical-binding: t; -*-
+;;; ui/dashboard/config.el -*- lexical-binding: t; -*-
 
 (defvar +nucleus-dashboard-name "*nucleus*"
   "The name to use for the dashboard buffer.")
