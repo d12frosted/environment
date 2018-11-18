@@ -1,4 +1,4 @@
-;;; ui/nucleus/config.el -*- lexical-binding: t; -*-
+;;; ui/themes/config.el -*- lexical-binding: t; -*-
 
 (defvar +nucleus-solaire-themes
   '((doom-city-lights . t)
@@ -13,10 +13,10 @@
     (doom-solarized-light)
     (doom-spacegrey)
     (doom-vibrant)
-    (doom-tomorrow-night))
+    (doom-tomorrow-night)
+    (leuven . nil))
   "An alist of themes that support `solaire-mode'. If CDR is t, then use
 `solaire-mode-swap-bg'.")
-
 
 ;;
 ;; Packages
@@ -27,7 +27,6 @@
   (unless nucleus-theme
     (setq nucleus-theme 'leuven)))
 
-;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
   :defer t
   :init
@@ -56,7 +55,8 @@
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)
   ;; Prevent color glitches when reloading either DOOM or loading a new theme
-  (add-hook! :append '(nucleus-load-theme-hook nucleus-reload-hook)
+  (add-hook! :append
+    '(nucleus-load-theme-hook nucleus-reload-hook)
     #'solaire-mode-reset)
   ;; org-capture takes an org buffer and narrows it. The result is erroneously
   ;; considered an unreal buffer, so solaire-mode must be restored.
