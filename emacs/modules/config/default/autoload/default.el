@@ -16,6 +16,7 @@
 ;;;###autoload
 (defun +default/browse-templates ()
   (interactive) (nucleus-project-browse +file-templates-dir))
+
 ;;;###autoload
 (defun +default/find-in-templates ()
   (interactive) (nucleus-project-find-file +file-templates-dir))
@@ -36,9 +37,9 @@
 
 ;;;###autoload
 (defun +default/find-in-config ()
-  "Open a file somewhere in `nucleus-emacs-dir' via a fuzzy filename search."
+  "Open a file somewhere in `nucleus-config-dir' via a fuzzy filename search."
   (interactive)
-  (nucleus-project-find-file nucleus-emacs-dir))
+  (nucleus-project-find-file nucleus-config-dir))
 
 ;;;###autoload
 (defun +default/browse-config ()
