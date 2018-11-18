@@ -166,10 +166,10 @@
        ;; reference for your own modules.
        (default +bindings +snippets +evil-commands))
 
-(setq doom-theme 'leuven
-      doom-font (font-spec :family "Source Code Pro" :size 12)
-      doom-big-font (font-spec :family "Source Code Pro" :size 18)
-      doom-serif-font (font-spec :family "Source Code Pro" :size 12))
+(setq nucleus-theme 'doom-one-light
+      nucleus-font (font-spec :family "Source Code Pro" :size 12)
+      nucleus-big-font (font-spec :family "Source Code Pro" :size 18)
+      nucleus-serif-font (font-spec :family "Source Code Pro" :size 12))
 
 (provide 'dna)
 
