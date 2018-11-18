@@ -166,7 +166,7 @@
        ;; reference for your own modules.
        (default +bindings +snippets +evil-commands))
 
-(setq nucleus-theme 'doom-one-light
+(setq nucleus-theme 'leuven
       nucleus-font (font-spec :family "Source Code Pro" :size 12)
       nucleus-big-font (font-spec :family "Source Code Pro" :size 18)
       nucleus-serif-font (font-spec :family "Source Code Pro" :size 12))
