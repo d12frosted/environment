@@ -4,8 +4,10 @@
 
 (setq org-agenda-files (list org-directory
                              +org-tasks-dir
-                             +org-notes-dir))
-(setq org-agenda-custom-commands
+                             +org-notes-dir)
+      org-agenda-compact-blocks t
+      org-agenda-log-mode-items '(closed clock state)
+      org-agenda-custom-commands
       `((" " "Agenda"
          (
           (tags-todo "notifications"

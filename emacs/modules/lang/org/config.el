@@ -257,8 +257,13 @@ unfold to point on startup."
      (?b . warning)
      (?c . success))
    org-refile-targets
-   '((nil :maxlevel . 3)
-     (org-agenda-files :maxlevel . 3))
+   '((nil :maxlevel . 4)
+     (org-agenda-files :maxlevel . 4))
+   org-refile-use-outline-path t
+   org-log-into-drawer t
+   org-outline-path-complete-in-steps nil
+   org-refile-allow-creating-parent-nodes nil
+   org-indirect-buffer-display 'current-window
    org-startup-folded t
    org-startup-indented t
    org-startup-with-inline-images nil
