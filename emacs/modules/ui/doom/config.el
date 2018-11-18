@@ -21,14 +21,16 @@
 ;;
 ;; Packages
 
-(def-package! leuven-theme)
+(def-package! leuven-theme
+  :defer t
+  :init
+  (unless nucleus-theme
+    (setq nucleus-theme 'leuven)))
 
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
   :defer t
   :init
-  (unless nucleus-theme
-    (setq nucleus-theme 'doom-one-light))
   ;; improve integration w/ org-mode
   (add-hook 'nucleus-load-theme-hook #'doom-themes-org-config)
   ;; more Atom-esque file icons for neotree/treemacs
