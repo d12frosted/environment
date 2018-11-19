@@ -458,14 +458,16 @@ it."
                (setq nucleus-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
 (defun nucleus|run-all-startup-hooks ()
-  "Run all startup Emacs hooks. Meant to be executed after
-starting Emacs with -q or -Q, for example:
+  "Run all startup Emacs hooks. 
+
+Meant to be executed after starting Emacs with -q or -Q, for
+example:
 
   emacs -Q -l init.el -f nucleus|run-all-startup-hooks"
   (run-hook-wrapped 'after-init-hook #'nucleus-try-run-hook)
   (setq after-init-time (current-time))
   (dolist (hook (list 'delayed-warnings-hook
-                      'emacs-startup-hook 'term-setup-hook
+                      'emacs-startup-hook
                       'window-setup-hook))
     (run-hook-wrapped hook #'nucleus-try-run-hook)))
 
