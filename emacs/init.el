@@ -20,13 +20,6 @@
 ;;
 ;;; Code:
 
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance . light))
-;; (add-to-list 'default-frame-alist '(undecorated . t))
-;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
-;; (add-to-list 'default-frame-alist '(fullscreen . fullboth))
-
-
 ;; disable package initialisation
 (setq package-enable-at-startup nil
       package--init-file-ensured t)
@@ -34,11 +27,14 @@
 ;;
 ;; Variables
 
-(defvar debug-mode (getenv "DEBUG_EMACS")
-  "Non nil enables debug mode. Whatever that means.")
-
 (defconst known-bases '("nucleus" "doom" "spacemacs")
   "List of the known bases to load from.")
+
+(defconst user-home-directory
+  (file-name-as-directory (getenv "HOME"))
+  "Path to user home directory.
+
+In a nutshell, it's just a Value of $HOME.")
 
 (defvar emacs-basis (or (car (member (getenv "EMACS_BASIS") known-bases))
                         (car known-bases))
@@ -47,31 +43,15 @@
 ;; ensure we are running out of this file's directory
 (setq user-emacs-directory (file-name-directory (file-truename load-file-name)))
 
-;; load path.el
-(require 'path (concat user-emacs-directory "core/path"))
-
-;; setup and load `custom-file'
-(setq custom-file path-custom-file)
-(load custom-file t)
-
-;; load `private.el' file containing all the sensitive data
-(let ((private-file (concat path-emacs-private "private.el")))
-  (when (file-exists-p private-file)
-    (load private-file)))
-
-;; load `local.el' file containing all the machine specific configurations
-(let ((local-file (concat path-emacs-local "local.el")))
-  (when (file-exists-p local-file)
-    (load local-file)))
-
-;; setup package-user-dir to allow seamless switch between emacs versions
-(setq package-user-dir
-      (file-name-as-directory
-       (concat path-emacs-cache "elpa/" emacs-version)))
-
 ;; load spacemacs
 (when (string-equal emacs-basis "spacemacs")
-  (message "Loading Spacemacs: " path-spacemacs-distr-home)
+  (message "Loading Spacemacs")
+
+  (defvar debug-mode (getenv "DEBUG_EMACS")
+    "Non nil enables debug mode. Whatever that means.")
+
+  (require 'path (concat user-emacs-directory "core/path"))
+  
   (setq-default
    spacemacs-start-directory path-spacemacs-distr-home
    dotspacemacs-filepath (if debug-mode
