@@ -15,31 +15,6 @@
 ;;
 ;;; Code:
 
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance . light))
-;; (add-to-list 'default-frame-alist '(undecorated . t))
-;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
-;; (add-to-list 'default-frame-alist '(fullscreen . fullboth))
-
-;; setup and load `custom-file'
-(setq custom-file path-custom-file)
-(load custom-file t)
-
-;; load `private.el' file containing all the sensitive data
-(let ((private-file (concat path-emacs-private "private.el")))
-  (when (file-exists-p private-file)
-    (load private-file)))
-
-;; load `local.el' file containing all the machine specific configurations
-(let ((local-file (concat path-emacs-local "local.el")))
-  (when (file-exists-p local-file)
-    (load local-file)))
-
-;; setup package-user-dir to allow seamless switch between emacs versions
-(setq package-user-dir
-      (file-name-as-directory
-       (concat path-emacs-cache "elpa/" emacs-version)))
-
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration."
   (setq-default

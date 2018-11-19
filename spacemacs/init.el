@@ -1,4 +1,4 @@
-;;; path.el --- path file for personal configurations -*- lexical-binding: t; -*-
+;;; init.el --- init file for personal Spacemacs configurations -*- lexical-binding: t; -*-
 ;;
 ;;; Copyright (c) 2015-2018 Boris Buliga
 ;;
@@ -10,13 +10,13 @@
 ;;
 ;;; Commentary:
 ;;
-;; Path constants and helpers.
-;;
-;; Naming conventions:
-;;   path-*-file  path representing file
-;;   path-*       path representing directory
-;;
 ;;; Code:
+
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance . light))
+;; (add-to-list 'default-frame-alist '(undecorated . t))
+;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+;; (add-to-list 'default-frame-alist '(fullscreen . fullboth))
 
 (defconst path-home
   (file-name-as-directory (getenv "HOME"))
@@ -154,6 +154,41 @@ If PATH already exists as a directory, just do nothing."
   "Add project NAME from `path-projects-home' to `load-path'."
   (add-to-load-path-if-exists (concat path-projects-home name)))
 
-(provide 'path)
+;; setup and load `custom-file'
+(setq custom-file path-custom-file)
+(load custom-file t)
 
-;;; path.el ends here
+;; load `private.el' file containing all the sensitive data
+(let ((private-file (concat path-emacs-private "private.el")))
+  (when (file-exists-p private-file)
+    (load private-file)))
+
+;; load `local.el' file containing all the machine specific configurations
+(let ((local-file (concat path-emacs-local "local.el")))
+  (when (file-exists-p local-file)
+    (load local-file)))
+
+;; setup package-user-dir to allow seamless switch between emacs versions
+(setq package-user-dir
+      (file-name-as-directory
+       (concat path-emacs-cache "elpa/" emacs-version)))
+
+(setq user-emacs-directory (file-name-directory (file-truename load-file-name)))
+
+(setq-default
+ spacemacs-start-directory path-spacemacs-distr-home
+ dotspacemacs-filepath (if (getenv "DEBUG_EMACS")
+                           path-spacemacs-user-config-test-file
+                         path-spacemacs-user-config-file))
+(load-file path-spacemacs-distr-init-file)
+
+;; The worst key binding ever! If I ever want to quit Emacs, I'd call my doctor.
+(define-key global-map (kbd "C-x C-c") nil)
+
+;; I use meta a lot, and command key is much easier to hit than option.
+(setq mac-command-modifier 'meta
+      mac-option-modifier  'none)
+
+(provide 'init)
+
+;;; init.el ends here
