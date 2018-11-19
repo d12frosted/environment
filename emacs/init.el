@@ -20,6 +20,10 @@
 ;;
 ;;; Code:
 
+;; Introduce myself.
+(setq user-full-name "Boris Buliga"
+      user-mail-address "boris@d12frosted.io")
+
 (defvar nucleus-gc-cons-threshold 16777216 ; 16mb
   "The default value to use for `gc-cons-threshold'. If you experience freezing,
 decrease this. If you experience stuttering, increase this.")
