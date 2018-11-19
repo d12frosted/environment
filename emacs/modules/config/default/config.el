@@ -8,22 +8,24 @@
         mac-option-modifier  'alt
         ;; sane trackpad/mouse scroll settings
         mac-redisplay-dont-reset-vscroll t
+	      ;; do not use smoth scrolling
         mac-mouse-wheel-smooth-scroll nil
-        mouse-wheel-scroll-amount '(1)  ; one line at a time
-        mouse-wheel-progressive-speed nil             ; don't accelerate scrolling
-        ;; Curse Lion and its sudden but inevitable fullscreen mode!
-        ;; NOTE Meaningless to railwaycat's emacs-mac build
+	      ;; scroll one line at a time
+        mouse-wheel-scroll-amount '(1)
+	      ;; don't accelerate scrolling
+        mouse-wheel-progressive-speed nil
+        ;; Do not use native fullscreen mode
         ns-use-native-fullscreen nil
         ;; Don't open files from the workspace in a new frame
         ns-pop-up-frames nil)
 
   ;; Fix the clipboard in terminal or daemon Emacs (non-GUI)
   (when (or (daemonp) (not (display-graphic-p)))
-    (add-hook 'doom-post-init-hook #'osx-clipboard-mode))
+    (add-hook 'nucleus-post-init-hook #'osx-clipboard-mode))
 
   (when (or (daemonp) (display-graphic-p))
-    ;; Syncs ns frame parameters with theme (and fixes mismatching text
-    ;; colr in the frame title)
+    ;; Syncs ns frame parameters with theme (and fixes mismatching
+    ;; text colr in the frame title)
     (require 'ns-auto-titlebar nil t)
 
     ;; A known problem with GUI Emacs on MacOS (or daemons started via
