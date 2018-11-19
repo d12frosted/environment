@@ -15,6 +15,7 @@ brew "ffmpeg"
 brew "fish"
 brew "git"
 brew "git-lfs"
+brew "gnu-tar"
 brew "haskell-stack"
 brew "jq"
 brew "mu", args: ["with-emacs"]
