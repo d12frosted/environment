@@ -1,5 +1,6 @@
 bootstrap/eru.sh ~/.local/bin/eru
 emacs/init.el ~/.emacs.d/init.el
+emacs/nucleus/bin/nucleus ~/.local/bin/nucleus
 haskell/.ghci ~/.ghci
 haskell/stack-global.yaml ~/.stack/global-project/stack.yaml
 haskell/stack.yaml ~/.stack/config.yaml
