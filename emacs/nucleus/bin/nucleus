@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 ":"; [[ $EMACS = *"term"* ]] && EMACS=emacs || EMACS=${EMACS:-emacs} # -*-emacs-lisp-*-
 ":"; command -v $EMACS >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; }
-":"; NUCLEUSBASE=$(dirname "${BASH_SOURCE:-${(%):-%x}}")/../..
+":"; NUCLEUSFILE_RAW="${BASH_SOURCE:-${(%):-%x}}"
+":"; NUCLEUSFILE=$([[ -L "$NUCLEUSFILE_RAW" ]] && echo $(readlink $NUCLEUSFILE_RAW) || echo $NUCLEUSFILE_RAW)
+":"; NUCLEUSBASE=$(dirname "$NUCLEUSFILE")/../..
 ":"; [[ $1 == doc || $1 == doctor ]] && { cd "$NUCLEUSBASE"; exec $EMACS --script nucleus/bin/nucleus-doctor; exit 0; }
 ":"; [[ $1 == run ]] && { cd "$NUCLEUSBASE"; shift; exec $EMACS -q --no-splash -l nucleus/bin/nucleus "$@"; exit 0; }
 ":"; exec $EMACS --script "$0" -- $@
