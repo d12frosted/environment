@@ -28,13 +28,20 @@ in the command line or use --debug-init to enable this.")
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 
+(defconst nucleus-home-dir
+  (file-name-as-directory
+   (getenv "HOME"))
+  "Path to user home directory.
+
+In a nutshell, it's just a Value of $HOME.")
+
 (defconst nucleus-config-dir
   (file-name-as-directory
    (or (getenv "XDG_CONFIG_HOME")
-       (concat path-home ".config")))
+       (concat nucleus-home-dir ".config")))
   "The root directory for personal configurations.")
 
-(defvar nucleus-projects-dir (concat user-home-directory "Developer/")
+(defvar nucleus-projects-dir (concat nucleus-home-dir "Developer/")
   "The root directory for personal projects.")
 
 (defvar nucleus-emacs-dir
