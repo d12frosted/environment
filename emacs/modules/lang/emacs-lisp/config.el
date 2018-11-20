@@ -17,3 +17,7 @@
 ;;
 ;;; Code:
 
+(after! elisp-mode
+  ;; Flycheck produces a *lot* of false positives in emacs configs, so
+  ;; disable it when you're editing them
+  (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe))

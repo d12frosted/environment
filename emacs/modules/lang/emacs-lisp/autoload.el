@@ -17,3 +17,15 @@
 ;;
 ;;; Code:
 
+;;;###autoload
+(defun +emacs-lisp|disable-flycheck-maybe ()
+  "Disable flycheck-mode if in emacs.d."
+  (message "disable?")
+  (when (and (bound-and-true-p flycheck-mode)
+             (eq major-mode 'emacs-lisp-mode)
+             (or (not buffer-file-name)
+                 (cl-loop for dir in (list nucleus-home-dir)
+                          if (file-in-directory-p buffer-file-name dir)
+                          return t)))
+    (message "disable!")
+    (flycheck-mode -1)))
