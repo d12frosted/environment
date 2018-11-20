@@ -32,8 +32,8 @@
  ;; workspaces
 
  :completion
- ;; (company
- ;;  +auto)
+ (company
+  +auto)
  ;; (ivy
  ;;  +fuzzy)
 
