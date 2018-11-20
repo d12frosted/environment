@@ -117,7 +117,7 @@
  ;; impatient-mode
 
  :config
- default)
+ os)
 
 (setq nucleus-theme 'leuven
       nucleus-font (font-spec :family "Source Code Pro" :size 12)
