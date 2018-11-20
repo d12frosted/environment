@@ -86,7 +86,7 @@
 
  :lang
  ;; data
- ;; emacs-lisp
+ emacs-lisp
  ;; (haskell +intero)
  ;; latex
  ;; ledger
