@@ -74,7 +74,7 @@
  ;; gist
  ;; macos
  ;; make
- ;; magit
+ magit
  ;; password-store
  ;; pdf
  ;; rgb
