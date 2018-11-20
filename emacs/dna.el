@@ -27,6 +27,7 @@
  ;;  +docsets)
  ;; snippets
  ;; spellcheck
+ syntax-checker
  ;; (syntax-checker
  ;;  +childframe)
  ;; workspaces
