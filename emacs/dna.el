@@ -17,7 +17,7 @@
  ;; debugger
  ;; eval
  ;; (evil +everywhere)
- ;; file-templates
+ file-templates
  ;; (lookup
  ;;  +docsets)
  ;; snippets
