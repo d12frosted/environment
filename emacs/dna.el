@@ -21,22 +21,18 @@
  :feature
  ;; debugger
  ;; eval
- ;; (evil +everywhere)
  file-templates
  ;; (lookup
  ;;  +docsets)
  snippets
  ;; spellcheck
  syntax-checker
- ;; (syntax-checker
- ;;  +childframe)
  ;; workspaces
 
  :completion
  (company
   +auto)
- ;; (ivy
- ;;  +fuzzy)
+ ;; ivy
 
  :ui
  ;; theme
