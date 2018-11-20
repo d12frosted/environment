@@ -1,12 +1,15 @@
-;;; init.el --- init file for personal configurations -*- lexical-binding: t; -*-
+;;; init.el -*- lexical-binding: t; -*-
 ;;
-;;; Copyright (c) 2015-2018 Boris Buliga
+;; Copyright (c) 2015-2018 Boris Buliga
 ;;
-;;; Author: Boris Buliga <boris@d12frosted.io>
+;; Author: Boris Buliga <boris@d12frosted.io>
+;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
-;;; URL: https://github.com/d12frosted/environment/emacs
+;; URL: https://github.com/d12frosted/environment/emacs
 ;;
-;;; License: GPLv3
+;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
 ;;
 ;;; Commentary:
 ;;
@@ -64,5 +67,3 @@ decrease this. If you experience stuttering, increase this.")
 
 ;; Assemble!
 (require 'nucleus (concat user-emacs-directory "nucleus/nucleus"))
-
-;;; init.el ends here

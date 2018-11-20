@@ -1,10 +1,15 @@
-;;; dna.el --- the heart of every cell -*- lexical-binding: t; -*-
+;;; dna.el -*- lexical-binding: t; -*-
 ;;
-;;; Copyright (c) 2015-2018 Boris Buliga
+;; Copyright (c) 2018 Boris Buliga
 ;;
-;;; Author: Boris Buliga <boris@d12frosted.io>
-;;; URL: https://github.com/d12frosted/environment/emacs
-;;; License: GPLv3
+;; Author: Boris Buliga <boris@d12frosted.io>
+;; Maintainer: Boris Buliga <boris@d12frosted.io>
+;;
+;; Created: 20 Nov 2018
+;;
+;; URL: https://github.com/d12frosted/environment/emacs
+;;
+;; License: GPLv3
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -37,7 +42,7 @@
  ;; dashboard
  ;; doom-quit
  ;; evil-goggles
- ;;fci
+ ;; fci
  ;; hl-todo
  ;; modeline
  ;; nav-flash
@@ -120,7 +125,3 @@
       nucleus-font (font-spec :family "Source Code Pro" :size 12)
       nucleus-big-font (font-spec :family "Source Code Pro" :size 18)
       nucleus-serif-font (font-spec :family "Source Code Pro" :size 12))
-
-(provide 'dna)
-
-;;; dna.el ends here
