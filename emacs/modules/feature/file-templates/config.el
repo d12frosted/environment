@@ -41,9 +41,9 @@ rules that don't have a :trigger property in
     (emacs-lisp-mode
      :trigger "__package")
     (snippet-mode))
-  "An alist of file template rules. The CAR of each rule is either a major mode
-symbol or regexp string. The CDR is a plist. See `set-file-template!' for more
-information.")
+  "An alist of file template rules. The CAR of each rule is
+either a major mode symbol or regexp string. The CDR is a
+plist. See `set-file-template!' for more information.")
 
 (defun +file-templates-in-emacs-dirs-p (file)
   "Returns t if FILE is in `nucleus-emacs-dir'."
