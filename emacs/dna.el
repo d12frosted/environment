@@ -25,7 +25,7 @@
  file-templates
  ;; (lookup
  ;;  +docsets)
- ;; snippets
+ snippets
  ;; spellcheck
  syntax-checker
  ;; (syntax-checker
