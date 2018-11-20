@@ -58,6 +58,7 @@
  ;; rotate-text
 
  :emacs
+ ui
  ;; dired
  ;; ediff
  ;; electric
