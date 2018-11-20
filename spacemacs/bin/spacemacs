@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+emacs -nw -Q -l $XDG_CONFIG_HOME/spacemacs/init.el
