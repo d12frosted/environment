@@ -18,7 +18,6 @@
 ;;
 ;;; Code:
 
-
 (dispatcher! test (nucleus-run-tests args)
   "Run unit tests.")
 
@@ -74,7 +73,6 @@ If neither is available, run all tests in all enabled modules."
           (window-min-width 0)
           (window-min-height 0))
       (buttercup-run))))
-
 
 ;;
 ;; Test library
