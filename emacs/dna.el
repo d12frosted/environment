@@ -32,7 +32,7 @@
  :completion
  (company
   +auto)
- ;; ivy
+ ivy
 
  :ui
  ;; theme
