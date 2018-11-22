@@ -90,6 +90,7 @@
  ;; lua
  ;; markdown
  ;; nix
+ org
  ;; (org-deprecated
  ;;  +agenda
  ;;  +attach
