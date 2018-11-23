@@ -43,6 +43,7 @@
  :lang
  emacs-lisp
  org
+ rest
 
  :app
 
