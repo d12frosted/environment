@@ -21,6 +21,7 @@
   :defer 1
   :after-call pre-command-hook
   :config
+  (setq projectile-completion-system 'ivy)
   (ivy-mode +1))
 
 (def-package! counsel

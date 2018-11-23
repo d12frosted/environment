@@ -19,15 +19,10 @@
 
 (nucleus!
  :feature
- ;; debugger
- ;; eval
  file-templates
- ;; (lookup
- ;;  +docsets)
+ projects
  snippets
- ;; spellcheck
  syntax-checker
- ;; workspaces
 
  :completion
  (company
@@ -35,87 +30,23 @@
  ivy
 
  :ui
- ;; theme
- ;; dashboard
- ;; doom-quit
- ;; evil-goggles
- ;; fci
- ;; hl-todo
- ;; modeline
- ;; nav-flash
- ;; treemacs
- ;; (popup
- ;;  +all
- ;;  +defaults)
- ;; vc-gutter
- ;; vi-tilde-fringe
- ;; window-select
 
  :editor
- ;; (format +onsave)
- ;; multiple-cursors
- ;; parinfer
- ;; rotate-text
 
  :emacs
+ files
  ui
- ;; dired
- ;; ediff
- ;; electric
- ;; eshell
- ;; hideshow
- ;; imenu
- ;; term
- ;; vc
 
  :tools
- ;; docker
- ;; editorconfig
- ;; gist
- ;; macos
- ;; make
  magit
- ;; password-store
- ;; pdf
- ;; rgb
- ;; terraform
- ;; tmux
 
  :lang
- ;; data
  emacs-lisp
- ;; (haskell +intero)
- ;; latex
- ;; ledger
- ;; lua
- ;; markdown
- ;; nix
  org
- ;; (org-deprecated
- ;;  +agenda
- ;;  +attach
- ;;  +babel
- ;;  +capture
- ;;  +export
- ;;  +present)
- ;; plantuml
- ;; rest
- ;; ruby
- ;; scala
- ;; (sh +fish)
 
  :app
- ;; (email +gmail)
- ;; irc
- ;; (rss +org)
- ;; twitter
- ;; (write
- ;;  +wordnut
- ;;  +langtool)
 
  :collab
- ;; floobits
- ;; impatient-mode
 
  :config
  os)
