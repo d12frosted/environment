@@ -22,6 +22,7 @@
  file-templates
  projects
  snippets
+ spellcheck
  syntax-checker
 
  :completion
