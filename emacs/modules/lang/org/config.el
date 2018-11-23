@@ -39,7 +39,8 @@
 ;; Load other Org modules lazily.
 (nucleus-load-packages-incrementally
  '(org-agenda
-   org-capture))
+   org-capture
+   org-id))
 
 ;;
 ;; Bootstrap
@@ -47,7 +48,8 @@
 (add-hook! 'org-load-hook
   #'(+org|setup-ui
      +org|setup-todo
-     +org|setup-clock))
+     +org|setup-clock
+     +org|setup-id))
 
 ;;
 ;; `org-load-hook'
@@ -104,3 +106,8 @@
       (beginning-of-line 0)
       (org-remove-empty-drawer-at (point))))
   (add-hook! :append 'org-clock-out-hook #'+org/remove-empty-drawer))
+
+(defun +org|setup-id ()
+  "setup `org-id'."
+  (setq org-id-track-globally t
+	org-id-locations-file (concat nucleus-cache-dir "org-id-locations.el")))
