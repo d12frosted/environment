@@ -32,11 +32,11 @@ rules that don't have a :trigger property in
     ("/.dir-locals.el$")
     ("/packages\\.el$"
      :when +file-templates-in-emacs-dirs-p
-     :trigger "__nucleus-packages"
+     :trigger "__module-packages"
      :mode emacs-lisp-mode)
     ("\\.el$"
      :when +file-templates-in-emacs-dirs-p
-     :trigger "__nucleus-module"
+     :trigger "__module-config"
      :mode emacs-lisp-mode)
     (emacs-lisp-mode
      :trigger "__package")
