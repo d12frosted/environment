@@ -21,30 +21,30 @@
       :desc "Find file in project" "SPC" #'projectile-find-file
       :desc "Browse files" "." #'find-file
       (:when (featurep! :completion ivy)
-	:desc "Resume last search" "'" #'ivy-resume)
+	      :desc "Resume last search" "'" #'ivy-resume)
 
       (:desc "search" :prefix "/"
-	(:when (featurep! :completion ivy)
+	      (:when (featurep! :completion ivy)
           :desc "Buffer" "b" #'swiper
           :desc "Project" "p" #'+ivy/project-search
           :desc "Directory" "d" #'+ivy/project-search-from-cwd)
-	:desc "Symbols" "i" #'imenu
+	      :desc "Symbols" "i" #'imenu
         :desc "Symbols across buffers" "I" #'imenu-anywhere)
 
       (:desc "buffer" :prefix "b"
-	(:when (featurep! :feature workspaces)
+	      (:when (featurep! :feature workspaces)
           :desc "Switch workspace buffer" "b" #'persp-switch-to-buffer
           :desc "Switch buffer" "B" #'switch-to-buffer)
         (:unless (featurep! :feature workspaces)
           :desc "Switch buffer" "b" #'switch-to-buffer)
-	:desc "Kill buffer" "k" #'kill-this-buffer
-	:desc "Next buffer" "n" #'next-buffer
+	      :desc "Kill buffer" "k" #'kill-this-buffer
+	      :desc "Next buffer" "n" #'next-buffer
         :desc "Previous buffer" "p" #'previous-buffer
         :desc "Next buffer" "]" #'next-buffer
         :desc "Previous buffer" "[" #'previous-buffer
-	:desc "Save buffer" "s" #'save-buffer
-	:desc "Pop scratch buffer" "x" #'nucleus/open-scratch-buffer
-	:desc "Sudo edit this file" "S" #'+files/sudo-this)
+	      :desc "Save buffer" "s" #'save-buffer
+	      :desc "Pop scratch buffer" "x" #'nucleus/open-scratch-buffer
+	      :desc "Sudo edit this file" "S" #'+files/sudo-this)
 
       (:desc "file" :prefix "f"
         :desc "Find file" "." #'find-file
