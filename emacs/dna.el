@@ -33,6 +33,7 @@
  :ui
 
  :editor
+ default
 
  :emacs
  files
