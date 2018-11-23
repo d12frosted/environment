@@ -53,7 +53,8 @@
       (defun set-env! (&rest vars)
         "Inject VARS from your shell environment into Emacs."
         (exec-path-from-shell-copy-envs vars))
-      (setq exec-path-from-shell-check-startup-files nil
+      (setq exec-path-from-shell-shell-name "/usr/local/bin/fish"
+	    exec-path-from-shell-check-startup-files nil
             exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments)
             exec-path-from-shell-debug nucleus-debug-mode
             exec-path-from-shell-variables
