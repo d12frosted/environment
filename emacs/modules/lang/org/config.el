@@ -111,3 +111,15 @@
   "setup `org-id'."
   (setq org-id-track-globally t
 	org-id-locations-file (concat nucleus-cache-dir "org-id-locations.el")))
+
+;;
+;; Packages
+
+(def-package! org-brain
+  :defer t
+  :init
+  (setq org-brain-path (concat org-directory "notes/")
+	org-brain-visualize-sort-function #'org-brain-title<
+	org-brain-visualize-one-child-per-line t
+	org-brain-visualize-default-choices 'all
+	org-brain-title-max-length 12))

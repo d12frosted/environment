@@ -19,3 +19,4 @@
 
 (package! org-plus-contrib)
 (package! org :ignore t)
+(package! org-brain)
