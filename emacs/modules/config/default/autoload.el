@@ -1,0 +1,33 @@
+;;; config/default/autoload.el -*- lexical-binding: t; -*-
+;;
+;; Copyright (c) 2018 Boris Buliga
+;;
+;; Author: Boris Buliga <boris@d12frosted.io>
+;; Maintainer: Boris Buliga <boris@d12frosted.io>
+;;
+;; Created: 23 Nov 2018
+;;
+;; URL: https://github.com/d12frosted/environment/emacs
+;;
+;; License: GPLv3
+;;
+;; This file is not part of GNU Emacs.
+;;
+;;; Commentary:
+;;
+;;; Code:
+
+;;;###autoload
+(defun +default/browse-project ()
+  (interactive)
+  (+project-browse (+project-root)))
+
+;;;###autoload
+(defun +default/browse-config ()
+  (interactive)
+  (+project-browse nucleus-emacs-dir))
+
+;;;###autoload
+(defun +default/find-in-config ()
+  (interactive)
+  (+project-find-file nucleus-emacs-dir))
