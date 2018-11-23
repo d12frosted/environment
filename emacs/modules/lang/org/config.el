@@ -29,13 +29,16 @@
 ;; Setup list of Org modules that should always be loaded together
 ;; with Org.
 (defvar org-modules
-  '(org-info))
+  '(org-info
+    org-habit))
+
+;; Sub-modules
+(load! "+agenda")
 
 ;; Load other Org modules lazily.
 (nucleus-load-packages-incrementally
  '(org-agenda
-   org-capture
-   org-habit))
+   org-capture))
 
 ;;
 ;; Bootstrap
@@ -43,8 +46,7 @@
 (add-hook! 'org-load-hook
   #'(+org|setup-ui
      +org|setup-todo
-     +org|setup-clock
-     +org|setup-agenda))
+     +org|setup-clock))
 
 ;;
 ;; `org-load-hook'
@@ -98,15 +100,3 @@
       (beginning-of-line 0)
       (org-remove-empty-drawer-at (point))))
   (add-hook! :append 'org-clock-out-hook #'+org/remove-empty-drawer))
-
-(defun +org|setup-agenda ()
-  "Setup `org-agenda'."
-  (setq org-agenda-files (list org-directory
-			       (concat org-directory "notes/")
-			       (concat org-directory "gtd/"))
-	;; also show state change in log mode
-	org-agenda-log-mode-items '(closed clock state)
-
-	;; setup archive
-	org-archive-location (concat org-directory ".archive/archive" "::")
-	org-archive-save-context-info '(time file ltags itags todo category olpath)))
