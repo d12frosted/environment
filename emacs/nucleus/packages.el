@@ -23,3 +23,6 @@
 
 ;; autoload/test.el
 (package! buttercup)
+
+;; nucleus-keybinds.el
+(package! which-key)
