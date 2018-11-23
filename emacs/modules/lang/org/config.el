@@ -61,7 +61,10 @@
 	org-pretty-entities nil
 	org-adapt-indentation nil
 	org-startup-folded t
-	org-startup-indented t))
+	org-startup-indented t
+
+	;; better formatting for properties
+	org-property-format "%-24s %s"))
 
 (defun +org|setup-todo ()
   "Setup todo states."
