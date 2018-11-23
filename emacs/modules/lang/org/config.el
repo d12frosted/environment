@@ -34,6 +34,7 @@
 
 ;; Sub-modules
 (load! "+agenda")
+(load! "+capture")
 
 ;; Load other Org modules lazily.
 (nucleus-load-packages-incrementally
