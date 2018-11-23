@@ -33,8 +33,8 @@ It is relative to `org-directory', unless it is absolute.")
   '(("t" "todo" plain (file +capture-inbox-file)
      "* TODO %?\n%U\n" :clock-in t :clock-resume t)
     
-    ("j" "Journal" entry (file+datetree+prompt +capture-journal-file)
-     "* %?\n%U\n" :clock-in t :clock-resume t)
+    ("j" "Journal" entry (file+olp+datetree +capture-journal-file)
+     "* %?\n%U\n" :clock-in t :clock-resume t :time-prompt t)
 
     ("n" "note" entry (file +capture-inbox-file)
      "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
