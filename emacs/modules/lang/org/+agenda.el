@@ -38,7 +38,11 @@
           (tags . " %i %-24:c")
           (search . " %i %-24:c"))
 	org-agenda-todo-keyword-format "%-1s"
-	org-agenda-tags-column 0))
+	org-agenda-tags-column 0)
+
+  (after! org-agenda
+    ;; release leader key
+    (unbind-key nucleus-leader-key org-agenda-keymap)))
 
 (defvar org-agenda-custom-commands
   `((" " "Agenda"
