@@ -20,6 +20,8 @@
 (map! :leader
       :desc "Find file in project" "SPC" #'projectile-find-file
       :desc "Browse files" "." #'find-file
+      :desc "Org Capture" "x"  #'+org/capture-task
+      :desc "Org Capture Template" "X"  #'org-capture
       (:when (featurep! :completion ivy)
 	      :desc "Resume last search" "'" #'ivy-resume)
 
