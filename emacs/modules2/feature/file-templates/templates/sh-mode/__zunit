@@ -1,5 +1,0 @@
-#!/usr/bin/env zunit
-
-@test '...' {
-    $0
-}
