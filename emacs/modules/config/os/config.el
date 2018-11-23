@@ -25,11 +25,11 @@
         mac-option-modifier  'alt
         ;; sane trackpad/mouse scroll settings
         mac-redisplay-dont-reset-vscroll t
-	      ;; do not use smoth scrolling
+	;; do not use smoth scrolling
         mac-mouse-wheel-smooth-scroll nil
-	      ;; scroll one line at a time
+	;; scroll one line at a time
         mouse-wheel-scroll-amount '(1)
-	      ;; don't accelerate scrolling
+	;; don't accelerate scrolling
         mouse-wheel-progressive-speed nil
         ;; Do not use native fullscreen mode
         ns-use-native-fullscreen nil
