@@ -52,7 +52,8 @@
      +org|setup-id))
 
 (add-hook! 'org-mode-hook
-  #'(org-indent-mode))
+  #'(org-indent-mode
+     vulpea-mode-maybe-enable))
 
 ;;
 ;; `org-load-hook'
