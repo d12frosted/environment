@@ -23,6 +23,12 @@
 (defvar +agenda-hide-scheduled-and-waiting-next-tasks t)
 
 ;;;###autoload
+(defun +org/agenda-main ()
+  "Show main `org-agenda' view"
+  (interactive)
+  (org-agenda nil " "))
+
+;;;###autoload
 (defun +agenda--find-project-task ()
   "Move point to the parent (project) task if any."
   (save-restriction

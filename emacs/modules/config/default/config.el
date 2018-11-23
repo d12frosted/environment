@@ -87,7 +87,8 @@
         :desc "Previous hunk" "[" #'git-gutter:previous-hunk)
 
       (:desc "open" :prefix "o"
-	:desc "Org agenda" "a" #'org-agenda)
+	      :desc "Org agenda" "a" #'+org/agenda-main
+        :desc "Org select agenda view" "A" #'org-agenda)
 
       (:desc "project" :prefix "p"
         :desc "Browse project" "." #'+default/browse-project
