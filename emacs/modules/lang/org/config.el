@@ -51,6 +51,9 @@
      +org|setup-clock
      +org|setup-id))
 
+(add-hook! 'org-mode-hook
+  #'(org-indent-mode))
+
 ;;
 ;; `org-load-hook'
 
