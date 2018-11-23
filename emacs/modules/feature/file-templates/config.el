@@ -30,6 +30,10 @@ rules that don't have a :trigger property in
 (defvar +file-templates-alist
   `(;; elisp
     ("/.dir-locals.el$")
+    ("\\.el$"
+     :when +file-templates-in-nucleus-dirs-p
+     :trigger "__nucleus"
+     :mode emacs-lisp-mode)
     ("/packages\\.el$"
      :when +file-templates-in-emacs-dirs-p
      :trigger "__module-packages"
@@ -48,6 +52,10 @@ plist. See `set-file-template!' for more information.")
 (defun +file-templates-in-emacs-dirs-p (file)
   "Returns t if FILE is in `nucleus-emacs-dir'."
   (file-in-directory-p file nucleus-emacs-dir))
+
+(defun +file-templates-in-nucleus-dirs-p (file)
+  "Return t if FILE ins in `nucleus-dir'."
+  (file-in-directory-p file nucleus-dir))
 
 (defun +file-templates|check ()
   "Check if the current buffer is a candidate for file template
