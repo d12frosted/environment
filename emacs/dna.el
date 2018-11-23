@@ -50,6 +50,7 @@
  :collab
 
  :config
+ default
  os)
 
 (setq nucleus-theme 'leuven
