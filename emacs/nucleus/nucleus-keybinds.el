@@ -1,8 +1,9 @@
-;;; nucleus/nucleus-keybinds.el -*- lexical-binding: t; -*-
+;;; nucleus-keybinds.el --- the heart of every cell -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2018 Boris Buliga
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
+;;         Henrik Lissner <henrik@lissner.net>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Created: 23 Nov 2018
@@ -12,6 +13,8 @@
 ;; License: GPLv3
 ;;
 ;; This file is not part of GNU Emacs.
+;;
+;; Most of the code was borrowed from hlissner/doom-emacs.
 ;;
 ;;; Commentary:
 ;;
