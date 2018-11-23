@@ -23,6 +23,9 @@
 ;; Setup location of Org files. Should be set before Org loads.
 (defvar org-directory (concat nucleus-home-dir "Dropbox/vulpea/"))
 
+(defvar +org-refile-ignore-tags '("JOURNAL" "REFILE")
+  "List of tags to ignore during refile.")
+
 ;;
 ;; Org modules
 
@@ -49,7 +52,8 @@
   #'(+org|setup-ui
      +org|setup-todo
      +org|setup-clock
-     +org|setup-id))
+     +org|setup-id
+     +org|setup-refile))
 
 (add-hook! 'org-mode-hook
   #'(org-indent-mode
@@ -68,6 +72,7 @@
 	org-adapt-indentation nil
 	org-startup-folded t
 	org-startup-indented t
+	org-outline-path-complete-in-steps nil
 
 	;; better formatting for properties
 	org-property-format "%-24s %s"))
@@ -112,9 +117,31 @@
   (add-hook! :append 'org-clock-out-hook #'+org/remove-empty-drawer))
 
 (defun +org|setup-id ()
-  "setup `org-id'."
+  "Setup `org-id'."
   (setq org-id-track-globally t
 	org-id-locations-file (concat nucleus-cache-dir "org-id-locations.el")))
+
+(defun +org|setup-refile ()
+  "Setup refile functionality."
+  (setq org-refile-targets '((nil :maxlevel . 4)
+			     (org-agenda-files :maxlevel . 4))
+	org-refile-use-outline-path t
+	org-refile-allow-creating-parent-nodes nil
+	org-refile-target-verify-function '+org-refile--verify-refile-target)
+
+  (defun +org-refile--verify-refile-target ()
+    "Exclude todo keywords with a done state from refile targets"
+    (let ((tags-at (org-get-tags-at)))
+      (and
+       ;; doesn't have done keyword
+       (not (member (nth 2 (org-heading-components)) org-done-keywords))
+
+       ;; doesn't have blacklisted tag
+       (or (null tags-at)
+           (member-if-not
+            (lambda (x)
+              (member (if (listp x) (car x) x) +org-refile-ignore-tags))
+            tags-at))))))
 
 ;;
 ;; Packages
