@@ -1,4 +1,4 @@
-;;; emacs/files/autoload.el -*- lexical-binding: t; -*-
+;;; emacs/file/autoload.el -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2018 Boris Buliga
 ;;
@@ -23,7 +23,7 @@
 ;;
 ;; Helpers
 
-(defun +files--forget (old-path &optional new-path)
+(defun +file--forget (old-path &optional new-path)
   "Ensure `recentf', `projectile' and `save-place' forget OLD-PATH."
   (when (bound-and-true-p recentf-mode)
     (when new-path
@@ -36,14 +36,14 @@
   (when (bound-and-true-p save-place-mode)
     (save-place-forget-unreadable-files)))
 
-(defun +files--update (path)
+(defun +file--update (path)
   (when (featurep 'vc)
     (vc-file-clearprops path)
     (vc-resynch-buffer path nil t))
   (when (featurep 'magit)
     (magit-refresh)))
 
-(defun +files--copy (old-path new-path &optional force-p)
+(defun +file--copy (old-path new-path &optional force-p)
   (let* ((new-path (expand-file-name new-path))
          (old-path (file-truename old-path))
          (new-path (apply #'expand-file-name
@@ -75,7 +75,7 @@
 ;; Commands
 
 ;;;###autoload
-(defun +files/delete-this (&optional path force-p)
+(defun +file/delete-this (&optional path force-p)
   "Delete FILENAME (defaults to the file associated with current buffer) and
 kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
   (interactive
@@ -96,45 +96,45 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
                  ;; Ensures that windows displaying this buffer will be switched
                  ;; to real buffers (`nucleus-real-buffer-p')
                  (nucleus/kill-this-buffer-in-all-windows buf t)
-                 (+files--forget path)
-                 (+files--update path)
+                 (+file--forget path)
+                 (+file--update path)
                  (message "Successfully deleted %s" short-path))))))))
 
 ;;;###autoload
-(defun +files/copy-this (new-path &optional force-p)
+(defun +file/copy-this (new-path &optional force-p)
   "Copy current buffer's file to NEW-PATH. If FORCE-P, overwrite the destination
 file if it exists, without confirmation."
   (interactive "F")
   (pcase (catch 'status
-           (when-let* ((dest (+files--copy (buffer-file-name) new-path force-p)))
-             (+files--update new-path)
+           (when-let* ((dest (+file--copy (buffer-file-name) new-path force-p)))
+             (+file--update new-path)
              (message "File successfully copied to %s" dest)))
     (`overwrite-self (error "Cannot overwrite self"))
     (`aborted (message "Aborted"))
     (_ t)))
 
 ;;;###autoload
-(defun +files/move-this (new-path &optional force-p)
+(defun +file/move-this (new-path &optional force-p)
   "Move current buffer's file to NEW-PATH. If FORCE-P, overwrite the destination
 file if it exists, without confirmation."
   (interactive "FP")
   (pcase (catch 'status
            (let ((old-path (buffer-file-name))
                  (new-path (expand-file-name new-path)))
-             (when-let* ((dest (+files--copy old-path new-path force-p)))
+             (when-let* ((dest (+file--copy old-path new-path force-p)))
                (when (file-exists-p old-path)
                  (delete-file old-path))
                (kill-this-buffer)
                (find-file new-path)
-               (+files--forget old-path new-path)
-               (+files--update new-path)
+               (+file--forget old-path new-path)
+               (+file--update new-path)
                (message "File successfully moved to %s" dest))))
     (`overwrite-self (error "Cannot overwrite self"))
     (`aborted (message "Aborted"))
     (_ t)))
 
 ;;;###autoload
-(defun +files/sudo-find (file)
+(defun +file/sudo-find (file)
   "Open FILE as root."
   (interactive
    (list (read-file-name "Open as root: ")))
@@ -145,7 +145,7 @@ file if it exists, without confirmation."
                (concat "/sudo:root@localhost:" file))))
 
 ;;;###autoload
-(defun +files/sudo-this ()
+(defun +file/sudo-this ()
   "Open the current file as root."
   (interactive)
-  (+files/sudo-find (file-truename buffer-file-name)))
+  (+file/sudo-find (file-truename buffer-file-name)))

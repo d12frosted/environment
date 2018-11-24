@@ -36,7 +36,7 @@
  default
 
  :emacs
- files
+ file
  ui
 
  :tools

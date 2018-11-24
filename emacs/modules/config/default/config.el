@@ -46,11 +46,11 @@
         :desc "Previous buffer" "[" #'previous-buffer
 	      :desc "Save buffer" "s" #'save-buffer
 	      :desc "Pop scratch buffer" "x" #'nucleus/open-scratch-buffer
-	      :desc "Sudo edit this file" "S" #'+files/sudo-this)
+	      :desc "Sudo edit this file" "S" #'+file/sudo-this)
 
       (:desc "file" :prefix "f"
         :desc "Find file" "." #'find-file
-        :desc "Sudo find file" ">" #'+files/sudo-find
+        :desc "Sudo find file" ">" #'+file/sudo-find
         :desc "Find file in project" "/" #'projectile-find-file
         :desc "Find file from here" "?" #'counsel-file-jump
         :desc "Find other file" "a" #'projectile-find-other-file
@@ -60,7 +60,7 @@
         :desc "Recent files" "r" #'recentf-open-files
         :desc "Recent project files" "R" #'projectile-recentf
         :desc "Yank filename" "y" #'+default/yank-buffer-filename
-        :desc "Delete this file" "X" #'+files/delete-this)
+        :desc "Delete this file" "X" #'+file/delete-this)
 
       (:desc "git" :prefix "g"
         :desc "Magit blame" "b" #'magit-blame-addition
