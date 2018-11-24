@@ -41,6 +41,22 @@
       (:when (featurep! :completion ivy)
 	      :desc "Resume last search" "'" #'ivy-resume)
 
+      (:desc "previous..." :prefix "["
+        :desc "Buffer" "b" #'previous-buffer
+        :desc "Diff Hunk" "d" #'git-gutter:previous-hunk
+        :desc "Todo" "t" #'hl-todo-previous
+        :desc "Error" "e" #'previous-error
+        :desc "Workspace" "w" #'+workspace/switch-left
+        :desc "Spelling correction" "s" #'flyspell-correct-wrapper)
+
+      (:desc "next..." :prefix "]"
+        :desc "Buffer" "b" #'next-buffer
+        :desc "Diff Hunk" "d" #'git-gutter:next-hunk
+        :desc "Todo" "t" #'hl-todo-next
+        :desc "Error" "e" #'next-error
+        :desc "Workspace" "w" #'+workspace/switch-right
+        :desc "Spelling correction" "s" (λ! (let ((flyspell-correct--direction)) (flyspell-correct-wrapper 0))))
+
       (:desc "search" :prefix "/"
 	      (:when (featurep! :completion ivy)
           :desc "Buffer" "b" #'swiper
