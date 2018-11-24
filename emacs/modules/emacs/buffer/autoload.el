@@ -65,7 +65,7 @@ meant to clean up leftover buffers and processes.")
 Returns nil if BUF should be skipped over by functions like
 `next-buffer' and `other-buffer'."
   (or (+buffer-real-p buf)
-      (eq buf (+buffer-fallback-buffer))))
+      (eq buf (+buffer-fallback))))
 
 ;;;###autoload
 (defun +buffer-fallback ()
