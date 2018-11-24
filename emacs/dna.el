@@ -39,6 +39,7 @@
  buffer
  file
  ui
+ window
 
  :tools
  magit
