@@ -33,6 +33,7 @@
 
  :ui
  modern
+ theming
 
  :editor
  default
