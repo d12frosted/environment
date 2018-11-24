@@ -41,7 +41,7 @@ If neither is available, run all tests in all enabled modules."
          (cond ((stringp (car modules)) ; command line
                 (save-match-data
                   (cl-loop for arg in modules
-                           if (string= arg ":core") collect nucleus-dir
+                           if (string= arg ":nucleus") collect nucleus-dir
                            else if (string-match-p "/" arg)
                            nconc (mapcar (apply-partially #'expand-file-name arg)
                                          nucleus-modules-dirs)

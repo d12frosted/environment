@@ -178,7 +178,7 @@ FILE."
                                 ((file-in-directory-p path nucleus-emacs-dir)
                                  `(:private . ,(intern (file-name-base path))))
                                 ((file-in-directory-p path nucleus-emacs-dir)
-                                 `(:core . ,(intern (file-name-base path))))))
+                                 `(:nucleus . ,(intern (file-name-base path))))))
                   (nucleus-file-form
                    `(put ',name 'nucleus-file ,(abbreviate-file-name path))))
              (cond ((memq type '(defun defmacro cl-defun cl-defmacro))
@@ -247,7 +247,7 @@ FILE."
   "Refreshes the autoloads.el file, specified by
 `nucleus-autoload-file', if necessary (or if FORCE-P is non-nil).
 
-It scans and reads core/autoload/*.el, modules/*/*/autoload.el
+It scans and reads nucleus/autoload/*.el, modules/*/*/autoload.el
 and modules/*/*/autoload/*.el, and generates
 `nucleus-autoload-file'. This file tells Emacs where to find
 lazy-loaded functions.
