@@ -29,7 +29,8 @@
 
 ;;;###autoload
 (defun nucleus/am-i-secure ()
-  "Test to see if your root certificates are securely configured in emacs."
+  "Test to see if your root certificates are securely configured
+in Emacs."
   (declare (interactive-only t))
   (interactive)
   (unless (string-match-p "\\_<GNUTLS\\_>" system-configuration-features)

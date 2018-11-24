@@ -19,10 +19,10 @@
 ;; This little library thinly wraps around persistent-soft (which is a
 ;; pcache wrapper, how about that). It has three purposes:
 ;;
-;; - To encapsulate the cache backend (persistent-soft/pcache in this
-;;   case), in case it needs to change.
-;; - To provide `nucleus-cache-persist': a mechanism for easily
-;;   persisting variables across Emacs sessions.
+;; - To encapsulate the cache backend (persistent-soft/pcache in this case), in
+;;   case it needs to change.
+;; - To provide `nucleus-cache-persist': a mechanism for easily persisting
+;;   variables across Emacs sessions.
 ;; - To lazy-load persistent-soft until it is really needed.
 ;;
 ;; Like persistent-soft, caches assume a 2-tier structure, where all
