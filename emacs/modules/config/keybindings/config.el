@@ -105,4 +105,30 @@
         :desc "Switch project" "p" #'projectile-switch-project
         :desc "Recent project files" "r" #'projectile-recentf
         :desc "List project tasks" "t" #'+ivy/tasks
-        :desc "Invalidate cache" "x" #'projectile-invalidate-cache))
+        :desc "Invalidate cache" "x" #'projectile-invalidate-cache)
+
+      (:desc "workspace" :prefix [tab]
+        :desc "Display tab bar" [tab] #'+workspace/display
+        :desc "New workspace" "n" #'+workspace/new
+        :desc "Load workspace from file" "l" #'+workspace/load
+        :desc "Load a past session" "L" #'+workspace/load-session
+        :desc "Save workspace to file" "s" #'+workspace/save
+        :desc "Autosave current session" "S" #'+workspace/save-session
+        :desc "Switch workspace" "." #'+workspace/switch-to
+        :desc "Kill all buffers" "x" #'+buffer/kill-all
+        :desc "Delete session" "X" #'+workspace/kill-session
+        :desc "Delete this workspace" "d" #'+workspace/delete
+        :desc "Rename workspace" "r" #'+workspace/rename
+        :desc "Restore last session" "R" #'+workspace/load-last-session
+        :desc "Next workspace" "]" #'+workspace/switch-right
+        :desc "Previous workspace" "[" #'+workspace/switch-left
+        :desc "Switch to 1st workspace" "1" (λ! (+workspace/switch-to 0))
+        :desc "Switch to 2nd workspace" "2" (λ! (+workspace/switch-to 1))
+        :desc "Switch to 3rd workspace" "3" (λ! (+workspace/switch-to 2))
+        :desc "Switch to 4th workspace" "4" (λ! (+workspace/switch-to 3))
+        :desc "Switch to 5th workspace" "5" (λ! (+workspace/switch-to 4))
+        :desc "Switch to 6th workspace" "6" (λ! (+workspace/switch-to 5))
+        :desc "Switch to 7th workspace" "7" (λ! (+workspace/switch-to 6))
+        :desc "Switch to 8th workspace" "8" (λ! (+workspace/switch-to 7))
+        :desc "Switch to 9th workspace" "9" (λ! (+workspace/switch-to 8))
+        :desc "Switch to last workspace" "0" #'+workspace/switch-to-last))

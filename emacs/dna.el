@@ -24,6 +24,7 @@
  snippets
  spellcheck
  syntax-checker
+ workspaces
 
  :completion
  (company
