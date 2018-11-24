@@ -18,10 +18,10 @@
 ;;
 ;;; Code:
 
-(require 'core-cli)
+(require 'nucleus-cli)
 
 (defun nucleus--run (command &optional yes)
-  (let ((default-directory nucleus-emacs-dir)
+  (let ((default-directory nucleus-dir)
         (nucleus-auto-accept yes))
     (let ((compilation-buffer-name-function (lambda (_) "*bin/nucleus*")))
       (compile (format "bin/nucleus %s" command) t))
@@ -30,7 +30,6 @@
     (when (y-or-n-p "Reload Emacs config?")
       (nucleus/reload))
     (message "Done")))
-
 
 ;;;###autoload
 (defun nucleus//update (&optional yes)
@@ -75,7 +74,7 @@ files (if necessary), reinistalize nucleus (via
 `nucleus-initialize') and reloads your private init.el and
 config.el. Then runs `nucleus-reload-hook'."
   (interactive "P")
-  (require 'core-cli)
+  (require 'nucleus-cli)
   (nucleus-reload-autoloads force-p)
   (setq load-path nucleus-site-load-path)
   (let (nucleus-init-p)
