@@ -54,7 +54,7 @@
  :collab
 
  :config
- default
+ keybindings
  os)
 
 (setq nucleus-theme 'leuven

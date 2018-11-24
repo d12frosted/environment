@@ -52,7 +52,34 @@ absolute."
   (setq-default projectile-project-root nil)
   (dolist (fn projectile-project-root-files-functions)
     (remhash (format "%s-%s" fn default-directory)
-	     projectile-project-root-cache)))
+	           projectile-project-root-cache)))
+
+;;;###autoload
+(defun +project/browse-this ()
+  "Traverse a file structure starting linearly from
+`+project-root'."
+  (interactive)
+  (+project-browse (+project-root)))
+
+;;;###autoload
+(defun +project/browse-config ()
+  "Traverse a file structure starting linearly from
+`nucleus-config-dir'."
+  (interactive)
+  (+project-browse nucleus-config-dir))
+
+;;;###autoload
+(defun +project/browse-emacs-config ()
+  "Traverse a file structure starting linearly from
+`nucleus-emacs-dir'."
+  (interactive)
+  (+project-browse nucleus-emacs-dir))
+
+;;;###autoload
+(defun +project/find-in-config ()
+  "Fuzzy-find a file under `nucleus-config-dir'."
+  (interactive)
+  (+project-find-file nucleus-config-dir))
 
 ;;
 ;; Library

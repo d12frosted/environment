@@ -1,4 +1,4 @@
-;;; config/default/config.el -*- lexical-binding: t; -*-
+;;; config/keybindings/config.el -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2018 Boris Buliga
 ;;
@@ -55,8 +55,9 @@
         :desc "Find file from here" "?" #'counsel-file-jump
         :desc "Find other file" "a" #'projectile-find-other-file
         :desc "Find directory" "d" #'dired
-        :desc "Find file in .config" "e" #'+default/find-in-config
-        :desc "Browse .config" "E" #'+default/browse-config
+        :desc "Find file in .config" "c" #'+project/find-in-config
+        :desc "Browse .config" "C" #'+project/browse-config
+        :desc "Browse .config/emacs" "E" #'+project/browse-emacs-config
         :desc "Recent files" "r" #'recentf-open-files
         :desc "Recent project files" "R" #'projectile-recentf
         :desc "Yank filename" "y" #'+default/yank-buffer-filename
