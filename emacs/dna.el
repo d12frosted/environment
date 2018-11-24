@@ -36,6 +36,7 @@
  default
 
  :emacs
+ buffer
  file
  ui
 

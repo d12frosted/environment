@@ -102,3 +102,15 @@ absolute."
      ;; completion modules may remap this command
      (or (command-remapping #'find-file)
          #'find-file))))
+
+;;;###autoload
+(defun +project-buffer-list ()
+  "Return a list of buffers belonging to the current project.
+
+If no project is active, return all buffers."
+  (let ((buffers (+buffer-list)))
+    (if-let* ((project-root (+project-root)))
+        (cl-loop for buf in buffers
+                 if (projectile-project-buffer-p buf project-root)
+                 collect buf)
+      buffers)))

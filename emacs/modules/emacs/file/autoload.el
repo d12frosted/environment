@@ -95,7 +95,7 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
                    (error "Failed to delete %s" short-path)
                  ;; Ensures that windows displaying this buffer will be switched
                  ;; to real buffers (`nucleus-real-buffer-p')
-                 (nucleus/kill-this-buffer-in-all-windows buf t)
+                 (+buffer/kill-this-in-all-windows buf t)
                  (+file--forget path)
                  (+file--update path)
                  (message "Successfully deleted %s" short-path))))))))
