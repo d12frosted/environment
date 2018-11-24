@@ -18,10 +18,14 @@
 ;;; Code:
 
 (map! :leader
+      ;; most used key bindings
       :desc "Find file in project" "SPC" #'projectile-find-file
       :desc "Browse files" "." #'find-file
+
+      ;; org short-cuts
       :desc "Org Capture" "x"  #'+org/capture-task
       :desc "Org Capture Template" "X"  #'org-capture
+
       (:when (featurep! :completion ivy)
 	      :desc "Resume last search" "'" #'ivy-resume)
 
@@ -63,6 +67,7 @@
         :desc "Yank filename" "y" #'+buffer/yank-filename
         :desc "Delete this file" "X" #'+file/delete-this)
 
+      ;; TODO: revaluate these bindings
       (:desc "git" :prefix "g"
         :desc "Magit blame" "b" #'magit-blame-addition
         :desc "Magit commit" "c" #'magit-commit
@@ -101,4 +106,3 @@
         :desc "Recent project files" "r" #'projectile-recentf
         :desc "List project tasks" "t" #'+ivy/tasks
         :desc "Invalidate cache" "x" #'projectile-invalidate-cache))
-
