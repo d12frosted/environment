@@ -60,7 +60,7 @@
         :desc "Browse .config/emacs" "E" #'+project/browse-emacs-config
         :desc "Recent files" "r" #'recentf-open-files
         :desc "Recent project files" "R" #'projectile-recentf
-        :desc "Yank filename" "y" #'+default/yank-buffer-filename
+        :desc "Yank filename" "y" #'+buffer/yank-filename
         :desc "Delete this file" "X" #'+file/delete-this)
 
       (:desc "git" :prefix "g"
