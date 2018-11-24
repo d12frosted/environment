@@ -32,6 +32,7 @@
  ivy
 
  :ui
+ modern
 
  :editor
  default
@@ -39,7 +40,6 @@
  :emacs
  buffer
  file
- ui
  window
 
  :tools
@@ -57,8 +57,3 @@
  :config
  keybindings
  os)
-
-(setq nucleus-theme 'leuven
-      nucleus-font (font-spec :family "Source Code Pro" :size 12)
-      nucleus-big-font (font-spec :family "Source Code Pro" :size 18)
-      nucleus-serif-font (font-spec :family "Source Code Pro" :size 12))
