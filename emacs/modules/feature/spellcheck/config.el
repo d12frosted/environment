@@ -17,11 +17,12 @@
 ;;
 ;;; Code:
 
-(defvar-local +spellcheck-immediately t
+(defvar-local +spellcheck-immediately nil
   "If non-nil, spellcheck the current buffer upon starting `flyspell-mode'.
 
-Since spellchecking can be slow in some buffers, this can be
-disabled with:
+Since spellchecking can be slow in some buffers, so this is
+disabled by default. But one can enable it in specific modes or
+files. For example,
 
   (setq-hook! 'TeX-mode-hook +spellcheck-immediately nil)")
 
@@ -37,14 +38,11 @@ disabled with:
 
 (def-package! flyspell ; built-in
   :defer t
-  :init (add-hook 'flyspell-mode-hook #'+spellcheck|immediately)
-  :config
-  (defun +spellcheck|immediately ()
-    "Spellcheck the buffer when `flyspell-mode' is enabled."
-    (when (and flyspell-mode +spellcheck-immediately)
-      (flyspell-buffer))))
+  :init
+  (add-hook 'flyspell-mode-hook #'+spellcheck|immediately))
 
 (def-package! flyspell-correct-ivy
+  :defer t
   :init
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
