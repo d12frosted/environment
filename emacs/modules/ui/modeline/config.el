@@ -428,7 +428,8 @@ Meant for `+modeline-buffer-path-function'."
   ;; means there is no state for this file.
   :on-set (vc-mode)
   :on-hooks (nucleus-enter-buffer-hook
-             nucleus-enter-window-hook)
+             nucleus-enter-window-hook
+             nucleus-exit-window-hook)
   (when (and vc-mode buffer-file-name)
     (let* ((backend (vc-backend buffer-file-name))
            (state   (vc-state-refresh buffer-file-name backend)))
