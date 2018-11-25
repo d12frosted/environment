@@ -103,9 +103,6 @@ inherit `+modern-font's size.")
  ;; minibuffer resizing
  resize-mini-windows 'grow-only
 
- ;; hide :help-echo text
- show-help-function nil ; 'tooltip-show-help
-
  ;; favor vertical splits
  split-height-threshold 120
  split-width-threshold 160
