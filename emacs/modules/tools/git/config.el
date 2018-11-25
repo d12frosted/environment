@@ -27,6 +27,11 @@
   :config
   (setq magit-todos-require-colon nil))
 
+(after! git-timemachine
+  (setq git-timemachine-show-minibuffer-details t)
+  (advice-add #'git-timemachine--show-minibuffer-details :override #'+git*update-header-line)
+  (add-transient-hook! #'git-timemachine-blame (require 'magit-blame)))
+
 (defun +git|enforce-commit-conventions ()
   "See https://chris.beams.io/posts/git-commit/"
   (setq fill-column 72

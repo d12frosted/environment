@@ -19,3 +19,4 @@
 
 (package! magit)
 (package! magit-todos)
+(package! git-timemachine)
