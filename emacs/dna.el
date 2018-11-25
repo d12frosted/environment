@@ -53,6 +53,7 @@
  emacs-lisp
  org
  rest
+ sh
 
  :app
 
