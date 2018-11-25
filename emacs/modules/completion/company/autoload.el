@@ -57,7 +57,7 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
     (when (eq modes :derived)
       (setq type :derived
             modes (pop backends)))
-    (dolist (mode (doom-enlist modes))
+    (dolist (mode (nucleus-enlist modes))
       (if (null (car backends))
           (setq +company-backend-alist
                 (delq (assq mode +company-backend-alist)
