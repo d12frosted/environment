@@ -426,6 +426,8 @@ Meant for `+modeline-buffer-path-function'."
   ;; TODO vc-mode is not activated in files that are not registered in VCS which
   ;; means there is no state for this file.
   :on-set (vc-mode)
+  :on-hooks (nucleus-enter-buffer-hook
+             nucleus-enter-window-hook)
   (when (and vc-mode buffer-file-name)
     (let* ((backend (vc-backend buffer-file-name))
            (state   (vc-state buffer-file-name backend)))
