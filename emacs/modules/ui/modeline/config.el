@@ -454,7 +454,7 @@ Meant for `+modeline-buffer-path-function'."
                        (if active (setq face '+modeline-urgent))
                        (all-the-icons-octicon "alert" :face face))
                       (t
-                       (if active (setq face '+modeline-info))
+                       (if active (setq face 'mode-line))
                        (all-the-icons-octicon
                         "git-compare"
                         :face face
