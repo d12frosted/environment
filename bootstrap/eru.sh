@@ -374,6 +374,10 @@ theme_guard "skhd" "Patch skhd application PATH" && {
   }
 }
 
+theme_guard "Emacs" "Refresh Nucleus" && {
+  nucleus --yes refresh
+}
+
 theme_guard "Guardian" "Check that Emacs runs as expected" && {
   emacs --batch -l "$target/emacs/test.el"
 }
