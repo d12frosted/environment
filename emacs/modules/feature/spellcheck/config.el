@@ -47,3 +47,6 @@ disabled with:
 (def-package! flyspell-correct-ivy
   :init
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
+
+(add-hook! '(text-mode-hook) #'flyspell-mode)
+(add-hook! '(prog-mode-hook) #'flyspell-prog-mode)
