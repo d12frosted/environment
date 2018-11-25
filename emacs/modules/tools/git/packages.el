@@ -1,4 +1,4 @@
-;;; tools/magit/config.el -*- lexical-binding: t; -*-
+;;; tools/git/packages.el -*- no-byte-compile: t; -*-
 ;;
 ;; Copyright (c) 2018 Boris Buliga
 ;;
@@ -17,12 +17,5 @@
 ;;
 ;;; Code:
 
-(def-package! magit
-  :init
-  ;; TODO: we already use `global-auto-revert-mode'
-  (setq magit-auto-revert-mode nil))
-
-(def-package! magit-todos
-  :hook (magit-mode . magit-todos-mode)
-  :config
-  (setq magit-todos-require-colon nil))
+(package! magit)
+(package! magit-todos)

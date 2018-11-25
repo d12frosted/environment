@@ -46,7 +46,7 @@
  window
 
  :tools
- magit
+ git
 
  :lang
  emacs-lisp
