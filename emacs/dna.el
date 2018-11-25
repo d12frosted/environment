@@ -32,6 +32,7 @@
  ivy
 
  :ui
+ helpful
  modern
  theming
 

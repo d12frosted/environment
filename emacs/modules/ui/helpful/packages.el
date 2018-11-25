@@ -1,11 +1,11 @@
-;;; editor/default/packages.el -*- no-byte-compile: t; -*-
+;;; ui/helpful/packages.el -*- no-byte-compile: t; -*-
 ;;
 ;; Copyright (c) 2018 Boris Buliga
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
-;; Created: 23 Nov 2018
+;; Created: 25 Nov 2018
 ;;
 ;; URL: https://github.com/d12frosted/environment/emacs
 ;;
@@ -17,4 +17,4 @@
 ;;
 ;;; Code:
 
-(package! ws-butler)
+(package! helpful)

@@ -39,13 +39,6 @@
  tab-always-indent t
  tab-width 2)
 
-;; `helpful'
-(define-key! 'global
-  [remap describe-function] #'helpful-callable
-  [remap describe-command]  #'helpful-command
-  [remap describe-variable] #'helpful-variable
-  [remap describe-key]      #'helpful-key)
-
 (def-package! ws-butler
   :config
   (setq ws-butler-global-exempt-modes
