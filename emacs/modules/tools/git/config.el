@@ -20,7 +20,10 @@
 (def-package! magit
   :init
   ;; we already use `global-auto-revert-mode'
-  (setq magit-auto-revert-mode nil))
+  (setq magit-auto-revert-mode nil)
+
+  ;; full-screen is my friend
+  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
 
 (def-package! magit-todos
   :hook (magit-mode . magit-todos-mode)
