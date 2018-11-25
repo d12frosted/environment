@@ -1,11 +1,11 @@
-;;; ui/theming/config.el -*- lexical-binding: t; -*-
+;;; ui/theming/autoload.el -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2018 Boris Buliga
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
-;; Created: 24 Nov 2018
+;; Created: 25 Nov 2018
 ;;
 ;; URL: https://github.com/d12frosted/environment/emacs
 ;;
@@ -17,8 +17,9 @@
 ;;
 ;;; Code:
 
-(def-package! leuven-theme
-  :init
-  (unless +modern-theme
-    (setq +modern-theme 'leuven))
-  (add-hook '+modern-init-ui-hook #'+leuven|patch-faces))
+;;;###autoload
+(defun +leuven|patch-faces ()
+  "Patch faces of `leuven-theme'."
+  (when (eq +modern-theme 'leuven)
+    (custom-set-faces
+     '(+modeline-info ((t (:foreground "PaleGreen1"))) t))))
