@@ -380,21 +380,26 @@ Meant for `+modeline-buffer-path-function'."
 
 (def-modeline-segment! +modeline-buffer-state
   (let* ((base (buffer-base-buffer))
+         (active (active))
+         (face 'mode-line-inactive)
          (icon (cond (buffer-read-only
+                      (if active (setq face '+modeline-warning))
                       (all-the-icons-octicon
                        "lock"
-                       :face '+modeline-warning
+                       :face face
                        :v-adjust -0.05))
                      ((buffer-modified-p base)
+                      (if active (setq face '+modeline-buffer-modified))
                       (all-the-icons-faicon
                        "floppy-o"
-                       :face '+modeline-buffer-modified
+                       :face face
                        :v-adjust -0.05))
                      ((and (buffer-file-name base)
                            (not (file-exists-p (buffer-file-name base))))
+                      (if active (setq face '+modeline-urgent))
                       (all-the-icons-octicon
                        "circle-slash"
-                       :face '+modeline-urgent
+                       :face face
                        :v-adjust -0.05)))))
     (if icon (concat icon " "))))
 
