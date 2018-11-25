@@ -428,6 +428,10 @@ Meant for `+modeline-buffer-path-function'."
 (def-modeline-segment! +modeline-vcs
   ;; TODO vc-mode is not activated in files that are not registered in VCS which
   ;; means there is no state for this file.
+  ;;
+  ;; TODO for some reason mode-line-active face has no effect when you have
+  ;; multiple windows visiting same buffer. So VC segment is drawn in 'active'
+  ;; state instead of 'inactive'.
   :on-set (vc-mode)
   :on-hooks (nucleus-enter-buffer-hook
              nucleus-enter-window-hook
@@ -454,7 +458,7 @@ Meant for `+modeline-buffer-path-function'."
                        (if active (setq face '+modeline-urgent))
                        (all-the-icons-octicon "alert" :face face))
                       (t
-                       (if active (setq face 'mode-line))
+                       (if active (setq face '+modeline-info))
                        (all-the-icons-octicon
                         "git-compare"
                         :face face

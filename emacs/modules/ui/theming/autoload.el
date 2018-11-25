@@ -22,4 +22,4 @@
   "Patch faces of `leuven-theme'."
   (when (eq +modern-theme 'leuven)
     (custom-set-faces
-     '(+modeline-info ((t (:foreground "PaleGreen1"))) t))))
+     '(+modeline-info ((t (:inherit mode-line))) t))))
