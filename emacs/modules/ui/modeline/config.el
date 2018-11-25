@@ -61,6 +61,11 @@ Currently available functions:
 (defvar-local +modeline-format-left  () "TODO")
 (defvar-local +modeline-format-right () "TODO")
 
+(defvar-local +modeline-indent-width nil
+  "Indent width in the current buffer.
+
+Useful for modes that don't use `tab-width' for indentation.")
+
 (put '+modeline-format-left  'risky-local-variable t)
 (put '+modeline-format-right 'risky-local-variable t)
 
@@ -469,13 +474,13 @@ Meant for `+modeline-buffer-path-function'."
 
 (def-modeline-segment! +modeline-indent-style
   :on-hooks (after-revert-hook after-save-hook find-file-hook)
-  :on-set (indent-tabs-mode tab-width)
+  :on-set (indent-tabs-mode +modeline-indent-width tab-width)
   (propertize (format "%s%d  "
                       (if indent-tabs-mode "⭾" "␣")
-                      tab-width)
+                      (or +modeline-indent-width tab-width))
               'help-echo
               (format "Indentation: %d %s wide"
-                      tab-width
+                      (or +modeline-indent-width tab-width)
                       (if indent-tabs-mode "tabs" "spaces"))))
 
 (def-modeline-segment! +modeline-encoding
