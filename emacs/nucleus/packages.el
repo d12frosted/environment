@@ -26,3 +26,4 @@
 
 ;; nucleus-keybinds.el
 (package! which-key)
+(package! hydra)

@@ -286,5 +286,12 @@ Example
        (t (user-error "Invalid key %s" key))))
     `(progn ,@(nreverse forms))))
 
+(def-package! hydra
+  :init
+  (defalias 'def-hydra! 'defhydra)
+  (defalias 'def-hydra-radio! 'defhydradio)
+  :config
+  (setq lv-use-seperator t))
+
 (provide 'nucleus-keybinds)
 ;;; nucleus-keybinds.el ends here
