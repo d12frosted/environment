@@ -17,3 +17,4 @@
 ;;
 ;;; Code:
 
+(package! highlight-quoted)
