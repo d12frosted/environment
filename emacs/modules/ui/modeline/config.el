@@ -430,7 +430,7 @@ Meant for `+modeline-buffer-path-function'."
              nucleus-enter-window-hook)
   (when (and vc-mode buffer-file-name)
     (let* ((backend (vc-backend buffer-file-name))
-           (state   (vc-state buffer-file-name backend)))
+           (state   (vc-state-refresh buffer-file-name backend)))
       (let ((face    'mode-line-inactive)
             (active  (active))
             (all-the-icons-default-adjust -0.1))
