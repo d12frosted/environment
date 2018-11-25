@@ -162,6 +162,7 @@ mode-line path."
 
 (add-hook 'window-configuration-change-hook #'+modeline|set-selected-window)
 (add-hook 'nucleus-enter-window-hook #'+modeline|set-selected-window)
+(add-hook 'nucleus-exit-window-hook #'+modeline|unset-selected-window)
 (if (not (boundp 'after-focus-change-function))
     (progn
       (add-hook 'focus-in-hook  #'+modeline|set-selected-window)
