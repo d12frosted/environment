@@ -33,6 +33,7 @@
 
  :ui
  helpful
+ modeline
  modern
  theming
 
