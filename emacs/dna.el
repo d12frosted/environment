@@ -38,6 +38,7 @@
 
  :editor
  default
+ whitespaces
 
  :emacs
  buffer

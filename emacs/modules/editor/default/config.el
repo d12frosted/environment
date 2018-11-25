@@ -28,7 +28,7 @@
  bookmark-save-flag t
 
  ;; Formatting
- delete-trailing-lines nil
+ delete-trailing-lines nil ; `ws-butler' is used for better whitespace handling
  fill-column 80
  sentence-end-double-space nil
  word-wrap t
@@ -38,10 +38,3 @@
  require-final-newline t
  tab-always-indent t
  tab-width 2)
-
-(def-package! ws-butler
-  :config
-  (setq ws-butler-global-exempt-modes
-        (append ws-butler-global-exempt-modes
-                '(special-mode comint-mode term-mode eshell-mode)))
-  (ws-butler-global-mode))
