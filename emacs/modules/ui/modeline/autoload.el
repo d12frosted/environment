@@ -82,7 +82,7 @@ aligned respectively."
                                              (when (+modeline-segment-active-p ',name)
                                                (setq-local ,realvar ,(macroexp-progn body)))))
                                      (byte-compile ',setterfn))
-                                   (mapcar (lambda (hook) `(add-hook ',hook #',setterfn))
+                                   (mapcar (lambda (hook) `(add-hook ',hook #',setterfn t))
                                            on-hooks)
                                    (when on-set
                                      `((fset ',varsetterfn
