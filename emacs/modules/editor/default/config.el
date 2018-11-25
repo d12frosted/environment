@@ -38,3 +38,10 @@
  require-final-newline t
  tab-always-indent t
  tab-width 2)
+
+(def-package! autorevert
+  ;; revert buffers for changed files
+  :after-call after-find-file
+  :config
+  (setq auto-revert-verbose nil)
+  (global-auto-revert-mode +1))

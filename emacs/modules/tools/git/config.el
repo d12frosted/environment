@@ -19,7 +19,7 @@
 
 (def-package! magit
   :init
-  ;; TODO: we already use `global-auto-revert-mode'
+  ;; we already use `global-auto-revert-mode'
   (setq magit-auto-revert-mode nil))
 
 (def-package! magit-todos
