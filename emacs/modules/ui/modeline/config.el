@@ -436,7 +436,8 @@ Meant for `+modeline-buffer-path-function'."
   ;;
   ;; TODO for some reason mode-line-active face has no effect when you have
   ;; multiple windows visiting same buffer. So VC segment is drawn in 'active'
-  ;; state instead of 'inactive'.
+  ;; state instead of 'inactive'. The problem here is that the modeline segment
+  ;; variable is a buffer local.
   :on-set (vc-mode)
   :on-hooks (nucleus-enter-buffer-hook
              nucleus-enter-window-hook
