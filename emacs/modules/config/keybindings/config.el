@@ -27,16 +27,16 @@
       :desc "Org capture" "X"  #'org-capture
 
       ;; fast workspaces switch
-      "M-1" (λ! (+workspace/switch-to 0))
-      "M-2" (λ! (+workspace/switch-to 1))
-      "M-3" (λ! (+workspace/switch-to 2))
-      "M-4" (λ! (+workspace/switch-to 3))
-      "M-5" (λ! (+workspace/switch-to 4))
-      "M-6" (λ! (+workspace/switch-to 5))
-      "M-7" (λ! (+workspace/switch-to 6))
-      "M-8" (λ! (+workspace/switch-to 7))
-      "M-9" (λ! (+workspace/switch-to 8))
-      "M-0" #'+workspace/switch-to-last
+      :desc "Switch to 1st workspace" "M-1" (λ! (+workspace/switch-to 0))
+      :desc "Switch to 2nd workspace" "M-2" (λ! (+workspace/switch-to 1))
+      :desc "Switch to 3th workspace" "M-3" (λ! (+workspace/switch-to 2))
+      :desc "Switch to 4th workspace" "M-4" (λ! (+workspace/switch-to 3))
+      :desc "Switch to 5th workspace" "M-5" (λ! (+workspace/switch-to 4))
+      :desc "Switch to 6th workspace" "M-6" (λ! (+workspace/switch-to 5))
+      :desc "Switch to 7th workspace" "M-7" (λ! (+workspace/switch-to 6))
+      :desc "Switch to 8th workspace" "M-8" (λ! (+workspace/switch-to 7))
+      :desc "Switch to 9th workspace" "M-9" (λ! (+workspace/switch-to 8))
+      :desc "Switch to last workspace" "M-0" #'+workspace/switch-to-last
 
       (:when (featurep! :completion ivy)
 	      :desc "Resume last search" "'" #'ivy-resume)
