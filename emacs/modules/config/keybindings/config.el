@@ -23,8 +23,8 @@
       :desc "Browse files" "." #'find-file
 
       ;; org short-cuts
-      :desc "Org Capture" "x"  #'+org/capture-task
-      :desc "Org Capture Template" "X"  #'org-capture
+      :desc "Org fast capture" "x"  #'+org/capture-task
+      :desc "Org capture" "X"  #'org-capture
 
       ;; fast workspaces switch
       "M-1" (λ! (+workspace/switch-to 0))
@@ -121,8 +121,8 @@
         :desc "Previous hunk" "[" #'git-gutter:previous-hunk)
 
       (:desc "open" :prefix "o"
-	      :desc "Org agenda" "a" #'+org/agenda-main
-        :desc "Org select agenda view" "A" #'org-agenda)
+	      :desc "Org fast agenda" "a" #'+org/agenda-main
+        :desc "Org agenda" "A" #'org-agenda)
 
       (:desc "project" :prefix "p"
         :desc "Browse project" "." #'+default/browse-project
