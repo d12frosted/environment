@@ -122,7 +122,8 @@
 
       (:desc "open" :prefix "o"
 	      :desc "Org fast agenda" "a" #'+org/agenda-main
-        :desc "Org agenda" "A" #'org-agenda)
+        :desc "Org agenda" "A" #'org-agenda
+        :desc "Brain node" "b" #'org-brain-visualize)
 
       (:desc "project" :prefix "p"
         :desc "Browse project" "." #'+default/browse-project
