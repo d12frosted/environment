@@ -71,6 +71,8 @@ Useful for modes that don't use `tab-width' for indentation.")
 
 (defvar +modeline--vspc (propertize " " 'face 'variable-pitch))
 
+(defvar anzu--state nil)
+(defvar iedit-mode nil)
 (defvar all-the-icons-scale-factor)
 (defvar all-the-icons-default-adjust)
 
@@ -110,7 +112,7 @@ mode-line path."
 
 (defface +modeline-panel
   '((t (:inherit mode-line-highlight)))
-  "Face for 'X out of Y' segments, such as`iedit'."
+  "Face for 'X out of Y' segments, such as`iedit' or `anzu'."
   :group '+modeline)
 
 (defface +modeline-info
@@ -138,6 +140,38 @@ mode-line path."
 
 (defvaralias 'mode-line-format-left '+modeline-format-left)
 (defvaralias 'mode-line-format-right '+modeline-format-right)
+
+;;
+;; Packages
+
+(def-package! anzu
+  :after-call isearch-mode
+  :config
+  (setq anzu-cons-mode-line-p nil
+        anzu-minimum-input-length 1
+        anzu-search-threshold 250)
+  (global-anzu-mode +1)
+
+  (defun +modeline*fix-anzu-count (positions here)
+    (cl-loop for (start . end) in positions
+             collect t into before
+             when (and (>= here start) (<= here end))
+             return (length before)
+             finally return 0))
+  (advice-add #'anzu--where-is-here :override #'+modeline*fix-anzu-count)
+
+  ;; Avoid anzu conflicts across buffers
+  (mapc #'make-variable-buffer-local
+        '(anzu--total-matched
+          anzu--current-position
+          anzu--state
+          anzu--cached-count
+          anzu--cached-positions
+          anzu--last-command
+          anzu--last-isearch-string anzu--overflow-p))
+  ;; Ensure anzu state is cleared when searches & iedit are done
+  (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
+  (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
 
 ;;
 ;; Make friends
@@ -522,6 +556,21 @@ Meant for `+modeline-buffer-path-function'."
                                      :v-adjust -0.05)
               sep))))
 
+(defsubst +modeline--anzu ()
+  "Show the match index and total number thereof."
+  (when (and anzu--state (not iedit-mode))
+    (propertize
+     (let ((here anzu--current-position)
+           (total anzu--total-matched))
+       (cond ((eq anzu--state 'replace-query)
+              (format " %d replace " total))
+             ((eq anzu--state 'replace)
+              (format " %d/%d " here total))
+             (anzu--overflow-p
+              (format " %s+ " total))
+             ((format " %s/%d " here total))))
+     'face (if (active) '+modeline-panel))))
+
 (defun +modeline-themes--overlay-sort (a b)
   (< (overlay-start a) (overlay-start b)))
 
@@ -549,8 +598,9 @@ on."
   "Displays:
 
 1. the currently recording macro,
-2. nothing more"
+2. a current/total for the current search term (with anzu)."
   (let ((meta (concat (+modeline--macro-recording)
+                      (+modeline--anzu)
                       " ")))
      (or (and (not (equal meta " ")) meta)
          (if buffer-file-name " %I "))))

@@ -18,3 +18,4 @@
 ;;; Code:
 
 (package! shrink-path)
+(package! anzu)
