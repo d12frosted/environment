@@ -131,5 +131,6 @@ chunkc core::load purify.so
 #
 
 chunkc tiling::rule --owner Finder --name Copy --state float &
+chunkc tiling::rule --owner VOX --state float &
 chunkc tiling::rule --owner \"App Store\" --state float &
 chunkc tiling::rule --owner Emacs --state tile &

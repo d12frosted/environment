@@ -51,6 +51,8 @@ cask "mactex"
 cask "slack"
 cask "telegram"
 cask "ubersicht"
+cask "vox"
+cask "vox-preferences-pane"
 cask "xquartz"
 
 # fonts
