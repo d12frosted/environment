@@ -68,45 +68,58 @@ aligned respectively."
        (while (keywordp (car body))
          (setq body (cddr body)))
        ;;
-       (cl-destructuring-bind (&key init faces on-hooks on-set &allow-other-keys)
+       (cl-destructuring-bind
+           (&key init faces on-hooks on-set &allow-other-keys)
            rest
          (let ((realvar (if (and body faces)
                             (intern (format "+modeline--var-%s" name))
                           name)))
-           (append (when body
-                     (if (or on-hooks on-set)
-                         (let ((setterfn    (intern (format "+modeline--set-%s" name)))
-                               (varsetterfn (intern (format "+modeline--setvar-%s" name))))
-                           (append `((fset ',setterfn
-                                           (lambda (&rest _)
-                                             (when (+modeline-segment-active-p ',name)
-                                               (setq-local ,realvar ,(macroexp-progn body)))))
-                                     (byte-compile ',setterfn))
-                                   (mapcar (lambda (hook) `(add-hook ',hook #',setterfn t))
-                                           on-hooks)
-                                   (when on-set
-                                     `((fset ',varsetterfn
-                                             (lambda (sym val op where)
-                                               (and (eq op 'set) where
-                                                    (with-current-buffer where
-                                                      (set sym val)
-                                                      (,setterfn)))))
-                                       ,@(mapcan (lambda (var) `((add-variable-watcher ',var #',varsetterfn)))
-                                                 on-set)))))
-                       (setq init `(quote (:eval ,(macroexp-progn body))))
-                       nil))
-                   (if (eq realvar name)
-                       `((defvar-local ,name nil ,docstring)
-                         (setq-default ,name ,init))
-                     `((defvar-local ,realvar ,init)
-                       (defvar-local ,name nil ,docstring)
-                       (setq-default
-                        ,name '(:eval (cond ((active) ,realvar)
-                                            (,realvar (let ((rlvar (concat ,realvar)))
-                                                        (add-face-text-property 0 (length rlvar)
-                                                                                '(:inherit (mode-line-inactive)) nil rlvar)
-                                                        rlvar)))))))
-                   `((put ',name 'risky-local-variable t)))))))))
+           (append
+            (when body
+              (if (or on-hooks on-set)
+                  (let ((setterfn
+                         (intern (format "+modeline--set-%s" name)))
+                        (varsetterfn
+                         (intern (format "+modeline--setvar-%s" name))))
+                    (append
+                     `((fset
+                        ',setterfn
+                        (lambda (&rest _)
+                          (when (+modeline-segment-active-p ',name)
+                            (setq-local ,realvar ,(macroexp-progn body)))))
+                       (byte-compile ',setterfn))
+                     (mapcar (lambda (hook) `(add-hook ',hook #',setterfn t))
+                             on-hooks)
+                     (when on-set
+                       `((fset ',varsetterfn
+                               (lambda (sym val op where)
+                                 (and (eq op 'set) where
+                                      (with-current-buffer where
+                                        (set sym val)
+                                        (,setterfn)))))
+                         ,@(mapcan
+                            (lambda (var)
+                              `((add-variable-watcher ',var #',varsetterfn)))
+                            on-set)))))
+                (setq init `(quote (:eval ,(macroexp-progn body))))
+                nil))
+            (if (eq realvar name)
+                `((defvar-local ,name nil ,docstring)
+                  (setq-default ,name ,init))
+              `((defvar-local ,realvar ,init)
+                (defvar-local ,name nil ,docstring)
+                (setq-default
+                 ,name
+                 '(:eval
+                   (cond ((active) ,realvar)
+                         (,realvar
+                          (let ((rlvar (concat ,realvar)))
+                            (add-face-text-property
+                             0
+                             (length rlvar)
+                             '(:inherit (mode-line-inactive)) nil rlvar)
+                            rlvar)))))))
+            `((put ',name 'risky-local-variable t)))))))))
 
 ;;;###autodef
 (defun set-modeline! (name &optional default)
