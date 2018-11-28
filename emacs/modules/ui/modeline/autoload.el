@@ -102,7 +102,10 @@ aligned respectively."
                        (defvar-local ,name nil ,docstring)
                        (setq-default
                         ,name '(:eval (cond ((active) ,realvar)
-                                            (,realvar (substring-no-properties ,realvar)))))))
+                                            (,realvar (let ((rlvar (concat ,realvar)))
+                                                        (add-face-text-property 0 (length rlvar)
+                                                                                '(:inherit (mode-line-inactive)) nil rlvar)
+                                                        rlvar)))))))
                    `((put ',name 'risky-local-variable t)))))))))
 
 ;;;###autodef
