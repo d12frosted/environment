@@ -42,7 +42,7 @@ files. For example,
   (add-hook 'flyspell-mode-hook #'+spellcheck|immediately))
 
 (def-package! flyspell-correct-ivy
-  :defer t
+  :commands (flyspell-correct-ivy)
   :init
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
