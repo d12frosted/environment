@@ -662,10 +662,10 @@ modeline segment.")
                                       (if .error '+modeline-urgent '+modeline-warning)
                                       -0.25)))
                  (+modeline-ml-icon "check" nil '+modeline-info)))
-    (`running     (+modeline-ml-icon "access_time" nil 'font-lock-doc-face -0.25))
+    (`running     (+modeline-ml-icon "access_time" nil '+modeline-info -0.25))
     ;; (`no-checker  (+modeline-ml-icon "sim_card_alert" "-" 'font-lock-doc-face))
     (`errored     (+modeline-ml-icon "sim_card_alert" "Error" '+modeline-urgent))
-    (`interrupted (+modeline-ml-icon "pause" "Interrupted" 'font-lock-doc-face))))
+    (`interrupted (+modeline-ml-icon "pause" "Interrupted" '+modeline-warning))))
 
 (defun +modeline|update-flycheck-segment (&optional status)
   (setq +modeline-flycheck
@@ -677,7 +677,8 @@ modeline segment.")
 (def-modeline-segment! +modeline-flycheck
   "Displays color-coded flycheck error status in the current
 buffer with pretty icons."
-  :init nil)
+  :init nil
+  :faces t)
 
 ;;
 ;; Preset modeline formats
