@@ -188,34 +188,14 @@ mode-line path."
 ;; Keep `+modeline-current-window' up-to-date
 (defvar +modeline-current-window (frame-selected-window))
 
-(defvar +modeline-remap-buffer nil
-  "Buffer with remapped face cookies.
-
-Used during window switching.")
-
-(defvar +modeline-remap-face-cookies nil
-  "List of remapped face cookies.
-
-Used during window switching.")
-
 (defun +modeline|set-selected-window (&rest _)
   "Sets `+modeline-current-window' appropriately"
-  (when-let ((win (frame-selected-window)))
-    (when-let* ((buffer +modeline-remap-buffer)
-                (_ (buffer-live-p buffer))
-                (cookies +modeline-remap-face-cookies))
-      (with-current-buffer buffer
-        (mapc #'face-remap-remove-relative cookies)))
+  (when-let* ((win (frame-selected-window)))
     (unless (minibuffer-window-active-p win)
       (setq +modeline-current-window win)
       (force-mode-line-update))))
 
 (defun +modeline|unset-selected-window ()
-  (when-let* ((window +modeline-current-window)
-              (buffer (window-buffer window))
-              (_ (buffer-live-p buffer)))
-    (setq +modeline-remap-buffer buffer
-          +modeline-remap-face-cookies (+modeline--remap-face-cookies)))
   (setq +modeline-current-window nil)
   (force-mode-line-update))
 
@@ -238,27 +218,24 @@ Used during window switching.")
   (eq (selected-window) +modeline-current-window))
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
-(defvar +modeline-remap-focus-face-cookies nil
-  "Alist of buffer and list of face remap cookies.
-
-Used for inactivation of modeline when Emacs becomes unfocused.")
+(defvar +modeline-remap-face-cookies nil)
 
 (defun +modeline|focus-all-windows (&rest _)
-  (cl-loop for (buffer . cookies) in +modeline-remap-focus-face-cookies
+  (cl-loop for (buffer . cookie) in +modeline-remap-face-cookies
            if (buffer-live-p buffer)
            do (with-current-buffer buffer
-                (cl-loop for cookie in cookies
-                         do (face-remap-remove-relative cookie)))))
+                (face-remap-remove-relative cookie))))
 
 (defun +modeline|unfocus-all-windows (&rest _)
-  (setq +modeline-remap-focus-face-cookies
+  (setq +modeline-remap-face-cookies
         (cl-loop for window in (window-list)
                  for buffer = (window-buffer window)
                  if (buffer-live-p buffer)
                  collect
                  (with-current-buffer buffer
                    (cons buffer
-                         (+modeline--remap-face-cookies))))))
+                         (face-remap-add-relative 'mode-line
+                                                  'mode-line-inactive))))))
 
 (add-hook 'focus-in-hook #'+modeline|focus-all-windows)
 (add-hook 'focus-out-hook #'+modeline|unfocus-all-windows)
@@ -267,13 +244,6 @@ Used for inactivation of modeline when Emacs becomes unfocused.")
 
 ;;
 ;; Helpers
-
-(defun +modeline--remap-face-cookies ()
-  "Remap modeline faces to inactive."
-  (list (face-remap-add-relative 'mode-line
-                                 'mode-line-inactive)
-        (face-remap-add-relative '+modeline-warning
-                                 'mode-line-inactive)))
 
 (defun +modeline--make-xpm (width height &optional color)
   "Create an XPM bitmap.
@@ -535,7 +505,7 @@ Meant for `+modeline-buffer-path-function'."
                         :v-adjust -0.05)))
                 +modeline--vspc
                 (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                            'face face))))))
+                            'face (if active face)))))))
 
 (def-modeline-segment! +modeline-indent-style
   :on-hooks (after-revert-hook after-save-hook find-file-hook)
