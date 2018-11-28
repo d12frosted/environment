@@ -58,7 +58,7 @@ auto-installed if missing) and shouldn't be deleted.")
 (defvar nucleus-disabled-packages ()
   "A list of packages that should be ignored by `def-package!'.")
 
-(defvar nucleus-package-archives-location 'origin
+(defvar nucleus-package-archives-location 'mirror
   "Location of package-archives.
 
 Can be either mirror or origin.
