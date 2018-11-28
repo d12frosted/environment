@@ -53,6 +53,7 @@
  :lang
  emacs-lisp
  org
+ plantuml
  rest
  sh
 
