@@ -163,3 +163,10 @@
   (setq
    orgability-file (concat org-directory "orgability.el")
    orgability-agenda-topics-column 36))
+
+(def-package! org-board
+  :defer t
+  :init
+  (setq org-board-wget-show-buffer nil
+        org-board-default-browser 'eww))
+
