@@ -156,3 +156,10 @@
 	      org-brain-visualize-one-child-per-line t
 	      org-brain-visualize-default-choices 'all
 	      org-brain-title-max-length 24))
+
+(def-package! orgability
+  :defer t
+  :init
+  (setq
+   orgability-file (concat org-directory "orgability.el")
+   orgability-agenda-topics-column 36))

@@ -20,3 +20,5 @@
 (package! org-plus-contrib)
 (package! org :ignore t)
 (package! org-brain)
+(package! orgability
+  :recipe (:fetcher github :repo "d12frosted/orgability"))
