@@ -38,6 +38,12 @@
       :desc "Switch to 9th workspace" "M-9" (λ! (+workspace/switch-to 8))
       :desc "Switch to last workspace" "M-0" #'+workspace/switch-to-last
 
+      (:when (featurep! :feature workspaces)
+        :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
+        :desc "Switch buffer" "<" #'switch-to-buffer)
+      (:unless (featurep! :feature workspaces)
+        :desc "Switch buffer" "," #'switch-to-buffer)
+
       (:when (featurep! :completion ivy)
 	      :desc "Resume last search" "'" #'ivy-resume)
 
