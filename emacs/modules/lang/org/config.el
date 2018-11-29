@@ -161,7 +161,7 @@
   :defer t
   :init
   (setq
-   orgability-file (concat org-directory "orgability.el")
+   orgability-file (concat org-directory "orgability.org")
    orgability-agenda-topics-column 36))
 
 (def-package! org-board
