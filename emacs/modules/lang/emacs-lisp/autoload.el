@@ -23,7 +23,7 @@
   (when (and (bound-and-true-p flycheck-mode)
              (eq major-mode 'emacs-lisp-mode)
              (or (not buffer-file-name)
-                 (cl-loop for dir in (list nucleus-home-dir)
+                 (cl-loop for dir in (list nucleus-emacs-dir)
                           if (file-in-directory-p buffer-file-name dir)
                           return t)))
     (flycheck-mode -1)))
