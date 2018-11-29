@@ -23,3 +23,4 @@
 (package! orgability
   :recipe (:fetcher github :repo "d12frosted/orgability"))
 (package! org-board)
+(package! org-download)

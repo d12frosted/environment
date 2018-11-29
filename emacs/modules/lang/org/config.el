@@ -170,3 +170,9 @@
   (setq org-board-wget-show-buffer nil
         org-board-default-browser 'eww))
 
+(def-package! org-download
+  :defer t
+  :init
+  (setq-default org-download-image-dir
+                (concat org-directory ".images/"))
+  (add-hook 'org-mode-hook #'org-download-enable))
