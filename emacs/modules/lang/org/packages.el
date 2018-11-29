@@ -20,6 +20,8 @@
 (package! org-plus-contrib)
 (package! org :ignore t)
 (package! org-brain)
+(package! org-drawer-list
+  :recipe (:fetcher github :repo "d12frosted/org-drawer-list"))
 (package! orgability
   :recipe (:fetcher github :repo "d12frosted/orgability"))
 (package! org-board)
