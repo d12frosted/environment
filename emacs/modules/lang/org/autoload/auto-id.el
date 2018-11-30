@@ -25,6 +25,7 @@
 (defconst +org-auto-id-enable-regexp
   "^#\\+OPTIONS:.*auto-id:t")
 
+;;;###autoload
 (defun +org-auto-id-dwim ()
   "Just do the dirty job for the heading at point."
   (mapc (lambda (prop)
