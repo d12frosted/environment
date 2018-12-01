@@ -39,6 +39,7 @@
 (load! "+agenda")
 (load! "+capture")
 (load! "+auto-id")
+(load! "+auto-save")
 (load! "+modeline")
 
 ;; Load other Org modules lazily.
