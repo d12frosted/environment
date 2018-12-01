@@ -59,6 +59,7 @@
 
 (add-hook! 'org-mode-hook
   #'(org-indent-mode
+     auto-fill-mode
      vulpea-mode-maybe-enable))
 
 ;;
