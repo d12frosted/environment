@@ -22,10 +22,6 @@
       :desc "Find file in project" "SPC" #'projectile-find-file
       :desc "Browse files" "." #'find-file
 
-      ;; org short-cuts
-      :desc "Org fast capture" "x"  #'+org/capture-task
-      :desc "Org capture" "X"  #'org-capture
-
       ;; fast workspaces switch
       :desc "Switch to 1st workspace" "M-1" (λ! (+workspace/switch-to 0))
       :desc "Switch to 2nd workspace" "M-2" (λ! (+workspace/switch-to 1))
@@ -137,6 +133,12 @@
 	      :desc "Org fast agenda" "a" #'+org/agenda-main
         :desc "Org agenda" "A" #'org-agenda
         :desc "Brain node" "b" #'org-brain-visualize)
+
+      (:desc "capture" :prefix "c"
+        :desc "Org fast capture" "x" #'+org/capture-task
+        :desc "Org capture" "X" #'org-capture
+        :desc "Orgability clip" "o" #'orgability-clip
+        :desc "Org store link" "l" #'org-store-link)
 
       (:desc "project" :prefix "p"
         :desc "Browse project" "." #'+default/browse-project
