@@ -1,4 +1,4 @@
-;;; editor/default/autoload/point.el -*- lexical-binding: t; -*-
+;;; editor/navigation/autoload.el -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2018 Boris Buliga
 ;;
@@ -18,7 +18,7 @@
 ;;; Code:
 
 ;;;###autoload
-(defun +point-beginning-of-line (arg)
+(defun +navigation/beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
 
 Move point to the first non-whitespace character on this line. If
