@@ -63,6 +63,13 @@
         :desc "Workspace" "w" #'+workspace/switch-right
         :desc "Spelling correction" "s" (λ! (let ((flyspell-correct--direction)) (flyspell-correct-wrapper 0))))
 
+      (:desc "jump" :prefix "j"
+        :desc "Line (by number)" "L" #'goto-line
+        :desc "Line (avy)" "l" #'avy-goto-line
+        :desc "Char" "j" #'avy-goto-char
+        :desc "Chars" "J" #'avy-goto-char-timer
+        :desc "Word" "w" #'avy-goto-word-0)
+
       (:desc "search" :prefix "/"
 	      (:when (featurep! :completion ivy)
           :desc "Buffer" "b" #'swiper

@@ -39,6 +39,7 @@
 
  :editor
  default
+ navigation
  octocursors
  whitespaces
 
