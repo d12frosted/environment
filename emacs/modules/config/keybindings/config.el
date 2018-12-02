@@ -142,14 +142,15 @@
         :desc "List project tasks" "t" #'+ivy/tasks
         :desc "Invalidate cache" "x" #'projectile-invalidate-cache)
 
-      :desc "Avy window" "M-w" #'other-window ;; TODO: avy
+      :desc "Ace window" "M-w" #'ace-window
       (:desc "window" :prefix "w"
         :desc "Split frame vertically" "V" #'+window-split-vertically
         :desc "Split frame vertically and focus" "v" #'+window-split-vertically-and-focus
         :desc "Split frame horizontally" "S" #'+window-split-horizontally
         :desc "Split frame horizontally and focus" "s" #'+window-split-horizontally-and-focus
         :desc "Kill window" "k" #'delete-window
-        :desc "Kill other windows" "m" #'delete-other-windows)
+        :desc "Kill other windows" "m" #'delete-other-windows
+        :desc "Ace window" "w" #'ace-window)
 
       (:desc "workspace" :prefix [tab]
         :desc "Display tab bar" [tab] #'+workspace/display
