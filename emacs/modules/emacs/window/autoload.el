@@ -24,3 +24,29 @@
            when (or (window-parameter window 'visible)
                     (not (window-dedicated-p window)))
            collect window))
+
+;;;###autoload
+(defun +window-split-vertically ()
+  "Split window vertically."
+  (interactive)
+  (split-window-right))
+
+;;;###autoload
+(defun +window-split-vertically-and-focus ()
+  "Split window vertically and focus it."
+  (interactive)
+  (split-window-right)
+  (windmove-right))
+
+;;;###autoload
+(defun +window-split-horizontally ()
+  "Split window horizontally."
+  (interactive)
+  (split-window-below))
+
+;;;###autoload
+(defun +window-split-horizontally-and-focus ()
+  "Split window horizontally and focus it."
+  (interactive)
+  (split-window-below)
+  (windmove-down))
