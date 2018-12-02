@@ -45,3 +45,6 @@
   :config
   (setq auto-revert-verbose nil)
   (global-auto-revert-mode +1))
+
+(global-set-key [remap move-beginning-of-line]
+                '+point-beginning-of-line)
