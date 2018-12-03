@@ -23,4 +23,5 @@
   (when (eq +modern-theme 'leuven)
     (custom-set-faces
      '(+modeline-info ((t (:inherit mode-line))) t)
-     '(org-checkbox ((t (:background "#FAF7CC"))) t))))
+     '(org-checkbox ((t (:background "#FAF7CC"))) t)
+     '(solaire-default-face ((t (:background "#FAFAFA")))))))

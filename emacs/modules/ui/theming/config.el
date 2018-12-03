@@ -21,4 +21,5 @@
   :init
   (unless +modern-theme
     (setq +modern-theme 'leuven))
-  (add-hook '+modern-init-ui-hook #'+leuven|patch-faces))
+  (add-hook '+modern-init-ui-hook #'+leuven|patch-faces)
+  (+modern-mark-solaire-theme 'leuven))

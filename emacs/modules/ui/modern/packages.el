@@ -22,3 +22,4 @@
 (package! highlight-escape-sequences
   :recipe (:fetcher github :repo "hlissner/highlight-escape-sequences"))
 (package! rainbow-delimiters)
+(package! solaire-mode)

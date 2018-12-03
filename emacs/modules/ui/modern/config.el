@@ -176,6 +176,49 @@ inherit `+modern-font's size.")
   :init
   (setq rainbow-delimiters-max-face-count 3))
 
+(defvar +modern-solaire-themes '()
+  "An alist of themes that support `solaire-mode'.
+
+If CDR is t, then use `solaire-mode-swap-bg'.")
+
+(defun +modern-mark-solaire-theme (theme)
+  "Mark THEME as one that supports `solaire-mode'."
+  (add-to-list '+modern-solaire-themes (cons theme t)))
+
+(def-package! solaire-mode
+  :defer t
+  :init
+  (defun +modern|solaire-mode-swap-bg-maybe ()
+    (when-let* ((rule (assq +modern-theme +modern-solaire-themes)))
+      (require 'solaire-mode)
+      (if (cdr rule) (solaire-mode-swap-bg))))
+  (add-hook 'nucleus-load-theme-hook #'+modern|solaire-mode-swap-bg-maybe t)
+  :config
+  (add-hook 'change-major-mode-after-body-hook #'turn-on-solaire-mode)
+  ;; fringe can become unstyled when deleting or focusing frames
+  (add-hook 'focus-in-hook #'solaire-mode-reset)
+  ;; Prevent color glitches when reloading either Emacs or loading a new theme
+  (add-hook! :append '(nucleus-load-theme-hook nucleus-reload-hook)
+    #'solaire-mode-reset)
+  ;; org-capture takes an org buffer and narrows it. The result is erroneously
+  ;; considered an unreal buffer, so solaire-mode must be restored.
+  (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode)
+
+  ;; Because fringes can't be given a buffer-local face, they can look odd, so
+  ;; we remove them in the minibuffer and which-key popups (they serve no
+  ;; purpose there anyway).
+  (defun +modern|disable-fringes-in-minibuffer (&rest _)
+    (set-window-fringes (minibuffer-window) 0 0 nil))
+  (add-hook 'solaire-mode-hook #'+modern|disable-fringes-in-minibuffer)
+
+  (defun +modern*no-fringes-in-which-key-buffer (&rest _)
+    (+modern|disable-fringes-in-minibuffer)
+    (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
+  (advice-add 'which-key--show-buffer-side-window :after #'+modern*no-fringes-in-which-key-buffer)
+
+  (add-hook! '(minibuffer-setup-hook window-configuration-change-hook)
+    #'+modern|disable-fringes-in-minibuffer))
+
 ;; `whitespace-mode'
 (setq whitespace-line-column nil
       whitespace-style
