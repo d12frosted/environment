@@ -131,7 +131,7 @@
 
       (:desc "open" :prefix "o"
 	      :desc "Org fast agenda" "a" #'+org/agenda-main
-        :desc "Orgability list" "o" #'+orgability/list
+        :desc "Reading list" "r" #'+orgability/list
         :desc "Org agenda" "A" #'org-agenda
         :desc "Brain node" "b" #'org-brain-visualize)
 
