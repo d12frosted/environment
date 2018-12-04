@@ -1,12 +1,92 @@
 commands =
-  isRunning: "osascript -e 'if application \"iTunes\" is running then return true'"
-  isPlaying: "osascript -e 'if application \"iTunes\" is running then tell application \"iTunes\" to if player state is playing then return true'"
-  iTunes: "osascript -e 'if application \"iTunes\" is running then tell application \"iTunes\" to if player state is playing then artist of current track & \" - \" & name of current track'"
+  isRunning: """osascript -e 'if application "iTunes" is running or application "VOX" is running then return true'"""
+  isPlaying: """osascript -e '
+                  if application "iTunes" is running then
+                    tell application "iTunes" to if player state is playing then return true
+                  else if application "VOX" is running then
+                    tell application "VOX" to if player state ≠ 0 then return true
+                  end if
+                '
+             """
+  trackInfo: """osascript -e '
+                  if application "iTunes" is running then
+                    tell application "iTunes"
+                      try
+                        set whatshappening to (get player state as string)
+                      end try
+                      if whatshappening ≠ "paused" then
+                        tell application "iTunes"
+                          if exists current track then
+                            set theName to the name of the current track
+                            set theArtist to the artist of the current track
+                            try
+                              return theArtist & " - " & theName
+                            on error err
+                            end try
+                          end if
+                        end tell
+                      end if
+                    end tell
+                  else if application "VOX" is running then
+                    tell application "VOX"
+                      try
+                        set state to player state
+                      end try
+                      if player state ≠ 0 then
+                        tell application "VOX"
+                          set theName to track
+                          set theArtist to artist
+                          try
+                            return theArtist & " - " & theName
+                          on error err
+                          end try
+                        end tell
+                      end if
+                    end tell
+                  end if
+                '
+             """
+  playPause: """osascript -e '
+                  if application "iTunes" is running then
+                    tell application "iTunes"
+                      playpause
+                    end tell
+                  else if application "VOX" is running then
+                    tell application "VOX"
+                      playpause
+                    end tell
+                  end if
+                '
+             """
+  prevTrack: """osascript -e '
+                  if application "iTunes" is running then
+                    tell application "iTunes"
+                      previous track
+                    end tell
+                  else if application "VOX" is running then
+                    tell application "VOX"
+                      previous track
+                    end tell
+                  end if
+                '
+             """
+  nextTrack: """osascript -e '
+                  if application "iTunes" is running then
+                    tell application "iTunes"
+                      next track
+                    end tell
+                  else if application "VOX" is running then
+                    tell application "VOX"
+                      next track
+                    end tell
+                  end if
+                '
+             """
 
 command: "echo " +
          "$(#{commands.isRunning}):::" +
          "$(#{commands.isPlaying}):::" +
-         "$(#{commands.iTunes}):::"
+         "$(#{commands.trackInfo}):::"
 
 refreshFrequency: '10s'
 
@@ -81,7 +161,7 @@ cache: (key, value) ->
 #
 
 handlePlay: (domEl, status) ->
-  @run "osascript -e 'tell application \"iTunes\" to playpause'"
+  @run commands.playPause
   @handlePlayIcon(domEl, status)
   @refresh()
 
@@ -102,13 +182,13 @@ handlePlayIcon: (domEl, status) ->
     $(domEl).find('#play').removeClass('open')
 
 handlePrev: (domEl) ->
-  @run "osascript -e 'tell application \"iTunes\" to previous track'"
+  @run commands.prevTrack
   $(domEl).find('#play-button').removeClass()
   $(domEl).find('#play-button').addClass('fas fa-pause')
   @refresh()
 
 handleNext: (domEl) ->
-  @run "osascript -e 'tell application \"iTunes\" to next track'"
+  @run commands.nextTrack
   $(domEl).find('#play-button').removeClass()
   $(domEl).find('#play-button').addClass('fas fa-pause')
   @refresh()
