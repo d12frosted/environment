@@ -53,6 +53,7 @@
 
  :lang
  emacs-lisp
+ (haskell +intero)
  org
  plantuml
  rest
