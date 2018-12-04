@@ -32,9 +32,7 @@
   ;; TODO Lookup/jumpers
   ;; (set-lookup-handlers! 'haskell-mode :definition #'haskell-mode-jump-to-def-or-tag)
   (set-file-template! 'haskell-mode :trigger #'haskell-auto-insert-module-template :project t)
-
-  ;; TODO REPL
-  ;; (set-repl-handler! '(haskell-mode haskell-cabal-mode literate-haskell-mode) #'+haskell-repl-buffer)
+  (set-repl-handler! '(haskell-mode haskell-cabal-mode literate-haskell-mode) #'+haskell-repl)
 
   (add-to-list 'completion-ignored-extensions ".hi")
   (setq-hook! 'haskell-mode-hook +modeline-indent-width haskell-indentation-left-offset)

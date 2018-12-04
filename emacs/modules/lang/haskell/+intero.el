@@ -32,6 +32,10 @@ This is necessary because `intero-mode' doesn't do its own error checks."
   (setq haskell-compile-cabal-build-command "stack build --fast")
   ;; TODO lookup/jumper
   ;; (set-lookup-handlers! 'intero-mode :definition #'intero-goto-definition)
+  (set-eval-handler! 'haskell-mode #'intero-repl-eval-region)
+  (set-eval-handler! 'haskell-mode
+    '((:command . "stack")
+      (:exec    . "%c ghc -- -e \"$(< %s)\"")))
   (set-company-backend! 'intero-mode 'intero-company)
   (when (featurep! :feature syntax-checker)
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
@@ -41,5 +45,4 @@ This is necessary because `intero-mode' doesn't do its own error checks."
         "t" #'intero-type-at
         "i" #'intero-info
         "l" #'intero-repl-load
-        "e" #'intero-repl-eval-region
         "a" #'intero-apply-suggestions))
