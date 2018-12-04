@@ -81,7 +81,7 @@ PLIST may contain these properties:
   "Auto insert a yasnippet snippet into current file and enter
 insert mode (if evil is loaded and enabled)."
   (when (and pred (not ignore))
-    (when t ;; TODO add projects support (if project (doom-project-p) t)
+    (when (if project (+project-p) t)
       (unless mode
         (setq mode (if (symbolp pred) pred major-mode)))
       (unless mode
