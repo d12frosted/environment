@@ -24,4 +24,4 @@
     (custom-set-faces
      '(+modeline-info ((t (:inherit mode-line))) t)
      '(org-checkbox ((t (:background "#FAF7CC"))) t)
-     '(solaire-default-face ((t (:background "#FAFAFA")))))))
+     '(solaire-default-face ((t (:inherit default :background "#FAFAFA")))))))
