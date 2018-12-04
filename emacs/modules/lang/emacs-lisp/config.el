@@ -18,6 +18,9 @@
 ;;; Code:
 
 (after! elisp-mode
+  (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
+  (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
+
   ;; Flycheck produces a *lot* of false positives in emacs configs, so
   ;; disable it when you're editing them
   (add-hook 'flycheck-mode-hook #'+emacs-lisp|disable-flycheck-maybe)

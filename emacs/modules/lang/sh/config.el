@@ -28,8 +28,7 @@
   ;; TODO electric
   ;; (set-electric! 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
 
-  ;; TODO REPL
-  ;; (set-repl-handler! 'sh-mode #'+sh/repl)
+  (set-repl-handler! 'sh-mode #'+sh/repl)
 
   ;; setup indentation
   (setq sh-indent-after-continuation 'always

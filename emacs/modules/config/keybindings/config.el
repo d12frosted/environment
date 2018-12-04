@@ -66,6 +66,11 @@
         :desc "Chars" "J" #'avy-goto-char-timer
         :desc "Word" "w" #'avy-goto-word-0)
 
+      (:desc "eval" :prefix "e"
+        :desc "Eval buffer" "b" #'+eval/buffer
+        :desc "Eval region" "r" #'+eval/region
+        :desc "Eval region and replace" "R" #'+eval/region-and-replace)
+
       (:desc "search" :prefix "/"
 	      (:when (featurep! :completion ivy)
           :desc "Buffer" "b" #'swiper
@@ -133,7 +138,8 @@
 	      :desc "Org fast agenda" "a" #'+org/agenda-main
         :desc "Reading list" "r" #'+orgability/list
         :desc "Org agenda" "A" #'org-agenda
-        :desc "Brain node" "b" #'org-brain-visualize)
+        :desc "Brain node" "b" #'org-brain-visualize
+        :desc "REPL" "l" #'+eval/open-repl)
 
       (:desc "capture" :prefix "c"
         :desc "Org fast capture" "x" #'+org/capture-task

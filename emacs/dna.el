@@ -19,6 +19,7 @@
 
 (nucleus!
  :feature
+ eval
  file-templates
  projects
  snippets
