@@ -29,8 +29,8 @@
 	      projectile-known-projects-file (concat nucleus-cache-dir "projectile.projects")
 	      projectile-require-project-root t
         projectile-indexing-method 'alien
-        projectile-git-command "fd . -0"
-        projectile-generic-command "fd . -0"
+        projectile-git-command "fd . -t f -0"
+        projectile-generic-command "fd . -t f -0"
 	      projectile-ignored-projects '("~/" "/tmp"))
   :config
   (add-hook! 'find-file-hook #'+project|init-auto-mode)
