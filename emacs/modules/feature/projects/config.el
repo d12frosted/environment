@@ -25,13 +25,12 @@
 	     projectile-project-p)
   :init
   (setq projectile-cache-file (concat nucleus-cache-dir "projectile.cache")
-	      projectile-enable-caching (not noninteractive)
+	      projectile-enable-caching nil ;; (not noninteractive)
 	      projectile-known-projects-file (concat nucleus-cache-dir "projectile.projects")
 	      projectile-require-project-root t
-        ;; has no effect with alien indexing method
-	      projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
-        ;; has no effect with alien indexing method
-	      projectile-globally-ignored-file-suffixes '(".elc" ".o")
+        projectile-indexing-method 'alien
+        projectile-git-command "fd . -0"
+        projectile-generic-command "fd . -0"
 	      projectile-ignored-projects '("~/" "/tmp"))
   :config
   (add-hook! 'find-file-hook #'+project|init-auto-mode)
