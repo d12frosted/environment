@@ -4,7 +4,7 @@ commands =
                   if application "iTunes" is running then
                     tell application "iTunes" to if player state is playing then return true
                   else if application "VOX" is running then
-                    tell application "VOX" to if player state ≠ 0 then return true
+                    tell application "VOX" to if player state is 1 then return true
                   end if
                 '
              """
@@ -32,7 +32,7 @@ commands =
                       try
                         set state to player state
                       end try
-                      if player state ≠ 0 then
+                      if player state is 1 then
                         tell application "VOX"
                           set theName to track
                           set theArtist to artist
