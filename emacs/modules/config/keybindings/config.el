@@ -68,8 +68,8 @@
 
       (:desc "eval" :prefix "e"
         :desc "Eval buffer" "b" #'+eval/buffer
-        :desc "Eval region" "r" #'+eval/region
-        :desc "Eval region and replace" "R" #'+eval/region-and-replace)
+        :desc "Eval region" "e" #'+eval/region
+        :desc "Eval region and replace" "r" #'+eval/region-and-replace)
 
       (:desc "search" :prefix "/"
 	      (:when (featurep! :completion ivy)
