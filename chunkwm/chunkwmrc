@@ -131,6 +131,9 @@ chunkc core::load purify.so
 #
 
 chunkc tiling::rule --owner Finder --name Copy --state float &
+chunkc tiling::rule --owner \"IntelliJ IDEA\" --name \"Move\" --state float &
+chunkc tiling::rule --owner \"IntelliJ IDEA\" --name \"Run/Debug Configurations\" --state float &
+chunkc tiling::rule --owner \"IntelliJ IDEA\" --name \"Execute Maven Goal\" --state float &
 chunkc tiling::rule --owner \"IntelliJ IDEA\" --name \"New File\" --state float &
 chunkc tiling::rule --owner \"IntelliJ IDEA\" --name \"New Package\" --state float &
 chunkc tiling::rule --owner \"IntelliJ IDEA\" --name \"Select Elements to Import\" --state float &
