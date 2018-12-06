@@ -21,8 +21,8 @@
 
 (def-package! projectile
   :commands (projectile-project-root
-	     projectile-project-name
-	     projectile-project-p)
+	           projectile-project-name
+	           projectile-project-p)
   :init
   (setq projectile-cache-file (concat nucleus-cache-dir "projectile.cache")
 	      projectile-enable-caching nil ;; (not noninteractive)
