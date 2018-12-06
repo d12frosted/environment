@@ -143,6 +143,7 @@
 
       (:desc "capture" :prefix "c"
         :desc "Org fast capture" "x" #'+org/capture-task
+        :desc "Org fast capture" "m" #'+org/capture-meeting
         :desc "Org capture" "X" #'org-capture
         :desc "Orgability clip" "o" #'orgability-clip
         :desc "Org store link" "l" #'org-store-link)

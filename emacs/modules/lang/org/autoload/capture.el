@@ -19,6 +19,12 @@
 
 ;;;###autoload
 (defun +org/capture-task ()
-  "A short-cut for capturing todo task"
+  "A short-cut for capturing todo task."
   (interactive)
   (org-capture nil "t"))
+
+;;;###autoload
+(defun +org/capture-meeting ()
+  "A short-cut for capturing meeting."
+  (interactive)
+  (org-capture nil "m"))
