@@ -10,6 +10,7 @@ brew "ag"
 brew "aspell"
 brew "cask", args: ["ignore-dependencies"]
 brew "chunkwm", args: ["with-purify", "HEAD"], restart_service: :changed
+brew "docker"
 brew "emacs-plus", args: ["without-spacemacs-icon"]
 brew "fd"
 brew "ffmpeg"
@@ -42,6 +43,7 @@ cask "alfred"
 cask "bartender"
 cask "cryptomator"
 cask "cyberduck"
+cask "docker"
 cask "dropbox"
 cask "firefox"
 cask "font-awesome-terminal-fonts"
