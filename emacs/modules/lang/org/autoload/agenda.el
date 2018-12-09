@@ -36,9 +36,17 @@
 
 ;;;###autoload
 (defun +agenda/main (arg)
-  "Show main `org-agenda' view"
-  (interactive)
-  (org-agenda nil " "))
+  "Show main `org-agenda' view.
+
+If it already exists and no \\[universal-argument] is passed,
+just switch to that buffer using `+buffer-display-and-switch'
+function.
+
+Otherwise create it from scratch."
+  (interactive "P")
+  (if-let ((buffer (and (null arg) (get-buffer +agenda-main-buffer-name))))
+      (+buffer-display-and-switch buffer)
+    (org-agenda nil " ")))
 
 ;;;###autoload
 (defun +agenda--find-project-task ()
