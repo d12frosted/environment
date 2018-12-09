@@ -26,3 +26,4 @@
   :recipe (:fetcher github :repo "d12frosted/orgability"))
 (package! org-board)
 (package! org-download)
+(package! ace-link)

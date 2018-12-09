@@ -20,5 +20,8 @@
 (def-package! avy
   :defer t)
 
+(def-package! ace-link
+  :defer t)
+
 (global-set-key [remap move-beginning-of-line]
                 '+navigation/beginning-of-line)

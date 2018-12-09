@@ -157,7 +157,11 @@
 	      org-brain-visualize-sort-function #'org-brain-title<
 	      org-brain-visualize-one-child-per-line t
 	      org-brain-visualize-default-choices 'all
-	      org-brain-title-max-length 24))
+	      org-brain-title-max-length 24)
+  :config
+  (map! :map org-brain-visualize-mode-map
+        :leader
+        :desc "Button" "jb" #'+ace-link-brain-visualize))
 
 (def-package! orgability
   :defer t
