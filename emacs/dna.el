@@ -47,6 +47,7 @@
  :emacs
  buffer
  file
+ string
  window
 
  :tools

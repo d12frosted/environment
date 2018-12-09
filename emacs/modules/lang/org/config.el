@@ -61,7 +61,9 @@
 (add-hook! 'org-mode-hook
   #'(org-indent-mode
      auto-fill-mode
-     vulpea-mode-maybe-enable))
+     places-mode-maybe-enable
+     pretty-props-mode-maybe-enable
+     cha-mode-maybe-enable))
 
 ;;
 ;; `org-load-hook'
