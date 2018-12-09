@@ -38,4 +38,4 @@ Must accept one argument: the buffer to display.")
   "Open `+buffer-messages-name' buffer."
   (interactive)
   (let ((+buffer-messages-display-fn #'switch-to-buffer))
-    (+buffer/open-messages)))
+    (+buffer/pop-messages)))
