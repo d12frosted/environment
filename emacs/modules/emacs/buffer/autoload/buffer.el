@@ -1,11 +1,11 @@
-;;; emacs/buffer/autoload.el -*- lexical-binding: t; -*-
+;;; emacs/buffer/autoload/real.el -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2018 Boris Buliga
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
-;; Created: 24 Nov 2018
+;; Created: 09 Dec 2018
 ;;
 ;; URL: https://github.com/d12frosted/environment/emacs
 ;;
@@ -55,15 +55,6 @@ exist (will create it if it doesn't exist).")
 (defvar +buffer-cleanup-session-hook ()
   "A list of hooks run when `+buffer/cleanup-session' is run,
 meant to clean up leftover buffers and processes.")
-
-(defvar +buffer-messages-display-fn #'+buffer-display-and-switch
-  "The function to use to display messages buffer.
-
-Must accept one argument: the buffer to display.")
-
-;;;###autoload
-(defvar +buffer-messages-name "*Messages*"
-  "The name of the messages buffer.")
 
 ;;
 ;; Functions
@@ -355,17 +346,3 @@ Return number of processes killed."
   (if-let* ((filename (or buffer-file-name (bound-and-true-p list-buffers-directory))))
       (message (kill-new (abbreviate-file-name filename)))
     (error "Couldn't find filename in current buffer")))
-
-;;;###autoload
-(defun +buffer/pop-messages ()
-  "Open `+buffer-messages-name' buffer."
-  (interactive)
-  (funcall +buffer-messages-display-fn
-           (get-buffer-create +buffer-messages-name)))
-
-;;;###autoload
-(defun +buffer/switch-to-messages ()
-  "Open `+buffer-messages-name' buffer."
-  (interactive)
-  (let ((+buffer-messages-display-fn #'switch-to-buffer))
-    (+buffer/open-messages)))
