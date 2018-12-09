@@ -35,7 +35,7 @@
   "Name of the habits agenda buffer.")
 
 ;;;###autoload
-(defun +org/agenda-main (arg)
+(defun +agenda/main (arg)
   "Show main `org-agenda' view"
   (interactive)
   (org-agenda nil " "))

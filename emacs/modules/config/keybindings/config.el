@@ -138,7 +138,7 @@
         :desc "Previous hunk" "[" #'git-gutter:previous-hunk)
 
       (:desc "open" :prefix "o"
-	      :desc "Org fast agenda" "a" #'+org/agenda-main
+	      :desc "Org fast agenda" "a" #'+agenda/main
         :desc "Reading list" "r" #'+orgability/list
         :desc "Org agenda" "A" #'org-agenda
         :desc "Brain node" "b" #'org-brain-visualize
