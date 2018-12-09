@@ -61,7 +61,7 @@ scratch."
       (current-buffer))))
 
 ;;;###autoload
-(defun +buffer/open-scratch (&optional arg)
+(defun +buffer/pop-scratch (&optional arg)
   "Opens a scratch pad window in the same major-mode.
 
 If ARG (universal argument), then open a persistent scratch
@@ -94,10 +94,10 @@ If a region is active, copy its contents to the scratch."
 (defun +buffer/switch-to-scratch (&optional arg)
   "Switches to a scratch buffer in the current window.
 
-Otherwise, does exactly what `+buffer/open-scratch' does."
+Otherwise, does exactly what `+buffer/pop-scratch' does."
   (interactive "P")
   (let ((+buffer-scratch-display-fn #'switch-to-buffer))
-    (+buffer/open-scratch arg)))
+    (+buffer/pop-scratch arg)))
 
 ;;;###autoload
 (defun +buffer/delete-scratch-files ()

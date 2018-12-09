@@ -91,7 +91,7 @@
         :desc "Next buffer" "]" #'next-buffer
         :desc "Previous buffer" "[" #'previous-buffer
 	      :desc "Save buffer" "s" #'save-buffer
-	      :desc "Pop scratch buffer" "x" #'+buffer/open-scratch
+	      :desc "Pop scratch buffer" "x" #'+buffer/pop-scratch
         :desc "Pop scratch buffer" "X" #'+buffer/switch-to-scratch
         :desc "Pop messages buffer" "m" #'+buffer/pop-messages
         :desc "Switch to messages buffer" "M" #'+buffer/switch-to-messages
