@@ -23,7 +23,19 @@
 (defvar +agenda-hide-scheduled-and-waiting-next-tasks t)
 
 ;;;###autoload
-(defun +org/agenda-main ()
+(defvar +agenda-main-buffer-name "*agenda:main*"
+  "Name of the main agenda buffer.")
+
+;;;###autoload
+(defvar +agenda-reading-list-buffer-name "*agenda:reading-list*"
+  "Name of the reading list agenda buffer.")
+
+;;;###autoload
+(defvar +agenda-habits-buffer-name "*agenda:habits*"
+  "Name of the habits agenda buffer.")
+
+;;;###autoload
+(defun +org/agenda-main (arg)
   "Show main `org-agenda' view"
   (interactive)
   (org-agenda nil " "))

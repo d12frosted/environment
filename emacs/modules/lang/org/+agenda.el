@@ -121,7 +121,7 @@
              (org-agenda-skip-function '+agenda--skip-non-archivable-tasks)
              (org-tags-match-list-sublevels nil)))
       )
-     nil)
+     ((org-agenda-buffer-name +agenda-main-buffer-name)))
     ("r" "Reading List" tags-todo "READING"
      ((org-agenda-overriding-header "Reading List")
       (org-agenda-remove-tags t)
@@ -129,9 +129,11 @@
        '((tags . "%(orgability-agenda-list-topics)")
          ))
       (org-agenda-sorting-strategy
-       '(todo-state-down effort-up category-keep))))
+       '(todo-state-down effort-up category-keep)))
+     ((org-agenda-buffer-name +agenda-reading-list-buffer-name)))
     ("h" "Habits" tags-todo "STYLE=\"habit\""
      ((org-agenda-overriding-header "Habits")
       (org-agenda-sorting-strategy
-       '(todo-state-down effort-up category-keep))))
+       '(todo-state-down effort-up category-keep)))
+     ((org-agenda-buffer-name +agenda-habits-buffer-name)))
     ))
