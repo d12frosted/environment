@@ -92,7 +92,9 @@
         :desc "Previous buffer" "[" #'previous-buffer
 	      :desc "Save buffer" "s" #'save-buffer
 	      :desc "Pop scratch buffer" "x" #'nucleus/open-scratch-buffer
-	      :desc "Sudo edit this file" "S" #'+file/sudo-this)
+	      :desc "Sudo edit this file" "S" #'+file/sudo-this
+        :desc "Pop messages buffer" "m" #'+buffer/pop-messages
+        :desc "Switch to messages buffer" "M" #'+buffer/swtich-to-messages)
 
       (:desc "file" :prefix "f"
         :desc "Find file" "." #'find-file
