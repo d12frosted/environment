@@ -26,7 +26,6 @@
 
   (setq-local cha-tea-groups-parent-id
               (+org-get-buffer-setting "TEA_GROUPS_PARENT"))
-  ;; TODO use watchers
   (setq-local cha--tea-groups-parent
               (+brain-as-entry cha-tea-groups-parent-id))
 
@@ -127,7 +126,7 @@ top of the file:
       (setq val (cdr (assoc-string prop properties)))
       (setq result (replace-regexp-in-string
                     (concat "{" prop "}")
-                    val
+                    (or val "?")
                     result
                     t)))
     result))
