@@ -56,7 +56,8 @@
      +org|setup-todo
      +org|setup-clock
      +org|setup-id
-     +org|setup-refile))
+     +org|setup-refile
+     +org|setup-attach))
 
 (add-hook! 'org-mode-hook
   #'(org-indent-mode
@@ -149,6 +150,9 @@
               (member (if (listp x) (car x) x) +org-refile-ignore-tags))
             tags-at))))))
 
+(defun +org|setup-attach ()
+  "Setup attach functionality."
+  (setq org-attach-directory ".data"))
 ;;
 ;; Packages
 
@@ -181,6 +185,5 @@
 (def-package! org-download
   :defer t
   :init
-  (setq-default org-download-image-dir
-                (concat org-directory ".images/"))
+  (setq-default org-download-method 'attach)
   (add-hook 'org-mode-hook #'org-download-enable))
