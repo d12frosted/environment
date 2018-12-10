@@ -152,7 +152,10 @@
 
 (defun +org|setup-attach ()
   "Setup attach functionality."
-  (setq org-attach-directory ".data"))
+  (setq org-attach-directory ".data"
+        org-attach-auto-tag nil
+        org-attach-file-list-property nil
+        org-attach-store-link-p 'attached))
 ;;
 ;; Packages
 
