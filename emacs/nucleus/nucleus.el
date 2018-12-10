@@ -136,10 +136,6 @@ to run after everything else (except for `window-setup-hook').")
 (defvar nucleus-reload-hook nil
   "A list of hooks to run when `nucleus/reload' is called.")
 
-(defvar nucleus-load-theme-hook nil
-  "Hook run after the theme is loaded with `load-theme' or
-reloaded with `nucleus/reload-theme'.")
-
 (defvar nucleus-exit-window-hook nil
   "Hook run before `switch-window' or `switch-frame' are called.
 
@@ -208,13 +204,6 @@ See `nucleus-enter-buffer-hook', `nucleus-enter-window-hook',
     (if disable
         (advice-remove (car spec) (cdr spec))
       (advice-add (car spec) :around (cdr spec)))))
-
-(defun nucleus*load-theme-hooks (theme &rest _)
-  "Set up `nucleus-load-theme-hook' to run after `load-theme' is
-called."
-  (setq nucleus-theme theme)
-  (run-hooks 'nucleus-load-theme-hook))
-(advice-add #'load-theme :after #'nucleus*load-theme-hooks)
 
 ;;
 ;; Emacs core configuration

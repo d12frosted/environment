@@ -192,13 +192,13 @@ If CDR is t, then use `solaire-mode-swap-bg'.")
     (when-let* ((rule (assq +modern-theme +modern-solaire-themes)))
       (require 'solaire-mode)
       (if (cdr rule) (solaire-mode-swap-bg))))
-  (add-hook 'nucleus-load-theme-hook #'+modern|solaire-mode-swap-bg-maybe t)
+  (add-hook '+modern-load-theme-hook #'+modern|solaire-mode-swap-bg-maybe t)
   :config
   (add-hook 'change-major-mode-after-body-hook #'turn-on-solaire-mode)
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)
   ;; Prevent color glitches when reloading either Emacs or loading a new theme
-  (add-hook! :append '(nucleus-load-theme-hook nucleus-reload-hook)
+  (add-hook! :append '(+modern-load-theme-hook nucleus-reload-hook)
     #'solaire-mode-reset)
   ;; org-capture takes an org buffer and narrows it. The result is erroneously
   ;; considered an unreal buffer, so solaire-mode must be restored.
@@ -231,6 +231,17 @@ If CDR is t, then use `solaire-mode-swap-bg'.")
 
 ;;
 ;; Theme & font
+
+(defvar +modern-load-theme-hook nil
+  "Hook run after the theme is loaded with `load-theme' or
+reloaded with `+modern/reload-theme'.")
+
+(defun +modern*load-theme-hooks (theme &rest _)
+  "Set up `+modern-load-theme-hook' to run after `load-theme' is
+called."
+  (setq +modern-theme theme)
+  (run-hooks '+modern-load-theme-hook))
+(advice-add #'load-theme :after #'+modern*load-theme-hooks)
 
 (defvar +modern-last-window-system
   (if (daemonp) 'daemon initial-window-system)
