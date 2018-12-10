@@ -17,6 +17,36 @@
 ;;
 ;;; Code:
 
+(defvar +org-id-link-regexp
+  (concat
+   ;; outer bracket
+   "\\["
+
+   ;; link
+   "\\["
+   ;; type
+   "\\([[a-zA-Z0-9\\-]+\\)"
+   ":"
+   ;; uuid
+   "\\("
+   "[a-zA-Z0-9]\\{8\\}"
+   "-"
+   "[a-zA-Z0-9]\\{4\\}"
+   "-"
+   "[a-zA-Z0-9]\\{4\\}"
+   "-"
+   "[a-zA-Z0-9]\\{4\\}"
+   "-"
+   "[a-zA-Z0-9]\\{12\\}"
+   "\\)"
+   "\\]"
+
+   ;; title
+   "\\[" "\\(.*\\)" "\\]"
+
+   ;; outer bracket
+   "\\]"))
+
 ;;;###autoload
 (defun +org-extract-id-from-link (link)
-  (+string-match-1 "\\[\\[.+:\\(.+\\)\\]\\[.*\\]\\]" link))
+  (+string-match-n 2 +org-id-link-regexp link))
