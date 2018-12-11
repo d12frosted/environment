@@ -400,7 +400,7 @@ Meant for `+modeline-buffer-path-function'."
   (if +modeline-bar-at-end
       (setq +modeline-bar-end '+modeline-bar)
     (setq +modeline-bar-start '+modeline-bar)))
-(add-hook 'nucleus-load-theme-hook #'+modeline|setup-bars)
+(add-hook '+modern-load-theme-hook #'+modeline|setup-bars)
 
 (defun +modeline|setup-bars-after-change (sym val op _where)
   (when (eq op 'set)
