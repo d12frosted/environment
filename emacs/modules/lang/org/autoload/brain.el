@@ -26,12 +26,18 @@
   (insert (+brain-make-link (+brain-choose-entry))))
 
 ;;;###autoload
+(defun +brain-title (entry-or-id)
+  "Get title of ENTRY-OR-ID."
+  (save-match-data
+    (org-brain-title (+brain-as-entry entry-or-id))))
+
+;;;###autoload
 (defun +brain-make-link (entry-or-id)
   "Make an org-mode link to ENTRY-OR-ID."
   (org-make-link-string
    (concat "brain:"
            (+brain-as-id entry-or-id))
-   (org-brain-title (+brain-as-entry entry-or-id))))
+   (+brain-title entry-or-id)))
 
 ;;;###autoload
 (defun +brain-choose-entry ()
