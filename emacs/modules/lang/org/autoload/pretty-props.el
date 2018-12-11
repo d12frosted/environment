@@ -58,18 +58,20 @@ top of the file:
   "Prettify properties of entry at point.
 
 - `pretty-props-format'
-- `pretty-props-sort'"
+- `pretty-props-sort'
+- `pretty-props-update-links'"
   (interactive)
   (pretty-props-format)
-  (pretty-props-sort))
+  (pretty-props-sort)
+  (pretty-props-update-links))
 
 (defun pretty-props-sort ()
   "Sort properties in entry at point."
   (let ((p0 (car (org-get-property-block)))
-         (p1 (- (cdr (org-get-property-block)) 1))
-         (props (org-entry-properties))
-         (maxv (seq-length pretty-props-config))
-         (pregx "^:\\([a-zA-Z_\\-]+\\):.*$"))
+        (p1 (- (cdr (org-get-property-block)) 1))
+        (props (org-entry-properties))
+        (maxv (seq-length pretty-props-config))
+        (pregx "^:\\([a-zA-Z_\\-]+\\):.*$"))
     (save-excursion
       (save-restriction
         (narrow-to-region p0 p1)
@@ -98,6 +100,18 @@ top of the file:
         (org-indent-line)
         (forward-line 1)
         (beginning-of-line)))))
+
+(defun pretty-props-update-links ()
+  "Update titles of the links in properties."
+  (let ((p0 (car (org-get-property-block)))
+        (p1 (cdr (org-get-property-block))))
+    (save-excursion
+      (save-restriction
+        (narrow-to-region p0 p1)
+        (goto-char (point-min))
+        (while (search-forward-regexp +org-id-link-regexp nil t)
+          (replace-match (+brain-title (match-string 2))
+                         nil nil nil 3))))))
 
 (defun pretty-props-buffer-config ()
   "Get the `pretty-props-config' from current buffer."
