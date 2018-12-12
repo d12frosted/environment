@@ -46,6 +46,7 @@
 
  :emacs
  buffer
+ ediff
  file
  string
  window
