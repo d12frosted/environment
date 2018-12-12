@@ -129,11 +129,11 @@
        '((tags . "%(orgability-agenda-list-topics)")
          ))
       (org-agenda-sorting-strategy
-       '(todo-state-down effort-up category-keep)))
-     ((org-agenda-buffer-name +agenda-reading-list-buffer-name)))
+       '(todo-state-down effort-up category-keep))
+      (org-agenda-buffer-name +agenda-reading-list-buffer-name)))
     ("h" "Habits" tags-todo "STYLE=\"habit\""
      ((org-agenda-overriding-header "Habits")
       (org-agenda-sorting-strategy
-       '(todo-state-down effort-up category-keep)))
-     ((org-agenda-buffer-name +agenda-habits-buffer-name)))
+       '(todo-state-down effort-up category-keep))
+      (org-agenda-buffer-name +agenda-habits-buffer-name)))
     ))
