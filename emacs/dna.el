@@ -62,6 +62,7 @@
  org
  plantuml
  rest
+ scala
  sh
 
  :app
