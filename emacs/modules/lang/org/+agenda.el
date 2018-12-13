@@ -41,8 +41,6 @@
 	 org-agenda-todo-keyword-format "%-1s"
 	 org-agenda-tags-column 0)
 
-  ;; make the `mode-name' a little bit shorter
-  (setq-hook! 'org-agenda-mode-hook mode-name "agenda")
 
   (after! org-agenda
     ;; release leader key
