@@ -43,3 +43,22 @@
         (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max))))
     (set-buffer-modified-p nil))
   (add-hook 'dired-after-readin-hook #'+dired|sort-directories-first))
+
+(def-package! dired-k
+  :hook (dired-initial-position . dired-k)
+  :hook (dired-after-readin . dired-k-no-revert)
+  :config
+  (defun +dired*interrupt-process (orig-fn &rest args)
+    "Fixes dired-k killing git processes too abruptly, leaving
+behind disruptive .git/index.lock files."
+    (cl-letf (((symbol-function #'kill-process)
+               (symbol-function #'interrupt-process)))
+      (apply orig-fn args)))
+  (advice-add #'dired-k--start-git-status :around #'+dired*interrupt-process)
+
+  (defun +dired*dired-k-highlight (orig-fn &rest args)
+    "Butt out if the requested directory is remote (i.e. through
+tramp)."
+    (unless (file-remote-p default-directory)
+      (apply orig-fn args)))
+  (advice-add #'dired-k--highlight :around #'+dired*dired-k-highlight))
