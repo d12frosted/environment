@@ -21,4 +21,8 @@
   :defer t
   :init
   ;; visit file or directory in place, reuse buffers
-  (put 'dired-find-alternate-file 'disabled nil))
+  (put 'dired-find-alternate-file 'disabled nil)
+  (setq
+   ; Always copy/delete recursively
+   dired-recursive-copies  'always
+   dired-recursive-deletes 'top))
