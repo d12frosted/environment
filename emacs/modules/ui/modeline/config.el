@@ -512,7 +512,7 @@ Meant for `+modeline-buffer-path-function'."
   :on-hooks (after-revert-hook after-save-hook find-file-hook)
   :on-set (indent-tabs-mode +modeline-indent-width tab-width)
   (propertize (format "%s%d  "
-                      (if indent-tabs-mode "⭾" "␣")
+                      (if indent-tabs-mode "»" "␣")
                       (or +modeline-indent-width tab-width))
               'help-echo
               (format "Indentation: %d %s wide"
