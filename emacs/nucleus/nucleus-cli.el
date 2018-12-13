@@ -21,7 +21,6 @@
 ;; Eagerly load these libraries because this module may be loaded in a session
 ;; that hasn't been fully initialized (where autoloads files haven't been
 ;; generated or `load-path' populated).
-(load! "autoload/debug")
 (load! "autoload/files")
 (load! "autoload/message")
 (load! "autoload/packages")
