@@ -58,6 +58,7 @@
 
  :lang
  emacs-lisp
+ go
  (haskell +intero)
  org
  plantuml
