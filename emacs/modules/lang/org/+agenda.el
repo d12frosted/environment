@@ -21,24 +21,25 @@
 
 (defun +org|setup-agenda ()
   "Setup `org-agenda'."
-  (setq org-agenda-files (list org-directory
-			       (concat org-directory "notes/")
-			       (concat org-directory "gtd/"))
-	;; also show state change in log mode
-	org-agenda-log-mode-items '(closed clock state)
+  (setq
+   org-agenda-files (list org-directory
+			                    (concat org-directory "notes/")
+			                    (concat org-directory "gtd/"))
+	 ;; also show state change in log mode
+	 org-agenda-log-mode-items '(closed clock state)
 
-	;; setup archive
-	org-archive-location (concat org-directory ".archive/archive" "::")
-	org-archive-save-context-info '(time file ltags itags todo category olpath)
+	 ;; setup archive
+	 org-archive-location (concat org-directory ".archive/archive" "::")
+	 org-archive-save-context-info '(time file ltags itags todo category olpath)
 
-	;; more structured view
-	org-agenda-prefix-format
-        '((agenda . " %i %-24:c%?-12t% s")
-          (todo . " %i %-24:c")
-          (tags . " %i %-24:c")
-          (search . " %i %-24:c"))
-	org-agenda-todo-keyword-format "%-1s"
-	org-agenda-tags-column 0)
+	 ;; more structured view
+	 org-agenda-prefix-format
+   '((agenda . " %i %-24:c%?-12t% s")
+     (todo . " %i %-24:c")
+     (tags . " %i %-24:c")
+     (search . " %i %-24:c"))
+	 org-agenda-todo-keyword-format "%-1s"
+	 org-agenda-tags-column 0)
 
   ;; make the `mode-name' a little bit shorter
   (setq-hook! 'org-agenda-mode-hook mode-name "agenda")
