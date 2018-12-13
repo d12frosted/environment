@@ -23,6 +23,7 @@
   ;; visit file or directory in place, reuse buffers
   (put 'dired-find-alternate-file 'disabled nil)
   (setq
+   dired-listing-switches "-alh"
    ; Always copy/delete recursively
    dired-recursive-copies  'always
    dired-recursive-deletes 'top
@@ -47,6 +48,7 @@
 (def-package! dired-k
   :hook (dired-initial-position . dired-k)
   :hook (dired-after-readin . dired-k-no-revert)
+  (setq dired-k-human-readable t)
   :config
   (defun +dired*interrupt-process (orig-fn &rest args)
     "Fixes dired-k killing git processes too abruptly, leaving
