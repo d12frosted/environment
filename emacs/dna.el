@@ -46,6 +46,7 @@
 
  :emacs
  buffer
+ dired
  ediff
  file
  string
