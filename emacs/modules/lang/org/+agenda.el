@@ -39,8 +39,10 @@
      (tags . " %i %-24:c")
      (search . " %i %-24:c"))
 	 org-agenda-todo-keyword-format "%-1s"
-	 org-agenda-tags-column 0)
+	 org-agenda-tags-column 0
 
+   ;; show agenda in current window
+   org-agenda-window-setup 'current-window)
 
   (after! org-agenda
     ;; release leader key
