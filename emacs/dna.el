@@ -37,6 +37,7 @@
  modeline
  modern
  theming
+ vc-gutter
 
  :editor
  default
