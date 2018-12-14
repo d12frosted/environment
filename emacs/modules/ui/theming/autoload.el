@@ -29,6 +29,10 @@
      '(+theming-mode-line-critical ((t (:inherit warning :foreground "#F4847D"))))
 
      ;; org faces
+     '(org-mode-line-clock ((t (:inherit +theming-mode-line-warning
+                                :box unspecified
+                                :foreground unspecified
+                                :background unspecified))))
      '(org-checkbox ((t (:background "#FAF7CC"))))
 
      ;; solaire faces
