@@ -28,6 +28,11 @@
      '(+theming-mode-line-warning ((t (:inherit warning))))
      '(+theming-mode-line-critical ((t (:inherit warning :foreground "#F4847D"))))
 
+     ;; git-gutter faces
+     '(git-gutter:added ((t (:foreground "#97f295"))))
+     '(git-gutter:modified ((t (:inherit warning))))
+     '(git-gutter:deleted ((t (:foreground "#F4847D"))))
+
      ;; org faces
      '(org-mode-line-clock ((t (:inherit +theming-mode-line-warning
                                 :box unspecified
