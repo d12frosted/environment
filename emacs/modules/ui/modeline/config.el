@@ -22,4 +22,13 @@
   :defer t
   :hook (after-init . doom-modeline-init)
   :init
+  (custom-set-faces
+   '(doom-modeline-buffer-modified ((t (:inherit (+theming-mode-line-critical bold)))))
+   '(doom-modeline-info ((t (:inherit +theming-mode-line))))
+   '(doom-modeline-warning ((t (:inherit +theming-mode-line-warning))))
+   '(doom-modeline-urgent ((t (:inherit +theming-mode-line-critical))))
+   '(doom-modeline-buffer-project ((t (:inherit +theming-mode-line-highlight))))
+   '(doom-modeline-project-root-dir ((t (:inherit +theming-mode-line-highlight))))
+   '(doom-modeline-persp-name ((t (:inherit +theming-mode-line-highlight))))
+   '(doom-modeline-persp-buffer-not-in-persp ((t (:inherit +theming-mode-line-warning)))))
   (setq doom-modeline-buffer-file-name-style 'truncate-with-project))

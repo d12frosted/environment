@@ -22,16 +22,14 @@
   "Patch faces of `leuven-theme'."
   (when (eq +modern-theme 'leuven)
     (custom-set-faces
-     ;; modeline
-     '(doom-modeline-buffer-modified ((t (:inherit (mode-line bold) :foreground "#F4D7DA"))) t)
-     '(doom-modeline-info ((t (:inherit mode-line))) t)
-     '(doom-modeline-persp-name ((t (:inherit mode-line :foreground "SkyBlue3"))) t)
-     '(doom-modeline-buffer-project ((t (:inherit mode-line :foreground "SkyBlue3"))) t)
-     '(doom-modeline-project-root-dir ((t (:inherit mode-line))) t)
-     '(doom-modeline-persp-buffer-not-in-persp ((t (:inherit mode-line))) t)
+     ;; theming faces
+     '(+theming-mode-line ((t (:inherit mode-line))))
+     '(+theming-mode-line-highlight ((t (:inherit mode-line :foreground "SkyBlue3"))))
+     '(+theming-mode-line-warning ((t (:inherit warning))))
+     '(+theming-mode-line-critical ((t (:inherit warning :foreground "#F4847D"))))
 
-     ;; org
-     '(org-checkbox ((t (:background "#FAF7CC"))) t)
+     ;; org faces
+     '(org-checkbox ((t (:background "#FAF7CC"))))
 
-     ;; solaire
+     ;; solaire faces
      '(solaire-default-face ((t (:inherit default :background "#FAFAFA")))))))

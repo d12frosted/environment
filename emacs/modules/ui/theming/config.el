@@ -17,6 +17,22 @@
 ;;
 ;;; Code:
 
+(defface +theming-mode-line
+  '((t (:inherit mode-line)))
+  "Face used for regular text in mode line.")
+
+(defface +theming-mode-line-highlight
+  '((t (:inherit mode-line)))
+  "Face used for highlighted text in mode line.")
+
+(defface +theming-mode-line-warning
+  '((t (:inherit mode-line)))
+  "Face used for warning text in mode line.")
+
+(defface +theming-mode-line-critical
+  '((t (:inherit mode-line)))
+  "Face used for critical text in mode line.")
+
 (def-package! leuven-theme
   :init
   (unless +modern-theme
