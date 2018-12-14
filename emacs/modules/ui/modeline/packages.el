@@ -17,5 +17,5 @@
 ;;
 ;;; Code:
 
-(package! shrink-path)
-(package! anzu)
+(package! doom-modeline
+  :recipe (:fetcher github :repo "d12frosted/doom-modeline"))

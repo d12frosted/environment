@@ -33,7 +33,6 @@
   ;; setup indentation
   (setq sh-indent-after-continuation 'always
         sh-basic-offset tab-width)
-  (setq-hook! 'sh-mode-hook +modeline-indent-width sh-basic-offset)
 
   ;; make the `mode-name' a little bit shorter
   (setq-hook! 'sh-mode-hook mode-name "sh")
@@ -76,7 +75,6 @@
   :config
   ;; setup indentation
   (setq fish-indent-offset tab-width)
-  (setq-hook! 'fish-mode-hook +modeline-indent-width fish-indent-offset)
 
   ;; TODO formatter
   ;;(set-formatter! 'fish-mode #'fish_indent)

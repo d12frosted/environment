@@ -35,7 +35,6 @@
   (set-repl-handler! '(haskell-mode haskell-cabal-mode literate-haskell-mode) #'+haskell-repl)
 
   (add-to-list 'completion-ignored-extensions ".hi")
-  (setq-hook! 'haskell-mode-hook +modeline-indent-width haskell-indentation-left-offset)
 
   (map! :map haskell-mode-map
         :localleader
