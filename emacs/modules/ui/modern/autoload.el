@@ -18,12 +18,46 @@
 ;;; Code:
 
 ;;;###autoload
+(defun +modern-dpi (&optional display)
+  "Get the DPI of DISPLAY.
+
+DISPLAY is a display name, frame or terminal, as in
+`display-monitor-attributes-list'."
+  (cl-flet ((pyth (lambda (w h)
+                    (sqrt (+ (* w w)
+                             (* h h)))))
+            (mm2in (lambda (mm)
+                     (/ mm 25.4))))
+    (let* ((atts (frame-monitor-attributes))
+           (pix-w (cl-fourth (assoc 'geometry atts)))
+           (pix-h (cl-fifth (assoc 'geometry atts)))
+           (pix-d (pyth pix-w pix-h))
+           (mm-w (cl-second (assoc 'mm-size atts)))
+           (mm-h (cl-third (assoc 'mm-size atts)))
+           (mm-d (pyth mm-w mm-h)))
+      (/ pix-d (mm2in mm-d)))))
+
+;;;###autoload
+(defun +modern-scale (&optional display)
+  "Get the scale of DISPLAY.
+
+DISPLAY is a display name, frame or terminal, as in
+`display-monitor-attributes-list'."
+  (/ (+modern-dpi display) +modern-target-dpi))
+
+;;;###autoload
+(defun +modern-patch-font-size (font-spec size)
+  "Patch size of FONT-SPEC according to display DPI."
+  (font-put font-spec :size (round (* (+modern-scale) size)))
+  font-spec)
+
+;;;###autoload
 (defun +modern/reload-font ()
   "Reload `+modern-font', `+modern-variable-pitch-font', and
 `+modern-unicode-font', if set."
   (interactive)
   (when +modern-font
-    (set-frame-font +modern-font t))
+    (set-frame-font (+modern-patch-font-size +modern-font +modern-font-size) t))
   (+modern|init-fonts))
 
 ;;;###autoload
@@ -57,6 +91,6 @@ Uses `+modern-big-font' when enabled."
   (unless +modern-font
     (user-error "`+modern-font' must be set to a valid font"))
   (set-frame-font (if +modern-big-font-mode
-                      +modern-big-font
-                    +modern-font)
+                      (+modern-patch-font-size +modern-big-font +modern-big-font-size)
+                    (+modern-patch-font-size +modern-font +modern-font-size))
                   t t))
