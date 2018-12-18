@@ -78,17 +78,6 @@ that through you great beauty has been wakened into song."
 intro
 
 #
-# Operating system check
-#
-
-theme "Guardian" "Checking operating system"
-supported_os="Darwin"
-if [[ "$(uname)" != "$supported_os" ]]; then
-  error "unsupported operating system: $(uname). This script works on $supported_os only."
-  exit 1
-fi
-
-#
 # Helpers
 #
 
@@ -104,6 +93,24 @@ function theme_guard() {
     inactive_theme "$1" "${@:2}"
     return 1
   fi
+}
+
+function os_guard() {
+  if [[ "$(uname)" == "$1" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+function macos_guard() {
+  os_guard "Darwin"
+  return $?
+}
+
+function linux_guard() {
+  os_guard "Linux"
+  return $?
 }
 
 function qualify_repo_url() {
@@ -314,11 +321,13 @@ theme_guard "SSH" "Checking SSH keys" && {
     log "Starting ssh-agent"
     eval "$(ssh-agent -s)"
 
-    log "Automatically load SSH key and use Keychain"
-    echo "Host *
+    macos_guard && {
+      log "Automatically load SSH key and use Keychain"
+      echo "Host *
  AddKeysToAgent yes
  UseKeychain yes
  IdentityFile $ssh_key_path" > "$ssh_config_path"
+    }
 
     log "Add SSH key to ssh-agent"
     ssh-add -K ~/.ssh/id_rsa
@@ -344,7 +353,7 @@ theme_guard "Linking" "Link all files as defined in Linkfile" && {
   map_lines sync_repo "$XDG_CONFIG_CACHE/eru/Linkfile" || true
 }
 
-theme_guard "Brew" "Ensure brew exists" && {
+macos_guard && theme_guard "Brew" "Ensure brew exists" && {
   check brew || {
     info "Installing brew"
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -352,7 +361,7 @@ theme_guard "Brew" "Ensure brew exists" && {
   }
 }
 
-theme_guard "Brew" "Install all dependencies" && {
+macos_guard && theme_guard "Brew" "Install all dependencies" && {
   cd "$target/bootstrap" && brew bundle
 }
 
@@ -364,11 +373,11 @@ echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 theme "Git" "Create a local git config file"
 touch "$target/git/local.config"
 
-theme_guard "macOS" "Write all defaults" && {
+macos_guard && theme_guard "macOS" "Write all defaults" && {
   cd "$target/macos" && sudo ./defaults.sh
 }
 
-theme_guard "skhd" "Patch skhd application PATH" && {
+macos_guard && theme_guard "skhd" "Patch skhd application PATH" && {
   check skhd && {
     "$target/utils/bin/patch_skhd_path"
   }
@@ -378,7 +387,7 @@ theme_guard "Emacs" "Refresh Nucleus" && {
   nucleus --yes refresh
 }
 
-theme_guard "Guardian" "Check that Emacs runs as expected" && {
+macos_guard && theme_guard "Guardian" "Check that Emacs runs as expected" && {
   emacs --batch -l "$target/emacs/test.el"
 }
 
