@@ -57,9 +57,10 @@
  git
 
  :lang
+ (haskell +intero)
  emacs-lisp
  go
- (haskell +intero)
+ nix
  org
  plantuml
  rest
