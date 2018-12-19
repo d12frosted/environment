@@ -33,6 +33,11 @@
      '(git-gutter:modified ((t (:inherit warning))))
      '(git-gutter:deleted ((t (:foreground "#F4847D"))))
 
+     ;; dired-k
+     '(dired-k-added ((t (:foreground "#97f295"))))
+     '(dired-k-modified ((t (:inherit warning))))
+     '(dired-k-commited ((t (:foreground "SkyBlue3"))))
+
      ;; org faces
      '(org-mode-line-clock ((t (:inherit +theming-mode-line-warning
                                 :box unspecified
