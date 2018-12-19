@@ -63,6 +63,7 @@
  nix
  org
  plantuml
+ proto
  rest
  scala
  sh
