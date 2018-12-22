@@ -380,16 +380,18 @@ theme_guard "Linking" "Link all files as defined in Linkfiles" && {
   map_lines sync_repo "$XDG_CONFIG_CACHE/eru/Linkfile" || true
 }
 
-macos_guard && theme_guard "Brew" "Ensure brew exists" && {
-  check brew || {
-    info "Installing brew"
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    brew update
+macos_guard && {
+  theme_guard "Brew" "Ensure brew exists" && {
+    check brew || {
+      info "Installing brew"
+      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+      brew update
+    }
   }
-}
 
-macos_guard && theme_guard "Brew" "Install all dependencies" && {
-  cd "$target/bootstrap" && brew bundle
+  theme_guard "Brew" "Install all dependencies" && {
+    cd "$target/bootstrap" && brew bundle
+  }
 }
 
 theme "Fish" "Setup fish variables"
@@ -400,13 +402,15 @@ echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
 theme "Git" "Create a local git config file"
 touch "$target/git/local.config"
 
-macos_guard && theme_guard "macOS" "Write all defaults" && {
-  cd "$target/macos" && sudo ./defaults.sh
-}
+macos_guard && {
+  theme_guard "macOS" "Write all defaults" && {
+    cd "$target/macos" && sudo ./defaults.sh
+  }
 
-macos_guard && theme_guard "skhd" "Patch skhd application PATH" && {
-  check skhd && {
-    "$target/utils/bin/patch_skhd_path"
+  theme_guard "skhd" "Patch skhd application PATH" && {
+    check skhd && {
+      "$target/utils/bin/patch_skhd_path"
+    }
   }
 }
 
