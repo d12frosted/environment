@@ -377,7 +377,7 @@ theme_guard "Linking" "Link all files as defined in Linkfiles" && {
   map_lines safe_link "$target/bootstrap/Linkfile"
   map_lines safe_link "$target/bootstrap/Linkfile_${KERNEL_NAME}" || true
   map_lines safe_link "$target/bootstrap/Linkfile_${KERNEL_RELEASE}" || true
-  map_lines sync_repo "$XDG_CONFIG_CACHE/eru/Linkfile" || true
+  map_lines sync_link "$XDG_CONFIG_CACHE/eru/Linkfile" || true
 }
 
 macos_guard && {
