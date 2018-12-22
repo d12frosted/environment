@@ -418,7 +418,7 @@ theme_guard "Emacs" "Refresh Nucleus" && {
   nucleus --yes refresh
 }
 
-macos_guard && theme_guard "Guardian" "Check that Emacs runs as expected" && {
+theme_guard "Guardian" "Check that Emacs runs as expected" && {
   emacs --batch -l "$target/emacs/test.el"
 }
 
