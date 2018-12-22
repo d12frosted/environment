@@ -67,7 +67,7 @@ function intro() {
 }
 
 function log() {
-  echo -e "\033[0;30m$*\033[0m"
+  echo -e "$*"
 }
 
 function section() {
