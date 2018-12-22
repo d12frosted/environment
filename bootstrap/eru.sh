@@ -35,6 +35,26 @@ fellow="d12frosted"
 set -e
 
 #
+# Get the OS info
+#
+
+KERNEL_NAME=$(uname -s | awk '{print tolower($0)}')
+KERNEL_RELEASE="unknown"
+OS_NAME="$(uname -o)"
+case $KERNEL_NAME in
+  Darwin)
+    KERNEL_RELEASE=macos
+    ;;
+  Linux)
+    if [[ "$(uname -r)" == *"arch"* ]]; then
+      KERNEL_RELEASE="arch"
+    fi
+    ;;
+  *)
+    ;;
+esac
+
+#
 # Logging
 #
 
@@ -76,6 +96,11 @@ Imperishable, ye shall show forth your powers in adorning this theme, each with
 his own thoughts and devices, if he will. But I win sit and hearken, and be glad
 that through you great beauty has been wakened into song."
 intro
+
+log "Kernel name:      $KERNEL_NAME"
+log "Kernel release:   $KERNEL_RELEASE"
+log "operating system: $OS_NAME"
+log
 
 #
 # Helpers
