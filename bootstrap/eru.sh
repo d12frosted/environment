@@ -368,7 +368,7 @@ theme_guard "Repositories" "Sync environment repository" && {
   sync_repo "$XDG_CONFIG_HOME" "d12frosted/environment" || true
 }
 
-theme_guard "Repositories" "Sync repositories from Repofile" && {
+theme_guard "Repositories" "Sync repositories from Repofiles" && {
   map_lines sync_repo "$target/bootstrap/Repofile" || true
   map_lines sync_repo "$XDG_CONFIG_CACHE/eru/Repofile" || true
 }
