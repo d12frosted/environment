@@ -12,7 +12,5 @@ utils/bin/on_window_switch ~/.local/bin/on_window_switch
 utils/bin/on_desktop_switch ~/.local/bin/on_desktop_switch
 utils/bin/gifify ~/.local/bin/gifify
 scala/plugins.sbt ~/.sbt/1.0/plugins/plugins.sbt
-chunkwm/chunkwmrc ~/.chunkwmrc
-skhd/skhdrc ~/.skhdrc
-ubersicht/ ~/Library/Application Support/Übersicht/widgets
 maven/mavenrc ~/.mavenrc
+gnupg/gpg-agent.conf ~/.gnupg/gpg-agent.conf
