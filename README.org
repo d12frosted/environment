@@ -32,7 +32,8 @@ As it was already told, every domain has it's own readme file where the full
 list of dependencies is written down.
 
 But be aware that I am using OS X and haven't tested my configurations beyond
-this operating system. They should work, but I can't promise :smile:.
+this operating system. They should work, but I can't promise :smile:. Though
+note that Linux support is in progress.
 
 The installation script will try to get some of the dependencies if you are
 using OS X. Dependencies are installed via =bootstrap= script, which can be
