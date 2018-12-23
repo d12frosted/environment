@@ -13,4 +13,4 @@ utils/bin/on_desktop_switch ~/.local/bin/on_desktop_switch
 utils/bin/gifify ~/.local/bin/gifify
 scala/plugins.sbt ~/.sbt/1.0/plugins/plugins.sbt
 maven/mavenrc ~/.mavenrc
-gnupg/gpg-agent.conf ~/.gnupg/gpg-agent.conf
+gnupg/gpg-agent-${KERNEL_NAME}.conf ~/.gnupg/gpg-agent.conf
