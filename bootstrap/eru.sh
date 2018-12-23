@@ -39,15 +39,14 @@ set -e
 #
 
 KERNEL_NAME=$(uname -s | awk '{print tolower($0)}')
-KERNEL_RELEASE="unknown"
-OS_NAME="$(uname -o)"
+OS_NAME="unknown"
 case $KERNEL_NAME in
   darwin)
-    KERNEL_RELEASE=macos
+    OS_NAME=macos
     ;;
   linux)
     if [[ "$(uname -r)" == *"arch"* ]]; then
-      KERNEL_RELEASE="arch"
+      OS_NAME="arch"
     fi
     ;;
   *)
@@ -97,9 +96,8 @@ his own thoughts and devices, if he will. But I win sit and hearken, and be glad
 that through you great beauty has been wakened into song."
 intro
 
-log "Kernel name:      $KERNEL_NAME"
-log "Kernel release:   $KERNEL_RELEASE"
-log "operating system: $OS_NAME"
+log "Kernel:           $KERNEL_NAME"
+log "Operating system: $OS_NAME"
 log
 
 #
@@ -120,22 +118,14 @@ function theme_guard() {
   fi
 }
 
-function os_guard() {
-  if [[ "$(uname)" == "$1" ]]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
 function macos_guard() {
-  os_guard "Darwin"
-  return $?
+  [[ "$OS_NAME" == "macos" ]]
+  return
 }
 
-function linux_guard() {
-  os_guard "Linux"
-  return $?
+function arch_guard() {
+  [[ "$OS_NAME" == "arch" ]]
+  return
 }
 
 function qualify_repo_url() {
@@ -328,6 +318,36 @@ ensure_dir "$HOME/.local/bin"
 ensure_dir "$DEVELOPER"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
+arch_guard && theme_guard "OS" "Bootstrap Arch Linux" && {
+  section "Install crutial dependenices"
+  sudo pacman -Syu --noconfirm
+  sudo pacman -S --noconfirm --needed base-devel
+  sudo pacman -S --noconfirm git pacman-contrib
+
+  section "Rank mirrors for pacman"
+  mirrorlist="/etc/pacman.d/mirrorlist"
+  mirrorlist_bak="${mirrorlist}.bak"
+  if [[ -f "$mirrorlist_bak" ]]; then
+    log "Not updating mirrors list, because '$mirrorlist_bak' exists"
+    log "Delete in order to re-rank mirrors"
+  else
+    mirrorlist_tmp=$(mktemp)
+    curl -s 'https://www.archlinux.org/mirrorlist/?country=all&protocol=https&ip_version=4' \
+      | sed -e 's/^#Server/Server/' -e '/^#/d' > "$mirrorlist_tmp"
+    sudo cp "$mirrorlist_tmp" "$mirrorlist_bak"
+    sudo rankmirrors -n 6 "$mirrorlist_bak" > "$mirrorlist"
+  fi
+
+  section "Install yay for simpler AUR access"
+  check yay || {
+    yay_dir=$(mktemp -d)
+    git clone https://aur.archlinux.org/yay.git "$yay_dir"
+    cd "$yay_dir" && {
+      makepkg -si --noconfirm
+    }
+  }
+}
+
 # TODO: make it working on Linux from command line
 macos_guard && theme_guard "SSH" "Checking SSH keys" && {
   if [[ "$INTERACTIVE" = "true" ]]; then
@@ -378,7 +398,7 @@ theme_guard "Repositories" "Sync repositories from Repofiles" && {
 theme_guard "Linking" "Link all files as defined in Linkfiles" && {
   map_lines safe_link "$target/bootstrap/Linkfile"
   map_lines safe_link "$target/bootstrap/Linkfile_${KERNEL_NAME}" || true
-  map_lines safe_link "$target/bootstrap/Linkfile_${KERNEL_RELEASE}" || true
+  map_lines safe_link "$target/bootstrap/Linkfile_${OS_NAME}" || true
   map_lines sync_link "$XDG_CONFIG_CACHE/eru/Linkfile" || true
 }
 
