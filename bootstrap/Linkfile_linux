@@ -2,3 +2,5 @@ xorg/xinitrc ~/.xinitrc
 xorg/xresources ~/.Xresources
 xorg/xmodmap ~/.Xmodmap
 xmonad/xmonad.hs ~/.xmonad/xmonad.hs
+bash/bash_profile_linux ~/.bash_profile
+bash/bashrc_linux ~/.bashrc
