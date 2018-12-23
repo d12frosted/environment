@@ -391,14 +391,14 @@ theme_guard "Repositories" "Sync environment repository" && {
 }
 
 theme_guard "Repositories" "Sync repositories from Repofiles" && {
-  map_lines sync_repo "$target/bootstrap/Repofile" || true
+  map_lines sync_repo "$target/Repofile" || true
   map_lines sync_repo "$XDG_CONFIG_CACHE/eru/Repofile" || true
 }
 
 theme_guard "Linking" "Link all files as defined in Linkfiles" && {
-  map_lines safe_link "$target/bootstrap/Linkfile"
-  map_lines safe_link "$target/bootstrap/Linkfile_${KERNEL_NAME}" || true
-  map_lines safe_link "$target/bootstrap/Linkfile_${OS_NAME}" || true
+  map_lines safe_link "$target/Linkfile"
+  map_lines safe_link "$target/${KERNEL_NAME}/Linkfile" || true
+  map_lines safe_link "$target/${OS_NAME}/Linkfile" || true
   map_lines sync_link "$XDG_CONFIG_CACHE/eru/Linkfile" || true
 }
 
@@ -407,7 +407,7 @@ arch_guard && {
      section "Install all dependencies"
      # map_lines 'sudo pacman -Syu --noconfirm' "$target/bootstrap/Pacmanfile"
      # is not efficient, so it's better to read whole file and call pacman once
-     pkgs=$(cat "$target/bootstrap/Pacmanfile" | tr '\n' ' ')
+     pkgs=$(cat "$target/arch/Pacmanfile" | tr '\n' ' ')
      sudo pacman -Syu --noconfirm $pkgs
    }
 
@@ -427,7 +427,7 @@ macos_guard && {
   }
 
   theme_guard "Brew" "Install all dependencies" && {
-    cd "$target/bootstrap" && brew bundle
+    cd "$target/macos" && brew bundle
   }
 }
 
