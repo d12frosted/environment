@@ -19,7 +19,7 @@
 #
 # For example,
 #
-#   ./eru.sh linking repositories brew
+#   ./eru.sh linking repositories packages
 #
 
 #
@@ -418,7 +418,7 @@ arch_guard && {
 }
 
 macos_guard && {
-  theme_guard "Brew" "Ensure brew exists" && {
+  theme_guard "packages" "Ensure brew exists" && {
     check brew || {
       info "Installing brew"
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -426,7 +426,7 @@ macos_guard && {
     }
   }
 
-  theme_guard "Brew" "Install all dependencies" && {
+  theme_guard "packages" "Install all dependencies" && {
     cd "$target/macos" && brew bundle
   }
 }
@@ -440,11 +440,11 @@ theme "Git" "Create a local git config file"
 touch "$target/git/local.config"
 
 macos_guard && {
-  theme_guard "macOS" "Write all defaults" && {
+  theme_guard "OS" "Write all defaults" && {
     cd "$target/macos" && sudo ./defaults.sh
   }
 
-  theme_guard "skhd" "Patch skhd application PATH" && {
+  theme "skhd" "Patch skhd application PATH" && {
     check skhd && {
       "$target/utils/bin/patch_skhd_path"
     }

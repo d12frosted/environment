@@ -29,7 +29,7 @@ theme or themes only.
 #+BEGIN_SRC bash
   $ ./bootstrap/eru.sh                   # to help with all themes
   $ ./bootstrap/eru.sh repositories      # to help with repositories
-  $ ./bootstrap/eru.sh repositories brew # to help with repositories and brew
+  $ ./bootstrap/eru.sh repositories packages # to help with repositories and packages
 #+END_SRC
 
 =Eru.sh= reveals all available themes. For example,
