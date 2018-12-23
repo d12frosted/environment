@@ -403,8 +403,7 @@ arch_guard && {
     }
   }
 
-  theme_guard "packages" && {
-    section "Install all dependencies"
+  theme_guard "packages" "Install all dependencies" && {
     aurs=$(cat "$target/arch/Aurfile" | tr '\n' ' ')
     yay -Syu --noconfirm $aurs
 
@@ -414,8 +413,7 @@ arch_guard && {
     sudo pacman -Syu --noconfirm $pkgs
   }
 
-  theme_guard "hardware" && {
-    section "Setup touchpad"
+  theme_guard "hardware" "Setup touchpad" && {
     sudo cp $XDG_CONFIG_HOME/xorg/30-touchpad.conf /etc/X11/xorg.conf.d/30-touchpad.conf
   }
 }
