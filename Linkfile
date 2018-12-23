@@ -1,4 +1,4 @@
-bootstrap/eru.sh ~/.local/bin/eru
+eru.sh ~/.local/bin/eru
 emacs/init.el ~/.emacs.d/init.el
 emacs/nucleus/bin/nucleus ~/.local/bin/nucleus
 spacemacs/bin/spacemacs ~/.local/bin/spacemacs

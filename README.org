@@ -15,10 +15,10 @@ keep clean and organized.
 * What's inside?
 All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for
 sure). Configurations are divided into domains like =emacs=, =git=, =haskell=,
-=fish= etc. Every domain has it's own readme file, so make sure to check them as
-well before running installation script. There is also =deprecated= domain.
-There are things that are no more used but has little value for me. Time to time
-I clean that domain, so don't be surprised to see it's missing.
+=fish= etc.
+
+All of the configurations as well as dependencies are maintained using Eru - a
+script that creates the universe.
 
 #+BEGIN_HTML
 <p align="center">
@@ -26,39 +26,65 @@ I clean that domain, so don't be surprised to see it's missing.
 </p>
 #+END_HTML
 
-* Dependencies
-My configurations are expecting that a lot of stuff is installed on your system.
-As it was already told, every domain has it's own readme file where the full
-list of dependencies is written down.
+* Eru domain
 
-But be aware that I am using OS X and haven't tested my configurations beyond
-this operating system. They should work, but I can't promise :smile:. Though
-note that Linux support is in progress.
+As you might know, Eru is the supreme deity of Arda. The first things that Eru
+created where the Ainur. He then bade the Ainur to sing to him. Each Ainu had a
+particular theme given by Eru. Sure enough, Eru makes the 'World and All That
+Is'.
 
-The installation script will try to get some of the dependencies if you are
-using OS X. Dependencies are installed via =bootstrap= script, which can be
-found in the root of =environment= and in some of domains. For example, root
-=bootstrap= script will install =brew= if you don't have one.
-
-* Usage
-The most important thing - you need to clone this repo into =~/.config=.
-Otherwise fish and emacs will not work properly. Then call
-
-#+BEGIN_SRC sh
-  $ ./bootstrap/eru.sh [theme] [theme] ...
-#+END_SRC
-
-If you are on a new laptop,
+So when I get a new clean system there is nothing yet. And so I call upon the
+wisdom and power of =Eru.sh= - the one who creates Ainur and the 'World and All
+That Is'.
 
 #+BEGIN_SRC bash
-  $ curl https://raw.githubusercontent.com/d12frosted/environment/master/bootstrap/eru.sh | bash
+  $ curl https://raw.githubusercontent.com/d12frosted/environment/master/eru.sh | bash
 #+END_SRC
+
+I just have to wait patiently, while everything is being downloaded and
+installed, while all configuration cogs are being placed on the right spot.
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="bootstrap/images/eru-example-1.png">
+  <img src="images/eru-example-1.png" />
 </p>
 #+END_HTML
+
+The good thing about =Eru.sh= is that after the 'World and All That Is' creation
+you can still call upon his help and you can even ask him to help with specific
+theme or themes only.
+
+#+BEGIN_SRC bash
+  $ ./eru.sh                       # to help with all themes
+  $ ./eru.sh repositories          # to help with repositories
+  $ ./eru.sh repositories packages # to help with repositories and packages
+#+END_SRC
+
+=Eru.sh= reveals all available themes. For example,
+
+#+BEGIN_SRC text
+  => Guardian Theme :: Checking operating system
+  => Supporting Theme :: Defining helpers
+  => Supporting Theme :: Defining variables
+  => Guardian Theme :: Ensure all directories exists
+  -> SSH Theme :: Checking SSH keys
+  -> Repositories Theme :: Sync environment repository
+  -> Repositories Theme :: Sync repositories from Repofile
+  -> Linking Theme :: Link all files as defined in Linkfile
+#+END_SRC
+
+Every theme that begins with ~=>~ is a mandatory theme - the one you can't skip.
+Every theme prefixed with ~->~ is an optional one. If you don't specify any
+themes, all optional themes are sung. If you do specify at least one theme -
+only specified are sang.
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/eru-example-2.png" />
+</p>
+#+END_HTML
+
+You can read a little bit more about Eru in a [[https://d12frosted.io/posts/2018-11-04-revisiting-eru.html][Revisiting Eru]] blog post.
 
 * Can I use your files?
 Sure you can. But should you? :D
