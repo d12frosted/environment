@@ -318,36 +318,6 @@ ensure_dir "$HOME/.local/bin"
 ensure_dir "$DEVELOPER"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
-arch_guard && theme_guard "OS" "Bootstrap Arch Linux" && {
-  section "Install crutial dependenices"
-  sudo pacman -Syu --noconfirm
-  sudo pacman -S --noconfirm --needed base-devel
-  sudo pacman -S --noconfirm git pacman-contrib
-
-  section "Rank mirrors for pacman"
-  mirrorlist="/etc/pacman.d/mirrorlist"
-  mirrorlist_bak="${mirrorlist}.bak"
-  if [[ -f "$mirrorlist_bak" ]]; then
-    log "Not updating mirrors list, because '$mirrorlist_bak' exists"
-    log "Delete in order to re-rank mirrors"
-  else
-    mirrorlist_tmp=$(mktemp)
-    curl -s 'https://www.archlinux.org/mirrorlist/?country=all&protocol=https&ip_version=4' \
-      | sed -e 's/^#Server/Server/' -e '/^#/d' > "$mirrorlist_tmp"
-    sudo cp "$mirrorlist_tmp" "$mirrorlist_bak"
-    sudo rankmirrors -n 6 "$mirrorlist_bak" > "$mirrorlist"
-  fi
-
-  section "Install yay for simpler AUR access"
-  check yay || {
-    yay_dir=$(mktemp -d)
-    git clone https://aur.archlinux.org/yay.git "$yay_dir"
-    cd "$yay_dir" && {
-      makepkg -si --noconfirm
-    }
-  }
-}
-
 # TODO: make it working on Linux from command line
 macos_guard && theme_guard "SSH" "Checking SSH keys" && {
   if [[ "$INTERACTIVE" = "true" ]]; then
@@ -403,18 +373,49 @@ theme_guard "Linking" "Link all files as defined in Linkfiles" && {
 }
 
 arch_guard && {
-   theme_guard "packages" && {
-     section "Install all dependencies"
-     # map_lines 'sudo pacman -Syu --noconfirm' "$target/bootstrap/Pacmanfile"
-     # is not efficient, so it's better to read whole file and call pacman once
-     pkgs=$(cat "$target/arch/Pacmanfile" | tr '\n' ' ')
-     sudo pacman -Syu --noconfirm $pkgs
-   }
+  theme_guard "packages" "Bootstrap Arch Linux" && {
+    section "Install crutial dependenices"
+    sudo pacman -Syu --noconfirm
+    sudo pacman -S --noconfirm --needed base-devel
+    sudo pacman -S --noconfirm git pacman-contrib
 
-   theme_guard "hardware" && {
-     section "Setup touchpad"
-     sudo cp $XDG_CONFIG_HOME/xorg/30-touchpad.conf /etc/X11/xorg.conf.d/30-touchpad.conf
-   }
+    section "Rank mirrors for pacman"
+    mirrorlist="/etc/pacman.d/mirrorlist"
+    mirrorlist_bak="${mirrorlist}.bak"
+    if [[ -f "$mirrorlist_bak" ]]; then
+      log "Not updating mirrors list, because '$mirrorlist_bak' exists"
+      log "Delete in order to re-rank mirrors"
+    else
+      mirrorlist_tmp=$(mktemp)
+      curl -s 'https://www.archlinux.org/mirrorlist/?country=all&protocol=https&ip_version=4' \
+        | sed -e 's/^#Server/Server/' -e '/^#/d' > "$mirrorlist_tmp"
+      sudo cp "$mirrorlist_tmp" "$mirrorlist_bak"
+      sudo rankmirrors -n 6 "$mirrorlist_bak" > "$mirrorlist"
+    fi
+
+    section "Install yay for simpler AUR access"
+    check yay || {
+      yay_dir=$(mktemp -d)
+      git clone https://aur.archlinux.org/yay.git "$yay_dir"
+      cd "$yay_dir" && {
+        makepkg -si --noconfirm
+      }
+    }
+  }
+
+  theme_guard "packages" && {
+    section "Install all dependencies"
+
+    # map_lines 'sudo pacman -Syu --noconfirm' "$target/arch/Pacmanfile"
+    # is not efficient, so it's better to read whole file and call pacman once
+    pkgs=$(cat "$target/arch/Pacmanfile" | tr '\n' ' ')
+    sudo pacman -Syu --noconfirm $pkgs
+  }
+
+  theme_guard "hardware" && {
+    section "Setup touchpad"
+    sudo cp $XDG_CONFIG_HOME/xorg/30-touchpad.conf /etc/X11/xorg.conf.d/30-touchpad.conf
+  }
 }
 
 macos_guard && {
