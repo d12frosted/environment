@@ -14,6 +14,7 @@ if test ! -d $XDG_CONFIG_HOME/utils/bin
 end
 
 # variables
+set -x GPG_TTY (tty)
 set -x SPACEMACSDIR $HOME/.spacemacs
 set -x GEM_HOME $HOME/.local/gem
 set -x GEM_PATH $HOME/.local/gem
