@@ -11,6 +11,9 @@ fd
 firefox
 fish
 jq
+networkmanager
+networkmanager-openvpn
+networkmanager-openconnect
 openssh
 shellcheck
 tree
