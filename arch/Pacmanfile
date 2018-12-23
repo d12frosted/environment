@@ -1,3 +1,4 @@
+ack
 adobe-source-code-pro-fonts
 aspell
 aspell-en
@@ -9,8 +10,12 @@ emacs
 fd
 firefox
 fish
+jq
 openssh
+shellcheck
+tree
 ttf-dejavu
+wget
 xmonad
 xorg
 xorg-xinit
