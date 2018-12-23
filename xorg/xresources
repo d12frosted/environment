@@ -1,5 +1,14 @@
+!
+! Xterm configurations
+!
+
+XTerm*utf8: 1
 XTerm*faceName: xft:Source Code Pro:size=12
-!Tomorrow
+XTerm*metaSendsEscape: true
+XTerm*modifier: meta
+XTerm*modifyOtherKeys: 1
+
+! Tomorrow
 #define t_background   #ffffff
 #define t_current_line #efefef
 #define t_selection    #d6d6d6
@@ -12,7 +21,6 @@ XTerm*faceName: xft:Source Code Pro:size=12
 #define t_aqua         #3e999f
 #define t_blue         #4271ae
 #define t_purple       #8959a8
-
 
 *.foreground:   t_foreground
 *.background:   t_background
