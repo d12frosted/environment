@@ -328,7 +328,8 @@ ensure_dir "$HOME/.local/bin"
 ensure_dir "$DEVELOPER"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
-theme_guard "SSH" "Checking SSH keys" && {
+# TODO: make it working on Linux from command line
+macos_guard && theme_guard "SSH" "Checking SSH keys" && {
   if [[ "$INTERACTIVE" = "true" ]]; then
     ssh_key_add_url="https://github.com/settings/ssh/new"
     ssh_key_path="$HOME/.ssh/id_rsa"
