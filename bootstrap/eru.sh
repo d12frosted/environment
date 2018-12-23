@@ -410,6 +410,11 @@ arch_guard && {
      pkgs=$(cat "$target/bootstrap/Pacmanfile" | tr '\n' ' ')
      sudo pacman -Syu --noconfirm $pkgs
    }
+
+   theme_guard "hardware" && {
+     section "Setup touchpad"
+     sudo cp $XDG_CONFIG_HOME/xorg/30-touchpad.conf /etc/X11/xorg.conf.d/30-touchpad.conf
+   }
 }
 
 macos_guard && {
