@@ -10,6 +10,7 @@ emacs
 fd
 firefox
 fish
+gocryptfs
 jq
 networkmanager
 networkmanager-openvpn
