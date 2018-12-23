@@ -30,7 +30,7 @@ files. For example,
 (setq ispell-dictionary "english"
       ispell-list-command "--list"
       ispell-extr-args '("--dont-tex-check-comments")
-      ispell-program-name "ispell")
+      ispell-program-name "aspell")
 
 (after! ispell
   (when (equal (file-name-base ispell-program-name) "aspell")
