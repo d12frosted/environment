@@ -42,10 +42,10 @@ KERNEL_NAME=$(uname -s | awk '{print tolower($0)}')
 KERNEL_RELEASE="unknown"
 OS_NAME="$(uname -o)"
 case $KERNEL_NAME in
-  Darwin)
+  darwin)
     KERNEL_RELEASE=macos
     ;;
-  Linux)
+  linux)
     if [[ "$(uname -r)" == *"arch"* ]]; then
       KERNEL_RELEASE="arch"
     fi
