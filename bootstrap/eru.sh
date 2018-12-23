@@ -402,6 +402,16 @@ theme_guard "Linking" "Link all files as defined in Linkfiles" && {
   map_lines sync_link "$XDG_CONFIG_CACHE/eru/Linkfile" || true
 }
 
+arch_guard && {
+   theme_guard "packages" && {
+     section "Install all dependencies"
+     # map_lines 'sudo pacman -Syu --noconfirm' "$target/bootstrap/Pacmanfile"
+     # is not efficient, so it's better to read whole file and call pacman once
+     pkgs=$(cat "$target/bootstrap/Pacmanfile" | tr '\n' ' ')
+     sudo pacman -Syu --noconfirm $pkgs
+   }
+}
+
 macos_guard && {
   theme_guard "Brew" "Ensure brew exists" && {
     check brew || {
