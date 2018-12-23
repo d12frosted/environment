@@ -42,3 +42,7 @@
         git-commit-style-convention-checks '(overlong-summary-line
                                              non-empty-second-line)))
 (add-hook 'git-commit-mode-hook #'+git|enforce-commit-conventions)
+
+(after! magit
+  (setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
+  (pinentry-start))
