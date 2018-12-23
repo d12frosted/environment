@@ -239,7 +239,8 @@ function check() {
 }
 
 function safe_link() {
-  s="$target/$1"
+  f=$(eval echo $1)
+  s="$target/$f"
   shift
   t="${*/#\~/$HOME}"
   d=$(dirname "$t")
