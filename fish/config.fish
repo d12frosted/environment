@@ -65,7 +65,7 @@ set fish_pager_color_prefix cyan
 set fish_pager_color_progress cyan
 
 # Eru completions
-complete -c eru -a 'ssh repositories linking brew macos skhd guardian' --no-files
+complete -c eru -a 'ssh repositories linking brew macos hardware packages skhd guardian' --no-files
 
 # private post-configs
 if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
