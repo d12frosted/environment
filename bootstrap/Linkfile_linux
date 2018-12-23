@@ -1,3 +1,4 @@
 xorg/xinitrc ~/.xinitrc
+xorg/xresources ~/.Xresources
 xorg/xmodmap ~/.Xmodmap
 xmonad/xmonad.hs ~/.xmonad/xmonad.hs
