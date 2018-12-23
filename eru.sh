@@ -405,14 +405,13 @@ arch_guard && {
 
   theme_guard "packages" && {
     section "Install all dependencies"
+    aurs=$(cat "$target/arch/Aurfile" | tr '\n' ' ')
+    yay -Syu --noconfirm $aurs
 
     # map_lines 'sudo pacman -Syu --noconfirm' "$target/arch/Pacmanfile"
     # is not efficient, so it's better to read whole file and call pacman once
     pkgs=$(cat "$target/arch/Pacmanfile" | tr '\n' ' ')
     sudo pacman -Syu --noconfirm $pkgs
-
-    aurs=$(cat "$target/arch/Aurfile" | tr '\n' ' ')
-    yay -Syu --noconfirm $aurs
   }
 
   theme_guard "hardware" && {
