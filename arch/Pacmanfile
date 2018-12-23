@@ -13,10 +13,11 @@ fish
 gocryptfs
 jq
 networkmanager
-networkmanager-openvpn
 networkmanager-openconnect
+networkmanager-openvpn
 openssh
 shellcheck
+stack
 tree
 ttf-dejavu
 wget
