@@ -410,6 +410,9 @@ arch_guard && {
     # is not efficient, so it's better to read whole file and call pacman once
     pkgs=$(cat "$target/arch/Pacmanfile" | tr '\n' ' ')
     sudo pacman -Syu --noconfirm $pkgs
+
+    aurs=$(cat "$target/arch/Aurfile" | tr '\n' ' ')
+    yay -Syu --noconfirm $aurs
   }
 
   theme_guard "hardware" && {
