@@ -20,6 +20,7 @@ tree
 ttf-dejavu
 wget
 xmonad
+xmonad-contrib
 xorg
 xorg-xinit
 xterm

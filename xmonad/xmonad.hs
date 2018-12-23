@@ -1,5 +1,5 @@
 import XMonad
--- import XMonad.Hooks.SetWMName
+import XMonad.Hooks.SetWMName
 
 --------------------------------------------------------------------------------
 main
@@ -7,5 +7,5 @@ main
   { modMask = mod4Mask -- Use Super instead of Alt
 
   -- Java swing applications and xmonad are not friends
-  -- , startupHook = setWMName "LG3D"
+  , startupHook = setWMName "LG3D"
   }
