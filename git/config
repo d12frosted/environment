@@ -1,5 +1,5 @@
 [core]
-	editor = emacsclient
+	editor = emacs
 	autocrlf = input
 	ignorecase = false
 
