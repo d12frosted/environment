@@ -25,10 +25,10 @@
   ;; full-screen is my friend
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
 
-(def-package! magit-todos
-  :hook (magit-mode . magit-todos-mode)
-  :config
-  (setq magit-todos-require-colon nil))
+;; (def-package! magit-todos
+;;   :hook (magit-mode . magit-todos-mode)
+;;   :config
+;;   (setq magit-todos-require-colon nil))
 
 (after! git-timemachine
   (setq git-timemachine-show-minibuffer-details t)
