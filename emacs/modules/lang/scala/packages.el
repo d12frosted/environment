@@ -18,3 +18,5 @@
 ;;; Code:
 
 (package! scala-mode)
+(package! ensime)
+(package! sbt-mode)
