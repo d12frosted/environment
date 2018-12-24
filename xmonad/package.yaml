@@ -1,0 +1,20 @@
+name: d12-xmonad
+version: '0.1.0.0'
+author: Boris Buliga
+maintainer: Boris Buliga
+github: d12frosted/environment
+
+default-extensions:
+  - OverloadedStrings
+
+ghc-options: -Wall -Werror
+
+executables:
+  d12-xmonad:
+    main: xmonad.hs
+    dependencies:
+      - base
+      - data-default
+      - xmonad
+      - xmonad-contrib
+      - xmonad-extras

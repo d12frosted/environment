@@ -1,11 +1,41 @@
+import Data.Default (def)
+import System.IO
 import XMonad
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.SetWMName
+import XMonad.Util.Run (spawnPipe)
 
 --------------------------------------------------------------------------------
-main
-  = xmonad defaultConfig
-  { modMask = mod4Mask -- Use Super instead of Alt
+main :: IO ()
+main = do
+  xmproc <- spawnPipe "xmobar"
+  xmonad def
+    { -- Use Super instead of Alt
+      modMask = mod4Mask
 
-  -- Java swing applications and xmonad are not friends
-  , startupHook = setWMName "LG3D"
-  }
+    -- Hooks
+    , manageHook      = manageDocks <+> manageHook def
+    , layoutHook      = avoidStruts  $  layoutHook def
+    , handleEventHook = handleEventHook def <+> docksEventHook
+
+    -- Java swing applications and xmonad are not friends, so we need to pretend a
+    -- little bit
+    , startupHook = setWMName "LG3D"
+
+    , logHook = dynamicLogWithPP xmobarPP
+                { ppOutput = hPutStrLn xmproc
+                , ppTitle = xmobarColor "green" "" . shorten 50
+                }
+
+    -- Borders
+    , normalBorderColor = "black"
+    , focusedBorderColor = "orange"
+
+    -- Workspaces
+    , workspaces = [ "1:emacs"
+                   , "2:term"
+                   , "3:web"
+                   , "4:media"
+                   ]
+    }
