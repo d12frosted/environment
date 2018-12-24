@@ -23,6 +23,7 @@ networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
 openssh
+ripgrep
 shellcheck
 stack
 tree
