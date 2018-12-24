@@ -57,9 +57,9 @@
  git
 
  :lang
- (haskell +intero)
  emacs-lisp
  go
+ haskell
  nix
  org
  plantuml
