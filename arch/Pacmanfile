@@ -21,6 +21,7 @@ stack
 tree
 ttf-dejavu
 wget
+xmobar
 xmonad
 xmonad-contrib
 xorg
