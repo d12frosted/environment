@@ -7,6 +7,8 @@ aspell
 aspell-en
 aspell-ru
 aspell-uk
+audacious
+audacious-plugins
 chromium
 dmenu
 emacs
@@ -16,6 +18,7 @@ firefox
 fish
 gocryptfs
 jq
+libcue
 networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
