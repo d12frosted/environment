@@ -17,5 +17,4 @@
 ;;
 ;;; Code:
 
-;; (package! protobuf)
-;; https://melpa.org/#/protobuf-mode
+(package! protobuf-mode)
