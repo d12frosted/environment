@@ -38,5 +38,6 @@ main = do
                    , "2:term"
                    , "3:web"
                    , "4:media"
+                   , "5:other"
                    ]
     }
