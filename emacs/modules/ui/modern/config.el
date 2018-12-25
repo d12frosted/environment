@@ -25,10 +25,7 @@
 
 This is changed when `load-theme' is used as well.")
 
-(defvar +modern-font-size 7
-  "Default size of `+modern-font'.")
-
-(defvar +modern-font (font-spec :family "Source Code Pro")
+(defvar +modern-font (font-spec :family "Source Code Pro" :size 16)
   "The default font to use.
 
 Expects either a `font-spec', font object, an XFT font string or
@@ -40,10 +37,7 @@ Examples:
   (setq +modern-font (font-spec :family \"Fira Mono\" :size 12))
   (setq +modern-font \"Terminus (TTF):pixelsize=12:antialias=off\")")
 
-(defvar +modern-big-font-size 12
-  "Default size of `+modern-big-font'.")
-
-(defvar +modern-big-font (font-spec :family "Source Code Pro")
+(defvar +modern-big-font (font-spec :family "Source Code Pro" :size 28)
   "The font to use when `+modern-big-font-mode' is enabled.
 Expects either a `font-spec' or a XFT font string. See
 `+modern-font' for examples.")

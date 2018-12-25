@@ -57,7 +57,7 @@ DISPLAY is a display name, frame or terminal, as in
 `+modern-unicode-font', if set."
   (interactive)
   (when +modern-font
-    (set-frame-font (+modern-patch-font-size +modern-font +modern-font-size) t))
+    (set-frame-font +modern-font t))
   (+modern|init-fonts))
 
 ;;;###autoload
@@ -91,6 +91,6 @@ Uses `+modern-big-font' when enabled."
   (unless +modern-font
     (user-error "`+modern-font' must be set to a valid font"))
   (set-frame-font (if +modern-big-font-mode
-                      (+modern-patch-font-size +modern-big-font +modern-big-font-size)
-                    (+modern-patch-font-size +modern-font +modern-font-size))
+                      +modern-big-font
+                    +modern-font)
                   t t))
