@@ -35,3 +35,6 @@ fi
 twm &
 ~/.fehbg &
 xmonad
+
+# I need this so much outside of Emacs.
+xset r rate 180 26
