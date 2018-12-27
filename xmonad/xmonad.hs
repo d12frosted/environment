@@ -1,16 +1,18 @@
 import Data.Default (def)
+import Graphics.X11.ExtraTypes.XF86
 import System.IO
 import XMonad
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.SetWMName
+import XMonad.Util.EZConfig (additionalKeys)
 import XMonad.Util.Run (spawnPipe)
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = do
   xmproc <- spawnPipe "xmobar"
-  xmonad def
+  xmonad $ def
     { -- Use Super instead of Alt
       modMask = mod4Mask
 
@@ -40,4 +42,8 @@ main = do
                    , "4:media"
                    , "5:other"
                    ]
-    }
+    } `additionalKeys` [ ((0, xF86XK_AudioRaiseVolume), spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%")
+                       , ((0, xF86XK_AudioLowerVolume), spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%")
+                       , ((0, xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")
+                       , ((0, xF86XK_AudioMicMute), spawn "pactl set-source-mute 1 toggle")
+                       ]

@@ -25,9 +25,10 @@ executable d12-xmonad
   default-extensions: OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
-      base
-    , data-default
-    , xmonad
-    , xmonad-contrib
-    , xmonad-extras
+                  base
+                , X11 >= 1.9
+                , data-default
+                , xmonad
+                , xmonad-contrib
+                , xmonad-extras
   default-language: Haskell2010
