@@ -46,12 +46,12 @@ Config {
                          , "--high"     , "darkgreen"
 
                          , "--" -- battery specific options
-                                   -- discharging status
-                                   , "-o"	, "<left>% (<timeleft>)"
-                                   -- AC "on" status
-                                   , "-O"	, "<fc=#dAA520>Charging</fc>"
-                                   -- charged status
-                                   , "-i"	, "<fc=#006000>Charged</fc>"
+                         -- discharging status
+                         , "-o"	, "<left>% (<timeleft>)"
+                         -- AC "on" status
+                         , "-O"	, "<fc=darkorange>Charging</fc> <left>% (<timeleft>)"
+                         -- charged status
+                         , "-i"	, "<fc=darkgreen>Charged</fc>"
                          ] 50
 
     -- time and date indicator
