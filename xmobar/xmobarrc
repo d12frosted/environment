@@ -1,6 +1,6 @@
 Config {
   -- appearance
-    font = "xft:Source Code Pro:size=10"
+    font = "xft:Source Code Pro:size=12"
   , borderColor = "#fefefe"
   , border = NoBorder
   , bgColor = "#fefefe"

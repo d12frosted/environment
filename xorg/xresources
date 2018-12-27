@@ -1,11 +1,9 @@
-Xft.dpi: 120
-
 !
 ! Xterm configurations
 !
 
 XTerm*utf8: 1
-XTerm*faceName: xft:Source Code Pro:size=10
+XTerm*faceName: xft:Source Code Pro:size=12
 XTerm*metaSendsEscape: true
 XTerm*modifier: meta
 XTerm*modifyOtherKeys: 1
