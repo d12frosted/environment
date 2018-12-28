@@ -31,7 +31,9 @@
    '(doom-modeline-project-root-dir ((t (:inherit +theming-mode-line-highlight))))
    '(doom-modeline-persp-name ((t (:inherit +theming-mode-line-highlight))))
    '(doom-modeline-persp-buffer-not-in-persp ((t (:inherit +theming-mode-line-warning)))))
-  (setq doom-modeline-buffer-file-name-style 'truncate-with-project))
+  (setq doom-modeline-buffer-file-name-style 'truncate-with-project)
+  :config
+  (column-number-mode))
 
 (def-package! anzu
   :after-call isearch-mode
