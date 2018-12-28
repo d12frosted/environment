@@ -17,10 +17,20 @@
 ;;
 ;;; Code:
 
-(after! scala-mode
-  (setq scala-indent:align-parameters t))
+(def-package! scala-mode
+  :defer t
+  :init
+  (setq scala-indent:align-parameters t)
+  (when (featurep! +lsp-scala)
+    (add-hook 'scala-mode-hook #'lsp))
+  :config
+  (when (featurep! +lsp-scala)
+    (lsp-scala-setup)))
 
-(after! ensime
+(def-package! ensime
+  :when (featurep! +ensime)
+  :after scala-mode
+  :init
   (setq ensime-startup-snapshot-notification nil
         ensime-startup-notification nil
         ensime-eldoc-hints 'all
@@ -32,6 +42,15 @@
   ;; trying to make imenu variables buffer local before imenu is loaded.
   (require 'imenu))
 
+(def-package! lsp-mode
+  :when (featurep! +lsp-scala)
+  :after scala-mode)
+
+(def-package! lsp-ui
+  :when (featurep! +lsp-scala)
+  :hook (lsp-mode . lsp-ui-mode))
+
 (def-package! sbt-mode
   :after scala-mode
+  :commands sbt-start sbt-command
   :config (set-repl-handler! 'scala-mode #'run-scala))

@@ -20,3 +20,5 @@
 (package! scala-mode)
 (package! ensime)
 (package! sbt-mode)
+(package! lsp-mode)
+(package! lsp-ui)
