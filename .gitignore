@@ -33,3 +33,14 @@ git/local/*
 
 # some .mono files
 .mono/
+
+# Ignored applications
+chromium
+bloop
+dconf
+gconf
+gtk-2.0
+gtk-3.0
+procps
+pulse
+yay
