@@ -1,0 +1,5 @@
+*.elc
+
+.local
+.cache
+eshell/history
