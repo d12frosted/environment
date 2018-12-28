@@ -29,6 +29,7 @@ shellcheck
 stack
 tree
 ttf-dejavu
+unzip
 wget
 xmobar
 xmonad
