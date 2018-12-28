@@ -42,6 +42,26 @@ alias cenv "cd $XDG_CONFIG_HOME"
 alias cem  "cd $HOME/.emacs.d"
 
 # theme
+if test "$TERM" = "linux"
+  set FISH_THEME base16-tomorrow-night
+else
+  set FISH_THEME base16-tomorrow
+end
+
+if status --is-interactive
+  # load current theme
+  eval sh "$XDG_CONFIG_HOME/fish/themes/$FISH_THEME.sh"
+
+  function theme_preview_mode
+    for SCRIPT in $XDG_CONFIG_HOME/fish/themes/*.sh
+      set THEME (basename $SCRIPT .sh)
+      set FUNCTION_NAME (echo "set_theme_$THEME")
+      function $FUNCTION_NAME -V SCRIPT -V THEME
+        eval sh '"'$SCRIPT'"'
+      end
+    end for
+  end
+end
 set fish_color_autosuggestion gray
 set fish_color_command purple
 set fish_color_comment brown
