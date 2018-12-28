@@ -32,3 +32,11 @@
    '(doom-modeline-persp-name ((t (:inherit +theming-mode-line-highlight))))
    '(doom-modeline-persp-buffer-not-in-persp ((t (:inherit +theming-mode-line-warning)))))
   (setq doom-modeline-buffer-file-name-style 'truncate-with-project))
+
+(def-package! anzu
+  :after-call isearch-mode
+  :config
+  (setq anzu-cons-mode-line-p nil
+        anzu-minimum-input-length 1
+        anzu-search-threshold 250)
+  (global-anzu-mode +1))

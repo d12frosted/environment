@@ -19,3 +19,4 @@
 
 (package! doom-modeline
   :recipe (:fetcher github :repo "d12frosted/doom-modeline"))
+(package! anzu)
