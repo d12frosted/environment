@@ -407,9 +407,27 @@ arch_guard && {
   }
 
   theme_guard "packages" "Install all dependencies" && {
-    yay -Syu --noconfirm < "$target/arch/Aurfile" | tr '\n' ' '
-    # shellcheck disable=SC2024
-    sudo pacman -Syu --noconfirm < "$target/arch/Pacmanfile" | tr '\n' ' '
+    function combine_files {
+      local output
+      output=$(mktemp)
+      for f in "$@"; do
+        if [[ -f $f ]]; then
+          cat "$f" >> "$output"
+        fi
+      done
+      echo "$output"
+    }
+
+    aur_file=$(combine_files "$target/arch/Aurfile" "$target/arch/Aurfile_$USER")
+    aur_ignore=$(combine_files "$target/arch/Aurignore" "$target/arch/Aurignore_$USER")
+
+    # shellcheck disable=SC2046
+    yay -Syu --noconfirm $(comm -23 "$aur_file" "$aur_ignore")
+
+    pacman_file=$(combine_files "$target/arch/Pacmanfile" "$target/arch/Pacmanfile_$USER")
+    pacman_ignore=$(combine_files "$target/arch/Pacmanignore" "$target/arch/Pacmanignore_$USER")
+    # shellcheck disable=SC2046
+    sudo pacman -Syu --noconfirm $(comm -23 "$pacman_file" "$pacman_ignore")
   }
 
   theme_guard "hardware" "Setup keyboard" && {
