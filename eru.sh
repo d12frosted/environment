@@ -74,15 +74,15 @@ function section() {
 }
 
 function theme() {
-  echo -e "\033[1;32m=> $1 Theme :: ${@:2}\033[0m"
+  echo -e "\033[1;32m=> $1 Theme :: ${*:2}\033[0m"
 }
 
 function optional_theme() {
-  echo -e "\033[1;32m-> $1 Theme :: ${@:2}\033[0m"
+  echo -e "\033[1;32m-> $1 Theme :: ${*:2}\033[0m"
 }
 
 function inactive_theme() {
-  echo -e "\033[1;37m-> $1 Theme :: ${@:2}\033[0m"
+  echo -e "\033[1;37m-> $1 Theme :: ${*:2}\033[0m"
 }
 
 #
@@ -195,7 +195,7 @@ function sync_repo() {
       return 0
     fi
 
-    if [ `git rev-list HEAD..$remote/$branch --count` != 0 ]; then
+    if [ "$(git rev-list HEAD..$remote/$branch --count)" != 0 ]; then
       log "Fetched changes:"
       git_lg HEAD..$remote/$branch
       log
@@ -205,7 +205,7 @@ function sync_repo() {
     git rebase $remote/$branch
 
     if [[ "$url" = *"$fellow"* ]]; then
-      if [ `git rev-list $remote/$branch..HEAD --count` != 0 ]; then
+      if [ "$(git rev-list $remote/$branch..HEAD --count)" != 0 ]; then
         log "Changes to push:"
         git_lg $remote/$branch..HEAD
         log
@@ -229,6 +229,7 @@ function check() {
 }
 
 function safe_link() {
+  # shellcheck disable=SC2086
   f=$(eval echo $1)
   s="$target/$f"
   shift
@@ -258,6 +259,7 @@ function safe_link() {
 function map_lines() {
   if [[ -f "$2" ]]; then
     while IFS='' read -r line || [[ -n "$line" ]]; do
+      # shellcheck disable=SC2086
       $1 $line
     done < "$2"
   fi
@@ -330,7 +332,7 @@ macos_guard && theme_guard "SSH" "Checking SSH keys" && {
       log "SSH key found at $ssh_key_path."
     else
       log "No SSH key found."
-      mkdir -p $(dirname "$ssh_key_path")
+      mkdir -p "$(dirname "$ssh_key_path")"
       ssh-keygen -t rsa -b 4096 -C "$USER" -f "$ssh_key_path"
       log "SSH key was generated."
     fi
@@ -352,7 +354,7 @@ macos_guard && theme_guard "SSH" "Checking SSH keys" && {
     log "Make sure to add SSH key to GitHub"
     pbcopy < "$ssh_key_pub_path"
     open "$ssh_key_add_url"
-    read -p "Press enter to continue"
+    read -rp "Press enter to continue"
   fi
 }
 
@@ -390,6 +392,7 @@ arch_guard && {
       curl -s 'https://www.archlinux.org/mirrorlist/?country=all&protocol=https&ip_version=4' \
         | sed -e 's/^#Server/Server/' -e '/^#/d' > "$mirrorlist_tmp"
       sudo cp "$mirrorlist_tmp" "$mirrorlist_bak"
+      # shellcheck disable=SC2024
       sudo rankmirrors -n 6 "$mirrorlist_bak" > "$mirrorlist"
     fi
 
@@ -404,24 +407,20 @@ arch_guard && {
   }
 
   theme_guard "packages" "Install all dependencies" && {
-    aurs=$(cat "$target/arch/Aurfile" | tr '\n' ' ')
-    yay -Syu --noconfirm $aurs
-
-    # map_lines 'sudo pacman -Syu --noconfirm' "$target/arch/Pacmanfile"
-    # is not efficient, so it's better to read whole file and call pacman once
-    pkgs=$(cat "$target/arch/Pacmanfile" | tr '\n' ' ')
-    sudo pacman -Syu --noconfirm $pkgs
+    yay -Syu --noconfirm < "$target/arch/Aurfile" | tr '\n' ' '
+    # shellcheck disable=SC2024
+    sudo pacman -Syu --noconfirm < "$target/arch/Pacmanfile" | tr '\n' ' '
   }
 
   theme_guard "hardware" "Setup keyboard" && {
     if [[ ! -f /usr/share/X11/xkb/symbols/ua.bak ]]; then
       sudo mv /usr/share/X11/xkb/symbols/ua /usr/share/X11/xkb/symbols/ua.bak
     fi
-    sudo cp $XDG_CONFIG_HOME/xorg/xkb/symbols/ua /usr/share/X11/xkb/symbols/ua
-    sudo cp $XDG_CONFIG_HOME/xorg/00-keyboard.conf /etc/X11/xorg.conf.d/00-keyboard.conf
+    sudo cp "$XDG_CONFIG_HOME/xorg/xkb/symbols/ua" "/usr/share/X11/xkb/symbols/ua"
+    sudo cp "$XDG_CONFIG_HOME/xorg/00-keyboard.conf" "/etc/X11/xorg.conf.d/00-keyboard.conf"
   }
   theme_guard "hardware" "Setup touchpad" && {
-    sudo cp $XDG_CONFIG_HOME/xorg/30-touchpad.conf /etc/X11/xorg.conf.d/30-touchpad.conf
+    sudo cp "$XDG_CONFIG_HOME/xorg/30-touchpad.conf" "/etc/X11/xorg.conf.d/30-touchpad.conf"
   }
 }
 
