@@ -1,5 +1,0 @@
-* Terminal.app themes
-
-Theme that I use most of time is ~d12frosted.terminal~.
-
-[[file:images/d12frosted.png]]
