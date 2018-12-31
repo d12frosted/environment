@@ -24,6 +24,10 @@ networkmanager-openconnect
 networkmanager-openvpn
 openssh
 pcmanfm
+pulseaudio
+pulseaudio-alsa
+pulseaudio-bluetooth
+pulsemixer
 ripgrep
 shellcheck
 stack
