@@ -259,8 +259,10 @@ function safe_link() {
 function map_lines() {
   if [[ -f "$2" ]]; then
     while IFS='' read -r line || [[ -n "$line" ]]; do
-      # shellcheck disable=SC2086
-      $1 $line
+      if [[ "$line" != "#"* ]]; then
+        # shellcheck disable=SC2086
+        $1 $line
+      fi
     done < "$2"
   fi
 }
