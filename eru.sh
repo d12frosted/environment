@@ -131,10 +131,18 @@ function arch_guard() {
 function qualify_repo_url() {
   if [[ "$1" = "https://"* || "$1" = "git@"* ]]; then
     echo "$1"
-  elif [[ "$USE_HTTPS" = "true" ]]; then
-    echo  "https://github.com/$1.git"
-  else
-    echo "git@github.com:$1.git"
+  elif [[ "$2" = "github" ]]; then
+    if [[ "$USE_HTTPS" = "true" ]]; then
+      echo  "https://github.com/$1.git"
+    else
+      echo "git@github.com:$1.git"
+    fi
+  elif [[ "$2" = "gitlab" ]]; then
+    if [[ "$USE_HTTPS" = "true" ]]; then
+      echo  "https://gitlab.com/$1.git"
+    else
+      echo "git@gitlab.com:$1.git"
+    fi
   fi
 }
 
@@ -149,10 +157,10 @@ function git_lg() {
 function sync_repo() {
   section "sync_repo $*"
 
-  remote=origin
   wd=$(eval echo "$1")
-  url=$(qualify_repo_url "$2")
-  branch="$3"
+  remote="$2"
+  url=$(qualify_repo_url "$3" "$remote")
+  branch="$4"
   if [[ $branch = "" ]]; then
     branch="master"
   fi
