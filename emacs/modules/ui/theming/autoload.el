@@ -36,7 +36,9 @@
      ;; dired-k
      '(dired-k-added ((t (:foreground "#97f295"))))
      '(dired-k-modified ((t (:inherit warning))))
-     '(dired-k-commited ((t (:foreground "SkyBlue3"))))
+     '(dired-k-untracked ((t (:inherit error))))
+     '(dired-k-commited ((t (:foreground "#ffffff"))))
+     '(dired-k-ignored ((t (:foreground "DimGrey"))))
 
      ;; org faces
      '(org-mode-line-clock ((t (:inherit +theming-mode-line-warning
