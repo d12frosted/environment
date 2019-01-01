@@ -179,7 +179,7 @@ function sync_repo() {
     if [[ -d .git/refs/remotes/$remote ]]; then
       current_url=$(git remote get-url $remote)
       if [[ $current_url != "$url" ]]; then
-        log "Remote '$branch' has wrong url, so updating it"
+        log "Remote '$remote' has wrong url, so updating it"
         log "  $current_url -> $url"
         git remote set-url $remote "$url"
       fi
