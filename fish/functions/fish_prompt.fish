@@ -58,7 +58,11 @@ function fish_prompt --description 'Write out the prompt'
   end
 
   # echo -n '➤ '
-  echo -n 'λ '
+  if test "$TERM" = "linux"
+    echo -n '> '
+  else
+    echo -n 'λ '
+  end
   set_color normal
 end
 
