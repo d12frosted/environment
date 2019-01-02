@@ -1,0 +1,7 @@
+#!/bin/sh
+
+xautolock \
+  -time 5 \
+  -locker xlocker \
+  -notify 30 \
+  -notifier 'notify-send "System will lock in 30s"'

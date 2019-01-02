@@ -1,0 +1,18 @@
+#!/bin/sh
+
+xlock \
+  -mode blank \
+  -startCmd 'physlock -l' \
+  -endCmd 'physlock -L' \
+  -background black \
+  -foreground white \
+  -font '-misc-dejavu serif-medium-r-normal--0-0-0-0-p-0-ascii-0' \
+  -planfont '-misc-dejavu serif-medium-r-normal--0-0-0-0-p-0-ascii-0' \
+  -fpsfont '-misc-dejavu serif-medium-r-normal--0-0-0-0-p-0-ascii-0' \
+  -messagefont '-misc-dejavu serif-medium-r-normal--0-0-0-0-p-0-ascii-0' \
+  -mousemotion +usefirst \
+  -delay 500 \
+  -echokeys \
+  -echokey '.' \
+  -info 'Enter password to unlock.' \
+  +description

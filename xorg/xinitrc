@@ -35,6 +35,9 @@ fi
 # I rarely see my wallpapers. But when I do, I am happy.
 ~/.fehbg &
 
+# Automatically lock screen
+xautolocker &
+
 # Because every X needs some algebra to tame it.
 xmonad
 

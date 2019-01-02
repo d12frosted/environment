@@ -22,11 +22,13 @@ fish
 gocryptfs
 jq
 libcue
+libnotify
 networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
 openssh
 pcmanfm
+physlock
 pulseaudio
 pulseaudio-alsa
 pulseaudio-bluetooth
@@ -38,6 +40,8 @@ tree
 ttf-dejavu
 unzip
 wget
+xautolock
+xlockmore
 xmobar
 xmonad
 xmonad-contrib
