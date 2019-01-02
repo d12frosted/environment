@@ -369,7 +369,7 @@ macos_guard && theme_guard "SSH" "Checking SSH keys" && {
 }
 
 theme_guard "Repositories" "Sync environment repository" && {
-  sync_repo "$XDG_CONFIG_HOME" "d12frosted/environment" || true
+  sync_repo "$XDG_CONFIG_HOME" "github" "d12frosted/environment" || true
 }
 
 theme_guard "Repositories" "Sync repositories from Repofiles" && {
