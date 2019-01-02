@@ -46,4 +46,5 @@ main = do
                        , ((0, xF86XK_AudioLowerVolume), spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%")
                        , ((0, xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")
                        , ((0, xF86XK_AudioMicMute), spawn "pactl set-source-mute 1 toggle")
+                       , ((mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
                        ]
