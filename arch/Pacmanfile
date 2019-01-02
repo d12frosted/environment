@@ -48,4 +48,5 @@ xmonad-contrib
 xorg
 xorg-fonts-misc
 xorg-xinit
+xorg-xlsfonts
 xterm
