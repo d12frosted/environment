@@ -47,7 +47,8 @@ main = do
     , ((0, xF86XK_AudioLowerVolume), vlmDec)
     , ((0, xF86XK_AudioMute), vlmMute)
     , ((0, xF86XK_AudioMicMute), micMute)
-    , ( (mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
+    , ((mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
+    , ((mod4Mask, xK_Escape), spawn "switch_kbd_layout")
     ]
 
 --------------------------------------------------------------------------------
