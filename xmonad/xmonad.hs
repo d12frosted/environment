@@ -43,23 +43,22 @@ main = do
                    , "5:other"
                    ]
     } `additionalKeys`
-    [ ( (0, xF86XK_AudioRaiseVolume)
-      , spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%"
-      )
-
-    , ( (0, xF86XK_AudioLowerVolume)
-      , spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%"
-      )
-
-    , ( (0, xF86XK_AudioMute)
-      , spawn "pactl set-sink-mute 0 toggle"
-      )
-
-    , ( (0, xF86XK_AudioMicMute)
-      , spawn "pactl set-source-mute 1 toggle"
-      )
-
-    , ( (mod4Mask .|. shiftMask, xK_z)
-      , spawn "xlocker"
-      )
+    [ ((0, xF86XK_AudioRaiseVolume), vlmInc)
+    , ((0, xF86XK_AudioLowerVolume), vlmDec)
+    , ((0, xF86XK_AudioMute), vlmMute)
+    , ((0, xF86XK_AudioMicMute), micMute)
+    , ( (mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
     ]
+
+--------------------------------------------------------------------------------
+vlmInc :: MonadIO m => m ()
+vlmInc = spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%"
+
+vlmDec :: MonadIO m => m ()
+vlmDec = spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%"
+
+vlmMute :: MonadIO m => m ()
+vlmMute = spawn "pactl set-sink-mute 0 toggle"
+
+micMute :: MonadIO m => m ()
+micMute = spawn "pactl set-source-mute 1 toggle"
