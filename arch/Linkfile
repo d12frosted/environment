@@ -1,6 +1,6 @@
 xorg/xinitrc ~/.xinitrc
 xorg/xresources ~/.Xresources
-xorg/xmodmap ~/.Xmodmap
+xorg/bin/switch_kbd_layout ~/.local/bin/switch_kbd_layout
 xmonad/xmonad.hs ~/.xmonad/xmonad.hs
 bash/bash_profile_linux ~/.bash_profile
 bash/bashrc_linux ~/.bashrc

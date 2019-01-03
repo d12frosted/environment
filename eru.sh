@@ -445,7 +445,6 @@ arch_guard && {
       sudo mv /usr/share/X11/xkb/symbols/ua /usr/share/X11/xkb/symbols/ua.bak
     fi
     sudo cp "$XDG_CONFIG_HOME/xorg/xkb/symbols/ua" "/usr/share/X11/xkb/symbols/ua"
-    sudo cp "$XDG_CONFIG_HOME/xorg/00-keyboard.conf" "/etc/X11/xorg.conf.d/00-keyboard.conf"
   }
   theme_guard "hardware" "Setup touchpad" && {
     sudo cp "$XDG_CONFIG_HOME/xorg/30-touchpad.conf" "/etc/X11/xorg.conf.d/30-touchpad.conf"
