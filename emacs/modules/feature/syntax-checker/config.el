@@ -21,6 +21,7 @@
   :commands (flycheck-list-errors flycheck-buffer)
   :after-call (nucleus-enter-buffer-hook after-find-file)
   :config
+  (setq flycheck-global-modes '(not org-mode))
   ;; Emacs feels snappier without checks on newline
   (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
   (global-flycheck-mode +1))
