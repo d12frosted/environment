@@ -21,8 +21,8 @@ main = do
     , layoutHook      = avoidStruts  $  layoutHook def
     , handleEventHook = handleEventHook def <+> docksEventHook
 
-    -- Java swing applications and xmonad are not friends, so we need to pretend a
-    -- little bit
+    -- Java swing applications and xmonad are not friends, so we need to pretend
+    -- a little bit
     , startupHook = setWMName "LG3D"
 
     , logHook = dynamicLogWithPP xmobarPP
@@ -42,9 +42,24 @@ main = do
                    , "4:media"
                    , "5:other"
                    ]
-    } `additionalKeys` [ ((0, xF86XK_AudioRaiseVolume), spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%")
-                       , ((0, xF86XK_AudioLowerVolume), spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%")
-                       , ((0, xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")
-                       , ((0, xF86XK_AudioMicMute), spawn "pactl set-source-mute 1 toggle")
-                       , ((mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
-                       ]
+    } `additionalKeys`
+    [ ( (0, xF86XK_AudioRaiseVolume)
+      , spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%"
+      )
+
+    , ( (0, xF86XK_AudioLowerVolume)
+      , spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%"
+      )
+
+    , ( (0, xF86XK_AudioMute)
+      , spawn "pactl set-sink-mute 0 toggle"
+      )
+
+    , ( (0, xF86XK_AudioMicMute)
+      , spawn "pactl set-source-mute 1 toggle"
+      )
+
+    , ( (mod4Mask .|. shiftMask, xK_z)
+      , spawn "xlocker"
+      )
+    ]
