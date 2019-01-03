@@ -34,14 +34,10 @@
       :desc "Switch to 9th workspace" "M-9" (λ! (+workspace/switch-to 8))
       :desc "Switch to last workspace" "M-0" #'+workspace/switch-to-last
 
-      (:when (featurep! :feature workspaces)
-        :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
-        :desc "Switch buffer" "<" #'switch-to-buffer)
-      (:unless (featurep! :feature workspaces)
-        :desc "Switch buffer" "," #'switch-to-buffer)
+      :desc "Switch workspace buffer" "," #'persp-switch-to-buffer
+      :desc "Switch buffer" "<" #'switch-to-buffer
 
-      (:when (featurep! :completion ivy)
-	      :desc "Resume last search" "'" #'ivy-resume)
+      :desc "Resume last search" "'" #'ivy-resume
 
       (:desc "previous..." :prefix "["
         :desc "Buffer" "b" #'previous-buffer
@@ -80,11 +76,8 @@
         :desc "Symbols across buffers" "I" #'imenu-anywhere)
 
       (:desc "buffer" :prefix "b"
-	      (:when (featurep! :feature workspaces)
-          :desc "Switch workspace buffer" "b" #'persp-switch-to-buffer
-          :desc "Switch buffer" "B" #'switch-to-buffer)
-        (:unless (featurep! :feature workspaces)
-          :desc "Switch buffer" "b" #'switch-to-buffer)
+        :desc "Switch workspace buffer" "b" #'persp-switch-to-buffer
+        :desc "Switch buffer" "B" #'switch-to-buffer
 	      :desc "Kill buffer" "k" #'kill-this-buffer
 	      :desc "Next buffer" "n" #'next-buffer
         :desc "Previous buffer" "p" #'previous-buffer
