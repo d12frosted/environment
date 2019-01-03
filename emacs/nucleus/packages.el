@@ -25,5 +25,6 @@
 (package! buttercup)
 
 ;; nucleus-keybinds.el
+(package! general)
 (package! which-key)
 (package! hydra)
