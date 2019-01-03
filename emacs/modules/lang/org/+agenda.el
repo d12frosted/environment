@@ -42,11 +42,7 @@
 	 org-agenda-tags-column 0
 
    ;; show agenda in current window
-   org-agenda-window-setup 'current-window)
-
-  (after! org-agenda
-    ;; release leader key
-    (unbind-key nucleus-leader-key org-agenda-keymap)))
+   org-agenda-window-setup 'current-window))
 
 (defvar org-agenda-custom-commands
   `((" " "Agenda"
