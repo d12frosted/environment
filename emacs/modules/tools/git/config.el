@@ -21,10 +21,10 @@
   :init
   ;; we already use `global-auto-revert-mode'
   (setq magit-auto-revert-mode nil)
-
+  :config
   ;; full-screen is my friend
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
-  :config
+
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 
