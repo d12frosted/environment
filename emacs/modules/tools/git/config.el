@@ -28,11 +28,6 @@
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
 
-;; (def-package! magit-todos
-;;   :hook (magit-mode . magit-todos-mode)
-;;   :config
-;;   (setq magit-todos-require-colon nil))
-
 (after! git-timemachine
   (setq git-timemachine-show-minibuffer-details t)
   (advice-add #'git-timemachine--show-minibuffer-details :override #'+git*update-header-line)

@@ -18,6 +18,5 @@
 ;;; Code:
 
 (package! magit)
-;; (package! magit-todos)
 (package! git-timemachine)
 (package! pinentry)
