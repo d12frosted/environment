@@ -26,7 +26,14 @@
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
   :config
   ;; properly kill leftover magit buffers on quit
-  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
+  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
+
+  ;; so magit buffers can be switched to (except for process buffers)
+  (defun +magit-buffer-p (buffer)
+    (with-current-buffer buffer
+      (and (derived-mode-p 'magit-mode)
+           (not (eq major-mode 'magit-process-mode)))))
+  (add-to-list '+buffer-real-p-functions #'+magit-buffer-p nil #'eq))
 
 (after! git-timemachine
   (setq git-timemachine-show-minibuffer-details t)
