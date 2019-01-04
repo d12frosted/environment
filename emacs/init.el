@@ -56,7 +56,7 @@ decrease this. If you experience stuttering, increase this.")
   ;; functions. You get a minor speed up by nooping this.
   (setq file-name-handler-alist nil)
   ;; Not restoring these to their defaults will cause stuttering/freezes.
-  (add-hook 'emacs-startup-hook #'nucleus|restore-startup-optimizations))
+  (add-hook 'after-init-hook #'nucleus|restore-startup-optimizations))
 
 ;; Ensure we are in the right directory.
 (setq user-emacs-directory (file-name-directory (file-truename load-file-name)))
