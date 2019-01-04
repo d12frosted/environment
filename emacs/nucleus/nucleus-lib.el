@@ -149,6 +149,26 @@ alternative to `after!'."
            (put ',fun 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fun)))))
 
+(defmacro defer-feature! (feature &optional mode)
+  "Defer a FEATURE (optionally with MODE)."
+  (let ((advice-fn (intern (format "nucleus|defer-feature-%s" feature)))
+        (mode (or mode feature)))
+    `(progn
+       (delq ',feature features)
+       (advice-add #',mode :before #',advice-fn)
+       (defun ,advice-fn (&rest _)
+         ;; Some plugins (like yasnippet) run `lisp-mode' early, to parse some
+         ;; elisp. This would prematurely trigger this function. In these cases,
+         ;; `lisp-mode-hook' is let-bound to nil or its hooks are delayed, so if
+         ;; we see either, keep pretending elisp-mode isn't loaded.
+         (when (and ,(intern (format "%s-hook" mode))
+                    (not delay-mode-hooks))
+           ;; Otherwise, announce to the world elisp-mode has been loaded, so
+           ;; `after!' handlers can respond and configure elisp-mode as
+           ;; expected.
+           (provide ',feature)
+           (advice-remove #',mode #',advice-fn))))))
+
 (defmacro after! (targets &rest body)
   "A smart wrapper around `with-eval-after-load'. Supresses
 warnings during compilation. This will no-op on features that

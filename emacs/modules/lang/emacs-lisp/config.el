@@ -17,6 +17,10 @@
 ;;
 ;;; Code:
 
+;; `elisp-mode' is loaded at startup. In order to lazy load its config we need
+;; to pretend it isn't loaded
+(defer-feature! elisp-mode emacs-lisp-mode)
+
 (after! elisp-mode
   (set-repl-handler! 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set-eval-handler! 'emacs-lisp-mode #'+emacs-lisp-eval)
