@@ -23,7 +23,10 @@
   (setq magit-auto-revert-mode nil)
 
   ;; full-screen is my friend
-  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+  :config
+  ;; properly kill leftover magit buffers on quit
+  (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
 
 ;; (def-package! magit-todos
 ;;   :hook (magit-mode . magit-todos-mode)
