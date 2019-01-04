@@ -18,7 +18,7 @@ main = do
 
     -- Hooks
     , manageHook      = manageDocks <+> manageHook def
-    , layoutHook      = avoidStruts  $  layoutHook def
+    , layoutHook      = avoidStruts $ layoutHook def
     , handleEventHook = handleEventHook def <+> docksEventHook
 
     -- Java swing applications and xmonad are not friends, so we need to pretend
@@ -42,14 +42,19 @@ main = do
                    , "4:media"
                    , "5:other"
                    ]
-    } `additionalKeys`
-    [ ((0, xF86XK_AudioRaiseVolume), vlmInc)
-    , ((0, xF86XK_AudioLowerVolume), vlmDec)
-    , ((0, xF86XK_AudioMute), vlmMute)
-    , ((0, xF86XK_AudioMicMute), micMute)
-    , ((mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
-    , ((mod4Mask, xK_Escape), spawn "switch_kbd_layout")
-    ]
+    } `additionalKeys` extraKeys
+
+
+--------------------------------------------------------------------------------
+extraKeys :: MonadIO m => [((KeyMask, KeySym), m ())]
+extraKeys =
+  [ ((0, xF86XK_AudioRaiseVolume), vlmInc)
+  , ((0, xF86XK_AudioLowerVolume), vlmDec)
+  , ((0, xF86XK_AudioMute), vlmMute)
+  , ((0, xF86XK_AudioMicMute), micMute)
+  , ((mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
+  , ((mod4Mask, xK_Escape), spawn "switch_kbd_layout")
+  ]
 
 --------------------------------------------------------------------------------
 vlmInc :: MonadIO m => m ()
