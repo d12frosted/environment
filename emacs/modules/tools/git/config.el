@@ -33,7 +33,9 @@
     (with-current-buffer buffer
       (and (derived-mode-p 'magit-mode)
            (not (eq major-mode 'magit-process-mode)))))
-  (add-to-list '+buffer-real-p-functions #'+magit-buffer-p nil #'eq))
+  (add-to-list '+buffer-real-p-functions #'+magit-buffer-p nil #'eq)
+
+  (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")))
 
 (after! git-timemachine
   (setq git-timemachine-show-minibuffer-details t)
