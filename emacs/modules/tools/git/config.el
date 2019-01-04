@@ -35,7 +35,9 @@
            (not (eq major-mode 'magit-process-mode)))))
   (add-to-list '+buffer-real-p-functions #'+magit-buffer-p nil #'eq)
 
-  (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")))
+  (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
+        ;; show word-granularity on selected hunk
+        magit-diff-refine-hunk t))
 
 (after! git-timemachine
   (setq git-timemachine-show-minibuffer-details t)
