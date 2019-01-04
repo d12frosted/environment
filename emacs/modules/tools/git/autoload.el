@@ -46,12 +46,15 @@ current workspace."
                              (eq major-mode 'magit-status-mode)))
                          (window-list))))
     (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
-    (dolist (buffer (+workspace-buffer-list))
-      (with-current-buffer buffer
-        (when (fboundp 'vc-refresh-state)
-          (vc-refresh-state))
-        (when (fboundp '+version-control|update-git-gutter)
-          (+version-control|update-git-gutter))))))
+    (async-start
+     (lambda ()
+       (dolist (buffer (buffer-list))
+         (with-current-buffer buffer
+           (when (fboundp 'vc-refresh-state)
+             (vc-refresh-state))
+           (when (fboundp '+version-control|update-git-gutter)
+             (+version-control|update-git-gutter)))))
+     'ignore)))
 
 (defun +magit--kill-buffer (buffer)
   "Gracefully kill magit BUFFER.
