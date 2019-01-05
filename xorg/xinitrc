@@ -32,17 +32,17 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
   unset f
 fi
 
-# I rarely see my wallpapers. But when I do, I am happy.
-~/.fehbg &
-
-# Automatically lock screen
-xautolocker &
-
-# Because every X needs some algebra to tame it.
-xmonad
-
 # I need this so much outside of Emacs.
 xset r rate 180 26
 
 # Make sure that Caps doesn't miss it's purpose.
 setxkbmap -option caps:ctrl_modifier
+
+# Automatically lock screen
+xautolocker &
+
+# I rarely see my wallpapers. But when I do, I am happy.
+~/.fehbg &
+
+# Because every X needs some algebra to tame it.
+xmonad
