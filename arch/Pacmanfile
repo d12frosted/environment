@@ -21,6 +21,7 @@ fd
 feh
 firefox
 fish
+font-bh-ttf
 gocryptfs
 java-runtime-common
 jq
@@ -29,6 +30,7 @@ libnotify
 networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
+noto-fonts
 openssh
 pcmanfm
 physlock
