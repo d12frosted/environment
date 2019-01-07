@@ -54,7 +54,7 @@
   (let ((org-brain-file-entries-use-title nil))
     (org-brain-choose-entry
      prompt
-     (org-brain-children (brain-as-entry parent))
+     (org-brain-children (+brain-as-entry parent))
      nil
      t)))
 
