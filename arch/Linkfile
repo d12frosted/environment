@@ -1,6 +1,8 @@
 xorg/xinitrc ~/.xinitrc
 xorg/xresources ~/.Xresources
 xorg/bin/switch_kbd_layout ~/.local/bin/switch_kbd_layout
+xorg/bin/xautolocker ~/.local/bin/xautolocker
+xorg/bin/xlocker ~/.local/bin/xlocker
 xmonad/xmonad.hs ~/.xmonad/xmonad.hs
 bash/bash_profile_linux ~/.bash_profile
 bash/bashrc_linux ~/.bashrc

@@ -14,5 +14,3 @@ utils/bin/inactive-repo-notifier.sh ~/.local/bin/inactive-repo-notifier
 utils/bin/on_desktop_switch ~/.local/bin/on_desktop_switch
 utils/bin/on_window_switch ~/.local/bin/on_window_switch
 utils/bin/sync_spacemacs ~/.local/bin/sync_spacemacs
-xorg/xautolocker ~/.local/bin/xautolocker
-xorg/xlocker ~/.local/bin/xlocker
