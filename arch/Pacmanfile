@@ -22,6 +22,7 @@ feh
 firefox
 fish
 font-bh-ttf
+font-mathematica
 gocryptfs
 java-runtime-common
 jq
@@ -31,6 +32,7 @@ networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
 noto-fonts
+noto-fonts-emoji
 npm
 openssh
 pcmanfm
@@ -44,7 +46,10 @@ scrot
 shellcheck
 stack
 tree
+ttf-arphic-uming
 ttf-dejavu
+ttf-freefont
+ttf-indic-otf
 unzip
 wget
 xautolock
