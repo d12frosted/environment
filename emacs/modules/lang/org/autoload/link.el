@@ -17,6 +17,7 @@
 ;;
 ;;; Code:
 
+;;;###autoload
 (defvar +org-id-link-regexp
   (concat
    ;; outer bracket
