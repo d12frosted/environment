@@ -59,7 +59,7 @@ if status --is-interactive
       function $FUNCTION_NAME -V SCRIPT -V THEME
         eval sh '"'$SCRIPT'"'
       end
-    end for
+    end
   end
 end
 set fish_color_autosuggestion gray
