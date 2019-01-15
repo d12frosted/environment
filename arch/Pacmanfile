@@ -57,6 +57,7 @@ unzip
 vim
 wget
 xautolock
+xclip
 xlockmore
 xmobar
 xmonad
