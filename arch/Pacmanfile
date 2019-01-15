@@ -9,6 +9,7 @@ aspell-ru
 aspell-uk
 audacious
 audacious-plugins
+bind-tools
 blueman
 bluez
 bluez-utils
@@ -28,6 +29,7 @@ java-runtime-common
 jq
 libcue
 libnotify
+net-tools
 networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
