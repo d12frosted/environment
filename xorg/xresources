@@ -59,3 +59,10 @@ XTerm*modifyOtherKeys: 1
 ! Light Grey (Selection) + White (Current Line)
 *.color7:       t_selection
 *.color15:      t_current_line
+
+!
+! RXVT configurations
+!
+
+URxvt.font: xft:Source Code Pro:size=12
+URxvt.scrollBar: false
