@@ -55,3 +55,7 @@
 (after! magit
   (setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
   (pinentry-start))
+
+(def-package! forge
+  :when (featurep! :tools magit +forge)
+  :after magit)

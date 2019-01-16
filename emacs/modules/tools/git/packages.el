@@ -18,5 +18,6 @@
 ;;; Code:
 
 (package! magit)
+(package! forge)
 (package! git-timemachine)
 (package! pinentry)
