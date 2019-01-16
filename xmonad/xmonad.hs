@@ -39,8 +39,9 @@ main = do
     , workspaces = [ "1:emacs"
                    , "2:term"
                    , "3:web"
-                   , "4:media"
-                   , "5:other"
+                   , "4:chat"
+                   , "5:media"
+                   , "6:other"
                    ]
     } `additionalKeys` extraKeys
 
