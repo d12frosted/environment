@@ -48,3 +48,6 @@
 
 (def-package! ialign
   :defer t)
+
+(def-package! lorem-ipsum
+  :defer t)

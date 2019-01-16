@@ -18,3 +18,4 @@
 ;;; Code:
 
 (package! ialign)
+(package! lorem-ipsum)
