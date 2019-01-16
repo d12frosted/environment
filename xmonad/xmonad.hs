@@ -43,6 +43,9 @@ main = do
                    , "5:media"
                    , "6:other"
                    ]
+
+    -- Unfortunately, use urxvt
+    , terminal = "urxvt"
     } `additionalKeys` extraKeys
 
 
