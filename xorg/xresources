@@ -6,6 +6,7 @@ XTerm*utf8: 1
 XTerm*faceName: xft:Source Code Pro:size=12
 XTerm*metaSendsEscape: true
 XTerm.*backarrowKey: false
+XTerm*deleteIsDEL: true
 XTerm*modifier: meta
 XTerm*modifyOtherKeys: 1
 
