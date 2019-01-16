@@ -3,8 +3,14 @@
 # make sure that US layout is selected
 switch_kbd_layout us
 
+# actually lock the screen
 xlock \
-  -mode blank \
+  -mode life1d \
+  -erasemode no_fade \
+  -delay 66666 \
+  -size 10 \
+  -cycles 1440 \
+  -erasedelay 0 \
   -startCmd 'physlock -l' \
   -endCmd 'physlock -L' \
   -background black \
@@ -14,7 +20,6 @@ xlock \
   -fpsfont '-misc-dejavu serif-medium-r-normal--0-0-0-0-p-0-ascii-0' \
   -messagefont '-misc-dejavu serif-medium-r-normal--0-0-0-0-p-0-ascii-0' \
   -mousemotion +usefirst \
-  -delay 500 \
   -echokeys \
   -echokey '.' \
   -info 'Enter password to unlock.' \
