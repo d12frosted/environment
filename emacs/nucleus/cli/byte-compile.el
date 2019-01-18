@@ -123,7 +123,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       ;; Assemble el files we want to compile; taking into account that
       ;; MODULES may be a list of MODULE/SUBMODULE strings from the command
       ;; line.
-      (let ((target-files (doom-files-in targets :filter #'doom--byte-compile-ignore-file-p))
+      (let ((target-files (nucleus-files-in targets :filter #'nucleus--byte-compile-ignore-file-p))
             (load-path load-path)
             kill-emacs-hook kill-buffer-query-functions)
         (unless target-files
