@@ -113,6 +113,8 @@
 
 (defun +org|setup-tags ()
   "Setup tags-related parts of Org."
+  (setq org-tag-persistent-alist '(("FOCUS" . ?f)
+                                   ("PROJECT" . ?p)))
   (add-to-list 'org-tags-exclude-from-inheritance "PROJECT"))
 
 (defun +org|setup-clock ()
