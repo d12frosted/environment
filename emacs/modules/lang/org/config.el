@@ -61,6 +61,7 @@
 
 (add-hook! 'org-mode-hook
   #'(org-indent-mode
+     org-edna-load
      auto-fill-mode
      places-mode-maybe-enable
      pretty-props-mode-maybe-enable

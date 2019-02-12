@@ -27,3 +27,4 @@
 (package! org-board)
 (package! org-download)
 (package! ace-link)
+(package! org-edna)
