@@ -54,6 +54,7 @@
 (add-hook! 'org-load-hook
   #'(+org|setup-ui
      +org|setup-todo
+     +org|setup-tags
      +org|setup-clock
      +org|setup-id
      +org|setup-refile
@@ -109,6 +110,10 @@
 
 	      ;; use drawer for state changes
 	      org-log-into-drawer t))
+
+(defun +org|setup-tags ()
+  "Setup tags-related parts of Org."
+  (add-to-list 'org-tags-exclude-from-inheritance "PROJECT"))
 
 (defun +org|setup-clock ()
   "Setup clock-related parts of Org."
