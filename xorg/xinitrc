@@ -39,7 +39,7 @@ xset r rate 180 26
 setxkbmap -option caps:ctrl_modifier
 
 # Automatically lock screen
-xautolocker &
+autolock &
 
 # I rarely see my wallpapers. But when I do, I am happy.
 ~/.fehbg &

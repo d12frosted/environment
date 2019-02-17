@@ -2,6 +2,6 @@
 
 xautolock \
   -time 5 \
-  -locker xlocker \
+  -locker lock \
   -notify 30 \
   -notifier 'notify-send "System will lock in 30s"'
