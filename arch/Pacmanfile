@@ -26,6 +26,7 @@ fish
 font-bh-ttf
 font-mathematica
 gocryptfs
+hledger
 java-runtime-common
 jq
 libcue
