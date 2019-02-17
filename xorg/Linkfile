@@ -1,0 +1,5 @@
+xinitrc ~/.xinitrc
+xresources ~/.Xresources
+bin/switch_kbd_layout ~/.local/bin/switch_kbd_layout
+bin/xautolocker ~/.local/bin/xautolocker
+bin/xlocker ~/.local/bin/xlocker
