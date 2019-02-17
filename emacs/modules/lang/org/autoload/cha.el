@@ -71,8 +71,8 @@ in the options section.
 
 (defun cha--refresh-mapping ()
   "Return alist of parent id and refresh function."
-  (list (cons cha-tea-groups-parent-id #'cha/refresh-tea-group-entry)
-        (cons cha-tea-parent-id #'cha/refresh-tea-entry)))
+  (list (cons cha-tea-groups-parent-id #'cha-refresh-tea-group-entry)
+        (cons cha-tea-parent-id #'cha-refresh-tea-entry)))
 
 (defun cha/refresh-buffer ()
   "Refresh all entries in the current buffer.."
@@ -94,21 +94,74 @@ in the options section.
                                 nil 'tree)))))
         (cha--refresh-mapping)))
 
-(defun cha/refresh-tea-group-entry ()
+(defun cha/refresh ()
+  "Refresh entry at point.
+
+Support following entries:
+
+1. Tea group entry
+2. Tea entry
+3. Rating entry"
+  (interactive)
+  (cond
+   ((string-equal (+org-parent-id) cha-tea-groups-parent-id)
+    (cha-refresh-tea-group-entry))
+   ((string-equal (+org-parent-id) cha-tea-parent-id)
+    (cha-refresh-tea-entry))
+   ((+org-entry-tag-p "RATING")
+    (cha-refresh-tea-rating t))
+   (t
+    (message "Unsupported entry"))))
+
+(defun cha-refresh-tea-group-entry ()
   "Refresh tea group entry at point."
   (pretty-props/entry))
 
-(defun cha/refresh-tea-entry ()
+(defun cha-refresh-tea-entry ()
   "Refresh tea entry at point."
-  (org-set-property
-   "AVAILABLE"
-   (number-to-string
-    (round
-     (- (string-to-number (or (org-entry-get nil "TOTAL_IN") ""))
-        (string-to-number (or (org-entry-get nil "TOTAL_OUT") ""))))))
+  (+org-entry-set-number "AVAILABLE"
+                         (round (- (+org-entry-get-number "TOTAL_IN")
+                                   (+org-entry-get-number "TOTAL_OUT"))))
+  (let ((rates (org-map-entries
+                (lambda ()
+                  (cha-refresh-tea-rating nil)
+                  (+org-entry-get-number "TOTAL"))
+                "+RATING"
+                'tree)))
+    (+org-entry-set-number "RATE" (/ (apply #'+ rates)
+                                     (float (length rates)))))
   (org-edit-headline
    (cha-format-tea-title cha-tea-title-format))
   (pretty-props/entry))
+
+(defun cha-refresh-tea-rating (propagate)
+  "Refresh tea rating entry at point.
+
+When PROPAGATE is non-nil, refresh is propagated upper to the tea
+entry."
+  (if propagate
+    (save-excursion
+      (org-up-heading-safe)
+      (cha-refresh-tea-entry))
+    (+org-entry-set-number "TOTAL" (cha--tea-rating))))
+
+(defvar cha--tea-rating-props
+  '("DRY_LEAF_APPEARANCE"
+    "DRY_LEAF_AROMA"
+    "WARM_LEAF_AROMA"
+    "BREWED_APPEARANCE"
+    "BREWED_AROMA"
+    "BREWED_FLAVOR"
+    "DEVELOPMENT"
+    "BOTTOM"
+    "AFTER_STATE"
+    "GENERAL")
+  "Tea rating properties.")
+
+(defun cha--tea-rating ()
+  "Get rating value from tea rating entry at point."
+  (/ (seq-reduce #'+ (seq-map #'+org-entry-get-number cha--tea-rating-props) 0)
+     (float (length cha--tea-rating-props))))
 
 ;;
 ;; Title
@@ -284,6 +337,3 @@ top of the file:
       (org-set-property "TOTAL_OUT" "0")
       (cha/pretty-tea)
       (save-buffer))))
-
-;;
-;; Rate

@@ -26,5 +26,5 @@
 (defun +org-parent-id ()
   "Return parent id of entry at point."
   (save-excursion
-    (org-up-heading-safe)
-    (org-id-get-create)))
+    (when (org-up-heading-safe)
+      (org-id-get-create))))

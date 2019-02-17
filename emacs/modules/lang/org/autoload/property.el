@@ -40,3 +40,23 @@ Candidates are children of PARENT brain entry."
 
 (defun +org--pretty-property-prompt (prompt)
   (capitalize (replace-regexp-in-string "_" " " prompt)))
+
+;;;###autoload
+(defun +org-entry-get (prop)
+  "Get PROP value of entry at point."
+  (org-entry-get nil prop))
+
+;;;###autoload
+(defun +org-entry-get-number (prop)
+  "Get number PROP value of entry at point"
+  (string-to-number (or (org-entry-get nil prop) "")))
+
+;;;###autoload
+(defun +org-entry-set-number (prop num)
+  "Set PROP of entry to point to NUM."
+  (org-set-property prop (number-to-string num)))
+
+;;;###autoload
+(defun +org-entry-tag-p (tag)
+  "Return non-nil when entry at point has TAG."
+  (string-match-p (format ".*:%s:.*" tag) (or (org-entry-get nil "TAGS") "")))
