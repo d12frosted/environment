@@ -67,37 +67,45 @@ in the options section.
         (cha-mode)))))
 
 ;;
-;; Pretty
+;; Refresh
 
-(defun cha/pretty-buffer ()
-  "Prettify all tea entries in the buffer."
+(defun cha--refresh-mapping ()
+  "Return alist of parent id and refresh function."
+  (list (cons cha-tea-groups-parent-id #'cha/refresh-tea-group-entry)
+        (cons cha-tea-parent-id #'cha/refresh-tea-entry)))
+
+(defun cha/refresh-buffer ()
+  "Refresh all entries in the current buffer.."
   (interactive)
-  (let ((loc-groups (org-id-find cha-tea-groups-parent-id))
-        (loc-tea (org-id-find cha-tea-parent-id)))
+  (mapc (lambda (config)
+          (let* ((parent-id (car config))
+                 (refreshf (cdr config))
+                 (loc (org-id-find parent-id)))
+            (+org-with-file
+             (car loc)
+             (org-with-point-at (cdr loc)
+               (org-map-entries (lambda ()
+                                  (cond
+                                   ((string-equal (org-id-get) parent-id)
+                                    (pretty-props/entry))
+                                   ((string-equal (+org-parent-id) parent-id)
+                                    (funcall refreshf))
+                                   (t)))
+                                nil 'tree)))))
+        (cha--refresh-mapping)))
 
-    (+org-with-file
-     (car loc-groups)
-     (org-with-point-at (cdr loc-groups)
-       (org-map-entries #'pretty-props/entry nil 'tree)))
+(defun cha/refresh-tea-group-entry ()
+  "Refresh tea group entry at point."
+  (pretty-props/entry))
 
-    (+org-with-file
-     (car loc-tea)
-     (org-with-point-at (cdr loc-tea)
-       (org-map-entries (lambda ()
-                          (if (string-equal (org-id-get)
-                                            cha-tea-parent-id)
-                              (pretty-props/entry)
-                            (cha/pretty-tea)))
-                        nil 'tree)))))
-
-(defun cha/pretty-tea ()
-  "Prettify tea entry at point."
-  (interactive)
+(defun cha/refresh-tea-entry ()
+  "Refresh tea entry at point."
   (org-set-property
    "AVAILABLE"
    (number-to-string
-    (- (string-to-number (or (org-entry-get nil "TOTAL_IN") ""))
-       (string-to-number (or (org-entry-get nil "TOTAL_OUT") "")))))
+    (round
+     (- (string-to-number (or (org-entry-get nil "TOTAL_IN") ""))
+        (string-to-number (or (org-entry-get nil "TOTAL_OUT") ""))))))
   (org-edit-headline
    (cha-format-tea-title cha-tea-title-format))
   (pretty-props/entry))
@@ -276,3 +284,6 @@ top of the file:
       (org-set-property "TOTAL_OUT" "0")
       (cha/pretty-tea)
       (save-buffer))))
+
+;;
+;; Rate
