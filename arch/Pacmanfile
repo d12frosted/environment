@@ -18,6 +18,7 @@ dmenu
 docker
 docker-compose
 emacs
+expect
 fd
 feh
 firefox
