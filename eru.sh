@@ -236,13 +236,42 @@ function check() {
   command -v "$1" >/dev/null 2>&1
 }
 
+function linkfile() {
+  local linkfile_root="$1"
+  local files
+
+  files=("Linkfile"
+         "Linkfile_${KERNEL_NAME}")
+
+  for file in "${files[@]}"; do
+    if [ -f "$linkfile_root/$file" ]; then
+      cd "$linkfile_root" && map_lines safe_link "$file"
+    fi
+  done
+}
+
 function safe_link() {
+  local f
+  local s
+  local t
+  local d
+  local owner
+
   # shellcheck disable=SC2086
   f=$(eval echo $1)
-  s="$target/$f"
+  s="$(pwd)/$f"
   shift
   t="${*/#\~/$HOME}"
   d=$(dirname "$t")
+  owner=$(stat -c '%U' "$d")
+
+  if [[ "$owner" != "root" && "$owner" != "$USER" ]]; then
+    error "can not link '$s' to '$t'"
+    error "owner of '$d' is $owner"
+    error "allowed owners: root or $USER"
+    exit 1
+  fi
+
 
   if [[ ! -f "$s" && ! -d "$s" ]]; then
     error "can not link '$s' as it does not exist"
@@ -256,12 +285,20 @@ function safe_link() {
 
   if [[ -L "$t" ]]; then
     log "relink $s -> $t"
-    rm "$t"
+    if [[ "$owner" = "root" ]]; then
+      sudo rm "$t"
+    else
+      rm "$t"
+    fi
   else
     log "link $s -> $t"
   fi
 
-  ln -s "$s" "$t"
+  if [[ "$owner" = "root" ]]; then
+    sudo ln -s "$s" "$t"
+  else
+    ln -s "$s" "$t"
+  fi
 }
 
 function map_lines() {
@@ -378,10 +415,16 @@ theme_guard "Repositories" "Sync repositories from Repofiles" && {
 }
 
 theme_guard "Linking" "Link all files as defined in Linkfiles" && {
-  map_lines safe_link "$target/Linkfile"
-  map_lines safe_link "$target/${KERNEL_NAME}/Linkfile" || true
-  map_lines safe_link "$target/${OS_NAME}/Linkfile" || true
-  map_lines sync_link "$XDG_CONFIG_CACHE/eru/Linkfile" || true
+  linkdirs=("$target"
+            "$target/${KERNEL_NAME}"
+            "$target/${OS_NAME}"
+            "$target/xorg"
+            "$XDG_CONFIG_CACHE/eru"
+           )
+  for i in "${linkdirs[@]}"
+  do
+    linkfile "$i"
+  done
 }
 
 arch_guard && {
