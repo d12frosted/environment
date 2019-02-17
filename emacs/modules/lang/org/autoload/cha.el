@@ -131,8 +131,11 @@ Support following entries:
                   (+org-entry-get-number "TOTAL"))
                 "+RATING"
                 'tree)))
-    (+org-entry-set-number "RATE" (/ (apply #'+ rates)
-                                     (float (length rates)))))
+    (+org-entry-set-number "RATE"
+                           (if (null rates)
+                               0
+                             (/ (apply #'+ rates)
+                                (float (length rates))))))
   (org-edit-headline
    (cha-format-tea-title cha-tea-title-format))
   (pretty-props/entry))
@@ -146,7 +149,8 @@ entry."
     (save-excursion
       (org-up-heading-safe)
       (cha-refresh-tea-entry))
-    (+org-entry-set-number "TOTAL" (cha--tea-rating))))
+    (+org-entry-set-number "TOTAL" (cha--tea-rating))
+    (pretty-props/entry)))
 
 (defvar cha--tea-rating-props
   '("DRY_LEAF_APPEARANCE"
@@ -360,7 +364,30 @@ top of the file:
                             (+org-entry-get-number "DEFAULT_AMOUNT"))))
         (date (or date (org-read-date nil t))))
     (cha-inv--sub id amount "drink" date)
+    (when (and (string-equal action "drink")
+               (y-or-n-p "Rate?"))
+      (cha/rate date))
     (cha-refresh-tea-entry)))
+
+(defun cha/rate (&optional date)
+  "Rate tea entry at point.
+
+When DATE is omitted, `current-time' is used."
+  (interactive)
+  (let* ((date (or date (org-read-date nil t)))
+         (name (concat
+                (format-time-string "%Y-%m-%d %A" date)
+                " | "
+                (org-entry-get nil "NAME")
+                " "
+                (org-entry-get nil "TAG")))
+         (id (+brain-new-child (org-id-get-create) name)))
+    (org-with-point-at (org-id-find id t)
+      (org-set-tags-to ":RATING:")
+      (org-set-property "DATE" (format-time-string "%Y-%m-%d" date))
+      (mapc #'+org-prompt-property cha--tea-rating-props)
+      (save-buffer)
+      (cha-refresh-tea-rating t))))
 
 ;;
 ;; Inventory
