@@ -119,6 +119,9 @@ Support following entries:
 
 (defun cha-refresh-tea-entry ()
   "Refresh tea entry at point."
+  (let ((id (org-id-get-create)))
+    (+org-entry-set-number "TOTAL_IN" (cha-inv--total-in id))
+    (+org-entry-set-number "TOTAL_OUT" (cha-inv--total-out id)))
   (+org-entry-set-number "AVAILABLE"
                          (round (- (+org-entry-get-number "TOTAL_IN")
                                    (+org-entry-get-number "TOTAL_OUT"))))
@@ -333,7 +336,70 @@ top of the file:
                         (concat cha-default-currency
                                 (read-string "Price: ")))
       (+org-prompt-property "AVAILABLE")
+      (cha-inv--add id
+                    (org-entry-get nil "AVAILABLE")
+                    (read-string "Shop:" "belayasova")
+                    (org-read-date nil t nil "Date of purchase: "))
       (org-set-property "TOTAL_IN" (org-entry-get nil "AVAILABLE"))
       (org-set-property "TOTAL_OUT" "0")
       (cha/pretty-tea)
       (save-buffer))))
+
+(defun cha/drink ()
+  "Drink tea at point."
+  (interactive)
+  (cha/consume "drink"))
+
+(defun cha/consume (&optional action id amount date)
+  "Consume AMOUNT of ID because of ACTION at DATE."
+  (interactive)
+  (let ((id (or id (org-id-get-create)))
+        (action (or action (read-string "Action: " "drink")))
+        (amount (or amount (read-number
+                            "Amount: "
+                            (+org-entry-get-number "DEFAULT_AMOUNT"))))
+        (date (or date (org-read-date nil t))))
+    (cha-inv--sub id amount "drink" date)
+    (cha-refresh-tea-entry)))
+
+;;
+;; Inventory
+
+(defun cha-inv--balance (id &optional query)
+  "Get balance of ID using QUERY."
+  (let* ((cmd (format "hledger -f cha-dao.journal b %s '%s'" id query))
+         (res (shell-command-to-string cmd))
+         (lines (split-string res "\n")))
+    (string-to-number (car (seq-drop-while #'string-empty-p (reverse lines))))))
+
+(defun cha-inv--total-in (id)
+  "Get total income for ID."
+  (cha-inv--balance id "amt:>0"))
+
+(defun cha-inv--total-out (id)
+  "Get total outcome for ID."
+  (abs (cha-inv--balance id "amt:<0")))
+
+(defun cha-inv--add (id amount source &optional date)
+  "Add AMOUNT of ID to inventory from SOURCE.
+
+When DATE is omitted, `current-time' is used."
+  (shell-command-to-string
+   (format
+    "echo '\n%s\n    cha:%s  %s\n    source:%s' >> cha-dao.journal"
+    (format-time-string "%Y/%m/%d" date)
+    id
+    amount
+    source)))
+
+(defun cha-inv--sub (id amount action &optional date)
+  "Subtract amount of ID from inventory as result of ACTION.
+
+When DATE is omitted, `current-time' is used."
+  (shell-command-to-string
+   (format
+    "echo '\n%s\n    activity:%s  %s\n    cha:%s' >> cha-dao.journal"
+    (format-time-string "%Y/%m/%d" date)
+    action
+    amount
+    id)))
