@@ -21,3 +21,10 @@
 (defmacro +org-with-file (file &rest body)
   `(with-current-buffer (find-file-noselect ,file)
      ,@body))
+
+;;;###autoload
+(defun +org-parent-id ()
+  "Return parent id of entry at point."
+  (save-excursion
+    (org-up-heading-safe)
+    (org-id-get-create)))
