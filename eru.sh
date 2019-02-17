@@ -490,8 +490,14 @@ arch_guard && {
     fi
     sudo cp "$XDG_CONFIG_HOME/xorg/xkb/symbols/ua" "/usr/share/X11/xkb/symbols/ua"
   }
+
   theme_guard "hardware" "Setup touchpad" && {
     sudo cp "$XDG_CONFIG_HOME/xorg/30-touchpad.conf" "/etc/X11/xorg.conf.d/30-touchpad.conf"
+  }
+
+  theme_guard "hardware" "Setup autolock" && {
+    sudo cp "$XDG_CONFIG_HOME/arch/lock@.service" /etc/systemd/system/lock@.service
+    systemctl enable "lock@${USER}.service"
   }
 }
 
