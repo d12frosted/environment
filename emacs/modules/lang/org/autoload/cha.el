@@ -346,7 +346,7 @@ top of the file:
                     (org-read-date nil t nil "Date of purchase: "))
       (org-set-property "TOTAL_IN" (org-entry-get nil "AVAILABLE"))
       (org-set-property "TOTAL_OUT" "0")
-      (cha/pretty-tea)
+      (cha-refresh-tea-entry)
       (save-buffer))))
 
 (defun cha/drink ()
