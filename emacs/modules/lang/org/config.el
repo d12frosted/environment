@@ -89,7 +89,7 @@
 (defun +org|setup-todo ()
   "Setup todo states."
   (setq org-todo-keywords
-	      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+	      '((sequence "TODO(t)" "|" "DONE(d!)")
 	        (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING"))
 
 	      ;; use fast todo selection
@@ -105,7 +105,6 @@
           ("HOLD" ("WAITING") ("HOLD" . t))
           (done ("WAITING") ("HOLD") ("FOCUS"))
           ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-          ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
           ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))
 
 	      ;; use drawer for state changes
