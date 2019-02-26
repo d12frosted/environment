@@ -46,7 +46,8 @@
 (nucleus-load-packages-incrementally
  '(org-agenda
    org-capture
-   org-id))
+   org-id
+   org-attach))
 
 ;;
 ;; Bootstrap
