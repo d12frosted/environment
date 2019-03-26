@@ -83,7 +83,7 @@ set fish_pager_color_prefix cyan
 set fish_pager_color_progress cyan
 
 # Eru completions
-complete -c eru -a 'ssh repositories linking packages guardian os' --no-files
+complete -c eru -a 'ssh repositories linking packages guardian os hardware' --no-files
 
 # private post-configs
 if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
