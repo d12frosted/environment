@@ -25,6 +25,8 @@ firefox
 fish
 font-bh-ttf
 font-mathematica
+git
+gnupg2
 gocryptfs
 hledger
 java-runtime-common
@@ -47,6 +49,7 @@ pulseaudio-alsa
 pulseaudio-bluetooth
 pulsemixer
 ripgrep
+rng-tools
 scrot
 shellcheck
 stack
