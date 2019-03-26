@@ -65,7 +65,7 @@
  plantuml
  proto
  rest
- (scala +ensime)
+ (scala +lsp-scala)
  sh
 
  :app
