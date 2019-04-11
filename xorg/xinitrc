@@ -1,7 +1,7 @@
 #!/bin/sh
 
-userresources=$HOME/.Xresources
-usermodmap=$HOME/.Xmodmap
+userresources=$XDG_CONFIG_HOME/xorg/xresources
+usermodmap=$XDG_CONFIG_HOME/xorg/xmodmap
 sysresources=/etc/X11/xinit/.Xresources
 sysmodmap=/etc/X11/xinit/.Xmodmap
 

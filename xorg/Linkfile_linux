@@ -1,5 +1,4 @@
 xinitrc ~/.xinitrc
-xresources ~/.Xresources
 bin/switch_kbd_layout /usr/local/bin/switch_kbd_layout
 bin/autolock /usr/local/bin/xautolocker
 bin/lock /usr/local/bin/xlocker
