@@ -39,14 +39,8 @@ function fish_prompt --description 'Write out the prompt'
 
   set_color normal
 
-  __d12_fish_venv
-
   if command -v git > /dev/null
     __terlar_git_prompt
-  end
-
-  if command -v hg > /dev/null
-    __fish_hg_prompt
   end
 
   echo
@@ -87,11 +81,5 @@ end
 function __d12_prompt__notify_completion -a duration
   if command -v terminal-notifier > /dev/null
     echo -es 'Finished in ' $duration ' ms' | terminal-notifier
-  end
-end
-
-function __d12_fish_venv
-  if set -q VIRTUAL_ENV
-    echo -n -s "|" (set_color $fish_color_comment) (basename "$VIRTUAL_ENV") (set_color normal)
   end
 end
