@@ -13,6 +13,7 @@ bind-tools
 blueman
 bluez
 bluez-utils
+certbot
 chromium
 dmenu
 docker

@@ -9,6 +9,7 @@ brew "ack"
 brew "ag"
 brew "aspell"
 brew "cask", args: ["ignore-dependencies"]
+brew "certbot"
 brew "chunkwm", args: ["with-purify", "HEAD"], restart_service: :changed
 brew "docker"
 brew "emacs-plus", args: ["without-spacemacs-icon"]
