@@ -123,3 +123,7 @@ set fish_greeting "
  `-\     /        |    j
     `-=-'          `--'
 "
+
+if test "$TERM" = "linux"
+  clear
+end
