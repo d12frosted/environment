@@ -58,4 +58,14 @@
 
 (def-package! forge
   :when (featurep! :tools magit +forge)
-  :after magit)
+  ;; We defer loading even further because forge's dependencies will try to
+  ;; compile emacsql, which is a slow and blocking operation.
+  :after-call magit-status
+  :init
+  (setq forge-database-file (concat nucleus-etc-dir "forge/forge-database.sqlite"))
+  :config
+  ;; All forge list modes are derived from `forge-topic-list-mode'
+  (map! :map forge-topic-list-mode-map :n "q" #'kill-this-buffer)
+  ;; (set-popup-rule! "^\\*?[0-9]+:\\(?:new-\\|[0-9]+$\\)" :size 0.45 :modeline t :ttl 0 :quit nil)
+  ;; (set-popup-rule! "^\\*\\(?:[^/]+/[^ ]+ #[0-9]+\\*$\\|Issues\\|Pull-Requests\\|forge\\)" :ignore t)
+  )

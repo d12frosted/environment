@@ -54,7 +54,7 @@
  window
 
  :tools
- git
+ (git +forge)
 
  :lang
  emacs-lisp
