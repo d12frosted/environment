@@ -138,8 +138,10 @@
         :desc "REPL" "l" #'+eval/open-repl)
 
       (:desc "capture" :prefix "c"
-        :desc "Org fast capture" "x" #'+org/capture-task
+        :desc "Org fast capture" "j" #'+org/capture-journal
         :desc "Org fast capture" "m" #'+org/capture-meeting
+        :desc "Org fast capture" "n" #'+org/capture-note
+        :desc "Org fast capture" "x" #'+org/capture-task
         :desc "Org capture" "X" #'org-capture
         :desc "Orgability clip" "o" #'orgability-clip
         :desc "Org store link" "l" #'org-store-link)

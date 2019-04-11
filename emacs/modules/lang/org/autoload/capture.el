@@ -28,3 +28,15 @@
   "A short-cut for capturing meeting."
   (interactive)
   (org-capture nil "m"))
+
+;;;###autoload
+(defun +org/capture-note ()
+  "A short-cut for capturing note."
+  (interactive)
+  (org-capture nil "n"))
+
+;;;###autoload
+(defun +org/capture-journal ()
+  "A short-cut for capturing journal entry."
+  (interactive)
+  (org-capture nil "j"))
