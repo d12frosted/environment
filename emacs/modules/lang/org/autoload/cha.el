@@ -363,7 +363,7 @@ top of the file:
                             "Amount: "
                             (+org-entry-get-number "DEFAULT_AMOUNT"))))
         (date (or date (org-read-date nil t))))
-    (cha-inv--sub id amount "drink" date)
+    (cha-inv--sub id amount action date)
     (when (and (string-equal action "drink")
                (y-or-n-p "Rate?"))
       (cha/rate date))
