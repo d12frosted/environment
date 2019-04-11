@@ -369,6 +369,16 @@ top of the file:
       (cha/rate date))
     (cha-refresh-tea-entry)))
 
+(defun cha/acquire (&optional source id amount date)
+  "Acquire AMOUNT of ID because from SOURCE at DATE."
+  (interactive)
+  (let ((id (or id (org-id-get-create)))
+        (source (or source (read-string "Source: " "belayasova")))
+        (amount (or amount (read-number "Amount: ")))
+        (date (or date (org-read-date nil t))))
+    (cha-inv--add id amount source date)
+    (cha-refresh-tea-entry)))
+
 (defun cha/rate (&optional date)
   "Rate tea entry at point.
 
