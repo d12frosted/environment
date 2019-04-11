@@ -27,6 +27,10 @@
   "Name of the main agenda buffer.")
 
 ;;;###autoload
+(defvar +agenda-main-cache-buffer nil
+  "When non-nil `+agenda/main' will cache the buffer.")
+
+;;;###autoload
 (defvar +agenda-reading-list-buffer-name "*agenda:reading-list*"
   "Name of the reading list agenda buffer.")
 
@@ -44,7 +48,9 @@ function.
 
 Otherwise create it from scratch."
   (interactive "P")
-  (if-let ((buffer (and (null arg) (get-buffer +agenda-main-buffer-name))))
+  (if-let ((buffer (and +agenda-main-cache-buffer
+                        (null arg)
+                        (get-buffer +agenda-main-buffer-name))))
       (+buffer-display-and-switch buffer)
     (org-agenda nil " ")))
 
