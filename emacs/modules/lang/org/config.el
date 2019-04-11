@@ -47,7 +47,8 @@
  '(org-agenda
    org-capture
    org-id
-   org-attach))
+   org-attach
+   org-edna))
 
 ;;
 ;; Bootstrap
