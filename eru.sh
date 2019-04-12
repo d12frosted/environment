@@ -108,7 +108,8 @@ theme "Supporting" "Defining helpers"
 
 function theme_guard() {
   key=$(echo "$1" | awk '{print tolower($0)}')
-  guard=$(eval echo "\$guard_$key")
+  local guard_ref="guard_$key"
+  guard="${!guard_ref}"
   if [[ "$ALL" = "true" || "$guard" = "true" ]]; then
     optional_theme "$1" "${@:2}"
     return 0
@@ -347,7 +348,7 @@ while [[ $# -gt 0 ]]
 do
   if [[ "$1" != "" ]]; then
     key=$(echo "$1" | awk '{print tolower($0)}')
-    declare -r "guard_$key=true"
+    declare -rg "guard_$key=true"
     ALL="false"
   fi
   shift
