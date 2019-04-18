@@ -348,7 +348,7 @@ while [[ $# -gt 0 ]]
 do
   if [[ "$1" != "" ]]; then
     key=$(echo "$1" | awk '{print tolower($0)}')
-    declare -rg "guard_$key=true"
+    declare -r "guard_$key=true"
     ALL="false"
   fi
   shift
