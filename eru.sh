@@ -432,8 +432,8 @@ theme_guard "Linking" "Link all files as defined in Linkfiles" && {
 arch_guard && {
   theme_guard "packages" "Bootstrap Arch Linux" && {
     section "Install crutial dependenices"
-    sudo pacman -S --noconfirm --needed base-devel
-    sudo pacman -S --noconfirm git pacman-contrib
+    # sudo pacman -Syu --noconfirm
+    sudo pacman -S --noconfirm --needed base-devel git pacman-contrib
 
     section "Rank mirrors for pacman"
     mirrorlist="/etc/pacman.d/mirrorlist"
@@ -476,12 +476,12 @@ arch_guard && {
     aur_ignore=$(combine_files "$target/arch/Aurignore" "$target/arch/Aurignore_$USER")
 
     # shellcheck disable=SC2046
-    yay -Syu --noconfirm $(comm -23 "$aur_file" "$aur_ignore")
+    yay -S --noconfirm --needed $(comm -23 "$aur_file" "$aur_ignore")
 
     pacman_file=$(combine_files "$target/arch/Pacmanfile" "$target/arch/Pacmanfile_$USER")
     pacman_ignore=$(combine_files "$target/arch/Pacmanignore" "$target/arch/Pacmanignore_$USER")
     # shellcheck disable=SC2046
-    sudo pacman -Syu --noconfirm $(comm -23 "$pacman_file" "$pacman_ignore")
+    sudo pacman -S --noconfirm --needed $(comm -23 "$pacman_file" "$pacman_ignore")
   }
 
   theme_guard "hardware" "Setup keyboard" && {
