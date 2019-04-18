@@ -1,4 +1,6 @@
 #+TITLE:        Übersicht domain
+#+AUTHOR:       Boris Buliga
+#+EMAIL:        boris@d12frosted.io
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 

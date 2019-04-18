@@ -1,7 +1,6 @@
 #+TITLE:        git domain
 #+AUTHOR:       Boris Buliga
-#+EMAIL:        d12frosted@icloud.com
-#+DATE:         <2015-04-26 Sun>
+#+EMAIL:        boris@d12frosted.io
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:t
 
