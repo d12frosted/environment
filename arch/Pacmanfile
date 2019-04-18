@@ -27,7 +27,7 @@ fish
 font-bh-ttf
 font-mathematica
 git
-gnupg2
+gnupg
 gocryptfs
 hledger
 java-runtime-common
