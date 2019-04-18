@@ -432,7 +432,6 @@ theme_guard "Linking" "Link all files as defined in Linkfiles" && {
 arch_guard && {
   theme_guard "packages" "Bootstrap Arch Linux" && {
     section "Install crutial dependenices"
-    sudo pacman -Syu --noconfirm
     sudo pacman -S --noconfirm --needed base-devel
     sudo pacman -S --noconfirm git pacman-contrib
 
