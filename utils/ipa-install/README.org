@@ -1,4 +1,0 @@
-* =ipa-install=
-
-=ipa-install= is utility for installing =ipa= files from command line. Credits go to
-[[https://github.com/Gamua/Starling-Framework/blob/master/util/transporter_chief/transporter_chief.rb][Gamua GmbH]]. For more information, [[http://gamua.com/blog/2012/03/how-to-deploy-ios-apps-to-the-iphone-via-the-command-line/][read this blog post]].

@@ -1,4 +1,35 @@
 #!/usr/bin/env bash
+#
+# Convert video to gif
+#
+# Usage:
+#
+#  gifify -i FILE [OPTIONS]
+#
+#    -i, --input FILE     (required) specify input video file
+#
+#    -o, --output FILE    (optional) specify output gif file
+#
+#                         defaults to input file with extension changed to gif
+#
+#    -s, --scale INT      (optional) specify scale of the resulting gif (affects
+#                         both width and height)
+#
+#                         affects speed of conversion and physical size of the
+#                         resulting gif
+#
+#                         defaults to 1
+#
+#    --fps INT            (optional) specify FPS of the resulting gif
+#
+#                         defaults to 24
+#
+#    --default-palette    (optional) enforce default palette instead of
+#                         specially generated one, may lead to worse quality
+#
+#    --compress           (optional) compress the gif to make physical size
+#                         lesser, may lead to worse quality
+#
 
 set -e
 

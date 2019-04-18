@@ -9,8 +9,8 @@ end
 if test ! -d $HOME/.local/bin
   mkdir -p $HOME/.local/bin
 end
-if test ! -d $XDG_CONFIG_HOME/utils/bin
-  mkdir -p $XDG_CONFIG_HOME/utils/bin
+if test ! -d $XDG_CONFIG_HOME/bin
+  mkdir -p $XDG_CONFIG_HOME/bin
 end
 
 # variables
@@ -27,7 +27,7 @@ function __append_to_path -a path
   end
 end
 set -x PATH $HOME/.local/bin $PATH
-set -x PATH $XDG_CONFIG_HOME/utils/bin $PATH
+set -x PATH $XDG_CONFIG_HOME/bin $PATH
 __append_to_path $GEM_HOME/bin
 __append_to_path /usr/texbin
 __append_to_path /usr/local/sbin

@@ -530,7 +530,7 @@ macos_guard && {
 
   theme "skhd" "Patch skhd application PATH" && {
     check skhd && {
-      "$target/utils/bin/patch_skhd_path"
+      "$target/bin/patch_skhd_path"
     }
   }
 }

@@ -1,0 +1,9 @@
+#+TITLE:        Bin
+#+AUTHOR:       Boris Buliga
+#+EMAIL:        boris@d12frosted.io
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+Some scripts and utils that I use with varying frequency. They are either used
+directly by other domains of my environment or are not that important to be part
+of a separate repository.
