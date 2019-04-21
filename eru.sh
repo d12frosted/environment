@@ -96,6 +96,9 @@ his own thoughts and devices, if he will. But I win sit and hearken, and be glad
 that through you great beauty has been wakened into song."
 intro
 
+uname -s
+uname -r
+
 log "Kernel:           $KERNEL_NAME"
 log "Operating system: $OS_NAME"
 log "User:             $USER"
