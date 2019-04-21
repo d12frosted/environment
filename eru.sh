@@ -38,13 +38,13 @@ set -e
 # Get the OS info
 #
 
-KERNEL_NAME=$(uname -s | awk '{print tolower($0)}')
+KERNEL_NAME=$(uname -s)
 OS_NAME="unknown"
 case $KERNEL_NAME in
   darwin)
     OS_NAME=macos
     ;;
-  linux)
+  Linux)
     if [[ "$(uname -r)" == *"arch"* ]]; then
       OS_NAME="arch"
     fi
