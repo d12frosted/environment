@@ -1,0 +1,11 @@
+image: base/archlinux
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - eru.sh
+  only:
+    - master
