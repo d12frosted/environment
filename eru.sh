@@ -38,13 +38,13 @@ set -e
 # Get the OS info
 #
 
-KERNEL_NAME=$(uname -s)
+KERNEL_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
 OS_NAME="unknown"
 case $KERNEL_NAME in
   darwin)
     OS_NAME=macos
     ;;
-  Linux)
+  linux)
     if [[ "$(uname -r)" == *"arch"* ]]; then
       OS_NAME="arch"
     fi
@@ -107,7 +107,7 @@ log
 theme "Supporting" "Defining helpers"
 
 function theme_guard() {
-  key=$(echo "$1" | awk '{print tolower($0)}')
+  key=$(echo "$1" | tr '[:upper:]' '[:lower:]')
   local guard_ref="guard_$key"
   guard="${!guard_ref}"
   if [[ "$ALL" = "true" || "$guard" = "true" ]]; then
@@ -347,7 +347,7 @@ POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
   if [[ "$1" != "" ]]; then
-    key=$(echo "$1" | awk '{print tolower($0)}')
+    key=$(echo "$1" | tr '[:upper:]' '[:lower:]')
     declare -r "guard_$key=true"
     ALL="false"
   fi
