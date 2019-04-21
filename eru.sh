@@ -98,6 +98,7 @@ intro
 
 log "Kernel:           $KERNEL_NAME"
 log "Operating system: $OS_NAME"
+log "User:             $USER"
 log
 
 #
