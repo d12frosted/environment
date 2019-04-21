@@ -6,6 +6,7 @@ stages:
 build:
   stage: build
   script:
+    - sudo pacman -S --noconfirm --needed base-devel git pacman-contrib
     - ./eru.sh
   only:
     - master
