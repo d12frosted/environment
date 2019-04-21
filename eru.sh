@@ -366,6 +366,7 @@ fi
 
 theme "Guardian" "Ensure all directories exists"
 ensure_dir "$HOME/.local/bin"
+ensure_dir "$HOME/.emacs.d"
 ensure_dir "$DEVELOPER"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
