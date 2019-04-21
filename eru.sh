@@ -48,6 +48,9 @@ case $KERNEL_NAME in
     if [[ "$(uname -r)" == *"arch"* ]]; then
       OS_NAME="arch"
     fi
+    if [[ "$(uname -r)" == *"coreos"* ]]; then
+      OS_NAME="arch"
+    fi
     ;;
   *)
     ;;
