@@ -6,6 +6,6 @@ stages:
 build:
   stage: build
   script:
-    - eru.sh
+    - ./eru.sh
   only:
     - master
