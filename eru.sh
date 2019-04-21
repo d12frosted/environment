@@ -265,13 +265,15 @@ function safe_link() {
   shift
   t="${*/#\~/$HOME}"
   d=$(dirname "$t")
-  owner=$(stat -c '%U' "$d")
 
-  if [[ "$owner" != "root" && "$owner" != "$USER" ]]; then
-    error "can not link '$s' to '$t'"
-    error "owner of '$d' is $owner"
-    error "allowed owners: root or $USER"
-    exit 1
+  if [[ -d "$d" ]]; then
+    owner=$(stat -c '%U' "$d")
+    if [[ "$owner" != "root" && "$owner" != "$USER" ]]; then
+      error "can not link '$s' to '$t'"
+      error "owner of '$d' is $owner"
+      error "allowed owners: root or $USER"
+      exit 1
+    fi
   fi
 
 
@@ -366,7 +368,6 @@ fi
 
 theme "Guardian" "Ensure all directories exists"
 ensure_dir "$HOME/.local/bin"
-ensure_dir "$HOME/.emacs.d"
 ensure_dir "$DEVELOPER"
 ensure_dir "$HOME/Dropbox/Apps/Emacs"
 
