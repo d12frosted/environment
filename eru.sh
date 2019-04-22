@@ -55,6 +55,14 @@ case $KERNEL_NAME in
 esac
 
 #
+# Setup USER
+#
+
+if [ -z "$USER" ]; then
+  USER=$(whoami)
+fi
+
+#
 # Logging
 #
 
