@@ -1,4 +1,4 @@
-image: archlinux/base
+image: d12frosted/environment:archlinux
 
 stages:
   - build
