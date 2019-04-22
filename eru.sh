@@ -39,16 +39,14 @@ set -e
 #
 
 KERNEL_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
+KERNEL_RELEASE=$(uname -r | tr '[:upper:]' '[:lower:]')
 OS_NAME="unknown"
 case $KERNEL_NAME in
   darwin)
     OS_NAME=macos
     ;;
   linux)
-    if [[ "$(uname -r)" == *"arch"* ]]; then
-      OS_NAME="arch"
-    fi
-    if [[ "$(uname -r)" == *"coreos"* ]]; then
+    if [[ "$KERNEL_RELEASE" == *"arch"* ]]; then
       OS_NAME="arch"
     fi
     ;;
@@ -99,10 +97,8 @@ his own thoughts and devices, if he will. But I win sit and hearken, and be glad
 that through you great beauty has been wakened into song."
 intro
 
-uname -s
-uname -r
-
-log "Kernel:           $KERNEL_NAME"
+log "Kernel name:      $KERNEL_NAME"
+log "Kernel release:   $KERNEL_RELEASE"
 log "Operating system: $OS_NAME"
 log "User:             $USER"
 log
