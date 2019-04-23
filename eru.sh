@@ -515,6 +515,7 @@ arch_guard && {
 
   theme_guard "hardware" "Setup autolock" && {
     sudo cp "$XDG_CONFIG_HOME/arch/lock@.service" /etc/systemd/system/lock@.service
+    ls -l /etc/systemd/system/sleep.target.wants
     systemctl enable "lock@${USER}.service"
   }
 }
