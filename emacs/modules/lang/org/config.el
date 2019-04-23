@@ -186,6 +186,7 @@
 	      org-brain-visualize-one-child-per-line t
 	      org-brain-visualize-default-choices 'all
 	      org-brain-title-max-length 24)
+  (add-hook 'org-brain-visualize-text-hook #'org-toggle-latex-fragment)
   :config
   (map! :map org-brain-visualize-mode-map
         :leader
