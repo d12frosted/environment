@@ -476,6 +476,9 @@ arch_guard && {
   }
 
   theme_guard "packages" "Install all dependencies" && {
+    log "Import known GPG keys"
+    gpg --recv-keys 1C61A2656FB57B7E4DE0F4C1FC918B335044912E
+
     function combine_files {
       local output
       output=$(mktemp)
