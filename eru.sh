@@ -462,7 +462,7 @@ arch_guard && {
         | sed -e 's/^#Server/Server/' -e '/^#/d' > "$mirrorlist_tmp"
       sudo cp "$mirrorlist_tmp" "$mirrorlist_bak"
       # shellcheck disable=SC2024
-      sudo rankmirrors -n 6 "$mirrorlist_bak" > "$mirrorlist"
+      sudo sh -c "rankmirrors -n 6 '$mirrorlist_bak' > '$mirrorlist'"
     fi
 
     section "Install yay for simpler AUR access"
