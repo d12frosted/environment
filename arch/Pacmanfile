@@ -49,6 +49,7 @@ shellcheck
 stack
 systemd
 telegram-desktop
+texlive-most
 tree
 ttf-arphic-uming
 ttf-dejavu
