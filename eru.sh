@@ -345,15 +345,15 @@ target=$XDG_CONFIG_HOME
 if [[ "$target" = "" ]]; then
   target="$HOME/.config"
 fi
-XDG_CONFIG_HOME=$target
+export XDG_CONFIG_HOME=$target
 
 if [[ "$XDG_CONFIG_CACHE" = "" ]]; then
-  XDG_CONFIG_CACHE="$HOME/.cache"
+  export XDG_CONFIG_CACHE="$HOME/.cache"
 fi
 
-DEVELOPER=$HOME/Developer
+export DEVELOPER=$HOME/Developer
 if [[ "$USER" != "$fellow" ]]; then
-  DEVELOPER=$HOME/Developer/personal
+  export DEVELOPER=$HOME/Developer/personal
 fi
 
 ALL="true"
