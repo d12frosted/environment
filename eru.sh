@@ -535,9 +535,8 @@ macos_guard && {
 
 theme "Fish" "Setup fish variables"
 check fish && {
-  echo "set -U XDG_CONFIG_HOME $target" | fish
   echo "set -x XDG_CONFIG_HOME $target" | fish
-  echo "set -x SPACEMACSDIR $XDG_CONFIG_HOME/emacs" | fish
+  echo "set -U XDG_CONFIG_HOME $target" | fish
 }
 
 theme "Git" "Create a local git config file"
