@@ -86,7 +86,17 @@
 	      org-outline-path-complete-in-steps nil
 
 	      ;; better formatting for properties
-	      org-property-format "%-24s %s"))
+	      org-property-format "%-24s %s"
+
+        ;; LaTeX preview
+        org-format-latex-options
+        (list :foreground default
+              :background default
+              :scale 1.5
+		          :html-foreground "Black"
+              :html-background "Transparent"
+		          :html-scale 1.0
+              :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))))
 
 (defun +org|setup-todo ()
   "Setup todo states."
