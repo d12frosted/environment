@@ -556,7 +556,7 @@ macos_guard && {
 }
 
 theme_guard "Emacs" "Refresh Nucleus" && {
-  nucleus --yes refresh
+  "$XDG_CONFIG_HOME/emacs/nucleus/bin/nucleus" --yes refresh
 }
 
 theme_guard "Guardian" "Check that Emacs runs as expected" && {
