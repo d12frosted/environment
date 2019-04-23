@@ -39,16 +39,18 @@ set -e
 #
 
 KERNEL_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
-KERNEL_RELEASE=$(tr '[:upper:]' '[:lower:]' < /proc/version)
+KERNEL_RELEASE=$(uname -r | tr '[:upper:]' '[:lower:]')
 OS_NAME="unknown"
 case $KERNEL_NAME in
   darwin)
     OS_NAME=macos
     ;;
   linux)
-    if [[ "$KERNEL_RELEASE" == *"arch"* ]]; then
-      OS_NAME="arch"
-    fi
+    case $KERNEL_RELEASE in
+      *arch*|*coreos*)
+        OS_NAME="arch"
+        ;;
+    esac
     ;;
   *)
     ;;
