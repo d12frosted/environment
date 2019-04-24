@@ -554,6 +554,12 @@ macos_guard && {
   }
 }
 
+arch_guard && {
+  theme_guard "xmonad" "Rebuild Xmonad configurations" && {
+    xmonad --recompile
+  }
+}
+
 theme_guard "Emacs" "Refresh Nucleus" && {
   "$XDG_CONFIG_HOME/emacs/nucleus/bin/nucleus" --yes refresh
 }
