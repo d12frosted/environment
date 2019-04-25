@@ -11,7 +11,7 @@ Config {
   -- layout
   , sepChar =  "%"   -- delineator between plugin names and straight text
   , alignSep = "}{"  -- separator between left-right alignment
-  , template = " %StdinReader%}{[%kbd%] %battery% %date% "
+  , template = " %StdinReader%}{[%kbd%] %default:Master% %battery% %date% "
 
   -- general behavior
   , lowerOnStart =     True    -- send to bottom of window stack on start
@@ -38,27 +38,29 @@ Config {
   , commands =
 
     -- battery monitor
-    [ Run Battery        [ "--template" , "Batt: <acstatus>"
-                         , "--Low"      , "10"        -- units: %
-                         , "--High"     , "80"        -- units: %
-                         , "--low"      , "darkred"
-                         , "--normal"   , "darkorange"
-                         , "--high"     , "darkgreen"
+    [ Run Battery [ "--template" , "Batt: <acstatus>"
+                  , "--Low"      , "10"        -- units: %
+                  , "--High"     , "80"        -- units: %
+                  , "--low"      , "darkred"
+                  , "--normal"   , "darkorange"
+                  , "--high"     , "darkgreen"
 
-                         , "--" -- battery specific options
-                         -- discharging status
-                         , "-o"	, "<left>% (<timeleft>)"
-                         -- AC "on" status
-                         , "-O"	, "<fc=darkorange>Charging</fc> <left>% (<timeleft>)"
-                         -- charged status
-                         , "-i"	, "<fc=darkgreen>Charged</fc>"
-                         ] 50
+                  , "--" -- battery specific options
+                  -- discharging status
+                  , "-o"	, "<left>% (<timeleft>)"
+                  -- AC "on" status
+                  , "-O"	, "<fc=darkorange>Charging</fc> <left>% (<timeleft>)"
+                  -- charged status
+                  , "-i"	, "<fc=darkgreen>Charged</fc>"
+                  ] 50
 
-    -- time and date indicator
-    --   (%F = y-m-d date, %a = day of week, %T = h:m:s time)
-    , Run Date           "%F (%a) %T" "date" 10
+    , Run Date "%F (%a) %T" "date" 10
 
-    -- keyboard layout indicator
+    , Run Volume "default" "Master" [ "--"
+                                    , "-C", "darkgreen"
+                                    , "-c", "darkred"
+                                    ] 10
+
     , Run Kbd            []
 
     , Run StdinReader

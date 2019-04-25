@@ -60,7 +60,6 @@ vim
 wget
 xautolock
 xclip
-xmobar
 xmonad
 xmonad-contrib
 xorg
