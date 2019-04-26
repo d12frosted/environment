@@ -59,7 +59,7 @@
                            (if +agenda-hide-scheduled-and-waiting-next-tasks
                                ""
                              " (including WAITING and SCHEDULED tasks)")))
-                  (org-agenda-skip-function '+agenda--skip-projects-and-habits)
+                  (org-agenda-skip-function '+agenda--skip-habits)
                   (org-tags-match-list-sublevels t)
                   (org-agenda-todo-ignore-scheduled +agenda-hide-scheduled-and-waiting-next-tasks)
                   (org-agenda-todo-ignore-deadlines +agenda-hide-scheduled-and-waiting-next-tasks)

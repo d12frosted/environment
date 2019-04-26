@@ -331,6 +331,18 @@ tasks."
         nil)))))
 
 ;;;###autoload
+(defun +agenda--skip-habits ()
+  "Skip tasks that are habits."
+  (save-restriction
+    (widen)
+    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+      (cond
+       ((org-is-habit-p)
+        subtree-end)
+       (t
+        nil)))))
+
+;;;###autoload
 (defun +agenda--skip-projects-and-habits ()
   "Skip trees that are projects and tasks that are habits."
   (save-restriction
