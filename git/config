@@ -37,6 +37,9 @@
 [github]
 	user = d12frosted
 
+[gitlab]
+	user = d12frosted
+
 [magithub]
 	online = true
 
