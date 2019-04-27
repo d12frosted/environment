@@ -11,7 +11,7 @@ import XMonad.Util.Run (spawnPipe)
 --------------------------------------------------------------------------------
 main :: IO ()
 main = do
-  xmproc <- spawnPipe "xmobar"
+  xmproc <- spawnPipe "d12-xmobar"
   xmonad $ def
     { -- Use Super instead of Alt
       modMask = mod4Mask
@@ -47,7 +47,6 @@ main = do
     -- Unfortunately, use urxvt
     , terminal = "urxvt"
     } `additionalKeys` extraKeys
-
 
 --------------------------------------------------------------------------------
 extraKeys :: MonadIO m => [((KeyMask, KeySym), m ())]
