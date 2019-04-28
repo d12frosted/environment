@@ -13,5 +13,3 @@ build:
   script:
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
     - ./eru.sh
-  only:
-    - master
