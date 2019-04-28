@@ -565,7 +565,14 @@ arch_guard && {
   }
 
   theme_guard "xmonad" "Rebuild Xmonad configurations" && {
-    xmonad --recompile
+    (
+      cd "$XDG_CONFIG_HOME/xmonad"
+      stack install
+    )
+    (
+      cd "$XDG_CONFIG_HOME/taffybar"
+      stack install
+    )
   }
 }
 
