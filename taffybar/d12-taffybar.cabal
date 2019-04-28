@@ -1,0 +1,37 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: f9a2f74d444f5fee9431f9cf2859de4d5c538a8e67ecf6f48ed5414f201ade44
+
+name:           d12-taffybar
+version:        0.1.0.0
+homepage:       https://github.com/d12frosted/environment#readme
+bug-reports:    https://github.com/d12frosted/environment/issues
+author:         Boris Buliga
+maintainer:     Boris Buliga
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/d12frosted/environment
+
+executable d12-taffybar
+  main-is: taffybar.hs
+  other-modules:
+      Paths_d12_taffybar
+  default-extensions: OverloadedStrings
+  ghc-options: -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      X11 >=1.8
+    , base
+    , containers
+    , directory
+    , filepath
+    , gi-gtk
+    , taffybar
+    , text
+    , xmonad-contrib >=0.13
+  default-language: Haskell2010

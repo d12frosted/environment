@@ -1,0 +1,24 @@
+name: d12-taffybar
+version: '0.1.0.0'
+author: Boris Buliga
+maintainer: Boris Buliga
+github: d12frosted/environment
+
+default-extensions:
+  - OverloadedStrings
+
+ghc-options: -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
+
+executables:
+  d12-taffybar:
+    main: taffybar.hs
+    dependencies:
+      - X11 >= 1.8
+      - base
+      - containers
+      - directory
+      - filepath
+      - gi-gtk
+      - taffybar
+      - text
+      - xmonad-contrib >= 0.13
