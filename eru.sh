@@ -573,6 +573,10 @@ arch_guard && {
       cd "$XDG_CONFIG_HOME/taffybar"
       stack install
     )
+
+    if pgrep xmonad; then
+      d12-xmonad --restart
+    fi
   }
 }
 

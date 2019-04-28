@@ -19,7 +19,12 @@ import Data.Semigroup
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = do
+main = getArgs >>= \case
+    ["--restart"] -> sendRestart
+    _             -> app
+
+app :: IO ()
+app = do
   spawn "respawn d12-taffybar"
   launch $
     -- -- docks allows xmonad to handle taffybar
@@ -36,7 +41,7 @@ main = do
     -- Hooks
     , manageHook      = manageDocks <+> manageHook def
     , layoutHook      = avoidStruts $ layoutHook def
-    , handleEventHook = handleEventHook def <+> docksEventHook
+    , handleEventHook = handleEvent <+> handleEventHook def <+> docksEventHook
 
     -- Java swing applications and xmonad are not friends, so we need to pretend
     -- a little bit
@@ -62,7 +67,7 @@ main = do
 --------------------------------------------------------------------------------
 extraKeys :: [((KeyMask, KeySym), X ())]
 extraKeys =
-  [ ((mod4Mask, xK_q), reload)
+  [ ((mod4Mask, xK_q), rebuild)
   , ((0, xF86XK_AudioRaiseVolume), vlmInc)
   , ((0, xF86XK_AudioLowerVolume), vlmDec)
   , ((0, xF86XK_AudioMute), vlmMute)
@@ -72,6 +77,31 @@ extraKeys =
   , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s") -- one window
   , ((0, xK_Print), spawn "scrot")
   ]
+
+--------------------------------------------------------------------------------
+sendRestart :: IO ()
+sendRestart = do
+  dpy <- openDisplay ""
+  rw <- rootWindow dpy $ defaultScreen dpy
+  xmonad_restart <- internAtom dpy "D12_XMONAD_RESTART" False
+  allocaXEvent $ \e -> do
+      setEventType e clientMessage
+      setClientMessageEvent e rw xmonad_restart 32 0 currentTime
+      sendEvent dpy rw False structureNotifyMask e
+  sync dpy False
+
+--------------------------------------------------------------------------------
+rebuild :: X ()
+rebuild = spawn "eru xmonad"
+
+--------------------------------------------------------------------------------
+handleEvent :: Event -> X All
+handleEvent e@ClientMessageEvent { ev_message_type = mt } = do
+  a <- getAtom "D12_XMONAD_RESTART"
+  if (mt == a)
+    then restart "d12-xmonad" True >> pure (All True)
+    else broadcastMessage e >> pure (All True)
+handleEvent e = broadcastMessage e >> pure (All True)
 
 --------------------------------------------------------------------------------
 vlmInc :: MonadIO m => m ()
