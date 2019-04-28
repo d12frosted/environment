@@ -45,4 +45,4 @@ autolock &
 ~/.fehbg &
 
 # Because every X needs some algebra to tame it.
-xmonad
+d12-xmonad

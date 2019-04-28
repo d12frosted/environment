@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.1.
+-- This file has been generated from package.yaml by hpack version 0.31.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b8a8aab27a9a5be3da1832dcd05ac79d0b2bd76ffc97ad57c9e25ffb4cd9ce93
+-- hash: bacfc9772090160856c374e50cc527d0404be70b1d34e9df1d68e9be9aebbdae
 
 name:           d12-xmonad
 version:        0.1.0.0
@@ -25,10 +25,12 @@ executable d12-xmonad
   default-extensions: OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
-                  base
-                , X11 >= 1.9
-                , data-default
-                , xmonad
-                , xmonad-contrib
-                , xmonad-extras
+      X11
+    , base
+    , data-default
+    , process
+    , taffybar
+    , xmonad
+    , xmonad-contrib
+    , xmonad-extras
   default-language: Haskell2010

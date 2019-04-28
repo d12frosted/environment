@@ -1,18 +1,35 @@
+{-# LANGUAGE LambdaCase #-}
+
+--------------------------------------------------------------------------------
+module Main (main) where
+
+--------------------------------------------------------------------------------
+
+import Control.Monad.IO.Class (MonadIO)
 import Data.Default (def)
 import Graphics.X11.ExtraTypes.XF86
-import System.IO
+import System.Taffybar.Support.PagerHints (pagerHints)
 import XMonad
-import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.SetWMName
 import XMonad.Util.EZConfig (additionalKeys)
-import XMonad.Util.Run (spawnPipe)
+import System.Environment
+import Data.Semigroup
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = do
-  xmproc <- spawnPipe "d12-xmobar"
-  xmonad $ def
+  spawn "respawn d12-taffybar"
+  launch $
+    -- -- docks allows xmonad to handle taffybar
+    -- docks $
+    -- ewmh allows taffybar access to the state of xmonad/x11
+    ewmh $
+    -- pagerHints supplies additional state that is not supplied by ewmh
+    pagerHints $
+    ewmh $
+    def
     { -- Use Super instead of Alt
       modMask = mod4Mask
 
@@ -24,12 +41,6 @@ main = do
     -- Java swing applications and xmonad are not friends, so we need to pretend
     -- a little bit
     , startupHook = setWMName "LG3D"
-
-    , logHook = dynamicLogWithPP xmobarPP
-                { ppOutput = hPutStrLn xmproc
-                , ppTitle = xmobarColor "black" "" . shorten 80
-                , ppCurrent = xmobarColor "#006000" ""
-                }
 
     -- Borders
     , normalBorderColor = "black"
@@ -49,9 +60,10 @@ main = do
     } `additionalKeys` extraKeys
 
 --------------------------------------------------------------------------------
-extraKeys :: MonadIO m => [((KeyMask, KeySym), m ())]
+extraKeys :: [((KeyMask, KeySym), X ())]
 extraKeys =
-  [ ((0, xF86XK_AudioRaiseVolume), vlmInc)
+  [ ((mod4Mask, xK_q), reload)
+  , ((0, xF86XK_AudioRaiseVolume), vlmInc)
   , ((0, xF86XK_AudioLowerVolume), vlmDec)
   , ((0, xF86XK_AudioMute), vlmMute)
   , ((0, xF86XK_AudioMicMute), micMute)

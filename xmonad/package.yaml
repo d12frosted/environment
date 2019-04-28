@@ -13,8 +13,11 @@ executables:
   d12-xmonad:
     main: xmonad.hs
     dependencies:
+      - X11
       - base
       - data-default
+      - process
+      - taffybar
       - xmonad
       - xmonad-contrib
       - xmonad-extras
