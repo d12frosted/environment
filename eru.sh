@@ -435,6 +435,7 @@ theme_guard "Linking" "Link all files as defined in Linkfiles" && {
             "$target/${KERNEL_NAME}"
             "$target/${OS_NAME}"
             "$target/xorg"
+            "$target/xmonad"
             "$target/bash"
             "$XDG_CONFIG_CACHE/eru"
            )
