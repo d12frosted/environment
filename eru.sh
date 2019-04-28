@@ -537,7 +537,8 @@ macos_guard && {
 theme "Fish" "Setup fish variables"
 check fish && {
   echo "set -x XDG_CONFIG_HOME $target" | fish
-  echo "set -U XDG_CONFIG_HOME $target" | fish
+  echo "set -x XDG_CACHE_HOME $HOME/.cache" | fish
+  echo "set -x XDG_DATA_HOME $HOME/.local/share" | fish
 }
 
 theme "Git" "Create a local git config file"
