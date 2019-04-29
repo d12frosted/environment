@@ -7,9 +7,9 @@ stages:
   stage: build
   cache:
     paths:
-      - taffybar/.stack-work
-      - xmobar/.stack-work
-      - xmonad/.stack-work
+      - /home/d12frosted/.config/taffybar/.stack-work
+      - /home/d12frosted/.config/xmobar/.stack-work
+      - /home/d12frosted/.config/xmonad/.stack-work
   before_script:
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
 
