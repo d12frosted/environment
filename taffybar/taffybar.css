@@ -4,7 +4,7 @@
 @define-color taffy-blue #0c7cd5;
 
 @define-color active-window-color @fgColor;
-@define-color urgent-window-color @taffy-blue;
+@define-color urgent-window-color #ff8833;
 @define-color font-color @fgColor;
 @define-color menu-background-color @fgColor;
 @define-color menu-font-color @bgColor;
@@ -52,7 +52,7 @@
 }
 
 .active .contents {
-	background-color: rgba(252.0, 232.0, 131.0, 0.5);
+	background-color: rgba(252.0, 232.0, 131.0, 0.3);
 }
 
 .visible .contents {
@@ -68,17 +68,16 @@
    This will actually affect all widgets, (not just the workspace icons), but
    that is what we want since we want the icons to look the same. */
 .auto-size-image, .sni-tray {
-  padding-top: 3px;
-	padding-top: 3px;
-	padding-bottom: 3px;
+  padding-top: 4px;
+	padding-bottom: 4px;
 }
 
 .window-icon-container.active {
-	box-shadow: inset 0 -3px @white;
+	box-shadow: inset 0 -2px @taffy-blue;
 }
 
 .window-icon-container.urgent {
-	box-shadow: inset 0 -3px @urgent-window-color;
+	box-shadow: inset 0 -2px @urgent-window-color;
 }
 
 .window-icon-container.inactive .window-icon {
@@ -92,6 +91,8 @@
 .window-icon {
   opacity: 1;
 	transition: opacity .5s;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 /* Button styling */
