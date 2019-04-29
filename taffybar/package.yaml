@@ -21,4 +21,5 @@ executables:
       - gi-gtk
       - taffybar
       - text
+      - transformers
       - xmonad-contrib >= 0.13
