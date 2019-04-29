@@ -3,13 +3,17 @@ image: d12frosted/environment:archlinux
 stages:
   - build
 
-build:
+.build_template: &build_definition
   stage: build
   cache:
     paths:
       - taffybar/.stack-work
       - xmobar/.stack-work
       - xmonad/.stack-work
-  script:
+  before_script:
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
-    - ./eru.sh
+
+build:
+  <<: *build_definition
+  script:
+    - ./eru.sh -xmonad
