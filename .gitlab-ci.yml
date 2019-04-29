@@ -16,4 +16,4 @@ stages:
 build:
   <<: *build_definition
   script:
-    - ./eru.sh -xmonad
+    - ./eru.sh
