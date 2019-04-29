@@ -23,6 +23,7 @@ import           GI.Gtk ( Widget
                         , toWidget
                         , widgetShowAll
                         )
+import           Path.Parse
 import           System.Taffybar
 import           System.Taffybar.Context (TaffyIO)
 import           System.Taffybar.Hooks
@@ -33,7 +34,6 @@ import           System.Taffybar.Widget
 import           System.Taffybar.Widget.Generic.ChannelWidget
 import           System.Taffybar.Widget.Generic.PollingLabel
 import           Text.Printf
-import Path.Parse
 
 --------------------------------------------------------------------------------
 data Env
