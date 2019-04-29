@@ -359,6 +359,10 @@ if [[ "$XDG_CONFIG_CACHE" = "" ]]; then
   export XDG_CONFIG_CACHE="$HOME/.cache"
 fi
 
+if [[ "$XDG_CACHE_HOME" = "" ]]; then
+  export XDG_CACHE_HOME="$HOME/.cache"
+fi
+
 export DEVELOPER=$HOME/Developer
 if [[ "$USER" != "$fellow" ]]; then
   export DEVELOPER=$HOME/Developer/personal
@@ -386,6 +390,28 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 if [[ "$INTERACTIVE" = "" ]]; then
   INTERACTIVE=true
 fi
+
+#
+# Lock
+#
+
+LOCK_FILE=$XDG_CACHE_HOME/eru/eru.lock
+if [ -f "$LOCK_FILE" ]; then
+  error "
+Yet another world is being shaped by Eru
+
+One must either wait patiently or embrace the horrors of the unknown and
+manually delete the $LOCK_FILE"
+  exit 1
+fi
+mkdir -p "$(dirname "$LOCK_FILE")"
+touch "$LOCK_FILE"
+
+function unlock() {
+  rm -rf "$LOCK_FILE"
+}
+
+trap unlock INT TERM EXIT
 
 #
 # Actual bootstrap
