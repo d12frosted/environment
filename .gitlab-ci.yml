@@ -9,6 +9,6 @@ build:
     paths:
       - .stack-work
   script:
-    - export STACK_WORK .stack-work
+    - export STACK_WORK=.stack-work
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
     - ./eru.sh
