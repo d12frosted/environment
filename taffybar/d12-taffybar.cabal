@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 790b1bff6ecacf00b24322ff913fa8ad85cbbdc09c2de587bbda13f2e99efca2
+-- hash: 37ea1d3c7f6c49ce21771cd725e9067bb9e1b3f163a7b11466fb4dab2d4a70a2
 
 name:           d12-taffybar
 version:        0.1.0.0
@@ -28,6 +28,8 @@ executable d12-taffybar
       X11 >=1.8
     , base
     , containers
+    , d12-hs-env
+    , d12-hs-path
     , directory
     , filepath
     , gi-gtk

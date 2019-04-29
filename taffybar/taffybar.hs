@@ -1,10 +1,11 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+
 --------------------------------------------------------------------------------
 module Main (main) where
 
 --------------------------------------------------------------------------------
-
 import           Control.Applicative
 import           Control.Monad
 import           Control.Monad.IO.Class
@@ -32,18 +33,28 @@ import           System.Taffybar.Widget
 import           System.Taffybar.Widget.Generic.ChannelWidget
 import           System.Taffybar.Widget.Generic.PollingLabel
 import           Text.Printf
+import Path.Parse
+
+--------------------------------------------------------------------------------
+data Env
+  = Env
+  { envConfigHome :: Path Abs Dir
+  }
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = startTaffybar $
-  withBatteryRefresh $
-  withLogServer $
-  withToggleServer $
-  toTaffyConfig config
+main = do
+  env <- Env <$> parseDirPath "$XDG_CONFIG_HOME"
+  startTaffybar
+    . withBatteryRefresh
+    . withLogServer
+    . withToggleServer
+    . toTaffyConfig
+    $ config env
 
 --------------------------------------------------------------------------------
-config :: SimpleTaffyConfig
-config =
+config :: Env -> SimpleTaffyConfig
+config env =
   defaultSimpleTaffyConfig
   { startWidgets = workspacesNew workspacesConfig' : map (>>= buildContentsBox)
     [ layoutNew defaultLayoutConfig
@@ -59,7 +70,8 @@ config =
   , barPadding = 0
   , barHeight = 32
   , widgetSpacing = 0
-  , cssPath = Just "/home/borysb/.config/taffybar/taffybar.css"
+  , cssPath = Just . toFilePath $
+    envConfigHome env </> [relfile|taffybar/taffybar.css|]
   }
 
 --------------------------------------------------------------------------------

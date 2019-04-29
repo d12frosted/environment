@@ -16,6 +16,8 @@ executables:
       - X11 >= 1.8
       - base
       - containers
+      - d12-hs-env
+      - d12-hs-path
       - directory
       - filepath
       - gi-gtk
