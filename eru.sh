@@ -65,6 +65,12 @@ if [ -z "$USER" ]; then
 fi
 
 #
+# Setup PATH
+#
+
+export PATH=$HOME/.local/bin:$PATH
+
+#
 # Logging
 #
 
