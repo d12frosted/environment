@@ -128,8 +128,10 @@ theme "Supporting" "Defining helpers"
 function theme_guard() {
   key=$(echo "$1" | tr '[:upper:]' '[:lower:]')
   local guard_ref="guard_$key"
+  local ignore_guard_ref="guard_ignore_$key"
   guard="${!guard_ref}"
-  if [[ "$ALL" = "true" || "$guard" = "true" ]]; then
+  ignore_guard="${!ignore_guard_ref}"
+  if [[ ("$ALL" = "true" || "$guard" = "true") && "$ignore_guard" = "" ]]; then
     optional_theme "$1" "${@:2}"
     return 0
   else
@@ -368,9 +370,14 @@ POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
   if [[ "$1" != "" ]]; then
-    key=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-    declare -r "guard_$key=true"
-    ALL="false"
+    if [[ "$1" = -* ]]; then
+      key=$(echo "${1#-}" | tr '[:upper:]' '[:lower:]')
+      declare -r "guard_ignore_$key=true"
+    else
+      key=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+      declare -r "guard_$key=true"
+      ALL="false"
+    fi
   fi
   shift
 done
