@@ -563,13 +563,6 @@ macos_guard && {
 }
 
 arch_guard && {
-  theme_guard "xmobar" "Rebuild Xmobar configurations" && {
-    (
-      cd "$XDG_CONFIG_HOME/xmobar"
-      stack install
-    )
-  }
-
   theme_guard "xmonad" "Rebuild Xmonad configurations" && {
     (
       cd "$XDG_CONFIG_HOME/xmonad"
