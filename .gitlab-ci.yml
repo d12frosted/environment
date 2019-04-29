@@ -7,8 +7,9 @@ build:
   stage: build
   cache:
     paths:
-      - .stack-work
+      - taffybar/.stack-work
+      - xmobar/.stack-work
+      - xmonad/.stack-work
   script:
-    - export STACK_WORK=.stack-work
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
     - ./eru.sh
