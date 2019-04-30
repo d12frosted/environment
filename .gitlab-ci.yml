@@ -11,7 +11,7 @@ cache:
   stage: build
   before_script:
     - pwd
-    - export XDG_CONFIG_HOME=(pwd)
+    - export XDG_CONFIG_HOME=$(pwd)
     - echo "XDG_CONFIG_HOME = $XDG_CONFIG_HOME"
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
 
