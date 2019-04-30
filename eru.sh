@@ -599,7 +599,7 @@ arch_guard && {
   theme_guard "xmonad" "Rebuild Xmonad configurations" && {
     (
       cd "$XDG_CONFIG_HOME/xmonad"
-      stack install
+      stack install --allow-other-user
     )
     # (
     #   cd "$XDG_CONFIG_HOME/taffybar"
