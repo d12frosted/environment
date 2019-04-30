@@ -3,9 +3,6 @@ image: d12frosted/environment:archlinux
 stages:
   - build
 
-variables:
-  GIT_CLONE_PATH: $HOME/.config
-
 cache:
   paths:
     - xmonad/.stack-work
@@ -13,6 +10,9 @@ cache:
 .build_template: &build_definition
   stage: build
   before_script:
+    - pwd
+    - export XDG_CONFIG_HOME=$(pwd)
+    - echo "XDG_CONFIG_HOME = $XDG_CONFIG_HOME"
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
 
 build:
