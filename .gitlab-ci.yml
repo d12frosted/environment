@@ -3,14 +3,14 @@ image: d12frosted/environment:archlinux
 stages:
   - build
 
+cache:
+  paths:
+    - xmonad/.stack-work
+
 .build_template: &build_definition
   stage: build
-  cache:
-    paths:
-      - /home/d12frosted/.config/xmonad/.stack-work
-      - /home/d12frosted/.config/xmonad/.stack-work/
-      - /home/d12frosted/.config/xmonad/.stack
   before_script:
+    - pwd
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
 
 build:
