@@ -591,19 +591,14 @@ macos_guard && {
 
 arch_guard && {
   theme_guard "xmonad" "Rebuild Xmonad configurations" && {
-    section "Install d12-xmonad"
+    section "Install xmonad"
     (
       cd "$XDG_CONFIG_HOME/xmonad"
       stack --allow-different-user install
     )
-    section "Install d12-taffybar"
-    (
-      cd "$XDG_CONFIG_HOME/taffybar"
-      stack --allow-different-user install
-    )
 
     section "Restart xmonad"
-    if pgrep xmonad; then
+    if pgrep d12-xmonad; then
       log "Found running instance of xmonad. Restarting..."
       d12-xmonad --restart
     else

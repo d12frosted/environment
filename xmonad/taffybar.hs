@@ -74,7 +74,7 @@ config env =
   , barHeight = 32
   , widgetSpacing = 0
   , cssPath = Just . toFilePath $
-    envConfigHome env </> [relfile|taffybar/taffybar.css|]
+    envConfigHome env </> [relfile|xmonad/taffybar.css|]
   }
 
 --------------------------------------------------------------------------------
