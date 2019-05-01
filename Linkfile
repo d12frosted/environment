@@ -1,10 +1,1 @@
-emacs/init.el ~/.emacs.d/init.el
-emacs/nucleus/bin/nucleus ~/.local/bin/nucleus
 eru.sh ~/.local/bin/eru
-gnupg/gpg-agent-${KERNEL_NAME}.conf ~/.gnupg/gpg-agent.conf
-haskell/.ghci ~/.ghci
-haskell/cabal-config ~/.cabal/config
-haskell/stack-global.yaml ~/.stack/global-project/stack.yaml
-haskell/stack.yaml ~/.stack/config.yaml
-maven/mavenrc ~/.mavenrc
-scala/plugins.sbt ~/.sbt/1.0/plugins/plugins.sbt

@@ -259,17 +259,13 @@ function check() {
 }
 
 function linkfile() {
-  local linkfile_root="$1"
-  local files
-
-  files=("Linkfile"
-         "Linkfile_${KERNEL_NAME}")
-
-  for file in "${files[@]}"; do
-    if [ -f "$linkfile_root/$file" ]; then
-      cd "$linkfile_root" && map_lines safe_link "$file"
-    fi
-  done
+  local file="$1"
+  if [ -f "$file" ]; then
+    (
+      cd "$(dirname "$file")"
+      map_lines safe_link "$file"
+    )
+  fi
 }
 
 function safe_link() {
@@ -470,17 +466,14 @@ theme_guard "Repositories" "Sync repositories from Repofiles" && {
 }
 
 theme_guard "Linking" "Link all files as defined in Linkfiles" && {
-  linkdirs=("$target"
-            "$target/${KERNEL_NAME}"
-            "$target/${OS_NAME}"
-            "$target/xorg"
-            "$target/xmonad"
-            "$target/bash"
-            "$XDG_CONFIG_CACHE/eru"
-           )
-  for i in "${linkdirs[@]}"
-  do
-    linkfile "$i"
+  linkfile "$target/Linkfile"
+  linkfile "$XDG_CONFIG_CACHE/eru/Linkfile"
+  linkfile "$XDG_CONFIG_CACHE/eru/Linkfile_${KERNEL_NAME}"
+  for f in "$target"/**/Linkfile; do
+    linkfile "$f"
+  done
+  for f in "$target"/**/Linkfile_"${KERNEL_NAME}"; do
+    linkfile "$f"
   done
 }
 

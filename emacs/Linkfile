@@ -1,0 +1,2 @@
+init.el ~/.emacs.d/init.el
+nucleus/bin/nucleus ~/.local/bin/nucleus
