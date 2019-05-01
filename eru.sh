@@ -510,7 +510,8 @@ arch_guard && {
 
   theme_guard "packages" "Install all dependencies" && {
     log "Import known GPG keys"
-    gpg --recv-keys 1C61A2656FB57B7E4DE0F4C1FC918B335044912E
+    gpg --recv-keys 1C61A2656FB57B7E4DE0F4C1FC918B335044912E # don't remember
+    gpg --recv-keys 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90 # spotify
 
     function combine_files {
       local output
