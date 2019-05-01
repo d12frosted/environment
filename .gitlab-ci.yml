@@ -3,19 +3,25 @@ image: d12frosted/environment:archlinux
 stages:
   - build
 
-cache:
-  paths:
-    - xmonad/.stack-work
-
 .build_template: &build_definition
   stage: build
+  cache:
+    paths:
+      - xmonad/.stack-work
+      - xmobar/.stack-work
+      - taffybar/.stack-work
   before_script:
     - pwd
     - export XDG_CONFIG_HOME=$(pwd)
     - echo "XDG_CONFIG_HOME = $XDG_CONFIG_HOME"
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
 
-build:
+build_no_xmonad:
   <<: *build_definition
   script:
-    - ./eru.sh
+    - ./eru.sh -xmonad
+
+build_xmonad:
+  <<: *build_definition
+  script:
+    - ./eru.sh xmonad
