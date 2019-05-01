@@ -10,4 +10,4 @@ push:
 	docker login -u $(DOCKER_USER)
 	docker push "$(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):$(DOCKER_IMAGE_TAG)"
 
-.PHONY: rootfs docker-image docker-image-test ci-test docker-push
+.PHONY: image push
