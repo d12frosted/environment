@@ -16,7 +16,7 @@ stages:
     - echo "XDG_CONFIG_HOME = $XDG_CONFIG_HOME"
     - sudo pacman -Syu --noconfirm --needed base-devel git pacman-contrib
 
-build_no_xmonad
+build_no_xmonad:
   <<: *build_definition
   script:
     - ./eru.sh -xmonad
