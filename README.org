@@ -17,7 +17,7 @@ script that creates the universe.
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="ubersicht/images/ubersicht.png">
+  <img src="ubersicht/images/ubersicht.png" style="max-width: 100%;"/>
 </p>
 #+END_HTML
 
@@ -41,7 +41,7 @@ installed, while all configuration cogs are being placed on the right spot.
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="images/eru-example-1.png" />
+  <img src="images/eru-example-1.png" style="max-width: 100%;"/>
 </p>
 #+END_HTML
 
@@ -75,7 +75,7 @@ only specified are sang.
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="images/eru-example-2.png" />
+  <img src="images/eru-example-2.png" style="max-width: 100%;"/>
 </p>
 #+END_HTML
 
