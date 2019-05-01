@@ -8,4 +8,3 @@ haskell/stack-global.yaml ~/.stack/global-project/stack.yaml
 haskell/stack.yaml ~/.stack/config.yaml
 maven/mavenrc ~/.mavenrc
 scala/plugins.sbt ~/.sbt/1.0/plugins/plugins.sbt
-spacemacs/bin/spacemacs ~/.local/bin/spacemacs
