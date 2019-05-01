@@ -3,10 +3,10 @@ DOCKER_ORGANIZATION=d12frosted
 DOCKER_IMAGE:=environment
 DOCKER_IMAGE_TAG:=archlinux
 
-docker-image:
+image:
 	docker build -t "$(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):$(DOCKER_IMAGE_TAG)" .
 
-docker-push:
+push:
 	docker login -u $(DOCKER_USER)
 	docker push "$(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):$(DOCKER_IMAGE_TAG)"
 
