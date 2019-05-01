@@ -601,10 +601,10 @@ arch_guard && {
       cd "$XDG_CONFIG_HOME/xmonad"
       stack --allow-different-user install
     )
-    # (
-    #   cd "$XDG_CONFIG_HOME/taffybar"
-    #   stack install
-    # )
+    (
+      cd "$XDG_CONFIG_HOME/taffybar"
+      stack --allow-different-user install
+    )
 
     if pgrep xmonad; then
       d12-xmonad --restart
