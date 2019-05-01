@@ -58,7 +58,10 @@ config env =
   defaultSimpleTaffyConfig
   { startWidgets = workspacesNew workspacesConfig' : map (>>= buildContentsBox)
     [ layoutNew defaultLayoutConfig
-    , windowsNew defaultWindowsConfig ]
+    ]
+  , centerWidgets = map (>>= buildContentsBox)
+    [ windowsNew defaultWindowsConfig
+    ]
   , endWidgets = map (>>= buildContentsBox)
     [ textClockNew Nothing "%F (%a) %T" 0.5
     , textBatteryNew' formatBatteryInfo
