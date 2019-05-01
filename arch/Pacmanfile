@@ -66,8 +66,6 @@ webkit2gtk
 wget
 xautolock
 xclip
-xmonad
-xmonad-contrib
 xorg
 xorg-fonts-misc
 xorg-xinit
