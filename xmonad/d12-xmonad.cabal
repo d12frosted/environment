@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c8fe548c2a674b8f466abb2460c57ac2061a06979bb4b3d06e8251adccba15da
+-- hash: c5e293b50ed58b5def333284ed77c9694194b4bf49d9aab69839ed83f9994025
 
 name:           d12-xmonad
 version:        0.1.0.0
@@ -18,12 +18,26 @@ source-repository head
   type: git
   location: https://github.com/d12frosted/environment
 
+executable d12-xmobar
+  main-is: xmobar.hs
+  other-modules:
+      Paths_d12_xmonad
+  default-extensions: OverloadedStrings
+  ghc-options: -Wall -Werror
+  build-depends:
+      base
+    , d12-hs-path
+    , data-default
+    , path
+    , xmobar
+  default-language: Haskell2010
+
 executable d12-xmonad
   main-is: xmonad.hs
   other-modules:
       Paths_d12_xmonad
   default-extensions: OverloadedStrings
-  ghc-options: -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Werror
   build-depends:
       X11
     , base

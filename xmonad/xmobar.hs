@@ -43,7 +43,7 @@ config env = defaultConfig {
   , persistent =       True    -- enable/disable hiding (True = disabled)
 
   -- icons
-  , iconRoot = toFilePath $ envConfigHome env </> [reldir|xmobar/icons|]
+  , iconRoot = toFilePath $ envConfigHome env </> [reldir|xmonad/icons|]
 
   -- plugins
   , commands =
@@ -58,7 +58,7 @@ config env = defaultConfig {
                     -- discharging status
                     , "-o", "<icon=battery-use.xpm/> <left>% (<timeleft>)"
                     -- AC "on" status
-                    , "-O", "<icon=battery-charge.xpm/> <leftbar>% (<timeleft>)"
+                    , "-O", "<icon=battery-charge.xpm/> <left>% (<timeleft>)"
                     -- charged status
                     , "-i", "<icon=battery-charge.xpm/>"
                     ] 50

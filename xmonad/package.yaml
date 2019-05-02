@@ -7,7 +7,7 @@ github: d12frosted/environment
 default-extensions:
   - OverloadedStrings
 
-ghc-options: -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
+ghc-options: -Wall -Werror
 
 executables:
   d12-xmonad:
@@ -20,3 +20,11 @@ executables:
       - xmonad
       - xmonad-contrib
       - xmonad-extras
+  d12-xmobar:
+    main: xmobar.hs
+    dependencies:
+      - base
+      - data-default
+      - xmobar
+      - d12-hs-path
+      - path
