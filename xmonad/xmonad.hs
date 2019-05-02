@@ -4,18 +4,17 @@
 module Main (main) where
 
 --------------------------------------------------------------------------------
-
 import Control.Monad.IO.Class (MonadIO)
 import Data.Default (def)
+import Data.Semigroup
 import Graphics.X11.ExtraTypes.XF86
-import System.Taffybar.Support.PagerHints (pagerHints)
+import System.Environment
 import XMonad
-import XMonad.Hooks.EwmhDesktops (ewmh)
+import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.SetWMName
+import XMonad.Layout.LayoutModifier
 import XMonad.Util.EZConfig (additionalKeys)
-import System.Environment
-import Data.Semigroup
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -24,47 +23,41 @@ main = getArgs >>= \case
     _             -> app
 
 app :: IO ()
-app = do
-  spawn "respawn d12-taffybar"
-  launch $
-    -- -- docks allows xmonad to handle taffybar
-    -- docks $
-    -- ewmh allows taffybar access to the state of xmonad/x11
-    ewmh $
-    -- pagerHints supplies additional state that is not supplied by ewmh
-    pagerHints $
-    ewmh $
-    def
-    { -- Use Super instead of Alt
-      modMask = mod4Mask
-
-    -- Hooks
-    , manageHook      = manageDocks <+> manageHook def
-    , layoutHook      = avoidStruts $ layoutHook def
-    , handleEventHook = handleEvent <+> handleEventHook def <+> docksEventHook
-
-    -- Java swing applications and xmonad are not friends, so we need to pretend
-    -- a little bit
-    , startupHook = setWMName "LG3D"
-
-    -- Borders
-    , normalBorderColor = "black"
-    , focusedBorderColor = "orange"
-
-    -- Workspaces
-    , workspaces = [ "1:emacs"
-                   , "2:term"
-                   , "3:web"
-                   , "4:chat"
-                   , "5:media"
-                   , "6:other"
-                   ]
-
-    -- Unfortunately, use urxvt
-    , terminal = "urxvt"
-    } `additionalKeys` extraKeys
+app = launch =<< statusBar "d12-xmobar" statusBarPP toggleStrutsKey xmonadConfig
 
 --------------------------------------------------------------------------------
+xmonadConfig :: XConfig (ModifiedLayout AvoidStruts (Choose Tall (Choose (Mirror Tall) Full)))
+xmonadConfig
+  = def
+  { -- Use Super instead of Alt
+    modMask = mod4Mask
+
+  -- Hooks
+  , manageHook      = manageDocks <+> manageHook def
+  , layoutHook      = avoidStruts $ layoutHook def
+  , handleEventHook = handleEvent <+> handleEventHook def <+> docksEventHook
+
+  -- Java swing applications and xmonad are not friends, so we need to pretend
+  -- a little bit
+  , startupHook = setWMName "LG3D"
+
+  -- Borders
+  , normalBorderColor = "black"
+  , focusedBorderColor = "orange"
+
+  -- Workspaces
+  , workspaces = [ "1:emacs"
+                 , "2:term"
+                 , "3:web"
+                 , "4:chat"
+                 , "5:media"
+                 , "6:other"
+                 ]
+
+  -- Unfortunately, use urxvt
+  , terminal = "urxvt"
+  } `additionalKeys` extraKeys
+
 extraKeys :: [((KeyMask, KeySym), X ())]
 extraKeys =
   [ ((mod4Mask, xK_q), rebuild)
@@ -77,6 +70,18 @@ extraKeys =
   , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s") -- one window
   , ((0, xK_Print), spawn "scrot")
   ]
+
+--------------------------------------------------------------------------------
+statusBarPP :: PP
+statusBarPP
+  = def
+  { ppCurrent = xmobarColor "#050505" "#ffff99"
+  , ppTitle = xmobarColor "#614051" "" . shorten 120
+  }
+
+--------------------------------------------------------------------------------
+toggleStrutsKey :: XConfig l -> (KeyMask, KeySym)
+toggleStrutsKey XConfig {XMonad.modMask = m} = (m, xK_b)
 
 --------------------------------------------------------------------------------
 sendRestart :: IO ()
@@ -99,7 +104,7 @@ handleEvent :: Event -> X All
 handleEvent e@ClientMessageEvent { ev_message_type = mt } = do
   a <- getAtom "D12_XMONAD_RESTART"
   if (mt == a)
-    then restart "d12-xmonad" True >> pure (All True)
+    then restart "d12-xmonad" True >> pure (All False)
     else broadcastMessage e >> pure (All True)
 handleEvent e = broadcastMessage e >> pure (All True)
 

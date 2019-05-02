@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 90faaf2a5367a5aab95cefda743e425d8acdf5a7d8cf5995301d79067b3d81a9
+-- hash: c8fe548c2a674b8f466abb2460c57ac2061a06979bb4b3d06e8251adccba15da
 
 name:           d12-xmonad
 version:        0.1.0.0
@@ -18,27 +18,6 @@ source-repository head
   type: git
   location: https://github.com/d12frosted/environment
 
-executable d12-taffybar
-  main-is: taffybar.hs
-  other-modules:
-      Paths_d12_xmonad
-  default-extensions: OverloadedStrings
-  ghc-options: -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      X11 >=1.8
-    , base
-    , containers
-    , d12-hs-env
-    , d12-hs-path
-    , directory
-    , filepath
-    , gi-gtk
-    , taffybar
-    , text
-    , transformers
-    , xmonad-contrib >=0.13
-  default-language: Haskell2010
-
 executable d12-xmonad
   main-is: xmonad.hs
   other-modules:
@@ -50,7 +29,6 @@ executable d12-xmonad
     , base
     , data-default
     , process
-    , taffybar
     , xmonad
     , xmonad-contrib
     , xmonad-extras

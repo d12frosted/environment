@@ -597,6 +597,12 @@ arch_guard && {
       stack --allow-different-user install
     )
 
+    section "Install xmobar"
+    (
+      cd "$XDG_CONFIG_HOME/xmobar"
+      stack --allow-different-user install
+    )
+
     section "Restart xmonad"
     if pgrep d12-xmonad; then
       log "Found running instance of xmonad. Restarting..."

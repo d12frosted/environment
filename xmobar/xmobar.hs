@@ -1,11 +1,23 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+--------------------------------------------------------------------------------
+module Main (main) where
+
+--------------------------------------------------------------------------------
 import Xmobar
 import Path.Parse
 
+--------------------------------------------------------------------------------
 data Env = Env { envConfigHome :: Path Abs Dir }
 
+--------------------------------------------------------------------------------
+main :: IO ()
+main = do
+  env <- Env <$> parseDirPath "$XDG_CONFIG_HOME"
+  xmobar $ config env
+
+--------------------------------------------------------------------------------
 config :: Env -> Config
 config env = defaultConfig {
   -- appearance
@@ -67,8 +79,3 @@ config env = defaultConfig {
     , Run StdinReader
     ]
   }
-
-main :: IO ()
-main = do
-  env <- Env <$> parseDirPath "$XDG_CONFIG_HOME"
-  xmobar $ config env
