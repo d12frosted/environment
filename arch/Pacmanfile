@@ -22,16 +22,10 @@ font-mathematica
 gimp
 git
 gnupg
-gobject-introspection
-gobject-introspection-runtime
 gocryptfs
-gtksourceview3
 hledger
 java-runtime-common
 jq
-libcue
-libdbusmenu-gtk3
-libnotify
 net-tools
 networkmanager
 networkmanager-openconnect
@@ -61,9 +55,7 @@ ttf-dejavu
 ttf-freefont
 ttf-indic-otf
 unzip
-upower
 vim
-webkit2gtk
 wget
 wireless_tools
 xautolock
