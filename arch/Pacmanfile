@@ -17,8 +17,6 @@ fd
 feh
 firefox
 fish
-font-bh-ttf
-font-mathematica
 gimp
 git
 gnupg
@@ -30,8 +28,6 @@ net-tools
 networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
-noto-fonts
-noto-fonts-emoji
 npm
 ntp
 openssh
@@ -50,10 +46,6 @@ systemd
 telegram-desktop
 texlive-most
 tree
-ttf-arphic-uming
-ttf-dejavu
-ttf-freefont
-ttf-indic-otf
 unzip
 vim
 wget
