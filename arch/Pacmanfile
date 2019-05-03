@@ -38,6 +38,7 @@ pulseaudio-bluetooth
 pulsemixer
 ripgrep
 rng-tools
+rxvt-unicode
 scrot
 shellcheck
 stack
