@@ -8,7 +8,6 @@ build:
   cache:
     paths:
       - xmonad/.stack-work
-      - xmobar/.stack-work
   before_script:
     - export XDG_CONFIG_HOME=$(pwd)
     - echo "XDG_CONFIG_HOME = $XDG_CONFIG_HOME"
