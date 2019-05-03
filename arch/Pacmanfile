@@ -9,7 +9,6 @@ aspell-ru
 aspell-uk
 bind-tools
 certbot
-dmenu
 docker
 docker-compose
 expect
