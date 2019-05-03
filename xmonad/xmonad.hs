@@ -76,8 +76,8 @@ extraKeys =
 statusBarPP :: PP
 statusBarPP
   = def
-  { ppCurrent = xmobarColor "#050505" "#ffff99"
-  , ppTitle = xmobarColor "#614051" "" . shorten 120
+  { ppCurrent = xmobarColor "#01786f" "" . ("\x23A8 " <>) . (<> " \x23AC")
+  , ppTitle = xmobarColor "#4848ff" "" . shorten 120 . ("\x1F5B3 " <>)
   }
 
 --------------------------------------------------------------------------------

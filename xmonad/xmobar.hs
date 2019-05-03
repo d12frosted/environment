@@ -21,18 +21,18 @@ main = do
 config :: Env -> Config
 config env = defaultConfig {
   -- appearance
-    font = "xft:Source Code Pro:size=14"
+    font = "xft:Source Code Pro:size=14,Symbola:size=16"
   , borderColor = "#fefefe"
   , border = NoBorder
   , bgColor = "#fefefe"
   , fgColor = "#050505"
   , alpha = 255
-  , position = Top
+  , position = TopSize C 100 32
 
   -- layout
   , sepChar =  "%"   -- delineator between plugin names and straight text
   , alignSep = "}{"  -- separator between left-right alignment
-  , template = " %StdinReader%}{[%kbd%] %default:Master% %battery% %date% "
+  , template = " %StdinReader%}{\x2328 %kbd% %default:Master% %battery% %date% "
 
   -- general behavior
   , lowerOnStart =     True    -- send to bottom of window stack on start
@@ -50,28 +50,26 @@ config env = defaultConfig {
     [ Run $ Battery [ "--template" , "<acstatus>"
                     , "--Low"      , "10"        -- units: %
                     , "--High"     , "80"        -- units: %
-                    , "--low"      , "darkred"
-                    , "--normal"   , "darkorange"
+                    , "--low"      , "#ca3435"
+                    , "--normal"   , "#e77200"
                     , "--high"     , "#050505"
-
                     , "--" -- battery specific options
                     -- discharging status
-                    , "-o", "<icon=battery-use.xpm/> <left>% (<timeleft>)"
+                    , "-o", "\x1F50B\x2620 <left>% (<timeleft>)"
                     -- AC "on" status
-                    , "-O", "<icon=battery-charge.xpm/> <left>% (<timeleft>)"
+                    , "-O", "\x1F50B\x1F5F2 <left>% (<timeleft>)"
                     -- charged status
-                    , "-i", "<icon=battery-charge.xpm/>"
+                    , "-i", "\x1F50B"
                     ] 50
 
-    , Run $ Date "%F (%a) %T" "date" 10
+    , Run $ Date "\x1F4C5 %F (%a) \x23F2 %T" "date" 10
 
-    , Run $ Volume "default" "Master" [ "--template", "<status><volume>%"
-
+    , Run $ Volume "default" "Master" [ "--template", "<status> <volume>%"
                                       ,  "--"
-                                      , "-o", "<icon=volume-mute.xpm/> "
-                                      , "-O", "<icon=volume-up.xpm/> "
-                                      , "-C", "#050505"
+                                      , "-o", "\x1F507"
+                                      , "-O", "\x1F50A"
                                       , "-c", "#050505"
+                                      , "-C", "#050505"
                                       ] 10
 
     , Run $ Kbd []
