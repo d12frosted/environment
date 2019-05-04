@@ -21,7 +21,7 @@ main = do
 config :: Env -> Config
 config env = defaultConfig {
   -- appearance
-    font = "xft:Source Code Pro:size=14,Symbola:size=16"
+    font = "xft:Source Code Pro:size=14,Symbola:size=16,FontAwesome:size=14"
   , borderColor = "#fefefe"
   , border = NoBorder
   , bgColor = "#fefefe"
@@ -32,7 +32,7 @@ config env = defaultConfig {
   -- layout
   , sepChar =  "%"   -- delineator between plugin names and straight text
   , alignSep = "}{"  -- separator between left-right alignment
-  , template = " %StdinReader%}{\x2328 %kbd% %default:Master% %battery% %date% "
+  , template = " %StdinReader%}{\x2328 %kbd% \xf1eb %wlp3s0wi% %default:Master% %battery% %date% "
 
   -- general behavior
   , lowerOnStart =     True    -- send to bottom of window stack on start
@@ -73,6 +73,9 @@ config env = defaultConfig {
                                       ] 10
 
     , Run $ Kbd []
+
+    , Run $ Wireless "wlp3s0" [ "--template", "<essid>"
+                              ] 100
 
     , Run StdinReader
     ]
