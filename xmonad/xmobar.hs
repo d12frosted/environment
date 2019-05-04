@@ -62,7 +62,7 @@ config env = defaultConfig {
                     , "-i", "\x1F50B"
                     ] 50
 
-    , Run $ Date "\x1F4C5 %F (%a) \x23F2 %T" "date" 10
+    , Run $ Date "\xf073 %F (%a) \x23F2 %T" "date" 10
 
     , Run $ Volume "default" "Master" [ "--template", "<status> <volume>%"
                                       ,  "--"
