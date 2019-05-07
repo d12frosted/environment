@@ -8,6 +8,7 @@ aspell-en
 aspell-ru
 aspell-uk
 bind-tools
+bower
 certbot
 docker
 docker-compose
