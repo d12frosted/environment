@@ -33,7 +33,7 @@ xmonadConfig
     modMask = mod4Mask
 
   -- Hooks
-  , manageHook      = manageDocks <+> manageHook def
+  , manageHook      = manageDocks <+> manageAppsWorkspace <+> manageHook def
   , layoutHook      = avoidStruts $ layoutHook def
   , handleEventHook = handleEvent <+> handleEventHook def <+> docksEventHook
 
@@ -127,6 +127,17 @@ handleEvent e@ClientMessageEvent { ev_message_type = mt } = do
     then restart "d12-xmonad" True >> pure (All False)
     else broadcastMessage e >> pure (All True)
 handleEvent e = broadcastMessage e >> pure (All True)
+
+--------------------------------------------------------------------------------
+manageAppsWorkspace :: Query (Endo WindowSet)
+manageAppsWorkspace
+  = composeAll . concat $
+    [ [ className =? "Firefox" --> doShift wsWeb ]
+    , [ className =? "jetbrains-idea" --> doShift wsTerm ]
+    , [ className =? "Spotify" --> doShift wsMedia ]
+    , [ className =? "TelegramDesktop" --> doShift wsSocial ]
+    , [ className =? "Slack" --> doShift wsSocial ]
+    ]
 
 --------------------------------------------------------------------------------
 vlmInc :: MonadIO m => m ()
