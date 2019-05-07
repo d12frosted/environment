@@ -61,7 +61,7 @@ xmonadConfig
 extraKeys :: [((KeyMask, KeySym), X ())]
 extraKeys =
   [ ((mod4Mask, xK_q), rebuild)
-  , ((mod4Mask, xK_p), spawn "dmenu_run -z -h 32 -fn 'Source Code Pro-14'")
+  , ((mod4Mask, xK_p), spawn "dmenu_run -h 32 -fn 'Source Code Pro-14'")
   , ((0, xF86XK_AudioRaiseVolume), vlmInc)
   , ((0, xF86XK_AudioLowerVolume), vlmDec)
   , ((0, xF86XK_AudioMute), vlmMute)
