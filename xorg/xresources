@@ -64,5 +64,5 @@ XTerm*modifyOtherKeys: 1
 ! RXVT configurations
 !
 
-URxvt.font: xft:Source Code Pro:size=12
+URxvt.font: xft:Source Code Pro:pixelsize=18,xft:Symbola:pixelsize=18
 URxvt.scrollBar: false
