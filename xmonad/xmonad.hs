@@ -46,12 +46,12 @@ xmonadConfig
   , focusedBorderColor = "orange"
 
   -- Workspaces
-  , workspaces = [ "1:emacs"
-                 , "2:term"
-                 , "3:web"
-                 , "4:chat"
-                 , "5:media"
-                 , "6:other"
+  , workspaces = [ wsEmacs
+                 , wsTerm
+                 , wsWeb
+                 , wsSocial
+                 , wsMedia
+                 , wsOther
                  ]
 
   -- Unfortunately, use urxvt
@@ -71,6 +71,25 @@ extraKeys =
   , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s") -- one window
   , ((0, xK_Print), spawn "scrot")
   ]
+
+--------------------------------------------------------------------------------
+wsEmacs :: WorkspaceId
+wsEmacs = "1:emacs"
+
+wsTerm :: WorkspaceId
+wsTerm = "2:term"
+
+wsWeb :: WorkspaceId
+wsWeb = "3:web"
+
+wsSocial :: WorkspaceId
+wsSocial = "4:chat"
+
+wsMedia :: WorkspaceId
+wsMedia = "5:media"
+
+wsOther :: WorkspaceId
+wsOther = "6:other"
 
 --------------------------------------------------------------------------------
 statusBarPP :: PP
