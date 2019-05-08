@@ -7,9 +7,17 @@ if [[ -n "$1" ]]; then
   setxkbmap "$1"
 else
   layout=$(setxkbmap -query | awk '/layout/{print $2}')
+  variant=$(setxkbmap -query | awk '/variant/{print $2}')
   case $layout in
     us)
-      setxkbmap ua
+      case $variant in
+        intl)
+          setxkbmap us
+          ;;
+        *)
+          setxkbmap -layout us -variant intl
+          ;;
+      esac
       ;;
     *)
       setxkbmap us
