@@ -85,6 +85,9 @@
 	      org-startup-indented t
 	      org-outline-path-complete-in-steps nil
 
+        ;; do not allow invisible edits (...)
+        org-catch-invisible-edits 'error
+
 	      ;; better formatting for properties
 	      org-property-format "%-24s %s"
 
