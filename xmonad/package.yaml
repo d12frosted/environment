@@ -9,6 +9,8 @@ default-extensions:
 
 ghc-options: -Wall -Werror
 
+source-dirs: src
+
 executables:
   d12-xmonad:
     main: xmonad.hs

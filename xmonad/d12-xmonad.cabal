@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c5e293b50ed58b5def333284ed77c9694194b4bf49d9aab69839ed83f9994025
+-- hash: 2ffcb54d0ed21d8539e75fd9595850e1d173111f353ba3acdee21cb94d75e473
 
 name:           d12-xmonad
 version:        0.1.0.0
@@ -22,6 +22,8 @@ executable d12-xmobar
   main-is: xmobar.hs
   other-modules:
       Paths_d12_xmonad
+  hs-source-dirs:
+      src
   default-extensions: OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
@@ -36,6 +38,8 @@ executable d12-xmonad
   main-is: xmonad.hs
   other-modules:
       Paths_d12_xmonad
+  hs-source-dirs:
+      src
   default-extensions: OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
