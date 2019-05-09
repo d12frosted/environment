@@ -49,7 +49,8 @@ xmonadConfig
   , workspaces = [ wsEmacs
                  , wsTerm
                  , wsWeb
-                 , wsSocial
+                 , wsChat
+                 , wsMail
                  , wsMedia
                  , wsOther
                  ]
@@ -83,14 +84,17 @@ wsTerm = "2:term"
 wsWeb :: WorkspaceId
 wsWeb = "3:web"
 
-wsSocial :: WorkspaceId
-wsSocial = "4:chat"
+wsChat :: WorkspaceId
+wsChat = "4:chat"
+
+wsMail :: WorkspaceId
+wsMail = "5:mail"
 
 wsMedia :: WorkspaceId
-wsMedia = "5:media"
+wsMedia = "6:media"
 
 wsOther :: WorkspaceId
-wsOther = "6:other"
+wsOther = "7:other"
 
 --------------------------------------------------------------------------------
 statusBarPP :: PP
@@ -136,8 +140,9 @@ manageAppsWorkspace
     [ [ className =? "Firefox" --> doShift wsWeb ]
     , [ className =? "jetbrains-idea" --> doShift wsTerm ]
     , [ className =? "Spotify" --> doShift wsMedia ]
-    , [ className =? "TelegramDesktop" --> doShift wsSocial ]
-    , [ className =? "Slack" --> doShift wsSocial ]
+    , [ className =? "TelegramDesktop" --> doShift wsChat ]
+    , [ className =? "Slack" --> doShift wsChat ]
+    , [ className =? "Thunderbird" --> doShift wsMail ]
     ]
 
 --------------------------------------------------------------------------------
