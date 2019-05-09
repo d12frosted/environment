@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 
-# If an explicit layout is provided as an argument, use it. Otherwise, select
-# the next layout from the set [us, ua].
+# Select the next keyboard layout from the list [us, ua] or [us, us intl].
 
-if [[ -n "$1" ]]; then
-  setxkbmap "$1"
-else
-  layout=$(setxkbmap -query | awk '/layout/{print $2}')
-  variant=$(setxkbmap -query | awk '/variant/{print $2}')
-  case $layout in
-    us)
+USE_CYRILLIC="$1"
+
+layout=$(setxkbmap -query | awk '/layout/{print $2}')
+variant=$(setxkbmap -query | awk '/variant/{print $2}')
+case $layout in
+  us)
+    if [ -z "$USE_CYRILLIC" ]; then
       case $variant in
         intl)
           setxkbmap us
@@ -18,9 +17,11 @@ else
           setxkbmap -layout us -variant intl
           ;;
       esac
-      ;;
-    *)
-      setxkbmap us
-      ;;
-  esac
-fi
+    else
+      setxkbmap ua
+    fi
+    ;;
+  *)
+    setxkbmap us
+    ;;
+esac
