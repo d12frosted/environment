@@ -19,14 +19,17 @@ import XMonad.Util.EZConfig (additionalKeys)
 --------------------------------------------------------------------------------
 main :: IO ()
 main = getArgs >>= \case
-    ["--restart"] -> sendRestart
-    _             -> app
-
-app :: IO ()
-app = launch =<< statusBar "d12-xmobar" statusBarPP toggleStrutsKey xmonadConfig
+  ["--restart"] -> sendRestart
+  _             -> launch =<<
+    statusBar "d12-xmobar" statusBarPP toggleStrutsKey xmonadConfig
 
 --------------------------------------------------------------------------------
-xmonadConfig :: XConfig (ModifiedLayout AvoidStruts (Choose Tall (Choose (Mirror Tall) Full)))
+type XMonadConfig
+  = XConfig
+    ( ModifiedLayout AvoidStruts (Choose Tall (Choose (Mirror Tall) Full))
+    )
+
+xmonadConfig :: XMonadConfig
 xmonadConfig
   = def
   { -- Use Super instead of Alt
