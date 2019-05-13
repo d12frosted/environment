@@ -34,10 +34,10 @@ textAlert :: Color
 textAlert = "#ca3435"
 
 textFocusedFg :: Color
-textFocusedFg = "#01786f"
+textFocusedFg = background
 
 textFocusedBg :: Color
-textFocusedBg = ""
+textFocusedBg = textRegular
 
 textTitleFg :: Color
 textTitleFg = "#4848ff"

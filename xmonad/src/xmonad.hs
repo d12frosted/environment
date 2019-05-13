@@ -52,8 +52,8 @@ xmonadConfig
   , focusedBorderColor = Colors.backgroundActive
 
   -- Workspaces
-  , workspaces = [ wsEmacs
-                 , wsTerm
+  , workspaces = [ wsCode1
+                 , wsCode2
                  , wsWeb
                  , wsChat
                  , wsMail
@@ -81,40 +81,45 @@ extraKeys =
   ]
 
 --------------------------------------------------------------------------------
-wsEmacs :: WorkspaceId
-wsEmacs = "1:emacs"
+wsCode1 :: WorkspaceId
+wsCode1 = "\xf121"
 
-wsTerm :: WorkspaceId
-wsTerm = "2:term"
+wsCode2 :: WorkspaceId
+wsCode2 = "\xf120"
 
 wsWeb :: WorkspaceId
-wsWeb = "3:web"
+wsWeb = "\xf269"
 
 wsChat :: WorkspaceId
-wsChat = "4:chat"
+wsChat = "\xf086"
 
 wsMail :: WorkspaceId
-wsMail = "5:mail"
+wsMail = "\xf0e0"
 
 wsMedia :: WorkspaceId
-wsMedia = "6:media"
+wsMedia = "\xf001"
 
 wsOther :: WorkspaceId
-wsOther = "7:other"
+wsOther = "\xf18c"
 
 --------------------------------------------------------------------------------
 statusBarPP :: PP
 statusBarPP
   = def
-  { ppCurrent =
-      xmobarColor Colors.textFocusedFg Colors.textFocusedBg
-      . ("\x23A8 " <>)
-      . (<> " \x23AC")
+  { ppCurrent = xmobarColor Colors.textFocusedFg Colors.textFocusedBg . wrapSpc
+  , ppHidden = wrapSpc
+  , ppWsSep = ""
   , ppTitle =
       xmobarColor Colors.textTitleFg Colors.textTitleBg
       . shorten 120
-      . ("\x1F5B3 " <>)
+  , ppLayout = \case
+      "Tall"        -> "\x25E7"
+      "Mirror Tall" -> "\x2B12"
+      "Full"        -> "\x23F9"
+      l             -> l
+  , ppSep = " \x22EE "
   }
+  where wrapSpc x = " " <> x <> " "
 
 --------------------------------------------------------------------------------
 toggleStrutsKey :: XConfig l -> (KeyMask, KeySym)
@@ -150,7 +155,7 @@ manageAppsWorkspace :: Query (Endo WindowSet)
 manageAppsWorkspace
   = composeAll . concat $
     [ [ className =? "Firefox" --> doShift wsWeb ]
-    , [ className =? "jetbrains-idea" --> doShift wsTerm ]
+    , [ className =? "jetbrains-idea" --> doShift wsCode2 ]
     , [ className =? "Spotify" --> doShift wsMedia ]
     , [ className =? "TelegramDesktop" --> doShift wsChat ]
     , [ className =? "Slack" --> doShift wsChat ]
