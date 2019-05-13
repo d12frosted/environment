@@ -58,6 +58,10 @@ In a nutshell, it's just a Value of $HOME.")
 (defvar nucleus-modules-dir (concat nucleus-emacs-dir "modules/")
   "The root directory for modules.")
 
+(defvar nucleus-private-modules-dir
+  (concat nucleus-home-dir "Dropbox/Apps/Emacs/modules/")
+  "The root directory for private modules.")
+
 ;; TODO: move outside of $XDG_CONFIG_HOME
 (defvar nucleus-local-dir (concat nucleus-emacs-dir ".local/")
   "The root directory for local Emacs files.

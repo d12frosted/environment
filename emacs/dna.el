@@ -75,4 +75,6 @@
 
  :config
  keybindings
- os)
+ os
+ private
+ )

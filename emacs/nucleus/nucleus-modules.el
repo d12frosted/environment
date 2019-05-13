@@ -27,7 +27,8 @@
 
 (defvar nucleus-modules-dirs
   (list (expand-file-name "modules/" nucleus-emacs-dir)
-        nucleus-modules-dir)
+        nucleus-modules-dir
+        nucleus-private-modules-dir)
   "A list of module root directories.
 
 Order determines priority.")
