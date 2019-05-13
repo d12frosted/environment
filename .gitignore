@@ -35,11 +35,24 @@ git/local/*
 .mono/
 
 # Ignored applications
-chromium
+Blue Jeans
+GIMP
+QtProject.conf
+Slack
+StardewValley
+Trolltech.conf
 bloop
+chromium
 dconf
 gconf
+google-chrome
 gtk-2.0
+gtk-3.0
+libfm
+mc
+menus
+pcmanfm
 procps
 pulse
+spotify
 yay
