@@ -49,6 +49,7 @@
  buffer
  dired
  ediff
+ eshell
  file
  string
  window
