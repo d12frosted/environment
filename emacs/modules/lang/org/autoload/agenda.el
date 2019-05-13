@@ -55,6 +55,12 @@ Otherwise create it from scratch."
     (org-agenda nil " ")))
 
 ;;;###autoload
+(defun +agenda/wix ()
+  "Show Wix `org-agenda' view."
+  (interactive)
+  (org-agenda nil "w"))
+
+;;;###autoload
 (defun +agenda--find-project-task ()
   "Move point to the parent (project) task if any."
   (save-restriction
@@ -68,20 +74,15 @@ Otherwise create it from scratch."
 
 ;;;###autoload
 (defun +agenda--is-project-p ()
-  "Any task with a todo keyword subtask."
-  (save-restriction
-    (widen)
-    (let ((has-subtask)
-          (subtree-end (save-excursion (org-end-of-subtree t)))
-          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (save-excursion
-        (forward-line 1)
-        (while (and (not has-subtask)
-                    (< (point) subtree-end)
-                    (re-search-forward "^\*+ " subtree-end t))
-          (when (member (org-get-todo-state) org-todo-keywords-1)
-            (setq has-subtask t))))
-      (and is-a-task has-subtask))))
+  "Returns non-nil if the heading at point is a project.
+
+Basically, it's any item with some todo keyword and tagged as
+PROJECT."
+  (let* ((comps (org-heading-components))
+         (todo (nth 2 comps))
+         (tags (split-string (or (nth 5 comps) "") ":")))
+    (and (member todo org-todo-keywords-1)
+         (member "PROJECT" tags))))
 
 ;;;###autoload
 (defun +agenda--is-project-subtree-p ()
@@ -185,7 +186,7 @@ Callers of this function already widen the buffer view."
                  (has-next ))
             (save-excursion
               (forward-line 1)
-              (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+              (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ TODO " subtree-end t))
                 (unless (member "WAITING" (org-get-tags-at))
                   (setq has-next t))))
             (if has-next

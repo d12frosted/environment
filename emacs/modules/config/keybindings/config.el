@@ -132,6 +132,7 @@
 
       (:desc "open" :prefix "o"
 	      :desc "Org fast agenda" "a" #'+agenda/main
+        :desc "Org Wix fast agenda" "w" #'+agenda/wix
         :desc "Reading list" "r" #'+orgability/list
         :desc "Org agenda" "A" #'org-agenda
         :desc "Brain node" "b" #'org-brain-visualize
