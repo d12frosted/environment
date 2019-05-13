@@ -25,7 +25,7 @@
 
 This is changed when `load-theme' is used as well.")
 
-(defvar +modern-font (font-spec :family "Source Code Pro")
+(defvar +modern-font (font-spec :family "Source Code Pro" :size 18)
   "The default font to use.
 
 Expects either a `font-spec', font object, an XFT font string or
