@@ -77,7 +77,7 @@ config env = defaultConfig {
                     -- AC "on" status
                     , "-O", Icons.static "\xf0e7" <> " <left>% (<timeleft>)"
                     -- charged status
-                    , "-i", "\xf240"
+                    , "-i", Icons.static "\xf240"
                     ] 50
 
     , Run $ Date dateTemplate "date" 10
