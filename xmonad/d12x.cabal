@@ -4,9 +4,9 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: fce6b9b0923d3057747cf54d32212a0726070ad3c17cb8aacbd299e3d8f024c3
+-- hash: bdbb4e484691eb8894d132e641d18e7fbbdcb1fe6cc3f3c106fbb4cd0352aa8b
 
-name:           d12-xmonad
+name:           d12x
 version:        0.1.0.0
 homepage:       https://github.com/d12frosted/environment#readme
 bug-reports:    https://github.com/d12frosted/environment/issues
@@ -18,48 +18,54 @@ source-repository head
   type: git
   location: https://github.com/d12frosted/environment
 
-executable d12-xmobar
-  main-is: xmobar.hs
-  other-modules:
+library
+  exposed-modules:
       Utils.Color
       Utils.Icon
-      XMonad.Commands
-      XMonad.Keybindings
-      XMonad.Workspaces
-      Paths_d12_xmonad
+  other-modules:
+      Paths_d12x
   hs-source-dirs:
-      src
+      lib
   default-extensions: OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
-      X11
-    , base
-    , d12-hs-path
-    , data-default
-    , path
-    , xmobar
-    , xmonad
+      base
     , xmonad-contrib
   default-language: Haskell2010
 
-executable d12-xmonad
-  main-is: xmonad.hs
+executable d12-xmobar
+  main-is: Main.hs
   other-modules:
-      Utils.Color
-      Utils.Icon
+      Paths_d12x
+  hs-source-dirs:
+      xmobar
+  default-extensions: OverloadedStrings
+  ghc-options: -Wall -Werror
+  build-depends:
+      base
+    , d12-hs-path
+    , d12x
+    , data-default
+    , path
+    , xmobar
+  default-language: Haskell2010
+
+executable d12-xmonad
+  main-is: Main.hs
+  other-modules:
       XMonad.Commands
       XMonad.Keybindings
       XMonad.Workspaces
-      Paths_d12_xmonad
+      Paths_d12x
   hs-source-dirs:
-      src
+      xmonad
   default-extensions: OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
       X11
     , base
+    , d12x
     , data-default
-    , process
     , xmonad
     , xmonad-contrib
     , xmonad-extras

@@ -1,4 +1,4 @@
-name: d12-xmonad
+name: d12x
 version: '0.1.0.0'
 author: Boris Buliga
 maintainer: Boris Buliga
@@ -9,27 +9,31 @@ default-extensions:
 
 ghc-options: -Wall -Werror
 
-source-dirs: src
+library:
+  source-dirs: lib
+  dependencies:
+    - base
+    - xmonad-contrib
 
 executables:
   d12-xmonad:
-    main: xmonad.hs
+    source-dirs: xmonad
+    main: Main.hs
     dependencies:
       - X11
       - base
+      - d12x
       - data-default
-      - process
       - xmonad
       - xmonad-contrib
       - xmonad-extras
   d12-xmobar:
-    main: xmobar.hs
+    source-dirs: xmobar
+    main: Main.hs
     dependencies:
-      - X11
       - base
-      - data-default
-      - xmobar
-      - xmonad
-      - xmonad-contrib
       - d12-hs-path
+      - d12x
+      - data-default
       - path
+      - xmobar
