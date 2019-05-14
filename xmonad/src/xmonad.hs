@@ -66,20 +66,6 @@ xmonadConfig
   , terminal = "urxvt"
   } `additionalKeys` extraKeys
 
-extraKeys :: [((KeyMask, KeySym), X ())]
-extraKeys =
-  [ ((mod4Mask, xK_q), rebuild)
-  , ((mod4Mask, xK_p), spawn "dmenu_run -h 32 -fn 'Source Code Pro-14'")
-  , ((0, xF86XK_AudioRaiseVolume), vlmInc)
-  , ((0, xF86XK_AudioLowerVolume), vlmDec)
-  , ((0, xF86XK_AudioMute), vlmMute)
-  , ((0, xF86XK_AudioMicMute), micMute)
-  , ((mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
-  , ((mod4Mask, xK_Escape), spawn "switch_kbd_layout t")
-  , ((mod4Mask .|. shiftMask, xK_Escape), spawn "switch_kbd_layout")
-  , ((mod4Mask, xK_Print), spawn "scrot")
-  ]
-
 --------------------------------------------------------------------------------
 wsCode1 :: WorkspaceId
 wsCode1 = "\xf121"
@@ -101,6 +87,21 @@ wsMedia = "\xf001"
 
 wsOther :: WorkspaceId
 wsOther = "\xf18c"
+
+--------------------------------------------------------------------------------
+extraKeys :: [((KeyMask, KeySym), X ())]
+extraKeys =
+  [ ((mod4Mask, xK_q), spawn "eru xmonad")
+  , ((mod4Mask, xK_p), spawn "dmenu_run -h 32 -fn 'Source Code Pro-14'")
+  , ((0, xF86XK_AudioRaiseVolume), vlmInc)
+  , ((0, xF86XK_AudioLowerVolume), vlmDec)
+  , ((0, xF86XK_AudioMute), vlmMute)
+  , ((0, xF86XK_AudioMicMute), micMute)
+  , ((mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
+  , ((mod4Mask, xK_Escape), spawn "switch_kbd_layout t")
+  , ((mod4Mask .|. shiftMask, xK_Escape), spawn "switch_kbd_layout")
+  , ((mod4Mask, xK_Print), spawn "scrot")
+  ]
 
 --------------------------------------------------------------------------------
 statusBarPP :: PP
@@ -135,10 +136,6 @@ sendRestart = do
       setClientMessageEvent e rw xmonad_restart 32 0 currentTime
       sendEvent dpy rw False structureNotifyMask e
   sync dpy False
-
---------------------------------------------------------------------------------
-rebuild :: X ()
-rebuild = spawn "eru xmonad"
 
 --------------------------------------------------------------------------------
 handleEvent :: Event -> X All
