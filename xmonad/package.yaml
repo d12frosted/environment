@@ -25,9 +25,11 @@ executables:
   d12-xmobar:
     main: xmobar.hs
     dependencies:
+      - X11
       - base
       - data-default
       - xmobar
+      - xmonad
       - xmonad-contrib
       - d12-hs-path
       - path

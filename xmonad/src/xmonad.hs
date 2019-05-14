@@ -6,12 +6,12 @@ module Main (main) where
 --------------------------------------------------------------------------------
 import qualified Utils.Color as Color
 import qualified Utils.Icon as Icon
+import           XMonad.Keybindings
+import           XMonad.Workspaces
 
 --------------------------------------------------------------------------------
-import           Control.Monad.IO.Class (MonadIO)
 import           Data.Default (def)
 import           Data.Semigroup
-import           Graphics.X11.ExtraTypes.XF86
 import           System.Environment
 import           XMonad
 import           XMonad.Hooks.DynamicLog
@@ -64,44 +64,7 @@ xmonadConfig
 
   -- Unfortunately, use urxvt
   , terminal = "urxvt"
-  } `additionalKeys` extraKeys
-
---------------------------------------------------------------------------------
-wsCode1 :: WorkspaceId
-wsCode1 = "\xf121"
-
-wsCode2 :: WorkspaceId
-wsCode2 = "\xf120"
-
-wsWeb :: WorkspaceId
-wsWeb = "\xf269"
-
-wsChat :: WorkspaceId
-wsChat = "\xf086"
-
-wsMail :: WorkspaceId
-wsMail = "\xf0e0"
-
-wsMedia :: WorkspaceId
-wsMedia = "\xf001"
-
-wsOther :: WorkspaceId
-wsOther = "\xf18c"
-
---------------------------------------------------------------------------------
-extraKeys :: [((KeyMask, KeySym), X ())]
-extraKeys =
-  [ ((mod4Mask, xK_q), spawn "eru xmonad")
-  , ((mod4Mask, xK_p), spawn "dmenu_run -h 32 -fn 'Source Code Pro-14'")
-  , ((0, xF86XK_AudioRaiseVolume), vlmInc)
-  , ((0, xF86XK_AudioLowerVolume), vlmDec)
-  , ((0, xF86XK_AudioMute), vlmMute)
-  , ((0, xF86XK_AudioMicMute), micMute)
-  , ((mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
-  , ((mod4Mask, xK_Escape), spawn "switch_kbd_layout t")
-  , ((mod4Mask .|. shiftMask, xK_Escape), spawn "switch_kbd_layout")
-  , ((mod4Mask, xK_Print), spawn "scrot")
-  ]
+  } `additionalKeys` keybindings
 
 --------------------------------------------------------------------------------
 statusBarPP :: PP
@@ -145,28 +108,3 @@ handleEvent e@ClientMessageEvent { ev_message_type = mt } = do
     then restart "d12-xmonad" True >> pure (All False)
     else broadcastMessage e >> pure (All True)
 handleEvent e = broadcastMessage e >> pure (All True)
-
---------------------------------------------------------------------------------
-manageAppsWorkspace :: Query (Endo WindowSet)
-manageAppsWorkspace
-  = composeAll . concat $
-    [ [ className =? "Firefox" --> doShift wsWeb ]
-    , [ className =? "jetbrains-idea" --> doShift wsCode2 ]
-    , [ className =? "Spotify" --> doShift wsMedia ]
-    , [ className =? "TelegramDesktop" --> doShift wsChat ]
-    , [ className =? "Slack" --> doShift wsChat ]
-    , [ className =? "Thunderbird" --> doShift wsMail ]
-    ]
-
---------------------------------------------------------------------------------
-vlmInc :: MonadIO m => m ()
-vlmInc = spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%"
-
-vlmDec :: MonadIO m => m ()
-vlmDec = spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%"
-
-vlmMute :: MonadIO m => m ()
-vlmMute = spawn "pactl set-sink-mute 0 toggle"
-
-micMute :: MonadIO m => m ()
-micMute = spawn "pactl set-source-mute 1 toggle"
