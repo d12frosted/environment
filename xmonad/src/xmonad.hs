@@ -5,7 +5,7 @@ module Main (main) where
 
 --------------------------------------------------------------------------------
 import qualified Colors
-import           Icons
+import qualified Icons
 
 --------------------------------------------------------------------------------
 import           Control.Monad.IO.Class (MonadIO)
@@ -107,18 +107,18 @@ wsOther = "\xf18c"
 statusBarPP :: PP
 statusBarPP
   = def
-  { ppCurrent = iconWideFocused
-  , ppHidden = iconWide
+  { ppCurrent = Icons.active
+  , ppHidden = Icons.inactive
   , ppWsSep = ""
   , ppTitle =
       xmobarColor Colors.textTitleFg Colors.textTitleBg
       . shorten 120
   , ppLayout = \case
-      "Tall"        -> "\x25E7"
-      "Mirror Tall" -> "\x2B12"
-      "Full"        -> "\x23F9"
+      "Tall"        -> Icons.inactiveThin "\x25E7"
+      "Mirror Tall" -> Icons.inactiveThin "\x2B12"
+      "Full"        -> Icons.inactiveThin "\x23F9"
       l             -> l
-  , ppSep = " \x22EE "
+  , ppSep = Icons.inactiveThin "¦"
   }
 
 --------------------------------------------------------------------------------

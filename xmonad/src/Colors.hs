@@ -46,14 +46,20 @@ textTitleFg :: Color
 textTitleFg = "#4848ff"
 
 --------------------------------------------------------------------------------
-iconBg :: Color
-iconBg = "#f4f4f4"
+iconStaticBg :: Color
+iconStaticBg = "#f4faf4"
 
-iconFg :: Color
-iconFg = textRegular
+iconStaticFg :: Color
+iconStaticFg = textRegular
 
-iconFocusedBg :: Color
-iconFocusedBg = iconFg
+iconInactiveBg :: Color
+iconInactiveBg = background
 
-iconFocusedFg :: Color
-iconFocusedFg = iconBg
+iconInactiveFg :: Color
+iconInactiveFg = textRegular
+
+iconActiveBg :: Color
+iconActiveBg = "#bfdec8"
+
+iconActiveFg :: Color
+iconActiveFg = textRegular

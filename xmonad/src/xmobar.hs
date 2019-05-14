@@ -38,12 +38,11 @@ config env = defaultConfig {
   , sepChar =  "%"   -- delineator between plugin names and straight text
   , alignSep = "}{"  -- separator between left-right alignment
   , template = concat
-    [ " "
-    , "%StdinReader%"
+    [ "%StdinReader%"
     , "}{"
-    , icon "\x2328" <> " %kbd%"
+    , Icons.static "\x2328" <> " %kbd%"
     , " "
-    , icon "\xf1eb" <> " %wlp3s0wi%"
+    , Icons.static "\xf1eb" <> " %wlp3s0wi%"
     , " "
     , "%default:Master%"
     , " "
@@ -74,9 +73,9 @@ config env = defaultConfig {
                     , "--high"     , Colors.textRegular
                     , "--" -- battery specific options
                     -- discharging status
-                    , "-o", icon "\xf242" <> " <left>% (<timeleft>)"
+                    , "-o", Icons.static "\xf242" <> " <left>% (<timeleft>)"
                     -- AC "on" status
-                    , "-O", icon "\xf0e7" <> " <left>% (<timeleft>)"
+                    , "-O", Icons.static "\xf0e7" <> " <left>% (<timeleft>)"
                     -- charged status
                     , "-i", "\xf240"
                     ] 50
@@ -85,8 +84,8 @@ config env = defaultConfig {
 
     , Run $ Volume "default" "Master" [ "--template", "<status> <volume>%"
                                       ,  "--"
-                                      , "-o", icon "\x1F507"
-                                      , "-O", icon "\x1F50A"
+                                      , "-o", Icons.static "\x1F507"
+                                      , "-O", Icons.static "\x1F50A"
                                       , "-c", Colors.textRegular
                                       , "-C", Colors.textRegular
                                       ] 10
@@ -103,8 +102,8 @@ config env = defaultConfig {
 dateTemplate :: String
 dateTemplate
   = concat
-  [ icon "\xf073"
+  [ Icons.static "\xf073"
   , " %F (%a) "
-  , icon "\x23F2"
+  , Icons.static "\x23F2"
   , " %T"
   ]

@@ -2,12 +2,10 @@
 -- characters).
 
 --------------------------------------------------------------------------------
-{-# LANGUAGE RankNTypes #-}
-
---------------------------------------------------------------------------------
-module Icons ( icon
-             , iconWide
-             , iconWideFocused
+module Icons ( static
+             , inactive
+             , inactiveThin
+             , active
              ) where
 
 --------------------------------------------------------------------------------
@@ -17,14 +15,17 @@ import Colors
 import XMonad.Hooks.DynamicLog (xmobarColor, wrap)
 
 --------------------------------------------------------------------------------
-icon :: String -> String
-icon = xmobarColor iconFg iconBg . thin
+static :: String -> String
+static = xmobarColor iconStaticFg iconStaticBg . wide
 
-iconWide :: String -> String
-iconWide = xmobarColor iconFg iconBg . wide
+inactiveThin :: String -> String
+inactiveThin = xmobarColor iconInactiveFg iconInactiveBg . thin
 
-iconWideFocused :: String -> String
-iconWideFocused = xmobarColor iconFocusedFg iconFocusedBg . wide
+inactive :: String -> String
+inactive = xmobarColor iconInactiveFg iconInactiveBg . wide
+
+active :: String -> String
+active = xmobarColor iconActiveFg iconActiveBg . wide
 
 --------------------------------------------------------------------------------
 wide :: String -> String
