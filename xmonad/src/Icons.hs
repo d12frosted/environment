@@ -16,7 +16,7 @@ import XMonad.Hooks.DynamicLog (xmobarColor, wrap)
 
 --------------------------------------------------------------------------------
 static :: String -> String
-static = xmobarColor iconStaticFg iconStaticBg . wide
+static = xmobarColor iconStaticFg iconStaticBg . thin
 
 inactiveThin :: String -> String
 inactiveThin = xmobarColor iconInactiveFg iconInactiveBg . thin
