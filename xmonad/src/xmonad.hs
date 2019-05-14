@@ -118,7 +118,7 @@ statusBarPP
       "Mirror Tall" -> Icons.inactiveThin "\x2B12"
       "Full"        -> Icons.inactiveThin "\x23F9"
       l             -> l
-  , ppSep = Icons.inactiveThin "¦"
+  , ppSep = " "
   }
 
 --------------------------------------------------------------------------------
