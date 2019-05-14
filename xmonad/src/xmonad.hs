@@ -5,6 +5,7 @@ module Main (main) where
 
 --------------------------------------------------------------------------------
 import qualified Colors
+import           Icons
 
 --------------------------------------------------------------------------------
 import           Control.Monad.IO.Class (MonadIO)
@@ -106,8 +107,8 @@ wsOther = "\xf18c"
 statusBarPP :: PP
 statusBarPP
   = def
-  { ppCurrent = xmobarColor Colors.textFocusedFg Colors.textFocusedBg . wrapSpc
-  , ppHidden = wrapSpc
+  { ppCurrent = iconWideFocused
+  , ppHidden = iconWide
   , ppWsSep = ""
   , ppTitle =
       xmobarColor Colors.textTitleFg Colors.textTitleBg
@@ -119,7 +120,6 @@ statusBarPP
       l             -> l
   , ppSep = " \x22EE "
   }
-  where wrapSpc x = " " <> x <> " "
 
 --------------------------------------------------------------------------------
 toggleStrutsKey :: XConfig l -> (KeyMask, KeySym)

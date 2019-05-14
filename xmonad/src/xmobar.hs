@@ -1,11 +1,13 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes #-}
 
 --------------------------------------------------------------------------------
 module Main (main) where
 
 --------------------------------------------------------------------------------
 import qualified Colors
+import           Icons
 
 --------------------------------------------------------------------------------
 import           Xmobar
@@ -39,9 +41,9 @@ config env = defaultConfig {
     [ " "
     , "%StdinReader%"
     , "}{"
-    , "\x2328 %kbd%"
+    , icon "\x2328" <> " %kbd%"
     , " "
-    , "\xf1eb %wlp3s0wi%"
+    , icon "\xf1eb" <> " %wlp3s0wi%"
     , " "
     , "%default:Master%"
     , " "
@@ -65,26 +67,26 @@ config env = defaultConfig {
   -- plugins
   , commands =
     [ Run $ Battery [ "--template" , "<acstatus>"
-                    , "--Low"      , "10"        -- units: %
+                    , "--Low"      , "20"        -- units: %
                     , "--High"     , "80"        -- units: %
                     , "--low"      , Colors.textAlert
                     , "--normal"   , Colors.textWarning
                     , "--high"     , Colors.textRegular
                     , "--" -- battery specific options
                     -- discharging status
-                    , "-o", "\x1F50B\x2620 <left>% (<timeleft>)"
+                    , "-o", icon "\xf242" <> " <left>% (<timeleft>)"
                     -- AC "on" status
-                    , "-O", "\x1F50B\x1F5F2 <left>% (<timeleft>)"
+                    , "-O", icon "\xf0e7" <> " <left>% (<timeleft>)"
                     -- charged status
-                    , "-i", "\x1F50B"
+                    , "-i", "\xf240"
                     ] 50
 
-    , Run $ Date "\xf073 %F (%a) \x23F2 %T" "date" 10
+    , Run $ Date dateTemplate "date" 10
 
     , Run $ Volume "default" "Master" [ "--template", "<status> <volume>%"
                                       ,  "--"
-                                      , "-o", "\x1F507"
-                                      , "-O", "\x1F50A"
+                                      , "-o", icon "\x1F507"
+                                      , "-O", icon "\x1F50A"
                                       , "-c", Colors.textRegular
                                       , "-C", Colors.textRegular
                                       ] 10
@@ -97,3 +99,12 @@ config env = defaultConfig {
     , Run StdinReader
     ]
   }
+
+dateTemplate :: String
+dateTemplate
+  = concat
+  [ icon "\xf073"
+  , " %F (%a) "
+  , icon "\x23F2"
+  , " %T"
+  ]

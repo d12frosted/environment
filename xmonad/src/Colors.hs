@@ -33,14 +33,27 @@ textWarning = "#e77200"
 textAlert :: Color
 textAlert = "#ca3435"
 
+textFocusedBg :: Color
+textFocusedBg = textRegular
+
 textFocusedFg :: Color
 textFocusedFg = background
 
-textFocusedBg :: Color
-textFocusedBg = textRegular
+textTitleBg :: Color
+textTitleBg = ""
 
 textTitleFg :: Color
 textTitleFg = "#4848ff"
 
-textTitleBg :: Color
-textTitleBg = ""
+--------------------------------------------------------------------------------
+iconBg :: Color
+iconBg = "#f4f4f4"
+
+iconFg :: Color
+iconFg = textRegular
+
+iconFocusedBg :: Color
+iconFocusedBg = iconFg
+
+iconFocusedFg :: Color
+iconFocusedFg = iconBg

@@ -28,5 +28,6 @@ executables:
       - base
       - data-default
       - xmobar
+      - xmonad-contrib
       - d12-hs-path
       - path
