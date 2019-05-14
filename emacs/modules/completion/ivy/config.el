@@ -87,7 +87,7 @@ session)."
     [remap org-capture]              #'counsel-org-capture
     [remap swiper]                   #'counsel-grep-or-swiper)
   :config
-  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)"
         counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable
         ;; Add smart-casing and compressed archive searching (-zS) to
