@@ -77,7 +77,6 @@ extraKeys =
   , ((mod4Mask .|. shiftMask, xK_z), spawn "xlocker")
   , ((mod4Mask, xK_Escape), spawn "switch_kbd_layout t")
   , ((mod4Mask .|. shiftMask, xK_Escape), spawn "switch_kbd_layout")
-  , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s") -- one window
   , ((mod4Mask, xK_Print), spawn "scrot")
   ]
 
