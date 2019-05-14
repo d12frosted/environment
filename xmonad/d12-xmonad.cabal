@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 37bda51e1a2b68743ade341d1bce78b1eea759b3c0ca882bf0e8aed3bebf5024
+-- hash: 87cfc217da726f9eb727a6bd762e9dfb6d6ce1c5697b6cd91dc17d9dfca69194
 
 name:           d12-xmonad
 version:        0.1.0.0
@@ -21,8 +21,8 @@ source-repository head
 executable d12-xmobar
   main-is: xmobar.hs
   other-modules:
-      Colors
-      Icons
+      Utils.Color
+      Utils.Icon
       Paths_d12_xmonad
   hs-source-dirs:
       src
@@ -40,8 +40,8 @@ executable d12-xmobar
 executable d12-xmonad
   main-is: xmonad.hs
   other-modules:
-      Colors
-      Icons
+      Utils.Color
+      Utils.Icon
       Paths_d12_xmonad
   hs-source-dirs:
       src

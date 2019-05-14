@@ -4,8 +4,8 @@
 module Main (main) where
 
 --------------------------------------------------------------------------------
-import qualified Colors
-import qualified Icons
+import qualified Utils.Color as Color
+import qualified Utils.Icon as Icon
 
 --------------------------------------------------------------------------------
 import           Control.Monad.IO.Class (MonadIO)
@@ -49,8 +49,8 @@ xmonadConfig
   , startupHook = setWMName "LG3D"
 
   -- Borders
-  , normalBorderColor = Colors.backgroundInactive
-  , focusedBorderColor = Colors.backgroundActive
+  , normalBorderColor = Color.backgroundInactive
+  , focusedBorderColor = Color.backgroundActive
 
   -- Workspaces
   , workspaces = [ wsCode1
@@ -107,16 +107,16 @@ extraKeys =
 statusBarPP :: PP
 statusBarPP
   = def
-  { ppCurrent = Icons.active
-  , ppHidden = Icons.inactive
+  { ppCurrent = Icon.active
+  , ppHidden = Icon.inactive
   , ppWsSep = ""
   , ppTitle =
-      xmobarColor Colors.textTitleFg Colors.textTitleBg
+      xmobarColor Color.textTitleFg Color.textTitleBg
       . shorten 120
   , ppLayout = \case
-      "Tall"        -> Icons.inactiveThin "\x25E7"
-      "Mirror Tall" -> Icons.inactiveThin "\x2B12"
-      "Full"        -> Icons.inactiveThin "\x23F9"
+      "Tall"        -> Icon.inactiveThin "\x25E7"
+      "Mirror Tall" -> Icon.inactiveThin "\x2B12"
+      "Full"        -> Icon.inactiveThin "\x23F9"
       l             -> l
   , ppSep = " "
   }

@@ -6,8 +6,8 @@
 module Main (main) where
 
 --------------------------------------------------------------------------------
-import qualified Colors
-import           Icons
+import qualified Utils.Color as Color
+import qualified Utils.Icon as Icon
 
 --------------------------------------------------------------------------------
 import           Xmobar
@@ -28,9 +28,9 @@ config env = defaultConfig {
   -- appearance
     font = "xft:Source Code Pro:size=14,Symbola:size=16,FontAwesome:size=14"
   , border = NoBorder
-  , borderColor = Colors.background
-  , bgColor = Colors.background
-  , fgColor = Colors.textRegular
+  , borderColor = Color.background
+  , bgColor = Color.background
+  , fgColor = Color.textRegular
   , alpha = 255
   , position = TopSize C 100 32
 
@@ -40,9 +40,9 @@ config env = defaultConfig {
   , template = concat
     [ "%StdinReader%"
     , "}{"
-    , Icons.static "\x2328" <> " %kbd%"
+    , Icon.static "\x2328" <> " %kbd%"
     , " "
-    , Icons.static "\xf1eb" <> " %wlp3s0wi%"
+    , Icon.static "\xf1eb" <> " %wlp3s0wi%"
     , " "
     , "%default:Master%"
     , " "
@@ -68,26 +68,26 @@ config env = defaultConfig {
     [ Run $ Battery [ "--template" , "<acstatus>"
                     , "--Low"      , "20"        -- units: %
                     , "--High"     , "80"        -- units: %
-                    , "--low"      , Colors.textAlert
-                    , "--normal"   , Colors.textWarning
-                    , "--high"     , Colors.textRegular
+                    , "--low"      , Color.textAlert
+                    , "--normal"   , Color.textWarning
+                    , "--high"     , Color.textRegular
                     , "--" -- battery specific options
                     -- discharging status
-                    , "-o", Icons.static "\xf242" <> " <left>% (<timeleft>)"
+                    , "-o", Icon.static "\xf242" <> " <left>% (<timeleft>)"
                     -- AC "on" status
-                    , "-O", Icons.static "\xf0e7" <> " <left>% (<timeleft>)"
+                    , "-O", Icon.static "\xf0e7" <> " <left>% (<timeleft>)"
                     -- charged status
-                    , "-i", Icons.static "\xf240"
+                    , "-i", Icon.static "\xf240"
                     ] 50
 
     , Run $ Date dateTemplate "date" 10
 
     , Run $ Volume "default" "Master" [ "--template", "<status> <volume>%"
                                       ,  "--"
-                                      , "-o", Icons.static "\x1F507"
-                                      , "-O", Icons.static "\x1F50A"
-                                      , "-c", Colors.textRegular
-                                      , "-C", Colors.textRegular
+                                      , "-o", Icon.static "\x1F507"
+                                      , "-O", Icon.static "\x1F50A"
+                                      , "-c", Color.textRegular
+                                      , "-C", Color.textRegular
                                       ] 10
 
     , Run $ Kbd []
@@ -102,8 +102,8 @@ config env = defaultConfig {
 dateTemplate :: String
 dateTemplate
   = concat
-  [ Icons.static "\xf073"
+  [ Icon.static "\xf073"
   , " %F (%a) "
-  , Icons.static "\x23F2"
+  , Icon.static "\x23F2"
   , " %T"
   ]

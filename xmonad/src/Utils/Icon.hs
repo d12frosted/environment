@@ -2,14 +2,15 @@
 -- characters).
 
 --------------------------------------------------------------------------------
-module Icons ( static
-             , inactive
-             , inactiveThin
-             , active
-             ) where
+module Utils.Icon
+  ( static
+  , inactive
+  , inactiveThin
+  , active
+  ) where
 
 --------------------------------------------------------------------------------
-import Colors
+import Utils.Color
 
 --------------------------------------------------------------------------------
 import XMonad.Hooks.DynamicLog (xmobarColor, wrap)
