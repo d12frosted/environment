@@ -31,7 +31,7 @@ textWarning :: Color
 textWarning = "#e77200"
 
 textAlert :: Color
-textAlert = "#ca3435"
+textAlert = "#962727"
 
 textFocusedBg :: Color
 textFocusedBg = textRegular
