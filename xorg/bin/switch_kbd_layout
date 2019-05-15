@@ -2,26 +2,61 @@
 
 # Select the next keyboard layout from the list [us, ua] or [us, us intl].
 
-USE_CYRILLIC="$1"
+use_cyrillic=
+target_layout=
+target_variant=
 
-layout=$(setxkbmap -query | awk '/layout/{print $2}')
-variant=$(setxkbmap -query | awk '/variant/{print $2}')
-case $layout in
-  us)
-    if [ -z "$USE_CYRILLIC" ]; then
-      case $variant in
-        intl)
-          setxkbmap us
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+    --use-cyrillic)
+      use_cyrillic=t
+      shift
+      ;;
+    --layout)
+      target_layout=$1
+      shift
+      shift
+      ;;
+    --variant)
+      target_variant=$1
+      shift
+      shift
+      ;;
+    *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+if [[ -z "$target_layout" ]]; then
+  layout=$(setxkbmap -query | awk '/layout/{print $2}')
+  variant=$(setxkbmap -query | awk '/variant/{print $2}')
+  case $layout in
+    us)
+      if [ -z "$use_cyrillic" ]; then
+        target_layout=us
+        case $variant in
+          intl)
+            target_variant=
+            ;;
+          *)
+            target_variant=intl
           ;;
-        *)
-          setxkbmap -layout us -variant intl
-          ;;
-      esac
-    else
-      setxkbmap ua
-    fi
-    ;;
-  *)
-    setxkbmap us
-    ;;
-esac
+        esac
+      else
+        target_layout=ua
+      fi
+      ;;
+    *)
+      target_layout=us
+      ;;
+  esac
+fi
+
+setxkbmap -layout $target_layout -variant $target_variant

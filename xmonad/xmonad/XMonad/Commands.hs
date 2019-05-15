@@ -22,7 +22,7 @@ rebuild = spawn "eru xmonad"
 
 --------------------------------------------------------------------------------
 toggleKbd :: MonadIO m => m ()
-toggleKbd = spawn "switch_kbd_layout t"
+toggleKbd = spawn "switch_kbd_layout --use-cyrillic"
 
 toggleKbd' :: MonadIO m => m ()
 toggleKbd' = spawn "switch_kbd_layout"
