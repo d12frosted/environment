@@ -18,7 +18,7 @@ import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Hooks.SetWMName
 import           XMonad.Layout.LayoutModifier
-import           XMonad.Util.EZConfig (additionalKeys)
+import           XMonad.Util.EZConfig (additionalKeysP)
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -64,7 +64,7 @@ xmonadConfig
 
   -- Unfortunately, use urxvt
   , terminal = "urxvt"
-  } `additionalKeys` keybindings
+  } `additionalKeysP` keybindings
 
 --------------------------------------------------------------------------------
 statusBarPP :: PP
