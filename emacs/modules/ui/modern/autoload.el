@@ -18,6 +18,16 @@
 ;;; Code:
 
 ;;;###autoload
+(defun +modern-font-size ()
+  "Return target font pixel size for current display."
+  (when window-system (if (> (x-display-pixel-width) 1920) 18 12)))
+
+;;;###autoload
+(defun +modern-big-font-size ()
+  "Return target big font pixel size for current display."
+  (when window-system (if (> (x-display-pixel-width) 1920) 28 18)))
+
+;;;###autoload
 (defun +modern-dpi (&optional display)
   "Get the DPI of DISPLAY.
 
@@ -38,27 +48,10 @@ DISPLAY is a display name, frame or terminal, as in
       (/ pix-d (mm2in mm-d)))))
 
 ;;;###autoload
-(defun +modern-scale (&optional display)
-  "Get the scale of DISPLAY.
-
-DISPLAY is a display name, frame or terminal, as in
-`display-monitor-attributes-list'."
-  (/ (+modern-dpi display) +modern-target-dpi))
-
-;;;###autoload
 (defun +modern-patch-font-size (font-spec size)
   "Patch size of FONT-SPEC according to display DPI."
   (font-put font-spec :size (round (* (+modern-scale) size)))
   font-spec)
-
-;;;###autoload
-(defun +modern/reload-font ()
-  "Reload `+modern-font', `+modern-variable-pitch-font', and
-`+modern-unicode-font', if set."
-  (interactive)
-  (when +modern-font
-    (set-frame-font +modern-font t))
-  (+modern|init-fonts))
 
 ;;;###autoload
 (defun +modern/reload-theme ()
