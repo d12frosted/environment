@@ -25,6 +25,7 @@ gocryptfs
 hledger
 java-runtime-common
 jq
+kubectl
 net-tools
 networkmanager
 networkmanager-openconnect
