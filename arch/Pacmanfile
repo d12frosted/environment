@@ -7,6 +7,7 @@ aspell
 aspell-en
 aspell-ru
 aspell-uk
+bazel
 bind-tools
 bower
 certbot
