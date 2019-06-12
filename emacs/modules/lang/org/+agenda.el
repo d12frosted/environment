@@ -22,9 +22,7 @@
 (defun +org|setup-agenda ()
   "Setup `org-agenda'."
   (setq
-   org-agenda-files (list org-directory
-			                    (concat org-directory "notes/")
-			                    (concat org-directory "gtd/"))
+   org-agenda-files (list org-directory)
 	 ;; also show state change in log mode
 	 org-agenda-log-mode-items '(closed clock state)
 

@@ -184,7 +184,9 @@
 (def-package! org-brain
   :defer t
   :init
-  (setq org-brain-path (concat org-directory "notes/")
+  (setq org-brain-path org-directory
+        org-brain-scan-directories-recursively nil
+        org-brain-targets-match "NOTE"
 	      org-brain-visualize-sort-function #'org-brain-title<
 	      org-brain-visualize-one-child-per-line t
 	      org-brain-visualize-default-choices 'all
@@ -193,7 +195,22 @@
   :config
   (map! :map org-brain-visualize-mode-map
         :leader
-        :desc "Button" "jb" #'+ace-link-brain-visualize))
+        :desc "Button" "jb" #'+ace-link-brain-visualize)
+  (defun org-brain--file-targets (file)
+    "Return alist of (name . entry-id) for all entries (including the file) in FILE."
+    (let* ((file-relative (org-brain-path-entry-name file))
+           (file-entry-name (org-brain-entry-name file-relative)))
+      (append (list (cons file-entry-name file-relative))
+              (with-temp-buffer
+                (insert-file-contents file)
+                (delay-mode-hooks
+                  (org-mode)
+                  (mapcar (lambda (entry)
+                            (cons (concat file-entry-name "::" (car entry))
+                                  (cadr entry)))
+                          (remove nil (org-map-entries
+                                       #'org-brain--name-and-id-at-point
+                                       org-brain-targets-match)))))))))
 
 (def-package! orgability
   :defer t
