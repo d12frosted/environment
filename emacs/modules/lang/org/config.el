@@ -48,7 +48,9 @@
    org-capture
    org-id
    org-attach
-   org-edna))
+   org-edna
+   ox-latex
+   ox-beamer))
 
 ;;
 ;; Bootstrap
@@ -60,7 +62,8 @@
      +org|setup-clock
      +org|setup-id
      +org|setup-refile
-     +org|setup-attach))
+     +org|setup-attach
+     +org|setup-latex))
 
 (add-hook! 'org-mode-hook
   #'(org-indent-mode
@@ -178,6 +181,17 @@
         org-attach-auto-tag nil
         org-attach-file-list-property nil
         org-attach-store-link-p 'attached))
+
+(defun +org|setup-latex ()
+  "Setup LaTeX functionality."
+  (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
+  (add-to-list 'org-latex-packages-alist '("" "color"))
+  (setq org-latex-listings 'minted)
+  (setq org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  )
 ;;
 ;; Packages
 
