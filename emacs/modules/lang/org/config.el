@@ -50,7 +50,10 @@
    org-attach
    org-edna
    ox-latex
-   ox-beamer))
+   ox-beamer
+   ob-emacs-lisp
+   ob-dot
+   ob-plantuml))
 
 ;;
 ;; Bootstrap
@@ -63,6 +66,7 @@
      +org|setup-id
      +org|setup-refile
      +org|setup-attach
+     +org|setup-babel
      +org|setup-latex))
 
 (add-hook! 'org-mode-hook
@@ -181,6 +185,11 @@
         org-attach-auto-tag nil
         org-attach-file-list-property nil
         org-attach-store-link-p 'attached))
+
+(defun +org|setup-babel ()
+  "Setup babel functionality."
+  ;; (add-to-list 'org-src-lang-modes (cons "dot" 'graphviz-dot))
+  )
 
 (defun +org|setup-latex ()
   "Setup LaTeX functionality."
