@@ -58,6 +58,7 @@
  (git +forge)
 
  :lang
+ dot
  emacs-lisp
  go
  haskell
