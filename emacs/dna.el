@@ -61,7 +61,7 @@
  dot
  emacs-lisp
  go
- haskell
+ (haskell +intero)
  nix
  org
  plantuml
