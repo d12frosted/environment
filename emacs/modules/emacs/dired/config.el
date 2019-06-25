@@ -22,7 +22,6 @@
   :init
   ;; visit file or directory in place, reuse buffers
   (put 'dired-find-alternate-file 'disabled nil)
-  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
   (setq
    dired-listing-switches "-alh"
    ;; Always copy/delete recursively
@@ -36,7 +35,8 @@
   :config
   ;; Kill buffer when quitting dired buffers
   (define-key dired-mode-map [remap quit-window] (λ! (quit-window t)))
-
+  ;; reuse buffers when navigating
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
   ;; sort dired buffer so directories are first
   (defun +dired|sort-directories-first ()
     "List directories first in dired buffers."
