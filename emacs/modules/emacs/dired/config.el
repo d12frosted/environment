@@ -22,9 +22,10 @@
   :init
   ;; visit file or directory in place, reuse buffers
   (put 'dired-find-alternate-file 'disabled nil)
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
   (setq
    dired-listing-switches "-alh"
-   ; Always copy/delete recursively
+   ;; Always copy/delete recursively
    dired-recursive-copies  'always
    dired-recursive-deletes 'top
    ;; Auto refresh dired, but be quiet about it
