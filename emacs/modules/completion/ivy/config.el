@@ -54,13 +54,13 @@ session)."
 	ivy-fixed-height-minibuffer t
 	ivy-format-function #'ivy-format-function-line
 	;; disable magic slash on non-match
-        ivy-magic-slash-non-match-action nil
+  ivy-magic-slash-non-match-action nil
 	;; don't show recent files in switch-buffer
-        ivy-use-virtual-buffers nil
+  ivy-use-virtual-buffers nil
 	;; ...but if that ever changes, show their full path
-        ivy-virtual-abbreviate 'full
+  ivy-virtual-abbreviate 'full
 	;; don't quit minibuffer on delete-error
-        ivy-on-del-error-function nil)
+  ivy-on-del-error-function nil)
 
   (define-key! 'global
     [remap switch-to-buffer]       #'ivy-switch-buffer
