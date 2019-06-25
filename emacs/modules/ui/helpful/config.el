@@ -17,9 +17,12 @@
 ;;
 ;;; Code:
 
-;; `helpful'
-(define-key! 'global
-  [remap describe-function] #'helpful-callable
-  [remap describe-command]  #'helpful-command
-  [remap describe-variable] #'helpful-variable
-  [remap describe-key]      #'helpful-key)
+(def-package! helpful
+  :init
+  (define-key! 'global
+    [remap describe-function] #'helpful-callable
+    [remap describe-command]  #'helpful-command
+    [remap describe-variable] #'helpful-variable
+    [remap describe-key]      #'helpful-key)
+  (setq helpful-switch-buffer-function #'+helpful-switch-to-buffer)
+  )
