@@ -49,18 +49,18 @@ session)."
   :after-call pre-command-hook
   :config
   (setq projectile-completion-system 'ivy
-	ivy-height 15
-	ivy-wrap t
-	ivy-fixed-height-minibuffer t
-	ivy-format-function #'ivy-format-function-line
-	;; disable magic slash on non-match
-  ivy-magic-slash-non-match-action nil
-	;; don't show recent files in switch-buffer
-  ivy-use-virtual-buffers nil
-	;; ...but if that ever changes, show their full path
-  ivy-virtual-abbreviate 'full
-	;; don't quit minibuffer on delete-error
-  ivy-on-del-error-function nil)
+	      ivy-height 15
+	      ivy-wrap t
+	      ivy-fixed-height-minibuffer t
+	      ivy-format-function #'ivy-format-function-line
+	      ;; disable magic slash on non-match
+        ivy-magic-slash-non-match-action nil
+	      ;; don't show recent files in switch-buffer
+        ivy-use-virtual-buffers nil
+	      ;; ...but if that ever changes, show their full path
+        ivy-virtual-abbreviate 'full
+	      ;; don't quit minibuffer on delete-error
+        ivy-on-del-error-function nil)
 
   (define-key! 'global
     [remap switch-to-buffer]       #'ivy-switch-buffer
@@ -98,11 +98,11 @@ session)."
 
 (def-package! counsel-projectile
   :commands (counsel-projectile-find-file
-	     counsel-projectile-find-dir
-	     counsel-projectile-switch-to-buffer
+	           counsel-projectile-find-dir
+	           counsel-projectile-switch-to-buffer
              counsel-projectile-grep
-	     counsel-projectile-ag
-	     counsel-projectile-switch-project)
+	           counsel-projectile-ag
+	           counsel-projectile-switch-project)
   :init
   (define-key! 'global
     [remap projectile-find-file]        #'+ivy/projectile-find-file
