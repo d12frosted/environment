@@ -29,6 +29,7 @@
    dired-recursive-copies  'always
    dired-recursive-deletes 'top
    ;; Auto refresh dired, but be quiet about it
+   dired-auto-revert-buffer t
    global-auto-revert-non-file-buffers t
    auto-revert-verbose nil
    dired-hide-details-hide-symlink-targets nil)
