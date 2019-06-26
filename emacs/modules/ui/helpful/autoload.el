@@ -17,6 +17,7 @@
 ;;
 ;;; Code:
 
+;;;###autoload
 (defun +helpful-switch-to-buffer (buffer-or-name)
   "Switch to helpful BUFFER-OR-NAME.
 
