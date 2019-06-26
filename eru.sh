@@ -540,6 +540,11 @@ arch_guard && {
     sudo pacman -S --noconfirm --needed $(comm -23 "$pacman_file" "$pacman_ignore")
   }
 
+  theme_guard "upgrade" "Upgrade Arch Linux" && {
+    sudo pacman -Syu --noconfirm
+    yay -Syu --noconfirm
+  }
+
   theme_guard "hardware" "Setup keyboard" && {
     if [[ ! -f /usr/share/X11/xkb/symbols/ua.bak ]]; then
       sudo mv /usr/share/X11/xkb/symbols/ua /usr/share/X11/xkb/symbols/ua.bak
