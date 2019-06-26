@@ -576,13 +576,6 @@ macos_guard && {
   }
 }
 
-theme "Fish" "Setup fish variables"
-check fish && {
-  echo "set -U XDG_CONFIG_HOME $target" | fish
-  echo "set -U XDG_CACHE_HOME $HOME/.cache" | fish
-  echo "set -U XDG_DATA_HOME $HOME/.local/share" | fish
-}
-
 theme "Git" "Create a local git config file"
 touch "$target/git/local.config"
 
@@ -614,6 +607,13 @@ arch_guard && {
       log "No running instance of xmonad is found. Meh..."
     fi
   }
+}
+
+theme "Fish" "Setup fish variables"
+check fish && {
+  fish -c "set -U XDG_CONFIG_HOME $target"
+  fish -c "set -U XDG_CACHE_HOME $HOME/.cache"
+  fish -c "set -U XDG_DATA_HOME $HOME/.local/share"
 }
 
 theme_guard "Emacs" "Refresh Nucleus" && {
