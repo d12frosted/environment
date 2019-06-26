@@ -124,6 +124,8 @@ set fish_greeting "
     `-=-'          `--'
 "
 
-if test "$TERM" = "linux"
-  clear
+if status --is-interactive
+  if test "$TERM" = "linux"
+    clear
+  end
 end
