@@ -1,3 +1,27 @@
+set fish_greeting "
+                       &    &     &
+                        &&&&  &  && &
+                &   &     && &&&&&&&
+                 &&& &       &&&& &&&
+              &&&&& &&& &   /~&&& &&   &&
+             && &&&&_&_&_ & \&&&&&&&& && &&
+                  &   &&\&&&&__&&&&&&&_/&&&  & &
+                         \|\\\__/_/   &&& &
+                         \_   _//     & &
+                               \\
+                                \\
+                                //~
+                                \\
+                                /~
+                                 /~
+             ;,'             (---./~~\.---)
+     _o_    ;:;'   ,          (          )
+ ,-.'---`.__ ;      ~,         (________)
+((j`~=~=~',-'     ,____.
+ `-\     /        |    j
+    `-=-'          `--'
+"
+
 set -l PRIVATE_FISH_CONFIGS_HOME $HOME/Dropbox/Apps/fish
 
 # private pre-configs
@@ -13,13 +37,6 @@ if test ! -d $XDG_CONFIG_HOME/bin
   mkdir -p $XDG_CONFIG_HOME/bin
 end
 
-# variables
-set -x GEM_HOME $HOME/.local/gem
-set -x GEM_PATH $HOME/.local/gem
-set -x EDITOR "emacsclient"
-set fish_greeting ""
-set cmd_notification_threshold 8000
-
 # PATH
 function __append_to_path -a path
   if test -d $path
@@ -31,6 +48,10 @@ set -x PATH $XDG_CONFIG_HOME/bin $PATH
 __append_to_path $GEM_HOME/bin
 __append_to_path /usr/texbin
 __append_to_path /usr/local/sbin
+
+# variables
+set -x EDITOR "emacsclient"
+set cmd_notification_threshold 8000
 
 # aliases
 alias ghci "stack ghci"
@@ -85,44 +106,29 @@ set fish_pager_color_progress cyan
 # Eru completions
 complete -c eru -a 'ssh repositories linking packages guardian os hardware' --no-files
 
-# private post-configs
-if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
-  source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
+# install fisher
+if not functions -q fisher
+  curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
+  fish -c fisher
 end
 
 # ssh-agent
 # https://github.com/danhper/fish-ssh-agent
 if test -z "$SSH_ENV"
-    set -xg SSH_ENV $HOME/.ssh/environment
+  set -xg SSH_ENV $HOME/.ssh/environment
 end
-
 if not __ssh_agent_is_started
-    __ssh_agent_start
+  __ssh_agent_start
 end
 
-set fish_greeting "
-                       &    &     &
-                        &&&&  &  && &
-                &   &     && &&&&&&&
-                 &&& &       &&&& &&&
-              &&&&& &&& &   /~&&& &&   &&
-             && &&&&_&_&_ & \&&&&&&&& && &&
-                  &   &&\&&&&__&&&&&&&_/&&&  & &
-                         \|\\\__/_/   &&& &
-                         \_   _//     & &
-                               \\
-                                \\
-                                //~
-                                \\
-                                /~
-                                 /~
-             ;,'             (---./~~\.---)
-     _o_    ;:;'   ,          (          )
- ,-.'---`.__ ;      ~,         (________)
-((j`~=~=~',-'     ,____.
- `-\     /        |    j
-    `-=-'          `--'
-"
+# nvm
+export NVM_DIR="$XDG_CACHE_HOME/.nvm"
+export NVM_SOURCE="/usr/share/nvm"
+
+# private post-configs
+if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
+  source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
+end
 
 if status --is-interactive
   if test "$TERM" = "linux"
