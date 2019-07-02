@@ -125,6 +125,9 @@ end
 export NVM_DIR="$XDG_CACHE_HOME/.nvm"
 export NVM_SOURCE="/usr/share/nvm"
 
+# go
+set -x GOPATH "$XDG_CACHE_HOME/go"
+
 # private post-configs
 if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
   source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
