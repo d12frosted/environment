@@ -149,3 +149,23 @@ file if it exists, without confirmation."
   "Open the current file as root."
   (interactive)
   (+file/sudo-find (file-truename buffer-file-name)))
+
+;;;###autoload
+(defalias '+file-locate-dominting-file #'locate-dominating-file)
+
+;;;###autoload
+(defun +file-locate-dominting-dir (file name)
+  "Starting at FILE, look up directory hierarchy for directory with NAME.
+FILE can be a file or a directory. If it's a file, its directory
+will serve as the starting point for searching the hierarchy of
+directories. Stop at the first parent directory with NAME, and
+return the directory. Return nil if not found."
+  (expand-file-name
+   (locate-dominating-file
+    buffer-file-name
+    (lambda (dir)
+      (and (file-directory-p dir)
+           (string-equal name
+                         (file-name-nondirectory
+                          (directory-file-name
+                           (file-name-directory dir)))))))))
