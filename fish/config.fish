@@ -122,8 +122,8 @@ if not __ssh_agent_is_started
 end
 
 # nvm
-export NVM_DIR="$XDG_CACHE_HOME/.nvm"
-export NVM_SOURCE="/usr/share/nvm"
+set -x NVM_DIR "$XDG_CACHE_HOME/nvm"
+set -x NVM_SOURCE "/usr/share/nvm"
 
 # go
 set -x GOPATH "$XDG_CACHE_HOME/go"
