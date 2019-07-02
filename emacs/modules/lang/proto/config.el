@@ -18,6 +18,7 @@
 ;;; Code:
 
 (after! protobuf-mode
+  (add-hook 'protobuf-mode-hook #'+proto|install-dependencies)
   (flycheck-define-checker protobuf-protoc
     "A protobuf syntax checker using the protoc compiler.
 See URL `https://developers.google.com/protocol-buffers/'."
