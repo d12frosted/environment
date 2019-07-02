@@ -18,6 +18,10 @@
 ;;; Code:
 
 ;;;###autoload
+(defvar +emacs-lisp-flycheck-iniquity-files nil
+  "List of filenames that should not be flychecked.")
+
+;;;###autoload
 (defun +emacs-lisp|disable-flycheck-maybe ()
   "Disable flycheck-mode if in emacs.d."
   (when (and (bound-and-true-p flycheck-mode)
@@ -25,7 +29,9 @@
              (or (not buffer-file-name)
                  (cl-loop for dir in (list nucleus-emacs-dir)
                           if (file-in-directory-p buffer-file-name dir)
-                          return t)))
+                          return t)
+                 (seq-contains +emacs-lisp-flycheck-iniquity-files
+                               (file-name-nondirectory buffer-file-name))))
     (flycheck-mode -1)))
 
 ;;;###autoload
