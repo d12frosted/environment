@@ -35,10 +35,11 @@ See URL `https://developers.google.com/protocol-buffers/'."
        (getenv "GOPATH")
        "/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis"))
      source-inplace)
+    :error-filter flycheck-fill-empty-line-numbers
     :error-patterns
     ((info line-start (file-name) ":" line ":" column ": note: " (message) line-end)
      (error line-start (file-name) ":" line ":" column ": " (message) line-end)
-     (error line-start (file-name) ":" line " " (message) line-end)
+     (error line-start (file-name) ": " (message) line-end)
      (error line-start (message "In file included from") " " (file-name) ":" line ":" column ":" line-end)
      )
     :modes protobuf-mode
