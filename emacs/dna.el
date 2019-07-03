@@ -19,6 +19,7 @@
 
 (nucleus!
  :feature
+ dir-settings
  eval
  file-templates
  projects
