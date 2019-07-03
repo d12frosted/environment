@@ -34,6 +34,7 @@ manageAppsWorkspace :: Query (Endo WindowSet)
 manageAppsWorkspace
   = composeAll . concat $
     [ [ className =? "Firefox" --> doShift wsWeb ]
+    , [ className =? "Nightly" --> doShift wsWeb ]
     , [ className =? "jetbrains-idea" --> doShift wsCode2 ]
     , [ className =? "Spotify" --> doShift wsMedia ]
     , [ className =? "TelegramDesktop" --> doShift wsChat ]
