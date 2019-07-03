@@ -19,5 +19,6 @@
 
 (add-hook 'find-file-hook '+dir-settings/load)
 
-(when (featurep! :lang emacs-lisp)
-  (add-to-list '+emacs-lisp-flycheck-iniquity-files +dir-settings-filename))
+(after! elisp-mode
+  (when (featurep! :lang emacs-lisp)
+    (add-to-list '+emacs-lisp-flycheck-iniquity-files +dir-settings-filename)))
