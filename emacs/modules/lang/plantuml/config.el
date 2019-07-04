@@ -22,7 +22,8 @@
   :init
   (setq plantuml-jar-path (concat nucleus-etc-dir "plantuml.jar")
         org-plantuml-jar-path plantuml-jar-path
-        plantuml-output-type "utxt")
+        plantuml-output-type "svg"
+        plantuml-default-exec-mode 'jar)
   ;; TODO popup rules
   ;; :config
   ;; (set-popup-rule! "^\\*PLANTUML" :size 0.4 :select nil :ttl 0)
