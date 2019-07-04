@@ -70,7 +70,7 @@
                 ((org-agenda-overriding-header "To archive")
                  (org-agenda-skip-function '+agenda--skip-non-archivable-tasks)
                  (org-tags-match-list-sublevels nil)))
-          (tags-todo "-wix-CANCELLED+WAITING-READING-focus|HOLD/!"
+          (tags-todo "-wix-CANCELLED+WAITING-READING-FOCUS|-wix+HOLD/!"
                      ((org-agenda-overriding-header
                        (concat "Waiting and Postponed Tasks"
                                (if +agenda-hide-scheduled-and-waiting-next-tasks
@@ -88,12 +88,12 @@
           (agenda "" ((org-agenda-span 'day)
                       (org-agenda-sorting-strategy
                        '(habit-down time-up category-keep todo-state-down priority-down))))
-          (tags-todo "wix+PROJECT-CANCELLED/!"
+          (tags-todo "wix+PROJECT-CANCELLED-HOLD/!"
                      ((org-agenda-overriding-header "Stuck Projects")
                       (org-agenda-skip-function '+agenda--skip-non-stuck-projects)
                       (org-agenda-sorting-strategy
                        '(todo-state-down priority-down effort-up category-keep))))
-          (tags-todo "wix+PROJECT"
+          (tags-todo "wix+PROJECT-HOLD"
                      ((org-agenda-overriding-header (concat "Projects"))
                       (org-tags-match-list-sublevels t)
                       (org-agenda-skip-function '+agenda--skip-non-projects)
@@ -120,7 +120,10 @@
                      ((org-agenda-overriding-header
                        (concat "People-related"))
                       (org-agenda-sorting-strategy
-                       '(tag-up todo-state-down priority-down effort-up category-keep))))
+                       '(tag-up todo-state-down priority-down effort-up category-keep))
+                      (org-agenda-tags-todo-honor-ignore-options t)
+                      (org-agenda-todo-ignore-scheduled +agenda-hide-scheduled-and-waiting-next-tasks)
+                      (org-agenda-todo-ignore-deadlines +agenda-hide-scheduled-and-waiting-next-tasks)))
 
           (tags-todo (format "wix-%s-REFILE-CANCELLED-WAITING-HOLD/!"
                              (string-join +org-wix-people-tags "-"))
@@ -177,4 +180,5 @@
            '(todo-state-down effort-up category-keep))
           (org-agenda-buffer-name +agenda-habits-buffer-name)))
 
-        ))
+        )
+      )
