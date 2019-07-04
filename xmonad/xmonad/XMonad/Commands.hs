@@ -10,7 +10,7 @@ import XMonad
 
 --------------------------------------------------------------------------------
 dmenu :: MonadIO m => m ()
-dmenu = spawn "dmenu_run -h 32 -fn 'Source Code Pro-14'"
+dmenu = spawn "dmenu_run -h 32 -fn 'Source Code Pro-10'"
 
 --------------------------------------------------------------------------------
 xlock :: MonadIO m => m ()

@@ -26,7 +26,7 @@ main = do
 config :: Env -> Config
 config env = defaultConfig {
   -- appearance
-    font = "xft:Source Code Pro:size=14,Symbola:size=16,FontAwesome:size=14"
+    font = "xft:Source Code Pro:size=10,Symbola:size=10,FontAwesome:size=10"
   , border = NoBorder
   , borderColor = Color.background
   , bgColor = Color.background
