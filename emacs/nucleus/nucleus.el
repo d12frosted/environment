@@ -32,12 +32,10 @@ in the command line or use --debug-init to enable this.")
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 
-(defconst nucleus-home-dir
-  (file-name-as-directory
-   (getenv "HOME"))
+(defconst nucleus-home-dir (file-name-as-directory (getenv "HOME"))
   "Path to user home directory.
 
-In a nutshell, it's just a Value of $HOME.")
+In a nutshell, it's just a value of $HOME.")
 
 (defconst nucleus-config-dir
   (file-name-as-directory
@@ -45,50 +43,55 @@ In a nutshell, it's just a Value of $HOME.")
        (concat nucleus-home-dir ".config")))
   "The root directory for personal configurations.")
 
-(defvar nucleus-projects-dir (concat nucleus-home-dir "Developer/")
+(defconst nucleus-projects-dir (concat nucleus-home-dir "Developer/")
   "The root directory for personal projects.")
 
-(defvar nucleus-emacs-dir
+(defconst nucleus-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
   "The path to this emacs directory.")
 
-(defvar nucleus-dir (concat nucleus-emacs-dir "nucleus/")
+(defconst nucleus-dir (concat nucleus-emacs-dir "nucleus/")
   "The root directory of nucleus.")
 
-(defvar nucleus-modules-dir (concat nucleus-emacs-dir "modules/")
+(defconst nucleus-modules-dir (concat nucleus-emacs-dir "modules/")
   "The root directory for modules.")
 
-(defvar nucleus-private-modules-dir
+(defconst nucleus-private-modules-dir
   (concat nucleus-home-dir "Dropbox/Apps/Emacs/modules/")
   "The root directory for private modules.")
 
-;; TODO: move outside of $XDG_CONFIG_HOME
-(defvar nucleus-local-dir (concat nucleus-emacs-dir ".local/")
+(defconst nucleus-local-dir
+  (concat
+   (file-name-as-directory
+    (or (getenv "XDG_CACHE_HOME")
+        (concat nucleus-home-dir ".cache")))
+   "emacs/")
   "The root directory for local Emacs files.
 
 Use this as permanent storage for files that are safe to share
 across systems.")
 
-(defvar nucleus-etc-dir (concat nucleus-local-dir "etc/")
+(defconst nucleus-etc-dir (concat nucleus-local-dir "etc/")
   "Directory for non-volatile storage.
 
 Use this for files that don't change much, like servers binaries,
 external dependencies or long-term shared data.")
 
-(defvar nucleus-cache-dir (concat nucleus-local-dir "cache/")
+(defconst nucleus-cache-dir (concat nucleus-local-dir "cache/")
   "Directory for volatile storage.
 
 Use this for files that change often, like cache files.")
 
-(defvar nucleus-packages-dir (concat nucleus-local-dir "packages/")
+(defconst nucleus-packages-dir (concat nucleus-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are
   stored.")
 
-(defvar nucleus-autoload-file (concat nucleus-local-dir "autoloads.el")
+(defconst nucleus-autoload-file (concat nucleus-local-dir "autoloads.el")
   "Where `nucleus-reload-nucleus-autoloads' will generate its
   core autoloads file.")
 
-(defvar nucleus-package-autoload-file (concat nucleus-local-dir "autoloads.pkg.el")
+(defconst nucleus-package-autoload-file
+  (concat nucleus-local-dir "autoloads.pkg.el")
   "Where `nucleus-reload-package-autoloads' will generate its
 package.el autoloads file.")
 
@@ -104,10 +107,6 @@ package.el autoloads file.")
 (defvar nucleus-emacs-changed-p nil
   "If non-nil, the running version of Emacs is different from the
 first time nucleus was setup, which can cause problems.")
-
-(defvar nucleus-site-load-path load-path
-  "The starting load-path, before it is altered by
-  `nucleus-initialize'.")
 
 (defvar nucleus--last-emacs-file (concat nucleus-local-dir "emacs-version.el"))
 (defvar nucleus--last-emacs-version nil)
