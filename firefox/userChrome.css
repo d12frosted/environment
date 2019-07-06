@@ -1,0 +1,105 @@
+/*
+ * Make the toolbar extra-compact
+ */
+
+:root[uidensity=compact] #urlbar,
+:root[uidensity=compact] .searchbar-textbox {
+  font-size: unset !important;
+  min-height: 24px !important;
+}
+
+:root[uidensity=compact] #identity-box {
+  max-height: 22px;
+}
+
+:root[uidensity=compact] #nav-bar .toolbarbutton-1 {
+  padding: 0px !important;
+}
+
+/* Compatibility with auto-hide.css */
+:root[uidensity=compact] #navigator-toolbox {
+  --nav-bar-height: 31px !important;
+}
+
+:root[uidensity=compact] .toolbarbutton-icon {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+:root[uidensity=compact] .toolbarbutton-1 > .toolbarbutton-icon {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+
+/*
+ * Makes tabs extra-compact
+ */
+
+[uidensity=compact]:root {
+  --tab-min-height: 22px !important;
+  --newtab-margin: -3px 0 -3px -3px !important;
+}
+
+:root[uidensity=compact] #tabbrowser-tabs {
+  --tab-min-height: var(--tab-min-height) !important;
+}
+
+:root[uidensity=compact] .tabbrowser-tab {
+  max-height: var(--tab-min-height) !important;
+}
+
+:root[uidensity=compact] .tabs-newtab-button{
+  margin: var(--newtab-margin) !important;
+}
+
+:root[uidensity=compact] .tab-icon-image {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+:root[uidensity=compact] .tab-close-button {
+  display: none;
+}
+
+:root[uidensity=compact] .tab-line {
+  height: 1px !important;
+}
+
+/*
+ * Prevent tabs overflow
+ */
+
+.tabbrowser-tab {
+  min-width: 1em !important;
+  clip-width: 1em !important;
+}
+
+/*
+ * Compact fonts
+ */
+
+:root[uidensity=compact] #navigator-toolbox {
+  font-size: 10px;
+}
+
+:root[uidensity=compact] .bookmark-item {
+  font-size: 10px
+}
+
+/*
+ * Compact search
+ */
+
+:root[uidensity=compact] .search-panel-one-offs-header {
+  display: none;
+}
+
+:root[uidensity=compact] .search-panel-one-offs {
+  display: none;
+}
+
+.urlbarView-row {
+  font-size: 12px !important;
+  height: 16px !important;
+}
