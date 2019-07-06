@@ -57,7 +57,7 @@
   (pinentry-start))
 
 (def-package! forge
-  :when (featurep! :tools magit +forge)
+  :when (featurep! :tools git +forge)
   ;; We defer loading even further because forge's dependencies will try to
   ;; compile emacsql, which is a slow and blocking operation.
   :after-call magit-status
