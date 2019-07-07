@@ -39,5 +39,4 @@ manageAppsWorkspace
     , [ className =? "Spotify" --> doShift wsMedia ]
     , [ className =? "TelegramDesktop" --> doShift wsChat ]
     , [ className =? "Slack" --> doShift wsChat ]
-    , [ className =? "Thunderbird" --> doShift wsMail ]
     ]

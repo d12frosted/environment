@@ -57,7 +57,6 @@ xmonadConfig
                  , wsCode2
                  , wsWeb
                  , wsChat
-                 , wsMail
                  , wsMedia
                  , wsOther
                  ]
