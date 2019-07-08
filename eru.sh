@@ -278,8 +278,7 @@ function safe_link() {
   # shellcheck disable=SC2086
   f=$(eval echo $1)
   s="$(pwd)/$f"
-  shift
-  t="${*/#\~/$HOME}"
+  t=$(eval echo "$2")
   d=$(dirname "$t")
 
   if [[ -d "$d" ]]; then
