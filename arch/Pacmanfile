@@ -13,6 +13,7 @@ bower
 certbot
 docker
 docker-compose
+dunst
 expect
 fd
 feh
@@ -30,7 +31,6 @@ net-tools
 networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
-dunst
 npm
 ntp
 openssh
