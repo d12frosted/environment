@@ -1,19 +1,24 @@
 -- | Defines colours used in the XMonad and XMobar configurations.
 
 --------------------------------------------------------------------------------
+
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes #-}
 
 --------------------------------------------------------------------------------
+
 module Utils.Color where
 
 --------------------------------------------------------------------------------
+
 import Data.String
 
 --------------------------------------------------------------------------------
+
 type Color = forall a. IsString a => a
 
 --------------------------------------------------------------------------------
+
 background :: Color
 background = "#fefefe"
 
@@ -24,6 +29,7 @@ backgroundActive :: Color
 backgroundActive = "#ca3435"
 
 --------------------------------------------------------------------------------
+
 textRegular :: Color
 textRegular = "#050505"
 
@@ -46,6 +52,7 @@ textTitleFg :: Color
 textTitleFg = "#4848ff"
 
 --------------------------------------------------------------------------------
+
 iconStaticBg :: Color
 iconStaticBg = "#f4faf4"
 
@@ -63,3 +70,5 @@ iconActiveBg = "#bfdec8"
 
 iconActiveFg :: Color
 iconActiveFg = textRegular
+
+--------------------------------------------------------------------------------
