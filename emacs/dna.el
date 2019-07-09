@@ -57,6 +57,7 @@
 
  :tools
  (git +forge)
+ pdf
 
  :lang
  dot
