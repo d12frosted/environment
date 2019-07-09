@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+################################################################################
+
+APPLICATION=notify
+URGENCY=normal
+SHOW_HELP=
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+  case $key in
+    -m|--message)
+      MESSAGE="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -t|--title)
+      TITLE="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -a|--application)
+      APPLICATION="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -u|--urgency)
+      URGENCY="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -h|--help)
+      SHOW_HELP=true
+      shift # past argument
+      ;;
+    *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+function print_usage() {
+  echo "Usage:
+  notify [-a APP] -t TITLE -m MESSAGE [-u URGENCY]
+
+Help Options:
+  -h|--help             Show help options
+
+Application Options:
+  -a|--help TEXT        Specify the application sending notification
+  -t|--title TEXT       Specify the title of the notification
+  -m|--message TEXT     Specify the message of the notification
+  -u|--urgency LEVEL    Specify the urgency level (low, normal or critical)
+"
+}
+
+if [[ -n "$SHOW_HELP" ]]; then
+  print_usage
+  exit 0
+fi
+
+if [[ -z $TITLE ]]; then
+  echo "Missing title!"
+  echo
+  print_usage
+  exit 1
+fi
+
+if [[ -z $MESSAGE ]]; then
+  echo "Missing message!"
+  echo
+  print_usage
+  exit 1
+fi
+
+################################################################################
+
+function check() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+################################################################################
+
+check notify-send && {
+  notify-send -a "$APPLICATION" "$TITLE" "$MESSAGE" -u "$URGENCY"
+}
+
+################################################################################
