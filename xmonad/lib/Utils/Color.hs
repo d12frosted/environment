@@ -71,4 +71,10 @@ iconActiveBg = "#bfdec8"
 iconActiveFg :: Color
 iconActiveFg = textRegular
 
+iconAlertBg :: Color
+iconAlertBg = "#fef0f0"
+
+iconAlertFg :: Color
+iconAlertFg = textRegular
+
 --------------------------------------------------------------------------------

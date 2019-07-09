@@ -64,7 +64,7 @@ config env = defaultConfig {
     , " "
     , "%date%"
     , " "
-    , Icon.static "%notification-status%"
+    , "%notification-status%"
     , " "
     ]
 
@@ -111,7 +111,7 @@ config env = defaultConfig {
     , Run $ Wireless "wlp3s0" [ "--template", "<essid>"
                               ] 100
 
-    , Run $ NotificationStatus 100
+    , Run $ NotificationStatus 10
 
     , Run StdinReader
     ]
@@ -135,8 +135,8 @@ instance Exec NotificationStatus where
   start (NotificationStatus r) callback = if r > 0 then go else exec >>= cb
     where go = exec >>= cb >> tenthSeconds r >> go
           exec = execProg "notify" ["status"] "?"
-          cb "enabled" = callback "\xf0f3"
-          cb "disabled" = callback "\xf1f6"
+          cb "enabled" = callback $ Icon.static "\xf0f3"
+          cb "disabled" = callback $ Icon.alert "\xf1f6"
           cb _          = callback "?"
 
 --------------------------------------------------------------------------------

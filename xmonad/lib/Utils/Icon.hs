@@ -2,20 +2,25 @@
 -- characters).
 
 --------------------------------------------------------------------------------
+
 module Utils.Icon
   ( static
   , inactive
   , inactiveThin
   , active
+  , alert
   ) where
 
 --------------------------------------------------------------------------------
+
 import Utils.Color
 
 --------------------------------------------------------------------------------
+
 import XMonad.Hooks.DynamicLog (xmobarColor, wrap)
 
 --------------------------------------------------------------------------------
+
 static :: String -> String
 static = xmobarColor iconStaticFg iconStaticBg . thin
 
@@ -28,7 +33,11 @@ inactive = xmobarColor iconInactiveFg iconInactiveBg . wide
 active :: String -> String
 active = xmobarColor iconActiveFg iconActiveBg . wide
 
+alert :: String -> String
+alert = xmobarColor iconAlertFg iconAlertBg  . thin
+
 --------------------------------------------------------------------------------
+
 wide :: String -> String
 wide = wrap " " " "
 
