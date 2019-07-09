@@ -44,5 +44,8 @@ autolock &
 # I rarely see my wallpapers. But when I do, I am happy.
 ~/.fehbg &
 
+# Being distracted by some obnoxious notifications is so nice.
+dunst &
+
 # Because every X needs some algebra to tame it.
 d12-xmonad

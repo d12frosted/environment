@@ -29,6 +29,7 @@ net-tools
 networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
+dunst
 npm
 ntp
 openssh
