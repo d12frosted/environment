@@ -79,7 +79,6 @@ function __d12_prompt__on_duration_exceeded -a duration
 end
 
 function __d12_prompt__notify_completion -a duration
-  if command -v terminal-notifier > /dev/null
-    echo -es 'Finished in ' $duration ' ms' | terminal-notifier
-  end
+  set last_cmd (echo $history[1] | cut -d ' ' -f 1)
+  notify -a "Terminal" -t $last_cmd -m "Finished in $duration ms" -u low
 end
