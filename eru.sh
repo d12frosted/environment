@@ -559,6 +559,22 @@ arch_guard && {
     sudo cp "$XDG_CONFIG_HOME/arch/lock@.service" /etc/systemd/system/lock@.service
     systemctl enable "lock@${USER}.service" || error "systemd is not working"
   }
+
+  theme_guard "hardware" "Setup backlight rules" && {
+    tmp_rule=$(mktemp)
+    for backlight in /sys/class/backlight/*; do
+      name=$(basename "$backlight")
+      echo "ACTION==\"add\", SUBSYSTEM==\"backlight\", KERNEL==\"$name\", RUN+=\"/bin/chgrp video /sys/class/backlight/%k/brightness\"" >> "$tmp_rule"
+      echo "ACTION==\"add\", SUBSYSTEM==\"backlight\", KERNEL==\"$name\", RUN+=\"/bin/chmod g+w /sys/class/backlight/%k/brightness\"" >> "$tmp_rule"
+    done
+    sudo cp "$tmp_rule" /etc/udev/rules.d/backlight.rules
+    if id -nG "$USER" | grep -qw "video"; then
+      echo "You are already able to adjust brightness level"
+    else
+      echo "Adding you to 'video' user group"
+      sudo gpasswd -a "$USER" video
+    fi
+  }
 }
 
 macos_guard && {

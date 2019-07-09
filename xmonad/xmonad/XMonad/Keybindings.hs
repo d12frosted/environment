@@ -1,16 +1,15 @@
 -- | Keybindings for XMonad. Because why not?
 
 --------------------------------------------------------------------------------
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE LambdaCase #-}
 
---------------------------------------------------------------------------------
 module XMonad.Keybindings where
 
 --------------------------------------------------------------------------------
+
 import           XMonad.Commands
 
 --------------------------------------------------------------------------------
+
 import           XMonad
 
 --------------------------------------------------------------------------------
@@ -22,6 +21,8 @@ keybindings =
   , ("<XF86AudioLowerVolume>", vlmDec)
   , ("<XF86AudioMute>", vlmMute)
   , ("<XF86AudioMicMute>", micMute)
+  , ("<XF86MonBrightnessUp>", brightnessInc)
+  , ("<XF86MonBrightnessDown>", brightnessDec)
   , ("M-S-z", xlock)
   , ("M-<Esc>", toggleKbd)
   , ("M-S-<Esc>", toggleKbd')
