@@ -3,8 +3,11 @@
 ################################################################################
 
 APPLICATION=notify
+MESSAGE=
 URGENCY=normal
-SHOW_HELP=
+
+ACTION=$1
+shift
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -31,10 +34,6 @@ do
       shift # past argument
       shift # past value
       ;;
-    -h|--help)
-      SHOW_HELP=true
-      shift # past argument
-      ;;
     *)    # unknown option
       POSITIONAL+=("$1") # save it in an array for later
       shift # past argument
@@ -45,37 +44,22 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 function print_usage() {
   echo "Usage:
-  notify [-a APP] -t TITLE -m MESSAGE [-u URGENCY]
+  notify ACTION
 
-Help Options:
-  -h|--help             Show help options
+Actions:
+  help                  Show help options
+  send                  Send a notification
+  status                Get status of the notification system (enabled, disabled)
+  enable                Enable notification system
+  disable               Disable notification system
 
-Application Options:
+Send Options:
   -a|--help TEXT        Specify the application sending notification
-  -t|--title TEXT       Specify the title of the notification
+  -t|--title TEXT       Specify the title of the notification (required)
   -m|--message TEXT     Specify the message of the notification
   -u|--urgency LEVEL    Specify the urgency level (low, normal or critical)
 "
 }
-
-if [[ -n "$SHOW_HELP" ]]; then
-  print_usage
-  exit 0
-fi
-
-if [[ -z $TITLE ]]; then
-  echo "Missing title!"
-  echo
-  print_usage
-  exit 1
-fi
-
-if [[ -z $MESSAGE ]]; then
-  echo "Missing message!"
-  echo
-  print_usage
-  exit 1
-fi
 
 ################################################################################
 
@@ -85,8 +69,45 @@ function check() {
 
 ################################################################################
 
-check notify-send && {
-  notify-send -a "$APPLICATION" "$TITLE" "$MESSAGE" -u "$URGENCY"
-}
+status_file="$XDG_DATA_HOME/notify/status"
+mkdir -p "$XDG_DATA_HOME/notify"
+
+case $ACTION in
+  help)
+    print_usage
+    ;;
+  send)
+    if [[ -z $TITLE ]]; then
+      echo "Missing title!"
+      echo
+      print_usage
+      exit 1
+    fi
+
+    check notify-send && {
+      notify-send -a "$APPLICATION" "$TITLE" "$MESSAGE" -u "$URGENCY"
+    }
+    ;;
+  status)
+    status=$(cat "$status_file" 2>/dev/null)
+    if [[ "$status" = "1" ]]; then
+      echo "enabled"
+    else
+      echo "disabled"
+    fi
+    ;;
+  enable)
+    echo "1" > "$XDG_DATA_HOME/notify/status"
+    notify send -t "DUNST_COMMAND_RESUME"
+    ;;
+  disable)
+    echo "0" > "$XDG_DATA_HOME/notify/status"
+    notify send -t "DUNST_COMMAND_PAUSE"
+    ;;
+  *)
+    print_usage
+    exit 1
+    ;;
+esac
 
 ################################################################################

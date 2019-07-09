@@ -134,7 +134,7 @@ instance Exec NotificationStatus where
   alias _ = "notification-status"
   start (NotificationStatus r) callback = if r > 0 then go else exec >>= cb
     where go = exec >>= cb >> tenthSeconds r >> go
-          exec = execProg "notify-status" [] "?"
+          exec = execProg "notify" ["status"] "?"
           cb "enabled" = callback "\xf0f3"
           cb "disabled" = callback "\xf1f6"
           cb _          = callback "?"

@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-mkdir -p "$XDG_DATA_HOME/notify"
-echo "1" > "$XDG_DATA_HOME/notify/status"
-
-notify -t "DUNST_COMMAND_RESUME" -m "fun"
