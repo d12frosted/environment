@@ -46,6 +46,7 @@ autolock &
 
 # Being distracted by some obnoxious notifications is so nice.
 dunst &
+notify-enable
 
 # Because every X needs some algebra to tame it.
 d12-xmonad

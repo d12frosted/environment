@@ -3,26 +3,40 @@
 {-# LANGUAGE RankNTypes #-}
 
 --------------------------------------------------------------------------------
+
 module Main (main) where
 
 --------------------------------------------------------------------------------
+
 import qualified Utils.Color as Color
 import qualified Utils.Icon as Icon
 
 --------------------------------------------------------------------------------
-import           Xmobar
+
+import           Control.Exception (handle, SomeException(..))
 import           Path.Parse
+import           System.Exit
+import           System.IO
+import           System.IO (hClose)
+import           System.Process (runInteractiveProcess, waitForProcess)
+import           Xmobar
 
 --------------------------------------------------------------------------------
-data Env = Env { envConfigHome :: Path Abs Dir }
+
+data Env
+  = Env
+  { envConfigHome :: Path Abs Dir
+  }
 
 --------------------------------------------------------------------------------
+
 main :: IO ()
 main = do
   env <- Env <$> parseDirPath "$XDG_CONFIG_HOME"
   xmobar $ config env
 
 --------------------------------------------------------------------------------
+
 config :: Env -> Config
 config env = defaultConfig {
   -- appearance
@@ -49,6 +63,8 @@ config env = defaultConfig {
     , "%battery%"
     , " "
     , "%date%"
+    , " "
+    , Icon.static "%notification-status%"
     , " "
     ]
 
@@ -95,6 +111,8 @@ config env = defaultConfig {
     , Run $ Wireless "wlp3s0" [ "--template", "<essid>"
                               ] 100
 
+    , Run $ NotificationStatus 100
+
     , Run StdinReader
     ]
   }
@@ -107,3 +125,31 @@ dateTemplate
   , Icon.static "\x23F2"
   , " %T"
   ]
+
+--------------------------------------------------------------------------------
+
+data NotificationStatus = NotificationStatus Int deriving (Show, Read)
+
+instance Exec NotificationStatus where
+  alias _ = "notification-status"
+  start (NotificationStatus r) callback = if r > 0 then go else exec >>= cb
+    where go = exec >>= cb >> tenthSeconds r >> go
+          exec = execProg "notify-status" [] "?"
+          cb "enabled" = callback "\xf0f3"
+          cb "disabled" = callback "\xf1f6"
+          cb _          = callback "?"
+
+--------------------------------------------------------------------------------
+
+execProg :: FilePath -> [String] -> String -> IO String
+execProg prog args msg = do
+  (i,o,e,p) <- runInteractiveProcess prog args Nothing Nothing
+  exit <- waitForProcess p
+  let closeHandles = hClose o >> hClose i >> hClose e
+      getL = handle (\(SomeException _) -> return "")
+                    (hGetLine o)
+  case exit of
+    ExitSuccess -> do str <- getL
+                      closeHandles
+                      pure $ str
+    _ -> closeHandles >> pure msg

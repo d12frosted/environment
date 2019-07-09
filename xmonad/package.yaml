@@ -36,4 +36,5 @@ executables:
       - d12x
       - data-default
       - path
+      - process
       - xmobar

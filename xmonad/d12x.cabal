@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bdbb4e484691eb8894d132e641d18e7fbbdcb1fe6cc3f3c106fbb4cd0352aa8b
+-- hash: 07c9609f18cb25993b810d284fce501a1e026cfc49eabbdf206cb108305a2af6
 
 name:           d12x
 version:        0.1.0.0
@@ -47,6 +47,7 @@ executable d12-xmobar
     , d12x
     , data-default
     , path
+    , process
     , xmobar
   default-language: Haskell2010
 
