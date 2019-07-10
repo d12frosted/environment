@@ -27,4 +27,5 @@ keybindings =
   , ("M-<Esc>", toggleKbd)
   , ("M-S-<Esc>", toggleKbd')
   , ("M-<Print>", spawn "scrot")
+  , ("M-t n", notificationToggle)
   ]

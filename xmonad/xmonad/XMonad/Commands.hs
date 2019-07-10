@@ -56,3 +56,8 @@ brightnessDec :: MonadIO m => m ()
 brightnessDec = spawn "brightness dec"
 
 --------------------------------------------------------------------------------
+
+notificationToggle :: MonadIO m => m ()
+notificationToggle = spawn "notify toggle"
+
+--------------------------------------------------------------------------------

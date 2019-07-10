@@ -52,6 +52,7 @@ Actions:
   status                Get status of the notification system (enabled, disabled)
   enable                Enable notification system
   disable               Disable notification system
+  toggle                Toggle the status of notification system
 
 Send Options:
   -a|--help TEXT        Specify the application sending notification
@@ -72,42 +73,54 @@ function check() {
 status_file="$XDG_DATA_HOME/notify/status"
 mkdir -p "$XDG_DATA_HOME/notify"
 
-case $ACTION in
-  help)
-    print_usage
-    ;;
-  send)
-    if [[ -z $TITLE ]]; then
-      echo "Missing title!"
-      echo
+function exec() {
+  case $1 in
+    help)
+      print_usage
+      ;;
+    send)
+      if [[ -z $TITLE ]]; then
+        echo "Missing title!"
+        echo
+        print_usage
+        exit 1
+      fi
+
+      check notify-send && {
+        notify-send -a "$APPLICATION" "$TITLE" "$MESSAGE" -u "$URGENCY"
+      }
+      ;;
+    status)
+      status=$(cat "$status_file" 2>/dev/null)
+      if [[ "$status" = "1" ]]; then
+        echo "enabled"
+      else
+        echo "disabled"
+      fi
+      ;;
+    enable)
+      echo "1" > "$XDG_DATA_HOME/notify/status"
+      notify send -t "DUNST_COMMAND_RESUME"
+      ;;
+    disable)
+      echo "0" > "$XDG_DATA_HOME/notify/status"
+      notify send -t "DUNST_COMMAND_PAUSE"
+      ;;
+    toggle)
+      status=$(cat "$status_file" 2>/dev/null)
+      if [[ "$status" = "1" ]]; then
+        exec disable
+      else
+        exec enable
+      fi
+      ;;
+    *)
       print_usage
       exit 1
-    fi
+      ;;
+  esac
+}
 
-    check notify-send && {
-      notify-send -a "$APPLICATION" "$TITLE" "$MESSAGE" -u "$URGENCY"
-    }
-    ;;
-  status)
-    status=$(cat "$status_file" 2>/dev/null)
-    if [[ "$status" = "1" ]]; then
-      echo "enabled"
-    else
-      echo "disabled"
-    fi
-    ;;
-  enable)
-    echo "1" > "$XDG_DATA_HOME/notify/status"
-    notify send -t "DUNST_COMMAND_RESUME"
-    ;;
-  disable)
-    echo "0" > "$XDG_DATA_HOME/notify/status"
-    notify send -t "DUNST_COMMAND_PAUSE"
-    ;;
-  *)
-    print_usage
-    exit 1
-    ;;
-esac
+exec "$ACTION"
 
 ################################################################################
