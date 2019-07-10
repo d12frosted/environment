@@ -350,17 +350,9 @@ if [[ "$target" = "" ]]; then
 fi
 export XDG_CONFIG_HOME=$target
 
-if [[ "$XDG_CONFIG_CACHE" = "" ]]; then
-  export XDG_CONFIG_CACHE="$HOME/.cache"
-fi
-
-if [[ "$XDG_DATA_HOME" = "" ]]; then
-  export XDG_DATA_HOME="$HOME/.local/share"
-fi
-
-if [[ "$XDG_CACHE_HOME" = "" ]]; then
-  export XDG_CACHE_HOME="$HOME/.cache"
-fi
+export XDG_CONFIG_CACHE="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
 
 export DEVELOPER=$HOME/Developer
 if [[ "$USER" != "$fellow" ]]; then
