@@ -611,7 +611,9 @@ arch_guard && {
     section "Install xmonad"
     (
       cd "$XDG_CONFIG_HOME/xmonad"
-      stack --allow-different-user install
+      stack --allow-different-user install || {
+        notify send -a "Eru" -t "Failed to compile xmonad" -u critical
+      }
     )
 
     section "Restart xmonad"
