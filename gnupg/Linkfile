@@ -1,1 +1,2 @@
 gpg-agent-${KERNEL_NAME}.conf ~/.gnupg/gpg-agent.conf
+pam_environment ~/.pam_environment

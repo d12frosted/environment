@@ -112,14 +112,9 @@ if not functions -q fisher
   fish -c fisher
 end
 
-# ssh-agent
-# https://github.com/danhper/fish-ssh-agent
-if test -z "$SSH_ENV"
-  set -xg SSH_ENV $HOME/.ssh/environment
-end
-if not __ssh_agent_is_started
-  __ssh_agent_start
-end
+# gpg + ssh
+set -xg GPG_TTY (tty)
+gpg-connect-agent updatestartuptty /bye >/dev/null
 
 # nvm
 set -x NVM_DIR "$XDG_CACHE_HOME/nvm"
