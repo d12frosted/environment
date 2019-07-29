@@ -490,6 +490,15 @@ arch_guard && {
       sudo sh -c "rankmirrors -n 6 '$mirrorlist_bak' > '$mirrorlist'"
     fi
 
+    section "Install aura for simpler AUR access"
+    check aura || {
+      aura_dir=$(mktemp -d)
+      git clone https://aur.archlinux.org/aura-bin.git "$aura_dir"
+      cd "$aura_dir" && {
+        makepkg -si --noconfirm
+      }
+    }
+
     section "Install yay for simpler AUR access"
     check yay || {
       yay_dir=$(mktemp -d)
@@ -520,17 +529,17 @@ arch_guard && {
     aur_ignore=$(combine_files "$target/arch/Aurignore" "$target/arch/Aurignore_$USER")
 
     # shellcheck disable=SC2046
-    yay -S --noconfirm --needed $(comm -23 "$aur_file" "$aur_ignore")
+    sudo aura -A --noconfirm --needed $(comm -23 "$aur_file" "$aur_ignore")
 
     pacman_file=$(combine_files "$target/arch/Pacmanfile" "$target/arch/Pacmanfile_$USER")
     pacman_ignore=$(combine_files "$target/arch/Pacmanignore" "$target/arch/Pacmanignore_$USER")
     # shellcheck disable=SC2046
-    sudo pacman -S --noconfirm --needed $(comm -23 "$pacman_file" "$pacman_ignore")
+    sudo aura -S --noconfirm --needed $(comm -23 "$pacman_file" "$pacman_ignore")
   }
 
   theme_guard "upgrade" "Upgrade Arch Linux" && {
-    sudo pacman -Syu --noconfirm
-    yay -Syu --noconfirm
+    sudo aura -Syu --noconfirm
+    sudo aura -Ayu --noconfirm
   }
 
   theme_guard "hardware" "Setup keyboard" && {
