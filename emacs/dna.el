@@ -57,19 +57,20 @@
 
  :tools
  (git +forge)
+ lsp
  pdf
 
  :lang
  dot
  emacs-lisp
  go
- (haskell +intero)
+ (haskell +lsp)
  nix
  org
  plantuml
  proto
  rest
- (scala +lsp-scala)
+ (scala +lsp)
  sh
 
  :app

@@ -18,14 +18,14 @@
 ;;; Code:
 
 ;;;###autoload
-(defun +haskell-repl-buffer (arg)
-  "Returns the appropriate Haskell REPL buffer."
-  (if (featurep! +intero)
-      (intero-repl-buffer arg)
-    (haskell-session-interactive-buffer (haskell-session))))
-
-;;;###autoload
-(defun +haskell/repl (&optional arg)
+(defun +haskell/open-repl (&optional arg)
   "Opens a Haskell REPL."
   (interactive "P")
-  (display-buffer (+haskell-repl-buffer arg)))
+  (if-let*
+      ((window
+        (display-buffer
+         (if (featurep! +intero)
+             (intero-repl-buffer arg)
+           (haskell-session-interactive-buffer (haskell-session))))))
+      (window-buffer window)
+    (error "Failed to display Haskell REPL")))

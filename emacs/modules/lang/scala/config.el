@@ -17,23 +17,27 @@
 ;;
 ;;; Code:
 
-(def-package! scala-mode
-  :defer t
-  :init
-  (setq scala-indent:align-parameters t)
-  (when (featurep! +lsp-scala)
-    (add-hook 'scala-mode-hook #'lsp))
-  :config
-  (when (featurep! +lsp-scala)
-    (lsp-scala-setup)))
+(after! scala-mode
+  (setq scala-indent:align-parameters t
+        ;; indent block comments to first asterix, not second
+        scala-indent:use-javadoc-style t)
+
+  (setq-hook! 'scala-mode-hook comment-line-break-function #'+scala-comment-indent-new-line)
+
+  (after! dtrt-indent
+    (add-to-list 'dtrt-indent-hook-mapping-list '(scala-mode c/c++/java scala-indent:step)))
+
+  (when (featurep! +lsp)
+    (add-hook 'scala-mode-hook #'lsp)))
 
 (def-package! ensime
-  :when (featurep! +ensime)
-  :after scala-mode
-  :init
+  :unless (featurep! +lsp)
+  :defer t
+  :config
   (setq ensime-startup-snapshot-notification nil
         ensime-startup-notification nil
         ensime-eldoc-hints 'all
+        ;; let DOOM handle company setup
         ensime-completion-style nil)
 
   (set-company-backend! 'scala-mode '(ensime-company company-yasnippet))
@@ -42,15 +46,6 @@
   ;; trying to make imenu variables buffer local before imenu is loaded.
   (require 'imenu))
 
-(def-package! lsp-mode
-  :when (featurep! +lsp-scala)
-  :after scala-mode)
-
-(def-package! lsp-ui
-  :when (featurep! +lsp-scala)
-  :hook (lsp-mode . lsp-ui-mode))
-
 (def-package! sbt-mode
   :after scala-mode
-  :commands sbt-start sbt-command
   :config (set-repl-handler! 'scala-mode #'run-scala))

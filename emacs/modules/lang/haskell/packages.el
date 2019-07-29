@@ -18,4 +18,9 @@
 ;;; Code:
 
 (package! haskell-mode)
-(package! intero)
+
+(when (featurep! +intero)
+  (package! intero))
+
+(when (featurep! +lsp)
+  (package! lsp-haskell))
