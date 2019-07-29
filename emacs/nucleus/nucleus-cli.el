@@ -110,24 +110,6 @@ BODY will be run when this dispatcher is called."
 ;;
 ;; Dummy dispatch commands (no-op because they're handled especially)
 
-(dispatcher! run :noop
-  "Run Emacs from bin/nucleus's parent directory.
-
-All arguments are passed on to Emacs (except for -p and -e).
-
-  nucleus run
-  nucleus run -nw init.el
-
-WARNING: this command exists for convenience and testing. Nucleus
-will suffer additional overhead by being started this way. For
-the best performance, it is best to run Emacs out of
-~/.emacs.d.")
-
-(dispatcher! (doctor doc) :noop
-  "Checks for issues with your environment and configurations.
-
-Also checks for missing dependencies for any enabled modules.")
-
 (dispatcher! (help h) :noop
   "Look up additional information about a command.")
 
@@ -137,8 +119,6 @@ Also checks for missing dependencies for any enabled modules.")
 (load! "cli/autoloads")
 (load! "cli/byte-compile")
 (load! "cli/packages")
-(load! "cli/patch-macos")
-(load! "cli/test")
 
 (defun nucleus-refresh (&optional force-p)
   "Ensure nucleus is in a working state by checking autoloads and

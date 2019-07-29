@@ -16,8 +16,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; This little library thinly wraps around persistent-soft (which is a
-;; pcache wrapper, how about that). It has three purposes:
+;; This little library thinly wraps around persistent-soft (which is a pcache
+;; wrapper, how about that). It has three purposes:
 ;;
 ;; - To encapsulate the cache backend (persistent-soft/pcache in this case), in
 ;;   case it needs to change.
@@ -25,8 +25,8 @@
 ;;   variables across Emacs sessions.
 ;; - To lazy-load persistent-soft until it is really needed.
 ;;
-;; Like persistent-soft, caches assume a 2-tier structure, where all
-;; caches are namespaced by location.
+;; Like persistent-soft, caches assume a 2-tier structure, where all caches are
+;; namespaced by location.
 ;;
 ;;; Code:
 

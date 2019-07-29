@@ -4,8 +4,6 @@
 ":"; NUCLEUSFILE_RAW="${BASH_SOURCE:-${(%):-%x}}"
 ":"; NUCLEUSFILE=$([[ -L "$NUCLEUSFILE_RAW" ]] && echo $(readlink $NUCLEUSFILE_RAW) || echo $NUCLEUSFILE_RAW)
 ":"; NUCLEUSBASE=$(dirname "$NUCLEUSFILE")/../..
-":"; [[ $1 == doc || $1 == doctor ]] && { cd "$NUCLEUSBASE"; exec $EMACS --script nucleus/bin/nucleus-doctor; exit 0; }
-":"; [[ $1 == run ]] && { cd "$NUCLEUSBASE"; shift; exec $EMACS -q --no-splash -l nucleus/bin/nucleus "$@"; exit 0; }
 ":"; exec $EMACS --script "$0" -- $@
 ":"; exit 0
 
@@ -22,13 +20,10 @@
             "  nucleus install\n"
             "  nucleus help update\n"
             "  nucleus compile :nucleus lang/haskell lang/emacs-lisp\n"
-            "  nucleus run\n"
-            "  nucleus run -nw file.txt file2.el\n"
             "\n"
             (format! (bold "Options:\n"))
             "  -d --debug\t\tTurns on nucleus-debug-mode (and debug-on-error)\n"
             "  -e --emacsd DIR\tUse the emacs config at DIR (e.g. ~/.emacs.d)\n"
-            "  -i --insecure\t\tDisable TLS/SSL validation (not recommended)\n"
             "  -y --yes\t\tAuto-accept all confirmation prompts\n\n")
     (princ (buffer-string)))
   (nucleus--dispatch-help))
