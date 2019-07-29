@@ -16,12 +16,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; > Emacs package management is opinionated, and so am I. I've bound
-;; > together `use-package', `quelpa' and package.el to create my own,
-;; > rolling-release, lazily-loaded package management system for
-;; > Emacs.
-;; >
-;; > (c) hlissner
+;; > Emacs package management is opinionated, and so am I. I've bound together
+;; > `use-package', `quelpa' and package.el to create my own, rolling-release,
+;; > lazily-loaded package management system for Emacs. (c) hlissner
 ;;
 ;; The three key commands are:
 ;;
@@ -85,9 +82,9 @@ and orgmode.org.")
           ("melpa" . ,(concat nucleus-elpa-mirror-dir "melpa/"))
           ("org"   . ,(concat nucleus-elpa-mirror-dir "org/"))))
        (t
-        '(("gnu"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/gnu/")
-          ("melpa" . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/melpa/")
-          ("org"   . "https://raw.githubusercontent.com/d12frosted/elpa-mirror/master/org/"))))
+        '(("gnu"   . "https://gitlab.com/d12frosted/elpa-mirror/raw/master/gnu/")
+          ("melpa" . "https://gitlab.com/d12frosted/elpa-mirror/raw/master/melpa/")
+          ("org"   . "https://gitlab.com/d12frosted/elpa-mirror/raw/master/org/"))))
 
       ;; Don't track MELPA, we'll use package.el for that
       quelpa-checkout-melpa-p nil
@@ -258,22 +255,6 @@ was disabled elsewhere."
              (if pin `((setf (alist-get ',name package-pinned-packages) ,pin)))
              `((setf (alist-get ',name nucleus-packages) ',plist)
                (not (memq ',name nucleus-disabled-packages)))))))
-
-(defmacro packages! (&rest packages)
-  "A convenience macro like `package!', but allows you to declare
-multiple packages at once.
-
-Only use this macro in a module's packages.el file."
-  (nucleus--assert-stage-p 'packages #'packages!)
-  `(progn ,@(cl-loop for desc in packages collect `(package! ,@(nucleus-enlist desc)))))
-
-(defmacro disable-packages! (&rest packages)
-  "A convenience macro like `package!', but allows you to disable
-multiple packages at once.
-
-Only use this macro in a module's packages.el file."
-  (nucleus--assert-stage-p 'packages #'disable-packages!)
-  `(setq nucleus-disabled-packages (append ',packages nucleus-disabled-packages)))
 
 (defmacro depends-on! (module submodule &optional flags)
   "Declares that this module depends on another.
