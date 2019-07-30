@@ -506,9 +506,8 @@ the selected package. Use this interactively. Use
 ;; Replace with nucleus variants
 ;;;###autoload
 (advice-add #'package-autoremove
- :override (λ! (nucleus-packages-autoremove current-prefix-arg)))
+ :override (lambda (nucleus-packages-autoremove current-prefix-arg)))
 
 ;;;###autoload
 (advice-add #'package-install-selected-packages
- :override (λ! (nucleus-packages-install current-prefix-arg)))
-
+ :override (lambda (nucleus-packages-install current-prefix-arg)))

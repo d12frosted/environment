@@ -124,13 +124,6 @@ leading colon."
 ;;
 ;; Macros
 
-(defmacro λ! (&rest body)
-  "A shortcut for inline interactive lambdas."
-  (declare (doc-string 1))
-  `(lambda () (interactive) ,@body))
-
-(defalias 'lambda! 'λ!)
-
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is true (checks on
 `after-load-functions'). Meant to serve as a predicated

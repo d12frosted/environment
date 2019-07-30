@@ -398,6 +398,60 @@ start from the end of the workspace list."
     ('error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
+(defun +workspace/switch-to-1 ()
+  "Switch to the 1st workspace"
+  (interactive)
+  (+workspace/switch-to 0))
+
+;;;###autoload
+(defun +workspace/switch-to-2 ()
+  "Switch to the 2nd workspace"
+  (interactive)
+  (+workspace/switch-to 1))
+
+;;;###autoload
+(defun +workspace/switch-to-3 ()
+  "Switch to the 3rd workspace"
+  (interactive)
+  (+workspace/switch-to 2))
+
+;;;###autoload
+(defun +workspace/switch-to-4 ()
+  "Switch to the 4th workspace"
+  (interactive)
+  (+workspace/switch-to 3))
+
+;;;###autoload
+(defun +workspace/switch-to-5 ()
+  "Switch to the 5th workspace"
+  (interactive)
+  (+workspace/switch-to 4))
+
+;;;###autoload
+(defun +workspace/switch-to-6 ()
+  "Switch to the 6th workspace"
+  (interactive)
+  (+workspace/switch-to 5))
+
+;;;###autoload
+(defun +workspace/switch-to-7 ()
+  "Switch to the 7th workspace"
+  (interactive)
+  (+workspace/switch-to 6))
+
+;;;###autoload
+(defun +workspace/switch-to-8 ()
+  "Switch to the 8th workspace"
+  (interactive)
+  (+workspace/switch-to 7))
+
+;;;###autoload
+(defun +workspace/switch-to-9 ()
+  "Switch to the 9th workspace"
+  (interactive)
+  (+workspace/switch-to 8))
+
+;;;###autoload
 (defun +workspace/switch-to-last ()
   "Switch to the last workspace."
   (interactive)
