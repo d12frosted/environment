@@ -1,10 +1,11 @@
-;;; packages.el --- the heart of every cell -*- no-byte-compile: t; -*-
+;;; config/keybindings/packages.el -*- no-byte-compile: t; -*-
 ;;
-;; Copyright (c) 2018 Boris Buliga
+;; Copyright (c) 2019 Boris Buliga
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
-;;         Henrik Lissner <henrik@lissner.net>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
+;;
+;; Created: 30 Jul 2019
 ;;
 ;; URL: https://github.com/d12frosted/environment/emacs
 ;;
@@ -12,8 +13,10 @@
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
-;; Most of the code was borrowed from hlissner/doom-emacs.
-;;
 ;;; Commentary:
 ;;
 ;;; Code:
+
+(package! general)
+(package! which-key)
+(package! hydra)

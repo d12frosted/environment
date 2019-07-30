@@ -38,11 +38,4 @@ This is necessary because `intero-mode' doesn't do its own error checks."
       (:exec    . "%c ghc -- -e \"$(< %s)\"")))
   (set-company-backend! 'intero-mode 'intero-company)
   (when (featurep! :feature syntax-checker)
-    (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
-
-  (map! :map intero-mode-map
-        :localleader
-        "t" #'intero-type-at
-        "i" #'intero-info
-        "l" #'intero-repl-load
-        "a" #'intero-apply-suggestions))
+    (flycheck-add-next-checker 'intero '(warning . haskell-hlint))))

@@ -216,9 +216,9 @@
 	      org-brain-title-max-length 24)
   (add-hook 'org-brain-visualize-text-hook #'org-toggle-latex-fragment)
   :config
-  (map! :map org-brain-visualize-mode-map
-        :leader
-        :desc "Button" "jb" #'+ace-link-brain-visualize)
+  (+leader-def
+    :keymaps 'org-brain-visualize-mode-map
+    "jb" '(+ace-link-brain-visualize :which-key "Brain entry"))
   (defun org-brain--file-targets (file)
     "Return alist of (name . entry-id) for all entries (including the file) in FILE."
     (let* ((file-relative (org-brain-path-entry-name file))

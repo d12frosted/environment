@@ -20,16 +20,8 @@
 
 (load! "cache")
 
-;;; Private functions
-(defun nucleus--packages-choose (prompt)
-  (let ((table (cl-loop for pkg in package-alist
-                        unless (package-built-in-p (cdr pkg))
-                        collect (cons (package-desc-full-name (cdr pkg))
-                                      (cdr pkg)))))
-    (cdr (assoc (completing-read prompt
-                                 (mapcar #'car table)
-                                 nil t)
-                table))))
+;;
+;; Private functions
 
 (defmacro nucleus--condition-case! (&rest body)
   `(condition-case-unless-debug e

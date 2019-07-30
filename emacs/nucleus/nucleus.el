@@ -531,9 +531,7 @@ Order defines precedence (from most to least)."
 
   (when (or force-load-core-p (not noninteractive))
     (add-hook! 'emacs-startup-hook
-      #'(nucleus|init-switch-hooks nucleus|display-benchmark))
-
-    (require 'nucleus-keybinds)))
+      #'(nucleus|init-switch-hooks nucleus|display-benchmark))))
 
 (defun nucleus-initialize-autoloads (file)
   "Tries to load FILE (an autoloads file). Return t on success,
