@@ -1,15 +1,20 @@
+--------------------------------------------------------------------------------
+
 {-# LANGUAGE LambdaCase #-}
 
 --------------------------------------------------------------------------------
+
 module Main (main) where
 
 --------------------------------------------------------------------------------
+
 import qualified Utils.Color as Color
 import qualified Utils.Icon as Icon
 import           XMonad.Keybindings
 import           XMonad.Workspaces
 
 --------------------------------------------------------------------------------
+
 import           Data.Default (def)
 import           Data.Semigroup
 import           System.Environment
@@ -21,6 +26,7 @@ import           XMonad.Layout.LayoutModifier
 import           XMonad.Util.EZConfig (additionalKeysP)
 
 --------------------------------------------------------------------------------
+
 main :: IO ()
 main = getArgs >>= \case
   ["--restart"] -> sendRestart
@@ -28,6 +34,7 @@ main = getArgs >>= \case
     statusBar "d12-xmobar" statusBarPP toggleStrutsKey xmonadConfig
 
 --------------------------------------------------------------------------------
+
 type XMonadConfig
   = XConfig
     ( ModifiedLayout AvoidStruts (Choose Tall (Choose (Mirror Tall) Full))
@@ -66,6 +73,7 @@ xmonadConfig
   } `additionalKeysP` keybindings
 
 --------------------------------------------------------------------------------
+
 statusBarPP :: PP
 statusBarPP
   = def
@@ -84,10 +92,12 @@ statusBarPP
   }
 
 --------------------------------------------------------------------------------
+
 toggleStrutsKey :: XConfig l -> (KeyMask, KeySym)
 toggleStrutsKey XConfig {XMonad.modMask = m} = (m, xK_b)
 
 --------------------------------------------------------------------------------
+
 sendRestart :: IO ()
 sendRestart = do
   dpy <- openDisplay ""
@@ -100,10 +110,13 @@ sendRestart = do
   sync dpy False
 
 --------------------------------------------------------------------------------
+
 handleEvent :: Event -> X All
 handleEvent e@ClientMessageEvent { ev_message_type = mt } = do
   a <- getAtom "D12_XMONAD_RESTART"
-  if (mt == a)
+  if mt == a
     then restart "d12-xmonad" True >> pure (All False)
     else broadcastMessage e >> pure (All True)
 handleEvent e = broadcastMessage e >> pure (All True)
+
+--------------------------------------------------------------------------------
