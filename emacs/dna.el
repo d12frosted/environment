@@ -48,6 +48,7 @@
 
  :emacs
  buffer
+ describe
  dired
  ediff
  eshell
