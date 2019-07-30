@@ -65,4 +65,6 @@
   (setq forge-database-file (concat nucleus-etc-dir "forge/forge-database.sqlite"))
   :config
   ;; All forge list modes are derived from `forge-topic-list-mode'
-  (general-def "q" '(kill-this-buffer :keymap forge-topic-list-mode-map)))
+  (general-def
+    :keymaps 'forge-topic-list-mode-map
+     "q" #'kill-this-buffer))

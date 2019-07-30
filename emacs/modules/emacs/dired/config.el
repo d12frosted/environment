@@ -34,9 +34,9 @@
    dired-hide-details-hide-symlink-targets nil)
   :config
   ;; Kill buffer when quitting dired buffers
-  (define-key dired-mode-map [remap quit-window] (lambda (quit-window t)))
+  (define-key dired-mode-map [remap quit-window] #'+dired/quit-window)
   ;; reuse buffers when navigating
-  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
+  (define-key dired-mode-map (kbd "RET") #'dired-find-alternate-file)
   ;; sort dired buffer so directories are first
   (defun +dired|sort-directories-first ()
     "List directories first in dired buffers."
