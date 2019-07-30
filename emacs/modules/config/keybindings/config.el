@@ -165,7 +165,7 @@
         :desc "Split frame horizontally" "S" #'+window-split-horizontally
         :desc "Split frame horizontally and focus" "s" #'+window-split-horizontally-and-focus
         :desc "Kill window" "k" #'delete-window
-        :desc "Kill other windows" "m" #'delete-other-windows
+        :desc "Kill other windows" "m" #'+window-zoom
         :desc "Ace window" "w" #'ace-window)
 
       (:desc "workspace" :prefix [tab]

@@ -50,3 +50,14 @@
   (interactive)
   (split-window-below)
   (windmove-down))
+
+;;;###autoload
+(defun +window-zoom ()
+  "Close other windows to focus on this one. Activate again to
+undo this. If the window changes before then, the undo expires."
+  (interactive)
+  (if (and (one-window-p)
+           (assq ?_ register-alist))
+      (jump-to-register ?_)
+    (window-configuration-to-register ?_)
+    (delete-other-windows)))
