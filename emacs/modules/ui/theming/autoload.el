@@ -48,4 +48,11 @@
      '(org-checkbox ((t (:background "#FAF7CC"))))
 
      ;; solaire faces
-     '(solaire-default-face ((t (:inherit default :background "#FAFAFA")))))))
+     '(solaire-default-face ((t (:inherit default :background "#FAFAFA"))))
+
+     ;; lsp-ui faces
+     '(lsp-ui-sideline-code-action ((t (:inherit default :foreground "SkyBlue3"))))
+     '(lsp-ui-doc-background ((((background light)) :background "#FAF7CC")
+                              (t :background "#272A36")))
+     ))
+  )
