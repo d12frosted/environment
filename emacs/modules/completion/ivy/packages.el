@@ -21,3 +21,4 @@
 (package! counsel)
 (package! counsel-projectile)
 (package! swiper)
+(package! pcre2el)
