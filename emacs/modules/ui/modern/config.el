@@ -197,9 +197,6 @@ If CDR is t, then use `solaire-mode-swap-bg'.")
   (add-hook 'change-major-mode-after-body-hook #'turn-on-solaire-mode)
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)
-  ;; Prevent color glitches when reloading either Emacs or loading a new theme
-  (add-hook! :append '(+modern-load-theme-hook nucleus-reload-hook)
-    #'solaire-mode-reset)
   ;; org-capture takes an org buffer and narrows it. The result is erroneously
   ;; considered an unreal buffer, so solaire-mode must be restored.
   (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode)

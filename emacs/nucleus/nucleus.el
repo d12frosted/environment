@@ -30,7 +30,6 @@ in the command line or use --debug-init to enable this.")
 
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
-(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 
 (defconst nucleus-home-dir (file-name-as-directory (getenv "HOME"))
   "Path to user home directory.
@@ -135,9 +134,6 @@ are loaded.")
   "A list of hooks run when Emacs is fully initialized. Fires near
 the end of `emacs-startup-hook', as late as possible. Guaranteed
 to run after everything else (except for `window-setup-hook').")
-
-(defvar nucleus-reload-hook nil
-  "A list of hooks to run when `nucleus/reload' is called.")
 
 (defvar nucleus-exit-window-hook nil
   "Hook run before `switch-window' or `switch-frame' are called.
