@@ -311,55 +311,6 @@ as `add-hook!'."
              (push `(setq-local ,var ,val) forms)))
          (nreverse forms))))
 
-(cl-defmacro associate! (mode &key modes match files when)
-  "Enables a minor MODE if certain conditions are met.
-
-The available conditions are:
-
-  :modes SYMBOL_LIST
-    A list of major/minor modes in which this minor mode may
-    apply.
-
-  :match REGEXP
-    A regexp to be tested against the current file path.
-
-  :files SPEC
-    Accepts what `project-file-exists-p!' accepts. Checks if
-    certain files exist relative to the project root.
-
-  :when FORM
-    Whenever FORM returns non-nil."
-  (declare (indent 1))
-  (unless noninteractive
-    (cond ((or files modes when)
-           (when (and files
-                      (not (or (listp files)
-                               (stringp files))))
-             (user-error "associate! :files expects a string or list of strings"))
-           (let ((hook-name (intern (format "nucleus--init-mode-%s" mode))))
-             `(progn
-                (fset ',hook-name
-                      (lambda ()
-                        (and (fboundp ',mode)
-                             (not (bound-and-true-p ,mode))
-                             (and buffer-file-name (not (file-remote-p buffer-file-name)))
-                             ,(or (not match)
-                                  `(if buffer-file-name (string-match-p ,match buffer-file-name)))
-                             ,(or (not files)
-                                  (nucleus--resolve-path-forms
-                                   (if (stringp (car files)) (cons 'and files) files)
-                                   '(nucleus-project-root)))
-                             ,(or when t)
-                             (,mode 1))))
-                ,@(if (and modes (listp modes))
-                      (cl-loop for hook in (nucleus--resolve-hook-forms modes)
-                               collect `(add-hook ',hook #',hook-name))
-                    `((add-hook 'after-change-major-mode-hook #',hook-name))))))
-          (match
-           `(add-to-list 'nucleus-auto-minor-mode-alist '(,match . ,mode)))
-          ((user-error "Invalid `associate!' rules for mode [%s] (:modes %s :match %s :files %s :when %s)"
-                       mode modes match files when)))))
-
 (defmacro file-exists-p! (spec &optional directory)
   "Returns t if the files in SPEC all exist.
 
