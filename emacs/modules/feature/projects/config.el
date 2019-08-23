@@ -35,7 +35,6 @@
     (setq projectile-git-command "fd . -t f -0"
           projectile-generic-command projectile-git-command))
 
-  (add-hook! 'find-file-hook #'+project|init-auto-mode)
   (projectile-mode +1)
 
   ;; a more generic project root file

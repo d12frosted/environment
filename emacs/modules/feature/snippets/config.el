@@ -48,11 +48,6 @@
   ;; there are multiple choices.
   (add-to-list 'yas-prompt-functions #'+snippets-prompt-private nil #'eq)
 
-  ;; Register `def-project-mode!' modes with yasnippet. This enables project
-  ;; specific snippet libraries (e.g. for Laravel, React or Jekyll projects).
-  ;; TODO: fix me
-  ;; (add-hook 'doom-project-hook #'+snippets|enable-project-modes)
-
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
     (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)))
