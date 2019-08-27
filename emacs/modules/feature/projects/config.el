@@ -17,8 +17,6 @@
 ;;
 ;;; Code:
 
-(load! "+auto-mode")
-
 (def-package! projectile
   :commands (projectile-project-root
 	           projectile-project-name
