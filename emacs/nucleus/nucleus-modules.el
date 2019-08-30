@@ -322,35 +322,6 @@ Order defines precedence (from most to least)."
      ,@(if (memq name nucleus-disabled-packages) `(:disabled t))
      ,@plist))
 
-(defmacro def-package-hook! (package when &rest body)
-  "Reconfigures a package's `def-package!' block.
-
-Only use this macro in a module's init.el file.
-
-Under the hood, this uses use-package's
-`use-package-inject-hooks'.
-
-PACKAGE is a symbol; the package's name.
-
-WHEN should be one of the following:
-  :pre-init :post-init :pre-config :post-config
-
-WARNING: If :pre-init or :pre-config hooks return nil, the
-original `def-package!''s :init/:config block (respectively) is
-overwritten, so remember to have them return non-nil (or exploit
-that to overwrite nucleus's config)."
-  (declare (indent defun))
-  (nucleus--assert-stage-p 'init #'package!)
-  (unless (memq when '(:pre-init :post-init :pre-config :post-config))
-    (error "'%s' isn't a valid hook for def-package-hook!" when))
-  `(progn
-     (setq use-package-inject-hooks t)
-     (add-hook!
-       ',(intern (format "use-package--%s--%s-hook"
-                         package
-                         (substring (symbol-name when) 1)))
-       ,@body)))
-
 (defmacro require! (category module &rest plist)
   "Loads the module specified by CATEGORY (a keyword) and
 MODULE (a symbol)."
