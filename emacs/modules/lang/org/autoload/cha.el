@@ -97,7 +97,7 @@ in the options section.
 (defun cha/refresh ()
   "Refresh entry at point.
 
-Support following entries:
+Supports the following entries:
 
 1. Tea group entry
 2. Tea entry
