@@ -75,7 +75,8 @@
      auto-fill-mode
      places-mode-maybe-enable
      pretty-props-mode-maybe-enable
-     cha-mode-maybe-enable))
+     cha-mode-maybe-enable
+     cigars-mode-maybe-enable))
 
 ;;
 ;; `org-load-hook'
