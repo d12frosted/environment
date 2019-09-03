@@ -29,6 +29,16 @@
   (setq-local cigars--parent
               (+brain-as-entry cigars-parent-id))
 
+  (setq-local cigars-manufacturers-parent-id
+              (+org-get-buffer-setting "MANUFACTURERS_PARENT"))
+  (setq-local cigars--manufacturers-parent
+              (+brain-as-entry cigars-manufacturers-parent-id))
+
+  (setq-local cigars-materials-location-parent-id
+              (+org-get-buffer-setting "MATERIALS_LOCATION_PARENT"))
+  (setq-local cigars--materials-location-parent
+              (+brain-as-entry cigars-materials-location-parent-id))
+
   (setq-local cigar-title-format
               (+org-get-buffer-setting "CIGAR_TITLE_FORMAT"))
   (setq-local cigar-rating-title-format
@@ -96,8 +106,8 @@ Supports the following entries:
 (defun cigar-refresh-entry ()
   "Refresh a cigar entry at point."
   (let ((id (org-id-get-create)))
-    (+org-entry-set-number "TOTAL_IN" (cigar-inv--total-in id))
-    (+org-entry-set-number "TOTAL_OUT" (cigar-inv--total-out id)))
+    (+org-entry-set-number "TOTAL_IN" (cigars-inv--total-in id))
+    (+org-entry-set-number "TOTAL_OUT" (cigars-inv--total-out id)))
   (+org-entry-set-number "AVAILABLE"
                          (round (- (+org-entry-get-number "TOTAL_IN")
                                    (+org-entry-get-number "TOTAL_OUT"))))
@@ -183,7 +193,7 @@ top of the file:
 ;; Cigars
 
 (defvar cigars-parent-id ""
-  "ID of Tea Groups parent entry.
+  "ID of Cigars parent entry.
 
 Can be set in the org-mode buffer by adding following line in the
 top of the file:
@@ -192,6 +202,45 @@ top of the file:
 
 (defvar-local cigars--parent nil)
 
+(defun cigar/new ()
+  "Create a new cigar entry."
+  (interactive)
+  (let* ((manufacturer (cigars--read-manufacturer))
+         (id (+brain-new-child cigars--parent (cadr manufacturer))))
+    (org-with-point-at (org-id-find id t)
+      (org-set-property "MANUFACTURER" (+brain-make-link manufacturer))
+      (+org-prompt-property "NAME")
+      (+org-prompt-property "DURATION")
+      (+org-prompt-property "RING_GAUGE")
+      (+org-prompt-property "LENGTH")
+      (org-set-property "STRENGTH"
+                        (completing-read "Strength: "
+                                         '("light"
+                                           "medium-light"
+                                           "medium"
+                                           "medium-full"
+                                           "full"
+                                           )
+                                         nil
+                                         t))
+      (+org-prompt-property "SHAPE")
+      (+org-prompt-property-brain "WRAPPER" cigars--materials-location-parent)
+      (+org-prompt-property-brain "BINDER" cigars--materials-location-parent)
+      (+org-prompt-property-brain "FILLER" cigars--materials-location-parent)
+      (+org-prompt-property "BOX_SIZE")
+      (+org-prompt-property "PRICE")
+      (+org-prompt-property "AVAILABLE")
+      (cigars-inv--add id
+                    (org-entry-get nil "AVAILABLE")
+                    (read-string "Source:" "cigarworld.de")
+                    (org-read-date nil t nil "Date of purchase: "))
+      (org-set-property "TOTAL_IN" (org-entry-get nil "AVAILABLE"))
+      (org-set-property "TOTAL_OUT" "0")
+      (cigar-refresh-entry)
+      (save-buffer)
+      (cigar-refresh-entry)
+      (save-buffer))))
+
 (defun cigar/acquire (&optional source id amount date)
   "Acquire AMOUNT of ID because from SOURCE at DATE."
   (interactive)
@@ -199,7 +248,7 @@ top of the file:
         (source (or source (read-string "Source: " "cigarworld.de")))
         (amount (or amount (read-number "Amount: ")))
         (date (or date (org-read-date nil t))))
-    (cigar-inv--add id amount source date)
+    (cigars-inv--add id amount source date)
     (cigar-refresh-entry)))
 
 (defun cigar/consume (&optional action id amount date)
@@ -211,7 +260,7 @@ top of the file:
                             "Amount: "
                             (+org-entry-get-number "DEFAULT_AMOUNT"))))
         (date (or date (org-read-date nil t))))
-    (cigar-inv--sub id amount action date)
+    (cigars-inv--sub id amount action date)
     (when (and (string-equal action "consume")
                (y-or-n-p "Rate?"))
       (cigar/rate date))
@@ -235,27 +284,27 @@ When DATE is omitted, `current-time' is used."
       (org-set-property "DATE" (format-time-string "%Y-%m-%d" date))
       (+org-prompt-property "TOTAL")
       (save-buffer)
-      (cha-refresh-tea-rating t))))
+      (cigar-refresh-rating t))))
 
 ;;
 ;; Inventory
 
-(defun cigar-inv--balance (id &optional query)
+(defun cigars-inv--balance (id &optional query)
   "Get balance of ID using QUERY."
   (let* ((cmd (format "hledger -f cigars.journal b %s '%s'" id query))
          (res (shell-command-to-string cmd))
          (lines (split-string res "\n")))
     (string-to-number (car (seq-drop-while #'string-empty-p (reverse lines))))))
 
-(defun cigar-inv--total-in (id)
+(defun cigars-inv--total-in (id)
   "Get total income for ID."
-  (cigar-inv--balance id "amt:>0"))
+  (cigars-inv--balance id "amt:>0"))
 
-(defun cigar-inv--total-out (id)
+(defun cigars-inv--total-out (id)
   "Get total outcome for ID."
-  (abs (cigar-inv--balance id "amt:<0")))
+  (abs (cigars-inv--balance id "amt:<0")))
 
-(defun cigar-inv--add (id amount source &optional date)
+(defun cigars-inv--add (id amount source &optional date)
   "Add AMOUNT of ID to inventory from SOURCE.
 
 When DATE is omitted, `current-time' is used."
@@ -267,7 +316,7 @@ When DATE is omitted, `current-time' is used."
     amount
     source)))
 
-(defun cigar-inv--sub (id amount action &optional date)
+(defun cigars-inv--sub (id amount action &optional date)
   "Subtract amount of ID from inventory as result of ACTION.
 
 When DATE is omitted, `current-time' is used."
@@ -278,3 +327,35 @@ When DATE is omitted, `current-time' is used."
     action
     amount
     id)))
+
+;;
+;; Manufacturers
+
+(defvar cigars-manufacturers-parent-id ""
+  "ID of Manufacturers parent entry.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+MANUFACTURERS_PARENT: ID")
+
+(defvar-local cigars--manufacturers-parent nil)
+
+(defun cigars--read-manufacturer ()
+  "Read Manufacturer."
+  (+brain-choose-entry-by-parent
+   "Manufacturer: "
+   cigars--manufacturers-parent))
+
+;;
+;; Other stuff
+
+(defvar cigars-materials-location-parent-id ""
+  "ID of Materials location parent entry.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+MATERIALS_LOCATION_PARENT: ID")
+
+(defvar-local cigars--materials-location-parent nil)
