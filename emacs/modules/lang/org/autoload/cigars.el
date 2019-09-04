@@ -29,10 +29,10 @@
   (setq-local cigars--parent
               (+brain-as-entry cigars-parent-id))
 
-  (setq-local cigars-manufacturers-parent-id
-              (+org-get-buffer-setting "MANUFACTURERS_PARENT"))
-  (setq-local cigars--manufacturers-parent
-              (+brain-as-entry cigars-manufacturers-parent-id))
+  (setq-local cigars-brands-parent-id
+              (+org-get-buffer-setting "BRANDS_PARENT"))
+  (setq-local cigars--brands-parent
+              (+brain-as-entry cigars-brands-parent-id))
 
   (setq-local cigars-materials-location-parent-id
               (+org-get-buffer-setting "MATERIALS_LOCATION_PARENT"))
@@ -205,10 +205,10 @@ top of the file:
 (defun cigar/new ()
   "Create a new cigar entry."
   (interactive)
-  (let* ((manufacturer (cigars--read-manufacturer))
-         (id (+brain-new-child cigars--parent (cadr manufacturer))))
+  (let* ((brand (cigars--read-brand))
+         (id (+brain-new-child cigars--parent (cadr brand))))
     (org-with-point-at (org-id-find id t)
-      (org-set-property "MANUFACTURER" (+brain-make-link manufacturer))
+      (org-set-property "BRAND" (+brain-make-link brand))
       (+org-prompt-property "NAME")
       (+org-prompt-property "DURATION")
       (+org-prompt-property "RING_GAUGE")
@@ -329,29 +329,29 @@ When DATE is omitted, `current-time' is used."
     id)))
 
 ;;
-;; Manufacturers
+;; Brands
 
-(defvar cigars-manufacturers-parent-id ""
-  "ID of Manufacturers parent entry.
+(defvar cigars-brands-parent-id ""
+  "ID of Brands parent entry.
 
 Can be set in the org-mode buffer by adding following line in the
 top of the file:
 
-  #+MANUFACTURERS_PARENT: ID")
+  #+BRANDS_PARENT: ID")
 
-(defvar-local cigars--manufacturers-parent nil)
+(defvar-local cigars--brands-parent nil)
 
-(defun cigars--read-manufacturer ()
-  "Read Manufacturer."
+(defun cigars--read-brand ()
+  "Read Brand."
   (+brain-choose-entry-by-parent
-   "Manufacturer: "
-   cigars--manufacturers-parent))
+   "Brand: "
+   cigars--brands-parent))
 
-(defun cigar/new-manufacturer ()
-  "Create a new manufacturer entry."
+(defun cigar/new-brand ()
+  "Create a new brand entry."
   (interactive)
   (let* ((name (read-string "Name: "))
-         (id (+brain-new-child cigars--manufacturers-parent name)))
+         (id (+brain-new-child cigars--brands-parent name)))
     (org-with-point-at (org-id-find id t)
       (places/set-dwim)
       (save-buffer)
