@@ -17,6 +17,9 @@
 ;;
 ;;; Code:
 
+;;
+;; Minor mode
+
 ;;;###autoload
 (define-minor-mode cigars-mode
   "Minor mode for all the cigars utilities."
@@ -42,7 +45,10 @@
   (setq-local cigar-title-format
               (+org-get-buffer-setting "CIGAR_TITLE_FORMAT"))
   (setq-local cigar-rating-title-format
-              (+org-get-buffer-setting "CIGAR_RATING_TITLE_FORMAT")))
+              (+org-get-buffer-setting "CIGAR_RATING_TITLE_FORMAT"))
+
+  (setq-local cigars-inventory-file
+              (+org-get-buffer-setting "INVENTORY_FILE")))
 
 ;;;###autoload
 (defun cigars-mode-maybe-enable ()
@@ -59,6 +65,63 @@ option set in the options section.
       (goto-char (point-min))
       (when (re-search-forward "^#\\+OPTIONS:.*cigars-mode:t" (point-max) t)
         (cigars-mode)))))
+
+;;
+;; Configurable variables
+
+(defvar cigars-brands-parent-id ""
+  "ID of Brands parent entry.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+BRANDS_PARENT: ID")
+
+(defvar-local cigars--brands-parent nil)
+
+(defvar cigars-parent-id ""
+  "ID of Cigars parent entry.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+CIGARS_PARENT: ID")
+
+(defvar-local cigars--parent nil)
+
+(defvar-local cigar-title-format nil
+  "Format of the cigar entry title.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+CIGAR_TITLE_FORMAT: {LOCATION} {NAME} | {YEAR} | {TAG}")
+
+(defvar-local cigar-rating-title-format nil
+  "Format of the rating entry title.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+CIGAR_RATING_TITLE_FORMAT: {LOCATION} {NAME} | {YEAR} | {TAG}")
+
+(defvar cigars-materials-location-parent-id ""
+  "ID of Materials location parent entry.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+MATERIALS_LOCATION_PARENT: ID")
+
+(defvar-local cigars--materials-location-parent nil)
+
+(defvar-local cigars-inventory-file nil
+  "File name of the inventory.
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+  #+INVENTORY_FILE: FILENAME")
 
 ;;
 ;; Refresh
@@ -106,8 +169,10 @@ Supports the following entries:
 (defun cigar-refresh-entry ()
   "Refresh a cigar entry at point."
   (let ((id (org-id-get-create)))
-    (+org-entry-set-number "TOTAL_IN" (cigars-inv--total-in id))
-    (+org-entry-set-number "TOTAL_OUT" (cigars-inv--total-out id)))
+    (+org-entry-set-number "TOTAL_IN"
+                           (inventory-total-in cigars-inventory-file id))
+    (+org-entry-set-number "TOTAL_OUT"
+                           (inventory-total-out cigars-inventory-file id)))
   (+org-entry-set-number "AVAILABLE"
                          (round (- (+org-entry-get-number "TOTAL_IN")
                                    (+org-entry-get-number "TOTAL_OUT"))))
@@ -141,22 +206,6 @@ cigar entry."
 
 ;;
 ;; Title
-
-(defvar-local cigar-title-format nil
-  "Format of the cigar entry title.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+CIGAR_TITLE_FORMAT: {LOCATION} {NAME} | {YEAR} | {TAG}")
-
-(defvar-local cigar-rating-title-format nil
-  "Format of the rating entry title.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+CIGAR_RATING_TITLE_FORMAT: {LOCATION} {NAME} | {YEAR} | {TAG}")
 
 (defun cigar-format-title (format)
   (let ((result format)
@@ -192,16 +241,6 @@ top of the file:
 ;;
 ;; Cigars
 
-(defvar cigars-parent-id ""
-  "ID of Cigars parent entry.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+CIGARS_PARENT: ID")
-
-(defvar-local cigars--parent nil)
-
 (defun cigar/new ()
   "Create a new cigar entry."
   (interactive)
@@ -230,10 +269,11 @@ top of the file:
       (+org-prompt-property "BOX_SIZE")
       (+org-prompt-property "PRICE")
       (+org-prompt-property "AVAILABLE")
-      (cigars-inv--add id
-                    (org-entry-get nil "AVAILABLE")
-                    (read-string "Source:" "cigarworld.de")
-                    (org-read-date nil t nil "Date of purchase: "))
+      (inventory-add cigars-inventory-file
+                     id
+                     (org-entry-get nil "AVAILABLE")
+                     (read-string "Source:" "cigarworld.de")
+                     (org-read-date nil t nil "Date of purchase: "))
       (org-set-property "TOTAL_IN" (org-entry-get nil "AVAILABLE"))
       (org-set-property "TOTAL_OUT" "0")
       (cigar-refresh-entry)
@@ -248,7 +288,7 @@ top of the file:
         (source (or source (read-string "Source: " "cigarworld.de")))
         (amount (or amount (read-number "Amount: ")))
         (date (or date (org-read-date nil t))))
-    (cigars-inv--add id amount source date)
+    (inventory-add cigars-inventory-file id amount source date)
     (cigar-refresh-entry)))
 
 (defun cigar/consume (&optional action id amount date)
@@ -260,7 +300,7 @@ top of the file:
                             "Amount: "
                             (+org-entry-get-number "DEFAULT_AMOUNT"))))
         (date (or date (org-read-date nil t))))
-    (cigars-inv--sub id amount action date)
+    (inventory-sub cigars-inventory-file id amount action date)
     (when (and (string-equal action "consume")
                (y-or-n-p "Rate?"))
       (cigar/rate date))
@@ -287,59 +327,7 @@ When DATE is omitted, `current-time' is used."
       (cigar-refresh-rating t))))
 
 ;;
-;; Inventory
-
-(defun cigars-inv--balance (id &optional query)
-  "Get balance of ID using QUERY."
-  (let* ((cmd (format "hledger -f cigars.journal b %s '%s'" id query))
-         (res (shell-command-to-string cmd))
-         (lines (split-string res "\n")))
-    (string-to-number (car (seq-drop-while #'string-empty-p (reverse lines))))))
-
-(defun cigars-inv--total-in (id)
-  "Get total income for ID."
-  (cigars-inv--balance id "amt:>0"))
-
-(defun cigars-inv--total-out (id)
-  "Get total outcome for ID."
-  (abs (cigars-inv--balance id "amt:<0")))
-
-(defun cigars-inv--add (id amount source &optional date)
-  "Add AMOUNT of ID to inventory from SOURCE.
-
-When DATE is omitted, `current-time' is used."
-  (shell-command-to-string
-   (format
-    "echo '\n%s\n    cigar:%s  %s\n    source:%s' >> cigars.journal"
-    (format-time-string "%Y/%m/%d" date)
-    id
-    amount
-    source)))
-
-(defun cigars-inv--sub (id amount action &optional date)
-  "Subtract amount of ID from inventory as result of ACTION.
-
-When DATE is omitted, `current-time' is used."
-  (shell-command-to-string
-   (format
-    "echo '\n%s\n    activity:%s  %s\n    cigar:%s' >> cigars.journal"
-    (format-time-string "%Y/%m/%d" date)
-    action
-    amount
-    id)))
-
-;;
 ;; Brands
-
-(defvar cigars-brands-parent-id ""
-  "ID of Brands parent entry.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+BRANDS_PARENT: ID")
-
-(defvar-local cigars--brands-parent nil)
 
 (defun cigars--read-brand ()
   "Read Brand."
@@ -357,16 +345,3 @@ top of the file:
       (save-buffer)
       (pretty-props/entry)
       (save-buffer))))
-
-;;
-;; Other stuff
-
-(defvar cigars-materials-location-parent-id ""
-  "ID of Materials location parent entry.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+MATERIALS_LOCATION_PARENT: ID")
-
-(defvar-local cigars--materials-location-parent nil)

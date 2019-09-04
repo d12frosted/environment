@@ -48,7 +48,10 @@
               (+org-get-buffer-setting "TEA_TITLE_FORMAT"))
 
   (setq-local cha-default-currency
-              (+org-get-buffer-setting "DEFAULT_CURRENCY")))
+              (+org-get-buffer-setting "DEFAULT_CURRENCY"))
+
+  (setq-local cha-inventory-file
+              (+org-get-buffer-setting "INVENTORY_FILE")))
 
 ;;;###autoload
 (defun cha-mode-maybe-enable ()
@@ -120,8 +123,10 @@ Supports the following entries:
 (defun cha-refresh-tea-entry ()
   "Refresh tea entry at point."
   (let ((id (org-id-get-create)))
-    (+org-entry-set-number "TOTAL_IN" (cha-inv--total-in id))
-    (+org-entry-set-number "TOTAL_OUT" (cha-inv--total-out id)))
+    (+org-entry-set-number "TOTAL_IN"
+                           (inventory-total-in cha-inventory-file id))
+    (+org-entry-set-number "TOTAL_OUT"
+                           (inventory-total-out cha-inventory-file id)))
   (+org-entry-set-number "AVAILABLE"
                          (round (- (+org-entry-get-number "TOTAL_IN")
                                    (+org-entry-get-number "TOTAL_OUT"))))
@@ -340,10 +345,11 @@ top of the file:
                         (concat cha-default-currency
                                 (read-string "Price: ")))
       (+org-prompt-property "AVAILABLE")
-      (cha-inv--add id
-                    (org-entry-get nil "AVAILABLE")
-                    (read-string "Shop:" "belayasova")
-                    (org-read-date nil t nil "Date of purchase: "))
+      (inventory-add cha-inventory-file
+                     id
+                     (org-entry-get nil "AVAILABLE")
+                     (read-string "Shop:" "belayasova")
+                     (org-read-date nil t nil "Date of purchase: "))
       (org-set-property "TOTAL_IN" (org-entry-get nil "AVAILABLE"))
       (org-set-property "TOTAL_OUT" "0")
       (cha-refresh-tea-entry)
@@ -363,7 +369,7 @@ top of the file:
                             "Amount: "
                             (+org-entry-get-number "DEFAULT_AMOUNT"))))
         (date (or date (org-read-date nil t))))
-    (cha-inv--sub id amount action date)
+    (inventory-sub cha-inventory-file id amount action date)
     (when (and (string-equal action "drink")
                (y-or-n-p "Rate?"))
       (cha/rate date))
@@ -376,7 +382,7 @@ top of the file:
         (source (or source (read-string "Source: " "belayasova")))
         (amount (or amount (read-number "Amount: ")))
         (date (or date (org-read-date nil t))))
-    (cha-inv--add id amount source date)
+    (inventory-add cha-inventory-file id amount source date)
     (cha-refresh-tea-entry)))
 
 (defun cha/rate (&optional date)
@@ -402,41 +408,10 @@ When DATE is omitted, `current-time' is used."
 ;;
 ;; Inventory
 
-(defun cha-inv--balance (id &optional query)
-  "Get balance of ID using QUERY."
-  (let* ((cmd (format "hledger -f cha-dao.journal b %s '%s'" id query))
-         (res (shell-command-to-string cmd))
-         (lines (split-string res "\n")))
-    (string-to-number (car (seq-drop-while #'string-empty-p (reverse lines))))))
+(defvar-local cha-inventory-file nil
+  "File name of the inventory.
 
-(defun cha-inv--total-in (id)
-  "Get total income for ID."
-  (cha-inv--balance id "amt:>0"))
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
 
-(defun cha-inv--total-out (id)
-  "Get total outcome for ID."
-  (abs (cha-inv--balance id "amt:<0")))
-
-(defun cha-inv--add (id amount source &optional date)
-  "Add AMOUNT of ID to inventory from SOURCE.
-
-When DATE is omitted, `current-time' is used."
-  (shell-command-to-string
-   (format
-    "echo '\n%s\n    cha:%s  %s\n    source:%s' >> cha-dao.journal"
-    (format-time-string "%Y/%m/%d" date)
-    id
-    amount
-    source)))
-
-(defun cha-inv--sub (id amount action &optional date)
-  "Subtract amount of ID from inventory as result of ACTION.
-
-When DATE is omitted, `current-time' is used."
-  (shell-command-to-string
-   (format
-    "echo '\n%s\n    activity:%s  %s\n    cha:%s' >> cha-dao.journal"
-    (format-time-string "%Y/%m/%d" date)
-    action
-    amount
-    id)))
+  #+INVENTORY_FILE: FILENAME")
