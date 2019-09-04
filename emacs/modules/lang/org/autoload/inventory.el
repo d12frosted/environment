@@ -20,7 +20,7 @@
 ;;;###autoload
 (defun inventory-balance (file id &optional query)
   "Get balance of ID in FILE using QUERY."
-  (let* ((cmd (format "hledger -f '$s' b %s '%s'" file id query))
+  (let* ((cmd (format "hledger -f %s b %s '%s'" file id query))
          (res (shell-command-to-string cmd))
          (lines (split-string res "\n")))
     (string-to-number (car (seq-drop-while #'string-empty-p (reverse lines))))))
@@ -42,7 +42,7 @@
 When DATE is omitted, `current-time' is used."
   (shell-command-to-string
    (format
-    "echo '\n%s\n    cigar:%s  %s\n    source:%s' >> '%s'"
+    "echo '\n%s\n    goods:%s  %s\n    source:%s' >> '%s'"
     (format-time-string "%Y/%m/%d" date)
     id
     amount
@@ -56,7 +56,7 @@ When DATE is omitted, `current-time' is used."
 When DATE is omitted, `current-time' is used."
   (shell-command-to-string
    (format
-    "echo '\n%s\n    activity:%s  %s\n    cigar:%s' >> %s"
+    "echo '\n%s\n    activity:%s  %s\n    goods:%s' >> %s"
     (format-time-string "%Y/%m/%d" date)
     action
     amount
