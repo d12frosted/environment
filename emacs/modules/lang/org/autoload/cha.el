@@ -22,36 +22,7 @@
   "Minor mode for all the tea utilities."
   :lighter " 茶"
   (places-mode)
-  (pretty-props-mode)
-
-  (setq-local cha-tea-groups-parent-id
-              (+org-get-buffer-setting "TEA_GROUPS_PARENT"))
-  (setq-local cha--tea-groups-parent
-              (+brain-as-entry cha-tea-groups-parent-id))
-
-  (setq-local cha-fermentation-types-parent-id
-              (+org-get-buffer-setting "FERMENTATION_TYPES_PARENT"))
-  (setq-local cha--fermentation-types-parent
-              (+brain-as-entry cha-fermentation-types-parent-id))
-
-  (setq-local cha-pressing-types-parent-id
-              (+org-get-buffer-setting "PRESSING_TYPES_PARENT"))
-  (setq-local cha--pressing-types-parent
-              (+brain-as-entry cha-pressing-types-parent-id))
-
-  (setq-local cha-tea-parent-id
-              (+org-get-buffer-setting "TEA_PARENT"))
-  (setq-local cha--tea-parent
-              (+brain-as-entry cha-tea-parent-id))
-
-  (setq-local cha-tea-title-format
-              (+org-get-buffer-setting "TEA_TITLE_FORMAT"))
-
-  (setq-local cha-default-currency
-              (+org-get-buffer-setting "DEFAULT_CURRENCY"))
-
-  (setq-local cha-inventory-file
-              (+org-get-buffer-setting "INVENTORY_FILE")))
+  (pretty-props-mode))
 
 ;;;###autoload
 (defun cha-mode-maybe-enable ()
@@ -70,12 +41,60 @@ in the options section.
         (cha-mode)))))
 
 ;;
+;; Buffer settings
+
+(def-org-buffer-brain-entry-setting
+  cha-tea-groups-parent
+  'cha-mode-hook
+  "TEA_GROUPS_PARENT"
+  "ID of tea groups parent entry.")
+
+(def-org-buffer-brain-entry-setting
+  cha-tea-parent
+  'cha-mode-hook
+  "TEA_PARENT"
+  "ID of tea parent entry.")
+
+(def-org-buffer-brain-entry-setting
+  cha-fermentation-types-parent
+  'cha-mode-hook
+  "FERMENTATION_TYPES_PARENT"
+  "ID of fermentation types parent entry")
+
+(def-org-buffer-brain-entry-setting
+  cha-pressing-types-parent
+  'cha-mode-hook
+  "PRESSING_TYPES_PARENT"
+  "ID of pressing types parent entry")
+
+(def-org-buffer-setting
+  cha-tea-title-format
+  nil
+  'cha-mode-hook
+  "TEA_TITLE_FORMAT"
+  "Format of the tea entry title.")
+
+(def-org-buffer-setting
+  cha-default-currency
+  ""
+  'cha-mode-hook
+  "DEFAULT_CURRENCY"
+  "Default currency.")
+
+(def-org-buffer-setting
+  cha-inventory-file
+  ""
+  'cha-mode-hook
+  "INVENTORY_FILE"
+  "File name of the inventory.")
+
+;;
 ;; Refresh
 
 (defun cha--refresh-mapping ()
   "Return alist of parent id and refresh function."
-  (list (cons cha-tea-groups-parent-id #'cha-refresh-tea-group-entry)
-        (cons cha-tea-parent-id #'cha-refresh-tea-entry)))
+  (list (cons (+brain-as-id cha-tea-groups-parent) #'cha-refresh-tea-group-entry)
+        (cons (+brain-as-id cha-tea-parent) #'cha-refresh-tea-entry)))
 
 (defun cha/refresh-buffer ()
   "Refresh all entries in the current buffer.."
@@ -107,9 +126,9 @@ Supports the following entries:
 3. Rating entry"
   (interactive)
   (cond
-   ((string-equal (+org-parent-id) cha-tea-groups-parent-id)
+   ((string-equal (+org-parent-id) (+brain-as-id cha-tea-groups-parent))
     (cha-refresh-tea-group-entry))
-   ((string-equal (+org-parent-id) cha-tea-parent-id)
+   ((string-equal (+org-parent-id) (+brain-as-id cha-tea-parent))
     (cha-refresh-tea-entry))
    ((+org-entry-tag-p "RATING")
     (cha-refresh-tea-rating t))
@@ -178,14 +197,6 @@ entry."
 ;;
 ;; Title
 
-(defvar-local cha-tea-title-format nil
-  "Format of the Tea entry title.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+TEA_TITLE_FORMAT: {LOCATION} {NAME} | {YEAR} | {TAG}")
-
 (defun cha-format-tea-title (format)
   (let ((properties (org-entry-properties))
         (val-regexp "{\\([a-zA-Z0-9\\-_]+\\)")
@@ -218,80 +229,36 @@ top of the file:
      (t (concat year-gathered " - " year-manufactured)))))
 
 ;;
-;; Currency
-
-(defvar-local cha-default-currency ""
-  "Default currency.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+DEFAULT_CURRENCY: currency")
-
-;;
 ;; Tea groups
-
-(defvar cha-tea-groups-parent-id ""
-  "ID of Tea Groups parent entry.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+TEA_GROUPS_PARENT: ID")
-
-(defvar-local cha--tea-groups-parent nil)
 
 (defun cha--read-tea-group ()
   "Read Tea Group."
   (+brain-choose-entry-by-parent
    "Tea group: "
-   cha--tea-groups-parent))
+   cha-tea-groups-parent))
 
 (defun cha/new-tea-group ()
   "Create a new tea group entry."
   (interactive)
   (let* ((name (read-string "Tea group name: "))
-         (id (+brain-new-child cha--tea-groups-parent name)))
+         (id (+brain-new-child cha-tea-groups-parent name)))
     (org-with-point-at (org-id-find id t)
       (+org-prompt-property "NAME_ORIGINAL")
       (+org-prompt-property "NAME_TRANSCRIPTION")
       (+org-prompt-property "NAME_MEANING")
       (+org-prompt-property-brain "FERMENTATION"
-                                  cha--fermentation-types-parent)
+                                  cha-fermentation-types-parent)
       (pretty-props/entry)
       (save-buffer))))
 
 ;;
-;; Fermentation
-
-(defvar cha-fermentation-types-parent-id ""
-  "ID of Fermentation types parent entry.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+FERMENTATION_TYPES_PARENT: ID")
-
-(defvar-local cha--fermentation-types-parent nil)
-
-;;
 ;; Pressing
-
-(defvar cha-pressing-types-parent-id ""
-  "ID of Pressing types parent entry.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+PRESSING_TYPES_PARENT: ID")
-
-(defvar-local cha--pressing-types-parent nil)
 
 (defun cha--read-pressing ()
   "Read Tea Group."
   (+brain-choose-entry-by-parent
    "Pressing: "
-   cha--pressing-types-parent))
+   cha-pressing-types-parent))
 
 (defun cha/set-pressing (&optional pressing)
   "Set PRESSING of tea entry at point"
@@ -303,16 +270,6 @@ top of the file:
 
 ;;
 ;; Tea
-
-(defvar cha-tea-parent-id ""
-  "ID of Tea parent entry.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+TEA_PARENT: ID")
-
-(defvar-local cha--tea-parent nil)
 
 (defun cha/new-tea ()
   "Create a new tea entry."
@@ -327,7 +284,7 @@ top of the file:
          (name-meaning
           (+brain-get-property tea-group "NAME_MEANING"))
          (name (read-string "Tea name: " name))
-         (id (+brain-new-child cha--tea-parent name)))
+         (id (+brain-new-child cha-tea-parent name)))
     (org-with-point-at (org-id-find id t)
       (org-set-property "TEA_GROUP"
                         (+brain-make-link tea-group))
@@ -404,14 +361,3 @@ When DATE is omitted, `current-time' is used."
       (mapc #'+org-prompt-property cha--tea-rating-props)
       (save-buffer)
       (cha-refresh-tea-rating t))))
-
-;;
-;; Inventory
-
-(defvar-local cha-inventory-file nil
-  "File name of the inventory.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+INVENTORY_FILE: FILENAME")

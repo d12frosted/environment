@@ -25,30 +25,7 @@
   "Minor mode for all the cigars utilities."
   :lighter " 🚬"
   (places-mode)
-  (pretty-props-mode)
-
-  (setq-local cigars-parent-id
-              (+org-get-buffer-setting "CIGARS_PARENT"))
-  (setq-local cigars--parent
-              (+brain-as-entry cigars-parent-id))
-
-  (setq-local cigars-brands-parent-id
-              (+org-get-buffer-setting "BRANDS_PARENT"))
-  (setq-local cigars--brands-parent
-              (+brain-as-entry cigars-brands-parent-id))
-
-  (setq-local cigars-materials-location-parent-id
-              (+org-get-buffer-setting "MATERIALS_LOCATION_PARENT"))
-  (setq-local cigars--materials-location-parent
-              (+brain-as-entry cigars-materials-location-parent-id))
-
-  (setq-local cigar-title-format
-              (+org-get-buffer-setting "CIGAR_TITLE_FORMAT"))
-  (setq-local cigar-rating-title-format
-              (+org-get-buffer-setting "CIGAR_RATING_TITLE_FORMAT"))
-
-  (setq-local cigars-inventory-file
-              (+org-get-buffer-setting "INVENTORY_FILE")))
+  (pretty-props-mode))
 
 ;;;###autoload
 (defun cigars-mode-maybe-enable ()
@@ -67,61 +44,46 @@ option set in the options section.
         (cigars-mode)))))
 
 ;;
-;; Configurable variables
+;; Buffer settings
 
-(defvar cigars-brands-parent-id ""
-  "ID of Brands parent entry.
+(def-org-buffer-brain-entry-setting
+  cigars-parent
+  'cigars-mode-hook
+  "CIGARS_PARENT"
+  "ID of cigars parent entry.")
 
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
+(def-org-buffer-brain-entry-setting
+  cigars-brands-parent
+  'cigars-mode-hook
+  "BRANDS_PARENT"
+  "ID of brands parent entry.")
 
-  #+BRANDS_PARENT: ID")
+(def-org-buffer-brain-entry-setting
+  cigars-materials-location-parent
+  'cigars-mode-hook
+  "MATERIALS_LOCATION_PARENT"
+  "ID of materials location parent entry.")
 
-(defvar-local cigars--brands-parent nil)
+(def-org-buffer-setting
+  cigar-title-format
+  nil
+  'cigars-mode-hook
+  "CIGAR_TITLE_FORMAT"
+  "Format of the cigar entry title.")
 
-(defvar cigars-parent-id ""
-  "ID of Cigars parent entry.
+(def-org-buffer-setting
+  cigar-rating-title-format
+  nil
+  'cigars-mode-hook
+  "RATING_TITLE_FORMAT"
+  "Format of the rating entry title.")
 
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+CIGARS_PARENT: ID")
-
-(defvar-local cigars--parent nil)
-
-(defvar-local cigar-title-format nil
-  "Format of the cigar entry title.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+CIGAR_TITLE_FORMAT: {LOCATION} {NAME} | {YEAR} | {TAG}")
-
-(defvar-local cigar-rating-title-format nil
-  "Format of the rating entry title.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+CIGAR_RATING_TITLE_FORMAT: {LOCATION} {NAME} | {YEAR} | {TAG}")
-
-(defvar cigars-materials-location-parent-id ""
-  "ID of Materials location parent entry.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+MATERIALS_LOCATION_PARENT: ID")
-
-(defvar-local cigars--materials-location-parent nil)
-
-(defvar-local cigars-inventory-file nil
-  "File name of the inventory.
-
-Can be set in the org-mode buffer by adding following line in the
-top of the file:
-
-  #+INVENTORY_FILE: FILENAME")
+(def-org-buffer-setting
+  cigars-inventory-file
+  nil
+  'cigars-mode-hook
+  "INVENTORY_FILE"
+  "File name of the inventory.")
 
 ;;
 ;; Refresh
@@ -135,7 +97,7 @@ Supports the following entries:
 2. Rating entry"
   (interactive)
   (cond
-   ((string-equal (+org-parent-id) cigars-parent-id)
+   ((string-equal (+org-parent-id) (+brain-as-id cigars-parent))
     (cigar-refresh-entry))
    ((+org-entry-tag-p "RATING")
     (cigar-refresh-rating t))
@@ -164,7 +126,7 @@ Supports the following entries:
 
 (defun cigar--refresh-mapping ()
   "Return alist of parent id and refresh function."
-  (list (cons cigars-parent-id #'cigar-refresh-entry)))
+  (list (cons (+brain-as-id cigars-parent) #'cigar-refresh-entry)))
 
 (defun cigar-refresh-entry ()
   "Refresh a cigar entry at point."
@@ -245,7 +207,7 @@ cigar entry."
   "Create a new cigar entry."
   (interactive)
   (let* ((brand (cigars--read-brand))
-         (id (+brain-new-child cigars--parent (cadr brand))))
+         (id (+brain-new-child cigars-parent (cadr brand))))
     (org-with-point-at (org-id-find id t)
       (org-set-property "BRAND" (+brain-make-link brand))
       (+org-prompt-property "NAME")
@@ -263,9 +225,9 @@ cigar entry."
                                          nil
                                          t))
       (+org-prompt-property "SHAPE")
-      (+org-prompt-property-brain "WRAPPER" cigars--materials-location-parent)
-      (+org-prompt-property-brain "BINDER" cigars--materials-location-parent)
-      (+org-prompt-property-brain "FILLER" cigars--materials-location-parent)
+      (+org-prompt-property-brain "WRAPPER" cigars-materials-location-parent)
+      (+org-prompt-property-brain "BINDER" cigars-materials-location-parent)
+      (+org-prompt-property-brain "FILLER" cigars-materials-location-parent)
       (+org-prompt-property "BOX_SIZE")
       (+org-prompt-property "PRICE")
       (+org-prompt-property "AVAILABLE")
@@ -333,13 +295,13 @@ When DATE is omitted, `current-time' is used."
   "Read Brand."
   (+brain-choose-entry-by-parent
    "Brand: "
-   cigars--brands-parent))
+   cigars-brands-parent))
 
 (defun cigar/new-brand ()
   "Create a new brand entry."
   (interactive)
   (let* ((name (read-string "Name: "))
-         (id (+brain-new-child cigars--brands-parent name)))
+         (id (+brain-new-child cigars-brands-parent name)))
     (org-with-point-at (org-id-find id t)
       (places/set-dwim)
       (save-buffer)

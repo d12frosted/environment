@@ -33,3 +33,51 @@
   "Get a setting called NAME from buffer as a list using
 SEPARATORS."
   (split-string (+org-get-buffer-setting name)))
+
+;;;###autoload
+(defmacro def-org-buffer-setting (name val hook prop doc)
+  "Define a buffer setting with NAME and default value VAL.
+
+Value is loaded on HOOK from the Org buffer setting named PROP."
+  `(def-org-buffer-setting-generic
+    ,name
+    ,val
+    ,hook
+    (+org-get-buffer-setting ,prop)
+    ,(format "%s
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+#+%s: value"
+            doc
+            prop)))
+
+;;;###autoload
+(defmacro def-org-buffer-brain-entry-setting (name hook prop doc)
+  "Define a buffer setting with NAME and default value VAL.
+
+Value is loaded on HOOK from the Org buffer setting named PROP."
+  `(def-org-buffer-setting-generic
+    ,name
+    nil
+    ,hook
+    (+brain-as-entry (+org-get-buffer-setting ,prop))
+    ,(format "%s
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+#+%s: ID"
+            doc
+            prop)))
+
+;;;###autoload
+(defmacro def-org-buffer-setting-generic (name val hook getter doc)
+  "Define a buffer setting with NAME and default value VAL.
+
+Value is set on HOOK using getter"
+  `(progn
+     (defvar-local ,name ,val ,doc)
+     (add-hook ,hook (lambda ()
+                       (setq-local ,name ,getter)))))
