@@ -347,6 +347,17 @@ top of the file:
    "Manufacturer: "
    cigars--manufacturers-parent))
 
+(defun cigar/new-manufacturer ()
+  "Create a new manufacturer entry."
+  (interactive)
+  (let* ((name (read-string "Name: "))
+         (id (+brain-new-child cigars--manufacturers-parent name)))
+    (org-with-point-at (org-id-find id t)
+      (places/set-dwim)
+      (save-buffer)
+      (pretty-props/entry)
+      (save-buffer))))
+
 ;;
 ;; Other stuff
 
