@@ -47,9 +47,11 @@ Candidates are children of PARENT brain entry."
   (org-entry-get nil prop))
 
 ;;;###autoload
-(defun +org-entry-get-number (prop)
+(defun +org-entry-get-number (prop &optional def)
   "Get number PROP value of entry at point"
-  (string-to-number (or (org-entry-get nil prop) "")))
+  (if-let ((str (+org-entry-get prop)))
+      (string-to-number str)
+    def))
 
 ;;;###autoload
 (defun +org-entry-set-number (prop num)
