@@ -48,6 +48,7 @@ set -x PATH $XDG_CONFIG_HOME/bin $PATH
 __append_to_path $GEM_HOME/bin
 __append_to_path /usr/texbin
 __append_to_path /usr/local/sbin
+systemctl --user import-environment PATH
 
 # variables
 set -x EDITOR "emacsclient"
@@ -105,6 +106,10 @@ set fish_pager_color_progress cyan
 
 # Eru completions
 complete -c eru -a 'ssh repositories linking packages guardian os hardware' --no-files
+
+# Vulpea
+set -x VULPEA_DIR "$HOME/Dropbox/vulpea"
+systemctl --user import-environment VULPEA_DIR
 
 # install fisher
 if not functions -q fisher
