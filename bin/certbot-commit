@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+root=$1
+token=$2
+validation=$3
+
+echo "user       = $USER"
+echo "root       = $root"
+echo "token      = $token"
+echo "validation = $validation"
+
+echo "Writing challenge file"
+mkdir -p "$root/assets/.well-known/acme-challenge/$token"
+file="$root/assets/.well-known/acme-challenge/$token/index.html"
+echo "$validation" > "$file"
+
+cd "$root" && {
+  git add "$file"
+  git commit -m "acme challenge"
+  git push
+}

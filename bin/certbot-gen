@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+set -e
+
+email=
+domain=
+root=
+
+################################################################################
+
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+    --email)
+      email="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    --domain)
+      domain="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    --root)
+      root="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+set -- "${POSITIONAL[@]}"
+
+function print_usage() {
+  echo "Usage:
+  certbot-gen [OPTIONS]
+
+Options:
+  --email TEXT          Specify user email (required)
+  --domain TEXT         Specify domain for which certificate is generated (required)
+  --root TEXT           Specify the root of the site files (required)
+"
+}
+
+################################################################################
+
+function ensure() {
+  if [[ -z $2 ]]; then
+    echo "Missing $1!"
+    echo
+    print_usage
+    exit 1
+  fi
+}
+
+ensure "email" "$email"
+ensure "domain" "$domain"
+ensure "root" "$root"
+
+################################################################################
+
+echo "Will generate certificate for:
+
+domain: $domain
+email:  $email
+root:   $root
+"
+
+################################################################################
+
+sudo mkdir -p "/var/cache/certbot-gen"
+echo "domain=$domain
+email=$email
+root=$root
+user=$USER" | sudo tee -a "/var/cache/certbot-gen/env" > /dev/null
+
+################################################################################
+
+sudo certbot certonly \
+  --manual \
+  --manual-auth-hook certbot-auth-hook \
+  --domain "$domain" \
+  --email "$email"

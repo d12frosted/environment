@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+source "/var/cache/certbot-gen/env"
+
+echo "$root"
+echo "$CERTBOT_DOMAIN"
+echo "$CERTBOT_VALIDATION"
+echo "$CERTBOT_TOKEN"
+
+sudo -u "$user" "/home/$user/.config/bin/certbot-commit" "$root" "$CERTBOT_TOKEN" "$CERTBOT_VALIDATION"
+
+echo "Waiting..."
+sleep 1200
