@@ -9,5 +9,14 @@ echo "$CERTBOT_TOKEN"
 
 sudo -u "$user" "/home/$user/.config/bin/certbot-commit" "$root" "$CERTBOT_TOKEN" "$CERTBOT_VALIDATION"
 
-echo "Waiting..."
-sleep 1200
+echo "Waiting for changes to propagate..."
+
+passed=false
+while [ $passed = false ]; do
+  res=$(curl -s -L -f "http://$domain/.well-known/acme-challenge/$CERTBOT_TOKEN")
+  if [ $res = $CERTBOT_VALIDATION ]; then
+    passed=true
+  else
+    sleep 10
+  fi
+done
