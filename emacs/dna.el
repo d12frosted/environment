@@ -47,6 +47,7 @@
  whitespaces
 
  :emacs
+ align
  buffer
  describe
  dired
@@ -65,7 +66,7 @@
  dot
  emacs-lisp
  go
- (haskell +lsp)
+ (haskell +intero)
  nix
  org
  plantuml

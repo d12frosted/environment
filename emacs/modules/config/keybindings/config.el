@@ -141,6 +141,12 @@
   "g]" '(git-gutter:next-hunk :which-key "Next hunk")
   "g[" '(git-gutter:previous-hunk :which-key "Previous hunk")
 
+  "a" '(nil :which-key "align...")
+  "ar" '(+align-regexp :which-key "Align regexp")
+  "a=" '(+align/= :which-key "Align '='")
+  "a:" '(+align/:: :which-key "Align '::'")
+  "ae" '(+align/lang-ext :which-key "Align Haskell language extensions")
+
   "o" '(nil :which-key "open...")
   "oa" '(+agenda/main :which-key "Org fast agenda")
   "ow" '(+agenda/wix :which-key "Org Wix fast agenda")
