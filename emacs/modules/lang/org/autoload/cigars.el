@@ -85,6 +85,13 @@ option set in the options section.
   "INVENTORY_FILE"
   "File name of the inventory.")
 
+(def-org-buffer-setting-list
+  cigars-sources
+  nil
+  'cigars-mode-hook
+  "SOURCES"
+  "List of sources (or shops) of cigars.")
+
 ;;
 ;; Refresh
 
@@ -226,7 +233,7 @@ cigar entry."
       (inventory-add cigars-inventory-file
                      id
                      (org-entry-get nil "AVAILABLE")
-                     (read-string "Source:" "cigarworld.de")
+                     (cigar-read-source)
                      (org-read-date nil t nil "Date of purchase: "))
       (org-set-property "TOTAL_IN" (org-entry-get nil "AVAILABLE"))
       (org-set-property "TOTAL_OUT" "0")
@@ -239,11 +246,15 @@ cigar entry."
   "Acquire AMOUNT of ID because from SOURCE at DATE."
   (interactive)
   (let ((id (or id (org-id-get-create)))
-        (source (or source (read-string "Source: " "cigarworld.de")))
+        (source (or source (cigar-read-source)))
         (amount (or amount (read-number "Amount: ")))
         (date (or date (org-read-date nil t))))
     (inventory-add cigars-inventory-file id amount source date)
     (cigar-refresh-entry)))
+
+(defun cigar-read-source ()
+  "Get the source."
+  (completing-read "Source: " cigars-sources nil t))
 
 (defun cigar/consume (&optional action id amount date)
   "Consume AMOUNT of ID because of ACTION at DATE."

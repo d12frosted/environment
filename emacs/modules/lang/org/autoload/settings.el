@@ -54,6 +54,26 @@ top of the file:
             prop)))
 
 ;;;###autoload
+(defmacro def-org-buffer-setting-list (name val hook prop doc)
+  "Define a buffer setting with NAME and default value VAL.
+
+Value is loaded on HOOK from the Org buffer setting named PROP
+and then split by space to become a list."
+  `(def-org-buffer-setting-generic
+    ,name
+    ,val
+    ,hook
+    (split-string-and-unquote (+org-get-buffer-setting ,prop))
+    ,(format "%s
+
+Can be set in the org-mode buffer by adding following line in the
+top of the file:
+
+#+%s: value"
+            doc
+            prop)))
+
+;;;###autoload
 (defmacro def-org-buffer-brain-entry-setting (name hook prop doc)
   "Define a buffer setting with NAME and default value VAL.
 
