@@ -149,17 +149,7 @@ Supports the following entries:
   (+org-entry-set-number "AVAILABLE"
                          (round (- (+org-entry-get-number "TOTAL_IN")
                                    (+org-entry-get-number "TOTAL_OUT"))))
-  (let ((rates (org-map-entries
-                (lambda ()
-                  (cha-refresh-tea-rating nil)
-                  (+org-entry-get-number "TOTAL"))
-                "+RATING"
-                'tree)))
-    (+org-entry-set-number "RATE"
-                           (if (null rates)
-                               0
-                             (/ (apply #'+ rates)
-                                (float (length rates))))))
+  (+org-entry-set-average-number "RATE" "TOTAL" "RATING")
   (org-edit-headline
    (cha-format-tea-title cha-tea-title-format))
   (pretty-props/entry))

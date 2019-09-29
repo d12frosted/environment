@@ -64,10 +64,29 @@ Be careful though, as it uses `string-to-number' for conversion."
 
 ;;;###autoload
 (defun +org-entry-set-number (prop num)
-  "Set PROP of entry to point to NUM."
-  (org-set-property prop (number-to-string num)))
+  "Set PROP of entry at point to NUM."
+  (+org-entry-set prop (number-to-string num)))
 
 ;;;###autoload
 (defun +org-entry-tag-p (tag)
   "Return non-nil when entry at point has TAG."
   (string-match-p (format ".*:%s:.*" tag) (or (org-entry-get nil "TAGS") "")))
+
+;;;###autoload
+(defun +org-entry-set-average-number (prop children-prop children-tag)
+  "Set the PROP of entry at point to average value of children.
+
+CHILDREN-TAG is used to filter out children.
+
+CHILDREN-PROP is used to get the number from matched children."
+  (when-let ((values (org-map-entries
+                      (lambda ()
+                        (cigar-refresh-rating nil)
+                        (+org-entry-get-number children-prop))
+                      (concat "+" children-tag)
+                      'tree)))
+    (+org-entry-set-number prop
+                           (if (null values)
+                               0
+                             (/ (apply #'+ values)
+                                (float (length values)))))))
