@@ -139,6 +139,8 @@ Supports the following entries:
                          (round (- (+org-entry-get-number "TOTAL_IN")
                                    (+org-entry-get-number "TOTAL_OUT"))))
   (+org-entry-set-average-number "RATE" "TOTAL" "RATING")
+  (+org-entry-set-average-number "DURATION" "DURATION" "RATING")
+  (+org-entry-set-average-number "STRENGTH" "STRENGTH" "RATING")
   (org-edit-headline
    (cigar-format-title cigar-title-format))
   (pretty-props/entry))
