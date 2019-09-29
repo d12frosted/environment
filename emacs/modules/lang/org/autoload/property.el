@@ -58,6 +58,11 @@ Be careful though, as it uses `string-to-number' for conversion."
     def))
 
 ;;;###autoload
+(defun +org-entry-set (prop val)
+  "Set PROP of entry at point to VAL."
+  (org-set-property prop val))
+
+;;;###autoload
 (defun +org-entry-set-number (prop num)
   "Set PROP of entry to point to NUM."
   (org-set-property prop (number-to-string num)))
