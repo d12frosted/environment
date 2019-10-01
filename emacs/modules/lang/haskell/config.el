@@ -28,6 +28,7 @@
         haskell-process-auto-import-loaded-modules t)
   (when (featurep! :feature syntax-checker)
     (setq haskell-process-show-overlays nil))  ; flycheck makes this unnecessary
+  (setq haskell-stylish-on-save t)
   (add-hook! 'haskell-mode-hook
     #'(subword-mode           ; improves text navigation with camelCase
        haskell-collapse-mode  ; support folding haskell code blocks
