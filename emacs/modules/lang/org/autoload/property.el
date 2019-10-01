@@ -27,6 +27,15 @@ If INITIAL is non-nil, set it as initial value."
    (read-string (concat (+org--pretty-property-prompt name) ": ") initial)))
 
 ;;;###autoload
+(defun +org-prompt-number-property (name &optional initial)
+  "Prompt for a number value and set is as property with NAME.
+
+If INITIAL is non-nil, set it as initial value."
+  (org-set-property
+   name
+   (read-number (concat (+org--pretty-property-prompt name) ": ") initial)))
+
+;;;###autoload
 (defun +org-prompt-property-brain (name parent)
   "Prompt for a brain entry and set is as property with NAME.
 
