@@ -47,6 +47,7 @@ rng-tools
 scrot
 shellcheck
 stack
+stylish-haskell
 systemd
 telegram-desktop
 texlive-most
