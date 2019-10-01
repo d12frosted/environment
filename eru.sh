@@ -540,7 +540,7 @@ arch_guard && {
 
   theme_guard "upgrade" "Upgrade Arch Linux" && {
     sudo aura -Syu --noconfirm
-    sudo aura -Ayu --noconfirm
+    sudo aura -Ayux --noconfirm
   }
 
   theme_guard "hardware" "Setup keyboard" && {
