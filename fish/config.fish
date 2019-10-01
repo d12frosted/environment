@@ -109,6 +109,8 @@ complete -c eru -a 'ssh repositories linking packages guardian os hardware' --no
 
 # Vulpea
 set -x VULPEA_DIR "$HOME/Dropbox/vulpea"
+set -x BUDGET_FILE "$VULPEA_DIR/current.journal"
+set -x BUDGET_CONFIG "$VULPEA_DIR/budget.yaml"
 systemctl --user import-environment VULPEA_DIR
 
 # install fisher
