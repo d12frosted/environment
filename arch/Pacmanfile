@@ -27,6 +27,7 @@ gnumeric
 gnupg
 gocryptfs
 hledger
+hledger-web
 hlint
 java-runtime-common
 jq
