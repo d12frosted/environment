@@ -33,7 +33,8 @@ If INITIAL is non-nil, set it as initial value."
 If INITIAL is non-nil, set it as initial value."
   (org-set-property
    name
-   (read-number (concat (+org--pretty-property-prompt name) ": ") initial)))
+   (number-to-string
+    (read-number (concat (+org--pretty-property-prompt name) ": ") initial))))
 
 ;;;###autoload
 (defun +org-prompt-property-brain (name parent)
