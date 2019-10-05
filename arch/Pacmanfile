@@ -7,7 +7,6 @@ aspell
 aspell-en
 aspell-ru
 aspell-uk
-bazel
 bind-tools
 bower
 calibre
@@ -45,6 +44,8 @@ pulseaudio
 pulseaudio-alsa
 pulseaudio-bluetooth
 pulsemixer
+python
+python-pip
 ripgrep
 rng-tools
 scrot
