@@ -83,15 +83,17 @@ Be careful though, as it uses `string-to-number' for conversion."
   (string-match-p (format ".*:%s:.*" tag) (or (org-entry-get nil "TAGS") "")))
 
 ;;;###autoload
-(defun +org-entry-set-average-number (prop children-prop children-tag)
+(defun +org-entry-set-average-number (prop children-prop children-tag &optional child-hook)
   "Set the PROP of entry at point to average value of children.
 
 CHILDREN-TAG is used to filter out children.
 
-CHILDREN-PROP is used to get the number from matched children."
+CHILDREN-PROP is used to get the number from matched children.
+
+When CHILD-HOOK is non-nil it's being called with point at child."
   (when-let ((values (org-map-entries
                       (lambda ()
-                        (cigar-refresh-rating nil)
+                        (when child-hook (funcall child-hook))
                         (+org-entry-get-number children-prop))
                       (concat "+" children-tag)
                       'tree)))

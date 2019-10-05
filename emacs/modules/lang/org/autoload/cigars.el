@@ -145,14 +145,14 @@ Supports the following entries:
   (+org-entry-set-number "AVAILABLE"
                          (round (- (+org-entry-get-number "TOTAL_IN")
                                    (+org-entry-get-number "TOTAL_OUT"))))
-  (+org-entry-set-average-number "RATE" "TOTAL" "RATING")
+  (+org-entry-set-average-number "RATE" "TOTAL" "RATING" #'cigar-refresh-rating)
   (+org-entry-set-average-number "DURATION" "DURATION" "RATING")
   (+org-entry-set-average-number "STRENGTH" "STRENGTH" "RATING")
   (org-edit-headline
    (cigar-format-title cigar-title-format))
   (pretty-props/entry))
 
-(defun cigar-refresh-rating (propagate)
+(defun cigar-refresh-rating (&optional propagate)
   "Refresh rating entry at point.
 
 When PROPAGATE is non-nil, refresh is propagated upper to the

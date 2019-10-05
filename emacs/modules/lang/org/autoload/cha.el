@@ -149,12 +149,12 @@ Supports the following entries:
   (+org-entry-set-number "AVAILABLE"
                          (round (- (+org-entry-get-number "TOTAL_IN")
                                    (+org-entry-get-number "TOTAL_OUT"))))
-  (+org-entry-set-average-number "RATE" "TOTAL" "RATING")
+  (+org-entry-set-average-number "RATE" "TOTAL" "RATING" #'cha-refresh-tea-rating)
   (org-edit-headline
    (cha-format-tea-title cha-tea-title-format))
   (pretty-props/entry))
 
-(defun cha-refresh-tea-rating (propagate)
+(defun cha-refresh-tea-rating (&optional propagate)
   "Refresh tea rating entry at point.
 
 When PROPAGATE is non-nil, refresh is propagated upper to the tea
