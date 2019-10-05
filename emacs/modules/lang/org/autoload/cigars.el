@@ -287,7 +287,9 @@ When DATE is omitted, `current-time' is used."
     (org-with-point-at (org-id-find id t)
       (org-set-tags-to ":RATING:")
       (org-set-property "DATE" (format-time-string "%Y-%m-%d" date))
-      (+org-prompt-property "TOTAL")
+      (+org-prompt-number-property "TOTAL")
+      (+org-prompt-number-property "DURATION")
+      (+org-prompt-number-property "STRENGTH")
       (save-buffer)
       (cigar-refresh-rating t))))
 
