@@ -35,6 +35,11 @@
   '(org-info
     org-habit))
 
+(defvar org-export-backends
+  '(beamer
+    latex
+    html))
+
 ;; Sub-modules
 (load! "+agenda")
 (load! "+capture")
@@ -49,8 +54,6 @@
    org-id
    org-attach
    org-edna
-   ox-latex
-   ox-beamer
    ob-emacs-lisp
    ob-dot
    ob-plantuml))
@@ -66,8 +69,7 @@
      +org|setup-id
      +org|setup-refile
      +org|setup-attach
-     +org|setup-babel
-     +org|setup-latex))
+     +org|setup-babel))
 
 (add-hook! 'org-mode-hook
   #'(org-indent-mode
@@ -192,18 +194,26 @@
   ;; (add-to-list 'org-src-lang-modes (cons "dot" 'graphviz-dot))
   )
 
-(defun +org|setup-latex ()
-  "Setup LaTeX functionality."
+;;
+;; Packages
+
+(def-package! ox-latex
+  :defer t
+  :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-packages-alist '("" "color"))
   (setq org-latex-listings 'minted)
   (setq org-latex-pdf-process
         '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+
+(def-package! ox-beamer
+  :defer t
+  :config
+  (add-to-list 'org-beamer-environments-extra
+               '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))
   )
-;;
-;; Packages
 
 (def-package! org-brain
   :defer t
