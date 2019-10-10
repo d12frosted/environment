@@ -14,8 +14,8 @@ Actions:
   level                 Show current level of brightness
   add AMMOUNT           Increase brigtness by AMMOUNT
   rem AMMOUNT           Decrease brigtness by AMMOUNT
-  inc                   Increase brigtness by 5%
-  dec                   Decrease brigtness by 5%
+  inc                   Increase brigtness by 2%
+  dec                   Decrease brigtness by 2%
 "
 }
 
@@ -47,14 +47,14 @@ case $ACTION in
   inc)
     level=$(cat $file)
     max_level=$(cat $max_file)
-    new_level=$((level + max_level / 20))
+    new_level=$((level + max_level / 100))
     new_level=$((new_level > max_level ? max_level : new_level))
     echo "$new_level" > $file
     ;;
   dec)
     level=$(cat $file)
     max_level=$(cat $max_file)
-    new_level=$((level - max_level / 20))
+    new_level=$((level - max_level / 100))
     new_level=$((new_level > 0 ? new_level : 0))
     echo "$new_level" > $file
     ;;
