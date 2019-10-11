@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+echo "Sync Vulpea files in $VULPEA_DIR"
+cd "$VULPEA_DIR" && {
+  git commit --all -m "[$(date '+%d/%m/%y %H:%M:%S')] sync"
+}
