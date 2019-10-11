@@ -36,23 +36,38 @@ git/local/*
 
 # Ignored applications
 Blue Jeans
+BraveSoftware
 GIMP
+GottCode
+Pinta
 QtProject.conf
 Slack
 StardewValley
 Trolltech.conf
+audacious
 bloop
+brittany
+calibre
+cef_user_data
 chromium
+configstore
 dconf
+enchant
+fisher
 gconf
 google-chrome
+gopass
 gtk-2.0
 gtk-3.0
 libfm
 mc
 menus
+mono.addins
+neofetch
+nvm
 pcmanfm
 procps
 pulse
 spotify
+wix
 yay
