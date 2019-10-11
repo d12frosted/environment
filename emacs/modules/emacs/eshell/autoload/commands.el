@@ -34,7 +34,7 @@
 ;;;###autoload
 (defun eshell/cd-to-project ()
   "Change to the project root of the current directory."
-  (eshell/cd (doom-project-root (eshell/pwd))))
+  (eshell/cd (+project-root (eshell/pwd))))
 
 ;;;###autoload
 (defun eshell/mkdir-and-cd (dir)
