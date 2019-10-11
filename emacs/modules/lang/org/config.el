@@ -203,6 +203,7 @@
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-packages-alist '("" "color"))
   (setq org-latex-listings 'minted)
+  (setq org-latex-inputenc-alist '(("utf8" . "utf8x")))
   (setq org-latex-pdf-process
         '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
