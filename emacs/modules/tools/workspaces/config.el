@@ -97,7 +97,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
         persp-auto-resume-time -1 ; Don't auto-load on startup
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
 
-  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
+  (advice-add #'persp-asave-on-exit :around #'+workspaces-autosave-real-buffers-a)
 
   (add-hook '+buffer-cleanup-session-hook #'+workspaces|cleanup-unassociated-buffers)
 
@@ -139,7 +139,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   ;; per-project workspaces, but reuse current workspace if empty
   (setq projectile-switch-project-action #'+workspaces|set-project-action
         counsel-projectile-switch-project-action
-        '(1 ("o" +workspaces|switch-to-project "open project in new workspace")
+        '(1 ("o" +workspaces-switch-to-project-h "open project in new workspace")
             ("O" counsel-projectile-switch-project-action "jump to a project buffer or file")
             ("f" counsel-projectile-switch-project-action-find-file "jump to a project file")
             ("d" counsel-projectile-switch-project-action-find-dir "jump to a project directory")
@@ -159,7 +159,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
             ("xt" counsel-projectile-switch-project-action-run-term "invoke term from project root")
             ("X" counsel-projectile-switch-project-action-org-capture "org-capture into project")))
 
-  (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
+  (add-hook 'projectile-after-switch-project-hook #'+workspaces-switch-to-project-h)
 
   ;; In some scenarios, persp-mode throws error when Emacs tries to die,
   ;; preventing its death and trapping us in Emacs.
