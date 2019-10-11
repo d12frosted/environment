@@ -37,5 +37,5 @@ This is necessary because `intero-mode' doesn't do its own error checks."
     '((:command . "stack")
       (:exec    . "%c ghc -- -e \"$(< %s)\"")))
   (set-company-backend! 'intero-mode 'intero-company)
-  (when (featurep! :feature syntax-checker)
+  (when (featurep! :tools syntax-checker)
     (flycheck-add-next-checker 'intero '(warning . haskell-hlint))))

@@ -68,7 +68,7 @@ rule in `+file-templates-alist' that applies to it."
       (apply #'+file-templates--expand rule))))
 
 (after! yasnippet
-  (if (featurep! :feature snippets)
+  (if (featurep! :tools snippets)
       (add-to-list 'yas-snippet-dirs '+file-templates-dir 'append #'eq)
     (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
           yas-snippet-dirs '(+file-templates-dir))

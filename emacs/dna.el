@@ -18,17 +18,7 @@
 ;;; Code:
 
 (nucleus!
- :feature
- dir-settings
- eval
- file-templates
- projects
- snippets
- spellcheck
- syntax-checker
- workspaces
-
- :completion
+  :completion
  (company
   +auto)
  ivy
@@ -58,6 +48,14 @@
  window
 
  :tools
+ dir-settings
+ eval
+ file-templates
+ projects
+ snippets
+ spellcheck
+ syntax-checker
+ workspaces
  (git +forge)
  lsp
  pdf

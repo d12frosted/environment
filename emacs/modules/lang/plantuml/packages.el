@@ -18,5 +18,5 @@
 ;;; Code:
 
 (package! plantuml-mode)
-(when (featurep! :feature syntax-checker)
+(when (featurep! :tools syntax-checker)
   (package! flycheck-plantuml))

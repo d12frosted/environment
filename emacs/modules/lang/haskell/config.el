@@ -26,7 +26,7 @@
 (after! haskell-mode
   (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
         haskell-process-auto-import-loaded-modules t)
-  (when (featurep! :feature syntax-checker)
+  (when (featurep! :tools syntax-checker)
     (setq haskell-process-show-overlays nil))  ; flycheck makes this unnecessary
   (setq haskell-stylish-on-save t)
   (add-hook! 'haskell-mode-hook

@@ -31,6 +31,6 @@
 
 
 (def-package! flycheck-plantuml
-  :when (featurep! :feature syntax-checker)
+  :when (featurep! :tools syntax-checker)
   :after plantuml-mode
   :config (flycheck-plantuml-setup))
