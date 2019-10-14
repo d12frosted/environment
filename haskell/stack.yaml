@@ -2,6 +2,6 @@ templates:
   params:
     author-email: boris@d12frosted.io
     author-name: Boris Buliga
-    copyright: 2018 Boris Buliga
     github-username: d12frosted
+    copyright: 2019 Boris Buliga
     category: Development
