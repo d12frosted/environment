@@ -1,3 +1,1 @@
-:def pretty \_ -> return ("import Text.Pretty.Simple(pPrint)\n:set -interactive-print pPrint")
-:def no-pretty \_ -> return (":set -interactive-print System.IO.print")
 :set prompt "λ "
