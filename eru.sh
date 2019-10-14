@@ -492,7 +492,7 @@ arch_guard && {
 
     section "Install aura for simpler AUR access"
     check aura || {
-      mkdir -p /var/cache/pacman/pkg
+      sudo mkdir -p /var/cache/pacman/pkg
       aura_dir=$(mktemp -d)
       git clone https://aur.archlinux.org/aura-bin.git "$aura_dir"
       cd "$aura_dir" && {
