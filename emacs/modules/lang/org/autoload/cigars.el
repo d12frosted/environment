@@ -183,10 +183,15 @@ cigar entry."
             (unless (string-empty-p val-maybe-format)
                 (concat ":" val-maybe-format)))
       (setq val-original (cdr (assoc-string prop properties)))
+      (setq val-def
+            (if (or (string-suffix-p "f" val-format)
+                    (string-suffix-p "d" val-format))
+                "0"
+              "n/a"))
       (setq val (replace-regexp-in-string
                  "\\[\\[.+\\]\\[\\(.+\\)\\]\\]"
                  "\\1"
-                 val-original))
+                 (or val-original val-def)))
       (setq val-conv
             (if (or (string-suffix-p "f" val-format)
                     (string-suffix-p "d" val-format))
