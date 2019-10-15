@@ -215,24 +215,13 @@ cigar entry."
     (org-with-point-at (org-id-find id t)
       (org-set-property "BRAND" (+brain-make-link brand))
       (+org-prompt-property "NAME")
-      (+org-prompt-property "DURATION")
       (+org-prompt-property "RING_GAUGE")
       (+org-prompt-property "LENGTH")
-      (org-set-property "STRENGTH"
-                        (completing-read "Strength: "
-                                         '("light"
-                                           "medium-light"
-                                           "medium"
-                                           "medium-full"
-                                           "full"
-                                           )
-                                         nil
-                                         t))
+      (+org-prompt-number-property "STRENGTH")
       (+org-prompt-property "SHAPE")
       (+org-prompt-property-brain "WRAPPER" cigars-materials-location-parent)
       (+org-prompt-property-brain "BINDER" cigars-materials-location-parent)
       (+org-prompt-property-brain "FILLER" cigars-materials-location-parent)
-      (+org-prompt-property "BOX_SIZE")
       (+org-prompt-property "PRICE")
       (+org-prompt-property "AVAILABLE")
       (inventory-add cigars-inventory-file
