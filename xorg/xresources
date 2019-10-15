@@ -78,4 +78,4 @@ XTerm*modifyOtherKeys: 1
 
 URxvt.font: xft:Source Code Pro:pixelsize=18,xft:Symbola:pixelsize=18
 URxvt.scrollBar: false
-URxvt.perl-ext-common: font-size
+URxvt.perl-ext-common: font-size,selection-to-clipboard
