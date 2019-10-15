@@ -117,6 +117,9 @@
   "fy" '(+buffer/yank-filename :which-key "Yank filename")
   "fX" '(+file/delete-this :which-key "Delete this file")
 
+  "i" '(nil :which-key "insert...")
+  "iu" '(counsel-unicode-char :which-key "unicode character")
+
   "g" '(nil :which-key "git...")
   "gb" '(magit-blame-addition :which-key "Magit blame")
   "gc" '(magit-commit :which-key "Magit commit")
