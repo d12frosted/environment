@@ -132,9 +132,10 @@ Returns t if successful, nil otherwise."
 
 ;;;###autoload
 (defun +workspace-save (name)
-  "Saves a single workspace (NAME) from the current session. Can
-be loaded again with `+workspace-load'. NAME can be the string
-name of a workspace or its perspective hash table.
+  "Saves a single workspace (NAME) from the current session.
+
+ Can be loaded again with `+workspace-load'. NAME can be the
+string name of a workspace or its perspective hash table.
 
 Returns t on success, nil otherwise."
   (unless (+workspace-exists-p name)
@@ -146,8 +147,10 @@ Returns t on success, nil otherwise."
 
 ;;;###autoload
 (defun +workspace-new (name)
-  "Create a new workspace named NAME. If one already exists, return nil.
-Otherwise return t on success, nil otherwise."
+  "Create a new workspace named NAME.
+
+If one already exists, return nil. Otherwise return t on success,
+nil otherwise."
   (when (+workspace--protected-p name)
     (error "Can't create a new '%s' workspace" name))
   (when (+workspace-exists-p name)

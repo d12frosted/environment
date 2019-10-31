@@ -86,14 +86,14 @@
 (defun +org|setup-ui ()
   "Setup UI of `org-mode'."
   (setq org-hidden-keywords nil
-	      org-hide-emphasis-markers nil
-	      org-hide-leading-stars nil
-	      org-image-actual-width '(512)
-	      org-pretty-entities nil
-	      org-adapt-indentation nil
-	      org-startup-folded t
-	      org-startup-indented t
-	      org-outline-path-complete-in-steps nil
+	org-hide-emphasis-markers nil
+	org-hide-leading-stars nil
+	org-image-actual-width '(512)
+	org-pretty-entities nil
+	org-adapt-indentation nil
+	org-startup-folded t
+	org-startup-indented t
+	org-outline-path-complete-in-steps nil
 
         ;; do not allow invisible edits (...)
         org-catch-invisible-edits 'error
@@ -213,8 +213,7 @@
   :defer t
   :config
   (add-to-list 'org-beamer-environments-extra
-               '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))
-  )
+               '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}")))
 
 (def-package! org-brain
   :defer t

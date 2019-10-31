@@ -91,7 +91,7 @@ inherit `+modern-font's size.")
  (delq (assq 'continuation fringe-indicator-alist)
        fringe-indicator-alist)
 
- ;; do not comact font caches during GC as we are going to use some heavy fonts
+ ;; do not compact font caches during GC as we are going to use some heavy fonts
  inhibit-compacting-font-caches t
 
  ;; just a bigger mini-window
