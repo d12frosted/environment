@@ -7,13 +7,18 @@ module XMonad.Commands where
 
 --------------------------------------------------------------------------------
 
-import Control.Monad.IO.Class (MonadIO)
-import XMonad
+import           Control.Monad.IO.Class (MonadIO)
+import           XMonad
 
 --------------------------------------------------------------------------------
 
 dmenu :: MonadIO m => m ()
 dmenu = spawn "dmenu_run -h 32 -fn 'Source Code Pro-10'"
+
+--------------------------------------------------------------------------------
+
+clipmenu :: MonadIO m => m ()
+clipmenu = spawn "clipmenu -i -h 32 -fn 'Source Code Pro-10'"
 
 --------------------------------------------------------------------------------
 
