@@ -48,5 +48,8 @@ autolock &
 dunst &
 notify-enable
 
+# Tame the clipboard as well
+clipmenud &
+
 # Because every X needs some algebra to tame it.
 d12-xmonad

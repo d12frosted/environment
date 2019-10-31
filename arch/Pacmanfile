@@ -11,6 +11,8 @@ bind-tools
 bower
 calibre
 certbot
+clipmenu
+clipnotify
 docker
 docker-compose
 dunst
