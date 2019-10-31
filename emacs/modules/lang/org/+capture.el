@@ -24,7 +24,7 @@
 
 It is relative to `org-directory', unless it is absolute.")
 
-(defvar +capture-journal-file "notes/journal.org"
+(defvar +capture-journal-file "journal.org"
   "The path to the journal file.
 
 It is relative to `org-directory', unless it is absolute.")
