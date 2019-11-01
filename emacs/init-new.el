@@ -105,7 +105,7 @@ stuttering, increase this.")
 (require 'init-completion)
 (require 'init-navigation)
 (require 'init-syntax-check)
-(require 'init-spell-check)
+(require 'init-spellcheck)
 (require 'init-vcs)
 (require 'init-file-templates)
 
