@@ -17,7 +17,7 @@
 ;;
 ;;; Code:
 
-(require 'lib-keybindings)
+(require '+keybindings)
 
 (use-package general)
 

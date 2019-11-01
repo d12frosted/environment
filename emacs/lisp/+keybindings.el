@@ -1,4 +1,4 @@
-;;; lib-keybindings.el --- keybindings utils -*- lexical-binding: t; -*-
+;;; +keybindings.el --- keybindings utils -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris Buliga
 ;;
@@ -39,5 +39,5 @@ If any hook returns non-nil, all hooks after it are ignored.")
         ;; Back to the default
         ((keyboard-quit))))
 
-(provide 'lib-keybindings)
-;;; lib-keybindings.el ends here
+(provide '+keybindings)
+;;; +keybindings.el ends here
