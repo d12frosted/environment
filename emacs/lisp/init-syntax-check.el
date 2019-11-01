@@ -17,7 +17,13 @@
 ;;
 ;;; Code:
 
-
+(use-package flycheck
+  :commands (flycheck-list-errors flycheck-buffer)
+  :config
+  (setq flycheck-global-modes '(not org-mode))
+  ;; Emacs feels snappier without checks on newline
+  (setq flycheck-check-syntax-automatically '(save idle-change mode-enabled))
+  (global-flycheck-mode +1))
 
 (provide 'init-syntax-check)
 ;;; init-syntax-check.el ends here
