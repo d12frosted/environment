@@ -18,6 +18,7 @@
 ;;; Code:
 
 (use-package flycheck
+  :diminish
   :commands (flycheck-list-errors flycheck-buffer)
   :config
   (setq flycheck-global-modes '(not org-mode))
