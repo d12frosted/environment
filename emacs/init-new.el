@@ -114,4 +114,5 @@ stuttering, increase this.")
 
 ;; languages
 (require 'init-org)
+(require 'init-haskell)
 (require 'init-elisp)
