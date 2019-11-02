@@ -67,7 +67,7 @@
  auto-save-default nil
  create-lockfiles nil
  history-length 500
- make-backup-files nil  ; don't create backup~ files
+ make-backup-files nil                  ; don't create backup~ files
 
  ;; byte compilation
  byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local)
@@ -101,13 +101,14 @@
  url-cache-directory (concat +path-cache-dir "url/")
  url-configuration-directory (concat +path-etc-dir "url/")
  gamegrid-user-score-file-directory (concat +path-etc-dir "games/")
+ recentf-save-file (concat +path-cache-dir "recentf")
 
  ;; bookmarks
  bookmark-default-file (concat +path-etc-dir "bookmarks")
  bookmark-save-flag t
 
  ;; Formatting
- delete-trailing-lines nil ; `ws-butler' is used for better whitespace handling
+ delete-trailing-lines nil  ; `ws-butler' is used for better whitespace handling
  fill-column 80
  sentence-end-double-space nil
  word-wrap t
