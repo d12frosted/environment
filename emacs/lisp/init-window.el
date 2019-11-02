@@ -1,4 +1,4 @@
-;;; lisp/init-window.el -*- lexical-binding: t; -*-
+;;; init-window.el --- taming them windows -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris
 ;;
@@ -16,6 +16,8 @@
 ;;; Commentary:
 ;;
 ;;; Code:
+
+(require 'init-keybindings)
 
 (use-package ace-window
   :general
@@ -54,8 +56,10 @@
 
 ;;;###autoload
 (defun +window-zoom ()
-  "Close other windows to focus on this one. Activate again to
-undo this. If the window changes before then, the undo expires."
+  "Close other windows to focus on this one.
+
+Activate again to undo this. If the window changes before then,
+the undo expires."
   (interactive)
   (if (and (one-window-p)
            (assq ?_ register-alist))

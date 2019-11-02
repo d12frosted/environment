@@ -1,4 +1,4 @@
-;;; lisp/init-vcs.el -*- lexical-binding: t; -*-
+;;; init-vcs.el --- keeping sources under control -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris
 ;;
@@ -17,17 +17,27 @@
 ;;
 ;;; Code:
 
+(require 'init-keybindings)
+
 (+leader-def
   "g" '(nil :which-key "git..."))
 
 (setq-default
  vc-follow-symlinks t)
 
+(eval-when-compile
+  (require 'git-gutter-fringe)
+  (require 'magit)
+  (declare-function git-gutter-fr:init "git-gutter-fringe")
+  (declare-function git-gutter-fr:view-diff-infos "git-gutter-fringe")
+  (declare-function git-gutter-fr:clear "git-gutter-fringe")
+  (declare-function git-gutter:view-diff-infos "git-gutter")
+  (declare-function git-gutter:clear-diff-infos "git-gutter"))
 
 (use-package magit
   :general
   (+leader-def
-    "gd" '(magit-dispatch-popup :which-key "Magit dispatch")
+    "gd" '(magit-dispatch :which-key "Magit dispatch")
     "gf" '(magit-find-file :which-key "Magit find-file")
     "gg" '(magit-status :which-key "Magit status")
     "gi" '(magit-init :which-key "Initialize repo")
@@ -36,7 +46,8 @@
     "gt" '(git-timemachine-toggle :which-key "Git time machine"))
   :config
   ;; full-screen is my friend
-  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+  (when (fboundp 'magit-display-buffer-fullframe-status-v1)
+    (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
 
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
@@ -58,7 +69,8 @@
   (add-hook 'after-save-hook #'+git-gutter-maybe)
   :config
   ;; Update git-gutter on focus (in case I was using git externally)
-  (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
+  (when (fboundp 'git-gutter:update-all-windows)
+    (add-hook 'focus-in-hook #'git-gutter:update-all-windows))
 
   ;; update git-gutter when using magit commands
   (advice-add #'magit-stage-file   :after #'+git-gutter-update)
@@ -84,15 +96,15 @@
 (defun +git-gutter-maybe ()
   "Enable `git-gutter-mode' in non-remote buffers."
   (when (and buffer-file-name
-	     (vc-backend buffer-file-name)
-	     (not (file-remote-p buffer-file-name)))
+	           (vc-backend buffer-file-name)
+	           (not (file-remote-p buffer-file-name)))
     (if (display-graphic-p)
-	(progn
-	  (require 'git-gutter-fringe)
-	  (setq-local git-gutter:init-function      #'git-gutter-fr:init)
-	  (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
-	  (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
-	  (setq-local git-gutter:window-width -1))
+	      (progn
+	        (require 'git-gutter-fringe)
+	        (setq-local git-gutter:init-function      #'git-gutter-fr:init)
+	        (setq-local git-gutter:view-diff-function #'git-gutter-fr:view-diff-infos)
+	        (setq-local git-gutter:clear-function     #'git-gutter-fr:clear)
+	        (setq-local git-gutter:window-width -1))
       (setq-local git-gutter:init-function      'nil)
       (setq-local git-gutter:view-diff-function #'git-gutter:view-diff-infos)
       (setq-local git-gutter:clear-function     #'git-gutter:clear-diff-infos)
@@ -118,14 +130,15 @@ current workspace."
                            (with-selected-window win
                              (eq major-mode 'magit-status-mode)))
                          (window-list))))
-    (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
+    (when (fboundp 'magit-mode-get-buffers)
+      (mapc #'+magit--kill-buffer (magit-mode-get-buffers)))
     (async-start
      (lambda ()
        (dolist (buffer (buffer-list))
          (with-current-buffer buffer
-	   (vc-refresh-state)
-	   (when (fboundp '+git-gutter-update)
-	     (+git-gutter-update)))))
+	         (vc-refresh-state)
+	         (when (fboundp '+git-gutter-update)
+	           (+git-gutter-update)))))
      'ignore)))
 
 (defun +magit--kill-buffer (buffer)

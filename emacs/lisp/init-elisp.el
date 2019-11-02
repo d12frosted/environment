@@ -19,6 +19,7 @@
 
 (use-package lispy
   :defer t
+  :diminish
   :hook ((emacs-lisp-mode . lispy-mode))
   :config
   (define-key lispy-mode-map (kbd "C-a") '+beginning-of-line))

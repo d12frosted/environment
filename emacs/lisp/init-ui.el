@@ -1,4 +1,4 @@
-;;; lisp/init-ui.el -*- lexical-binding: t; -*-
+;;; init-ui.el --- all the nice things -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris
 ;;

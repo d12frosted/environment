@@ -1,4 +1,4 @@
-;;; lisp/init-project.el -*- lexical-binding: t; -*-
+;;; init-project.el --- project feature -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris
 ;;
@@ -17,23 +17,22 @@
 ;;
 ;;; Code:
 
-(eval-when-compile
-  (require 'init-keybindings))
+(require 'init-keybindings)
 
 (use-package projectile
   :diminish
   :hook (after-init . projectile-mode)
   :general
   (+leader-def
-   "p" '(nil :which-key "project...")
-   "pf" '(projectile-find-file :which-key "Find file in project")
-   "p!" '(projectile-run-shell-command-in-root :which-key "Run cmd in project root")
-   "pp" '(projectile-switch-project :which-key "Switch project")
-   "pI" '(projectile-invalidate-cache :which-key "Invalidate cache"))
+    "p" '(nil :which-key "project...")
+    "pf" '(projectile-find-file :which-key "Find file in project")
+    "p!" '(projectile-run-shell-command-in-root :which-key "Run cmd in project root")
+    "pp" '(projectile-switch-project :which-key "Switch project")
+    "pI" '(projectile-invalidate-cache :which-key "Invalidate cache"))
   :init
   (setq projectile-mode-line-prefix ""
         projectile-sort-order 'recentf
-	projectile-indexing-method 'alien
+	      projectile-indexing-method 'alien
         projectile-use-git-grep t)
   :config
   (when (executable-find "rg")
@@ -43,15 +42,20 @@
               (setq rg-cmd (format "%s --glob '!%s'" rg-cmd dir)))
             (concat "rg -0 --files --color=never --hidden" rg-cmd)))))
 
+(autoload 'projectile-project-p "projectile")
 ;;;###autoload
 (defalias '+project-p #'projectile-project-p)
 
+(autoload 'projectile-project-root "projectile")
 ;;;###autoload
 (defalias '+project-root #'projectile-project-root)
 
 ;;;###autoload
 (defun +project-name (&optional dir)
-  "Return the name of the current project."
+  "Return the name of the current project.
+
+By default current working directory is used, but you can specify
+it manually by passing optional DIR argument."
   (let ((project-root (or (projectile-project-root dir)
                           (if dir (expand-file-name dir)))))
     (if project-root

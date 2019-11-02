@@ -1,4 +1,4 @@
-;;; lisp/init-ivy.el -*- lexical-binding: t; -*-
+;;; init-ivy.el --- best completion system -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris
 ;;
@@ -16,6 +16,9 @@
 ;;; Commentary:
 ;;
 ;;; Code:
+
+(require 'init-project)
+(require 'subr-x)
 
 (use-package counsel
   :diminish ivy-mode counsel-mode
@@ -37,19 +40,19 @@
   :config
   (setq
    ivy-initial-inputs-alist '((counsel-minor . "^+")
-			      (counsel-package . "^+")
-			      (counsel-org-capture . "^")
-			      (counsel-M-x . "^+?")
-			      (counsel-describe-function . "^+?")
-			      (counsel-describe-variable . "^+?"))))
+			                        (counsel-package . "^+")
+			                        (counsel-org-capture . "^")
+			                        (counsel-M-x . "^+?")
+			                        (counsel-describe-function . "^+?")
+			                        (counsel-describe-variable . "^+?"))))
 
 (use-package counsel-projectile
   :commands (counsel-projectile-find-file
-	     counsel-projectile-find-dir
-	     counsel-projectile-switch-to-buffer
+	           counsel-projectile-find-dir
+	           counsel-projectile-switch-to-buffer
              counsel-projectile-grep
-	     counsel-projectile-ag
-	     counsel-projectile-switch-project)
+	           counsel-projectile-ag
+	           counsel-projectile-switch-project)
   :init
   (global-set-key [remap projectile-find-file]        #'+ivy/projectile-find-file)
   (global-set-key [remap projectile-find-dir]         #'counsel-projectile-find-dir)
@@ -59,7 +62,8 @@
   (global-set-key [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
   ;; no highlighting visited files; slows down the filtering
-  (ivy-set-display-transformer #'counsel-projectile-find-file nil))
+  (when (fboundp 'ivy-set-display-transformer)
+    (ivy-set-display-transformer #'counsel-projectile-find-file nil)))
 
 ;;;###autoload
 (defun +ivy/projectile-find-file ()
@@ -79,9 +83,8 @@ file trees."
   (call-interactively
    (cond ((or (file-equal-p default-directory "~")
               (when-let* ((proot (+project-root)))
-			 (file-equal-p proot "~")))
+			          (file-equal-p proot "~")))
           #'counsel-find-file)
-
          ((+project-p)
           (let ((files (projectile-current-project-files)))
             (if (<= (length files) ivy-sort-max-size)

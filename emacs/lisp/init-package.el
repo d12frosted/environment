@@ -1,4 +1,4 @@
-;;; lisp/init-package.el -*- lexical-binding: t; -*-
+;;; init-package.el --- package system -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris Buliga
 ;;
@@ -16,6 +16,16 @@
 ;;; Commentary:
 ;;
 ;;; Code:
+
+(require 'init-path)
+
+(defvar +package-archives 'upstream
+  "Package archives.
+
+Possible values are: upstream, mirror and local.")
+
+(defvar +benchmark-enable nil
+  "Benchmark loading when non-nil.")
 
 (defun +package/set-archives (archives)
   "Set specific package ARCHIVES repository."

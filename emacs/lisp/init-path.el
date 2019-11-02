@@ -34,7 +34,7 @@ In a nutshell, it's just a value of $HOME.")
 
 (defconst +path-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
-  "The path to this emacs directory.")
+  "The path to this Emacs directory.")
 
 (defconst +path-emacs-private-dir
   (concat +path-home-dir "Dropbox/Apps/Emacs/")
@@ -63,8 +63,7 @@ external dependencies or long-term shared data.")
 Use this for files that change often, like cache files.")
 
 (defconst +path-packages-dir (concat +path-local-dir "packages/")
-  "Where package.el and quelpa plugins (and their caches) are
-  stored.")
+  "Where package.el and quelpa plugins are stored.")
 
 (defconst +path-elpa-mirror-dir (concat +path-home-dir ".elpa-mirror/")
   "Path to (M)ELPA mirror.")

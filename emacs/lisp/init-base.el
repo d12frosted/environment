@@ -1,4 +1,4 @@
-;;; lisp/init-base.el -*- lexical-binding: t; -*-
+;;; init-base.el --- Base configurations -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris Buliga
 ;;
@@ -19,6 +19,7 @@
 
 (require 'subr-x)
 (require 'cl-lib)
+(require 'init-path)
 
 ;; Introduce myself.
 (setq user-full-name "Boris Buliga"
@@ -72,8 +73,7 @@
  byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local)
 
  ;; security
- gnutls-verify-error (not (getenv "INSECURE")) ; you shouldn't use this
- tls-checktrust gnutls-verify-error
+ tls-checktrust t
  tls-program (list "gnutls-cli --x509cafile %t -p %p %h"
                    ;; compatibility fallbacks
                    "gnutls-cli -p %p %h"

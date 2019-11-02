@@ -1,4 +1,4 @@
-;;; lisp/init-buffer.el -*- lexical-binding: t; -*-
+;;; init-buffer.el --- buffer -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris
 ;;
@@ -19,14 +19,16 @@
 
 ;;;###autoload
 (defvar +buffer-fallback-name "*scratch*"
-  "The name of the buffer to fall back to if no other buffers
-exist (will create it if it doesn't exist).")
+  "The name of the buffer to fall back to.
+
+Used when no other buffers exist.")
 
 ;;;###autoload
 (defun +buffer-fallback ()
-  "Returns the fallback buffer, creating it if necessary. By
-default this is the scratch buffer. See `+buffer-fallback-name'
-to change this."
+  "Return the fallback buffer, creating it if necessary.
+
+By default this is the scratch buffer. See
+`+buffer-fallback-name' to change this."
   (get-buffer-create +buffer-fallback-name))
 
 (provide 'init-buffer)

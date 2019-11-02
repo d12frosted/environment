@@ -1,4 +1,4 @@
-;;; lisp/init-file-templates.el -*- lexical-binding: t; -*-
+;;; init-file-templates.el --- file templates -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris
 ;;
@@ -17,25 +17,29 @@
 ;;
 ;;; Code:
 
+(require 'init-path)
+(require 'init-project)
+
 (defvar +file-templates-dir
   (expand-file-name "templates/" +path-emacs-dir)
   "The path to a directory of yasnippet folders to use for file templates.")
 
 (defvar +file-templates-default-trigger "__"
-  "The default yasnippet trigger key (a string) for file template
-rules that don't have a :trigger property in
-`+file-templates-alist'.")
+  "The default yasnippet trigger key (a string).
+
+Used for file template rules that don't have a :trigger property
+in `+file-templates-alist'.")
 
 (defvar +file-templates-alist
-  `(;; elisp
+  `(; elisp
     ("/.dir-locals.el$")
     (emacs-lisp-mode
      :trigger "__package")
     (snippet-mode))
-  "An alist of file template rules. 
+  "An alist of file template rules.
 
 The CAR of each rule is either a major mode symbol or regexp
-string. 
+string.
 
 The CDR is a plist. See `+file-templates-set' for more
 information.")
@@ -44,24 +48,33 @@ information.")
   :diminish
   :defer t
   :config
-  (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
-	yas-snippet-dirs '(+file-templates-dir))
+  (when (fboundp 'yas-dropdown-prompt)
+    (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
+	        yas-snippet-dirs '(+file-templates-dir)))
   ;; Ensure file templates in `+file-templates-dir' are visible
-    (yas-reload-all))
+  (when (fboundp 'yas-reload-all)
+    (yas-reload-all)))
 
 (defun +file-templates-check ()
-  "Check if the current buffer is a candidate for file template
-expansion. It must be non-read-only, empty, and there must be a
-rule in `+file-templates-alist' that applies to it."
+  "Check the current buffer for file template expansion.
+
+Returns non-nil when current buffer is a candidate for file template expansion.
+
+The buffer must be non-read-only, empty, and there must be a rule
+in `+file-templates-alist' that applies to it."
   (when (and (not buffer-read-only)
              (bobp) (eobp)
              (not (string-match-p "^ *\\*" (buffer-name))))
-    (when-let* ((rule (cl-find-if #'+file-template-p +file-templates-alist)))
-      (apply #'+file-templates--expand rule))))
+    (let ((rule (cl-find-if #'+file-template-p +file-templates-alist)))
+      (when rule (apply #'+file-templates--expand rule)))))
 
 (add-hook 'find-file-hook #'+file-templates-check)
 
 (defun +file-templates--set (pred plist)
+  "Register a file template.
+
+Refer to `+file-templates-set' documentation on the meaning of
+PRED and PLIST."
   (if (null (car-safe plist))
       (setq +file-templates-alist
             (delq (assoc pred +file-templates-alist)
@@ -123,22 +136,13 @@ insert mode (if evil is loaded and enabled)."
       (if (functionp trigger)
           (funcall trigger)
         (require 'yasnippet)
-        (unless yas-minor-mode
-          (yas-minor-mode-on))
-        (when (and yas-minor-mode
-                   (when-let*
-                       ((template (cl-find trigger (yas--all-templates (yas--get-snippet-tables mode))
-                                           :key #'yas--template-key :test #'equal)))
-                     (yas-expand-snippet (yas--template-content template)))
-                   (and (featurep 'evil) evil-mode)
-                   (and yas--active-field-overlay
-                        (overlay-buffer yas--active-field-overlay)
-                        (overlay-get yas--active-field-overlay 'yas--field)))
-          (evil-initialize-state 'insert))))))
+        (when (and (fboundp 'yas-minor-mode-on)
+                   (not yas-minor-mode))
+          (yas-minor-mode-on))))))
 
 ;;;###autoload
 (defun +file-template-p (rule)
-  "Return t if RULE applies to the current buffer."
+  "Return non-nil if the RULE apply to the current buffer."
   (let ((pred (car rule))
         (plist (cdr rule)))
     (and (cond ((and (stringp pred) buffer-file-name) (string-match-p pred buffer-file-name))
@@ -149,11 +153,13 @@ insert mode (if evil is loaded and enabled)."
 
 ;;;###autoload
 (defun +file-templates/debug ()
-  "Tests the current buffer and outputs the file template rule
-most appropriate for it. This is used for testing."
+  "Output the file template rule for current buffer.
+
+Test the current buffer and outputs the file template rule most
+appropriate for it. This is used for testing."
   (interactive)
   (message "Found %s"
-	   (cl-find-if #'+file-template-p +file-templates-alist)))
+	         (cl-find-if #'+file-template-p +file-templates-alist)))
 
 (provide 'init-file-templates)
 ;;; init-file-templates.el ends here

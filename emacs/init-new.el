@@ -1,4 +1,4 @@
-;;; init.el -*- lexical-binding: t; -*-
+;;; init-new.el --- Emacs initialisation file -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2019 Boris Buliga
 ;;
@@ -17,13 +17,8 @@
 ;;
 ;;; Code:
 
-(defvar +package-archives 'upstream
-  "Package archives.
-
-Possible values are: upstream, mirror and local.")
-
-(defvar +benchmark-enable nil
-  "Benchmark loading when non-nil.")
+(setq-default +package-archives 'upstream
+              +benchmark-enable nil)
 
 (defvar +gc-cons-threshold 16777216 ; 16mb
   "The default value to use for `gc-cons-threshold'.
@@ -113,6 +108,9 @@ stuttering, increase this.")
 (require 'init-ui)
 
 ;; languages
-(require 'init-org)
+;; (require 'init-org)
 (require 'init-haskell)
 (require 'init-elisp)
+
+(provide 'init-new)
+;;; init-new.el ends here

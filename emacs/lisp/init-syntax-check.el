@@ -20,6 +20,8 @@
 (use-package flycheck
   :diminish
   :commands (flycheck-list-errors flycheck-buffer)
+  :init
+  (setq-default flycheck-emacs-lisp-load-path 'inherit)
   :config
   (setq flycheck-global-modes '(not org-mode))
   ;; Emacs feels snappier without checks on newline

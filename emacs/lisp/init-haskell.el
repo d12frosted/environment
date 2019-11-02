@@ -17,43 +17,44 @@
 ;;
 ;;; Code:
 
+(require 'init-completion)
+
 (use-package haskell-mode
+  :hook ((haskell-mode . subword-mode)
+         (haskell-mode . haskell-collapse-mode)
+         (haskell-mode . interactive-haskell-mode))
   :config
-  (setq haskell-process-suggest-remove-import-lines t  ; warnings for redundant imports etc
+  (setq haskell-process-suggest-remove-import-lines t
         haskell-process-auto-import-loaded-modules t)
-  (setq haskell-process-show-overlays nil) ; flycheck makes this unnecessary
+  ;; flycheck makes this unnecessary
+  (setq haskell-process-show-overlays nil)
   (setq haskell-stylish-on-save t)
-  (add-hook 'haskell-mode-hook #'subword-mode)
-  (add-hook 'haskell-mode-hook #'haskell-collapse-mode)
-  (add-hook 'haskell-mode-hook #'interactive-haskell-mode)
   (add-to-list 'completion-ignored-extensions ".hi"))
 
 (use-package intero
   :commands intero-mode
+  :hook ((haskell-mode-local-vars . +haskell-init-intero))
   :init
-  (add-hook 'haskell-mode-local-vars-hook #'+haskell|init-intero)
-  :config
-  (setq haskell-compile-cabal-build-command "stack build --fast")
-  (+company-set-backend 'intero-mode 'intero-company)
-  (flycheck-add-next-checker 'intero '(warning . haskell-hlint)))
+  (defun +haskell-init-intero ()
+    "Conditionally initialise `intero-mode'.
 
-(defun +haskell|init-intero ()
-  "Initializes `intero-mode' in haskell-mode, unless stack isn't installed.
+To enable `intero-mode', 'stack' must be installed.
 
 This is necessary because `intero-mode' doesn't do its own error
 checks."
-  (when (derived-mode-p 'haskell-mode)
-    (if (executable-find "stack")
-        (intero-mode +1)
-      (message "Couldn't find stack. Refusing to enable intero-mode."))))
+    (when (derived-mode-p 'haskell-mode)
+      (if (executable-find "stack")
+          (intero-mode +1)
+        (message "Couldn't find stack. Refusing to enable intero-mode."))))
+  :config
+  (+company-set-backend 'intero-mode 'intero-company)
+  (when (fboundp 'flycheck-add-next-checker)
+    (flycheck-add-next-checker 'intero '(warning . haskell-hlint))))
 
 (use-package lsp-haskell
   :disabled
   :after haskell-mode
-  :init (add-hook 'haskell-mode-hook #'lsp)
-  :config
-  ;; Does some strange indentation if it pastes in the snippet
-  (setq-hook! 'haskell-mode-hook yas-indent-line 'fixed))
+  :hook ((haskell-mode . lsp)))
 
 (provide 'init-haskell)
 ;;; init-haskell.el ends here
