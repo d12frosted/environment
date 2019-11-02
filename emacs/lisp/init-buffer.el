@@ -31,5 +31,10 @@ By default this is the scratch buffer. See
 `+buffer-fallback-name' to change this."
   (get-buffer-create +buffer-fallback-name))
 
+;;;###autoload
+(defun +buffer-display-and-switch (buffer-or-name)
+  "Display BUFFER-OR-NAME in some window and switch to it."
+  (select-window (display-buffer buffer-or-name)))
+
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
