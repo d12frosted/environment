@@ -35,7 +35,8 @@
   "c" '(nil :which-key "capture...")
   "o" '(nil :which-key "open...")
   "i" '(nil :which-key "insert...")
-  "[" '(nil :which-key "previous..."))
+  "[" '(nil :which-key "previous...")
+  "/" '(nil :which-key "search..."))
 
 (use-package which-key
   :diminish which-key-mode
