@@ -22,6 +22,7 @@
 
 (require '+org-cha)
 (require '+org-cigars)
+(require '+org-dependent)
 
 ;; Setup location of Org files. Should be set before Org loads.
 (defvar org-directory (concat +path-home-dir "Dropbox/vulpea/"))
