@@ -1,4 +1,4 @@
-;;; agenda.el --- utilities for building agenda -*- lexical-binding: t; -*-
+;;; +org-agenda.el --- utilities for building agenda -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris Buliga
 ;;
@@ -16,6 +16,10 @@
 ;;; Commentary:
 ;;
 ;;; Code:
+
+(require 'subr-x)
+(require 'init-buffer)
+(require '+org)
 
 ;;;###autoload
 (defvar +agenda-hide-scheduled-and-waiting-next-tasks t)
@@ -37,7 +41,7 @@
   "Name of the habits agenda buffer.")
 
 ;;;###autoload
-(defun +agenda/main (arg)
+(defun +agenda/main ()
   "Show main `org-agenda' view.
 
 If it already exists and no \\[universal-argument] is passed,
@@ -47,7 +51,7 @@ function.
 Otherwise create it from scratch."
   (interactive "P")
   (if-let ((buffer (and +agenda-main-cache-buffer
-                        (null arg)
+                        (equal current-prefix-arg nil)
                         (get-buffer +agenda-main-buffer-name))))
       (+buffer-display-and-switch buffer)
     (org-agenda nil " ")))
@@ -72,7 +76,7 @@ Otherwise create it from scratch."
 
 ;;;###autoload
 (defun +agenda--is-project-p ()
-  "Returns non-nil if the heading at point is a project.
+  "Return non-nil if the heading at point is a project.
 
 Basically, it's any item with some todo keyword and tagged as
 PROJECT."
@@ -125,10 +129,13 @@ Callers of this function already widen the buffer view."
 
 ;;;###autoload
 (defun +agenda--list-sublevels-for-projects-indented ()
-  "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
+  "Make all subtasks visible during subtree restriction.
 
-  This is normally used by skipping functions where this variable
-  is already local to the agenda."
+Sets `org-tags-match-list-sublevels' so when restricted to a
+subtree we list all subtasks.
+
+This is normally used by skipping functions where this variable
+is already local to the agenda."
   (if (marker-buffer org-agenda-restrict-begin)
       (setq org-tags-match-list-sublevels 'indented)
     (setq org-tags-match-list-sublevels nil))
@@ -136,10 +143,13 @@ Callers of this function already widen the buffer view."
 
 ;;;###autoload
 (defun +agenda--list-sublevels-for-projects ()
-  "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
+  "Make all subtasks visible during subtree restriction.
 
-  This is normally used by skipping functions where this variable
-  is already local to the agenda."
+Sets `org-tags-match-list-sublevels' so when restricted to a
+subtree we list all subtasks.
+
+This is normally used by skipping functions where this variable
+is already local to the agenda."
   (if (marker-buffer org-agenda-restrict-begin)
       (setq org-tags-match-list-sublevels t)
     (setq org-tags-match-list-sublevels nil))
@@ -147,6 +157,7 @@ Callers of this function already widen the buffer view."
 
 ;;;###autoload
 (defun +agenda/toggle-next-task-display ()
+  "Toggle displaying of next tasks in agenda."
   (interactive)
   (setq +agenda-hide-scheduled-and-waiting-next-tasks (not +agenda-hide-scheduled-and-waiting-next-tasks))
   (when  (equal major-mode 'org-agenda-mode)
@@ -165,7 +176,7 @@ Callers of this function already widen the buffer view."
             (save-excursion
               (forward-line 1)
               (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-                (unless (member "WAITING" (org-get-tags-at))
+                (unless (member "WAITING" (org-get-tags))
                   (setq has-next t))))
             (if has-next
                 nil
@@ -185,7 +196,7 @@ Callers of this function already widen the buffer view."
             (save-excursion
               (forward-line 1)
               (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ TODO " subtree-end t))
-                (unless (member "WAITING" (org-get-tags-at))
+                (unless (member "WAITING" (org-get-tags))
                   (setq has-next t))))
             (if has-next
                 next-headline
@@ -240,8 +251,7 @@ tasks."
 
 ;;;###autoload
 (defun +agenda--skip-projects-and-habits-and-single-tasks ()
-  "Skip trees that are projects, tasks that are habits, single
-non-project tasks."
+  "Skip trees that are projects, habits or single tasks."
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
@@ -249,7 +259,7 @@ non-project tasks."
        ((org-is-habit-p)
         next-headline)
        ((and +agenda-hide-scheduled-and-waiting-next-tasks
-             (member "WAITING" (org-get-tags-at)))
+             (member "WAITING" (org-get-tags)))
         next-headline)
        ((+agenda--is-project-p)
         next-headline)
@@ -401,5 +411,5 @@ tasks."
            (>= scheduled-seconds now)
            subtree-end))))
 
-(provide 'agenda)
-;;; agenda.el ends here
+(provide '+org-agenda)
+;;; +org-agenda.el ends here

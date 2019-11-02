@@ -1,4 +1,4 @@
-;;; org-auto-id.el --- automatically set header id -*- lexical-binding: t; -*-
+;;; +org-auto-id.el --- automatically set header id -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris Buliga
 ;;
@@ -53,10 +53,11 @@ the PROP of the entry is returned."
 
 ;;;###autoload
 (defun +org-auto-id-add-to-headlines-in-file ()
-  "Add id properties to all headlines in the current file which
-do not already have one.
+  "Add id properties to all headlines in the current file.
 
-Only dds ids if the `auto-id' option is set to `t' in the file
+Only missing properties are added.
+
+Only adds ids if the `auto-id' option is set to t in the file
 somewhere. For example,
 
   #+OPTIONS: auto-id:t"
@@ -68,5 +69,5 @@ somewhere. For example,
       (when (re-search-forward +org-auto-id-enable-regexp (point-max) t)
         (org-map-entries #'+org-auto-id-dwim)))))
 
-(provide 'org-auto-id)
-;;; org-auto-id.el ends here
+(provide '+org-auto-id)
+;;; +org-auto-id.el ends here

@@ -1,4 +1,4 @@
-;;; capture.el --- Org capture shortcuts -*- lexical-binding: t; -*-
+;;; +org-capture.el --- Org capture shortcuts -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris Buliga
 ;;
@@ -41,5 +41,5 @@
   (interactive)
   (org-capture nil "j"))
 
-(provide 'capture)
-;;; capture.el ends here
+(provide '+org-capture)
+;;; +org-capture.el ends here

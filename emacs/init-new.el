@@ -108,7 +108,7 @@ stuttering, increase this.")
 (require 'init-ui)
 
 ;; languages
-;; (require 'init-org)
+(require 'init-org)
 (require 'init-haskell)
 (require 'init-elisp)
 
