@@ -17,6 +17,7 @@
 ;;
 ;;; Code:
 
+(require 'subr-x)
 (require 'init-path)
 (require 'init-project)
 
@@ -31,8 +32,10 @@ Used for file template rules that don't have a :trigger property
 in `+file-templates-alist'.")
 
 (defvar +file-templates-alist
-  `(; elisp
-    ("/.dir-locals.el$")
+  `(
+    ;; elisp
+    ("/.dir-locals.el$")                ; no template for dir-locals
+    ("/.settings.el$")                  ; no template for settings
     (emacs-lisp-mode
      :trigger "__package")
     (snippet-mode))
@@ -46,14 +49,29 @@ information.")
 
 (use-package yasnippet
   :diminish
-  :defer t
+  :commands (yas-minor-mode-on
+             yas-expand
+             yas-expand-snippet
+             yas-lookup-snippet
+             yas-insert-snippet
+             yas-new-snippet
+             yas-visit-snippet-file
+             yas-reload-all
+             yas-dropdown-prompt
+             yas--all-templates
+             yas--get-snippet-tables
+             yas--template-key)
+  :hook ((text-mode . yas-minor-mode-on)
+         (prog-mode . yas-minor-mode-on)
+         (conf-mode . yas-minor-mode-on)
+         (snippet-mode . yas-minor-mode-on))
+  :init
+  (add-hook 'find-file-hook #'+file-templates-check)
   :config
-  (when (fboundp 'yas-dropdown-prompt)
-    (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
-	        yas-snippet-dirs '(+file-templates-dir)))
+  (setq yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
+        yas-snippet-dirs '(+file-templates-dir))
   ;; Ensure file templates in `+file-templates-dir' are visible
-  (when (fboundp 'yas-reload-all)
-    (yas-reload-all)))
+  (yas-reload-all))
 
 (defun +file-templates-check ()
   "Check the current buffer for file template expansion.
@@ -67,8 +85,6 @@ in `+file-templates-alist' that applies to it."
              (not (string-match-p "^ *\\*" (buffer-name))))
     (let ((rule (cl-find-if #'+file-template-p +file-templates-alist)))
       (when rule (apply #'+file-templates--expand rule)))))
-
-(add-hook 'find-file-hook #'+file-templates-check)
 
 (defun +file-templates--set (pred plist)
   "Register a file template.
@@ -136,9 +152,15 @@ insert mode (if evil is loaded and enabled)."
       (if (functionp trigger)
           (funcall trigger)
         (require 'yasnippet)
-        (when (and (fboundp 'yas-minor-mode-on)
-                   (not yas-minor-mode))
-          (yas-minor-mode-on))))))
+        (unless yas-minor-mode
+          (yas-minor-mode-on))
+        (when yas-minor-mode
+          (when-let
+              ((template (cl-find trigger
+                                  (yas--all-templates (yas--get-snippet-tables mode))
+                                  :key #'yas--template-key
+                                  :test #'equal)))
+            (yas-expand-snippet (yas--template-content template))))))))
 
 ;;;###autoload
 (defun +file-template-p (rule)
