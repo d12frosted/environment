@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require 'init-project)
+(require 'init-keybindings)
 (require 'subr-x)
 
 (use-package counsel
@@ -25,6 +26,9 @@
   :hook ((after-init . ivy-mode)
          (ivy-mode . counsel-mode))
   :bind (("M-x" . counsel-M-x))
+  :general
+  (+leader-def
+    "iu" '(counsel-unicode-char :which-key "Insert Unicode character"))
   :init
   (setq
    enable-recursive-minibuffers t

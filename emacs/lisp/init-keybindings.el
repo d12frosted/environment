@@ -32,8 +32,9 @@
 
 (+leader-def
   "a" '(nil :which-key "align...")
-  "o" '(nil :which-key "open...")
   "c" '(nil :which-key "capture...")
+  "o" '(nil :which-key "open...")
+  "i" '(nil :which-key "insert...")
   "[" '(nil :which-key "previous..."))
 
 (use-package which-key
