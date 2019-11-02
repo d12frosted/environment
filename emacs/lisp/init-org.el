@@ -24,9 +24,6 @@
 (require '+org-cigars)
 (require '+org-dependent)
 
-;; Setup location of Org files. Should be set before Org loads.
-(defvar org-directory (concat +path-home-dir "Dropbox/vulpea/"))
-
 ;; Setup list of Org modules that should always be loaded together
 ;; with Org.
 (defvar org-modules
@@ -77,6 +74,7 @@ It is relative to `org-directory', unless it is absolute.")
     "or" '(+orgability/list :which-key "Reading list")
     "oA" '(org-agenda :which-key "Org agenda"))
   :init
+  (setq org-directory (concat +path-home-dir "Dropbox/vulpea/"))
   ;; some aggressive saving
   (advice-add #'org-agenda-refile :after #'+org-save-all)
   (advice-add #'org-agenda-todo :after #'+org-save-all)
