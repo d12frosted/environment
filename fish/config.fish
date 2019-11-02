@@ -137,6 +137,9 @@ set -x GOPATH "$XDG_CACHE_HOME/go"
 # private post-configs
 safe_source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
 
+# load bazel env
+safe_source $HOME/.bazelenv
+
 if status --is-interactive
   if test "$TERM" = "linux"
     clear
