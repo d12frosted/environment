@@ -19,7 +19,7 @@
 
 ;;;###autoload
 (defvar +escape-hook nil
-  "A hook run after C-g is pressed.
+  "A hook run after \\[keyboard-quit] is pressed.
 
 Triggers `+escape'.
 
