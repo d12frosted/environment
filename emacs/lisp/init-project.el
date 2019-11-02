@@ -36,15 +36,7 @@
         projectile-sort-order 'recentf
 	      projectile-indexing-method 'alien
         projectile-cache-file (concat +path-cache-dir "projectile.cache")
-        projectile-known-projects-file (concat +path-cache-dir "projectile-bookmarks.eld")
-        projectile-use-git-grep t)
-  :config
-  (when (executable-find "rg")
-    (setq projectile-generic-command
-          (let ((rg-cmd ""))
-            (dolist (dir projectile-globally-ignored-directories)
-              (setq rg-cmd (format "%s --glob '!%s'" rg-cmd dir)))
-            (concat "rg -0 --files --color=never --hidden" rg-cmd)))))
+        projectile-known-projects-file (concat +path-cache-dir "projectile-bookmarks.eld")))
 
 (declare-function projectile-project-p "projectile")
 (declare-function projectile-project-root "projectile")
@@ -66,14 +58,6 @@ it manually by passing optional DIR argument."
     (if project-root
         (funcall projectile-project-name-function project-root)
       "-")))
-
-;;;###autoload
-(defun +project-find-file (dir)
-  "Fuzzy-find a file under DIR."
-  (let ((projectile-project-root (file-truename dir)))
-    (call-interactively
-     (or (command-remapping #'projectile-find-file)
-	 #'projectile-find-file))))
 
 (provide 'init-project)
 ;;; init-project.el ends here
