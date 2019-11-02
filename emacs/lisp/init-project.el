@@ -43,11 +43,12 @@
               (setq rg-cmd (format "%s --glob '!%s'" rg-cmd dir)))
             (concat "rg -0 --files --color=never --hidden" rg-cmd)))))
 
-(autoload 'projectile-project-p "projectile")
+(declare-function projectile-project-p "projectile")
+(declare-function projectile-project-root "projectile")
+
 ;;;###autoload
 (defalias '+project-p #'projectile-project-p)
 
-(autoload 'projectile-project-root "projectile")
 ;;;###autoload
 (defalias '+project-root #'projectile-project-root)
 
