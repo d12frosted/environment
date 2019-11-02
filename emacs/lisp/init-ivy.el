@@ -28,7 +28,8 @@
   :bind (("M-x" . counsel-M-x))
   :general
   (+leader-def
-    "iu" '(counsel-unicode-char :which-key "Insert Unicode character"))
+    "iu" '(counsel-unicode-char :which-key "Insert Unicode character")
+    "/i" '(counsel-imenu :which-key "imenu"))
   :init
   (setq
    enable-recursive-minibuffers t
