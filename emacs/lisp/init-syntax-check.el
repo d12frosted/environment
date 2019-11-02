@@ -18,8 +18,8 @@
 ;;; Code:
 
 (use-package flycheck
+  :defer 1
   :diminish
-  :commands (flycheck-list-errors flycheck-buffer)
   :init
   (setq-default flycheck-emacs-lisp-load-path 'inherit)
   :config
