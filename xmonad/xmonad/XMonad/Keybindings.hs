@@ -13,6 +13,7 @@ import           XMonad.Commands
 import           XMonad
 
 --------------------------------------------------------------------------------
+
 keybindings :: [(String, X ())]
 keybindings =
   [ ("M-q", rebuild)
@@ -28,5 +29,8 @@ keybindings =
   , ("M-S-<Esc>", toggleKbd')
   , ("M-<Print>", spawn "scrot")
   , ("M-o c", clipmenu)
+  , ("M-o e", emacs)
   , ("M-t n", notificationToggle)
   ]
+
+--------------------------------------------------------------------------------

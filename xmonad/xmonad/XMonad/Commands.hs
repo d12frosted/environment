@@ -22,6 +22,11 @@ clipmenu = spawn "clipmenu -i -h 32 -fn 'Source Code Pro-10'"
 
 --------------------------------------------------------------------------------
 
+emacs :: MonadIO m => m ()
+emacs = spawn "emacs"
+
+--------------------------------------------------------------------------------
+
 xlock :: MonadIO m => m ()
 xlock = spawn "xlocker"
 
