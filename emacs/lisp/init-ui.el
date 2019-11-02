@@ -61,7 +61,41 @@
 
 (use-package leuven-theme
   :init
-  (load-theme 'leuven t))
+  (load-theme 'leuven t)
+  (custom-set-faces
+   ;; theming faces
+   '(+theming-mode-line ((t (:inherit mode-line))))
+   '(+theming-mode-line-highlight ((t (:inherit mode-line :foreground "SkyBlue3"))))
+   '(+theming-mode-line-warning ((t (:inherit warning))))
+   '(+theming-mode-line-critical ((t (:inherit warning :foreground "#F4847D"))))
+
+   ;; git-gutter faces
+   '(git-gutter:added ((t (:foreground "#97f295"))))
+   '(git-gutter:modified ((t (:inherit warning))))
+   '(git-gutter:deleted ((t (:foreground "#F4847D"))))
+
+   ;; dired-k
+   '(dired-k-added ((t (:foreground "#97f295"))))
+   '(dired-k-modified ((t (:inherit warning))))
+   '(dired-k-untracked ((t (:inherit error))))
+   '(dired-k-commited ((t (:foreground "#ffffff"))))
+   '(dired-k-ignored ((t (:foreground "DimGrey"))))
+
+   ;; org faces
+   '(org-mode-line-clock ((t (:inherit +theming-mode-line-warning
+                                       :box unspecified
+                                       :foreground unspecified
+                                       :background unspecified))))
+   '(org-checkbox ((t (:background "#FAF7CC"))))
+
+   ;; solaire faces
+   '(solaire-default-face ((t (:inherit default :background "#FAFAFA"))))
+
+   ;; lsp-ui faces
+   '(lsp-ui-sideline-code-action ((t (:inherit default :foreground "SkyBlue3"))))
+   '(lsp-ui-doc-background ((((background light)) :background "#FAF7CC")
+                            (t :background "#272A36")))
+   ))
 
 (provide 'init-ui)
 ;;; init-ui.el ends here
