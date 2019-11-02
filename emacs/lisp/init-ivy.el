@@ -68,6 +68,9 @@
   (global-set-key [remap projectile-ripgrep]          #'counsel-projectile-rg)
   (global-set-key [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
+  (counsel-projectile-modify-action
+   'counsel-projectile-switch-project-action
+   '((default counsel-projectile-switch-project-action-dired)))
   ;; no highlighting visited files; slows down the filtering
   (when (fboundp 'ivy-set-display-transformer)
     (ivy-set-display-transformer #'counsel-projectile-find-file nil)))
