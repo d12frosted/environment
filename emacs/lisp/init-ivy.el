@@ -39,12 +39,13 @@
     (setq projectile-completion-system 'ivy))
   :config
   (setq
-   ivy-initial-inputs-alist '((counsel-minor . "^+")
-			                        (counsel-package . "^+")
-			                        (counsel-org-capture . "^")
-			                        (counsel-M-x . "^+?")
-			                        (counsel-describe-function . "^+?")
-			                        (counsel-describe-variable . "^+?"))))
+   ivy-initial-inputs-alist
+   '((counsel-minor . "^+")
+		 (counsel-package . "^+")
+		 (counsel-org-capture . "^")
+		 (counsel-M-x . "^+?")
+		 (counsel-describe-function . "^+?")
+		 (counsel-describe-variable . "^+?"))))
 
 (use-package counsel-projectile
   :commands (counsel-projectile-find-file
@@ -52,6 +53,7 @@
 	           counsel-projectile-switch-to-buffer
              counsel-projectile-grep
 	           counsel-projectile-ag
+             counsel-projectile-rg
 	           counsel-projectile-switch-project)
   :init
   (global-set-key [remap projectile-find-file]        #'+ivy/projectile-find-file)
@@ -59,6 +61,7 @@
   (global-set-key [remap projectile-switch-to-buffer] #'counsel-projectile-switch-to-buffer)
   (global-set-key [remap projectile-grep]             #'counsel-projectile-grep)
   (global-set-key [remap projectile-ag]               #'counsel-projectile-ag)
+  (global-set-key [remap projectile-ripgrep]          #'counsel-projectile-rg)
   (global-set-key [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
   ;; no highlighting visited files; slows down the filtering

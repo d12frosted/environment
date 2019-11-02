@@ -28,7 +28,8 @@
     "pf" '(projectile-find-file :which-key "Find file in project")
     "p!" '(projectile-run-shell-command-in-root :which-key "Run cmd in project root")
     "pp" '(projectile-switch-project :which-key "Switch project")
-    "pI" '(projectile-invalidate-cache :which-key "Invalidate cache"))
+    "pI" '(projectile-invalidate-cache :which-key "Invalidate cache")
+    "p/" '(projectile-ripgrep :which-key "Grep the project"))
   :init
   (setq projectile-mode-line-prefix ""
         projectile-sort-order 'recentf
