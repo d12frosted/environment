@@ -24,10 +24,14 @@ set fish_greeting "
 
 set -l PRIVATE_FISH_CONFIGS_HOME $HOME/Dropbox/Apps/fish
 
-# private pre-configs
-if test -f $PRIVATE_FISH_CONFIGS_HOME/preconfig.fish
-  source $PRIVATE_FISH_CONFIGS_HOME/preconfig.fish
+function safe_source -a file
+  if test -f $file
+    source $file
+  end
 end
+
+# private pre-configs
+safe_source $PRIVATE_FISH_CONFIGS_HOME/preconfig.fish
 
 # verify bin directories
 if test ! -d $HOME/.local/bin
@@ -131,9 +135,7 @@ set -x NVM_SOURCE "/usr/share/nvm"
 set -x GOPATH "$XDG_CACHE_HOME/go"
 
 # private post-configs
-if test -f $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
-  source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
-end
+safe_source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
 
 if status --is-interactive
   if test "$TERM" = "linux"
