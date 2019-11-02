@@ -49,7 +49,7 @@ just switch to that buffer using `+buffer-display-and-switch'
 function.
 
 Otherwise create it from scratch."
-  (interactive "P")
+  (interactive)
   (if-let ((buffer (and +agenda-main-cache-buffer
                         (equal current-prefix-arg nil)
                         (get-buffer +agenda-main-buffer-name))))
