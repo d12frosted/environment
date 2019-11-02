@@ -108,9 +108,10 @@ stuttering, increase this.")
 (require 'init-ui)
 
 ;; languages
-(require 'init-org)
-(require 'init-haskell)
 (require 'init-elisp)
+(require 'init-haskell)
+(require 'init-org)
+(require 'init-sh)
 
 (provide 'init-new)
 ;;; init-new.el ends here
