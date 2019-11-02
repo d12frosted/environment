@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require 'init-keybindings)
+(require 'init-path)
 
 (use-package projectile
   :diminish
@@ -34,6 +35,8 @@
   (setq projectile-mode-line-prefix ""
         projectile-sort-order 'recentf
 	      projectile-indexing-method 'alien
+        projectile-cache-file (concat +path-cache-dir "projectile.cache")
+        projectile-known-projects-file (concat +path-cache-dir "projectile-bookmarks.eld")
         projectile-use-git-grep t)
   :config
   (when (executable-find "rg")
