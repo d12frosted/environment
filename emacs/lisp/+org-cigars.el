@@ -222,7 +222,6 @@ cigar entry."
       (+org-prompt-property "NAME")
       (+org-prompt-property "RING_GAUGE")
       (+org-prompt-property "LENGTH")
-      (+org-prompt-number-property "STRENGTH")
       (+org-prompt-property "SHAPE")
       (+org-prompt-property-brain "WRAPPER" cigars-materials-location-parent)
       (+org-prompt-property-brain "BINDER" cigars-materials-location-parent)
