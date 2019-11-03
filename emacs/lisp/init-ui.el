@@ -29,6 +29,10 @@
 ;; y/n instead of yes/no
 (fset #'yes-or-no-p #'y-or-n-p)
 
+;; mode line
+(column-number-mode)
+(size-indication-mode)
+
 (setq-default
  ;; no beeping and no blinking please
  ring-bell-function #'ignore
@@ -51,7 +55,7 @@
 
  ;; hide curosrs in other windoes
  cursor-in-non-selected-windows nil
-)
+ )
 
 ;; Suppress GUI features
 (setq use-file-dialog nil
