@@ -27,8 +27,8 @@
   :states nil
   :keymaps 'override
   :prefix "M-m"
-  :prefix-command 'nucleus-prefix-command
-  :prefix-map 'nucleus-prefix-map)
+  :prefix-command '+prefix-command
+  :prefix-map '+prefix-map)
 
 (+leader-def
   "a" '(nil :which-key "align...")
