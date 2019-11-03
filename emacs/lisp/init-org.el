@@ -394,7 +394,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-download
   :defer t
-  :hook ((org-mode-hook . org-download-enable))
+  :hook ((org-mode . org-download-enable))
   :init
   (setq-default org-download-method 'attach))
 
