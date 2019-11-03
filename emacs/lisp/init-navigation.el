@@ -28,5 +28,11 @@
       "jJ" '(avy-goto-char-timer :which-key "Chars")
       "jw" '(avy-goto-word-0 :which-key "Word")))
 
+(use-package ace-link
+  :defer t
+  :general
+  (+leader-def
+    "jb" '(ace-link :which-key "Button or link")))
+
 (provide 'init-navigation)
 ;;; init-navigation.el ends here
