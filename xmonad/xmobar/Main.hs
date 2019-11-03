@@ -1,6 +1,8 @@
-{-# LANGUAGE QuasiQuotes #-}
+--------------------------------------------------------------------------------
+
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE QuasiQuotes       #-}
+{-# LANGUAGE RankNTypes        #-}
 
 --------------------------------------------------------------------------------
 
@@ -8,22 +10,21 @@ module Main (main) where
 
 --------------------------------------------------------------------------------
 
-import qualified Utils.Color as Color
-import qualified Utils.Icon as Icon
+import qualified Utils.Color       as Color
+import qualified Utils.Icon        as Icon
 
 --------------------------------------------------------------------------------
 
-import           Control.Exception (handle, SomeException(..))
+import           Control.Exception (SomeException (..), handle)
 import           Path.Parse
 import           System.Exit
 import           System.IO
-import           System.IO (hClose)
-import           System.Process (runInteractiveProcess, waitForProcess)
+import           System.Process    (runInteractiveProcess, waitForProcess)
 import           Xmobar
 
 --------------------------------------------------------------------------------
 
-data Env
+newtype Env
   = Env
   { envConfigHome :: Path Abs Dir
   }
@@ -128,14 +129,14 @@ dateTemplate
 
 --------------------------------------------------------------------------------
 
-data NotificationStatus = NotificationStatus Int deriving (Show, Read)
+newtype NotificationStatus = NotificationStatus Int deriving (Show, Read)
 
 instance Exec NotificationStatus where
   alias _ = "notification-status"
   start (NotificationStatus r) callback = if r > 0 then go else exec >>= cb
     where go = exec >>= cb >> tenthSeconds r >> go
           exec = execProg "notify" ["status"] "?"
-          cb "enabled" = callback $ Icon.static "\xf0f3"
+          cb "enabled"  = callback $ Icon.static "\xf0f3"
           cb "disabled" = callback $ Icon.alert "\xf1f6"
           cb _          = callback "?"
 
@@ -151,5 +152,7 @@ execProg prog args msg = do
   case exit of
     ExitSuccess -> do str <- getL
                       closeHandles
-                      pure $ str
+                      pure str
     _ -> closeHandles >> pure msg
+
+--------------------------------------------------------------------------------
