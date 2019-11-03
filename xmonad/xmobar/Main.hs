@@ -55,11 +55,11 @@ config env = defaultConfig {
   , template = concat
     [ "%StdinReader%"
     , "}{"
+    , "%default:Master%"
+    , " "
     , Icon.static "\x2328" <> " %kbd%"
     , " "
     , Icon.static "\xf1eb" <> " %wlp3s0wi%"
-    , " "
-    , "%default:Master%"
     , " "
     , "%battery%"
     , " "
