@@ -33,7 +33,7 @@
 
 (use-package intero
   :commands intero-mode
-  :hook ((haskell-mode-local-vars . +haskell-init-intero))
+  :hook ((haskell-mode . +haskell-init-intero))
   :init
   (defun +haskell-init-intero ()
     "Conditionally initialise `intero-mode'.
