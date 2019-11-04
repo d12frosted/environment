@@ -24,6 +24,10 @@
          (haskell-mode . haskell-collapse-mode)
          (haskell-mode . interactive-haskell-mode))
   :config
+  (+file-templates-set
+    'haskell-mode
+    :trigger "__module"
+    :project t)
   (setq haskell-process-suggest-remove-import-lines t
         haskell-process-auto-import-loaded-modules t)
   ;; flycheck makes this unnecessary
