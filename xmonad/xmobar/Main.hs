@@ -138,12 +138,10 @@ newtype NotificationStatus = NotificationStatus Int deriving (Show, Read)
 
 instance Exec NotificationStatus where
   alias _ = "notification-status"
-  start (NotificationStatus r) callback = if r > 0 then go else exec >>= cb
-    where go = exec >>= cb >> tenthSeconds r >> go
-          exec = execProg "notify" ["status"] "?"
-          cb "enabled"  = callback $ Icon.static "\xf0f3"
-          cb "disabled" = callback $ Icon.alert "\xf1f6"
-          cb _          = callback "?"
+  start (NotificationStatus r) callback = pollProg r "notify" ["status"] cb
+    where cb (Just "enabled")  = callback $ Icon.static "\xf0f3"
+          cb (Just "disabled") = callback $ Icon.alert "\xf1f6"
+          cb _                 = callback "?"
 
 --------------------------------------------------------------------------------
 
@@ -151,26 +149,29 @@ newtype DropboxStatus = DropboxStatus Int deriving (Show, Read)
 
 instance Exec DropboxStatus where
   alias _ = "dropbox-status"
-  start (DropboxStatus r) callback = if r > 0 then go else exec >>= cb
+  start (DropboxStatus r) callback = pollProg r "dropbox-cli" ["status"] cb
     where
-      go = exec >>= cb >> tenthSeconds r >> go
-      exec = execProg "dropbox-cli" ["status"] "?"
-      cb res | res == "Dropbox isn't running!" =
-               callback $ Icon.alert "\xf16b"
+      cb Nothing = callback "?"
+      cb (Just res) | res == "Dropbox isn't running!" =
+                      callback $ Icon.alert "\xf16b"
 
-             | res == "Up to date" =
-               callback $ Icon.static "\xf16b"
+                    | res == "Up to date" =
+                      callback $ Icon.static "\xf16b"
 
-             | "Syncing" `isPrefixOf` res =
-               callback $ Icon.static "\xf16b" <> Icon.static "\xf021"
+                    | "Syncing" `isPrefixOf` res =
+                      callback $ Icon.static "\xf16b" <> Icon.static "\xf021"
 
-             | otherwise =
-               callback $ Icon.inactive "\xf16b"
+                    | otherwise = callback "?"
 
 --------------------------------------------------------------------------------
 
-execProg :: FilePath -> [String] -> String -> IO String
-execProg prog args msg = do
+pollProg :: Int -> FilePath -> [String] -> (Maybe String -> IO ()) -> IO ()
+pollProg interval prog args cb = if interval > 0 then go else exec >>= cb
+  where go = exec >>= cb >> tenthSeconds interval >> go
+        exec = execProg' prog args
+
+execProg' :: FilePath -> [String] -> IO (Maybe String)
+execProg' prog args = do
   (i,o,e,p) <- runInteractiveProcess prog args Nothing Nothing
   exit <- waitForProcess p
   let closeHandles = hClose o >> hClose i >> hClose e
@@ -179,7 +180,7 @@ execProg prog args msg = do
   case exit of
     ExitSuccess -> do str <- getL
                       closeHandles
-                      pure str
-    _ -> closeHandles >> pure msg
+                      pure (Just str)
+    _ -> closeHandles >> pure Nothing
 
 --------------------------------------------------------------------------------
