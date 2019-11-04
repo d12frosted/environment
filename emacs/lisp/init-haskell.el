@@ -21,8 +21,7 @@
 
 (use-package haskell-mode
   :hook ((haskell-mode . subword-mode)
-         (haskell-mode . haskell-collapse-mode)
-         (haskell-mode . interactive-haskell-mode))
+         (haskell-mode . haskell-collapse-mode))
   :config
   (+file-templates-set
     'haskell-mode
