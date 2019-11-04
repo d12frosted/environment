@@ -103,6 +103,7 @@ stuttering, increase this.")
 (require 'init-spellcheck)
 (require 'init-vcs)
 (require 'init-dired)
+(require 'init-pdf)
 (require 'init-file-templates)
 
 ;; ui
