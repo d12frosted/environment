@@ -19,7 +19,6 @@
 
 (use-package flycheck
   :defer 1
-  :diminish
   :init
   (setq-default flycheck-emacs-lisp-load-path 'inherit)
   :config
