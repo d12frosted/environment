@@ -60,6 +60,7 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package org
   :defer t
   :ensure org-plus-contrib
+  :diminish org-indent-mode
   :hook ((org-mode . org-indent-mode)
          (org-mode . auto-fill-mode)
          (org-mode . places-mode-maybe-enable)

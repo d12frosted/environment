@@ -24,5 +24,8 @@
   :config
   (define-key lispy-mode-map (kbd "C-a") '+beginning-of-line))
 
+(with-eval-after-load 'eldoc
+  (diminish 'eldoc-mode))
+
 (provide 'init-elisp)
 ;;; init-elisp.el ends here

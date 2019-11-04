@@ -101,5 +101,10 @@
                             (t :background "#272A36")))
    ))
 
+;; built-in diminish
+(with-eval-after-load 'simple
+  ;; `auto-fill-mode'
+  (diminish 'auto-fill-function))
+
 (provide 'init-ui)
 ;;; init-ui.el ends here
