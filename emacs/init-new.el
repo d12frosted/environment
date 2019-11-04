@@ -20,7 +20,7 @@
 (setq-default +package-archives 'upstream
               +benchmark-enable nil)
 
-(defvar +gc-cons-threshold 16777216 ; 16mb
+(defvar +gc-cons-threshold 16777216     ; 16mb
   "The default value to use for `gc-cons-threshold'.
 
 If you experience freezing, decrease this. If you experience
@@ -112,6 +112,9 @@ stuttering, increase this.")
 (require 'init-haskell)
 (require 'init-org)
 (require 'init-sh)
+
+;; other
+(require 'init-fun)
 
 (provide 'init-new)
 ;;; init-new.el ends here
