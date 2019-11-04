@@ -10,17 +10,18 @@ module Main (main) where
 
 --------------------------------------------------------------------------------
 
-import qualified Utils.Color       as Color
-import qualified Utils.Icon        as Icon
+import qualified Utils.Color        as Color
+import qualified Utils.Icon         as Icon
 
 --------------------------------------------------------------------------------
 
-import           Control.Exception (SomeException (..), handle)
-import           Data.List         (isPrefixOf)
+import           Control.Exception  (SomeException (..), handle)
+import           Control.Monad.Cont
+import           Data.List          (isPrefixOf)
 import           Path.Parse
 import           System.Exit
 import           System.IO
-import           System.Process    (runInteractiveProcess, waitForProcess)
+import           System.Process     (runInteractiveProcess, waitForProcess)
 import           Xmobar
 
 --------------------------------------------------------------------------------
@@ -138,7 +139,8 @@ newtype NotificationStatus = NotificationStatus Int deriving (Show, Read)
 
 instance Exec NotificationStatus where
   alias _ = "notification-status"
-  start (NotificationStatus r) callback = pollProg r "notify" ["status"] cb
+  start (NotificationStatus r) callback =
+    callCC (pollProg r "notify" ["status"]) `runContT` cb
     where cb (Just "enabled")  = callback $ Icon.static "\xf0f3"
           cb (Just "disabled") = callback $ Icon.alert "\xf1f6"
           cb _                 = callback "?"
@@ -149,7 +151,8 @@ newtype DropboxStatus = DropboxStatus Int deriving (Show, Read)
 
 instance Exec DropboxStatus where
   alias _ = "dropbox-status"
-  start (DropboxStatus r) callback = pollProg r "dropbox-cli" ["status"] cb
+  start (DropboxStatus r) callback =
+    callCC (pollProg r "dropbox-cli" ["status"]) `runContT` cb
     where
       cb Nothing = callback "?"
       cb (Just res) | res == "Dropbox isn't running!" =
@@ -165,13 +168,18 @@ instance Exec DropboxStatus where
 
 --------------------------------------------------------------------------------
 
-pollProg :: Int -> FilePath -> [String] -> (Maybe String -> IO ()) -> IO ()
+pollProg :: MonadIO m
+         => Int
+         -> FilePath
+         -> [String]
+         -> (Maybe String -> ContT () m (Maybe String))
+         -> ContT () m (Maybe String)
 pollProg interval prog args cb = if interval > 0 then go else exec >>= cb
-  where go = exec >>= cb >> tenthSeconds interval >> go
-        exec = execProg' prog args
+  where go = exec >>= cb >> liftIO (tenthSeconds interval) >> go
+        exec = execProg prog args
 
-execProg' :: FilePath -> [String] -> IO (Maybe String)
-execProg' prog args = do
+execProg :: MonadIO m => FilePath -> [String] -> m (Maybe String)
+execProg prog args = liftIO $ do
   (i,o,e,p) <- runInteractiveProcess prog args Nothing Nothing
   exit <- waitForProcess p
   let closeHandles = hClose o >> hClose i >> hClose e

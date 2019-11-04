@@ -35,6 +35,7 @@ executables:
       - d12-hs-path
       - d12x
       - data-default
+      - mtl
       - path
       - process
       - xmobar
