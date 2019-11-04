@@ -155,12 +155,7 @@ insert mode (if evil is loaded and enabled)."
         (unless yas-minor-mode
           (yas-minor-mode-on))
         (when yas-minor-mode
-          (when-let
-              ((template (cl-find trigger
-                                  (yas--all-templates (yas--get-snippet-tables mode))
-                                  :key #'yas--template-key
-                                  :test #'equal)))
-            (yas-expand-snippet (yas--template-content template))))))))
+          (yas-expand-snippet (yas-lookup-snippet trigger mode)))))))
 
 ;;;###autoload
 (defun +file-template-p (rule)
