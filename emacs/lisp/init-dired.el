@@ -40,22 +40,30 @@
 (use-package dired-k
   :hook ((dired-initial-position . dired-k)
          (dired-after-readin . dired-k-no-revert))
+  :commands (dired-k--start-git-status
+             dired-k--highlight)
   :config
   (setq dired-k-human-readable t)
-  (defun +dired*interrupt-process (orig-fn &rest args)
-    "Fixes dired-k killing git processes too abruptly, leaving
-behind disruptive .git/index.lock files."
-    (cl-letf (((symbol-function #'kill-process)
-               (symbol-function #'interrupt-process)))
-      (apply orig-fn args)))
   (advice-add #'dired-k--start-git-status :around #'+dired*interrupt-process)
-
-  (defun +dired*dired-k-highlight (orig-fn &rest args)
-    "Butt out if the requested directory is remote (i.e. through
-tramp)."
-    (unless (file-remote-p default-directory)
-      (apply orig-fn args)))
   (advice-add #'dired-k--highlight :around #'+dired*dired-k-highlight))
+
+(defun +dired*interrupt-process (orig-fn &rest args)
+  "Fixes dired-k killing git processes too abruptly.
+
+It leaves behind disruptive .git/index.lock files, which is not
+good.
+
+ORIG-FN and ARGS are used for advice."
+  (cl-letf (((symbol-function #'kill-process)
+             (symbol-function #'interrupt-process)))
+    (apply orig-fn args)))
+
+(defun +dired*dired-k-highlight (orig-fn &rest args)
+  "Butt out if the requested directory is remote.
+
+ORIG-FN and ARGS are used for advice."
+  (unless (file-remote-p default-directory)
+    (apply orig-fn args)))
 
 (provide 'init-dired)
 ;;; init-dired.el ends here
