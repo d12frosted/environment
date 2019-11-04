@@ -16,6 +16,7 @@ import qualified Utils.Icon        as Icon
 --------------------------------------------------------------------------------
 
 import           Control.Exception (SomeException (..), handle)
+import           Data.List         (isPrefixOf)
 import           Path.Parse
 import           System.Exit
 import           System.IO
@@ -55,6 +56,8 @@ config env = defaultConfig {
   , template = concat
     [ "%StdinReader%"
     , "}{"
+    , "%dropbox-status%"
+    , " "
     , "%default:Master%"
     , " "
     , Icon.static "\x2328" <> " %kbd%"
@@ -114,6 +117,8 @@ config env = defaultConfig {
 
     , Run $ NotificationStatus 10
 
+    , Run $ DropboxStatus 100
+
     , Run StdinReader
     ]
   }
@@ -139,6 +144,28 @@ instance Exec NotificationStatus where
           cb "enabled"  = callback $ Icon.static "\xf0f3"
           cb "disabled" = callback $ Icon.alert "\xf1f6"
           cb _          = callback "?"
+
+--------------------------------------------------------------------------------
+
+newtype DropboxStatus = DropboxStatus Int deriving (Show, Read)
+
+instance Exec DropboxStatus where
+  alias _ = "dropbox-status"
+  start (DropboxStatus r) callback = if r > 0 then go else exec >>= cb
+    where
+      go = exec >>= cb >> tenthSeconds r >> go
+      exec = execProg "dropbox-cli" ["status"] "?"
+      cb res | res == "Dropbox isn't running!" =
+               callback $ Icon.alert "\xf16b"
+
+             | res == "Up to date" =
+               callback $ Icon.static "\xf16b"
+
+             | "Syncing" `isPrefixOf` res =
+               callback $ Icon.static "\xf16b" <> Icon.static "\xf021"
+
+             | otherwise =
+               callback $ Icon.inactive "\xf16b"
 
 --------------------------------------------------------------------------------
 
