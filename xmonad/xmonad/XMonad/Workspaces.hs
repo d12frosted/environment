@@ -1,13 +1,18 @@
+--------------------------------------------------------------------------------
+
 -- | Configurations for workspaces.
 
 --------------------------------------------------------------------------------
+
 module XMonad.Workspaces where
 
 --------------------------------------------------------------------------------
-import Data.Semigroup
-import XMonad
+
+import           Data.Semigroup
+import           XMonad
 
 --------------------------------------------------------------------------------
+
 wsCode1 :: WorkspaceId
 wsCode1 = "\xf121"
 
@@ -30,6 +35,7 @@ wsOther :: WorkspaceId
 wsOther = "\xf18c"
 
 --------------------------------------------------------------------------------
+
 manageAppsWorkspace :: Query (Endo WindowSet)
 manageAppsWorkspace
   = composeAll . concat $
@@ -40,3 +46,5 @@ manageAppsWorkspace
     , [ className =? "TelegramDesktop" --> doShift wsChat ]
     , [ className =? "Slack" --> doShift wsChat ]
     ]
+
+--------------------------------------------------------------------------------
