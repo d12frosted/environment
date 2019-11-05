@@ -30,6 +30,7 @@ keybindings =
   , ("M-<Print>", spawn "scrot")
   , ("M-o c", clipmenu)
   , ("M-o e", emacs)
+  , ("M-o n", network)
   , ("M-t n", notificationToggle)
   ]
 

@@ -32,6 +32,13 @@ xlock = spawn "xlocker"
 
 --------------------------------------------------------------------------------
 
+network :: MonadIO m => m ()
+network = do
+  spawn "nm-applet"
+  spawn "networkmanager_dmenu"
+
+--------------------------------------------------------------------------------
+
 rebuild :: MonadIO m => m ()
 rebuild = spawn "eru xmonad"
 
