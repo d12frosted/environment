@@ -3,12 +3,22 @@
 
 --------------------------------------------------------------------------------
 
+{-# LANGUAGE LambdaCase #-}
+
+--------------------------------------------------------------------------------
+
 module XMonad.Commands where
+
+--------------------------------------------------------------------------------
+
+import           XMonad.Window
+import           XMonad.Workspaces
 
 --------------------------------------------------------------------------------
 
 import           Control.Monad.IO.Class (MonadIO)
 import           XMonad
+import           XMonad.StackSet
 
 --------------------------------------------------------------------------------
 
@@ -36,6 +46,13 @@ network :: MonadIO m => m ()
 network = do
   spawn "nm-applet"
   spawn "networkmanager_dmenu"
+
+--------------------------------------------------------------------------------
+
+firefox :: X ()
+firefox = findApp "firefox" >>= \case
+  Nothing  -> spawn "firefox" >> windows (greedyView wsWeb)
+  Just win -> windows . focusWindow $ win
 
 --------------------------------------------------------------------------------
 

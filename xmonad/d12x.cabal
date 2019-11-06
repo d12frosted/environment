@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7fc4606a4a7c68543be3afe712a0ecb8c42fb1fc4d23773b36319bc052d541d7
+-- hash: a30495a845741f04836c26f9126b8282cd529564f52c68f19d4652388358543e
 
 name:           d12x
 version:        0.1.0.0
@@ -57,6 +57,7 @@ executable d12-xmonad
   other-modules:
       XMonad.Commands
       XMonad.Keybindings
+      XMonad.Window
       XMonad.Workspaces
       Paths_d12x
   hs-source-dirs:
