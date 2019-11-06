@@ -39,8 +39,7 @@ wsOther = "\xf18c"
 manageAppsWorkspace :: Query (Endo WindowSet)
 manageAppsWorkspace
   = composeAll . concat $
-    [ [ className =? "Firefox" --> doShift wsWeb ]
-    , [ className =? "Nightly" --> doShift wsWeb ]
+    [ [ stringProperty "WM_WINDOW_ROLE" =? "browser" --> doShift wsWeb ]
     , [ className =? "jetbrains-idea" --> doShift wsCode2 ]
     , [ className =? "Spotify" --> doShift wsMedia ]
     , [ className =? "TelegramDesktop" --> doShift wsChat ]
