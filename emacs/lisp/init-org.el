@@ -61,8 +61,7 @@ It is relative to `org-directory', unless it is absolute.")
   :defer t
   :ensure org-plus-contrib
   :diminish org-indent-mode
-  :hook ((org-mode . org-indent-mode)
-         (org-mode . auto-fill-mode)
+  :hook ((org-mode . auto-fill-mode)
          (org-mode . places-mode-maybe-enable)
          (org-mode . pretty-props-mode-maybe-enable)
          (org-mode . cha-mode-maybe-enable)
@@ -151,6 +150,12 @@ It is relative to `org-directory', unless it is absolute.")
    org-refile-use-outline-path t
    org-refile-allow-creating-parent-nodes nil
    org-refile-target-verify-function '+org-refile--verify-refile-target))
+
+(use-package org-indent
+  :defer t
+  :ensure org-plus-contrib
+  :diminish org-indent-mode
+  :hook ((org-mode . org-indent-mode)))
 
 (use-package org-id
   :defer t
