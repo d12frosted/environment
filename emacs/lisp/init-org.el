@@ -161,11 +161,11 @@ It is relative to `org-directory', unless it is absolute.")
   :defer t
   :ensure org-plus-contrib
   :hook ((before-save . +org-auto-id-add-to-headlines-in-file)
-	 (org-capture-prepare-finalize . +org-auto-id-dwim))
+	       (org-capture-prepare-finalize . +org-auto-id-dwim))
   :config
   (setq org-id-track-globally t
-	org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-	org-id-locations-file (concat +path-cache-dir "org-id-locations.el")))
+	      org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+	      org-id-locations-file (concat +path-cache-dir "org-id-locations.el")))
 
 (use-package org-capture
   :defer t
