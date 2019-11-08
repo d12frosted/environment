@@ -56,6 +56,82 @@ Otherwise create it from scratch."
       (+buffer-display-and-switch buffer)
     (org-agenda nil " ")))
 
+(defconst +agenda--refile
+  '(tags "REFILE"
+         ((org-agenda-overriding-header "To refile")
+          (org-tags-match-list-sublevels nil))))
+
+(defconst +agenda--today
+  '(agenda ""
+           ((org-agenda-span 'day)
+		        (org-agenda-skip-deadline-prewarning-if-scheduled t)
+		        (org-agenda-sorting-strategy
+		         '(habit-down time-up category-keep todo-state-down priority-down)))))
+
+(defconst +agenda--stuck-projects
+  '(tags-todo "PROJECT-CANCELLED-HOLD/!"
+              ((org-agenda-overriding-header "Stuck Projects")
+               (org-agenda-skip-function '+agenda--skip-non-stuck-projects)
+               (org-agenda-sorting-strategy
+                '(todo-state-down priority-down effort-up category-keep)))))
+
+(defconst +agenda--projects
+  '(tags-todo "PROJECT-HOLD"
+              ((org-agenda-overriding-header (concat "Projects"))
+               (org-tags-match-list-sublevels t)
+               (org-agenda-skip-function '+agenda--skip-non-projects)
+               (org-agenda-tags-todo-honor-ignore-options t)
+               (org-agenda-sorting-strategy
+                '(todo-state-down priority-down effort-up category-keep)))))
+
+(defconst +agenda--project-subtasks
+  '(tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
+              ((org-agenda-overriding-header
+                (concat "Project Subtasks"
+                        (if +agenda-hide-scheduled-and-waiting-next-tasks
+                            ""
+                          " (including WAITING and SCHEDULED tasks)")))
+               (org-agenda-skip-function '+agenda--skip-non-project-tasks)
+               (org-agenda-todo-ignore-scheduled +agenda-hide-scheduled-and-waiting-next-tasks)
+               (org-agenda-todo-ignore-deadlines +agenda-hide-scheduled-and-waiting-next-tasks)
+               (org-agenda-todo-ignore-with-date +agenda-hide-scheduled-and-waiting-next-tasks)
+               (org-agenda-sorting-strategy
+                '(todo-state-down priority-down effort-up category-keep)))))
+
+(defconst +agenda--focus
+  '(tags-todo "FOCUS"
+              ((org-agenda-overriding-header
+                (concat "To focus on"
+                        (if +agenda-hide-scheduled-and-waiting-next-tasks
+                            ""
+                          " (including WAITING and SCHEDULED tasks)")))
+               (org-agenda-skip-function '+agenda--skip-habits)
+               (org-tags-match-list-sublevels t)
+               (org-agenda-todo-ignore-scheduled +agenda-hide-scheduled-and-waiting-next-tasks)
+               (org-agenda-todo-ignore-deadlines +agenda-hide-scheduled-and-waiting-next-tasks)
+               (org-agenda-todo-ignore-with-date +agenda-hide-scheduled-and-waiting-next-tasks)
+               (org-agenda-tags-todo-honor-ignore-options t)
+               (org-agenda-sorting-strategy
+                '(todo-state-down priority-down effort-up category-keep)))))
+
+(defconst +agenda--archive
+  '(tags "-REFILE-READING/"
+         ((org-agenda-overriding-header "To archive")
+          (org-agenda-skip-function '+agenda--skip-non-archivable-tasks)
+          (org-tags-match-list-sublevels nil))))
+
+(defconst +agenda--waiting
+  '(tags-todo "-CANCELLED+WAITING-READING-FOCUS|+HOLD/!"
+              ((org-agenda-overriding-header
+                (concat "Waiting and Postponed Tasks"
+                        (if +agenda-hide-scheduled-and-waiting-next-tasks
+                            ""
+                          " (including WAITING and SCHEDULED tasks)")))
+               (org-agenda-skip-function '+agenda--skip-non-tasks)
+               (org-tags-match-list-sublevels nil)
+               (org-agenda-todo-ignore-scheduled +agenda-hide-scheduled-and-waiting-next-tasks)
+               (org-agenda-todo-ignore-deadlines +agenda-hide-scheduled-and-waiting-next-tasks))))
+
 ;;;###autoload
 (defun +agenda--find-project-task ()
   "Move point to the parent (project) task if any."

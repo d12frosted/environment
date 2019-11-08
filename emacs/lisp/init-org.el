@@ -239,6 +239,8 @@ It is relative to `org-directory', unless it is absolute.")
   :defer t
   :ensure org-plus-contrib
   :config
+  (eval-when-compile
+    (require '+org-agenda))
   (setq
    org-agenda-files (list org-directory)
    ;; also show state change in log mode
@@ -257,69 +259,13 @@ It is relative to `org-directory', unless it is absolute.")
    org-agenda-window-setup 'current-window
 
    org-agenda-custom-commands
-   `(
-     (" " "Agenda"
-      (
-       (tags "REFILE"
-	           ((org-agenda-overriding-header "To refile")
-	            (org-tags-match-list-sublevels nil)))
-       (agenda "" ((org-agenda-span 'day)
-		               (org-agenda-skip-deadline-prewarning-if-scheduled t)
-		               (org-agenda-sorting-strategy
-		                '(habit-down time-up category-keep todo-state-down priority-down))))
-       (tags-todo "PROJECT-CANCELLED-HOLD/!"
-		              ((org-agenda-overriding-header "Stuck Projects")
-		               (org-agenda-skip-function '+agenda--skip-non-stuck-projects)
-		               (org-agenda-sorting-strategy
-		                '(todo-state-down priority-down effort-up category-keep))))
-       (tags-todo "PROJECT-HOLD"
-		              ((org-agenda-overriding-header (concat "Projects"))
-		               (org-tags-match-list-sublevels t)
-		               (org-agenda-skip-function '+agenda--skip-non-projects)
-		               (org-agenda-tags-todo-honor-ignore-options t)
-		               (org-agenda-sorting-strategy
-		                '(todo-state-down priority-down effort-up category-keep))))
-       (tags-todo "FOCUS"
-		              ((org-agenda-overriding-header
-		                (concat "To focus on"
-			                      (if +agenda-hide-scheduled-and-waiting-next-tasks
-				                        ""
-			                        " (including WAITING and SCHEDULED tasks)")))
-		               (org-agenda-skip-function '+agenda--skip-habits)
-		               (org-tags-match-list-sublevels t)
-		               (org-agenda-todo-ignore-scheduled +agenda-hide-scheduled-and-waiting-next-tasks)
-		               (org-agenda-todo-ignore-deadlines +agenda-hide-scheduled-and-waiting-next-tasks)
-		               (org-agenda-todo-ignore-with-date +agenda-hide-scheduled-and-waiting-next-tasks)
-		               (org-agenda-tags-todo-honor-ignore-options t)
-		               (org-agenda-sorting-strategy
-		                '(todo-state-down priority-down effort-up category-keep))))
-       (tags "-REFILE-READING/"
-	           ((org-agenda-overriding-header "To archive")
-	            (org-agenda-skip-function '+agenda--skip-non-archivable-tasks)
-	            (org-tags-match-list-sublevels nil)))
-       ;; (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
-       ;;            ((org-agenda-overriding-header
-       ;;              (concat "Project Subtasks"
-       ;;                      (if +agenda-hide-scheduled-and-waiting-next-tasks
-       ;;                          ""
-       ;;                        " (including WAITING and SCHEDULED tasks)")))
-       ;;             (org-agenda-skip-function '+agenda--skip-non-project-tasks)
-       ;;             (org-agenda-todo-ignore-scheduled +agenda-hide-scheduled-and-waiting-next-tasks)
-       ;;             (org-agenda-todo-ignore-deadlines +agenda-hide-scheduled-and-waiting-next-tasks)
-       ;;             (org-agenda-todo-ignore-with-date +agenda-hide-scheduled-and-waiting-next-tasks)
-       ;;             (org-agenda-sorting-strategy
-       ;;              '(todo-state-down priority-down effort-up category-keep))))
-       (tags-todo "-CANCELLED+WAITING-READING-FOCUS|+HOLD/!"
-		              ((org-agenda-overriding-header
-		                (concat "Waiting and Postponed Tasks"
-			                      (if +agenda-hide-scheduled-and-waiting-next-tasks
-				                        ""
-			                        " (including WAITING and SCHEDULED tasks)")))
-		               (org-agenda-skip-function '+agenda--skip-non-tasks)
-		               (org-tags-match-list-sublevels nil)
-		               (org-agenda-todo-ignore-scheduled +agenda-hide-scheduled-and-waiting-next-tasks)
-		               (org-agenda-todo-ignore-deadlines +agenda-hide-scheduled-and-waiting-next-tasks)))
-       )
+   `((" " "Agenda"
+      (,+agenda--refile
+       ,+agenda--today
+       ,+agenda--stuck-projects
+       ,+agenda--projects
+       ,+agenda--focus
+       ,+agenda--waiting)
       ((org-agenda-buffer-name +agenda-main-buffer-name)))
 
      ("r" "Reading List" tags-todo "READING"
