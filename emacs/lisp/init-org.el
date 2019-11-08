@@ -292,6 +292,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-brain
   :defer t
+  :defines (org-brain-targets-match)
   :general
   (+leader-def
     "ob" '(org-brain-visualize :which-key "Brain node"))
@@ -303,7 +304,7 @@ It is relative to `org-directory', unless it is absolute.")
         org-brain-scan-directories-recursively nil
         org-brain-targets-match "NOTE"
 	      org-brain-visualize-sort-function #'org-brain-title<
-	      org-brain-visualize-one-child-per-line t
+        org-brain-child-linebreak-sexp 0
 	      org-brain-visualize-default-choices 'all
 	      org-brain-title-max-length 24)
   (add-hook 'org-brain-visualize-text-hook #'org-toggle-latex-fragment)
@@ -330,6 +331,8 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package orgability
   :defer t
+  :defines (orgability-file
+            orgability-agenda-topics-column)
   :general
   (+leader-def
     "co" '(orgability-clip :which-key "Orgability clip"))
