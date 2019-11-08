@@ -262,9 +262,9 @@ It is relative to `org-directory', unless it is absolute.")
    `((" " "Agenda"
       (,+agenda--refile
        ,+agenda--today
+       ,+agenda--focus
        ,+agenda--stuck-projects
        ,+agenda--projects
-       ,+agenda--focus
        ,+agenda--waiting)
       ((org-agenda-buffer-name +agenda-main-buffer-name)))
 
