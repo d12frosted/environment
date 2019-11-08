@@ -57,12 +57,6 @@ Otherwise create it from scratch."
     (org-agenda nil " ")))
 
 ;;;###autoload
-(defun +agenda/wix ()
-  "Show Wix `org-agenda' view."
-  (interactive)
-  (org-agenda nil "w"))
-
-;;;###autoload
 (defun +agenda--find-project-task ()
   "Move point to the parent (project) task if any."
   (save-restriction
