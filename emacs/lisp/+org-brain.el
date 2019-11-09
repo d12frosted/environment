@@ -45,12 +45,28 @@
     (org-brain-title (+brain-as-entry entry-or-id))))
 
 ;;;###autoload
-(defun +brain-make-link (entry-or-id)
-  "Make an `org-mode' link to ENTRY-OR-ID."
+(defun +brain-make-link (target-eoi &optional source-eoi type)
+  "Make an `org-mode' link to TARGET-EOI from SOURCE-EOI.
+
+TYPE is one of nil, parent, child, friend."
+  (case type
+    (parent
+     (org-brain-add-relationship (+brain-as-entry target-eoi)
+                                 (+brain-as-entry source-eoi)))
+    (child
+     (org-brain-add-relationship (+brain-as-entry source-eoi)
+                                 (+brain-as-entry target-eoi)))
+    (friend
+     (org-brain--internal-add-friendship (+brain-as-entry target-eoi)
+                                         (+brain-as-entry source-eoi))
+     (org-brain-add-friendship source-eoi (list target-eoi))))
   (org-make-link-string
-   (concat "brain:"
-           (+brain-as-id entry-or-id))
-   (+brain-title entry-or-id)))
+   (concat "brain"
+           (when type
+             (concat "-" (symbol-name type)))
+           ":"
+           (+brain-as-id target-eoi))
+   (+brain-title target-eoi)))
 
 ;;;###autoload
 (defun +brain-choose-entry ()
