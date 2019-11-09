@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+#
+# Fix org-mode .data directory by making sure all UUIDs are lowercase
+#
+
+set -e
+
+org_dir=
+if [ -z ${1+x} ]; then
+  org_dir="."
+else
+  org_dir="$1"
+fi
+
+data_dir="$org_dir/.data/"
+
+function process() {
+  while IFS= read -r -d '' dir
+  do
+    ldir=$(echo "$dir" | tr '[:upper:]' '[:lower:]')
+    if [ "$dir" != "$ldir" ]; then
+      echo "$dir" "->" "$ldir"
+      mv "$dir" "$ldir"
+    fi
+  done <   <(find "$data_dir" -mindepth "$1" -maxdepth "$1" -type d -print0)
+}
+
+process 1
+process 2
