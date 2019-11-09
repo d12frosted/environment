@@ -76,21 +76,23 @@
   "Make an `org-mode' link to TARGET-EOI from SOURCE-EOI.
 
 TYPE is one of nil, parent, child, friend."
-  (case type
-    (parent
+  (when (and type (symbolp type))
+    (setq type (symbol-name type)))
+  (pcase type
+    ("parent"
      (org-brain-add-relationship (+brain-as-entry target-eoi)
                                  (+brain-as-entry source-eoi)))
-    (child
+    ("child"
      (org-brain-add-relationship (+brain-as-entry source-eoi)
                                  (+brain-as-entry target-eoi)))
-    (friend
+    ("friend"
      (org-brain--internal-add-friendship (+brain-as-entry target-eoi)
                                          (+brain-as-entry source-eoi))
      (org-brain-add-friendship source-eoi (list target-eoi))))
   (org-make-link-string
    (concat "brain"
            (when type
-             (concat "-" (symbol-name type)))
+             (concat "-" type))
            ":"
            (+brain-as-id target-eoi))
    (+brain-title target-eoi)))
