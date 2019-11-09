@@ -28,7 +28,7 @@
 Can be set in the org-mode buffer by adding following line in the
 top of the file:
 
-  #+PLACES_CONFIG: LEVEL1:ID1 LEVEL2:ID2 LEVEL3:ID3 ...")
+  #+PLACES_CONFIG: LEVEL1:ID1:TYPE LEVEL2:ID2:TYPE LEVEL3:ID3:TYPE ...")
 
 ;;;###autoload
 (define-minor-mode places-mode
@@ -56,7 +56,9 @@ option set in the options section.
   "Set the location properties for headline at point."
   (interactive)
   (let* ((level (completing-read "Level: " (seq-map #'car places-config) nil t))
-         (level-id (cdr (assoc-string level places-config)))
+         (level-config (assoc-string level places-config))
+         (level-id (nth 1 level-config))
+         (link-type (nth 2 level-config))
          (level-entries (seq-map (lambda (x)
                                    (cons (car x)
                                          (org-brain-entry-from-id (cdr x))))
@@ -90,7 +92,7 @@ option set in the options section.
 
     ;; set the level value
     (org-set-property (upcase level)
-                      (+brain-make-link entry))))
+                      (+brain-make-link entry (org-id-get-create) link-type))))
 
 (defun places-get-location-id ()
   "Get LOCATION id of entry at point."
@@ -110,9 +112,7 @@ option set in the options section.
 (defun places-buffer-config ()
   "Get the `places-config' from the current buffer."
   (seq-map
-   (lambda (x)
-     (let ((pairs (split-string x ":")))
-       (cons (car pairs) (cadr pairs))))
+   (lambda (x) (split-string x ":"))
    (+org-get-buffer-settings "PLACES_CONFIG")))
 
 (provide '+org-places)
