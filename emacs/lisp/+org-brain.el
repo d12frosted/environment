@@ -39,6 +39,33 @@
   (insert (+brain-make-link (+brain-choose-entry))))
 
 ;;;###autoload
+(defun +brain/insert-parent-link ()
+  "Insert a link to brain entry and mark it as parent."
+  (interactive)
+  (insert (+brain-make-link
+           (+brain-choose-entry)
+           (+brain-as-entry (org-id-get-create))
+           'parent)))
+
+;;;###autoload
+(defun +brain/insert-child-link ()
+  "Insert a link to brain entry and mark it as child."
+  (interactive)
+  (insert (+brain-make-link
+           (+brain-choose-entry)
+           (+brain-as-entry (org-id-get-create))
+           'child)))
+
+;;;###autoload
+(defun +brain/insert-friend-link ()
+  "Insert a link to brain entry and mark it as friend."
+  (interactive)
+  (insert (+brain-make-link
+           (+brain-choose-entry)
+           (+brain-as-entry (org-id-get-create))
+           'friend)))
+
+;;;###autoload
 (defun +brain-title (entry-or-id)
   "Get title of ENTRY-OR-ID."
   (save-match-data
