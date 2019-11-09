@@ -21,6 +21,7 @@
 (require 'cl-lib)
 
 (require '+org-cha)
+(require '+org-wine)
 (require '+org-cigars)
 (require '+org-dependent)
 
@@ -65,6 +66,7 @@ It is relative to `org-directory', unless it is absolute.")
          (org-mode . places-mode-maybe-enable)
          (org-mode . pretty-props-mode-maybe-enable)
          (org-mode . cha-mode-maybe-enable)
+         (org-mode . wine-mode-maybe-enable)
          (org-mode . cigars-mode-maybe-enable)
          (org-clock-out . +org/remove-empty-drawer))
   :general
