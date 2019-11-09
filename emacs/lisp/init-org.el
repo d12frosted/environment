@@ -306,7 +306,7 @@ It is relative to `org-directory', unless it is absolute.")
 	      org-brain-visualize-sort-function #'org-brain-title<
         org-brain-child-linebreak-sexp 0
 	      org-brain-visualize-default-choices 'all
-	      org-brain-title-max-length 24)
+	      org-brain-title-max-length 36)
   (add-hook 'org-brain-visualize-text-hook #'org-toggle-latex-fragment)
   :config
   (defun +ace-link-brain-visualize ()
