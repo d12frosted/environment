@@ -49,16 +49,36 @@ Candidates are children of PARENT brain entry.
 SOURCE and TYPE are passed to `+brain-make-link'."
   (org-set-property
    name
-   (+brain-make-link
-    (+brain-choose-entry-by-parent
-     (format "%s: " (capitalize name))
-     parent)
-    source
-    type)))
+   (+org-prompt-brain-property-fn name parent source type)))
+
+(defun +org-prompt-brain-property-fn (name parent &optional source type)
+  "Prompt for a brain entry and make a link for it.
+
+NAME is a target property.
+
+Candidates are children of PARENT brain entry.
+
+SOURCE and TYPE are passed to `+brain-make-link'."
+  (+brain-make-link
+   (+brain-choose-entry-by-parent
+    (format "%s: " (capitalize name))
+    parent)
+   source
+   type))
 
 (defun +org--pretty-property-prompt (prop)
   "Create a pretty prompt from PROP."
   (capitalize (replace-regexp-in-string "_" " " prop)))
+
+(defun +org-prompt-property-repeating (fn name &rest args)
+  "Repeat FN prompt for a property with NAME.
+
+FN is called with NAME as the first argument and ARGS as the rest."
+  (let (result (inhibit-quit t))
+    (with-local-quit
+      (while t
+        (setq result (cons (apply fn (cons name args)) result))))
+    (+org-entry-set name (mapconcat #'identity result " "))))
 
 ;;;###autoload
 (defun +org-entry-get (prop)
