@@ -225,7 +225,7 @@ option set in the options section.
     (inventory-add wine-inventory-file id amount source date)
     (let ((prices (+org-entry-get-list "PRICE" ", ")))
       (unless (seq-contains prices price)
-        (+org-entry-set "PRICE" (mapconcat #'identity (cons price prices) ", "))))
+        (+org-entry-set "PRICE" (+string-join (cons price prices) ", "))))
     (wine-refresh-entry)))
 
 (defun wine/consume (&optional action id amount date)
