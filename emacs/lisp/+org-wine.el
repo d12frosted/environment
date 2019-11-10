@@ -31,6 +31,7 @@
 (define-minor-mode wine-mode
   "Minor mode for all the wine utilities."
   :lighter " 🍷"
+  (places-mode)
   (pretty-props-mode))
 
 ;;;###autoload
@@ -64,6 +65,20 @@ option set in the options section.
   'wine-mode-hook
   "WINE_TITLE_FORMAT"
   "Format of the wine entry title.")
+
+(def-org-buffer-setting
+  wine-rating-title-format
+  nil
+  'wine-mode-hook
+  "WINE_RATING_TITLE_FORMAT"
+  "Format of the wine entry title.")
+
+(def-org-buffer-setting
+  wine-inventory-file
+  nil
+  'wine-mode-hook
+  "INVENTORY_FILE"
+  "File name of the inventory.")
 
 (def-org-buffer-brain-entry-setting
   wine-wineries-parent
@@ -102,6 +117,14 @@ option set in the options section.
       (pretty-props/entry)
       (save-buffer))))
 
+(defun wine/set-grapes ()
+  "Set GRAPES properties."
+  (interactive)
+  (+org-prompt-property-repeating
+   #'+org-prompt-brain-property-fn
+   "GRAPES"
+   wine-grapes-parent))
+
 ;;
 ;; Styles
 
@@ -125,6 +148,7 @@ option set in the options section.
          (id (+brain-new-child wine-regions-parent name)))
     (org-with-point-at (org-id-find id t)
       (save-buffer)
+      (places/set-dwim)
       (pretty-props/entry)
       (save-buffer))))
 
@@ -159,17 +183,49 @@ option set in the options section.
       (org-set-property "WINERY" (+brain-make-link winery id 'parent))
       (+org-prompt-property "NAME")
       (+org-prompt-number-property "YEAR")
-      (+org-prompt-property-brain "REGION" wine-regions-parent id 'parent)
-      (+org-prompt-property-brain "STYLE" wine-styles-parent id 'parent)
+      (+org-prompt-brain-property "REGION" wine-regions-parent id 'parent)
+      (+org-prompt-property-repeating
+       #'+org-prompt-brain-property-fn
+       "GRAPES"
+       wine-grapes-parent)
+      ;; (+org-prompt-brain-property "STYLE" wine-styles-parent id 'parent)
       (save-buffer)
       (wine-refresh-entry)
       (save-buffer))))
 
 (defun wine-refresh-entry ()
   "Refresh a wine entry at point."
+  (let ((id (org-id-get-create)))
+    (+org-entry-set-number "TOTAL_IN"
+                           (inventory-total-in wine-inventory-file id))
+    (+org-entry-set-number "TOTAL_OUT"
+                           (inventory-total-out wine-inventory-file id)))
+  (+org-entry-set-number "AVAILABLE"
+                         (round (- (+org-entry-get-number "TOTAL_IN")
+                                   (+org-entry-get-number "TOTAL_OUT"))))
+  (+org-entry-set-average-number "RATE" "TOTAL" "RATING" #'wine-refresh-rating)
   (org-edit-headline
    (wine-format-title wine-title-format))
   (pretty-props/entry))
+
+;;
+;; Ratings
+
+(defun wine-refresh-rating (&optional propagate)
+  "Refresh rating entry at point.
+
+When PROPAGATE is non-nil, refresh is propagated upper to the
+wine entry."
+  (if propagate
+    (save-excursion
+      (org-up-heading-safe)
+      (wine-refresh-entry))
+    (org-edit-headline
+     (wine-format-title wine-rating-title-format))
+    (pretty-props/entry)))
+
+;;
+;; Title
 
 (defun wine-format-title (format)
   "FORMAT the title of the wine entry at point."
@@ -204,6 +260,49 @@ option set in the options section.
                       result
                       t))))
     result))
+
+;;
+;; Refresh
+
+(defun wine/refresh ()
+  "Refresh entry at point.
+
+Supports the following entries:
+
+1. Wine entry
+2. Rating entry"
+  (interactive)
+  (cond
+   ((string-equal (+org-parent-id) (+brain-as-id wine-parent))
+    (wine-refresh-entry))
+   ((+org-entry-tag-p "RATING")
+    (wine-refresh-rating t))
+   (t
+    (message "Unsupported entry"))))
+
+(defun wine/refresh-buffer ()
+  "Refresh all entries in the current buffer.."
+  (interactive)
+  (mapc (lambda (config)
+          (let* ((parent-id (car config))
+                 (refreshf (cdr config))
+                 (loc (org-id-find parent-id)))
+            (+org-with-file
+             (car loc)
+             (org-with-point-at (cdr loc)
+               (org-map-entries (lambda ()
+                                  (cond
+                                   ((string-equal (org-id-get) parent-id)
+                                    (pretty-props/entry))
+                                   ((string-equal (+org-parent-id) parent-id)
+                                    (funcall refreshf))
+                                   (t)))
+                                nil 'tree)))))
+        (wine--refresh-mapping)))
+
+(defun wine--refresh-mapping ()
+  "Return alist of parent id and refresh function."
+  (list (cons (+brain-as-id wine-parent) #'wine-refresh-entry)))
 
 (provide '+org-wine)
 ;;; +org-wine.el ends here
