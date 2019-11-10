@@ -78,6 +78,7 @@ FN is called with NAME as the first argument and ARGS as the rest."
     (with-local-quit
       (while t
         (setq result (cons (apply fn (cons name args)) result))))
+    (setq quit-flag nil)
     (+org-entry-set name (mapconcat #'identity result " "))))
 
 ;;;###autoload

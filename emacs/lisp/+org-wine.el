@@ -195,7 +195,6 @@ option set in the options section.
        #'+org-prompt-brain-property-fn
        "GRAPES"
        wine-grapes-parent)
-      ;; (+org-prompt-brain-property "STYLE" wine-styles-parent id 'parent)
       (save-buffer)
       (wine-refresh-entry)
       (save-buffer))))
