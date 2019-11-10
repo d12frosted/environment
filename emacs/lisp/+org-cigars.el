@@ -223,9 +223,9 @@ cigar entry."
       (+org-prompt-property "RING_GAUGE")
       (+org-prompt-property "LENGTH")
       (+org-prompt-property "SHAPE")
-      (+org-prompt-property-brain "WRAPPER" cigars-materials-location-parent)
-      (+org-prompt-property-brain "BINDER" cigars-materials-location-parent)
-      (+org-prompt-property-brain "FILLER" cigars-materials-location-parent)
+      (+org-prompt-brain-property "WRAPPER" cigars-materials-location-parent)
+      (+org-prompt-brain-property "BINDER" cigars-materials-location-parent)
+      (+org-prompt-brain-property "FILLER" cigars-materials-location-parent)
       (+org-prompt-property "PRICE")
       (+org-prompt-property "AVAILABLE")
       (inventory-add cigars-inventory-file

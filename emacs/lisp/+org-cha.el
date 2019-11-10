@@ -245,7 +245,7 @@ entry."
       (+org-prompt-property "NAME_ORIGINAL")
       (+org-prompt-property "NAME_TRANSCRIPTION")
       (+org-prompt-property "NAME_MEANING")
-      (+org-prompt-property-brain "FERMENTATION"
+      (+org-prompt-brain-property "FERMENTATION"
                                   cha-fermentation-types-parent)
       (pretty-props/entry)
       (save-buffer))))

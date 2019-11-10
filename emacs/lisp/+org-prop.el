@@ -41,7 +41,7 @@ If INITIAL is non-nil, set it as initial value."
     (read-number (concat (+org--pretty-property-prompt name) ": ") initial))))
 
 ;;;###autoload
-(defun +org-prompt-property-brain (name parent &optional source type)
+(defun +org-prompt-brain-property (name parent &optional source type)
   "Prompt for a brain entry and set is as property with NAME.
 
 Candidates are children of PARENT brain entry.
