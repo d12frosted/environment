@@ -89,9 +89,8 @@ FN is called with NAME as the first argument and ARGS as the rest."
 ;;;###autoload
 (defun +org-entry-get-list (prop sep)
   "Get list PROP value of entry at point using SEP."
-  (split-string
-   (org-entry-get nil prop)
-   sep))
+  (when-let ((val (+org-entry-get prop)))
+    (split-string val sep)))
 
 ;;;###autoload
 (defun +org-entry-get-number (prop &optional def)
