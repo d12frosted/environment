@@ -220,8 +220,12 @@ option set in the options section.
   (let ((id (or id (org-id-get-create)))
         (source (or source (wine-read-source)))
         (amount (or amount (read-number "Amount: ")))
+        (price (read-string "Price: "))
         (date (or date (org-read-date nil t))))
     (inventory-add wine-inventory-file id amount source date)
+    (let ((prices (+org-entry-get-list "PRICE" ", ")))
+      (unless (seq-contains prices price)
+        (+org-entry-set "PRICE" (mapconcat #'identity (cons price prices) ", "))))
     (wine-refresh-entry)))
 
 (defun wine/consume (&optional action id amount date)
