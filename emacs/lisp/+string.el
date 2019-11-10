@@ -37,5 +37,12 @@ buffer."
     (string-match regexp s)
     (match-string n s)))
 
+(defun +string-join (strs sep)
+  "Join a list of STRS using SEP."
+  (pcase strs
+    (`nil "")
+    (`(,str) str)
+    (_ (mapconcat #'identity strs sep))))
+
 (provide '+string)
 ;;; +string.el ends here
