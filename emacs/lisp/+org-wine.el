@@ -107,9 +107,34 @@ option set in the options section.
 (def-org-buffer-setting-list
   wine-sources
   nil
+  " "
   'wine-mode-hook
   "SOURCES"
   "List of sources (or shops) of wine.")
+
+(def-org-buffer-setting-list
+  wine-colours
+  nil
+  ", "
+  'wine-mode-hook
+  "COLOURS"
+  "List of colours.")
+
+(def-org-buffer-setting-list
+  wine-sweetness-levels
+  nil
+  ", "
+  'wine-mode-hook
+  "SWEETNESS"
+  "List of sweetness levels.")
+
+(def-org-buffer-setting-list
+  wine-carbonation-types
+  nil
+  ", "
+  'wine-mode-hook
+  "CARBONATION"
+  "List of carbonation types.")
 
 ;;
 ;; Grapes
@@ -197,6 +222,9 @@ option set in the options section.
        wine-grapes-parent)
       (+org-prompt-number-property "SUGAR")
       (+org-prompt-number-property "ALCOHOL")
+      (+org-prompt-completing-property "COLOUR" wine-colours)
+      (+org-prompt-completing-property "SWEETNESS" wine-sweetness-levels)
+      (+org-prompt-completing-property "CARBONATION" wine-carbonation-types)
       (save-buffer)
       (wine-refresh-entry)
       (save-buffer))))

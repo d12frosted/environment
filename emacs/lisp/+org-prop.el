@@ -31,6 +31,21 @@ If INITIAL is non-nil, set it as initial value."
    (read-string (concat (+org--pretty-property-prompt name) ": ") initial)))
 
 ;;;###autoload
+(defun +org-prompt-completing-property (name values &optional initial)
+  "Prompt for a value and set is as property with NAME.
+
+Value must be one of VALUES.
+
+If INITIAL is non-nil, set it as initial value."
+  (org-set-property
+   name
+   (completing-read (concat (+org--pretty-property-prompt name) ": ")
+                    values
+                    nil
+                    t
+                    initial)))
+
+;;;###autoload
 (defun +org-prompt-number-property (name &optional initial)
   "Prompt for a number value and set is as property with NAME.
 

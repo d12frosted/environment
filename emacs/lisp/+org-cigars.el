@@ -95,6 +95,7 @@ option set in the options section.
 (def-org-buffer-setting-list
   cigars-sources
   nil
+  " "
   'cigars-mode-hook
   "SOURCES"
   "List of sources (or shops) of cigars.")
