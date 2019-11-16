@@ -29,7 +29,7 @@
   :general
   (+leader-def
     "iu" '(counsel-unicode-char :which-key "Insert Unicode character")
-    "/i" '(counsel-imenu :which-key "imenu"))
+    "ji" '(counsel-imenu :which-key "imenu"))
   :init
   (setq
    enable-recursive-minibuffers t
