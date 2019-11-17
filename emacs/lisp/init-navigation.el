@@ -21,7 +21,6 @@
   :defer t
   :general
   (+leader-def
-      "j" '(nil :which-key "jump...")
       "jL" '(goto-line :which-key "Line (by number)")
       "jl" '(avy-goto-line :which-key "Line (avy)")
       "jj" '(avy-goto-char :which-key "Char")

@@ -33,6 +33,7 @@
 (+leader-def
   "a" '(nil :which-key "align...")
   "c" '(nil :which-key "capture...")
+  "j" '(nil :which-key "jump...")
   "o" '(nil :which-key "open...")
   "i" '(nil :which-key "insert...")
   "[" '(nil :which-key "previous...")
