@@ -4,7 +4,7 @@ DOCKER_IMAGE:=environment
 DOCKER_IMAGE_TAG:=archlinux
 
 image:
-	docker build -t "$(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):$(DOCKER_IMAGE_TAG)" .
+	docker build --no-cache -t "$(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):$(DOCKER_IMAGE_TAG)" .
 
 push:
 	docker login -u $(DOCKER_USER)
