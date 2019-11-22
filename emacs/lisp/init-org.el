@@ -96,6 +96,7 @@ It is relative to `org-directory', unless it is absolute.")
    org-startup-folded t
    org-startup-indented t
    org-outline-path-complete-in-steps nil
+   org-imenu-depth 2
 
    ;; do not allow invisible edits (...)
    org-catch-invisible-edits 'error
