@@ -1,24 +1,10 @@
 # haskell
 # https://github.com/commercialhaskell/stack/blob/master/.gitignore
-*.hi
-*.o
-*.swp
-*.tag
-*~
-*_flymake.hs
-.hsenv
 .stack-work/
-/.cabal-sandbox/
-TAGS
-cabal-dev/
-cabal.sandbox.config
-dist/
-tags
-/_release/
-.vagrant/
-*.imports
-/.idea/
-/*.iml
+
+# melkor
+melkor.cabal
+.shake/
 
 # csharp
 NuGet/

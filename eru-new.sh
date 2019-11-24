@@ -14,18 +14,20 @@
 
 set -e
 
-check() {
-  command -v "$1" >/dev/null 2>&1
-}
-
 #
 # Haskell is the language of Eru.
 #
 
-if check stack; then
+if command -v stack >/dev/null 2>&1; then
   stack upgrade
 else
   curl -sSL https://get.haskellstack.org/ | sh
 fi
 
-stack install shake
+#
+# Now start the Great Music
+#
+
+stack setup
+stack build
+stack exec -- melkor "$@"

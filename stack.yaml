@@ -1,0 +1,10 @@
+resolver: lts-14.14
+
+packages:
+- .
+
+extra-deps:
+- git: https://gitlab.com/d12frosted/d12-hs-path
+  commit: 063302ad18a3a7862f14415313c8adae1da31674
+- git: https://gitlab.com/d12frosted/d12-hs-env
+  commit: 76f3e773f1aa0b2c7f56d6e76d8bb7ca01bd0ccc
