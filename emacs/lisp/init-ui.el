@@ -73,6 +73,14 @@
    '(+theming-mode-line-warning ((t (:inherit warning))))
    '(+theming-mode-line-critical ((t (:inherit warning :foreground "#F4847D"))))
 
+   ;; flycheck
+   '(flycheck-color-mode-line-error-face ((t :inherit mode-line
+                                             :foreground "LavenderBlush"
+                                             :background "DarkSalmon")))
+   '(flycheck-color-mode-line-warning-face ((t :inherit mode-line
+                                               :foreground "LavenderBlush4"
+                                               :background "khaki")))
+
    ;; git-gutter faces
    '(git-gutter:added ((t (:foreground "#97f295"))))
    '(git-gutter:modified ((t (:inherit warning))))
@@ -100,6 +108,12 @@
    '(lsp-ui-doc-background ((((background light)) :background "#FAF7CC")
                             (t :background "#272A36")))
    ))
+
+(use-package flycheck-color-mode-line
+  :after flycheck
+  :init
+  (setq flycheck-color-mode-line-show-running nil)
+  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
 ;; built-in diminish
 (with-eval-after-load 'simple
