@@ -29,10 +29,7 @@
   :init
   (setq exec-path-from-shell-shell-name "/usr/local/bin/fish"
         exec-path-from-shell-check-startup-files nil
-        exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments)
-        exec-path-from-shell-debug nil
-        exec-path-from-shell-variables
-        (nconc exec-path-from-shell-variables '("LC_CTYPE" "LC_ALL" "LANG")))
+        exec-path-from-shell-debug nil)
   (exec-path-from-shell-initialize))
 
 (provide 'init-env)

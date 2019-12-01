@@ -22,7 +22,8 @@
 (require 'subr-x)
 
 (eval-when-compile
-  (require 'projectile))
+  ;; (require 'projectile)
+  )
 
 (+leader-def
   "b" '(nil :which-key "buffer...")

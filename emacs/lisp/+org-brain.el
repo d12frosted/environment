@@ -20,7 +20,7 @@
 (require '+org)
 
 (eval-when-compile
-  (require 'org-brain)
+  ;; (require 'org-brain)
   (declare-function org-brain-entry-from-id "org-brain")
   (declare-function org-brain-entry-identifier "org-brain")
   (declare-function org-brain-children "org-brain")

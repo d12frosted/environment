@@ -26,8 +26,8 @@
  vc-follow-symlinks t)
 
 (eval-when-compile
-  (require 'git-gutter-fringe)
-  (require 'magit)
+  ;; (require 'git-gutter-fringe)
+  ;; (require 'magit)
   (declare-function git-gutter-fr:init "git-gutter-fringe")
   (declare-function git-gutter-fr:view-diff-infos "git-gutter-fringe")
   (declare-function git-gutter-fr:clear "git-gutter-fringe")
