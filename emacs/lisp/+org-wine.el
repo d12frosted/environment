@@ -400,7 +400,7 @@ Supports the following entries:
     (message "Unsupported entry"))))
 
 (defun wine/refresh-buffer ()
-  "Refresh all entries in the current buffer.."
+  "Refresh all entries in the current buffer."
   (interactive)
   (mapc (lambda (config)
           (let* ((parent-id (car config))
