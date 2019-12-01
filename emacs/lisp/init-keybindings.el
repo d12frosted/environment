@@ -43,5 +43,9 @@
   :diminish which-key-mode
   :hook (after-init . which-key-mode))
 
+(when (and +sys-mac-p +sys-graphic-p)
+  (setq mac-option-modifier nil
+	mac-command-modifier 'meta))
+
 (provide 'init-keybindings)
 ;;; init-keybindings.el ends here
