@@ -60,7 +60,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :diminish org-indent-mode
   :hook ((org-mode . auto-fill-mode)
          (org-mode . places-mode-maybe-enable)
@@ -156,13 +156,13 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-indent
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :diminish org-indent-mode
   :hook ((org-mode . org-indent-mode)))
 
 (use-package org-id
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :hook ((before-save . +org-auto-id-add-to-headlines-in-file)
 	       (org-capture-prepare-finalize . +org-auto-id-dwim))
   :config
@@ -172,7 +172,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-capture
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :general
   (+leader-def
     "cj" '(+org/capture-journal :which-key "Capture journal")
@@ -203,7 +203,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-attach
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :config
   (setq org-attach-directory ".data"
         org-attach-auto-tag nil
@@ -212,7 +212,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package ox-latex
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-packages-alist '("" "color"))
@@ -225,14 +225,14 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package ox-beamer
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :config
   (add-to-list 'org-beamer-environments-extra
                '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}")))
 
 (use-package org-archive
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :config
   (setq
    org-archive-location (concat org-directory ".archive/archive_%s" "::" "datetree/*")
@@ -240,7 +240,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-agenda
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :config
   (eval-when-compile
     (require '+org-agenda))
@@ -290,7 +290,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-edna
   :defer t
-  :ensure org-plus-contrib
+  :straight org-plus-contrib
   :hook ((org-mode . org-edna-load)))
 
 (use-package org-brain
@@ -332,8 +332,19 @@ It is relative to `org-directory', unless it is absolute.")
                                        #'org-brain--name-and-id-at-point
                                        org-brain-targets-match)))))))))
 
+(use-package org-drawer-list
+  :defer t
+  :straight (org-drawer-list
+             :type git
+             :host github
+             :repo "d12frosted/org-drawer-list"))
+
 (use-package orgability
   :defer t
+  :straight (orgability
+             :type git
+             :host github
+             :repo "d12frosted/orgability")
   :defines (orgability-file
             orgability-agenda-topics-column)
   :general

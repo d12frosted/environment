@@ -64,14 +64,28 @@ Possible values are: upstream, mirror and local.")
    package-gnupghome-dir (expand-file-name "gpg" +path-packages-dir))
   (package-initialize))
 
-;; Setup `use-package'
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+;; Setup `straight' package manager.
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" +path-packages-dir))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (eval-and-compile
+    (setq straight-base-dir +path-packages-dir)
+    (setq straight-use-package-by-default t))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
 
 ;; Should set before loading `use-package'
 (eval-and-compile
-  (setq use-package-always-ensure t)
+  (setq use-package-always-ensure nil)
   (setq use-package-always-defer t)
   (setq use-package-expand-minimally t)
   (setq use-package-enable-imenu-support t))
