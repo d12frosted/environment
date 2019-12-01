@@ -229,8 +229,18 @@ option set in the options section.
       (wine-refresh-entry)
       (save-buffer))))
 
+(defun wine-entry-p ()
+  "Return non-nil when entry at point is wine entry."
+  (string-equal (+org-parent-id) (+brain-as-id wine-parent)))
+
+(defun wine-require-wine-entry ()
+  "Throw error when entry at point is not a wine entry."
+  (unless (wine-entry-p)
+    (user-error "This operation is possible only on wine entry")))
+
 (defun wine-refresh-entry ()
   "Refresh a wine entry at point."
+  (wine-require-wine-entry)
   (let ((id (org-id-get-create)))
     (+org-entry-set-number "TOTAL_IN"
                            (inventory-total-in wine-inventory-file id))
@@ -244,34 +254,53 @@ option set in the options section.
    (wine-format-title wine-title-format))
   (pretty-props/entry))
 
+(defun wine--up-to-wine-entry ()
+  "Walk up to the wine entry."
+  (while (not (wine-entry-p))
+    (let ((start-level (funcall outline-level)))
+      (when (<= start-level 2)
+        (user-error "Can't locate wine entry"))
+      (outline-up-heading 1 t))))
+
+(defmacro wine-with-point-at-wine (&rest body)
+  "Move up to the wine entry and execute BODY.
+
+Errors out when wine entry is not found. No movement is performed
+when already at wine entry."
+  `(save-excursion
+     (wine--up-to-wine-entry)
+     ,@body))
+
 (defun wine/acquire (&optional source id amount date)
   "Acquire AMOUNT of ID because from SOURCE at DATE."
   (interactive)
-  (let ((id (or id (org-id-get-create)))
-        (source (or source (wine-read-source)))
-        (amount (or amount (read-number "Amount: ")))
-        (price (read-string "Price: "))
-        (date (or date (org-read-date nil t))))
-    (inventory-add wine-inventory-file id amount source date)
-    (let ((prices (+org-entry-get-list "PRICE" ", ")))
-      (unless (seq-contains prices price)
-        (+org-entry-set "PRICE" (+string-join (cons price prices) ", "))))
-    (wine-refresh-entry)))
+  (wine-with-point-at-wine
+   (let ((id (or id (org-id-get-create)))
+         (source (or source (wine-read-source)))
+         (amount (or amount (read-number "Amount: ")))
+         (price (read-string "Price: "))
+         (date (or date (org-read-date nil t))))
+     (inventory-add wine-inventory-file id amount source date)
+     (let ((prices (+org-entry-get-list "PRICE" ", ")))
+       (unless (seq-contains prices price)
+         (+org-entry-set "PRICE" (+string-join (cons price prices) ", "))))
+     (wine-refresh-entry))))
 
 (defun wine/consume (&optional action id amount date)
   "Consume AMOUNT of ID because of ACTION at DATE."
   (interactive)
-  (let ((id (or id (org-id-get-create)))
-        (action (or action (read-string "Action: " "consume")))
-        (amount (or amount (read-number
-                            "Amount: "
-                            (+org-entry-get-number "DEFAULT_AMOUNT" 1))))
-        (date (or date (org-read-date nil t))))
-    (inventory-sub wine-inventory-file id amount action date)
-    (when (and (string-equal action "consume")
-               (y-or-n-p "Rate? "))
-      (wine/rate date))
-    (wine-refresh-entry)))
+  (wine-with-point-at-wine
+   (let ((id (or id (org-id-get-create)))
+         (action (or action (read-string "Action: " "consume")))
+         (amount (or amount (read-number
+                             "Amount: "
+                             (+org-entry-get-number "DEFAULT_AMOUNT" 1))))
+         (date (or date (org-read-date nil t))))
+     (inventory-sub wine-inventory-file id amount action date)
+     (when (and (string-equal action "consume")
+                (y-or-n-p "Rate? "))
+       (wine/rate date))
+     (wine-refresh-entry))))
 
 (defun wine-read-source ()
   "Get the source."
@@ -285,20 +314,21 @@ option set in the options section.
 
 When DATE is omitted, `current-time' is used."
   (interactive)
-  (let* ((date (or date (org-read-date nil t)))
-         (name (concat
-                (format-time-string "%Y-%m-%d %A" date)
-                " | "
-                (org-entry-get nil "NAME")
-                " "
-                (org-entry-get nil "TAG")))
-         (id (+brain-new-child (org-id-get-create) name)))
-    (org-with-point-at (org-id-find id t)
-      (org-set-tags ":RATING:")
-      (org-set-property "DATE" (format-time-string "%Y-%m-%d" date))
-      (+org-prompt-number-property "TOTAL")
-      (save-buffer)
-      (wine-refresh-rating t))))
+  (wine-with-point-at-wine
+   (let* ((date (or date (org-read-date nil t)))
+          (name (concat
+                 (format-time-string "%Y-%m-%d %A" date)
+                 " | "
+                 (org-entry-get nil "NAME")
+                 " "
+                 (org-entry-get nil "TAG")))
+          (id (+brain-new-child (org-id-get-create) name)))
+     (org-with-point-at (org-id-find id t)
+       (org-set-tags ":RATING:")
+       (org-set-property "DATE" (format-time-string "%Y-%m-%d" date))
+       (+org-prompt-number-property "TOTAL")
+       (save-buffer)
+       (wine-refresh-rating t)))))
 
 (defun wine-refresh-rating (&optional propagate)
   "Refresh rating entry at point.
@@ -362,7 +392,7 @@ Supports the following entries:
 2. Rating entry"
   (interactive)
   (cond
-   ((string-equal (+org-parent-id) (+brain-as-id wine-parent))
+   ((wine-entry-p)
     (wine-refresh-entry))
    ((+org-entry-tag-p "RATING")
     (wine-refresh-rating t))
