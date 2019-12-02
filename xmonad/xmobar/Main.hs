@@ -161,7 +161,8 @@ instance Exec DropboxStatus where
                     | "Syncing" `isPrefixOf` res =
                       callback $ Icon.static "\xf16b" <> Icon.static "\xf021"
 
-                    | otherwise = callback "?"
+                    | otherwise =
+                      callback $ Icon.alert "\xf16b" <> Icon.alert "?"
 
 --------------------------------------------------------------------------------
 
