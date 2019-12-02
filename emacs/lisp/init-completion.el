@@ -20,34 +20,6 @@
 (require 'lib-list)
 (require 'use-package)
 
-(use-package company
-  :defer 2
-  :diminish
-  :commands (company-complete-common
-             company-manual-begin
-             company-grab-line
-             global-company-mode)
-  :init
-  (add-hook 'post-self-insert-hook #'+company-mode-maybe)
-  (setq-default
-   company-idle-delay nil
-   company-tooltip-limit 14
-   company-dabbrev-downcase nil
-   company-dabbrev-ignore-case nil
-   company-dabbrev-code-other-buffers t
-   company-tooltip-align-annotations t
-   company-require-match 'never
-   company-global-modes
-   '(not erc-mode message-mode help-mode gud-mode eshell-mode)
-   company-backends '(company-capf)
-   company-frontends
-   '(company-pseudo-tooltip-frontend
-     company-echo-metadata-frontend))
-  :config
-  (setq company-idle-delay 0.1)
-  (add-hook 'company-mode-hook #'+company-init-backends)
-  (global-company-mode +1))
-
 (defun +company-mode-maybe ()
   "Enable company mode if it's not enabled."
   (unless global-company-mode
@@ -123,6 +95,34 @@ To have BACKENDS apply to any mode that is a parent of MODES, set MODES to
   (add-hook 'after-change-major-mode-hook #'+company-init-backends nil 'local))
 
 (put '+company-init-backends 'permanent-local-hook t)
+
+(use-package company
+  :defer 2
+  :diminish
+  :commands (company-complete-common
+             company-manual-begin
+             company-grab-line
+             global-company-mode)
+  :init
+  (add-hook 'post-self-insert-hook #'+company-mode-maybe)
+  (setq-default
+   company-idle-delay nil
+   company-tooltip-limit 14
+   company-dabbrev-downcase nil
+   company-dabbrev-ignore-case nil
+   company-dabbrev-code-other-buffers t
+   company-tooltip-align-annotations t
+   company-require-match 'never
+   company-global-modes
+   '(not erc-mode message-mode help-mode gud-mode eshell-mode)
+   company-backends '(company-capf)
+   company-frontends
+   '(company-pseudo-tooltip-frontend
+     company-echo-metadata-frontend))
+  :config
+  (setq company-idle-delay 0.1)
+  (add-hook 'company-mode-hook #'+company-init-backends)
+  (global-company-mode +1))
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
