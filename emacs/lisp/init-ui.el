@@ -66,6 +66,7 @@
       inhibit-startup-echo-area-message t)
 
 (use-package leuven-theme
+  :if +sys-graphic-p
   :init
   (load-theme 'leuven t)
   (custom-set-faces
