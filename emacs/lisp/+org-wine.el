@@ -222,6 +222,7 @@ option set in the options section.
        wine-grapes-parent)
       (+org-prompt-number-property "SUGAR")
       (+org-prompt-number-property "ALCOHOL")
+      (+org-prompt-property "PRICE")
       (+org-prompt-completing-property "COLOUR" wine-colours)
       (+org-prompt-completing-property "SWEETNESS" wine-sweetness-levels)
       (+org-prompt-completing-property "CARBONATION" wine-carbonation-types)
