@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require '+org)
+(require 'org-brain)
 
 ;;;###autoload
 (defun +brain/insert-link ()

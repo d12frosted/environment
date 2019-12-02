@@ -23,11 +23,6 @@
 (require 'init-navigation)
 (require 'cl-lib)
 
-(require '+org-cha)
-(require '+org-wine)
-(require '+org-cigars)
-(require '+org-dependent)
-
 (defvar +capture-inbox-file "inbox.org"
   "The path to the inbox file.
 
@@ -82,6 +77,10 @@ It is relative to `org-directory', unless it is absolute.")
   :config
   (require '+org-auto-id)
   (require '+org-agenda)
+  (require '+org-cha)
+  (require '+org-wine)
+  (require '+org-cigars)
+  (require '+org-dependent)
 
   (setq
    org-hidden-keywords nil

@@ -17,6 +17,8 @@
 ;;
 ;;; Code:
 
+(require 'org)
+
 ;;;###autoload
 (defmacro +org-with-file (file &rest body)
   "Execute BODY in `org-mode' FILE."
@@ -29,6 +31,14 @@
   (save-excursion
     (when (org-up-heading-safe)
       (org-id-get-create))))
+
+;;;###autoload
+(defun +org/remove-empty-drawer ()
+  "Remove empty drawer at point."
+  (interactive)
+  (save-excursion
+    (beginning-of-line 0)
+    (org-remove-empty-drawer-at (point))))
 
 (provide '+org)
 ;;; +org.el ends here
