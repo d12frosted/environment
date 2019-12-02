@@ -19,6 +19,7 @@
 
 (require 'subr-x)
 (require 'cl-lib)
+(require 'use-package)
 (require 'init-path)
 
 ;; Introduce myself.
@@ -122,6 +123,7 @@
 
 (use-package ws-butler
   :diminish
+  :commands (ws-butler-global-mode)
   :init
   (ws-butler-global-mode)
   :config
@@ -152,6 +154,9 @@ the beginning or end of the buffer, stop there."
     (back-to-indentation)
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
+
+(use-package async
+  :commands (async-start))
 
 (provide 'init-base)
 ;;; init-base.el ends here

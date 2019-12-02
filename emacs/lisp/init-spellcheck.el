@@ -17,20 +17,21 @@
 ;;
 ;;; Code:
 
-(eval-when-compile
-  (require 'ispell))
+(require 'use-package)
 
-;; `ispell'
-(setq ispell-dictionary "english"
-      ispell-program-name "aspell")
-
-(with-eval-after-load 'ispell
+(use-package ispell
+  :config
+  (setq ispell-dictionary "english"
+        ispell-program-name "aspell")
   (when (equal (file-name-base ispell-program-name) "aspell")
     (add-to-list 'ispell-extra-args "--sug-mode=ultra")))
 
 (use-package flyspell
   :defer t
-  :diminish flyspell-mode)
+  :diminish flyspell-mode
+  :init
+  (add-hook 'text-mode-hook #'flyspell-mode)
+  (add-hook 'prog-mode-hook #'flyspell-prog-mode))
 
 (use-package flyspell-correct-ivy
   :defer t
@@ -39,9 +40,6 @@
     "[s" '(flyspell-correct-wrapper :which-key "Spelling correction"))
   :init
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
-
-(add-hook 'text-mode-hook #'flyspell-mode)
-(add-hook 'prog-mode-hook #'flyspell-prog-mode)
 
 (provide 'init-spellcheck)
 ;;; init-spellcheck.el ends here

@@ -18,11 +18,15 @@
 ;;; Code:
 
 (require 'lib-list)
+(require 'use-package)
 
 (use-package company
   :defer 2
   :diminish
-  :commands (company-complete-common company-manual-begin company-grab-line)
+  :commands (company-complete-common
+             company-manual-begin
+             company-grab-line
+             global-company-mode)
   :init
   (add-hook 'post-self-insert-hook #'+company-mode-maybe)
   (setq-default

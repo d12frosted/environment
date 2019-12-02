@@ -59,7 +59,7 @@ Possible values are: upstream, mirror and local.")
 ;; Initialize packages
 (unless (bound-and-true-p package--initialized) ; To avoid warnings in 27
   (setq
-   package-enable-at-startup nil	; To prevent initializing twice
+   package-enable-at-startup nil        ; To prevent initializing twice
    package-user-dir (expand-file-name "elpa" +path-packages-dir)
    package-gnupghome-dir (expand-file-name "gpg" +path-packages-dir))
   (package-initialize))
@@ -81,6 +81,7 @@ Possible values are: upstream, mirror and local.")
     (setq straight-use-package-by-default t))
   (load bootstrap-file nil 'nomessage))
 
+(require 'straight)
 (straight-use-package 'use-package)
 
 ;; Should set before loading `use-package'
@@ -89,9 +90,7 @@ Possible values are: upstream, mirror and local.")
   (setq use-package-always-defer t)
   (setq use-package-expand-minimally t)
   (setq use-package-enable-imenu-support t))
-
-(eval-when-compile
-  (require 'use-package))
+(require 'use-package)
 
 ;; Required by `use-package'
 (use-package diminish)

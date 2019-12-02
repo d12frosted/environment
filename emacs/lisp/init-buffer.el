@@ -21,10 +21,6 @@
 (require 'init-keybindings)
 (require 'subr-x)
 
-(eval-when-compile
-  ;; (require 'projectile)
-  )
-
 (+leader-def
   "b" '(nil :which-key "buffer...")
   "bb" '(switch-to-buffer :which-key "Switch buffer")
@@ -132,28 +128,27 @@ created. These are stored in `+buffer-scratch-files-dir'.
 
 If a region is active, copy its contents to the scratch."
   (interactive "P")
-  (let (projectile-enable-caching)
-    (funcall
-     +buffer-scratch-display-fn
-     (+buffer-scratch
-      (when arg
-        (if-let* ((file (read-file-name
-                         "Open scratch file > "
-                         +buffer-scratch-files-dir
-                         "scratch")))
-            file
-          (user-error "Aborting")))
-      (cond ((eq +buffer-scratch-major-mode t)
-             (unless (or buffer-read-only
-                         (derived-mode-p 'special-mode)
-                         (string-match-p "^ ?\\*" (buffer-name)))
-               major-mode))
-            ((null +buffer-scratch-major-mode) nil)
-            ((symbolp +buffer-scratch-major-mode)
-             +buffer-scratch-major-mode))
-      (and (region-active-p)
-           (buffer-substring-no-properties
-            (region-beginning) (region-end)))))))
+  (funcall
+   +buffer-scratch-display-fn
+   (+buffer-scratch
+    (when arg
+      (if-let* ((file (read-file-name
+                       "Open scratch file > "
+                       +buffer-scratch-files-dir
+                       "scratch")))
+          file
+        (user-error "Aborting")))
+    (cond ((eq +buffer-scratch-major-mode t)
+           (unless (or buffer-read-only
+                       (derived-mode-p 'special-mode)
+                       (string-match-p "^ ?\\*" (buffer-name)))
+             major-mode))
+          ((null +buffer-scratch-major-mode) nil)
+          ((symbolp +buffer-scratch-major-mode)
+           +buffer-scratch-major-mode))
+    (and (region-active-p)
+         (buffer-substring-no-properties
+          (region-beginning) (region-end))))))
 
 ;;;###autoload
 (defun +buffer/switch-to-scratch (&optional arg)

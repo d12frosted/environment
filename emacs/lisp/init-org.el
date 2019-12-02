@@ -18,6 +18,9 @@
 ;;; Code:
 
 (require 'init-path)
+(require 'init-package)
+(require 'init-keybindings)
+(require 'init-navigation)
 (require 'cl-lib)
 
 (require '+org-cha)
@@ -27,18 +30,18 @@
 
 ;; Setup list of Org modules that should always be loaded together
 ;; with Org.
-(defvar org-modules
-  '(org-info
-    org-habit
-    org-agenda
-    org-archive
-    org-capture
-    org-id
-    org-attach
-    org-edna
-    ob-emacs-lisp
-    ob-dot
-    ob-plantuml))
+(setq org-modules
+      '(org-info
+        org-habit
+        org-agenda
+        org-archive
+        org-capture
+        org-id
+        org-attach
+        org-edna
+        ob-emacs-lisp
+        ob-dot
+        ob-plantuml))
 
 (defvar +capture-inbox-file "inbox.org"
   "The path to the inbox file.
@@ -63,12 +66,12 @@ It is relative to `org-directory', unless it is absolute.")
   :straight org-plus-contrib
   :diminish org-indent-mode
   :hook ((org-mode . auto-fill-mode)
-         (org-mode . places-mode-maybe-enable)
-         (org-mode . pretty-props-mode-maybe-enable)
-         (org-mode . cha-mode-maybe-enable)
-         (org-mode . wine-mode-maybe-enable)
-         (org-mode . cigars-mode-maybe-enable)
-         (org-clock-out . +org/remove-empty-drawer))
+         (org-mode . #'places-mode-maybe-enable)
+         (org-mode . #'pretty-props-mode-maybe-enable)
+         (org-mode . #'cha-mode-maybe-enable)
+         (org-mode . #'wine-mode-maybe-enable)
+         (org-mode . #'cigars-mode-maybe-enable)
+         (org-clock-out . #'+org/remove-empty-drawer))
   :general
   (+leader-def
     "oa" '(+agenda/main :which-key "Org fast agenda")
@@ -145,14 +148,19 @@ It is relative to `org-directory', unless it is absolute.")
                               ("PROJECT" . ?p))
    org-tags-exclude-from-inheritance '("PROJECT")
 
-   ;; remove clocked tasks with 0:00 duration
-   org-clock-out-remove-zero-time-clocks t
-
    org-refile-targets '((nil :maxlevel . 4)
                         (org-agenda-files :maxlevel . 4))
    org-refile-use-outline-path t
    org-refile-allow-creating-parent-nodes nil
    org-refile-target-verify-function '+org-refile--verify-refile-target))
+
+(use-package org-clock
+  :defer t
+  :straight org-plus-contrib
+  :init
+  (setq
+   ;; remove clocked tasks with 0:00 duration
+   org-clock-out-remove-zero-time-clocks t))
 
 (use-package org-indent
   :defer t
@@ -204,8 +212,9 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package org-attach
   :defer t
   :straight org-plus-contrib
+  :defines (org-attach-file-list-property)
   :config
-  (setq org-attach-directory ".data"
+  (setq org-attach-id-dir ".data/"
         org-attach-auto-tag nil
         org-attach-file-list-property nil
         org-attach-store-link-p 'attached))
@@ -296,6 +305,10 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package org-brain
   :defer t
   :defines (org-brain-targets-match)
+  :commands (org-brain-title<
+             org-brain-path-entry-name
+             org-brain-entry-name
+             org-brain--name-and-id-at-point)
   :general
   (+leader-def
     "ob" '(org-brain-visualize :which-key "Brain node"))
@@ -310,7 +323,7 @@ It is relative to `org-directory', unless it is absolute.")
         org-brain-child-linebreak-sexp 0
 	      org-brain-visualize-default-choices 'all
 	      org-brain-title-max-length 36)
-  (add-hook 'org-brain-visualize-text-hook #'org-toggle-latex-fragment)
+  (add-hook 'org-brain-visualize-text-hook #'org-latex-preview)
   :config
   (defun +ace-link-brain-visualize ()
     "Open a visible link in an `org-brain-visualize-mode' buffer."

@@ -23,6 +23,8 @@
 
 (use-package counsel
   :diminish ivy-mode counsel-mode
+  :commands (counsel-find-file
+             counsel-file-jump)
   :hook ((after-init . ivy-mode)
          (ivy-mode . counsel-mode))
   :bind (("M-x" . counsel-M-x))
@@ -59,7 +61,8 @@
              counsel-projectile-grep
 	           counsel-projectile-ag
              counsel-projectile-rg
-	           counsel-projectile-switch-project)
+	           counsel-projectile-switch-project
+             counsel-projectile-modify-action)
   :init
   (global-set-key [remap projectile-find-file]        #'+ivy/projectile-find-file)
   (global-set-key [remap projectile-find-dir]         #'counsel-projectile-find-dir)

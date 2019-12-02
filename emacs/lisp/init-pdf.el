@@ -17,11 +17,14 @@
 ;;
 ;;; Code:
 
+(require 'use-package)
+
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :defines (pdf-annot-list-document-buffer
             pdf-annot-list-buffer)
-  :commands (pdf-info-close)
+  :commands (pdf-info-close
+             pdf-tools-install)
   :init
   (setq-default pdf-view-display-size 'fit-page)
   :config

@@ -17,15 +17,17 @@
 ;;
 ;;; Code:
 
+(require 'init-keybindings)
+
 (use-package avy
   :defer t
   :general
   (+leader-def
-      "jL" '(goto-line :which-key "Line (by number)")
-      "jl" '(avy-goto-line :which-key "Line (avy)")
-      "jj" '(avy-goto-char :which-key "Char")
-      "jJ" '(avy-goto-char-timer :which-key "Chars")
-      "jw" '(avy-goto-word-0 :which-key "Word")))
+    "jL" '(goto-line :which-key "Line (by number)")
+    "jl" '(avy-goto-line :which-key "Line (avy)")
+    "jj" '(avy-goto-char :which-key "Char")
+    "jJ" '(avy-goto-char-timer :which-key "Chars")
+    "jw" '(avy-goto-word-0 :which-key "Word")))
 
 (use-package ace-link
   :defer t

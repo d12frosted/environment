@@ -17,9 +17,12 @@
 ;;
 ;;; Code:
 
+(require 'init-env)
 (require '+keybindings)
 
-(use-package general)
+(use-package general
+  :commands (general-define-key
+             general-create-definer))
 
 (global-set-key [remap keyboard-quit] #'+escape)
 
@@ -44,8 +47,10 @@
   :hook (after-init . which-key-mode))
 
 (when (and +sys-mac-p +sys-graphic-p)
+  (defvar mac-option-modifier)
+  (defvar mac-command-modifier)
   (setq mac-option-modifier nil
-	mac-command-modifier 'meta))
+        mac-command-modifier 'meta))
 
 (provide 'init-keybindings)
 ;;; init-keybindings.el ends here

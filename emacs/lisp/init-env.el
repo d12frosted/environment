@@ -1,13 +1,13 @@
-;;; lisp/init-env.el -*- lexical-binding: t; -*-
+;;; init-env.el --- environment configuration -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2019 Boris
+;; Copyright (c) 2019 Boris Buliga
 ;;
-;; Author: Boris <boris@d12frosted.io>
-;; Maintainer: Boris <boris@d12frosted.io>
+;; Author: Boris Buliga <boris@d12frosted.io>
+;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Created: 21 Oct 2019
 ;;
-;; URL: https://github.com/d12frosted/environment/emacs
+;; URL:
 ;;
 ;; License: GPLv3
 ;;
@@ -16,6 +16,8 @@
 ;;; Commentary:
 ;;
 ;;; Code:
+
+(require 'use-package)
 
 (defconst +sys-mac-p (eq system-type 'darwin))
 (defconst +sys-linux-p (eq system-type 'gnu/linux))
@@ -26,6 +28,7 @@
 
 (use-package exec-path-from-shell
   :if (and +sys-mac-p +sys-graphic-p)
+  :commands (exec-path-from-shell-initialize)
   :init
   (setq exec-path-from-shell-shell-name "/usr/local/bin/fish"
         exec-path-from-shell-check-startup-files nil

@@ -17,15 +17,17 @@
 ;;
 ;;; Code:
 
-(eval-when-compile
-  (require 'dired))
+(require 'use-package)
 
-(setq
- dired-listing-switches "-alh"
- dired-recursive-copies  'always
- dired-recursive-deletes 'top
- dired-auto-revert-buffer t
- dired-hide-details-hide-symlink-targets nil)
+(use-package dired
+  :straight (dired :type built-in)
+  :init
+  (setq
+   dired-listing-switches "-alh"
+   dired-recursive-copies  'always
+   dired-recursive-deletes 'top
+   dired-auto-revert-buffer t
+   dired-hide-details-hide-symlink-targets nil))
 
 ;; sort dired buffer so directories are first
 (add-hook 'dired-after-readin-hook #'+dired|sort-directories-first)

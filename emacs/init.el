@@ -1,4 +1,4 @@
-;;; init-new.el --- Emacs initialisation file -*- lexical-binding: t; -*-
+;;; init.el --- Emacs initialisation file -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2019 Boris Buliga
 ;;
@@ -119,4 +119,4 @@ stuttering, increase this.")
 (require 'init-fun)
 
 (provide 'init-new)
-;;; init-new.el ends here
+;;; init.el ends here

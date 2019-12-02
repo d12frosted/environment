@@ -17,8 +17,11 @@
 ;;
 ;;; Code:
 
+(require 'use-package)
+
 (use-package flycheck
   :defer 1
+  :commands (global-flycheck-mode)
   :init
   (setq-default flycheck-emacs-lisp-load-path 'inherit)
   :config

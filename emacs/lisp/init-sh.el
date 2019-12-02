@@ -17,8 +17,8 @@
 ;;
 ;;; Code:
 
-(eval-when-compile
-  (require 'sh-script))
+(require 'init-package)
+(require 'init-completion)
 
 (defvar +sh-builtin-keywords
   '("cat" "cat" "cd" "chmod" "chown" "cp" "curl" "date" "echo" "find" "git"
@@ -50,9 +50,7 @@
      (+sh--match-command-subst-in-quotes
       (1 'sh-quoted-exec prepend))
      (,(regexp-opt +sh-builtin-keywords 'words)
-      (0 'font-lock-type-face append))))
-  ;; 4. Fontify delimiters by depth
-  (add-hook 'sh-mode-hook #'rainbow-delimiters-mode))
+      (0 'font-lock-type-face append)))))
 
 (use-package company-shell
   :after sh-script

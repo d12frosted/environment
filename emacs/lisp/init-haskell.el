@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require 'init-completion)
+(require 'init-file-templates)
 
 (use-package haskell-mode
   :hook ((haskell-mode . subword-mode)

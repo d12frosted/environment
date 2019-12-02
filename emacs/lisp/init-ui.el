@@ -17,6 +17,8 @@
 ;;
 ;;; Code:
 
+(require 'use-package)
+
 ;; disable cursort blinking
 (blink-cursor-mode -1)
 
@@ -115,10 +117,13 @@
   (setq flycheck-color-mode-line-show-running nil)
   (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
-;; built-in diminish
-(with-eval-after-load 'simple
-  ;; `auto-fill-mode'
-  (diminish 'auto-fill-function))
+(use-package auto-fill
+  :straight (auto-fill :type built-in)
+  :diminish auto-fill-function)
+
+;; (use-package unicode-fonts
+;;   :init
+;;   (unicode-fonts-setup))
 
 (provide 'init-ui)
 ;;; init-ui.el ends here

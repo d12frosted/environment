@@ -18,21 +18,13 @@
 ;;; Code:
 
 (require 'init-keybindings)
+(require 'init-base)
 
 (+leader-def
   "g" '(nil :which-key "git..."))
 
 (setq-default
  vc-follow-symlinks t)
-
-(eval-when-compile
-  ;; (require 'git-gutter-fringe)
-  ;; (require 'magit)
-  (declare-function git-gutter-fr:init "git-gutter-fringe")
-  (declare-function git-gutter-fr:view-diff-infos "git-gutter-fringe")
-  (declare-function git-gutter-fr:clear "git-gutter-fringe")
-  (declare-function git-gutter:view-diff-infos "git-gutter")
-  (declare-function git-gutter:clear-diff-infos "git-gutter"))
 
 (use-package magit
   :general
@@ -42,8 +34,7 @@
     "gg" '(magit-status :which-key "Magit status")
     "gi" '(magit-init :which-key "Initialize repo")
     "gS" '(magit-stage-file :which-key "Git stage file")
-    "gU" '(magit-unstage-file :which-key "Git unstage file")
-    "gt" '(git-timemachine-toggle :which-key "Git time machine"))
+    "gU" '(magit-unstage-file :which-key "Git unstage file"))
   :config
   ;; full-screen is my friend
   (when (fboundp 'magit-display-buffer-fullframe-status-v1)
@@ -56,8 +47,21 @@
         ;; show word-granularity on selected hunk
         magit-diff-refine-hunk t))
 
+(use-package git-timemachine
+  :general
+  (+leader-def
+    "gt" '(git-timemachine-toggle :which-key "Git time machine")))
+
 (use-package git-gutter-fringe
   :diminish git-gutter-mode
+  :after async
+  :commands (git-gutter-fr:init
+             git-gutter-fr:view-diff-infos
+             git-gutter-fr:clear
+             git-gutter:view-diff-infos
+             git-gutter:clear-diff-infos
+             git-gutter-mode
+             git-gutter)
   :general
   (+leader-def
     "g]" '(git-gutter:next-hunk :which-key "Next hunk")

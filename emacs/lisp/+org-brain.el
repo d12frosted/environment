@@ -19,19 +19,6 @@
 
 (require '+org)
 
-(eval-when-compile
-  ;; (require 'org-brain)
-  (declare-function org-brain-entry-from-id "org-brain")
-  (declare-function org-brain-entry-identifier "org-brain")
-  (declare-function org-brain-children "org-brain")
-  (declare-function org-brain-title "org-brain")
-  (declare-function org-brain-choose-entry "org-brain")
-  (declare-function org-brain-files "org-brain")
-  (declare-function org-brain-headline-entries "org-brain")
-  (declare-function org-brain-filep "org-brain")
-  (declare-function org-brain-entry-path "org-brain")
-  (declare-function org-brain-entry-marker "org-brain"))
-
 ;;;###autoload
 (defun +brain/insert-link ()
   "Insert a link to brain entry."
@@ -89,7 +76,7 @@ TYPE is one of nil, parent, child, friend."
      (org-brain--internal-add-friendship (+brain-as-entry target-eoi)
                                          (+brain-as-entry source-eoi))
      (org-brain-add-friendship source-eoi (list target-eoi))))
-  (org-make-link-string
+  (org-link-make-string
    (concat "brain"
            (when type
              (concat "-" type))

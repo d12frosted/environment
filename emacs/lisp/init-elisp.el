@@ -17,6 +17,8 @@
 ;;
 ;;; Code:
 
+(require 'use-package)
+
 (use-package lispy
   :defer t
   :diminish
@@ -24,8 +26,9 @@
   :config
   (define-key lispy-mode-map (kbd "C-a") '+beginning-of-line))
 
-(with-eval-after-load 'eldoc
-  (diminish 'eldoc-mode))
+(use-package eldoc
+  :straight (eldoc :type built-in)
+  :diminish eldoc-mode)
 
 (provide 'init-elisp)
 ;;; init-elisp.el ends here

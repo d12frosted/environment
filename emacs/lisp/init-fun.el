@@ -17,7 +17,7 @@
 ;;
 ;;; Code:
 
-(require 'init-path)
+(require 'init-package)
 
 (use-package roguel-ike
   :commands roguel-ike
