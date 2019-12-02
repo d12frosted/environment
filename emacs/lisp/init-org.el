@@ -49,6 +49,7 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package org
   :defer t
   :straight org-plus-contrib
+  :commands (org-map-entries)
   :hook ((org-mode . auto-fill-mode)
          (org-mode . places-mode-maybe-enable)
          (org-mode . pretty-props-mode-maybe-enable)
@@ -78,11 +79,6 @@ It is relative to `org-directory', unless it is absolute.")
           ob-dot
           ob-plantuml))
   (setq org-directory (concat +path-home-dir "Dropbox/vulpea/"))
-  ;; some aggressive saving
-  (advice-add #'org-agenda-refile :after #'+org-save-all)
-  (advice-add #'org-agenda-todo :after #'+org-save-all)
-  (advice-add #'org-agenda-clock-in :after #'+org-save-all)
-  (advice-add #'org-agenda-clock-out :after #'+org-save-all)
   :config
   (require '+org-auto-id)
   (require '+org-agenda)
@@ -222,6 +218,7 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package ox-latex
   :defer t
   :straight org-plus-contrib
+  :commands (org-latex-preview)
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-packages-alist '("" "color"))
@@ -250,6 +247,16 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package org-agenda
   :defer t
   :straight org-plus-contrib
+  :commands (org-agenda-refile
+             org-agenda-todo
+             org-agenda-clock-in
+             org-agenda-clock-out)
+  :init
+  ;; some aggressive saving
+  (advice-add #'org-agenda-refile :after #'+org-save-all)
+  (advice-add #'org-agenda-todo :after #'+org-save-all)
+  (advice-add #'org-agenda-clock-in :after #'+org-save-all)
+  (advice-add #'org-agenda-clock-out :after #'+org-save-all)
   :config
   (eval-when-compile
     (require '+org-agenda))
@@ -388,13 +395,6 @@ It is relative to `org-directory', unless it is absolute.")
 (declare-function org-get-tags "org")
 (declare-function org-heading-components "org")
 (declare-function org-save-all-org-buffers "org")
-
-(defun +org/remove-empty-drawer ()
-  "Remove empty drawer at point."
-  (interactive)
-  (save-excursion
-    (beginning-of-line 0)
-    (org-remove-empty-drawer-at (point))))
 
 (defun +org-refile--verify-refile-target ()
   "Exclude todo keywords with a done state from refile targets."
