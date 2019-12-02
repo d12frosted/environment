@@ -65,6 +65,7 @@ Possible values are: upstream, mirror and local.")
   (package-initialize))
 
 ;; Setup `straight' package manager.
+(setq straight-repository-branch "develop")
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" +path-packages-dir))
@@ -78,7 +79,8 @@ Possible values are: upstream, mirror and local.")
       (eval-print-last-sexp)))
   (eval-and-compile
     (setq straight-base-dir +path-packages-dir)
-    (setq straight-use-package-by-default t))
+    (setq straight-use-package-by-default t
+          straight-repository-branch "develop"))
   (load bootstrap-file nil 'nomessage))
 
 (require 'straight)

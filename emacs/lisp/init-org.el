@@ -28,21 +28,6 @@
 (require '+org-cigars)
 (require '+org-dependent)
 
-;; Setup list of Org modules that should always be loaded together
-;; with Org.
-(setq org-modules
-      '(org-info
-        org-habit
-        org-agenda
-        org-archive
-        org-capture
-        org-id
-        org-attach
-        org-edna
-        ob-emacs-lisp
-        ob-dot
-        ob-plantuml))
-
 (defvar +capture-inbox-file "inbox.org"
   "The path to the inbox file.
 
@@ -64,14 +49,13 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package org
   :defer t
   :straight org-plus-contrib
-  :diminish org-indent-mode
   :hook ((org-mode . auto-fill-mode)
-         (org-mode . #'places-mode-maybe-enable)
-         (org-mode . #'pretty-props-mode-maybe-enable)
-         (org-mode . #'cha-mode-maybe-enable)
-         (org-mode . #'wine-mode-maybe-enable)
-         (org-mode . #'cigars-mode-maybe-enable)
-         (org-clock-out . #'+org/remove-empty-drawer))
+         (org-mode . places-mode-maybe-enable)
+         (org-mode . pretty-props-mode-maybe-enable)
+         (org-mode . cha-mode-maybe-enable)
+         (org-mode . wine-mode-maybe-enable)
+         (org-mode . cigars-mode-maybe-enable)
+         (org-clock-out . +org/remove-empty-drawer))
   :general
   (+leader-def
     "oa" '(+agenda/main :which-key "Org fast agenda")
@@ -79,6 +63,20 @@ It is relative to `org-directory', unless it is absolute.")
     "or" '(+orgability/list :which-key "Reading list")
     "oA" '(org-agenda :which-key "Org agenda"))
   :init
+  ;; Setup list of Org modules that should always be loaded together
+  ;; with Org.
+  (setq org-modules
+        '(org-info
+          org-habit
+          org-agenda
+          org-archive
+          org-capture
+          org-id
+          org-attach
+          org-edna
+          ob-emacs-lisp
+          ob-dot
+          ob-plantuml))
   (setq org-directory (concat +path-home-dir "Dropbox/vulpea/"))
   ;; some aggressive saving
   (advice-add #'org-agenda-refile :after #'+org-save-all)
@@ -175,6 +173,8 @@ It is relative to `org-directory', unless it is absolute.")
 	       (org-capture-prepare-finalize . +org-auto-id-dwim))
   :config
   (setq org-id-track-globally t
+        org-id-extra-files (list (concat org-directory ".archive/archive")
+                                 (concat org-directory ".archive/archive.org"))
 	      org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
 	      org-id-locations-file (concat +path-cache-dir "org-id-locations.el")))
 
@@ -255,6 +255,8 @@ It is relative to `org-directory', unless it is absolute.")
     (require '+org-agenda))
   (setq
    org-agenda-files (list org-directory)
+   org-agenda-text-search-extra-files (list (concat org-directory ".archive/archive")
+                                            (concat org-directory ".archive/archive.org"))
    ;; also show state change in log mode
    org-agenda-log-mode-items '(closed clock state)
 
@@ -299,7 +301,6 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-edna
   :defer t
-  :straight org-plus-contrib
   :hook ((org-mode . org-edna-load)))
 
 (use-package org-brain
@@ -308,6 +309,7 @@ It is relative to `org-directory', unless it is absolute.")
   :commands (org-brain-title<
              org-brain-path-entry-name
              org-brain-entry-name
+             org-brain-entry-from-id
              org-brain--name-and-id-at-point)
   :general
   (+leader-def
