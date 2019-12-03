@@ -255,6 +255,27 @@ option set in the options section.
    (wine-format-title wine-title-format))
   (pretty-props/entry))
 
+(defun wine-get-price ()
+  "Get the price of wine entry at point.
+
+Returns nil if the price is not set.
+
+Returns first price if it's a list."
+  (car (wine-get-prices)))
+
+(defun wine-get-prices ()
+  "Get prices of wine entry at point."
+  (+org-entry-get-list "PRICE" ", "))
+
+(defun wine-prompt-price ()
+  "Prompt the price for wine entry at point."
+  (if-let ((price (wine-get-price)))
+      (let ((input (read-string (format "Price (%s): " price))))
+        (if (or (null input) (string-empty-p input))
+            price
+          input))
+    (read-string "Price: ")))
+
 (defun wine--up-to-wine-entry ()
   "Walk up to the wine entry."
   (while (not (wine-entry-p))
@@ -279,10 +300,10 @@ when already at wine entry."
    (let ((id (or id (org-id-get-create)))
          (source (or source (wine-read-source)))
          (amount (or amount (read-number "Amount: ")))
-         (price (read-string "Price: "))
+         (price (wine-prompt-price))
          (date (or date (org-read-date nil t))))
      (inventory-add wine-inventory-file id amount source date)
-     (let ((prices (+org-entry-get-list "PRICE" ", ")))
+     (let ((prices (wine-get-prices)))
        (unless (seq-contains prices price)
          (+org-entry-set "PRICE" (+string-join (cons price prices) ", "))))
      (wine-refresh-entry))))
