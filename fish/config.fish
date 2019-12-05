@@ -134,6 +134,9 @@ set -x NVM_SOURCE "/usr/share/nvm"
 # go
 set -x GOPATH "$XDG_CACHE_HOME/go"
 
+# gopass and friends
+set -x PASSWORD_STORE "$HOME/Dropbox/.password-store"
+
 # private post-configs
 safe_source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
 
