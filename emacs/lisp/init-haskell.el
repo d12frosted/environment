@@ -19,10 +19,10 @@
 
 (require 'init-completion)
 (require 'init-file-templates)
+(require 'init-lsp)
 
 (use-package haskell-mode
-  :hook ((haskell-mode . subword-mode)
-         (haskell-mode . haskell-collapse-mode))
+  :hook ((haskell-mode . subword-mode))
   :config
   (+file-templates-set
     'haskell-mode
@@ -35,30 +35,28 @@
   (setq haskell-stylish-on-save t)
   (add-to-list 'completion-ignored-extensions ".hi"))
 
-(use-package intero
-  :commands intero-mode
-  :hook ((haskell-mode . +haskell-init-intero))
-  :init
-  (defun +haskell-init-intero ()
-    "Conditionally initialise `intero-mode'.
-
-To enable `intero-mode', 'stack' must be installed.
-
-This is necessary because `intero-mode' doesn't do its own error
-checks."
-    (when (derived-mode-p 'haskell-mode)
-      (if (executable-find "stack")
-          (intero-mode +1)
-        (message "Couldn't find stack. Refusing to enable intero-mode."))))
+(use-package dante
+  :disabled
+  :commands dante-mode
+  :hook (haskell-mode-local-vars . dante-mode)
   :config
-  (+company-set-backend 'intero-mode 'intero-company)
+  (+company-set-backend 'dante-mode #'dante-company)
   (when (fboundp 'flycheck-add-next-checker)
-    (flycheck-add-next-checker 'intero '(warning . haskell-hlint))))
+    (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint))))
 
 (use-package lsp-haskell
-  :disabled
   :after haskell-mode
-  :hook ((haskell-mode . lsp)))
+  :hook ((haskell-mode . lsp))
+  :commands (lsp-haskell--hie-command)
+  :init
+  (eval-after-load 'lsp
+    '(lsp-register-client
+      (make-lsp--client
+       :new-connection (lsp-stdio-connection (lambda () (lsp-haskell--hie-command)))
+       :major-modes '(haskell-mode)
+       :server-id 'hie
+       ;; :multi-root t
+       :initialization-options 'lsp-haskell--make-init-options))))
 
 (provide 'init-haskell)
 ;;; init-haskell.el ends here

@@ -105,6 +105,7 @@ stuttering, increase this.")
 (require 'init-dired)
 (require 'init-pdf)
 (require 'init-file-templates)
+(require 'init-lsp)
 
 ;; ui
 (require 'init-ui)
@@ -118,5 +119,5 @@ stuttering, increase this.")
 ;; other
 (require 'init-fun)
 
-(provide 'init-new)
+(provide 'init)
 ;;; init.el ends here
