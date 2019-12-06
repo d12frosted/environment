@@ -214,7 +214,7 @@ option set in the options section.
     (org-with-point-at (org-id-find id t)
       (org-set-property "WINERY" (+brain-make-link winery id 'parent))
       (+org-prompt-property "NAME")
-      (+org-prompt-number-property "YEAR")
+      (org-set-property "YEAR" nil)
       (+org-prompt-brain-property "REGION" wine-regions-parent id 'parent)
       (+org-prompt-property-repeating
        #'+org-prompt-brain-property-fn
