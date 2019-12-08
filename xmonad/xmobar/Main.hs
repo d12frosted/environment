@@ -153,16 +153,19 @@ instance Exec DropboxStatus where
     where
       cb Nothing = callback "?"
       cb (Just res) | res == "Dropbox isn't running!" =
-                      callback $ Icon.alert "\xf16b"
+                      callback $ Icon.alert "\xf16b Not running"
 
                     | res == "Up to date" =
                       callback $ Icon.static "\xf16b"
 
                     | "Syncing" `isPrefixOf` res =
-                      callback $ Icon.static "\xf16b" <> Icon.static "\xf021"
+                      callback $ Icon.static "\xf16b \xf021"
+
+                    | "Connecting" `isPrefixOf` res =
+                      callback $ Icon.alert "\xf16b \xf071 No connection"
 
                     | otherwise =
-                      callback $ Icon.alert "\xf16b" <> Icon.alert "?"
+                      callback $ Icon.alert "\xf16b \xf071 Unknown"
 
 --------------------------------------------------------------------------------
 
