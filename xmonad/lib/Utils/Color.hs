@@ -54,7 +54,7 @@ textTitleFg = "#4848ff"
 --------------------------------------------------------------------------------
 
 iconStaticBg :: Color
-iconStaticBg = "#f4faf4"
+iconStaticBg = "#f3fcf3"
 
 iconStaticFg :: Color
 iconStaticFg = textRegular
