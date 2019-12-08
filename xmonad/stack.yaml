@@ -1,15 +1,15 @@
-resolver: lts-13.18
+resolver: lts-14.16
 
 packages:
 - '.'
 
 extra-deps:
-  - xmobar-0.29.5
+  - xmobar-0.31
   - iwlib-0.1.0
   - git: https://gitlab.com/d12frosted/d12-hs-path
-    commit: caeca85f001dcc4b1cf1d93d6ef259dceb85b1a7
+    commit: 063302ad18a3a7862f14415313c8adae1da31674
   - git: https://gitlab.com/d12frosted/d12-hs-env
-    commit: b306c70b4a50e2ae2ffc1fe3a84209e00af51ead
+    commit: 76f3e773f1aa0b2c7f56d6e76d8bb7ca01bd0ccc
 
 flags:
   xmobar:
