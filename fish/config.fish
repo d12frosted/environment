@@ -52,7 +52,10 @@ set -x PATH $XDG_CONFIG_HOME/bin $PATH
 __append_to_path $GEM_HOME/bin
 __append_to_path /usr/texbin
 __append_to_path /usr/local/sbin
-systemctl --user import-environment PATH
+
+if command -v systemctl >/dev/null 2>&1
+  systemctl --user import-environment PATH
+end
 
 # variables
 set -x EDITOR "emacsclient"
@@ -115,7 +118,9 @@ complete -c eru -a 'ssh repositories linking packages guardian os hardware' --no
 set -x VULPEA_DIR "$HOME/Dropbox/vulpea"
 set -x BUDGET_FILE "$VULPEA_DIR/current.journal"
 set -x BUDGET_CONFIG "$VULPEA_DIR/budget.yaml"
-systemctl --user import-environment VULPEA_DIR
+if command -v systemctl >/dev/null 2>&1
+  systemctl --user import-environment VULPEA_DIR
+end
 
 # install fisher
 if not functions -q fisher
