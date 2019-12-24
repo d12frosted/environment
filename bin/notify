@@ -55,7 +55,7 @@ Actions:
   toggle                Toggle the status of notification system
 
 Send Options:
-  -a|--help TEXT        Specify the application sending notification
+  -a|--application TEXT¢ Specify the application sending notification
   -t|--title TEXT       Specify the title of the notification (required)
   -m|--message TEXT     Specify the message of the notification
   -u|--urgency LEVEL    Specify the urgency level (low, normal or critical)
