@@ -41,7 +41,6 @@
 (require 'subr-x)
 (require 'ivy)
 (require '+org)
-(require 'org-edna)
 
 ;;;###autoload
 (defun +org-dep/add-blocker ()

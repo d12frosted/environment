@@ -18,7 +18,20 @@
 ;;; Code:
 
 (require '+org)
-(require 'org-brain)
+
+(declare-function org-brain--internal-add-friendship "org-brain")
+(declare-function org-brain-add-friendship "org-brain")
+(declare-function org-brain-add-relationship "org-brain")
+(declare-function org-brain-children "org-brain")
+(declare-function org-brain-choose-entry "org-brain")
+(declare-function org-brain-entry-from-id "org-brain")
+(declare-function org-brain-entry-identifier "org-brain")
+(declare-function org-brain-entry-marker "org-brain")
+(declare-function org-brain-entry-path "org-brain")
+(declare-function org-brain-filep "org-brain")
+(declare-function org-brain-files "org-brain")
+(declare-function org-brain-headline-entries "org-brain")
+(declare-function org-brain-title "org-brain")
 
 ;;;###autoload
 (defun +brain/insert-link ()
