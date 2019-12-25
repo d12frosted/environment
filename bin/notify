@@ -89,9 +89,17 @@ function exec() {
       check notify-send && {
         notify-send -a "$APPLICATION" "$TITLE" "$MESSAGE" -u "$URGENCY"
       }
+      check terminal-notifier && {
+        terminal-notifier -title "$APPLICATION" -subtitle "$TITLE" -message "$MESSAGE"
+      }
       ;;
     status)
-      status=$(cat "$status_file" 2>/dev/null)
+      if check defaults; then
+        status=$(defaults read ~/Library/Preferences/ByHost/com.apple.notificationcenterui.plist doNotDisturb)
+        status=$(( ( status + 1 ) % 2))
+      else
+        status=$(cat "$status_file" 2>/dev/null)
+      fi
       if [[ "$status" = "1" ]]; then
         echo "enabled"
       else
@@ -100,11 +108,15 @@ function exec() {
       ;;
     enable)
       echo "1" > "$XDG_DATA_HOME/notify/status"
-      notify send -t "DUNST_COMMAND_RESUME"
+      check notify-send && {
+        notify send -t "DUNST_COMMAND_RESUME"
+      }
       ;;
     disable)
       echo "0" > "$XDG_DATA_HOME/notify/status"
-      notify send -t "DUNST_COMMAND_PAUSE"
+      check notify-send && {
+        notify send -t "DUNST_COMMAND_PAUSE"
+      }
       ;;
     toggle)
       status=$(cat "$status_file" 2>/dev/null)
