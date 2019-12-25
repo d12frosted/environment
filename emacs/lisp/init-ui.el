@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'init-env)
 
 ;; disable cursort blinking
 (blink-cursor-mode -1)
@@ -124,6 +125,9 @@
 (use-package auto-fill
   :straight (auto-fill :type built-in)
   :diminish auto-fill-function)
+
+(when (and +sys-mac-p +sys-graphic-p)
+  (add-to-list 'default-frame-alist '(font . "Source Code Pro")))
 
 ;; (use-package unicode-fonts
 ;;   :init
