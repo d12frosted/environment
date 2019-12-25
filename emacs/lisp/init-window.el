@@ -19,6 +19,10 @@
 
 (require 'init-keybindings)
 
+;; Prefer vertical splits by default
+(setq split-height-threshold nil
+      split-width-threshold 160)
+
 (use-package ace-window
   :general
   (+leader-def
