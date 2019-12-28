@@ -4,6 +4,9 @@
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
+[[https://github.com/d12frosted/environment/workflows/CI/badge.svg][file:https://github.com/d12frosted/environment/workflows/CI/badge.svg]]
+
+
 This repository contains configurations to various tools that I am trying to
 keep clean and organized.
 
