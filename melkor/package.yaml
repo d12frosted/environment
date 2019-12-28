@@ -19,7 +19,7 @@ dependencies:
 executables:
   melkor:
     main:                Melkor.hs
-    source-dirs:         .
+    source-dirs:         app
     ghc-options:
     - -threaded
     - -rtsopts

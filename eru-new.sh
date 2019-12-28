@@ -28,6 +28,8 @@ fi
 # Now start the Great Music
 #
 
-stack setup --allow-different-user
-stack build --allow-different-user
-stack exec --allow-different-user -- melkor "$@"
+cd "melkor" && {
+  stack setup --allow-different-user
+  stack build --allow-different-user
+  stack exec --allow-different-user -- melkor "$@"
+}

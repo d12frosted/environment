@@ -12,8 +12,8 @@ jobs:
     - name: .stack-work cache
       uses: actions/cache@v1
       with:
-        path: .stack-work
-        key: ${{ runner.os }}-stack-work-${{ hashFiles('stack.yaml.lock') }}
+        path: melkor/.stack-work
+        key: ${{ runner.os }}-stack-work-${{ hashFiles('melkor/stack.yaml.lock') }}
         restore-keys: |
           ${{ runner.os }}-stack-work
 
@@ -21,7 +21,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.stack
-        key: ${{ runner.os }}-stack-${{ hashFiles('stack.yaml.lock') }}
+        key: ${{ runner.os }}-stack-${{ hashFiles('melkor/stack.yaml.lock') }}
         restore-keys: |
           ${{ runner.os }}-stack
 
