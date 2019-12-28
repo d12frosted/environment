@@ -2,8 +2,11 @@
 
 --------------------------------------------------------------------------------
 
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NoImplicitPrelude     #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE TupleSections         #-}
 
 --------------------------------------------------------------------------------
 
@@ -23,6 +26,7 @@ import           Melkor.Provider
 --------------------------------------------------------------------------------
 
 import           RIO
+import qualified RIO.List          as L
 import qualified RIO.Text          as T
 
 --------------------------------------------------------------------------------
@@ -42,6 +46,11 @@ runMelkor melkor = run $ do
   then logInfo "everything is nice, all dependencies can be satisfied"
   else logError $ "Some of the dependencies can't be satisfied\n"
                 <> (display . T.intercalate "\n" . map (("  " <>) . textDisplay) $ unsatisfied)
+  -- TODO: fail when any of the dependencies can't be satisfied
+
+  let depToProviderMap = map (\dep -> (dep, fromMaybe undefined (L.find (`providerSatisfies` dep) allProviders))) allDeps
+  statuses <- mapM (\(dep, provider) -> (dep,) <$> runEff (providerCheckStatus provider dep)) depToProviderMap
+  mapM_ (\(dep, status) -> logInfo $ display status <> " :: " <> display dep) statuses
 
   logInfo "done."
 

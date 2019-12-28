@@ -35,6 +35,6 @@ melkor = do
 
   -- providers
   logDebug "no providers yet"
-  -- addProvider repoProvider
+  addProvider repoProvider
 
 --------------------------------------------------------------------------------

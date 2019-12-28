@@ -13,6 +13,7 @@ dependencies:
 - d12-hs-env
 - d12-hs-path
 - directory
+- mtl
 - rio
 
 executables:
