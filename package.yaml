@@ -14,7 +14,6 @@ dependencies:
 - d12-hs-path
 - directory
 - rio
-- shake
 
 executables:
   melkor:
