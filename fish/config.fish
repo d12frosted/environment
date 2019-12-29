@@ -27,6 +27,19 @@ set -l PRIVATE_FISH_CONFIGS_HOME $HOME/Dropbox/Apps/fish
 set -x XDG_CONFIG_HOME "$HOME/.config"
 set -x XDG_DATA_HOME "$HOME/.local/share"
 
+# install fisher
+# TODO: move to Eru
+if not functions -q fisher
+  curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
+  fish -c fisher
+end
+set -g fisher_path $XDG_DATA_HOME/fisher
+set fish_function_path $fish_function_path[1] $fisher_path/functions $fish_function_path[2..-1]
+set fish_complete_path $fish_complete_path[1] $fisher_path/completions $fish_complete_path[2..-1]
+for file in $fisher_path/conf.d/*.fish
+    builtin source $file 2> /dev/null
+end
+
 function safe_source -a file
   if test -f $file
     source $file
@@ -116,12 +129,6 @@ set -x BUDGET_FILE "$VULPEA_DIR/current.journal"
 set -x BUDGET_CONFIG "$VULPEA_DIR/budget.yaml"
 if command -v systemctl >/dev/null 2>&1
   systemctl --user import-environment VULPEA_DIR
-end
-
-# install fisher
-if not functions -q fisher
-  curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
-  fish -c fisher
 end
 
 # gpg + ssh
