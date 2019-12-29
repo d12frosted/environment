@@ -71,25 +71,18 @@ alias eclt "emacsclient -c"
 alias cenv "cd $XDG_CONFIG_HOME"
 alias cem  "cd $HOME/.emacs.d"
 
-# theme
-if test "$TERM" = "linux"
-  set FISH_THEME base16-tomorrow-night
-else
-  set FISH_THEME base16-tomorrow
+# TODO move to Eru
+set -x BASE16_HOME $XDG_DATA_HOME/base16-shell
+if test ! -d $BASE16_HOME
+  git clone https://github.com/chriskempson/base16-shell.git $BASE16_HOME
 end
 
+# theme
 if status --is-interactive
-  # load current theme
-  eval sh "$XDG_CONFIG_HOME/fish/themes/$FISH_THEME.sh"
-
-  function theme_preview_mode
-    for SCRIPT in $XDG_CONFIG_HOME/fish/themes/*.sh
-      set THEME (basename $SCRIPT .sh)
-      set FUNCTION_NAME (echo "set_theme_$THEME")
-      function $FUNCTION_NAME -V SCRIPT -V THEME
-        eval sh '"'$SCRIPT'"'
-      end
-    end
+  if test "$TERM" = "linux"
+    base16 tomorrow-night
+  else
+    base16 tomorrow
   end
 end
 set fish_color_autosuggestion gray

@@ -1,3 +1,4 @@
 # automatically installed
-nvm.fish
 fisher.fish
+nvm.fish
+base16.fish
