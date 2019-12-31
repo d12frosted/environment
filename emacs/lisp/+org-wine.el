@@ -249,8 +249,8 @@ option set in the options section.
     (+org-entry-set-number "TOTAL_OUT"
                            (inventory-total-out wine-inventory-file id)))
   (+org-entry-set-number "AVAILABLE"
-                         (round (- (+org-entry-get-number "TOTAL_IN")
-                                   (+org-entry-get-number "TOTAL_OUT"))))
+                         (- (+org-entry-get-number "TOTAL_IN")
+                            (+org-entry-get-number "TOTAL_OUT")))
   (+org-entry-set-average-number "RATE" "TOTAL" "RATING" #'wine-refresh-rating)
   (org-edit-headline
    (wine-format-title wine-title-format))
