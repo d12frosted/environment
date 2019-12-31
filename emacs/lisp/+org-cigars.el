@@ -241,15 +241,62 @@ cigar entry."
       (cigar-refresh-entry)
       (save-buffer))))
 
+(defun cigar-entry-p ()
+  "Return non-nil when entry at point is cigar entry."
+  (string-equal (+org-parent-id) (+brain-as-id cigars-parent)))
+
+(defun cigar-get-price ()
+  "Get the price of cigar entry at point.
+
+Returns nil if the price is not set.
+
+Returns first price if it's a list."
+  (car (cigar-get-prices)))
+
+(defun cigar-get-prices ()
+  "Get prices of cigar entry at point."
+  (+org-entry-get-list "PRICE" ", "))
+
+(defun cigar-prompt-price ()
+  "Prompt the price for cigar entry at point."
+  (if-let ((price (cigar-get-price)))
+      (let ((input (read-string (format "Price (%s): " price))))
+        (if (or (null input) (string-empty-p input))
+            price
+          input))
+    (read-string "Price: ")))
+
+(defun cigar--up-to-entry ()
+  "Walk up to the cigar entry."
+  (while (not (cigar-entry-p))
+    (let ((start-level (funcall outline-level)))
+      (when (<= start-level 2)
+        (user-error "Can't locate cigar entry"))
+      (outline-up-heading 1 t))))
+
+(defmacro cigar-with-point-at-entry (&rest body)
+  "Move up to the cigar entry and execute BODY.
+
+Errors out when cigar entry is not found. No movement is performed
+when already at cigar entry."
+  `(save-excursion
+     (cigar--up-to-entry)
+     ,@body))
+
 (defun cigar/acquire (&optional source id amount date)
   "Acquire AMOUNT of ID because from SOURCE at DATE."
   (interactive)
-  (let ((id (or id (org-id-get-create)))
-        (source (or source (cigar-read-source)))
-        (amount (or amount (read-number "Amount: ")))
-        (date (or date (org-read-date nil t))))
-    (inventory-add cigars-inventory-file id amount source date)
-    (cigar-refresh-entry)))
+  (cigar-with-point-at-entry
+   (let ((id (or id (org-id-get-create)))
+         (source (or source (cigar-read-source)))
+         (amount (or amount (read-number "Amount: ")))
+         (price (cigar-prompt-price))
+         (date (or date (org-read-date nil t))))
+     (inventory-add cigars-inventory-file id amount source date)
+     (let ((prices (cigar-get-prices)))
+       (unless (seq-contains prices price)
+         (+org-entry-set "PRICE" (+string-join (cons price prices) ", "))))
+     (cigar-refresh-entry))))
 
 (defun cigar-read-source ()
   "Get the source."
