@@ -30,6 +30,7 @@ gocryptfs
 hledger
 hledger-web
 hlint
+hoogle
 java-runtime-common
 jq
 kubectl
