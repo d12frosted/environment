@@ -94,9 +94,9 @@ end
 # theme
 if status --is-interactive
   if test "$TERM" = "linux"
-    base16 tomorrow-night
+    base16 onedark
   else
-    base16 tomorrow
+    base16 one-light
   end
 end
 set fish_color_autosuggestion gray
