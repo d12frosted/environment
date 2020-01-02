@@ -38,7 +38,7 @@
 (use-package dante
   :disabled
   :commands dante-mode
-  :hook (haskell-mode-local-vars . dante-mode)
+  :hook (haskell-mode . dante-mode)
   :config
   (+company-set-backend 'dante-mode #'dante-company)
   (when (fboundp 'flycheck-add-next-checker)
