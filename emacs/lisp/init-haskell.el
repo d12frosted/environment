@@ -40,6 +40,7 @@
   :commands dante-mode
   :hook (haskell-mode . dante-mode)
   :config
+  (setq dante-methods '(stack))
   (+company-set-backend 'dante-mode #'dante-company)
   (when (fboundp 'flycheck-add-next-checker)
     (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint))))
