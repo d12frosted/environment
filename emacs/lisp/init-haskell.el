@@ -36,7 +36,6 @@
   (add-to-list 'completion-ignored-extensions ".hi"))
 
 (use-package dante
-  :disabled
   :commands dante-mode
   :hook (haskell-mode . dante-mode)
   :config
@@ -46,6 +45,7 @@
     (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint))))
 
 (use-package lsp-haskell
+  :disabled
   :after haskell-mode
   :hook ((haskell-mode . lsp))
   :commands (lsp-haskell--hie-command)
