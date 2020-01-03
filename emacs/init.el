@@ -115,6 +115,7 @@ stuttering, increase this.")
 (require 'init-haskell)
 (require 'init-org)
 (require 'init-sh)
+(require 'init-rest)
 
 ;; other
 (require 'init-fun)
