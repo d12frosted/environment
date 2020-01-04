@@ -129,6 +129,10 @@
 (when (and +sys-mac-p +sys-graphic-p)
   (add-to-list 'default-frame-alist '(font . "Source Code Pro")))
 
+(use-package all-the-icons
+	     :defer t
+	     :commands (all-the-icons-material))
+
 ;; (use-package unicode-fonts
 ;;   :init
 ;;   (unicode-fonts-setup))
