@@ -56,7 +56,7 @@
 
 ;;;###autoload
 (defvar +company-backend-alist
-  '((text-mode :derived (company-dabbrev company-yasnippet company-ispell))
+  '((text-mode :derived (company-yasnippet))
     (prog-mode :derived (:separate company-capf company-yasnippet))
     (conf-mode :derived company-capf company-dabbrev-code company-yasnippet))
   "An alist matching modes to company backends.
