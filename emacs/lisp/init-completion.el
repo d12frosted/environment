@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require 'lib-list)
+(require 'init-path)
 (require 'init-package)
 
 ;;;###autoload
@@ -53,6 +54,14 @@ The backends for any mode is built from this.")
   :config
   (add-hook 'company-mode-hook #'+company-init-backends)
   (global-company-mode +1))
+
+(use-package company-prescient
+  :hook (company-mode . company-prescient-mode)
+  :defines (prescient-save-file)
+  :commands (prescient-persist-mode)
+  :config
+  (setq prescient-save-file (concat +path-cache-dir "prescient-save.el"))
+  (prescient-persist-mode +1))
 
 (defun +company-mode-maybe ()
   "Enable company mode if it's not enabled."
