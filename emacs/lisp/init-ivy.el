@@ -19,6 +19,7 @@
 
 (require 'init-project)
 (require 'init-keybindings)
+(require 'init-package)
 (require 'subr-x)
 
 (use-package counsel
@@ -106,6 +107,19 @@ file trees."
               #'projectile-find-file)))
 
          (#'counsel-file-jump))))
+
+(use-package ivy-prescient
+  :hook (ivy-mode . ivy-prescient-mode)
+  :defines (prescient-filter-method
+            prescient-save-file
+            ivy-prescient-retain-classic-highlighting)
+  :commands (prescient-persist-mode)
+  :init
+  (setq prescient-filter-method '(literal regexp initialism)
+        ivy-prescient-retain-classic-highlighting t)
+  :config
+  (setq prescient-save-file (concat +path-cache-dir "prescient-save.el"))
+  (prescient-persist-mode +1))
 
 (provide 'init-ivy)
 ;;; init-ivy.el ends here
