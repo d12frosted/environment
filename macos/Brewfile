@@ -31,6 +31,7 @@ brew "terminal-notifier", link: true
 brew "tree"
 brew "wget"
 brew "coreutils"
+brew "gnu-sed"
 
 # scala
 brew "maven"
