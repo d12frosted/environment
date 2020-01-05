@@ -2,9 +2,7 @@
 
 --------------------------------------------------------------------------------
 
-{-# LANGUAGE GeneralisedNewtypeDeriving #-}
-{-# LANGUAGE NoImplicitPrelude          #-}
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 --------------------------------------------------------------------------------
 

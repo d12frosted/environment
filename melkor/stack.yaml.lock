@@ -6,35 +6,35 @@
 packages:
 - completed:
     cabal-file:
-      size: 1005
-      sha256: 0611df1435ea85a8d7b7e9bc5edb312f94280ff36b105a77cfad3f73402cfb77
-    name: d12-hs-path
+      size: 1484
+      sha256: 41255c031aa84e63da37adbfe7fe2a9407227ae378f7d86b6eba57d61a1ba6fb
+    name: path-extra
     version: 0.1.0.0
-    git: https://gitlab.com/d12frosted/d12-hs-path
+    git: https://github.com/d12frosted/path-extra
     pantry-tree:
-      size: 414
-      sha256: b13c3720a3f1dd383ebce2e19a17ce7a2964baa50184ba9d8b168f7ff8bdcade
-    commit: 063302ad18a3a7862f14415313c8adae1da31674
+      size: 589
+      sha256: b96881df98c9a2690edb2be3345dc5dde81c18bb22dd1351be8e7ca12f1758dd
+    commit: 8457c546d02c97d06710320de4e834fb0fd46637
   original:
-    git: https://gitlab.com/d12frosted/d12-hs-path
-    commit: 063302ad18a3a7862f14415313c8adae1da31674
+    git: https://github.com/d12frosted/path-extra
+    commit: 8457c546d02c97d06710320de4e834fb0fd46637
 - completed:
     cabal-file:
-      size: 826
-      sha256: 54045ec7a65c6aa44d94dabd797582075e12f79eb68e80b44600ee7d75d4c3f3
-    name: d12-hs-env
-    version: 0.1.1.0
-    git: https://gitlab.com/d12frosted/d12-hs-env
+      size: 1343
+      sha256: 47b8e845e754efa4d041804a42453c73e8775d9f9e9f599d1904db97088accca
+    name: env-extra
+    version: 1.0.0.0
+    git: https://github.com/d12frosted/env-extra
     pantry-tree:
-      size: 404
-      sha256: eb2a2c3552dc071a8be37a81197389a3323442005e562a9c11af1dbdab0b50a6
-    commit: 76f3e773f1aa0b2c7f56d6e76d8bb7ca01bd0ccc
+      size: 544
+      sha256: 8af304d0e7496753d51aba7855b2f03e908f57b6e265951d20e08c63e38e8bd1
+    commit: ca7aebf497d92a58c1bd44e1f7f084e2e56efa34
   original:
-    git: https://gitlab.com/d12frosted/d12-hs-env
-    commit: 76f3e773f1aa0b2c7f56d6e76d8bb7ca01bd0ccc
+    git: https://github.com/d12frosted/env-extra
+    commit: ca7aebf497d92a58c1bd44e1f7f084e2e56efa34
 snapshots:
 - completed:
-    size: 524789
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/18.yaml
-    sha256: 646be71223e08234131c6989912e6011e01b9767bc447b6d466a35e14360bdf2
-  original: lts-14.18
+    size: 524155
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/19.yaml
+    sha256: 9f79f6494473c9b46911364b94c4b5ef19ca8d35ebf62e46697cf651f198ee19
+  original: lts-14.19

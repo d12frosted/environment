@@ -5,7 +5,6 @@
 
 {-# LANGUAGE DeriveFunctor     #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 --------------------------------------------------------------------------------
 

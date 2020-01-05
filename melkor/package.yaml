@@ -4,17 +4,28 @@ git:                 "https://gitlab.com/d12frosted/environment"
 license:             MIT
 author:              "Boris Buliga"
 maintainer:          "boris@d12frosted.io"
-copyright:           "2019 Boris Buliga"
+copyright:           "2019-2020 Boris Buliga"
 
 description:         Please see the README on GitLab at <https://gitlab.com/d12frosted/environment>
 
 dependencies:
-- base >= 4.7 && < 5
-- env-extra
-- path-extra
+- base-noprelude >= 4.7 && < 5
 - directory
+- env-extra
 - mtl
+- path
+- path-extra
+- relude
 - rio
+
+default-extensions:
+  - DeriveFunctor
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - OverloadedStrings
+
+library:
+  source-dirs: src
 
 executables:
   melkor:
@@ -24,3 +35,5 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-IO
+    dependencies:
+    - melkor
