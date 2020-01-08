@@ -130,12 +130,20 @@
   (add-to-list 'default-frame-alist '(font . "Source Code Pro")))
 
 (use-package all-the-icons
-	     :defer t
-	     :commands (all-the-icons-material))
+  :defer t
+  :commands (all-the-icons-material))
 
 ;; (use-package unicode-fonts
 ;;   :init
 ;;   (unicode-fonts-setup))
+
+(use-package minions
+  :commands (minions-mode)
+  :init (minions-mode 1))
+
+(use-package mode-line-debug
+  :commands (mode-line-debug-mode)
+  :init (mode-line-debug-mode 1))
 
 (provide 'init-ui)
 ;;; init-ui.el ends here
