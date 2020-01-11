@@ -41,5 +41,8 @@
   :init
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
+(use-package writegood-mode
+  :hook (org-mode markdown-mode rst-mode asciidoc-mode latex-mode))
+
 (provide 'init-spellcheck)
 ;;; init-spellcheck.el ends here
