@@ -1,6 +1,6 @@
 # taps
-tap "caskroom/fonts"
-tap "crisidev/homebrew-chunkwm"
+tap "homebrew/cask-fonts"
+tap "koekeishiya/formulae"
 tap "d12frosted/emacs-plus"
 tap "koekeishiya/formulae"
 
@@ -10,14 +10,15 @@ brew "ag"
 brew "aspell"
 brew "cask", args: ["ignore-dependencies"]
 brew "certbot"
-brew "chunkwm", args: ["with-purify", "HEAD"], restart_service: :changed
+brew "coreutils"
 brew "docker"
-brew "emacs-plus", args: ["without-spacemacs-icon"]
+brew "emacs-plus", args: ["without-spacemacs-icon", "with-xwidgets", "with-jansson", "with-no-titlebar", "HEAD"]
 brew "fd"
 brew "ffmpeg"
 brew "fish"
 brew "git"
 brew "git-lfs"
+brew "gnu-sed"
 brew "gnu-tar"
 brew "haskell-stack"
 brew "jq"
@@ -30,16 +31,14 @@ brew "skhd", args: ["with-logging", "HEAD"], restart_service: :changed
 brew "terminal-notifier", link: true
 brew "tree"
 brew "wget"
-brew "coreutils"
-brew "gnu-sed"
+brew "yabai"
+brew "proselint"
 
 # scala
 brew "maven"
 brew "sbt"
 brew "scala"
 cask "intellij-idea"
-cask "java"
-cask "homebrew/cask-versions/java8"
 
 # applications
 cask "alfred"
@@ -51,12 +50,10 @@ cask "dropbox"
 cask "firefox"
 cask "font-awesome-terminal-fonts"
 cask "font-fontawesome"
-cask "google-chrome"
 cask "gpg-suite"
 cask "mactex"
 cask "slack"
 cask "telegram"
-cask "ubersicht"
 cask "vox"
 cask "vox-preferences-pane"
 cask "xquartz"
