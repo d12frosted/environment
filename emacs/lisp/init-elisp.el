@@ -30,5 +30,12 @@
   :straight (eldoc :type built-in)
   :diminish eldoc-mode)
 
+(use-package flycheck-package
+  :defer nil
+  :after flycheck
+  :commands (flycheck-package-setup)
+  :config
+  (flycheck-package-setup))
+
 (provide 'init-elisp)
 ;;; init-elisp.el ends here
