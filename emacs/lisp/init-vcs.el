@@ -99,6 +99,13 @@
   ;;     [16 48 112 240 112 48 16] nil nil 'center))
   )
 
+(use-package ediff-wind
+  :straight (ediff-wind :type built-in)
+  :defer t
+  :init
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain
+        ediff-split-window-function 'split-window-horizontally))
+
 (defun +git-gutter-maybe ()
   "Enable `git-gutter-mode' in non-remote buffers."
   (when (and buffer-file-name
