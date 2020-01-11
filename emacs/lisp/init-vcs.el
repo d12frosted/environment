@@ -74,7 +74,9 @@
   :config
   ;; Update git-gutter on focus (in case I was using git externally)
   (when (fboundp 'git-gutter:update-all-windows)
-    (add-hook 'focus-in-hook #'git-gutter:update-all-windows))
+    (add-function :around
+                  after-focus-change-function
+                  #'git-gutter:update-all-windows))
 
   ;; update git-gutter when using magit commands
   (advice-add #'magit-stage-file   :after #'+git-gutter-update)
