@@ -53,8 +53,6 @@
     "gt" '(git-timemachine-toggle :which-key "Git time machine")))
 
 (use-package git-gutter-fringe
-  :diminish git-gutter-mode
-  :after async
   :commands (git-gutter-fr:init
              git-gutter-fr:view-diff-infos
              git-gutter-fr:clear
@@ -73,10 +71,9 @@
   (add-hook 'after-save-hook #'+git-gutter-maybe)
   :config
   ;; Update git-gutter on focus (in case I was using git externally)
-  (when (fboundp 'git-gutter:update-all-windows)
-    (add-function :around
-                  after-focus-change-function
-                  #'git-gutter:update-all-windows))
+  (add-function :after
+                after-focus-change-function
+                #'git-gutter:update-all-windows)
 
   ;; update git-gutter when using magit commands
   (advice-add #'magit-stage-file   :after #'+git-gutter-update)
