@@ -62,8 +62,7 @@ It is relative to `org-directory', unless it is absolute.")
   ;; Setup list of Org modules that should always be loaded together
   ;; with Org.
   (setq org-modules
-        '(org-info
-          org-habit
+        '(org-habit
           org-agenda
           org-archive
           org-capture
