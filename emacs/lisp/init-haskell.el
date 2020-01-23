@@ -57,7 +57,8 @@
        :major-modes '(haskell-mode)
        :server-id 'hie
        ;; :multi-root t
-       :initialization-options 'lsp-haskell--make-init-options))))
+       ;; :initialization-options 'lsp-haskell--make-init-options
+       ))))
 
 (provide 'init-haskell)
 ;;; init-haskell.el ends here
