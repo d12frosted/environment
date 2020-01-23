@@ -47,6 +47,11 @@
         ;; show word-granularity on selected hunk
         magit-diff-refine-hunk t))
 
+(use-package forge
+  :commands forge-create-pullreq forge-create-issue
+  :init
+  (setq forge-database-file (concat +path-etc-dir "forge/forge-database.sqlite")))
+
 (use-package git-timemachine
   :general
   (+leader-def
