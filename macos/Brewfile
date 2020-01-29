@@ -8,6 +8,7 @@ tap "koekeishiya/formulae"
 brew "ack"
 brew "ag"
 brew "aspell"
+brew "bat"
 brew "cask", args: ["ignore-dependencies"]
 brew "certbot"
 brew "coreutils"
@@ -26,13 +27,13 @@ brew "mu", args: ["with-emacs"]
 brew "ncdu"
 brew "ossp-uuid"
 brew "pandoc"
+brew "proselint"
 brew "shellcheck"
 brew "skhd", args: ["with-logging", "HEAD"], restart_service: :changed
 brew "terminal-notifier", link: true
 brew "tree"
 brew "wget"
 brew "yabai"
-brew "proselint"
 
 # scala
 brew "maven"
