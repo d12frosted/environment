@@ -23,7 +23,7 @@
 (require 'init-navigation)
 (require 'cl-lib)
 
-(defvar +capture-inbox-file "inbox.org"
+(defvar +capture-inbox-file (format "inbox-%s.org" +sys-name)
   "The path to the inbox file.
 
 It is relative to `org-directory', unless it is absolute.")

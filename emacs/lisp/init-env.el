@@ -25,6 +25,8 @@
 (defconst +sys-rootp
   (string-equal "root" (getenv "USER"))
   "Are you using ROOT user?")
+(defconst +sys-name (system-name)
+  "Name of the system (e.g. hostname).")
 
 (use-package exec-path-from-shell
   :if (and +sys-mac-p +sys-graphic-p)
