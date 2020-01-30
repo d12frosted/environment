@@ -44,7 +44,9 @@ stuttering, increase this.")
    (setq gc-cons-threshold +gc-cons-threshold)
 
    ;; GC automatically while unfocusing the frame.
-   (add-hook 'focus-out-hook 'garbage-collect)
+   (add-function :after
+                after-focus-change-function
+                #'garbage-collect)
 
    ;; Avoid GCs while using `ivy'.
    ;;
