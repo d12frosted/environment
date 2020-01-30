@@ -234,6 +234,11 @@ It is relative to `org-directory', unless it is absolute.")
   (add-to-list 'org-beamer-environments-extra
                '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}")))
 
+(use-package ob-plantuml
+  :defer t
+  :straight org-plus-contrib
+  :defines (org-plantuml-jar-path))
+
 (use-package org-archive
   :defer t
   :straight org-plus-contrib

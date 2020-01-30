@@ -116,6 +116,7 @@ stuttering, increase this.")
 (require 'init-org)
 (require 'init-sh)
 (require 'init-rest)
+(require 'init-puml)
 
 ;; other
 (require 'init-fun)
