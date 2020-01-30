@@ -22,6 +22,7 @@
 (require 'init-org)
 
 (use-package plantuml-mode
+  :mode "\\.puml\\'"
   :defines (plantuml-jar-path
             plantuml-default-exec-mode)
   :commands plantuml-download-jar
