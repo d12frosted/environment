@@ -165,6 +165,8 @@ It is relative to `org-directory', unless it is absolute.")
   :straight org-plus-contrib
   :hook ((before-save . +org-auto-id-add-to-headlines-in-file)
 	       (org-capture-prepare-finalize . +org-auto-id-dwim))
+  :init
+  (setq org-id-uuid-program "uuidgen | tr \"[:upper:]\" \"[:lower:]\"")
   :config
   (setq org-id-track-globally t
         org-id-extra-files (list (concat org-directory ".archive/archive")
