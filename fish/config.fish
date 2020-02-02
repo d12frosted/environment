@@ -71,6 +71,7 @@ __append_to_path /usr/texbin
 __append_to_path /usr/local/sbin
 __append_to_path /usr/local/opt/coreutils/libexec/gnubin
 __append_to_path /usr/local/opt/gnu-sed/libexec/gnubin
+__append_to_path $HOME/Dropbox/bin
 
 if command -v systemctl >/dev/null 2>&1
   systemctl --user import-environment PATH
