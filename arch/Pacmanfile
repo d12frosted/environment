@@ -7,8 +7,8 @@ aspell
 aspell-en
 aspell-ru
 aspell-uk
-bind-tools
 bat
+bind-tools
 bower
 calibre
 certbot
@@ -18,10 +18,10 @@ docker
 docker-compose
 dunst
 dwarffortress
-emacs
 expect
 fd
 feh
+firefox
 fish
 gimp
 git

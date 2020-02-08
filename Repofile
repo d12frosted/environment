@@ -1,4 +1,4 @@
-$XDG_CONFIG_HOME                   gitlab    d12frosted/environment             master
-$HOME/.elpa-mirror                 gitlab    d12frosted/elpa-mirror             master
+$XDG_CONFIG_HOME                   github    d12frosted/environment             master
+$HOME/.elpa-mirror                 github    d12frosted/elpa-mirror             master
 $HOME/.spacemacs                   github    syl20bnr/spacemacs                 develop
 $HOME/.doom-emacs                  github    hlissner/doom-emacs                develop

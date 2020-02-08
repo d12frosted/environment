@@ -512,8 +512,8 @@ arch_guard && {
 
   theme_guard "packages" "Install all dependencies" && {
     log "Import known GPG keys"
-    gpg --recv-keys 1C61A2656FB57B7E4DE0F4C1FC918B335044912E # don't remember
-    gpg --recv-keys 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90 # spotify
+    # spotify
+    curl -sS https://download.spotify.com/debian/pubkey.gpg | gpg --import
 
     function combine_files {
       local output
@@ -526,16 +526,17 @@ arch_guard && {
       echo "$output"
     }
 
-    aur_file=$(combine_files "$target/arch/Aurfile" "$target/arch/Aurfile_$USER")
-    aur_ignore=$(combine_files "$target/arch/Aurignore" "$target/arch/Aurignore_$USER")
-
-    # shellcheck disable=SC2046
-    sudo aura -A --noconfirm --needed $(comm -23 "$aur_file" "$aur_ignore")
+    log "Install packages"
 
     pacman_file=$(combine_files "$target/arch/Pacmanfile" "$target/arch/Pacmanfile_$USER")
     pacman_ignore=$(combine_files "$target/arch/Pacmanignore" "$target/arch/Pacmanignore_$USER")
     # shellcheck disable=SC2046
     sudo aura -S --noconfirm --needed $(comm -23 "$pacman_file" "$pacman_ignore")
+
+    aur_file=$(combine_files "$target/arch/Aurfile" "$target/arch/Aurfile_$USER")
+    aur_ignore=$(combine_files "$target/arch/Aurignore" "$target/arch/Aurignore_$USER")
+    # shellcheck disable=SC2046
+    sudo aura -A --noconfirm --needed $(comm -23 "$aur_file" "$aur_ignore")
   }
 
   theme_guard "upgrade" "Upgrade Arch Linux" && {
@@ -573,6 +574,14 @@ arch_guard && {
       echo "Adding you to 'video' user group"
       sudo gpasswd -a "$USER" video
     fi
+  }
+
+  theme_guard "gnupg" "Fix permissions" && {
+    # make sure that I am the owner
+    chown -R "$(whoami)" ~/.gnupg/
+    # correct permissions
+    find ~/.gnupg -type f -exec chmod 600 {} \;
+    find ~/.gnupg -type d -exec chmod 700 {} \;
   }
 }
 
@@ -632,12 +641,9 @@ check fish && {
   fish -c "set -U XDG_DATA_HOME $HOME/.local/share"
 }
 
-theme_guard "Emacs" "Refresh Nucleus" && {
-  "$XDG_CONFIG_HOME/emacs/nucleus/bin/nucleus" --yes refresh
-}
-
 theme_guard "Guardian" "Check that Emacs runs as expected" && {
   emacs --batch -l "$target/emacs/test.el"
 }
 
 true
+

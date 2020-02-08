@@ -3,8 +3,8 @@ cask
 dmenu2
 dropbox
 dropbox-cli
+emacs-git
 google-chrome
-haskell-ide-engine
 intellij-idea-ultimate-edition
 mons
 networkmanager-dmenu-git
@@ -12,7 +12,5 @@ patat-bin
 pinta-git
 rxvt-unicode-cvs
 spotify
-tor
-tor-browser
-ttf-symbola
+ttf-font-awesome-4
 urxvt-font-size
