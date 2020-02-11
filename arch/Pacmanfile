@@ -28,6 +28,7 @@ git
 gnumeric
 gnupg
 gocryptfs
+graphviz
 hledger
 hledger-web
 hlint
@@ -36,9 +37,11 @@ java-runtime-common
 jq
 kubectl
 net-tools
+network-manager-applet
 networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
+nm-connection-editor
 npm
 ntp
 openssh
