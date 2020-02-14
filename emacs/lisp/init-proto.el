@@ -19,6 +19,9 @@
 
 (require 'init-file)
 
+(defvar-local +proto-custom-include-path nil
+  "Path to custom library for protobuf checker.")
+
 (use-package protobuf-mode
   :defer t
   :after flycheck
@@ -42,6 +45,11 @@ See URL `https://developers.google.com/protocol-buffers/'."
        "-I"
        (getenv "GOPATH")
        "/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis"))
+     (eval
+      (when +proto-custom-include-path
+        (concat
+         "-I"
+         +proto-custom-include-path)))
      source-inplace)
     :error-filter flycheck-fill-empty-line-numbers
     :error-patterns
