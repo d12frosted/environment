@@ -119,6 +119,7 @@ stuttering, increase this.")
 (require 'init-sh)
 (require 'init-rest)
 (require 'init-puml)
+(require 'init-proto)
 
 ;; other
 (require 'init-fun)
