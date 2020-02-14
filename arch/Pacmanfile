@@ -47,10 +47,12 @@ ntp
 openssh
 pcmanfm
 physlock
+protobuf
 pulseaudio
 pulseaudio-alsa
 pulseaudio-bluetooth
 pulsemixer
+pygmentize
 python
 python-pip
 ripgrep
