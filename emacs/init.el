@@ -108,6 +108,7 @@ stuttering, increase this.")
 (require 'init-pdf)
 (require 'init-file-templates)
 (require 'init-lsp)
+(require 'init-test)
 
 ;; ui
 (require 'init-ui)
