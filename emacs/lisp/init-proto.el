@@ -24,6 +24,10 @@
 (defvar-local +proto-custom-include-path nil
   "Path to custom library for protobuf checker.")
 
+(defun +proto--checker-predicate (&optional _)
+  "Enable proto checker only when buffer has associated file."
+  buffer-file-name)
+
 (use-package protobuf-mode
   :defer t
   :after flycheck
@@ -65,16 +69,8 @@ See URL `https://developers.google.com/protocol-buffers/'."
     :predicate +proto--checker-predicate))
 
 (defun +proto-working-directory (&optional _)
-  "Return working directory of the current proto file.
-
-ARG is super ignored."
+  "Return working directory of the current proto file."
   (+file-locate-dominting-dir (buffer-file-name) "proto"))
-
-(defun +proto--checker-predicate (&optional _)
-  "Return working directory of the current proto file.
-
-ARG is super ignored."
-  buffer-file-name)
 
 (defun +proto--install-package (package &optional force)
   "Install PACKAGE.
