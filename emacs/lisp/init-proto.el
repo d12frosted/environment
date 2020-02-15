@@ -18,6 +18,8 @@
 ;;; Code:
 
 (require 'init-file)
+(require 'init-package)
+(require 'init-syntax-check)
 
 (defvar-local +proto-custom-include-path nil
   "Path to custom library for protobuf checker.")
@@ -62,13 +64,13 @@ See URL `https://developers.google.com/protocol-buffers/'."
     :working-directory +proto-working-directory
     :predicate +proto--checker-predicate))
 
-(defun +proto-working-directory (&optional arg)
+(defun +proto-working-directory (&optional _)
   "Return working directory of the current proto file.
 
 ARG is super ignored."
   (+file-locate-dominting-dir (buffer-file-name) "proto"))
 
-(defun +proto--checker-predicate (&optional arg)
+(defun +proto--checker-predicate (&optional _)
   "Return working directory of the current proto file.
 
 ARG is super ignored."
