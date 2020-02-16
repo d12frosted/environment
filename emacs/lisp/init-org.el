@@ -394,6 +394,12 @@ It is relative to `org-directory', unless it is absolute.")
   :init
   (setq-default org-download-method 'attach))
 
+(use-package toc-org
+  :defer t
+  :after org
+  :init
+  (add-hook 'org-mode-hook 'toc-org-mode))
+
 ;;; Functions
 
 (declare-function org-remove-empty-drawer-at "org")
