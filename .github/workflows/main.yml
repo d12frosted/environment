@@ -25,5 +25,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-stack
 
+    - name: Melkor tests
+      run: ./eru-new.sh test
+
     - name: Shape the world!
       run: ./eru-new.sh

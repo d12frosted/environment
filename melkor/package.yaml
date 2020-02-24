@@ -9,27 +9,48 @@ copyright:           "2019-2020 Boris Buliga"
 description:         Please see the README on GitLab at <https://gitlab.com/d12frosted/environment>
 
 dependencies:
-- base-noprelude >= 4.7 && < 5
+- base >= 4.7 && < 5
+- bytestring
+- comonad
+- containers
 - directory
 - env-extra
 - mtl
+- ordered-containers
 - path
 - path-extra
-- relude
 - rio
+- text
+- unordered-containers
+- hashable
+
+ghc-options:
+  - -O2
+  - -optP-Wno-nonportable-include-path
 
 default-extensions:
+  - DataKinds
   - DeriveFunctor
+  - FlexibleContexts
+  - GADTs
   - GeneralizedNewtypeDeriving
   - LambdaCase
+  - NoImplicitPrelude
   - OverloadedStrings
+  - PolyKinds
+  - RankNTypes
+  - ScopedTypeVariables
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
 
 library:
   source-dirs: src
 
 executables:
   melkor:
-    main:                Melkor.hs
+    main:                Main.hs
     source-dirs:         app
     ghc-options:
     - -threaded
@@ -37,3 +58,19 @@ executables:
     - -with-rtsopts=-IO
     dependencies:
     - melkor
+
+tests:
+  melkor-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - QuickCheck
+    - melkor
+    - tasty
+    - tasty-hunit
+    - tasty-quickcheck
+    - tasty-quickcheck-laws

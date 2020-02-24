@@ -19,22 +19,22 @@ packages:
     git: https://github.com/d12frosted/path-extra
     commit: 8457c546d02c97d06710320de4e834fb0fd46637
 - completed:
-    cabal-file:
-      size: 1343
-      sha256: 47b8e845e754efa4d041804a42453c73e8775d9f9e9f599d1904db97088accca
-    name: env-extra
-    version: 1.0.0.0
-    git: https://github.com/d12frosted/env-extra
+    hackage: env-extra-1.0.0.0@sha256:2b5f58f5756dedf9956c2f5738920b082ab8e08a0b62b902b67f5134cecad00d,1558
     pantry-tree:
-      size: 544
-      sha256: 8af304d0e7496753d51aba7855b2f03e908f57b6e265951d20e08c63e38e8bd1
-    commit: ca7aebf497d92a58c1bd44e1f7f084e2e56efa34
+      size: 330
+      sha256: b87d102a147f4c675b9b22ce62ab3bf0d79a030b416d4281319e8b91dabeb314
   original:
-    git: https://github.com/d12frosted/env-extra
-    commit: ca7aebf497d92a58c1bd44e1f7f084e2e56efa34
+    hackage: env-extra-1.0.0.0@sha256:2b5f58f5756dedf9956c2f5738920b082ab8e08a0b62b902b67f5134cecad00d,1558
+- completed:
+    hackage: tasty-quickcheck-laws-0.0.3@sha256:a33a458e2a98feee96be41969382a63c9570fdbca262f07e56d6b4d0228b36cd,2105
+    pantry-tree:
+      size: 1528
+      sha256: fb68e01210ba5d9d979b1803a074ff8a2ab4972cfe2d2f6b6863a382914415e5
+  original:
+    hackage: tasty-quickcheck-laws-0.0.3@sha256:a33a458e2a98feee96be41969382a63c9570fdbca262f07e56d6b4d0228b36cd,2105
 snapshots:
 - completed:
-    size: 524155
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/19.yaml
-    sha256: 9f79f6494473c9b46911364b94c4b5ef19ca8d35ebf62e46697cf651f198ee19
-  original: lts-14.19
+    size: 488576
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/15/0.yaml
+    sha256: e4b6a87b47ec1cf63a7f1a0884a3b276fce2b0d174a10e8753c4f618e7983568
+  original: lts-15.0
