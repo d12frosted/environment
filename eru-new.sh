@@ -14,22 +14,53 @@
 
 set -e
 
+function silence {
+  local output=
+  if ! output=$(eval "$@" 2>&1); then
+    echo "$output"
+    exit 1
+  fi
+}
+
 #
 # Haskell is the language of Eru.
 #
 
 if command -v stack >/dev/null 2>&1; then
-  stack upgrade
+  silence stack upgrade
 else
   curl -sSL https://get.haskellstack.org/ | sh
+fi
+
+#
+# Fetching the notes
+#
+
+export XDG_CONFIG_HOME=$HOME/.config
+
+if [ ! -d "$XDG_CONFIG_HOME/.git" ]; then
+  env_https=https://github.com/d12frosted/environment
+  env_ssh=git@github.com:d12frosted/environment.git
+
+  # clone via HTTPS, as most likely SSH is not yet available or configured
+  git clone $env_https "$XDG_CONFIG_HOME"
+
+  cd "$XDG_CONFIG_HOME" && {
+    git remote set-url origin $env_ssh
+  }
 fi
 
 #
 # Now start the Great Music
 #
 
-cd "melkor" && {
-  stack setup --allow-different-user
-  stack build --allow-different-user
-  stack exec --allow-different-user -- melkor "$@"
+cd "$XDG_CONFIG_HOME/melkor" && {
+  silence stack setup --allow-different-user
+  silence stack build --allow-different-user
+
+  if [ "$1" = test ]; then
+    stack test
+  else
+    stack exec --allow-different-user -- melkor "$@"
+  fi
 }
