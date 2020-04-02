@@ -81,6 +81,9 @@ It is relative to `org-directory', unless it is absolute.")
   (require '+org-cigars)
   (require '+org-dependent)
 
+  ;; open files in the same window
+  (add-to-list 'org-link-frame-setup '(file . find-file))
+
   (setq
    org-hidden-keywords nil
    org-hide-emphasis-markers nil
@@ -399,6 +402,42 @@ It is relative to `org-directory', unless it is absolute.")
   :after org
   :init
   (add-hook 'org-mode-hook 'toc-org-mode))
+
+(use-package org-roam
+  :straight (org-roam
+             :type git
+             :host github
+             :repo "jethrokuan/org-roam")
+  :hook
+  (after-init . org-roam-mode)
+  :init
+  (setq org-roam-directory (concat org-directory "notes")))
+
+(use-package deft
+  :after org
+  :bind
+  :general
+  (+leader-def
+    "od" '(deft :which-key "deft"))
+  :init
+  (setq
+   deft-recursive t
+   deft-use-filter-string-for-filename t
+   deft-default-extension "org"
+   deft-directory (concat org-directory "notes"))
+  :config/el-patch
+  (defun deft-parse-title (file contents)
+    "Parse the given FILE and CONTENTS and determine the title.
+If `deft-use-filename-as-title' is nil, the title is taken to
+be the first non-empty line of the FILE.  Else the base name of the FILE is
+used as title."
+    (el-patch-swap (if deft-use-filename-as-title
+                       (deft-base-filename file)
+                     (let ((begin (string-match "^.+$" contents)))
+                       (if begin
+                           (funcall deft-parse-title-function
+                                    (substring contents begin (match-end 0))))))
+                   (org-roam--get-title-or-slug file))))
 
 ;;; Functions
 
