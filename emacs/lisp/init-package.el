@@ -112,5 +112,14 @@ Possible values are: upstream, mirror and local.")
     (with-eval-after-load 'swiper
       (add-to-list 'swiper-font-lock-exclude 'benchmark-init/tree-mode))))
 
+(use-package el-patch
+  :straight (el-patch
+             :host github
+             :repo "raxod502/el-patch"
+             :branch "develop"))
+
+(eval-when-compile
+  (require 'el-patch))
+
 (provide 'init-package)
 ;;; init-package.el ends here
