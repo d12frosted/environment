@@ -31,6 +31,7 @@
 (use-package protobuf-mode
   :defer t
   :after flycheck
+  :hook ((protobuf-mode . subword-mode))
   :init
   (add-hook 'protobuf-mode-hook #'+proto|install-dependencies)
   :config
