@@ -403,29 +403,39 @@ It is relative to `org-directory', unless it is absolute.")
   :init
   (add-hook 'org-mode-hook 'toc-org-mode))
 
+(use-package +org-notes
+  :after org
+  :straight (:type built-in)
+  :general
+  (+leader-def
+    "on" '(+org-notes-list :which-key "notes"))
+  :commands (+org-notes-list
+             +org-notes-find
+             +org-notes-setup-buffer)
+  :init
+  (setq +org-notes-directory (concat org-directory "notes/"))
+  (add-to-list 'window-buffer-change-functions
+               #'+org-notes-setup-buffer))
+
 (use-package org-roam
+  :after +org-notes
   :straight (org-roam
              :type git
              :host github
              :repo "jethrokuan/org-roam")
-  :hook
-  (after-init . org-roam-mode)
   :init
-  (setq org-roam-directory (concat org-directory "notes")))
+  (setq org-roam-directory +org-notes-directory))
 
 (use-package deft
-  :after org
-  :bind
-  :general
-  (+leader-def
-    "od" '(deft :which-key "deft"))
+  :after +org-notes
   :init
   (setq
    deft-recursive t
    deft-use-filter-string-for-filename t
    deft-default-extension "org"
-   deft-directory (concat org-directory "notes"))
+   deft-directory +org-notes-directory)
   :config/el-patch
+  (require 'org-roam)
   (defun deft-parse-title (file contents)
     "Parse the given FILE and CONTENTS and determine the title.
 If `deft-use-filename-as-title' is nil, the title is taken to
