@@ -121,6 +121,7 @@ stuttering, increase this.")
 (require 'init-rest)
 (require 'init-puml)
 (require 'init-proto)
+(require 'init-json)
 
 ;; other
 (require 'init-fun)
