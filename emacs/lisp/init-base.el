@@ -106,6 +106,10 @@
  )
 
 (use-package ws-butler
+  :straight (ws-butler
+             :type git
+             :host github
+             :repo "hlissner/ws-butler")
   :diminish
   :commands (ws-butler-global-mode)
   :init
