@@ -25,10 +25,30 @@
   (call-interactively #'deft)
   (call-interactively #'deft-refresh))
 
+(defun +org-notes-today ()
+  "Open today's note."
+  (interactive)
+  (call-interactively #'org-roam-today))
+
+(defun +org-notes-yesterday ()
+  "Open yesterday's note."
+  (interactive)
+  (call-interactively #'org-roam-yesterday))
+
+(defun +org-notes-tomorrow ()
+  "Open tomorrow's note."
+  (interactive)
+  (call-interactively #'org-roam-tomorrow))
+
 (defun +org-notes-find ()
   "Find a note."
   (interactive)
   (call-interactively #'org-roam-find-file))
+
+(defun +org-notes-insert ()
+  "Insert a link to the note."
+  (interactive)
+  (call-interactively #'org-roam-insert))
 
 (defun +org-notes-setup-buffer (&optional _)
   "Setup current buffer for notes viewing and editing.

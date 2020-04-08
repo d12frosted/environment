@@ -408,7 +408,8 @@ It is relative to `org-directory', unless it is absolute.")
   :straight (:type built-in)
   :general
   (+leader-def
-    "on" '(+org-notes-list :which-key "notes"))
+    "on" '(+org-notes-list :which-key "notes")
+    "ot" '(+org-notes-today :which-key "today"))
   :commands (+org-notes-list
              +org-notes-find
              +org-notes-setup-buffer)
