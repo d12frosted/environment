@@ -39,7 +39,8 @@ If the current buffer is not a note, does nothing."
                              (file-name-directory buffer-file-name)))
           (eq major-mode 'deft-mode))
       (progn
-        (org-roam-mode 1)
+        (unless (bound-and-true-p org-roam-mode)
+          (org-roam-mode 1))
         (setq org-roam-last-window (get-buffer-window))
         (unless (eq 'visible (org-roam--current-visibility))
           (delete-other-windows)
