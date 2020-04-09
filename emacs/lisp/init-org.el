@@ -443,11 +443,11 @@ It is relative to `org-directory', unless it is absolute.")
         org-roam-graph-extra-config '(("overlap" . "false"))
         org-roam-completion-system 'ivy)
   :config
-  (setq org-capture-templates
+  (setq org-roam-capture-templates
         '(("d" "default" plain (function org-roam--capture-get-point)
            "%?"
            :file-name "%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+TITLE: ${title}\nTime-stamp: <>\n"
+           :head "#+TITLE: ${title}\n#+TIME-STAMP: <>\n"
            :unnarrowed t)))
   (server-start)
   (require 'org-protocol)
