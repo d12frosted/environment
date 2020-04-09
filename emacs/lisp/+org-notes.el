@@ -61,6 +61,7 @@ If the current buffer is not a note, does nothing."
       (progn
         (unless (bound-and-true-p org-roam-mode)
           (org-roam-mode 1))
+        (setq-local time-stamp-start "#\\+TIME-STAMP:[ 	]+\\\\?[\"<]+")
         (setq org-roam-last-window (get-buffer-window))
         (unless (eq 'visible (org-roam--current-visibility))
           (delete-other-windows)
