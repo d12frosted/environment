@@ -424,6 +424,11 @@ It is relative to `org-directory', unless it is absolute.")
              :type git
              :host github
              :repo "jethrokuan/org-roam")
+  :commands (org-roam-today
+             org-roam-yesterday
+             org-roam-tomorrow
+             org-roam-find-file
+             org-roam-insert)
   :init
   (setq org-roam-directory +org-notes-directory))
 
