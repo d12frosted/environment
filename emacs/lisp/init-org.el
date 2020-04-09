@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require 'init-path)
+(require 'init-env)
 (require 'init-package)
 (require 'init-keybindings)
 (require 'init-navigation)
@@ -432,7 +433,12 @@ It is relative to `org-directory', unless it is absolute.")
              org-roam-db--clear
              org-roam-db-build-cache)
   :init
-  (setq org-roam-directory +org-notes-directory)
+  (setq org-roam-directory +org-notes-directory
+        org-roam-graph-viewer
+        (when +sys-mac-p
+          "/Applications/Firefox.app/Contents/MacOS/firefox-bin")
+        org-roam-graph-executable (executable-find "neato")
+        org-roam-graph-extra-config '(("overlap" . "false")))
   :config
   (server-start)
   (require 'org-protocol)

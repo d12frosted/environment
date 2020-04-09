@@ -21,6 +21,7 @@ brew "git"
 brew "git-lfs"
 brew "gnu-sed"
 brew "gnu-tar"
+brew "graphviz"
 brew "haskell-stack"
 brew "jq"
 brew "mu", args: ["with-emacs"]
