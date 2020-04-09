@@ -438,7 +438,8 @@ It is relative to `org-directory', unless it is absolute.")
         (when +sys-mac-p
           "/Applications/Firefox.app/Contents/MacOS/firefox-bin")
         org-roam-graph-executable (executable-find "neato")
-        org-roam-graph-extra-config '(("overlap" . "false")))
+        org-roam-graph-extra-config '(("overlap" . "false"))
+        org-roam-completion-system 'ivy)
   :config
   (server-start)
   (require 'org-protocol)
