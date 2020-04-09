@@ -465,6 +465,7 @@ It is relative to `org-directory', unless it is absolute.")
     "nj" '(org-journal-new-entry :which-key "journal entry"))
   :init
   (setq
+   org-journal-find-file #'find-file
    org-journal-hide-entries-p nil
    org-journal-date-prefix "#+TITLE: "
    org-journal-time-prefix "* "
