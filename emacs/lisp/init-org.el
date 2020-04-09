@@ -454,6 +454,20 @@ It is relative to `org-directory', unless it is absolute.")
   (require 'org-protocol)
   (require 'org-roam-protocol))
 
+(use-package org-journal
+  :after +org-notes
+  :general
+  (+leader-def
+    "nj" '(org-journal-new-entry :which-key "journal entry"))
+  :init
+  (setq
+   org-journal-hide-entries-p nil
+   org-journal-date-prefix "#+TITLE: "
+   org-journal-time-prefix "* "
+   org-journal-file-format "%Y-%m-%d.org"
+   org-journal-dir +org-notes-directory
+   org-journal-date-format "%A, %d %B %Y"))
+
 (use-package deft
   :after +org-notes
   :init
