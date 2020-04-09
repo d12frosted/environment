@@ -430,7 +430,11 @@ It is relative to `org-directory', unless it is absolute.")
              org-roam-find-file
              org-roam-insert)
   :init
-  (setq org-roam-directory +org-notes-directory))
+  (setq org-roam-directory +org-notes-directory)
+  :config
+  (server-start)
+  (require 'org-protocol)
+  (require 'org-roam-protocol))
 
 (use-package deft
   :after +org-notes
