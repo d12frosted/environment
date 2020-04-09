@@ -411,7 +411,8 @@ It is relative to `org-directory', unless it is absolute.")
   (+leader-def
     "n" '(nil :which-key "notes...")
     "nl" '(+org-notes-list :which-key "notes")
-    "nt" '(+org-notes-today :which-key "today"))
+    "nt" '(+org-notes-today :which-key "today")
+    "ni" '(+org-notes-insert :which-key "insert"))
   :commands (+org-notes-list
              +org-notes-find
              +org-notes-setup-buffer)
