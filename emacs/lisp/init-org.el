@@ -442,6 +442,14 @@ It is relative to `org-directory', unless it is absolute.")
         org-roam-graph-extra-config '(("overlap" . "false"))
         org-roam-completion-system 'ivy)
   :config
+  (require 'time-stamp)
+  (add-hook 'write-file-functions 'time-stamp)
+  (setq org-capture-templates
+        '(("d" "default" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "%<%Y%m%d%H%M%S>-${slug}"
+           :head "#+TITLE: ${title}\nTime-stamp: <>\n"
+           :unnarrowed t)))
   (server-start)
   (require 'org-protocol)
   (require 'org-roam-protocol))
