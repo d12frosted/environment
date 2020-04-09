@@ -428,7 +428,9 @@ It is relative to `org-directory', unless it is absolute.")
              org-roam-yesterday
              org-roam-tomorrow
              org-roam-find-file
-             org-roam-insert)
+             org-roam-insert
+             org-roam-db--clear
+             org-roam-db-build-cache)
   :init
   (setq org-roam-directory +org-notes-directory)
   :config

@@ -69,5 +69,11 @@ If the current buffer is not a note, does nothing."
                (eq 'visible (org-roam--current-visibility)))
       (delete-window (get-buffer-window org-roam-buffer)))))
 
+(defun +org-notes-rebuild ()
+  "Rebuild notes database."
+  (interactive)
+  (org-roam-db--clear)
+  (org-roam-db-build-cache))
+
 (provide '+org-notes)
 ;;; +org-notes.el ends here
