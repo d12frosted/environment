@@ -54,10 +54,9 @@
   "Setup current buffer for notes viewing and editing.
 
 If the current buffer is not a note, does nothing."
-  (if (or (and buffer-file-name
-               (string-equal +org-notes-directory
-                             (file-name-directory buffer-file-name)))
-          (eq major-mode 'deft-mode))
+  (if (and buffer-file-name
+           (string-equal +org-notes-directory
+                         (file-name-directory buffer-file-name)))
       (progn
         (unless (bound-and-true-p org-roam-mode)
           (org-roam-mode 1))
