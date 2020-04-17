@@ -468,6 +468,7 @@ It is relative to `org-directory', unless it is absolute.")
    org-journal-find-file #'find-file
    org-journal-hide-entries-p nil
    org-journal-date-prefix "#+TITLE: "
+   org-journal-file-header "#+TIME-STAMP: <>"
    org-journal-time-prefix "* "
    org-journal-file-format "%Y-%m-%d.org"
    org-journal-dir +org-notes-directory
