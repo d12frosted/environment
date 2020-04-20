@@ -17,11 +17,15 @@ Portability : POSIX
 module Melkor.Types.Internal.SingleRelMap
   ( SingleRelMap
   , mkSingleRelMap
+
   , rel
   , ambiguous
   , orphans
   , keys
   , elems
+
+  , member
+
   ) where
 
 --------------------------------------------------------------------------------
@@ -84,6 +88,18 @@ elems srm = HS.unions $
 
 --------------------------------------------------------------------------------
 
+member :: ( Eq a, Hashable a
+          , Eq b, Hashable b
+          )
+       => a
+       -> SingleRelMap a b
+       -> Bool
+member a srm = HM.member a (rel srm)
+  || HM.member a (ambiguous srm)
+  || HS.member a (orphans srm)
+
+--------------------------------------------------------------------------------
+
 uncook :: ( Eq a, Hashable a
           , Eq b, Hashable b
           )
@@ -120,8 +136,8 @@ instance (Display a, Display b) => Display (SingleRelMap a b) where
   display SingleRelMap {..}
     = mconcat
     [ "{ "
-    , display $ toList _rel
-    , " ambiguous ", display . toList . HM.map toList $ _ambiguous
+    , display $ HM.toList _rel
+    , " ambiguous ", display . HM.toList . HM.map toList $ _ambiguous
     , " orphans ", display $ HS.toList _orphans
     , " }"
     ]
