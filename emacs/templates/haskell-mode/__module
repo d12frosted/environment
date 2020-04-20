@@ -1,20 +1,21 @@
 # -*- mode: snippet -*-
 # expand-env: ((yas-indent-line 'fixed))
 # --
--- | ${1:Module description}
+{-|
+Module      : `(haskell-guess-module-name-from-file-name (buffer-file-name))`
+Description : ${1:Module short description}
+Copyright   : (c) `user-full-name`, `(format-time-string "%Y")`
+License     : MIT
+Maintainer  : `user-mail-address`
+Stability   : experimental
+Portability : POSIX
 
---------------------------------------------------------------------------------
-
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE NoImplicitPrelude #-}
+${2:Module long description}
+-}
 
 --------------------------------------------------------------------------------
 
 module `(haskell-guess-module-name-from-file-name (buffer-file-name))` where
-
---------------------------------------------------------------------------------
-
-import Prelude
 
 --------------------------------------------------------------------------------
 
