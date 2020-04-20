@@ -80,6 +80,49 @@ do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
+function print_usage() {
+  echo "Usage:
+
+ gifify -i FILE [OPTIONS]
+
+   -i, --input FILE     (required) specify input video file
+
+   -o, --output FILE    (optional) specify output gif file
+
+                        defaults to input file with extension changed to gif
+
+   -s, --scale INT      (optional) specify scale of the resulting gif (affects
+                        both width and height)
+
+                        affects speed of conversion and physical size of the
+                        resulting gif
+
+                        defaults to 1
+
+   --fps INT            (optional) specify FPS of the resulting gif
+
+                        defaults to 24
+
+   --default-palette    (optional) enforce default palette instead of
+                        specially generated one, may lead to worse quality
+
+   --compress           (optional) compress the gif to make physical size
+                        lesser, may lead to worse quality
+"
+}
+
+if [[ -z $INPUT ]]; then
+  echo "Missing input"
+  print_usage
+  exit 1
+fi
+
+if [[ ! -f $INPUT ]]; then
+  echo "'$INPUT' is not a file"
+  print_usage
+  exit 1
+fi
+
 if [[ -z $OUTPUT ]]; then
   OUTPUT="${INPUT%.*}.gif"
 fi
