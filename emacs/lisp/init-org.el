@@ -472,7 +472,8 @@ It is relative to `org-directory', unless it is absolute.")
    org-journal-time-prefix "* "
    org-journal-file-format "%Y-%m-%d.org"
    org-journal-dir +org-notes-directory
-   org-journal-date-format "%A, %d %B %Y"))
+   org-journal-date-format "%A, %d %B %Y"
+   org-journal-cache-file (concat +path-cache-dir "org-journal.cache")))
 
 (use-package deft
   :after +org-notes
