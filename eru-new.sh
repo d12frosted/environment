@@ -38,7 +38,7 @@ fi
 
 export XDG_CONFIG_HOME=$HOME/.config
 
-if [ ! -d "$XDG_CONFIG_HOME" ] && [ ! -d "$XDG_CONFIG_HOME/.git" ]; then
+if [ ! -d "$XDG_CONFIG_HOME/.git" ]; then
   env_https=https://github.com/d12frosted/environment
   env_ssh=git@github.com:d12frosted/environment.git
 

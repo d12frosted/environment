@@ -9,14 +9,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: .stack-work cache
-      uses: actions/cache@v1
-      with:
-        path: melkor/.stack-work
-        key: ${{ runner.os }}-stack-work-${{ hashFiles('melkor/stack.yaml.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-stack-work
-
     - name: $HOME/.stack cache
       uses: actions/cache@v1
       with:
