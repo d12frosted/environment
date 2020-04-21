@@ -1,62 +1,54 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 #
-# Layout
-#
+# Definition:
+#   https://github.com/koekeishiya/yabai/blob/master/doc/yabai.asciidoc
 
-# bsp or float (default: bsp)
-yabai -m config layout bsp
+# global settings
+yabai -m config mouse_follows_focus          off
+yabai -m config focus_follows_mouse          off
+yabai -m config window_placement             second_child
+yabai -m config window_topmost               on
+yabai -m config window_opacity               off
+yabai -m config window_opacity_duration      0.0
+yabai -m config active_window_opacity        1.0
+yabai -m config normal_window_opacity        0.90
+yabai -m config window_shadow                float
+yabai -m config window_border                off
+yabai -m config window_border_placement      inset
+yabai -m config window_border_width          4
+yabai -m config window_border_radius         0.0
+yabai -m config active_window_border_topmost off
+yabai -m config active_window_border_color   0xffFFBF46
+yabai -m config normal_window_border_color   0xffE4FDE1
+yabai -m config insert_window_border_color   0xffd75f5f
+yabai -m config split_ratio                  0.50
+yabai -m config auto_balance                 off
+yabai -m config mouse_modifier               fn
+yabai -m config mouse_action1                move
+yabai -m config mouse_action2                resize
 
-#
-# Padding and gaps
-#
+# general space settings
+yabai -m config layout                       bsp
+yabai -m config top_padding                  8
+yabai -m config bottom_padding               8
+yabai -m config left_padding                 8
+yabai -m config right_padding                8
+yabai -m config window_gap                   8
 
-# Set all padding and gaps to 20pt (default: 0)
-yabai -m config top_padding    8
-yabai -m config bottom_padding 8
-yabai -m config left_padding   8
-yabai -m config right_padding  8
-yabai -m config window_gap     8
+# setup spaces
+function setup_space {
+  local idx="$1"
+  local name="$2"
+  yabai -m space --focus "$idx" || yabai -m space --create
+  yabai -m space "$idx" --label "$name"
+}
+setup_space 1 main
+setup_space 2 code
+setup_space 3 web
+setup_space 4 chat
+setup_space 5 media
+setup_space 6 other
+yabai -m space --focus 1
 
-#
-# Mouse
-#
-
-# set mouse interaction modifier key (default: fn)
-yabai -m config mouse_modifier fn
-
-# set modifier + left-click drag to resize window (default: move)
-yabai -m config mouse_action1 move
-
-# set modifier + right-click drag to resize window (default: resize)
-yabai -m config mouse_action2 resize
-
-# set focus follows mouse mode (default: off, options: off, autoraise, autofocus)
-yabai -m config focus_follows_mouse off
-
-# set mouse follows focus mode (default: off)
-yabai -m config mouse_follows_focus off
-
-#
-# Window modifications
-#
-
-# floating windows are always on top (default: off)
-yabai -m config window_topmost on
-
-# modify window shadows (default: on, options: on, off, float)
-# example: show shadows only for floating windows
-yabai -m config window_shadow float
-
-# window opacity (default: off)
-# example: render all unfocused windows with 90% opacity
-yabai -m config window_opacity off
-yabai -m config active_window_opacity 1.0
-yabai -m config normal_window_opacity 0.9
-
-#
-# Signals
-#
-
-# yabai -m signal --add event=window_destroyed action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
-# yabai -m signal --add event=application_terminated action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
+echo "yabai configuration loaded.."
