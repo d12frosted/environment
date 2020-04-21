@@ -23,6 +23,34 @@ function silence {
 }
 
 #
+# Fetching the notes
+#
+
+export XDG_CONFIG_HOME=$HOME/.config
+
+env_https=https://github.com/d12frosted/environment
+env_ssh=git@github.com:d12frosted/environment.git
+
+if [ -d "$XDG_CONFIG_HOME" ] && [ ! -d "$XDG_CONFIG_HOME/.git" ]; then
+  cd "$XDG_CONFIG_HOME" && {
+    git init
+    # clone via HTTPS, as most likely SSH is not yet available or configured
+    git remote add origin $env_https
+    git fetch
+    git reset --hard origin/master
+  }
+fi
+
+if [ ! -d "$XDG_CONFIG_HOME/.git" ]; then
+  # clone via HTTPS, as most likely SSH is not yet available or configured
+  git clone $env_https "$XDG_CONFIG_HOME"
+fi
+
+cd "$XDG_CONFIG_HOME" && {
+  git remote set-url origin $env_ssh
+}
+
+#
 # Haskell is the language of Eru.
 #
 
@@ -30,24 +58,6 @@ if command -v stack >/dev/null 2>&1; then
   silence stack upgrade
 else
   curl -sSL https://get.haskellstack.org/ | sh
-fi
-
-#
-# Fetching the notes
-#
-
-export XDG_CONFIG_HOME=$HOME/.config
-
-if [ ! -d "$XDG_CONFIG_HOME/.git" ]; then
-  env_https=https://github.com/d12frosted/environment
-  env_ssh=git@github.com:d12frosted/environment.git
-
-  # clone via HTTPS, as most likely SSH is not yet available or configured
-  git clone $env_https "$XDG_CONFIG_HOME"
-
-  cd "$XDG_CONFIG_HOME" && {
-    git remote set-url origin $env_ssh
-  }
 fi
 
 #
