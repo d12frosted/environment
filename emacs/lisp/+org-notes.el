@@ -28,17 +28,17 @@
 (defun +org-notes-today ()
   "Open today's note."
   (interactive)
-  (call-interactively #'org-roam-today))
+  (call-interactively #'org-roam-dailies-today))
 
 (defun +org-notes-yesterday ()
   "Open yesterday's note."
   (interactive)
-  (call-interactively #'org-roam-yesterday))
+  (call-interactively #'org-roam-dailies-yesterday))
 
 (defun +org-notes-tomorrow ()
   "Open tomorrow's note."
   (interactive)
-  (call-interactively #'org-roam-tomorrow))
+  (call-interactively #'org-roam-dailies-tomorrow))
 
 (defun +org-notes-find ()
   "Find a note."
@@ -54,6 +54,9 @@
   "Setup current buffer for notes viewing and editing.
 
 If the current buffer is not a note, does nothing."
+  (eval-when-compile
+    (require 'org-roam)
+    (require 'time-stamp))
   (unless (active-minibuffer-window)
     (if (and buffer-file-name
              (string-equal +org-notes-directory
@@ -66,7 +69,7 @@ If the current buffer is not a note, does nothing."
           (unless (eq 'visible (org-roam--current-visibility))
             (delete-other-windows)
             (call-interactively #'org-roam)))
-      (when (and (fboundp #'org-roam--current-visibility)
+      (when (and (fboundp #'org-roam-buffer--visibility)
                  (eq 'visible (org-roam--current-visibility)))
         (delete-window (get-buffer-window org-roam-buffer))))))
 

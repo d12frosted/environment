@@ -427,9 +427,9 @@ It is relative to `org-directory', unless it is absolute.")
              :type git
              :host github
              :repo "jethrokuan/org-roam")
-  :commands (org-roam-today
-             org-roam-yesterday
-             org-roam-tomorrow
+  :commands (org-roam-dailies-today
+             org-roam-dailies-yesterday
+             org-roam-dailies-tomorrow
              org-roam-find-file
              org-roam-insert
              org-roam-db--clear
