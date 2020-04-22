@@ -437,8 +437,7 @@ It is relative to `org-directory', unless it is absolute.")
   :init
   (setq org-roam-directory +org-notes-directory
         org-roam-graph-viewer
-        (when +sys-mac-p
-          "/Applications/Firefox.app/Contents/MacOS/firefox-bin")
+        (when +sys-mac-p "open")
         org-roam-graph-executable (executable-find "neato")
         org-roam-graph-extra-config '(("overlap" . "false"))
         org-roam-completion-system 'ivy)
