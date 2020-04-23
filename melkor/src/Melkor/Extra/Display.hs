@@ -1,26 +1,23 @@
-{-|
-Module      : Melkor.Extra.Display
-Description : Utilities for 'Display' type class
-Copyright   : (c) Boris Buliga, 2020
-License     : MIT
-Maintainer  : boris@d12frosted.io
-Stability   : experimental
-Portability : POSIX
--}
-
 --------------------------------------------------------------------------------
-
-{-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
 --------------------------------------------------------------------------------
 
+-- |
+-- Module      : Melkor.Extra.Display
+-- Description : Utilities for 'Display' type class
+-- Copyright   : (c) Boris Buliga, 2020
+-- License     : MIT
+-- Maintainer  : boris@d12frosted.io
+-- Stability   : experimental
+-- Portability : POSIX
 module Melkor.Extra.Display where
 
 --------------------------------------------------------------------------------
 
-import           RIO
-import           RIO.List (intersperse)
+import RIO
+import RIO.List (intersperse)
 
 --------------------------------------------------------------------------------
 
@@ -35,7 +32,7 @@ instance Display a => Display (Maybe a) where
   {-# INLINE display #-}
 
 displayMaybe :: Display a => Maybe a -> Utf8Builder
-displayMaybe Nothing  = "Nothing"
+displayMaybe Nothing = "Nothing"
 displayMaybe (Just a) = display a
 {-# INLINE displayMaybe #-}
 
@@ -51,7 +48,8 @@ instance {-# OVERLAPPING #-} Display String where
 
 displayList :: Display a => [a] -> Utf8Builder
 displayList xs = "[" <> dc xs <> "]"
-  where dc   = mconcat . intersperse ", " . fmap display
+  where
+    dc = mconcat . intersperse ", " . fmap display
 {-# INLINE displayList #-}
 
 --------------------------------------------------------------------------------
@@ -61,7 +59,7 @@ instance (Display a, Display b) => Display (a, b) where
   {-# INLINE display #-}
 
 displayTuple :: (Display a, Display b) => (a, b) -> Utf8Builder
-displayTuple (a, b) = mconcat [ "(", display a, ", ", display b, ")" ]
+displayTuple (a, b) = mconcat ["(", display a, ", ", display b, ")"]
 {-# INLINE displayTuple #-}
 
 instance (Display a, Display b, Display c) => Display (a, b, c) where
@@ -69,7 +67,7 @@ instance (Display a, Display b, Display c) => Display (a, b, c) where
   {-# INLINE display #-}
 
 displayTuple3 :: (Display a, Display b, Display c) => (a, b, c) -> Utf8Builder
-displayTuple3 (a, b, c) = mconcat [ "(", display a, ", ", display b, ", ", display c, ")" ]
+displayTuple3 (a, b, c) = mconcat ["(", display a, ", ", display b, ", ", display c, ")"]
 {-# INLINE displayTuple3 #-}
 
 --------------------------------------------------------------------------------

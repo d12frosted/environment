@@ -1,36 +1,33 @@
-{-|
-Module      : Melkor.Types.Resource
-Description : Resource data type declaration
-Copyright   : (c) Boris Buliga, 2020
-License     : MIT
-Maintainer  : boris@d12frosted.io
-Stability   : experimental
-Portability : POSIX
--}
-
 --------------------------------------------------------------------------------
-
 {-# LANGUAGE DeriveGeneric #-}
 
 --------------------------------------------------------------------------------
 
+-- |
+-- Module      : Melkor.Types.Resource
+-- Description : Resource data type declaration
+-- Copyright   : (c) Boris Buliga, 2020
+-- License     : MIT
+-- Maintainer  : boris@d12frosted.io
+-- Stability   : experimental
+-- Portability : POSIX
 module Melkor.Types.Resource
-  ( Resource
-  , GitHost(..)
-  , GitOwner
-  , GitRepoName
-  , GitBranch
-  , gitHubRepo
-  , gitHubRepo'
-  ) where
+  ( Resource,
+    GitHost (..),
+    GitOwner,
+    GitRepoName,
+    GitBranch,
+    gitHubRepo,
+    gitHubRepo',
+  )
+where
 
 --------------------------------------------------------------------------------
 
-import           Melkor.Types.Internal.ToString
-
+import Melkor.Types.Internal.ToString
 --------------------------------------------------------------------------------
 
-import           RIO
+import RIO
 
 --------------------------------------------------------------------------------
 
@@ -41,11 +38,15 @@ data Resource
   deriving (Generic, Eq, Ord)
 
 data GitHost = GitHub | GitLab deriving (Generic, Eq, Ord, Enum, Show)
+
 newtype GitOwner = GitOwner Text deriving (Hashable, Eq, Ord, Show, IsString)
+
 newtype GitRepoName = GitRepoName Text deriving (Hashable, Eq, Ord, Show, IsString)
+
 newtype GitBranch = GitBranch Text deriving (Hashable, Eq, Ord, Show, IsString)
 
 instance Hashable GitHost
+
 instance Hashable Resource
 
 --------------------------------------------------------------------------------
@@ -62,14 +63,16 @@ instance Show Resource where
   show = toString . textDisplay
 
 instance Display Resource where
-  display (GitRepo host owner repo branch) = mconcat [ display host
-                                                     , ":"
-                                                     , display owner
-                                                     , "/"
-                                                     , display repo
-                                                     , ":"
-                                                     , display branch
-                                                     ]
+  display (GitRepo host owner repo branch) =
+    mconcat
+      [ display host,
+        ":",
+        display owner,
+        "/",
+        display repo,
+        ":",
+        display branch
+      ]
   {-# INLINE display #-}
 
 instance Display GitHost where

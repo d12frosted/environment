@@ -1,49 +1,46 @@
-{-|
-Module      : Melkor.Gen
-Description : Generators for QuickCheck
-Copyright   : (c) Boris Buliga, 2020
-License     : MIT
-Maintainer  : boris@d12frosted.io
-Stability   : experimental
-Portability : POSIX
--}
-
 --------------------------------------------------------------------------------
 
+-- |
+-- Module      : Melkor.Gen
+-- Description : Generators for QuickCheck
+-- Copyright   : (c) Boris Buliga, 2020
+-- License     : MIT
+-- Maintainer  : boris@d12frosted.io
+-- Stability   : experimental
+-- Portability : POSIX
 module Melkor.Test.Gen where
 
 --------------------------------------------------------------------------------
 
-import           Melkor.BuildMap
-import           Melkor.Types.Internal.SingleRelMap
-import           Melkor.Types.Provider
-import           Melkor.Types.Resource
-
+import Melkor.BuildMap
+import Melkor.Types.Internal.SingleRelMap
+import Melkor.Types.Provider
+import Melkor.Types.Resource
 --------------------------------------------------------------------------------
 
-import           Prelude                            (enumFrom)
-import           RIO
-import qualified RIO.HashMap                        as HM
-import qualified RIO.HashSet                        as HS
-import qualified RIO.List                           as L
-import qualified RIO.Partial                        as RIO'
-import           Test.Tasty.QuickCheck
+import RIO
+import qualified RIO.HashMap as HM
+import qualified RIO.HashSet as HS
+import qualified RIO.List as L
+import qualified RIO.Partial as RIO'
+import Test.Tasty.QuickCheck
+import Prelude (enumFrom)
 
 --------------------------------------------------------------------------------
 
 instance Arbitrary Provider where
-  arbitrary
-    =   mkProvider
-    <$> nonEmptyString
-    <*> (HS.fromList <$> arbitrary)
-    <*> fmap (\b _ -> pure b) arbitrary
-    <*> pure (const . pure $ Unknown)
-    <*> pure (const . pure $ ())
-    <*> pure (const . pure $ ())
+  arbitrary =
+    mkProvider
+      <$> nonEmptyString
+      <*> (HS.fromList <$> arbitrary)
+      <*> fmap (\b _ -> pure b) arbitrary
+      <*> pure (const . pure $ Unknown)
+      <*> pure (const . pure $ ())
+      <*> pure (const . pure $ ())
 
 providerSupporting :: [Resource] -> Gen Provider
-providerSupporting rs
-  = mkProvider
+providerSupporting rs =
+  mkProvider
     <$> (fromString <$> nonEmptyString)
     <*> (HS.fromList <$> arbitrary)
     <*> pure (\r -> pure $ L.any (== r) rs)
@@ -52,8 +49,8 @@ providerSupporting rs
     <*> pure (const . pure $ ())
 
 providerSupporting' :: [Resource] -> [Resource] -> Gen Provider
-providerSupporting' rs deps
-  = mkProvider
+providerSupporting' rs deps =
+  mkProvider
     <$> (fromString <$> nonEmptyString)
     <*> pure (HS.fromList deps)
     <*> pure (\r -> pure $ L.any (== r) rs)
@@ -62,8 +59,8 @@ providerSupporting' rs deps
     <*> pure (const . pure $ ())
 
 providerNotSupporting :: [Resource] -> Gen Provider
-providerNotSupporting rs
-  = mkProvider
+providerNotSupporting rs =
+  mkProvider
     <$> (fromString <$> nonEmptyString)
     <*> (HS.fromList <$> arbitrary)
     <*> pure (\r -> pure $ not (L.any (== r) rs))
@@ -74,10 +71,10 @@ providerNotSupporting rs
 --------------------------------------------------------------------------------
 
 instance Arbitrary Resource where
-  arbitrary
-    = oneof
-    [ gitHubRepo' <$> arbitrary <*> arbitrary <*> arbitrary
-    ]
+  arbitrary =
+    oneof
+      [ gitHubRepo' <$> arbitrary <*> arbitrary <*> arbitrary
+      ]
 
 instance Arbitrary GitHost where
   arbitrary = elements $ enumFrom (RIO'.toEnum 0)
@@ -96,8 +93,16 @@ instance Arbitrary Status where
 
 --------------------------------------------------------------------------------
 
-instance ( Eq a, Hashable a, Arbitrary a
-         , Eq b, Hashable b, Arbitrary b ) => Arbitrary (SingleRelMap a b) where
+instance
+  ( Eq a,
+    Hashable a,
+    Arbitrary a,
+    Eq b,
+    Hashable b,
+    Arbitrary b
+  ) =>
+  Arbitrary (SingleRelMap a b)
+  where
   arbitrary = mkSingleRelMap . HM.fromList <$> arbitrary
 
 instance Arbitrary BuildMap where

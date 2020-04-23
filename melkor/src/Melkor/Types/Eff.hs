@@ -1,43 +1,39 @@
-{-|
-Module      : Melkor.Types.Eff
-Description : Eff type class declaration
-Copyright   : (c) Boris Buliga, 2020
-License     : MIT
-Maintainer  : boris@d12frosted.io
-Stability   : experimental
-Portability : POSIX
--}
-
 --------------------------------------------------------------------------------
-
 {-# LANGUAGE ConstraintKinds #-}
 
 --------------------------------------------------------------------------------
 
+-- |
+-- Module      : Melkor.Types.Eff
+-- Description : Eff type class declaration
+-- Copyright   : (c) Boris Buliga, 2020
+-- License     : MIT
+-- Maintainer  : boris@d12frosted.io
+-- Stability   : experimental
+-- Portability : POSIX
 module Melkor.Types.Eff where
 
 --------------------------------------------------------------------------------
 
-import           RIO
+import RIO
 
 --------------------------------------------------------------------------------
 
 type HasContext m = HasLogFunc m
 
-newtype Context
-  = Context
+newtype Context = Context
   { ctxLogFunc :: LogFunc
   }
 
 instance HasLogFunc Context where
-  logFuncL = lens ctxLogFunc (\x y -> x { ctxLogFunc = y })
+  logFuncL = lens ctxLogFunc (\x y -> x {ctxLogFunc = y})
 
 --------------------------------------------------------------------------------
 
-newtype Eff a
-  = Eff
+newtype Eff a = Eff
   { unEff :: Context -> RIO Context a
-  } deriving (Functor)
+  }
+  deriving (Functor)
 
 instance Applicative Eff where
   pure = Eff . const . pure
@@ -51,7 +47,7 @@ instance Monad Eff where
 instance MonadIO Eff where
   liftIO = Eff . const . liftIO
 
-runEff :: ( HasContext env ) => Eff a -> RIO env a
+runEff :: (HasContext env) => Eff a -> RIO env a
 runEff = runEff' (\env -> Context $ env ^. logFuncL)
 
 runEff' :: (env -> Context) -> Eff a -> RIO env a
