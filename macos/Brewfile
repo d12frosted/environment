@@ -30,6 +30,7 @@ brew "ossp-uuid"
 brew "pandoc"
 brew "pinentry-mac"
 brew "proselint"
+brew "pygments"
 brew "rg"
 brew "shellcheck"
 brew "skhd", args: ["with-logging", "HEAD"], restart_service: :changed
