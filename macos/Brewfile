@@ -13,7 +13,7 @@ brew "bat"
 brew "certbot"
 brew "coreutils"
 brew "docker"
-brew "emacs-plus", args: ["without-spacemacs-icon", "with-xwidgets", "with-jansson", "with-no-titlebar", "HEAD"]
+brew "emacs-plus", args: ["without-spacemacs-icon", "with-jansson", "HEAD"]
 brew "fd"
 brew "ffmpeg"
 brew "fish"
