@@ -122,6 +122,7 @@ stuttering, increase this.")
 (require 'init-puml)
 (require 'init-proto)
 (require 'init-json)
+(require 'init-scala)
 
 ;; other
 (require 'init-fun)

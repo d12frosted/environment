@@ -21,13 +21,13 @@
 (require 'init-package)
 
 (use-package lsp-mode
-  :defer t
   :defines (lsp-session-file)
+  :hook
+  (lsp-mode . lsp-lens-mode)
   :init
   (setq lsp-session-file (concat +path-etc-dir "lsp-session")
         lsp-auto-guess-root t
-        lsp-keep-workspace-alive nil
-        lsp-prefer-flymake nil))
+        lsp-keep-workspace-alive nil))
 
 (use-package company-lsp
   :defer t
@@ -36,6 +36,21 @@
 (use-package lsp-ui
   :defer t
   :commands lsp-ui-mode)
+
+(use-package posframe)
+
+(use-package dap-mode
+  :hook
+  (lsp-mode . dap-mode)
+  (lsp-mode . dap-ui-mode))
+
+(use-package lsp-treemacs
+  :defer t
+  :defines (lsp-metals-treeview-show-when-views-received)
+  :config
+  (lsp-metals-treeview-enable t)
+  (setq lsp-metals-treeview-show-when-views-received t
+        lsp-metals-treeview-logging t))
 
 (provide 'init-lsp)
 ;;; init-lsp.el ends here
