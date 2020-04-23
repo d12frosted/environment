@@ -32,11 +32,15 @@
         haskell-process-auto-import-loaded-modules t)
   ;; flycheck makes this unnecessary
   (setq haskell-process-show-overlays nil)
-  (setq haskell-stylish-on-save t)
+  ;; (setq haskell-stylish-on-save t)
   (add-to-list 'completion-ignored-extensions ".hi"))
 
+(use-package ormolu
+  :hook (haskell-mode . ormolu-format-on-save-mode))
+
 (use-package dante
-  :commands dante-mode
+  :commands (dante-mode
+             dante-company)
   :hook (haskell-mode . dante-mode)
   :config
   (setq dante-methods '(stack))
