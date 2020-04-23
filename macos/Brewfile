@@ -3,6 +3,7 @@ tap "homebrew/cask-fonts"
 tap "koekeishiya/formulae"
 tap "d12frosted/emacs-plus"
 tap "koekeishiya/formulae"
+tap "scalacenter/bloop"
 
 # important
 brew "ack"
@@ -41,7 +42,8 @@ brew "yabai", restart_service: :changed
 brew "maven"
 brew "sbt"
 brew "scala"
-cask "intellij-idea"
+brew "bloop"
+cask "java"
 
 # applications
 cask "alfred"
