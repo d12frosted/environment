@@ -17,8 +17,6 @@
 ;;
 ;;; Code:
 
-(require 'org)
-
 ;;;###autoload
 (defmacro +org-with-file (file &rest body)
   "Execute BODY in `org-mode' FILE."
