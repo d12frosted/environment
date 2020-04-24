@@ -26,24 +26,6 @@ dependencies:
 
 ghc-options:
   - -O2
-  - -optP-Wno-nonportable-include-path
-
-default-extensions:
-  - DataKinds
-  - DeriveFunctor
-  - FlexibleContexts
-  - GADTs
-  - GeneralizedNewtypeDeriving
-  - LambdaCase
-  - NoImplicitPrelude
-  - OverloadedStrings
-  - PolyKinds
-  - RankNTypes
-  - ScopedTypeVariables
-  - TupleSections
-  - TypeApplications
-  - TypeFamilies
-  - TypeOperators
 
 library:
   source-dirs: src

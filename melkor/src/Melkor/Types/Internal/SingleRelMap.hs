@@ -1,4 +1,5 @@
 --------------------------------------------------------------------------------
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
 --------------------------------------------------------------------------------
@@ -25,15 +26,12 @@ where
 
 --------------------------------------------------------------------------------
 
-import Melkor.Extra.Display
+import Melkor.Extra.Display ()
 import Melkor.Extra.List
 import Melkor.Types.Internal.ToString
---------------------------------------------------------------------------------
-
 import RIO
 import qualified RIO.HashMap as HM
 import qualified RIO.HashSet as HS
-import qualified RIO.List as L
 
 --------------------------------------------------------------------------------
 

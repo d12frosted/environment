@@ -1,4 +1,7 @@
 --------------------------------------------------------------------------------
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
+--------------------------------------------------------------------------------
 
 -- |
 -- Module      : Melkor.BuildMap
@@ -23,7 +26,7 @@ where
 
 --------------------------------------------------------------------------------
 
-import Melkor.Extra.Display
+import Melkor.Extra.Display ()
 import Melkor.Extra.Tuple
 import Melkor.Types.Eff
 import Melkor.Types.Internal.SingleRelMap
@@ -54,9 +57,9 @@ buildMapRaw ::
   RIO env (HashMap Resource (HashSet Provider))
 buildMapRaw rset pset =
   HM.fromList
-    <$> traverse (traverseToSnd (`providers` toList pset)) (toList rset)
+    <$> traverse (traverseToSnd (`providersOf` toList pset)) (toList rset)
   where
-    providers r =
+    providersOf r =
       fmap HS.fromList
         . filterM (\p -> runEff $ providerSatisfies p r)
 
@@ -82,19 +85,19 @@ buildMapDeep = go mempty
   where
     go bm0 rset pset = do
       bm <- mkBuildMap <$> buildMapRaw rset pset
-      let sum = bm <> bm0
+      let s = bm <> bm0
           rsetExtra =
             mconcat
               . fmap providerDependencies
               . HM.elems
               . rules
               $ bm
-          isNew r = not . member r $ sum
+          isNew r = not . member r $ s
           rsetNew = HS.filter isNew rsetExtra
       -- traceDisplayM (HS.toList rsetExtra)
       if HS.null rsetNew
-        then pure sum
-        else go sum rsetNew pset
+        then pure s
+        else go s rsetNew pset
 
 --------------------------------------------------------------------------------
 

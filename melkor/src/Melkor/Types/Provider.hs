@@ -1,4 +1,6 @@
 --------------------------------------------------------------------------------
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
 --------------------------------------------------------------------------------
@@ -25,10 +27,8 @@ where
 
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
-
 import Data.Hashable
-import Melkor.Extra.Display
+import Melkor.Extra.Display ()
 import Melkor.Types.Eff
 import Melkor.Types.Internal.ToString
 import Melkor.Types.Resource
