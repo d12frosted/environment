@@ -21,8 +21,15 @@
 (require 'init-file-templates)
 (require 'init-lsp)
 
+(defconst +haskell-backend 'eglot
+  "Backend for Haskell IDE: eglot, lsp-ui, dante.")
+
 (use-package haskell-mode
   :hook ((haskell-mode . subword-mode))
+  :init
+  (when (eq +haskell-backend 'eglot)
+    (with-eval-after-load 'eglot
+      (add-to-list 'eglot-server-programs '(haskell-mode . ("ghcide" "--lsp")))))
   :config
   (+file-templates-set
     'haskell-mode
@@ -32,13 +39,13 @@
         haskell-process-auto-import-loaded-modules t)
   ;; flycheck makes this unnecessary
   (setq haskell-process-show-overlays nil)
-  ;; (setq haskell-stylish-on-save t)
   (add-to-list 'completion-ignored-extensions ".hi"))
 
 (use-package ormolu
   :hook (haskell-mode . ormolu-format-on-save-mode))
 
 (use-package dante
+  :if (eq +haskell-backend 'dante)
   :commands (dante-mode
              dante-company)
   :hook (haskell-mode . dante-mode)
@@ -49,20 +56,13 @@
     (flycheck-add-next-checker 'haskell-dante '(warning . haskell-hlint))))
 
 (use-package lsp-haskell
-  :disabled
+  :if (eq +haskell-backend 'lsp-ui)
   :after haskell-mode
   :hook ((haskell-mode . lsp))
   :commands (lsp-haskell--hie-command)
   :init
-  (eval-after-load 'lsp
-    '(lsp-register-client
-      (make-lsp--client
-       :new-connection (lsp-stdio-connection (lambda () (lsp-haskell--hie-command)))
-       :major-modes '(haskell-mode)
-       :server-id 'hie
-       ;; :multi-root t
-       ;; :initialization-options 'lsp-haskell--make-init-options
-       ))))
+  (setq lsp-haskell-process-path-hie "ghcide"
+        lsp-haskell-process-args-hie nil))
 
 (provide 'init-haskell)
 ;;; init-haskell.el ends here
