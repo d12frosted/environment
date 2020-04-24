@@ -46,11 +46,17 @@
 
 (use-package lsp-treemacs
   :defer t
-  :defines (lsp-metals-treeview-show-when-views-received)
-  :config
-  (lsp-metals-treeview-enable t)
+  :defines (lsp-metals-treeview-show-when-views-received
+            lsp-metals-treeview-logging)
+  :commands (lsp-metals-treeview-enable)
+  :init
   (setq lsp-metals-treeview-show-when-views-received t
-        lsp-metals-treeview-logging t))
+        lsp-metals-treeview-logging t)
+  :config
+  (lsp-metals-treeview-enable t))
+
+(use-package eglot
+  :defer t)
 
 (provide 'init-lsp)
 ;;; init-lsp.el ends here
