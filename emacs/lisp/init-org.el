@@ -449,8 +449,6 @@ It is relative to `org-directory', unless it is absolute.")
            :file-name "%<%Y%m%d%H%M%S>-${slug}"
            :head "#+TITLE: ${title}\n#+TIME-STAMP: <>\n"
            :unnarrowed t)))
-  (unless (server-running-p server-name)
-    (server-start))
   (require 'org-protocol)
   (require 'org-roam-protocol))
 

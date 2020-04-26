@@ -146,5 +146,13 @@ the beginning or end of the buffer, stop there."
 (use-package async
   :commands (async-start))
 
+(use-package server
+  :if (display-graphic-p)
+  :defer 1
+  :commands (server-running-p)
+  :config
+  (unless (server-running-p)
+    (server-start)))
+
 (provide 'init-base)
 ;;; init-base.el ends here
