@@ -18,7 +18,9 @@ module Melkor.Extra.Display where
 --------------------------------------------------------------------------------
 
 import RIO
+import qualified RIO.ByteString.Lazy as BL
 import RIO.List (intersperse)
+import RIO.Text (unpack)
 
 --------------------------------------------------------------------------------
 
@@ -59,6 +61,9 @@ instance (Display a, Display b) => Display (a, b) where
   display = displayTuple
   {-# INLINE display #-}
 
+displayPair :: (Display a, Display b) => (a, b) -> Utf8Builder
+displayPair (a, b) = mconcat [display a, " -> ", display b]
+
 displayTuple :: (Display a, Display b) => (a, b) -> Utf8Builder
 displayTuple (a, b) = mconcat ["(", display a, ", ", display b, ")"]
 {-# INLINE displayTuple #-}
@@ -70,5 +75,16 @@ instance (Display a, Display b, Display c) => Display (a, b, c) where
 displayTuple3 :: (Display a, Display b, Display c) => (a, b, c) -> Utf8Builder
 displayTuple3 (a, b, c) = mconcat ["(", display a, ", ", display b, ", ", display c, ")"]
 {-# INLINE displayTuple3 #-}
+
+--------------------------------------------------------------------------------
+
+instance Display BL.ByteString where
+  display = display . decodeUtf8With lenientDecode . BL.toStrict
+  {-# INLINE display #-}
+
+--------------------------------------------------------------------------------
+
+stringDisplay :: Display a => a -> String
+stringDisplay = unpack . textDisplay
 
 --------------------------------------------------------------------------------
