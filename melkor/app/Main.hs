@@ -42,7 +42,7 @@ smartProvider =
   mkProvider
     "GitLab"
     HS.empty
-    (const (pure True))
+    (const (pure False))
     (const (pure Missing))
     (const (pure ()))
     (const (pure ()))
