@@ -127,6 +127,7 @@
   :diminish auto-fill-function)
 
 (when (and +sys-mac-p +sys-graphic-p)
+  (setq-default line-spacing 1)
   (add-to-list 'default-frame-alist '(font . "Source Code Pro")))
 
 (use-package all-the-icons
