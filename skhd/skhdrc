@@ -58,3 +58,7 @@ open < alt - o ; default
 
 # emacs
 open < e : open -na Emacs.app ; skhd -k "alt - o"
+
+# kitty
+open < return : open_kitty ; skhd -k "alt - o"
+shift + alt - return : open_kitty
