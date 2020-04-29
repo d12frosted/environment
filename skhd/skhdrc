@@ -43,5 +43,6 @@ shift + alt - 6 : yabai -m window --space 6; yabai -m space --focus 6
 
 shift + alt - c [
   "emacs" : skhd -k "ctrl - x" ; skhd -k "ctrl - c"
+  "kitty" : skhd -k "cmd - w"
   *       : skhd -k "cmd - q"
 ]
