@@ -46,3 +46,15 @@ shift + alt - c [
   "kitty" : skhd -k "cmd - w"
   *       : skhd -k "cmd - q"
 ]
+
+################################################################################
+#
+# Mode for opening applications
+#
+
+:: open @
+alt - o ; open
+open < alt - o ; default
+
+# emacs
+open < e : open -na Emacs.app ; skhd -k "alt - o"
