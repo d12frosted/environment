@@ -408,7 +408,7 @@ trap unlock INT TERM EXIT
 theme "Guardian" "Ensure all directories exists"
 ensure_dir "$HOME/.local/bin"
 ensure_dir "$DEVELOPER"
-ensure_dir "$HOME/Dropbox/Apps/Emacs"
+ensure_dir "$HOME/Dropbox/apps/Emacs"
 
 # TODO: make it working on Linux from command line
 macos_guard && theme_guard "SSH" "Checking SSH keys" && {

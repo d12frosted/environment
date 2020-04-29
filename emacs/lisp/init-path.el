@@ -37,7 +37,7 @@ In a nutshell, it's just a value of $HOME.")
   "The path to this Emacs directory.")
 
 (defconst +path-emacs-private-dir
-  (concat +path-home-dir "Dropbox/Apps/Emacs/")
+  (concat +path-home-dir "Dropbox/apps/Emacs/")
   "The root directory for private configurations.")
 
 (defconst +path-local-dir
