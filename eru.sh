@@ -641,6 +641,11 @@ check fish && {
   fish -c "set -U XDG_DATA_HOME $HOME/.local/share"
 }
 
+theme_guard "Emacs" "Setup Emacs" && {
+  rm -rf "$HOME/.emacs.d"
+  wget -O "$HOME/.emacs" "https://raw.githubusercontent.com/plexus/chemacs/master/.emacs"
+}
+
 theme_guard "Guardian" "Check that Emacs runs as expected" && {
   emacs --batch -l "$target/emacs/test.el"
 }
