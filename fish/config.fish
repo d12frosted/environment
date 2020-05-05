@@ -71,6 +71,7 @@ __append_to_path /usr/local/sbin
 __append_to_path /usr/local/opt/coreutils/libexec/gnubin
 __append_to_path /usr/local/opt/gnu-sed/libexec/gnubin
 __append_to_path $HOME/Dropbox/bin
+__append_to_path $HOME/.doom-emacs/bin
 set -x PATH $HOME/.local/bin $PATH
 
 if command -v systemctl >/dev/null 2>&1
@@ -133,6 +134,9 @@ set -x BUDGET_DIR "$VULPEA_DIR/budget"
 if command -v systemctl >/dev/null 2>&1
   systemctl --user import-environment VULPEA_DIR
 end
+
+# Emacs
+set -x DOOMDIR "$XDG_CONFIG_HOME/emacs/doom"
 
 # gpg + ssh
 set -xg GPG_TTY (tty)
