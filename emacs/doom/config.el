@@ -22,6 +22,10 @@ In a nutshell, it's just a value of $HOME.")
   '(doom-modeline-info :foreground "SkyBlue3")
   '(doom-modeline-buffer-modified :foreground "orange" :weight bold))
 
+(custom-set-faces!
+  '(mode-line :family "Source Code Pro" :height 1)
+  '(mode-line-inactive :family "Source Code Pro" :height 1))
+
 (when IS-MAC
   (setq-default line-spacing 1))
 
