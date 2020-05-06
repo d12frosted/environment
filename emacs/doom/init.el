@@ -5,6 +5,9 @@
 
 In a nutshell, it's just a value of $HOME.")
 
+(defconst +sys-name (system-name)
+  "Name of the system (e.g. hostname).")
+
 (doom! :completion
        company
        ivy
