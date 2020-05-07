@@ -78,6 +78,11 @@
           :desc "Tomorrow"                   "m" #'org-roam-dailies-tomorrow
           :desc "Yesterday"                  "y" #'org-roam-dailies-yesterday))
 
+      (:prefix-map ("c" . "capture")
+        :desc "task"                         "x" #'+capture-task
+        :desc "capture"                      "X" #'org-capture
+        :desc "link"                         "l" #'org-store-link)
+
       (:prefix ("j" . "jump to")
         :desc "Line (by number)"             "L" #'goto-line
         :desc "Line (avy)"                   "l" #'avy-goto-line
