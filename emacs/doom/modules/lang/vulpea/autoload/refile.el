@@ -1,5 +1,8 @@
 ;;; lang/vulpea/autoload/refile.el -*- lexical-binding: t; -*-
 
+(defvar +refile-ignore-tags '("JOURNAL" "REFILE")
+  "List of tags to ignore during refile.")
+
 ;;;###autoload
 (defun +refile-verify-target ()
   "Exclude todo keywords with a done state from refile targets."
@@ -12,5 +15,5 @@
      (or (null tags-at)
          (cl-member-if-not
           (lambda (x)
-            (member (if (listp x) (car x) x) +org-refile-ignore-tags))
+            (member (if (listp x) (car x) x) +refile-ignore-tags))
           tags-at)))))
