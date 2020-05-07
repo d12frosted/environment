@@ -26,8 +26,8 @@ It is relative to `org-directory', unless it is absolute.")
  ;; create ids
  org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 
-(add-hook! before-save-hook #'+org-auto-id-add-to-headlines-in-file)
-(add-hook! org-capture-prepare-finalize-hook #'+org-auto-id-dwim)
+(add-hook! 'before-save-hook #'+org-auto-id-add-to-headlines-in-file)
+(add-hook! 'org-capture-prepare-finalize-hook #'+org-auto-id-dwim)
 
 ;;
 ;; latex + beamer
