@@ -47,7 +47,7 @@ In a nutshell, it's just a value of $HOME.")
        grammar
 
        :tools
-       ;; debugger          ; FIXME stepping through code, to help you add bugs
+       debugger
        docker
        (eval +overlay)
        lookup
