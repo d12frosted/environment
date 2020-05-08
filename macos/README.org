@@ -1,0 +1,15 @@
+#+TITLE:        macOS
+#+AUTHOR:       Boris Buliga
+#+EMAIL:        boris@d12frosted.io
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+In the world where apples fall on our heads, it's important to wear helms. Or
+at least write down all important packages and defaults.
+
+The world binder knows how to install and upgrade packages, how to apply
+defaults.
+
+- =eru packages=
+- =eru upgrade=
+- =eru os=

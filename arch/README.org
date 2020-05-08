@@ -1,0 +1,20 @@
+#+TITLE:        Arch Linux
+#+AUTHOR:       Boris Buliga
+#+EMAIL:        boris@d12frosted.io
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+This domain contains list of packages that should be installed on Arch Linux.
+
+- =Pacmanfile= - list of package to be installed from Arch Linux repository.
+- =Aurfile= - list of packages to be installed from Aur repository.
+
+It's also possible to install certain packages only for specific users. They
+need to be listed in either =Pacmanfile_USER= or =Aurfile_USER=. Some of the
+packages can be ignored for specific users, they need to be listed in either
+=Pacmanignore_USER= or =Aurignore_USER=.
+
+These files are processed by =eru=.
+
+- =eru packages= - install missing packages;
+- =eru upgrade= - upgrades the system and all specified packages.

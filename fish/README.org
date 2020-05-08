@@ -1,19 +1,15 @@
-#+TITLE:        fish domain
+#+TITLE:        fish
 #+AUTHOR:       Boris Buliga
 #+EMAIL:        boris@d12frosted.io
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:t
 
-Personal fish configuration. I am trying to make it fly!
+[[https://d12frosted.io/posts/2015-02-07-make-the-fish-fly.html][Make the Fish fly]]. If it doesn't fly, it's not a [[https://fishshell.com][fish]].
 
 * Dependencies
 
-- =fish=
-- =terminal-notifier= of version =1.6.2= or higher (OS X only)
-
-As usual, these dependencies will be automatically bootstrapped during
-environment installation. But in any case, you should check [[https://github.com/fish-shell/fish-shell/#building][official
-instructions]] on setting fish as your default shell.
+It's impossible to maintain the list of dependencies in documentation. =eru= is
+your friend.
 
 * Custom lambda-prompt
 
@@ -33,11 +29,11 @@ Strong points of my custom [[file:functions/fish_prompt.fish][fish_prompt]] are:
 
 * Batteries
 
+Uses [[https://github.com/jorgebucaran/fisher][fisher]] to install packages.
+
 There are some useful functions that come with my configs.
 
-1. =__package_install PKG= - install =PKG= using =brew= if it's not yet
-   installed (OS X only and /deprecated/ in favour of =brw=).
-2. =dnvm= - wrapper for [[https://github.com/aspnet/dnvm][dnvm]].
-3. =hglog= - pretty =log= for mercurial repository.
-5. =convert_texture= - convert input texture to specified format using
+1. =dnvm= - wrapper for [[https://github.com/aspnet/dnvm][dnvm]].
+2. =hglog= - pretty =log= for mercurial repository.
+3. =convert_texture= - convert input texture to specified format using
    =TexturePacker=. For more information, checkout =$ TexturePacker --help=.

@@ -1,16 +1,15 @@
-#+TITLE:        Emacs domain
+#+TITLE:        Emacs
 #+AUTHOR:       Boris Buliga
 #+EMAIL:        boris@d12frosted.io
 #+STARTUP:      showeverything
 #+OPTIONS:      toc:nil
 
-Personal Emacs configurations. Tremendously boosted by [[http://spacemacs.org][Spacemacs]].
+Personal frustration and the biggest time waster in my life (comparable to video
+games). Please, turn away and retain your sanity. Otherwise you might end up
+tracking all your tasks, notes, thoughts and wine in Emacs.
 
-#+BEGIN_HTML
-<p align="center">
-  <img src="images/daomacs.png">
-</p>
-#+END_HTML
+It's impossible to run these configurations. =eru= to the rescue. If you don't
+understand what I mean, it's better for you.
 
 * Install Emacs
 
@@ -19,12 +18,12 @@ defaults, available via [[https://brew.sh][brew]] package manager.
 
 #+BEGIN_SRC
 $ brew tap d12frosted/emacs-plus
-$ brew install emacs-plus
+$ brew install emacs-plus --HEAD
 #+END_SRC
 
-But you are free™ to use whatever Emacs variant you wish to use, though I don't
-give any guarantees that it will work with these configurations. In case you
-wish to investigate more on this topic, please refer to [[http://emacs.stackexchange.com/a/274/5161][this answer]].
+You are free™ to use whatever Emacs variant you wish to use, though I don't give
+any guarantees that it will work with these configurations. In case you wish to
+investigate more on this topic, please refer to [[http://emacs.stackexchange.com/a/274/5161][this answer]].
 
 * Install configurations
 
@@ -33,26 +32,8 @@ wish to investigate more on this topic, please refer to [[http://emacs.stackexch
 * Run-time dependencies
 
 Emacs domain has lots of run-time dependencies. It's better to install them
-using global Eru.
+using =eru=.
 
-* Configuration basis
+* Interesting modules
 
-Right now my configrations have 3 basis:
-
-- Spacemacs
-- Doom
-- Nucleus
-
-You can choose to use any of them by either modifying =emacs-basis= variable in
-=init.el= file or by setting =EMACS_BASIS= environment variable:
-
-#+BEGIN_SRC bash
-EMACS_BASIS=nucleus; emacs -nw
-#+END_SRC
-
-* Nucleus
-
-Nucleus is a very opinionated fork of [[https://github.com/hlissner/doom-emacs][doom-emacs]] core with some ideas stolen
-from [[http://spacemacs.org][Spacemacs]]. Nucleus was created in the attempt to find a holy grail.
-
-It's in early stages of development so I advice you to be careful.
+/Section is under construction. Please return in -2147483648 seconds./

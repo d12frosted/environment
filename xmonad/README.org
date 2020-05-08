@@ -1,0 +1,54 @@
+#+TITLE:        xmonad
+#+AUTHOR:       Boris Buliga
+#+EMAIL:        boris@d12frosted.io
+#+STARTUP:      showeverything
+#+OPTIONS:      toc:nil
+
+It's complicated. But life in X is impossible without it.
+
+* How to install
+
+The best way to install my configurations is to use =eru=. It also automatically
+restarts =xmonad= and =xmobar= if they are already running.
+
+#+begin_src bash
+$ eru xmonad
+#+end_src
+
+If you really want to do it by hand:
+
+#+begin_src bash
+$ stack install
+#+end_src
+
+* How to start
+
+Now you can use =d12-xmonad= and =d12-xmobar= executables. The former knows how
+to start status bar.
+
+#+begin_src bash
+$ d12-xmonad
+#+end_src
+
+See also my =xinitrc= in =xorg= domain.
+
+* Features
+
+1. =xmonad= and =xmobar= configurations with shareable code and support of
+   additional dependencies. Default setup of these applications do not support
+   external dependencies or even shared code.
+2. =d12-xmonad= automatically starts =d12-xmobar=.
+3. Even though it's a custom application, =d12-xmonad= supports hotloading (e.g.
+   restaring) via =--restart= argument. In short it works like this (this flow
+   is possible thanks to great =xmonad= code):
+   1. =mod-q= is bind to =eru xmonad=, which rebuilds my configurations of
+      =xmonad= and =xmobar=
+   2. if compilation fails, notification is sent via =notify= (checkout by =bin=
+      domain)
+   3. otherwise =eru= launches =d12-xmonad= with =--restart= argument
+   4. this sends a notification to the running instance of =d12-xmonad= and it
+      restarts itself
+   5. since =d12-xmonad= has direct dependency on =d12-xmobar=, it also gets
+      restarted
+4. Dropbox section in status bar
+5. Notification section in status bar

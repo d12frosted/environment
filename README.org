@@ -6,20 +6,33 @@
 
 [[https://github.com/d12frosted/environment/workflows/CI/badge.svg][file:https://github.com/d12frosted/environment/workflows/CI/badge.svg]]
 
-This repository contains configurations to various tools that I am trying to
-keep clean and organized.
+This repository contains configurations for applications and tools I am using.
 
 * What's inside?
+
 All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for
 sure). Configurations are divided into domains like =emacs=, =git=, =haskell=,
 =fish= etc.
 
 All of the configurations as well as dependencies are maintained using Eru - a
-script that creates the universe.
+script that creates the universe. Supported platforms are [[https://www.apple.com/macos][macOS]] and [[https://www.archlinux.org][Arch Linux]].
+
+- [[https://github.com/d12frosted/homebrew-emacs-plus][Emacs]] is my editor.
+- [[https://fishshell.com][Fish]] is my shell.
+- World is full of windows, and tiling window managers are here to ease the pain
+  of existence.
+  - [[https://github.com/koekeishiya/yabai][yabai]] and [[https://github.com/koekeishiya/skhd][skhd]] fulfill this role on macOS;
+  - [[https://xmonad.org][xmonad]] with [[https://xmobar.org][xmobar]] are eXcellent choice.
 
 #+BEGIN_HTML
 <p align="center">
-  <img src="ubersicht/images/ubersicht.png" width="100%"/>
+  <img src="images/desktop_mac.png" width="100%"/>
+</p>
+#+END_HTML
+
+#+BEGIN_HTML
+<p align="center">
+  <img src="images/desktop_arch.png" width="100%"/>
 </p>
 #+END_HTML
 
@@ -84,17 +97,18 @@ only specified are sang.
 You can read a little bit more about Eru in a [[https://d12frosted.io/posts/2018-11-04-revisiting-eru.html][Revisiting Eru]] blog post.
 
 * Can I use your files?
-Sure you can. But should you? :D
 
-OK, jokes aside. It would be a pleasure to me knowing that someone finds
-something useful in my configurations. I am trying to keep things as clear as
-possible, but these are *personal* configurations, so I rarely think about any
-compatibility with previous configurations or other platforms. In any case, if
-you have questions or any problems with my configurations - just ping me. I'll
-try to help you as much as I can. Any suggestions or pull requests are warmly
-welcome!
+Sure, just take whatever you find fancy. Though keep in mind few things. These
+configurations are *personal* configurations, so they are based on my needs and
+are opionated towards my liking. I don't test any of them outside of my use
+case. I don't have a goal to provide exhaustive documentation, except for things
+that worth the effort. Though I will be glad to help you if you have any
+questions or problems. Pull requests and suggestions are warmly welcome!
+
+If you do use any parts of my configurations, do it only on your own risk. 
 
 * Acknowledgements
+
 These configurations would not have been possible without the work of and the
 inspiration from following people.
 
@@ -108,3 +122,4 @@ inspiration from following people.
   his help is very valuable!
 - [[https://github.com/purcell][Steve Purcell]] inspires me with his overall work on improving Emacs ecosystem.
 - [[https://github.com/Malabarba][Artur Malabarba]] shares valuable pieces of advice and ideas in his blog.
+- [[https://github.com/hlissner/][Henrik Lissner]] as author of Doom Emacs he inspired and helped me a lot.
