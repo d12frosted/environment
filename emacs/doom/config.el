@@ -41,8 +41,8 @@
       (:prefix-map ("w" . "window")
         :desc "Split vertically"             "V" #'+window-split-vertically
         :desc "Split vertically and focus"   "v" #'+window-split-vertically-and-focus
-        :desc "Split horizontally"           "H" #'split-window-vertically
-        :desc "Split horizontally and focus" "h" #'split-window-vertically-and-focus
+        :desc "Split horizontally"           "H" #'+window-split-horizontally
+        :desc "Split horizontally and focus" "h" #'+window-split-horizontally-and-focus
         :desc "Kill window"                  "k" #'delete-window
         :desc "Kill other windows"           "m" #'+window-zoom)
 
