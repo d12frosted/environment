@@ -1,9 +1,18 @@
 ;;; ui/chisinau/config.el -*- lexical-binding: t; -*-
 
-(setq doom-font (font-spec :family "Source Code Pro" :size 12)
-      doom-variable-pitch-font (font-spec :family "Source Code Pro")
-      doom-serif-font (font-spec :family "Source Code Pro")
-      doom-theme 'leuven
+(when IS-MAC
+  (setq
+   doom-font (font-spec :family "Source Code Pro" :size 12)
+   doom-variable-pitch-font (font-spec :family "Source Code Pro")
+   doom-serif-font (font-spec :family "Source Code Pro"))
+
+  (custom-set-faces!
+    '(mode-line :family "Source Code Pro" :height 1)
+    '(mode-line-inactive :family "Source Code Pro" :height 1))
+
+  (setq-default line-spacing 1))
+
+(setq doom-theme 'leuven
       display-line-numbers-type nil)
 
 (custom-theme-set-faces! 'leuven
@@ -19,13 +28,6 @@
   '(doom-modeline-project-dir :foreground "SkyBlue3")
   '(doom-modeline-info :foreground "SkyBlue3")
   '(doom-modeline-buffer-modified :foreground "orange" :weight bold))
-
-(custom-set-faces!
-  '(mode-line :family "Source Code Pro" :height 1)
-  '(mode-line-inactive :family "Source Code Pro" :height 1))
-
-(when IS-MAC
-  (setq-default line-spacing 1))
 
 (after! org
   (set-popup-rule! "^CAPTURE"
