@@ -84,6 +84,7 @@
         :desc "link"                         "l" #'org-store-link)
 
       (:prefix ("j" . "jump to")
+        :desc "imenu"                        "i" #'counsel-imenu
         :desc "Line (by number)"             "L" #'goto-line
         :desc "Line (avy)"                   "l" #'avy-goto-line
         :desc "Char"                         "j" #'avy-goto-char
