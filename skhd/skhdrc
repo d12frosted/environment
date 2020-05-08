@@ -58,6 +58,7 @@ open < alt - o ; default
 
 # emacs
 open < e : open -na Emacs.app ; skhd -k "alt - o"
+open < shift - e : emacs --with-profile custom & ; skhd -k "alt - o"
 
 # kitty
 open < return : open_kitty ; skhd -k "alt - o"
