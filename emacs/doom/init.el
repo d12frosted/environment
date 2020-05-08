@@ -13,6 +13,7 @@ In a nutshell, it's just a value of $HOME.")
        ivy
 
        :core
+       string
        windows
        navigation
 

@@ -48,6 +48,21 @@ It is relative to `org-directory', unless it is absolute.")
                '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}")))
 
 ;;
+;; custom modes
+;;
+
+(use-package! org
+  :hook ((org-mode . places-mode-maybe-enable)
+         (org-mode . pretty-props-mode-maybe-enable)
+         ;; (org-mode . cha-mode-maybe-enable)
+         (org-mode . wine-mode-maybe-enable)
+         ;; (org-mode . cigars-mode-maybe-enable)
+         (org-mode . +org/remove-empty-drawer)))
+
+(use-package! org-brain
+  :commands (org-brain-entry-from-id))
+
+;;
 ;; orgability
 ;;
 
