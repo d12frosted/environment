@@ -38,7 +38,7 @@ In a nutshell, it's just a value of $HOME.")
        :emacs
        dired
        electric
-       undo
+       (undo +tree)
        vc
 
        :checkers
