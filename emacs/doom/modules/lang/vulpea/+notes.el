@@ -24,9 +24,12 @@
                                        "inbox"
                                        "unfinished"
                                        "people"
-                                       "games"
+                                       "book"
+                                       "project"
 
                                        ;; very specific notes
+                                       "20200406121527"
+                                       "20200406121532"
                                        "20200401163827"
                                        "20200401163611"
                                        "20200401163758"
