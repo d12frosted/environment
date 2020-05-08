@@ -56,7 +56,7 @@ It is relative to `org-directory', unless it is absolute.")
          (org-mode . pretty-props-mode-maybe-enable)
          (org-mode . cha-mode-maybe-enable)
          (org-mode . wine-mode-maybe-enable)
-         ;; (org-mode . cigars-mode-maybe-enable)
+         (org-mode . cigars-mode-maybe-enable)
          (org-mode . +org/remove-empty-drawer)))
 
 (use-package! org-brain
