@@ -51,4 +51,7 @@ setup_space 5 media
 setup_space 6 other
 yabai -m space --focus 1
 
+# floating apps and windows
+yabai -m rule --add app="^System Preferences$" manage=off
+
 echo "yabai configuration loaded.."
