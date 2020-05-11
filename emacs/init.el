@@ -128,5 +128,8 @@ stuttering, increase this.")
 ;; other
 (require 'init-fun)
 
+;; setup key bindings
+(require '+keybindings)
+
 (provide 'init)
 ;;; init.el ends here

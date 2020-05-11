@@ -20,21 +20,11 @@
 (require 'init-keybindings)
 (require 'init-base)
 
-(+leader-def
-  "g" '(nil :which-key "git..."))
-
 (setq-default
  vc-follow-symlinks t)
 
 (use-package magit
-  :general
-  (+leader-def
-    "gd" '(magit-dispatch :which-key "Magit dispatch")
-    "gf" '(magit-find-file :which-key "Magit find-file")
-    "gg" '(magit-status :which-key "Magit status")
-    "gi" '(magit-init :which-key "Initialize repo")
-    "gS" '(magit-stage-file :which-key "Git stage file")
-    "gU" '(magit-unstage-file :which-key "Git unstage file"))
+  :defer t
   :config
   ;; full-screen is my friend
   (when (fboundp 'magit-display-buffer-fullframe-status-v1)
@@ -53,9 +43,7 @@
   (setq forge-database-file (concat +path-etc-dir "forge/forge-database.sqlite")))
 
 (use-package git-timemachine
-  :general
-  (+leader-def
-    "gt" '(git-timemachine-toggle :which-key "Git time machine")))
+  :defer t)
 
 (use-package git-gutter-fringe
   :commands (git-gutter-fr:init
@@ -65,10 +53,6 @@
              git-gutter:clear-diff-infos
              git-gutter-mode
              git-gutter)
-  :general
-  (+leader-def
-    "g]" '(git-gutter:next-hunk :which-key "Next hunk")
-    "g[" '(git-gutter:previous-hunk :which-key "Previous hunk"))
   :init
   (add-hook 'text-mode-hook  #'+git-gutter-maybe)
   (add-hook 'prog-mode-hook  #'+git-gutter-maybe)

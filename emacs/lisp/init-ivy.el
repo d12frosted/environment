@@ -29,10 +29,6 @@
   :hook ((after-init . ivy-mode)
          (ivy-mode . counsel-mode))
   :bind (("M-x" . counsel-M-x))
-  :general
-  (+leader-def
-    "iu" '(counsel-unicode-char :which-key "Insert Unicode character")
-    "ji" '(counsel-imenu :which-key "imenu"))
   :init
   (setq
    enable-recursive-minibuffers t

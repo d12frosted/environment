@@ -17,27 +17,98 @@
 ;;
 ;;; Code:
 
-;;;###autoload
-(defvar +escape-hook nil
-  "A hook run after \\[keyboard-quit] is pressed.
+(require 'init-keybindings)
 
-Triggers `+escape'.
+(+leader-def
+  "C-w" '(ace-window :which-key "Ace window")
+  "M-w" '(ace-window :which-key "Ace window")
+  "," '(projectile-switch-to-buffer :which-key "Switch project buffer")
 
-If any hook returns non-nil, all hooks after it are ignored.")
+  "/" '(nil :which-key "search...")
 
-;;;###autoload
-(defun +escape ()
-  "Run the `+escape-hook'."
-  (interactive)
-  (cond ((minibuffer-window-active-p (minibuffer-window))
-         ;; quit the minibuffer if open.
-         (abort-recursive-edit))
-        ;; Run all escape hooks. If any returns non-nil, then stop there.
-        ((cl-find-if #'funcall +escape-hook))
-        ;; don't abort macros
-        ((or defining-kbd-macro executing-kbd-macro) nil)
-        ;; Back to the default
-        ((keyboard-quit))))
+  "[" '(nil :which-key "previous...")
+  "[s" '(flyspell-correct-wrapper :which-key "Spelling correction")
+
+  "a" '(nil :which-key "align...")
+
+  "c" '(nil :which-key "capture...")
+  "cX" '(org-capture :which-key "dispatch...")
+  "cj" '(+org/capture-journal :which-key "journal")
+  "cl" '(org-store-link :which-key "link")
+  "cm" '(+org/capture-meeting :which-key "meeting")
+  "cn" '(+org/capture-note :which-key "note")
+  "co" '(orgability-clip :which-key "orgability ")
+  "cx" '(+org/capture-task :which-key "task")
+
+  "g" '(nil :which-key "git...")
+  "gS" '(magit-stage-file :which-key "stage file")
+  "gU" '(magit-unstage-file :which-key "unstage file")
+  "g[" '(git-gutter:previous-hunk :which-key "previous hunk")
+  "g]" '(git-gutter:next-hunk :which-key "next hunk")
+  "gd" '(magit-dispatch :which-key "dispatch")
+  "gf" '(magit-find-file :which-key "find-file")
+  "gg" '(magit-status :which-key "status")
+  "gi" '(magit-init :which-key "initialize repo")
+  "gt" '(git-timemachine-toggle :which-key "time machine")
+
+  "i" '(nil :which-key "insert...")
+  "iu" '(counsel-unicode-char :which-key "Unicode character")
+
+  "j" '(nil :which-key "jump...")
+  "jJ" '(avy-goto-char-timer :which-key "Chars")
+  "jL" '(goto-line :which-key "Line (by number)")
+  "jb" '(ace-link :which-key "Button or link")
+  "ji" '(counsel-imenu :which-key "imenu")
+  "jj" '(avy-goto-char :which-key "Char")
+  "jl" '(avy-goto-line :which-key "Line (avy)")
+  "jw" '(avy-goto-word-0 :which-key "Word")
+
+  "o" '(nil :which-key "open...")
+  "oA" '(org-agenda :which-key "agenda dispatch")
+  "oa" '(+agenda/main :which-key "agenda")
+  "ob" '(org-brain-visualize :which-key "brain node")
+  "or" '(+orgability/list :which-key "reading list")
+  "ow" '(+agenda/wix :which-key "work agenda")
+
+  "n" '(nil :which-key "notes...")
+  "nd" '(nil :which-key "by date...")
+  "ndd" '(org-roam-dailies-date :which-key "arbitrary date")
+  "ndt" '(org-roam-dailies-date :which-key "today")
+  "nf" '(+org-notes-find :which-key "find")
+  "ng" '(org-roam-graph)
+  "ni" '(+org-notes-insert :which-key "insert")
+  "nj" '(org-journal-new-entry :which-key "journal entry")
+  "nl" '(+org-notes-list :which-key "list")
+
+  "b" '(nil :which-key "buffer...")
+  "bM" '(+buffer/switch-to-messages :which-key "switch to messages buffer")
+  "bS" '(+file/sudo-this :which-key "sudo edit this file")
+  "bX" '(+buffer/switch-to-scratch :which-key "pop scratch buffer")
+  "bb" '(switch-to-buffer :which-key "switch buffer")
+  "bk" '(kill-this-buffer :which-key "kill buffer")
+  "bm" '(+buffer/pop-messages :which-key "pop messages buffer")
+  "bs" '(save-buffer :which-key "save buffer")
+  "bx" '(+buffer/pop-scratch :which-key "pop scratch buffer")
+
+  "w"  '(nil :which-key "window...")
+  "wS" '(+window-split-horizontally :which-key "split frame horizontally")
+  "wV" '(+window-split-vertically :which-key "split frame vertically")
+  "wk" '(delete-window :which-key "kill window")
+  "wm" '(+window-zoom :which-key "kill other windows")
+  "ws" '(+window-split-horizontally-and-focus :which-key "split frame horizontally and focus")
+  "wv" '(+window-split-vertically-and-focus :which-key "split frame vertically and focus")
+
+  "p" '(nil :which-key "project...")
+  "p!" '(projectile-run-shell-command-in-root :which-key "Run cmd in project root")
+  "p/" '(projectile-ripgrep :which-key "Grep the project")
+  "pI" '(projectile-invalidate-cache :which-key "Invalidate cache")
+  "pf" '(projectile-find-file :which-key "Find file in project")
+  "pp" '(projectile-switch-project :which-key "Switch project")
+  )
+
+(+leader-def
+  :keymaps 'org-brain-visualize-mode-map
+  "jb" '(+ace-link-brain-visualize :which-key "Brain entry"))
 
 (provide '+keybindings)
 ;;; +keybindings.el ends here

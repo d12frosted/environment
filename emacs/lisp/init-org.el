@@ -53,12 +53,6 @@ It is relative to `org-directory', unless it is absolute.")
          (org-mode . wine-mode-maybe-enable)
          (org-mode . cigars-mode-maybe-enable)
          (org-clock-out . +org/remove-empty-drawer))
-  :general
-  (+leader-def
-    "oa" '(+agenda/main :which-key "Org fast agenda")
-    "ow" '(+agenda/wix :which-key "Org Wix fast agenda")
-    "or" '(+orgability/list :which-key "Reading list")
-    "oA" '(org-agenda :which-key "Org agenda"))
   :init
   ;; Setup list of Org modules that should always be loaded together
   ;; with Org.
@@ -181,14 +175,6 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package org-capture
   :defer t
   :straight org-plus-contrib
-  :general
-  (+leader-def
-    "cj" '(+org/capture-journal :which-key "Capture journal")
-    "cm" '(+org/capture-meeting :which-key "Capture meeting")
-    "cn" '(+org/capture-note :which-key "Capture note")
-    "cx" '(+org/capture-task :which-key "Capture task")
-    "cX" '(org-capture :which-key "Org capture")
-    "cl" '(org-store-link :which-key "Org store link"))
   :config
   (require '+org-capture)
   (dolist (var '(+capture-inbox-file
@@ -327,12 +313,6 @@ It is relative to `org-directory', unless it is absolute.")
              org-brain-entry-name
              org-brain-entry-from-id
              org-brain--name-and-id-at-point)
-  :general
-  (+leader-def
-    "ob" '(org-brain-visualize :which-key "Brain node"))
-  (+leader-def
-    :keymaps 'org-brain-visualize-mode-map
-    "jb" '(+ace-link-brain-visualize :which-key "Brain entry"))
   :init
   (setq org-brain-path org-directory
         org-brain-scan-directories-recursively nil
@@ -378,9 +358,6 @@ It is relative to `org-directory', unless it is absolute.")
              :repo "d12frosted/orgability")
   :defines (orgability-file
             orgability-agenda-topics-column)
-  :general
-  (+leader-def
-    "co" '(orgability-clip :which-key "Orgability clip"))
   :init
   (setq
    orgability-file (expand-file-name "orgability.org" org-directory)
@@ -407,13 +384,6 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package +org-notes
   :after org
   :straight (:type built-in)
-  :general
-  (+leader-def
-    "n" '(nil :which-key "notes...")
-    "nf" '(+org-notes-find :which-key "find")
-    "nl" '(+org-notes-list :which-key "list")
-    "nt" '(+org-notes-today :which-key "today")
-    "ni" '(+org-notes-insert :which-key "insert"))
   :commands (+org-notes-list
              +org-notes-find
              +org-notes-setup-buffer)
@@ -459,9 +429,6 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-journal
   :after +org-notes
-  :general
-  (+leader-def
-    "nj" '(org-journal-new-entry :which-key "journal entry"))
   :init
   (setq
    org-journal-find-file #'find-file

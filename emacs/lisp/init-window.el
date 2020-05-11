@@ -24,10 +24,6 @@
       split-width-threshold 160)
 
 (use-package ace-window
-  :general
-  (+leader-def
-    "C-w" '(ace-window :which-key "Ace window")
-    "M-w" '(ace-window :which-key "Ace window"))
   :defer t
   :init
   (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o)))
@@ -70,15 +66,6 @@ the undo expires."
       (jump-to-register ?_)
     (window-configuration-to-register ?_)
     (delete-other-windows)))
-
-(+leader-def
-  "w"  '(nil :which-key "window...")
-  "wV" '(+window-split-vertically :which-key "Split frame vertically")
-  "wv" '(+window-split-vertically-and-focus :which-key "Split frame vertically and focus")
-  "wS" '(+window-split-horizontally :which-key "Split frame horizontally")
-  "ws" '(+window-split-horizontally-and-focus :which-key "Split frame horizontally and focus")
-  "wk" '(delete-window :which-key "Kill window")
-  "wm" '(+window-zoom :which-key "Kill other windows"))
 
 (provide 'init-window)
 ;;; init-window.el ends here

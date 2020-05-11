@@ -35,9 +35,6 @@
 
 (use-package flyspell-correct-ivy
   :defer t
-  :general
-  (+leader-def
-    "[s" '(flyspell-correct-wrapper :which-key "Spelling correction"))
   :init
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
 

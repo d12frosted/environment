@@ -21,17 +21,6 @@
 (require 'init-keybindings)
 (require 'subr-x)
 
-(+leader-def
-  "b" '(nil :which-key "buffer...")
-  "bb" '(switch-to-buffer :which-key "Switch buffer")
-  "bk" '(kill-this-buffer :which-key "Kill buffer")
-  "bs" '(save-buffer :which-key "Save buffer")
-  "bx" '(+buffer/pop-scratch :which-key "Pop scratch buffer")
-  "bX" '(+buffer/switch-to-scratch :which-key "Pop scratch buffer")
-  "bm" '(+buffer/pop-messages :which-key "Pop messages buffer")
-  "bM" '(+buffer/switch-to-messages :which-key "Switch to messages buffer")
-  "bS" '(+file/sudo-this :which-key "Sudo edit this file"))
-
 ;;;###autoload
 (defvar +buffer-fallback-name "*scratch*"
   "The name of the buffer to fall back to.
