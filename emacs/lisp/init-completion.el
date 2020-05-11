@@ -31,6 +31,17 @@
 
 The backends for any mode is built from this.")
 
+;;;###autoload
+(defun +company-init-backends ()
+  "Set `company-backends' for the current buffer."
+  (if (not company-mode)
+      (remove-hook 'change-major-mode-after-body-hook #'+company-init-backends 'local)
+    (unless (eq major-mode 'fundamental-mode)
+      (setq-local company-backends (+company--backends)))
+    (add-hook 'change-major-mode-after-body-hook #'+company-init-backends nil 'local)))
+
+(put '+company-init-backends 'permanent-local-hook t)
+
 (use-package company
   :defer 2
   :diminish
@@ -176,17 +187,6 @@ Examples:
                                     (symbol-value mode))) ; minor modes
                         append backends)
                (nreverse backends))))))
-
-;;;###autoload
-(defun +company-init-backends ()
-  "Set `company-backends' for the current buffer."
-  (if (not company-mode)
-      (remove-hook 'change-major-mode-after-body-hook #'+company-init-backends 'local)
-    (unless (eq major-mode 'fundamental-mode)
-      (setq-local company-backends (+company--backends)))
-    (add-hook 'change-major-mode-after-body-hook #'+company-init-backends nil 'local)))
-
-(put '+company-init-backends 'permanent-local-hook t)
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
