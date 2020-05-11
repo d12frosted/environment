@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="68px" height="68px" viewBox="0 0 68 68" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Untitled</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="D12" transform="translate(1.000000, 0.000000)">
+            <g id="dp_dp001" transform="translate(0.167000, 0.919000)" fill="#62929E" stroke="#62929E" stroke-width="1.33333">
+                <polygon id="dp_path002" points="26.761 8.084 47.845 18.783 43.428 39.369 23.772 43.888 11.827 26.439"></polygon>
+                <polygon id="dp_path003" points="49.635 18.783 46.269 39.369 57.285 50.467 64.975 36.963 60.347 17.405"></polygon>
+                <polygon id="dp_path004" points="49.388 16.864 59.32 15.749 47.845 4.873 28.947 0.884 27.987 6.004"></polygon>
+                <polygon id="dp_path005" points="25.757 6.337 26.76 1.572 10.427 12.704 1.212 26.437 9.791 25.333"></polygon>
+                <polygon id="dp_path006" points="9.969 27.705 0.715 28.895 4.885 48.919 16.268 59.319 21.913 44.94"></polygon>
+                <polygon id="dp_path007" points="24.317 45.605 17.995 60.884 38.745 65.528 55.913 52.431 45.015 40.993"></polygon>
+            </g>
+            <text id="dp_text001" fill="#FFFFFF" transform="translate(30.773473, 27.703621) rotate(-11.530002) translate(-30.773473, -27.703621) " font-family="ArialMT, Arial" font-size="21" font-weight="normal">
+                <tspan x="21.7734741" y="35.203623">I2</tspan>
+            </text>
+            <text id="dp_text002" fill="#FFFFFF" transform="translate(35.353150, 55.740236) rotate(158.689987) translate(-35.353150, -55.740236) " font-family="ArialMT, Arial" font-size="14" font-weight="normal">
+                <tspan x="28.9032324" y="60.7402341">8</tspan>
+            </text>
+            <text id="dp_text003" fill="#FFFFFF" transform="translate(55.567169, 34.086510) rotate(102.920011) translate(-55.567169, -34.086510) " font-family="ArialMT, Arial" font-size="14" font-weight="normal">
+                <tspan x="45.8975036" y="39.0865122">I0</tspan>
+            </text>
+            <text id="dp_text004" fill="#FFFFFF" transform="translate(9.251068, 42.359818) rotate(-115.520028) translate(-9.251068, -42.359818) " font-family="ArialMT, Arial" font-size="9" font-weight="normal">
+                <tspan x="2.46103636" y="45.3598181">7</tspan>
+            </text>
+            <text id="dp_text005" fill="#FFFFFF" transform="translate(16.552338, 12.583444) rotate(-45.899983) translate(-16.552338, -12.583444) " font-family="ArialMT, Arial" font-size="6" font-weight="normal">
+                <tspan x="7.1687078" y="14.5834442">9.</tspan>
+            </text>
+            <text id="dp_text006" fill="#FFFFFF" transform="translate(40.433888, 9.516452) rotate(49.270041) translate(-40.433888, -9.516452) " font-family="ArialMT, Arial" font-size="8" font-weight="normal">
+                <tspan x="36.755075" y="12.0164526">I</tspan>
+            </text>
+            <text id="dp_text007" fill="#FFFFFF" transform="translate(45.502288, 12.277542) rotate(49.270041) translate(-45.502288, -12.277542) " font-family="ArialMT, Arial" font-size="8" font-weight="normal">
+                <tspan x="41.823475" y="14.7775426">I</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

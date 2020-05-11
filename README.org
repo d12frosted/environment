@@ -1,14 +1,18 @@
-#+TITLE:        d12frosted environment
-#+AUTHOR:       Boris Buliga
-#+EMAIL:        boris@d12frosted.io
-#+STARTUP:      showeverything
-#+OPTIONS:      toc:nil
-
-[[https://github.com/d12frosted/environment/workflows/CI/badge.svg][file:https://github.com/d12frosted/environment/workflows/CI/badge.svg]]
+#+begin_html
+<p align="center">
+  <img width="256px" src="images/d12frosted.svg" alt="Banner">
+</p>
+<h1 align="center">d12frosted environment</h1>
+<p align="center">
+  <a href="https://github.com/d12frosted/environment/actions?query=workflow%3ACI">
+    <img src="https://github.com/d12frosted/environment/workflows/CI/badge.svg" alt="CI Status Badge">
+  </a>
+</p>
+#+end_html
 
 This repository contains configurations for applications and tools I am using.
 
-* What's inside?
+** What's inside?
 
 All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for
 sure). Configurations are divided into domains like =emacs=, =git=, =haskell=,
@@ -36,7 +40,7 @@ script that creates the universe. Supported platforms are [[https://www.apple.co
 </p>
 #+END_HTML
 
-* Eru domain
+** Eru domain
 
 As you might know, Eru is the supreme deity of Arda. The first things that Eru
 created where the Ainur. He then bade the Ainur to sing to him. Each Ainu had a
@@ -96,7 +100,7 @@ only specified are sang.
 
 You can read a little bit more about Eru in a [[https://d12frosted.io/posts/2018-11-04-revisiting-eru.html][Revisiting Eru]] blog post.
 
-* Can I use your files?
+** Can I use your files?
 
 Sure, just take whatever you find fancy. Though keep in mind few things. These
 configurations are *personal* configurations, so they are based on my needs and
@@ -107,7 +111,7 @@ questions or problems. Pull requests and suggestions are warmly welcome!
 
 If you do use any parts of my configurations, do it only on your own risk. 
 
-* Acknowledgements
+** Acknowledgements
 
 These configurations would not have been possible without the work of and the
 inspiration from following people.
@@ -123,3 +127,5 @@ inspiration from following people.
 - [[https://github.com/purcell][Steve Purcell]] inspires me with his overall work on improving Emacs ecosystem.
 - [[https://github.com/Malabarba][Artur Malabarba]] shares valuable pieces of advice and ideas in his blog.
 - [[https://github.com/hlissner/][Henrik Lissner]] as author of Doom Emacs he inspired and helped me a lot.
+
+[[https://openclipart.org/detail/248550/d12-twelve-sided-dice][D12 Twelve Sided Dice]] created by [[https://openclipart.org/artist/dwmoook][dwmoook]] and modified by [[https://d12frosted.io][Boris Buliga]].
