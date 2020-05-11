@@ -176,7 +176,7 @@ It is relative to `org-directory', unless it is absolute.")
         org-id-extra-files (list (concat org-directory ".archive/archive")
                                  (concat org-directory ".archive/archive.org"))
 	      org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-	      org-id-locations-file (concat +path-cache-dir "org-id-locations.el")))
+        org-id-locations-file (expand-file-name ".orgids" org-directory)))
 
 (use-package org-capture
   :defer t
