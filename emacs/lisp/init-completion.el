@@ -21,24 +21,7 @@
 (require 'init-path)
 (require 'init-package)
 (require 'init-ui)
-
-;;;###autoload
-(defvar +company-backend-alist
-  '((text-mode :derived (company-yasnippet))
-    (prog-mode :derived (:separate company-capf company-yasnippet))
-    (conf-mode :derived company-capf company-dabbrev-code company-yasnippet))
-  "An alist matching modes to company backends.
-
-The backends for any mode is built from this.")
-
-;;;###autoload
-(defun +company-init-backends ()
-  "Set `company-backends' for the current buffer."
-  (if (not company-mode)
-      (remove-hook 'change-major-mode-after-body-hook #'+company-init-backends 'local)
-    (unless (eq major-mode 'fundamental-mode)
-      (setq-local company-backends (+company--backends)))
-    (add-hook 'change-major-mode-after-body-hook #'+company-init-backends nil 'local)))
+(require '+company)
 
 (put '+company-init-backends 'permanent-local-hook t)
 
