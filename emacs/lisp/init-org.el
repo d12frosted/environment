@@ -173,8 +173,8 @@ It is relative to `org-directory', unless it is absolute.")
   (setq org-id-uuid-program "uuidgen | tr \"[:upper:]\" \"[:lower:]\"")
   :config
   (setq org-id-track-globally t
-        org-id-extra-files (list (concat org-directory ".archive/archive")
-                                 (concat org-directory ".archive/archive.org"))
+        org-id-extra-files (list (expand-file-name ".archive/archive" org-directory)
+                                 (expand-file-name ".archive/archive.org" org-directory))
 	      org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
         org-id-locations-file (expand-file-name ".orgids" org-directory)))
 
@@ -271,8 +271,8 @@ It is relative to `org-directory', unless it is absolute.")
     (require '+org-agenda))
   (setq
    org-agenda-files (list org-directory)
-   org-agenda-text-search-extra-files (list (concat org-directory ".archive/archive")
-                                            (concat org-directory ".archive/archive.org"))
+   org-agenda-text-search-extra-files (list (expand-file-name ".archive/archive" org-directory)
+                                            (expand-file-name ".archive/archive.org" org-directory))
    ;; also show state change in log mode
    org-agenda-log-mode-items '(closed clock state)
 
@@ -383,7 +383,7 @@ It is relative to `org-directory', unless it is absolute.")
     "co" '(orgability-clip :which-key "Orgability clip"))
   :init
   (setq
-   orgability-file (concat org-directory "orgability.org")
+   orgability-file (expand-file-name "orgability.org" org-directory)
    orgability-agenda-topics-column 36))
 
 (use-package org-board
@@ -472,7 +472,7 @@ It is relative to `org-directory', unless it is absolute.")
    org-journal-file-format "%Y-%m-%d.org"
    org-journal-dir +org-notes-directory
    org-journal-date-format "%A, %d %B %Y"
-   org-journal-cache-file (concat +path-cache-dir "org-journal.cache")))
+   org-journal-cache-file (expand-file-name "org-journal.cache" +path-cache-dir)))
 
 (use-package deft
   :after +org-notes
