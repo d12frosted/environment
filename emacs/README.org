@@ -11,6 +11,8 @@ tracking all your tasks, notes, thoughts and wine in Emacs.
 It's impossible to run these configurations. =eru= to the rescue. If you don't
 understand what I mean, it's better for you.
 
+These configurations are highly inspired by [[https://github.com/syl20bnr/spacemacs][Spacemacs]] and [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
+
 * Install Emacs
 
 For OS X users I recommend to install [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]] - GNU Emacs with some sane
