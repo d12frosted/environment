@@ -422,6 +422,12 @@ It is relative to `org-directory', unless it is absolute.")
   (require 'org-protocol)
   (require 'org-roam-protocol))
 
+(use-package company-org-roam
+  :straight (:host github :repo "org-roam/company-org-roam")
+  :init
+  (set-company-backend! 'org-mode
+    '(company-org-roam company-yasnippet company-dabbrev)))
+
 (use-package time-stamp
   :straight (:type built-in)
   :init
@@ -440,6 +446,9 @@ It is relative to `org-directory', unless it is absolute.")
    org-journal-dir +org-notes-directory
    org-journal-date-format "%A, %d %B %Y"
    org-journal-cache-file (expand-file-name "org-journal.cache" +path-cache-dir)))
+   org-journal-cache-file (expand-file-name "org-journal.cache" +path-cache-dir))
+  (set-company-backend! 'org-journal-mode
+    '(company-org-roam company-yasnippet company-dabbrev)))
 
 (use-package deft
   :defer t
