@@ -453,7 +453,6 @@ It is relative to `org-directory', unless it is absolute.")
    org-journal-file-format "%Y-%m-%d.org"
    org-journal-dir +org-notes-directory
    org-journal-date-format "%A, %d %B %Y"
-   org-journal-cache-file (expand-file-name "org-journal.cache" +path-cache-dir)))
    org-journal-cache-file (expand-file-name "org-journal.cache" +path-cache-dir))
   (set-company-backend! 'org-journal-mode
     '(company-org-roam company-yasnippet company-dabbrev)))
