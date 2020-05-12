@@ -88,7 +88,6 @@ It is relative to `org-directory', unless it is absolute.")
    org-adapt-indentation nil
    org-startup-folded t
    org-startup-indented t
-   org-outline-path-complete-in-steps nil
    org-imenu-depth 2
 
    ;; do not allow invisible edits (...)
@@ -136,13 +135,7 @@ It is relative to `org-directory', unless it is absolute.")
    ;; tags
    org-tag-persistent-alist '(("FOCUS" . ?f)
                               ("PROJECT" . ?p))
-   org-tags-exclude-from-inheritance '("PROJECT")
-
-   org-refile-targets '((nil :maxlevel . 4)
-                        (org-agenda-files :maxlevel . 4))
-   org-refile-use-outline-path t
-   org-refile-allow-creating-parent-nodes nil
-   org-refile-target-verify-function '+org-refile--verify-refile-target))
+   org-tags-exclude-from-inheritance '("PROJECT")))
 
 (use-package org-clock
   :defer t
@@ -151,6 +144,17 @@ It is relative to `org-directory', unless it is absolute.")
   (setq
    ;; remove clocked tasks with 0:00 duration
    org-clock-out-remove-zero-time-clocks t))
+
+(use-package org-refile
+  :defer t
+  :straight org-plus-contrib
+  :init
+  (setq org-outline-path-complete-in-steps nil
+        org-refile-targets '((nil :maxlevel . 4)
+                             (org-agenda-files :maxlevel . 4))
+        org-refile-use-outline-path t
+        org-refile-allow-creating-parent-nodes nil
+        org-refile-target-verify-function '+org-refile--verify-refile-target))
 
 (use-package org-indent
   :defer t
