@@ -61,7 +61,8 @@ Only adds ids if the `auto-id' option is set to t in the file
 somewhere. For example,
 
   #+OPTIONS: auto-id:t"
-  (when (and (eq major-mode 'org-mode)
+  (when (and (or (eq major-mode 'org-mode)
+                 (eq major-mode 'org-journal-mode))
              (eq buffer-read-only nil))
     (save-excursion
       (widen)
