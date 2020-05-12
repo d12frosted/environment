@@ -417,7 +417,7 @@ It is relative to `org-directory', unless it is absolute.")
         '(("d" "default" plain (function org-roam--capture-get-point)
            "%?"
            :file-name "%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+TITLE: ${title}\n#+TIME-STAMP: <>\n"
+           :head "#+OPTIONS: auto-id:t\n#+TITLE: ${title}\n#+TIME-STAMP: <>\n"
            :unnarrowed t)))
   (require 'org-protocol)
   (require 'org-roam-protocol))
