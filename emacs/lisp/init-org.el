@@ -428,6 +428,14 @@ It is relative to `org-directory', unless it is absolute.")
   (set-company-backend! 'org-mode
     '(company-org-roam company-yasnippet company-dabbrev)))
 
+(use-package org-roam-server
+  :straight (org-roam-server
+             :host github
+             :repo "org-roam/org-roam-server"
+             :files (:defaults ("assets/" . "assets/")))
+  :load-path (lambda () (concat straight-base-dir "straight/repos/org-roam-server/"))
+  :defer t)
+
 (use-package time-stamp
   :straight (:type built-in)
   :init
