@@ -75,7 +75,7 @@
   "ndd" '(org-roam-dailies-date :which-key "arbitrary date")
   "ndt" '(org-roam-dailies-today :which-key "today")
   "nf" '(+org-notes-find :which-key "find")
-  "ng" '(org-roam-graph)
+  "ng" '(org-roam-graph :which-key "graph")
   "ni" '(+org-notes-insert :which-key "insert")
   "nj" '(+org-notes-new-journal-entry :which-key "journal entry")
   "nl" '(+org-notes-list :which-key "list")
