@@ -77,7 +77,7 @@
   "nf" '(+org-notes-find :which-key "find")
   "ng" '(org-roam-graph)
   "ni" '(+org-notes-insert :which-key "insert")
-  "nj" '(org-journal-new-entry :which-key "journal entry")
+  "nj" '(+org-notes-new-journal-entry :which-key "journal entry")
   "nl" '(+org-notes-list :which-key "list")
 
   "b" '(nil :which-key "buffer...")

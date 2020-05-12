@@ -35,6 +35,12 @@
   (interactive)
   (call-interactively #'org-roam-insert))
 
+(defun +org-notes-new-journal-entry ()
+  "Create new journal entry."
+  (interactive)
+  (call-interactively #'org-roam-dailies-today)
+  (call-interactively #'org-journal-new-entry))
+
 (defun +org-notes-setup-buffer (&optional _)
   "Setup current buffer for notes viewing and editing.
 
