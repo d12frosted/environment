@@ -303,7 +303,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-edna
   :defer t
-  :hook ((org-mode . org-edna-load)))
+  :hook ((org-mode . org-edna-mode)))
 
 (use-package org-brain
   :defer t
