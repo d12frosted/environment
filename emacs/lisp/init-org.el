@@ -417,7 +417,23 @@ It is relative to `org-directory', unless it is absolute.")
         (when +sys-mac-p "open")
         org-roam-graph-executable (executable-find "neato")
         org-roam-graph-extra-config '(("overlap" . "false"))
-        org-roam-completion-system 'ivy)
+        org-roam-completion-system 'ivy
+        org-roam-graph-exclude-matcher '("literature_notes"
+                                         "permanent_notes"
+                                         "inbox"
+                                         "unfinished"
+                                         "people"
+                                         "book"
+                                         "project"
+
+                                         ;; very specific notes
+                                         "20200406121527"
+                                         "20200406121532"
+                                         "20200401163827"
+                                         "20200401163611"
+                                         "20200401163758"
+                                         "20200407181600"
+                                         "20200430184542"))
   :config
   (setq org-roam-capture-templates
         '(("d" "default" plain (function org-roam--capture-get-point)
