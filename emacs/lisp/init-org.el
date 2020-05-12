@@ -23,6 +23,7 @@
 (require 'init-keybindings)
 (require 'init-navigation)
 (require 'cl-lib)
+(require '+company)
 
 (defvar +capture-inbox-file (format "inbox-%s.org" +sys-name)
   "The path to the inbox file.
@@ -408,7 +409,8 @@ It is relative to `org-directory', unless it is absolute.")
              org-roam-find-file
              org-roam-insert
              org-roam-db--clear
-             org-roam-db-build-cache)
+             org-roam-db-build-cache
+             org-roam--get-title-or-slug)
   :init
   (setq org-roam-directory +org-notes-directory
         org-roam-graph-viewer
@@ -473,7 +475,6 @@ It is relative to `org-directory', unless it is absolute.")
    deft-default-extension "org"
    deft-directory +org-notes-directory)
   :config/el-patch
-  (require 'org-roam)
   (defun deft-parse-title (file contents)
     "Parse the given FILE and CONTENTS and determine the title.
 If `deft-use-filename-as-title' is nil, the title is taken to
