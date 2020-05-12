@@ -25,21 +25,6 @@
   (call-interactively #'deft)
   (call-interactively #'deft-refresh))
 
-(defun +org-notes-today ()
-  "Open today's note."
-  (interactive)
-  (call-interactively #'org-roam-dailies-today))
-
-(defun +org-notes-yesterday ()
-  "Open yesterday's note."
-  (interactive)
-  (call-interactively #'org-roam-dailies-yesterday))
-
-(defun +org-notes-tomorrow ()
-  "Open tomorrow's note."
-  (interactive)
-  (call-interactively #'org-roam-dailies-tomorrow))
-
 (defun +org-notes-find ()
   "Find a note."
   (interactive)
