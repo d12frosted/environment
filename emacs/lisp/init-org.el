@@ -382,7 +382,7 @@ It is relative to `org-directory', unless it is absolute.")
   (add-hook 'org-mode-hook 'toc-org-mode))
 
 (use-package +org-notes
-  :after org
+  :defer t
   :straight (:type built-in)
   :commands (+org-notes-list
              +org-notes-find
@@ -393,11 +393,11 @@ It is relative to `org-directory', unless it is absolute.")
                #'+org-notes-setup-buffer))
 
 (use-package org-roam
-  :after +org-notes
+  :defer t
   :straight (org-roam
              :type git
              :host github
-             :repo "jethrokuan/org-roam")
+             :repo "org-roam/org-roam")
   :commands (org-roam-dailies-today
              org-roam-dailies-yesterday
              org-roam-dailies-tomorrow
@@ -428,7 +428,7 @@ It is relative to `org-directory', unless it is absolute.")
   (add-hook 'write-file-functions 'time-stamp))
 
 (use-package org-journal
-  :after +org-notes
+  :defer
   :init
   (setq
    org-journal-find-file #'find-file
@@ -442,7 +442,7 @@ It is relative to `org-directory', unless it is absolute.")
    org-journal-cache-file (expand-file-name "org-journal.cache" +path-cache-dir)))
 
 (use-package deft
-  :after +org-notes
+  :defer t
   :init
   (setq
    deft-recursive t
