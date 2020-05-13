@@ -269,7 +269,7 @@ It is relative to `org-directory', unless it is absolute.")
 
    ;; more structured view
    org-agenda-prefix-format
-   '((agenda . " %i %-24:c%?-12t% s")
+   '((agenda . " %i %-24:c%?-12t %12s")
      (todo . " %i %-24:c")
      (tags . " %i %-24:c")
      (search . " %i %-24:c"))
