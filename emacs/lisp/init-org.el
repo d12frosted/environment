@@ -488,6 +488,11 @@ It is relative to `org-directory', unless it is absolute.")
   (set-company-backend! 'org-journal-mode
     '(company-org-roam company-yasnippet company-dabbrev)))
 
+;; remove after
+;; https://github.com/jrblevin/deft/issues/77
+(with-no-warnings
+  (require 'cl))
+
 (use-package deft
   :defer t
   :init
@@ -497,7 +502,7 @@ It is relative to `org-directory', unless it is absolute.")
    deft-default-extension "org"
    deft-directory +org-notes-directory)
   :config/el-patch
-  (defun deft-parse-title (file contents)
+  (defun deft-parse-title (file _)
     "Parse the given FILE and CONTENTS and determine the title.
 If `deft-use-filename-as-title' is nil, the title is taken to
 be the first non-empty line of the FILE.  Else the base name of the FILE is
