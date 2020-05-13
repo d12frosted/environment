@@ -644,6 +644,7 @@ check fish && {
 theme_guard "Emacs" "Setup Emacs" && {
   rm -rf "$HOME/.emacs.d"
   wget -O "$HOME/.emacs" "https://raw.githubusercontent.com/plexus/chemacs/master/.emacs"
+  emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el"
 }
 
 theme_guard "Guardian" "Check that Emacs runs as expected" && {
