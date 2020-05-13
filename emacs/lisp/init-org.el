@@ -436,11 +436,17 @@ It is relative to `org-directory', unless it is absolute.")
                                          "20200430184542"))
   :config
   (setq org-roam-capture-templates
-        '(("d" "default" plain (function org-roam--capture-get-point)
+        '(("d" "default" plain #'org-roam-capture--get-point
            "%?"
            :file-name "%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+OPTIONS: auto-id:t\n#+TITLE: ${title}\n#+TIME-STAMP: <>\n"
-           :unnarrowed t)))
+           :head "#+OPTIONS: auto-id:t\n#+TITLE: ${title}\n#+TIME-STAMP: <>\n\n"
+           :unnarrowed t))
+        org-roam-dailies-capture-templates
+        '(("d" "daily" plain #'org-roam-capture--get-point
+           ""
+           :immediate-finish t
+           :file-name "%<%Y-%m-%d>"
+           :head "#+OPTIONS: auto-id:t\n#+TITLE: %<%A, %d %B %Y>\n#+TIME-STAMP: <>\n\n")))
   (require 'org-protocol)
   (require 'org-roam-protocol))
 
