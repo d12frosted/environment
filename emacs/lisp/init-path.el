@@ -62,7 +62,7 @@ external dependencies or long-term shared data.")
 
 Use this for files that change often, like cache files.")
 
-(defconst +path-packages-dir (concat +path-local-dir "packages/")
+(defconst +path-packages-dir (concat +path-local-dir "packages/" emacs-version "/")
   "Where package.el and quelpa plugins are stored.")
 
 (defconst +path-elpa-mirror-dir (concat +path-home-dir ".elpa-mirror/")
