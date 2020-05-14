@@ -19,6 +19,8 @@
 
 (require 'init-keybindings)
 
+(global-set-key (kbd "C-h F") #'counsel-faces)
+
 (+leader-def
   "C-w" '(ace-window :which-key "Ace window")
   "M-w" '(ace-window :which-key "Ace window")
