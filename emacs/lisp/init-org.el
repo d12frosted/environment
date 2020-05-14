@@ -81,15 +81,15 @@ It is relative to `org-directory', unless it is absolute.")
   (add-to-list 'org-link-frame-setup '(file . find-file))
 
   (setq
+   org-adapt-indentation nil
    org-hidden-keywords nil
    org-hide-emphasis-markers nil
    org-hide-leading-stars nil
    org-image-actual-width '(512)
+   org-imenu-depth 2
    org-pretty-entities nil
-   org-adapt-indentation nil
    org-startup-folded t
    org-startup-indented t
-   org-imenu-depth 2
 
    ;; do not allow invisible edits (...)
    org-catch-invisible-edits 'error
