@@ -79,6 +79,7 @@ It is relative to `org-directory', unless it is absolute.")
 
   ;; open files in the same window
   (add-to-list 'org-link-frame-setup '(file . find-file))
+  (setq org-indirect-buffer-display 'current-window)
 
   (setq
    org-adapt-indentation nil
