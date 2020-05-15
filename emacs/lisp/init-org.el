@@ -81,6 +81,9 @@ It is relative to `org-directory', unless it is absolute.")
   (add-to-list 'org-link-frame-setup '(file . find-file))
   (setq org-indirect-buffer-display 'current-window)
 
+  ;; open directory links in `dired'
+  (add-to-list 'org-file-apps '(directory . emacs))
+
   (setq
    org-adapt-indentation nil
    org-hidden-keywords nil
