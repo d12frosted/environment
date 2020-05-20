@@ -403,6 +403,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-roam
   :defer t
+  :hook (org-roam-backlinks-mode . turn-on-visual-line-mode)
   :straight (org-roam
              :type git
              :host github
