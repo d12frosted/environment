@@ -417,6 +417,7 @@ It is relative to `org-directory', unless it is absolute.")
              org-roam--get-title-or-slug)
   :init
   (setq org-roam-directory +org-notes-directory
+        org-roam-db-location (expand-file-name "org-roam.db" +path-cache-dir)
         org-roam-graph-viewer
         (when +sys-mac-p "open")
         org-roam-graph-executable (executable-find "neato")
