@@ -85,6 +85,7 @@ Possible values are: upstream, mirror and local.")
 
 (require 'straight)
 (straight-use-package 'use-package)
+(straight-use-package 'el-patch)
 
 ;; Should set before loading `use-package'
 (eval-and-compile
@@ -93,6 +94,7 @@ Possible values are: upstream, mirror and local.")
   (setq use-package-expand-minimally t)
   (setq use-package-enable-imenu-support t))
 (require 'use-package)
+(require 'el-patch)
 
 ;; Required by `use-package'
 (use-package diminish)
@@ -111,15 +113,6 @@ Possible values are: upstream, mirror and local.")
     :config
     (with-eval-after-load 'swiper
       (add-to-list 'swiper-font-lock-exclude 'benchmark-init/tree-mode))))
-
-(use-package el-patch
-  :straight (el-patch
-             :host github
-             :repo "raxod502/el-patch"
-             :branch "develop"))
-
-(eval-when-compile
-  (require 'el-patch))
 
 (provide 'init-package)
 ;;; init-package.el ends here
