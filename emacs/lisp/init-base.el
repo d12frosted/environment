@@ -154,5 +154,12 @@ the beginning or end of the buffer, stop there."
   (unless (server-running-p)
     (server-start)))
 
+(cl-flet ((always-yes (&rest _) t))
+  (defun no-confirm (fun &rest args)
+    "Apply FUN to ARGS, skipping user confirmations."
+    (cl-letf (((symbol-function 'y-or-n-p) #'always-yes)
+              ((symbol-function 'yes-or-no-p) #'always-yes))
+      (apply fun args))))
+
 (provide 'init-base)
 ;;; init-base.el ends here
