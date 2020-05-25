@@ -17,9 +17,11 @@
 ;;
 ;;; Code:
 
+(require 'init-base)
 (require 'init-keybindings)
 
 (global-set-key (kbd "C-h F") #'counsel-faces)
+(global-set-key [remap move-beginning-of-line] '+beginning-of-line)
 
 (+leader-def
   "C-w" '(ace-window :which-key "Ace window")

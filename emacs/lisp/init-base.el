@@ -119,9 +119,6 @@
         (append ws-butler-global-exempt-modes
                 '(special-mode comint-mode term-mode eshell-mode))))
 
-(global-set-key [remap move-beginning-of-line]
-                '+beginning-of-line)
-
 ;;;###autoload
 (defun +beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
