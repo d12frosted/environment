@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require 'init-path)
+(require 'init-base)
 (require 'init-package)
 (require 'init-org)
 
@@ -29,6 +30,8 @@
   :init
   (setq plantuml-jar-path (concat +path-etc-dir "plantuml.jar")
         org-plantuml-jar-path plantuml-jar-path)
+  (unless (file-exists-p plantuml-jar-path)
+    (no-confirm #'plantuml-download-jar))
   :config
   (setq plantuml-default-exec-mode
         (cond ((executable-find "plantuml") 'executable)
