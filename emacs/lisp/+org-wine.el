@@ -317,7 +317,8 @@ when already at wine entry."
          (action (or action (read-string "Action: " "consume")))
          (amount (or amount (read-number
                              "Amount: "
-                             (+org-entry-get-number "DEFAULT_AMOUNT" 1))))
+                             (min (+org-entry-get-number "AVAILABLE" 1)
+                                  (+org-entry-get-number "DEFAULT_AMOUNT" 1)))))
          (date (or date (org-read-date nil t))))
      (inventory-sub wine-inventory-file id amount action date)
      (when (and (string-equal action "consume")
