@@ -69,5 +69,8 @@ cask "vox"
 cask "vox-preferences-pane"
 cask "xquartz"
 
+# other
+brew "gifsicle"
+
 # fonts
 cask "font-source-code-pro"
