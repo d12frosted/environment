@@ -61,6 +61,7 @@ See URL `https://developers.google.com/protocol-buffers/'."
     :error-filter flycheck-fill-empty-line-numbers
     :error-patterns
     ((info line-start (file-name) ":" line ":" column ": note: " (message) line-end)
+     (warning line-start (file-name) ":" line ":" column ": warning: " (message) line-end)
      (error line-start (file-name) ":" line ":" column ": " (message) line-end)
      (error line-start (file-name) ": " (message) line-end)
      (error line-start (message "In file included from") " " (file-name) ":" line ":" column ":" line-end)
