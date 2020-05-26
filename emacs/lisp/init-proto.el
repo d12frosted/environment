@@ -20,6 +20,8 @@
 (require 'init-file)
 (require 'init-package)
 (require 'init-syntax-check)
+(require 'init-completion)
+(require 'init-ctags)
 
 (defvar-local +proto-custom-include-path nil
   "Path to custom library for protobuf checker.")
@@ -31,10 +33,14 @@
 (use-package protobuf-mode
   :defer t
   :after flycheck
-  :hook ((protobuf-mode . subword-mode))
-  :init
-  (add-hook 'protobuf-mode-hook #'+proto|install-dependencies)
+  :hook ((protobuf-mode . subword-mode)
+         (protobuf-mode . +ctags-enable-auto-update))
   :config
+  (add-hook 'protobuf-mode-hook #'+proto|install-dependencies)
+  (+company-set-backend 'protobuf-mode '(company-dabbrev company-ctags))
+  (define-key protobuf-mode-map (kbd "M-.") #'counsel-etags-find-tag-at-point)
+  (require 'company-ctags)
+  (add-to-list 'company-ctags-modes 'protobuf-mode)
   (require 'flycheck)
   (flycheck-define-checker protobuf-protoc
     "A protobuf syntax checker using the protoc compiler.
@@ -74,25 +80,43 @@ See URL `https://developers.google.com/protocol-buffers/'."
   "Return working directory of the current proto file."
   (+file-locate-dominting-dir (buffer-file-name) "proto"))
 
+(defun +proto--package-path (package)
+  "Calculate location of PACKAGE."
+  (format "%s/src/%s/" (getenv "GOPATH") package))
+
 (defun +proto--install-package (package &optional force)
   "Install PACKAGE.
 
-Does nothing if the package already exists and FORCE is nil."
-  (let* ((gopath (getenv "GOPATH"))
-         (package-path (format "%s/src/%s" gopath package)))
+Does nothing if the package already exists and FORCE is nil.
+
+Returns path to generated TAGS file."
+  (let* ((package-path (+proto--package-path package))
+         (tags-file (expand-file-name +ctags-file-name package-path)))
     (unless (and (null force) (file-exists-p package-path))
-      (shell-command (format "go get -u %s" package)))))
+      (shell-command (format "go get -u %s" package)))
+    (unless (and (null force) (file-exists-p tags-file))
+      (+ctags-create package-path "protobuf"))
+    tags-file))
 
 (defun +proto|install-dependencies ()
   "Install dependencies for writing proto files."
   (interactive)
   (message "Install missing dependencies...")
-  (seq-do #'+proto--install-package
-          '("github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway"
-            "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger"
-            "github.com/golang/protobuf/protoc-gen-go"))
+  (setq-local
+   tags-table-list
+   (append
+    tags-table-list
+    (list (counsel-etags-locate-tags-file))
+    (seq-map #'+proto--install-package
+             '("github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway"
+               "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger"
+               "github.com/golang/protobuf/protoc-gen-go"
+               "github.com/protocolbuffers/protobuf"))))
+  (setq-local counsel-etags-extra-tags-files
+              tags-table-list)
+  (setq-local company-ctags-extra-tags-files
+              tags-table-list)
   (message "All dependencies are installed, have some proto fun!"))
-
 
 (provide 'init-proto)
 ;;; init-proto.el ends here

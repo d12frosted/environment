@@ -109,6 +109,7 @@ stuttering, increase this.")
 (require 'init-file-templates)
 (require 'init-lsp)
 (require 'init-test)
+(require 'init-ctags)
 
 ;; ui
 (require 'init-ui)
