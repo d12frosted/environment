@@ -94,8 +94,7 @@ Returns path to generated TAGS file."
          (tags-file (expand-file-name +ctags-file-name package-path)))
     (unless (and (null force) (file-exists-p package-path))
       (shell-command (format "go get -u %s" package)))
-    (unless (and (null force) (file-exists-p tags-file))
-      (+ctags-create package-path "protobuf"))
+    (+ctags-create package-path "protobuf" force)
     tags-file))
 
 (defun +proto|install-dependencies ()

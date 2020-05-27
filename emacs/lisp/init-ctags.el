@@ -22,21 +22,25 @@
 (defvar +ctags-file-name "TAGS"
   "Location for tags file produced by 'ctags'.")
 
-(defun +ctags-create (dir-name lang)
+(defun +ctags-create (dir-name lang &optional force)
   "Generate tags file in DIR-NAME.
 
 Only files matching LANG are processed.
 
-Returns path to generated file."
-  (interactive)
-  (shell-command
-   (format "%s -f %s/%s -e -R %s --languages=%s"
-           (executable-find "ctags")
-           dir-name
-           +ctags-file-name
-           (directory-file-name dir-name)
-           lang))
-  (expand-file-name +ctags-file-name dir-name))
+Returns path to generated file.
+
+When FORCE is non-nil, tags are not generated if tags file
+already exists."
+  (let ((file (expand-file-name +ctags-file-name dir-name)))
+    (unless (and (null force) (file-exists-p file))
+      (shell-command
+       (format "%s -f %s/%s -e -R %s --languages=%s"
+               (executable-find "ctags")
+               dir-name
+               +ctags-file-name
+               (directory-file-name dir-name)
+               lang)))
+    file))
 
 (defun +ctags-enable-auto-update ()
   "Enable TAGS file automatic update."
