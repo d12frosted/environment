@@ -51,6 +51,7 @@ Returns path to generated file."
 
 (use-package counsel-etags
   :defer t
+  :commands (counsel-etags-locate-tags-file)
   :init
   (setq counsel-etags-update-interval 10)
   :config
@@ -58,6 +59,24 @@ Returns path to generated file."
 
 (use-package company-ctags
   :defer t)
+
+(defun +ctags-set-files (files)
+  "Setup list of tags FILES."
+  (setq-local tags-table-list files)
+  (setq-local counsel-etags-extra-tags-files files)
+  (setq-local company-ctags-extra-tags-files files))
+
+(defun +ctags-cons (tags-file)
+  "Add TAGS-FILE to the tags list.
+
+TAGS-FILE must be absolute path to the tags file."
+  (+ctags-set-files (cons tags-file tags-table-list)))
+
+(defun +ctags-append (files)
+  "Append tags FILES to the tags list.
+
+Each element of FILES must be absolute path to the tags file."
+  (+ctags-set-files (append tags-table-list files)))
 
 (provide 'init-ctags)
 ;;; init-ctags.el ends here

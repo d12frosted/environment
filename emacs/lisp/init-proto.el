@@ -102,20 +102,13 @@ Returns path to generated TAGS file."
   "Install dependencies for writing proto files."
   (interactive)
   (message "Install missing dependencies...")
-  (setq-local
-   tags-table-list
-   (append
-    tags-table-list
-    (list (counsel-etags-locate-tags-file))
-    (seq-map #'+proto--install-package
-             '("github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway"
-               "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger"
-               "github.com/golang/protobuf/protoc-gen-go"
-               "github.com/protocolbuffers/protobuf"))))
-  (setq-local counsel-etags-extra-tags-files
-              tags-table-list)
-  (setq-local company-ctags-extra-tags-files
-              tags-table-list)
+  (+ctags-append
+   (seq-map #'+proto--install-package
+            '("github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway"
+              "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger"
+              "github.com/golang/protobuf/protoc-gen-go"
+              "github.com/protocolbuffers/protobuf")))
+  (+ctags-cons (counsel-etags-locate-tags-file))
   (message "All dependencies are installed, have some proto fun!"))
 
 (provide 'init-proto)
