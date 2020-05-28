@@ -277,10 +277,10 @@ It is relative to `org-directory', unless it is absolute.")
 
    ;; more structured view
    org-agenda-prefix-format
-   '((agenda . " %i %-24:c%?-12t %12s")
-     (todo . " %i %-24:c")
-     (tags . " %i %-24:c")
-     (search . " %i %-24:c"))
+   '((agenda . " %i %-24:(+org-entry-category) %?-12t %12s")
+     (todo . " %i %-24:(+org-entry-category)")
+     (tags . " %i %-24:(+org-entry-category)")
+     (search . " %i %-24:(+org-entry-category)"))
    org-agenda-todo-keyword-format "%-1s"
    org-agenda-tags-column 0
 

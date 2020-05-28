@@ -17,6 +17,7 @@
 ;;
 ;;; Code:
 
+(require '+string)
 (require '+org)
 (require '+org-brain)
 (require 'subr-x)
@@ -153,6 +154,19 @@ When CHILD-HOOK is non-nil it's being called with point at child."
                                0
                              (/ (apply #'+ values)
                                 (float (length values)))))))
+
+;;;###autoload
+(defun +org-entry-category ()
+  "Get category of item at point.
+
+Supports `org-roam' filenames by chopping prefix cookie."
+  (+string-chop-prefix-regexp
+   "^[0-9]+\\-"
+   (or (+org-entry-get "CATEGORY")
+       (if buffer-file-name
+           (file-name-sans-extension
+            (file-name-nondirectory buffer-file-name))
+			   ""))))
 
 (provide '+org-prop)
 ;;; +org-prop.el ends here
