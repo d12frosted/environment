@@ -265,9 +265,11 @@ It is relative to `org-directory', unless it is absolute.")
   (advice-add #'org-agenda-clock-out :after #'+org-save-all)
   :config
   (eval-when-compile
-    (require '+org-agenda))
+    (require '+org-agenda)
+    (require '+org-notes))
   (setq
-   org-agenda-files (list org-directory)
+   org-agenda-files (list org-directory
+                          +org-notes-directory)
    org-agenda-text-search-extra-files (list (expand-file-name ".archive/archive" org-directory)
                                             (expand-file-name ".archive/archive.org" org-directory))
    ;; also show state change in log mode
