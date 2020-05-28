@@ -397,6 +397,7 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package +org-notes
   :defer t
   :straight (:type built-in)
+  :defines (+org-notes-directory)
   :commands (+org-notes-list
              +org-notes-find
              +org-notes-setup-buffer)
