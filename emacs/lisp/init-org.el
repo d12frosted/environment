@@ -38,6 +38,7 @@ It is relative to `org-directory', unless it is absolute.")
 (defvar +org-refile-ignore-tags '("JOURNAL" "REFILE")
   "List of tags to ignore during refile.")
 
+(defvar org-agenda-files nil)
 (defvar org-export-backends
   '(beamer
     latex
@@ -69,6 +70,7 @@ It is relative to `org-directory', unless it is absolute.")
           ob-dot
           ob-plantuml))
   (setq org-directory (concat +path-home-dir "Dropbox/vulpea/"))
+  (add-to-list 'org-agenda-files org-directory)
   :config
   (require '+org-auto-id)
   (require '+org-agenda)
@@ -274,8 +276,6 @@ It is relative to `org-directory', unless it is absolute.")
   (advice-add #'org-agenda-clock-out :after #'+org-save-all)
   :config
   (setq
-   org-agenda-files (list org-directory
-                          +org-notes-directory)
    org-agenda-text-search-extra-files (list (expand-file-name ".archive/archive" org-directory)
                                             (expand-file-name ".archive/archive.org" org-directory))
    ;; also show state change in log mode
@@ -409,6 +409,7 @@ It is relative to `org-directory', unless it is absolute.")
              +org-notes-setup-buffer)
   :init
   (setq +org-notes-directory (concat org-directory "notes/"))
+  (add-to-list 'org-agenda-files +org-notes-directory)
   (add-to-list 'window-buffer-change-functions
                #'+org-notes-setup-buffer))
 
