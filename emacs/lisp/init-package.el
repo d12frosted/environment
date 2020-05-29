@@ -89,8 +89,6 @@ Possible values are: upstream, mirror and local.")
 
 ;; Should set before loading `use-package'
 (eval-and-compile
-  (setq use-package-always-ensure nil)
-  (setq use-package-always-defer t)
   (setq use-package-expand-minimally t)
   (setq use-package-enable-imenu-support t))
 (require 'use-package)

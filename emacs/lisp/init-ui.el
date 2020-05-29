@@ -122,10 +122,6 @@
   (setq flycheck-color-mode-line-show-running nil)
   (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
-(use-package auto-fill
-  :straight (auto-fill :type built-in)
-  :diminish auto-fill-function)
-
 (when (and +sys-mac-p +sys-graphic-p)
   (setq-default line-spacing 1)
   (add-to-list 'default-frame-alist '(font . "Source Code Pro")))

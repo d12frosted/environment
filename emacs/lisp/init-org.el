@@ -264,9 +264,6 @@ It is relative to `org-directory', unless it is absolute.")
   (advice-add #'org-agenda-clock-in :after #'+org-save-all)
   (advice-add #'org-agenda-clock-out :after #'+org-save-all)
   :config
-  (eval-when-compile
-    (require '+org-agenda)
-    (require '+org-notes))
   (setq
    org-agenda-files (list org-directory
                           +org-notes-directory)
@@ -416,6 +413,7 @@ It is relative to `org-directory', unless it is absolute.")
   :commands (org-roam-dailies-today
              org-roam-dailies-yesterday
              org-roam-dailies-tomorrow
+             org-roam-dailies-date
              org-roam-find-file
              org-roam-insert
              org-roam-db--clear
@@ -463,6 +461,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package company-org-roam
   :straight (:host github :repo "org-roam/company-org-roam")
+  :defer t
   :init
   (set-company-backend! 'org-mode
     '(company-org-roam company-yasnippet company-dabbrev)))
@@ -481,7 +480,7 @@ It is relative to `org-directory', unless it is absolute.")
   (add-hook 'write-file-functions 'time-stamp))
 
 (use-package org-journal
-  :defer
+  :after org-roam
   :init
   (setq
    org-journal-find-file #'find-file
