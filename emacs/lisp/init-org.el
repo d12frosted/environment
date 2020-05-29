@@ -145,12 +145,18 @@ It is relative to `org-directory', unless it is absolute.")
    org-tags-exclude-from-inheritance '("PROJECT")))
 
 (use-package org-clock
-  :defer t
+  :commands org-clock-save
   :straight org-plus-contrib
   :init
   (setq
+   org-clock-persist-file (expand-file-name "org-clock-save.el" +path-etc-dir)
    ;; remove clocked tasks with 0:00 duration
-   org-clock-out-remove-zero-time-clocks t))
+   org-clock-out-remove-zero-time-clocks t
+   org-clock-persist 'history
+   ;; Resume when clocking into task with open clock
+   org-clock-in-resume t)
+  :config
+  (add-hook 'kill-emacs-hook #'org-clock-save))
 
 (use-package org-refile
   :defer t
