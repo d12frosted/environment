@@ -124,6 +124,9 @@ It is relative to `org-directory', unless it is absolute.")
    ;; use fast todo selection
    org-use-fast-todo-selection t
 
+   ;; block parent until children are done
+   org-enforce-todo-dependencies t
+
    ;; allo to fast fix todo state without triggering anything
    org-treat-S-cursor-todo-selection-as-state-change nil
 
