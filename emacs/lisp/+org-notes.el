@@ -19,6 +19,23 @@
 
 (defvar +org-notes-directory nil)
 
+;; compiler
+(defvar time-stamp-start)
+(defvar org-roam-last-window)
+(defvar org-roam-buffer)
+(declare-function deft "deft")
+(declare-function deft-refresh "deft")
+(declare-function org-roam-find-file "org-roam")
+(declare-function org-roam-insert "org-roam")
+(declare-function org-roam-mode "org-roam")
+(declare-function org-roam-db-build-cache "org-roam-db")
+(declare-function org-roam-db--clear "org-roam-db")
+(declare-function org-roam "org-roam-buffer")
+(declare-function org-roam-buffer--visibility "org-roam-buffer")
+(declare-function org-roam--current-visibility "org-roam-buffer")
+(declare-function org-roam-dailies-today "org-roam-dailies")
+(declare-function org-journal-new-entry "org-journal")
+
 (defun +org-notes-list ()
   "Open a list of notes."
   (interactive)
@@ -45,9 +62,6 @@
   "Setup current buffer for notes viewing and editing.
 
 If the current buffer is not a note, does nothing."
-  (eval-when-compile
-    (require 'org-roam)
-    (require 'time-stamp))
   (unless (active-minibuffer-window)
     (if (and buffer-file-name
              (string-equal +org-notes-directory
@@ -57,11 +71,11 @@ If the current buffer is not a note, does nothing."
             (org-roam-mode 1))
           (setq-local time-stamp-start "#\\+TIME-STAMP:[ 	]+\\\\?[\"<]+")
           (setq org-roam-last-window (get-buffer-window))
-          (unless (eq 'visible (org-roam--current-visibility))
+          (unless (eq 'visible (org-roam-buffer--visibility))
             (delete-other-windows)
             (call-interactively #'org-roam)))
       (when (and (fboundp #'org-roam-buffer--visibility)
-                 (eq 'visible (org-roam--current-visibility)))
+                 (eq 'visible (org-roam-buffer--visibility)))
         (delete-window (get-buffer-window org-roam-buffer))))))
 
 (defun +org-notes-rebuild ()
