@@ -48,7 +48,6 @@ buffer."
 
 (defun +string-chop-prefix-regexp (prefix s)
   "Remove PREFIX regexp if it is at the start of S."
-  (message "(+string-chop-prefix-regexp %s %s)" prefix s)
   (s-chop-prefix (car (s-match prefix s)) s))
 
 (defun +string-chop-suffix-regexp (suffix s)
