@@ -17,6 +17,8 @@
 ;;
 ;;; Code:
 
+(require 's)
+
 ;;;###autoload
 (defun +string-match-1 (regexp val)
   "Get the first group from REGEXP match of the VAL.
