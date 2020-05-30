@@ -17,13 +17,20 @@
 ;;
 ;;; Code:
 
-(require 'init-path)
+(require 'cl-lib)
 (require 'init-env)
-(require 'init-package)
 (require 'init-keybindings)
 (require 'init-navigation)
-(require 'cl-lib)
+(require 'init-package)
+(require 'init-path)
 (require '+company)
+(require '+org-agenda)
+(require '+org-auto-id)
+(require '+org-cha)
+(require '+org-cigars)
+(require '+org-dependent)
+(require '+org-wine)
+(require '+org-capture)
 
 (defvar +capture-inbox-file (format "inbox-%s.org" +sys-name)
   "The path to the inbox file.
@@ -72,13 +79,6 @@ It is relative to `org-directory', unless it is absolute.")
   (setq org-directory (concat +path-home-dir "Dropbox/vulpea/"))
   (add-to-list 'org-agenda-files org-directory)
   :config
-  (require '+org-auto-id)
-  (require '+org-agenda)
-  (require '+org-cha)
-  (require '+org-wine)
-  (require '+org-cigars)
-  (require '+org-dependent)
-
   (define-key org-mode-map (kbd "C-a") '+org-beginning-of-line)
 
   ;; open files in the same window
@@ -198,7 +198,6 @@ It is relative to `org-directory', unless it is absolute.")
   :defer t
   :straight org-plus-contrib
   :config
-  (require '+org-capture)
   (dolist (var '(+capture-inbox-file
                  +capture-journal-file))
     (set var (expand-file-name (symbol-value var) org-directory)))
@@ -564,6 +563,7 @@ ARGS are ignored."
   (let ((_ args)))
   (org-save-all-org-buffers))
 
+(declare-function org-element-at-point "org-element")
 (defun +org-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
 
