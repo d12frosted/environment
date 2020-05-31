@@ -229,7 +229,9 @@ option set in the options section.
       (+org-prompt-completing-property "CARBONATION" wine-carbonation-types)
       (save-buffer)
       (wine-refresh-entry)
-      (save-buffer))))
+      (save-buffer)
+      (when (y-or-n-p "Acquire? ")
+        (call-interactively #'wine/acquire)))))
 
 (defun wine-entry-p ()
   "Return non-nil when entry at point is wine entry."
