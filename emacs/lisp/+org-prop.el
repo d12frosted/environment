@@ -21,6 +21,7 @@
 (require '+org)
 (require '+org-brain)
 (require 'subr-x)
+(require 'lib-fun)
 
 ;;;###autoload
 (defun +org-prompt-property (name &optional initial)
@@ -90,11 +91,7 @@ SOURCE and TYPE are passed to `+brain-make-link'."
   "Repeat FN prompt for a property with NAME.
 
 FN is called with NAME as the first argument and ARGS as the rest."
-  (let (result (inhibit-quit t))
-    (with-local-quit
-      (while t
-        (setq result (cons (apply fn (cons name args)) result))))
-    (setq quit-flag nil)
+  (let ((result (+repeat-fn fn (cons name args))))
     (+org-entry-set name (mapconcat #'identity result " "))))
 
 ;;;###autoload
