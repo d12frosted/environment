@@ -1,6 +1,6 @@
 #+begin_html
 <p align="center">
-  <img width="256px" src="images/d12frosted.svg" alt="Banner">
+  <img width="256px" src="images/d12frosted.png" alt="Banner">
 </p>
 <h1 align="center">d12frosted environment</h1>
 <p align="center">
