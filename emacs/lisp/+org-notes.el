@@ -64,7 +64,7 @@
 If the current buffer is not a note, does nothing."
   (unless (active-minibuffer-window)
     (if (and buffer-file-name
-             (string-equal +org-notes-directory
+             (string-equal (file-name-as-directory +org-notes-directory)
                            (file-name-directory buffer-file-name)))
         (progn
           (unless (bound-and-true-p org-roam-mode)
