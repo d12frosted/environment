@@ -216,10 +216,7 @@ option set in the options section.
       (+org-prompt-property "NAME")
       (org-set-property "YEAR" nil)
       (+org-prompt-brain-property "REGION" wine-regions-parent id 'parent)
-      (+org-prompt-property-repeating
-       #'+org-prompt-brain-property-fn
-       "GRAPES"
-       wine-grapes-parent)
+      (wine/set-grapes)
       (+org-prompt-number-property "SUGAR")
       (+org-prompt-number-property "ALCOHOL")
       (+org-prompt-property "PRICE")
