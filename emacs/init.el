@@ -125,6 +125,7 @@ stuttering, increase this.")
 (require 'init-proto)
 (require 'init-json)
 (require 'init-yaml)
+(require 'init-js)
 (require 'init-scala)
 
 ;; other
