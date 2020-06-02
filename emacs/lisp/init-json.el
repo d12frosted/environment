@@ -17,6 +17,8 @@
 ;;
 ;;; Code:
 
+(require 'init-package)
+
 (use-package json-mode
   :defer t)
 
