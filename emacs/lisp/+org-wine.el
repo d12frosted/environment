@@ -333,6 +333,16 @@ when already at wine entry."
 ;;
 ;; Ratings
 
+(defvar wine--rating-props
+  '(("AROMA_QUALITY" . 3)
+    ("AROMA_INTENSITY" . 2)
+    ("AROMA_COMPLEXITY" . 3)
+    ("BALANCE" . 3)
+    ("FLAVOURS" . 2)
+    ("AFTERTASTE" . 3)
+    ("GENERAL" . 4))
+  "Wine rating properties and their max value.")
+
 (defun wine/rate (&optional date)
   "Rate wine entry at point.
 
@@ -350,7 +360,10 @@ When DATE is omitted, `current-time' is used."
      (org-with-point-at (org-id-find id t)
        (org-set-tags ":RATING:")
        (org-set-property "DATE" (format-time-string "%Y-%m-%d" date))
-       (+org-prompt-number-property "TOTAL")
+       (seq-map (lambda (cfg)
+                  (+org-prompt-number-property (car cfg))
+                  (+org-entry-set-number (concat (car cfg) "_MAX") (cdr cfg)))
+                wine--rating-props)
        (save-buffer)
        (wine-refresh-rating t)))))
 
@@ -363,6 +376,25 @@ wine entry."
       (save-excursion
         (org-up-heading-safe)
         (wine-refresh-entry))
+    (+org-entry-set-number
+     "SCORE"
+     (seq-reduce #'+
+                 (seq-map #'+org-entry-get-number
+                          (seq-map #'car wine--rating-props))
+                 0))
+    (+org-entry-set-number
+     "SCORE_MAX"
+     (seq-reduce #'+
+                 (seq-map #'+org-entry-get-number
+                          (seq-map (lambda (prop) (concat prop "_MAX"))
+                                   (seq-map #'car wine--rating-props)))
+                 0))
+    (+org-entry-set-number
+     "TOTAL"
+     (* 10.0
+        (/
+         (float (+org-entry-get-number "SCORE"))
+         (float (+org-entry-get-number "SCORE_MAX")))))
     (org-edit-headline
      (wine-format-title wine-rating-title-format))
     (pretty-props/entry)))
