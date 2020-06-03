@@ -304,7 +304,7 @@ when already at wine entry."
          (date (or date (org-read-date nil t))))
      (inventory-add wine-inventory-file id amount source date)
      (let ((prices (wine-get-prices)))
-       (unless (seq-contains prices price)
+       (unless (seq-contains-p prices price)
          (+org-entry-set "PRICE" (+string-join (cons price prices) ", "))))
      (wine-refresh-entry))))
 
