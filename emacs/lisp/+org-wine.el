@@ -227,6 +227,11 @@ option set in the options section.
       (save-buffer)
       (wine-refresh-entry)
       (save-buffer)
+      (when-let ((url (read-string "URL: ")))
+        (org-brain-add-resource
+         url
+         (or (ignore-errors (url-domain (url-generic-parse-url url)))
+             url)))
       (when (y-or-n-p "Acquire? ")
         (call-interactively #'wine/acquire)))))
 
