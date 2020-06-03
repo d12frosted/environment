@@ -224,16 +224,12 @@ option set in the options section.
       (+org-prompt-completing-property "COLOUR" wine-colours)
       (+org-prompt-completing-property "SWEETNESS" wine-sweetness-levels)
       (+org-prompt-completing-property "CARBONATION" wine-carbonation-types)
+      (while (wine--add-url (read-string "URL: ")))
+      (when (y-or-n-p "Acquire? ")
+        (call-interactively #'wine/acquire))
       (save-buffer)
       (wine-refresh-entry)
-      (save-buffer)
-      (when-let ((url (read-string "URL: ")))
-        (org-brain-add-resource
-         url
-         (or (ignore-errors (url-domain (url-generic-parse-url url)))
-             url)))
-      (when (y-or-n-p "Acquire? ")
-        (call-interactively #'wine/acquire)))))
+      (save-buffer))))
 
 (defun wine-entry-p ()
   "Return non-nil when entry at point is wine entry."
@@ -407,6 +403,18 @@ wine entry."
                       result
                       t))))
     result))
+
+;;
+;; URL
+
+(defun wine--add-url (url)
+  "Add URL to the wine entry."
+  (when (and url (not (string-empty-p url)))
+    (org-brain-add-resource
+     url
+     (or (ignore-errors (url-domain (url-generic-parse-url url)))
+         url))
+    t))
 
 ;;
 ;; Refresh
