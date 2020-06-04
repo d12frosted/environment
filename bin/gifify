@@ -134,6 +134,7 @@ else
 fi
 
 PALETTE_FILE="${INPUT%.*}.png"
+filters="fps=${FPS},scale=iw*${SCALE}:ih*${SCALE}:flags=lanczos"
 
 echo "input    = ${INPUT}"
 echo "output   = ${OUTPUT}"
@@ -142,6 +143,7 @@ echo "fps      = ${FPS}"
 echo "palette  = ${PALETTE}"
 echo "compress = ${COMPRESS}"
 echo "args     = ${POSITIONAL[*]}"
+echo "filters  = $filters"
 echo
 
 function cleanup () {
@@ -150,27 +152,28 @@ function cleanup () {
 
 trap cleanup INT TERM EXIT
 
-filters="fps=${FPS},scale=iw*${SCALE}:ih*${SCALE}:flags=lanczos"
-
 case $PALETTE in
   custom)
+    # shellcheck disable=SC2086
     ffmpeg ${POSITIONAL[*]} \
-           -i "$INPUT" \
-           -vf "$filters,palettegen" \
-           "$PALETTE_FILE"
+      -i "$INPUT" \
+      -vf "$filters,palettegen" \
+      "$PALETTE_FILE"
 
+    # shellcheck disable=SC2086
     ffmpeg ${POSITIONAL[*]} \
-           -i "$INPUT" \
-           -i "$PALETTE_FILE" \
-           -filter_complex "$filters [x]; [x][1:v] paletteuse" \
-           "$OUTPUT_TEMP"
+      -i "$INPUT" \
+      -i "$PALETTE_FILE" \
+      -filter_complex "$filters [x]; [x][1:v] paletteuse" \
+      "$OUTPUT_TEMP"
     ;;
 
   default)
+    # shellcheck disable=SC2086
     ffmpeg ${POSITIONAL[*]} \
-           -i "$INPUT" \
-           -filter_complex "$filters" \
-           "$OUTPUT_TEMP"
+      -i "$INPUT" \
+      -filter_complex "$filters" \
+      "$OUTPUT_TEMP"
     ;;
 esac
 
