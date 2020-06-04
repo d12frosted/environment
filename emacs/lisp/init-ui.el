@@ -85,8 +85,8 @@
                                                :foreground "LavenderBlush4"
                                                :background "khaki")))
    '(flycheck-color-mode-line-info-face ((t :inherit mode-line
-                                               :foreground "black"
-                                               :background "LightSkyBlue")))
+                                            :foreground "black"
+                                            :background "LightSkyBlue")))
 
    ;; git-gutter faces
    '(git-gutter:added ((t (:foreground "#97f295"))))
