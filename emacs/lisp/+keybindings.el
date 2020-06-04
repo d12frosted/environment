@@ -21,6 +21,8 @@
 (require 'init-keybindings)
 
 (global-set-key (kbd "C-h F") #'counsel-faces)
+(global-set-key [M-S-down] #'move-text-down)
+(global-set-key [M-S-up]   #'move-text-up)
 (global-set-key [remap move-beginning-of-line] '+beginning-of-line)
 
 (+leader-def
