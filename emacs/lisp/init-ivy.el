@@ -117,5 +117,11 @@ file trees."
   (setq prescient-save-file (concat +path-cache-dir "prescient-save.el"))
   (prescient-persist-mode +1))
 
+(use-package ivy-rich
+  :after ivy
+  :commands (ivy-rich-mode)
+  :init
+  (ivy-rich-mode))
+
 (provide 'init-ivy)
 ;;; init-ivy.el ends here
