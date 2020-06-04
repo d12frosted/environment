@@ -48,14 +48,24 @@ If INITIAL is non-nil, set it as initial value."
                     initial)))
 
 ;;;###autoload
-(defun +org-prompt-number-property (name &optional initial)
+(defun +org-prompt-number-property (name &optional initial extra-info)
   "Prompt for a number value and set is as property with NAME.
 
-If INITIAL is non-nil, set it as initial value."
+If INITIAL is non-nil, set it as initial value.
+
+When EXTRA-INFO is non nil, it's also added to the prompt. Can be
+useful to explain it."
   (org-set-property
    name
    (number-to-string
-    (read-number (concat (+org--pretty-property-prompt name) ": ") initial))))
+    (let ((prompt
+           (if (string-empty-p extra-info)
+               (concat (+org--pretty-property-prompt name) ": ")
+             (concat (+org--pretty-property-prompt name)
+                     " ("
+                     extra-info
+                     "): "))))
+      (read-number prompt initial)))))
 
 ;;;###autoload
 (defun +org-prompt-brain-property (name parent &optional source type)

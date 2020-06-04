@@ -361,7 +361,9 @@ When DATE is omitted, `current-time' is used."
        (org-set-tags ":RATING:")
        (org-set-property "DATE" (format-time-string "%Y-%m-%d" date))
        (seq-map (lambda (cfg)
-                  (+org-prompt-number-property (car cfg))
+                  (+org-prompt-number-property (car cfg)
+                                               0
+                                               (format "0 to %i" (cdr cfg)))
                   (+org-entry-set-number (concat (car cfg) "_MAX") (cdr cfg)))
                 wine--rating-props)
        (save-buffer)
