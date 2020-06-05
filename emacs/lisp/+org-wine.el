@@ -359,7 +359,8 @@ When DATE is omitted, `current-time' is used."
           (id (+brain-new-child (org-id-get-create) name)))
      (org-with-point-at (org-id-find id t)
        (org-set-tags ":RATING:")
-       (org-set-property "DATE" (format-time-string "%Y-%m-%d" date))
+       (+org-entry-set "DATE" (format-time-string "%Y-%m-%d" date))
+       (+org-entry-set-number "RATING_VERSION" 2)
        (seq-map (lambda (cfg)
                   (+org-prompt-number-property (car cfg)
                                                0
@@ -378,25 +379,26 @@ wine entry."
       (save-excursion
         (org-up-heading-safe)
         (wine-refresh-entry))
-    (+org-entry-set-number
-     "SCORE"
-     (seq-reduce #'+
-                 (seq-map #'+org-entry-get-number
-                          (seq-map #'car wine--rating-props))
-                 0))
-    (+org-entry-set-number
-     "SCORE_MAX"
-     (seq-reduce #'+
-                 (seq-map #'+org-entry-get-number
-                          (seq-map (lambda (prop) (concat prop "_MAX"))
-                                   (seq-map #'car wine--rating-props)))
-                 0))
-    (+org-entry-set-number
-     "TOTAL"
-     (* 10.0
-        (/
-         (float (+org-entry-get-number "SCORE"))
-         (float (+org-entry-get-number "SCORE_MAX")))))
+    (pcase (+org-entry-get-number "RATING_VERSION" 1)
+      (`2 (+org-entry-set-number
+           "SCORE"
+           (seq-reduce #'+
+                       (seq-map #'+org-entry-get-number
+                                (seq-map #'car wine--rating-props))
+                       0))
+          (+org-entry-set-number
+           "SCORE_MAX"
+           (seq-reduce #'+
+                       (seq-map #'+org-entry-get-number
+                                (seq-map (lambda (prop) (concat prop "_MAX"))
+                                         (seq-map #'car wine--rating-props)))
+                       0))
+          (+org-entry-set-number
+           "TOTAL"
+           (* 10.0
+              (/
+               (float (+org-entry-get-number "SCORE"))
+               (float (+org-entry-get-number "SCORE_MAX")))))))
     (org-edit-headline
      (wine-format-title wine-rating-title-format))
     (pretty-props/entry)))
