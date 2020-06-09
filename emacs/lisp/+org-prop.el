@@ -101,7 +101,7 @@ SOURCE and TYPE are passed to `+brain-make-link'."
   "Repeat FN prompt for a property with NAME.
 
 FN is called with NAME as the first argument and ARGS as the rest."
-  (let ((result (+repeat-fn fn (cons name args))))
+  (let ((result (apply #'+repeat-fn fn name args)))
     (+org-entry-set name (mapconcat #'identity result " "))))
 
 ;;;###autoload
