@@ -33,6 +33,7 @@
 (declare-function org-roam-insert "org-roam")
 (declare-function org-roam-mode "org-roam")
 (declare-function org-roam--extract-tags "org-roam")
+(declare-function org-roam--extract-tags-prop "org-roam")
 (declare-function org-roam-db-query "org-roam-db")
 (declare-function org-roam-db-build-cache "org-roam-db")
 (declare-function org-roam-db--clear "org-roam-db")
@@ -111,13 +112,10 @@ If the current buffer is not a note, does nothing."
   (org-roam-db-build-cache))
 
 (defun +org-notes-tags-read ()
-  "Return list of tags as set in the buffer.
-
-Ideally it should fully support `org-roam' tags, but right now it
-only supports tags set in ROAM_TAGS property."
+  "Return list of tags as set in the buffer."
   (unless (+org-notes-buffer-p)
     (user-error "Current buffer is not a note"))
-  (org-roam--extract-tags))
+  (org-roam--extract-tags-prop (buffer-file-name (buffer-base-buffer))))
 
 (defun +org-notes-tags-add ()
   "Add a tag to current note."
