@@ -111,6 +111,7 @@ stuttering, increase this.")
 (require 'init-lsp)
 (require 'init-test)
 (require 'init-ctags)
+(require 'init-undo)
 
 ;; ui
 (require 'init-ui)
@@ -127,6 +128,7 @@ stuttering, increase this.")
 (require 'init-json)
 (require 'init-yaml)
 (require 'init-js)
+(require 'init-ruby)
 (require 'init-scala)
 
 ;; other
