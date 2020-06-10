@@ -25,6 +25,7 @@
 (defvar org-roam-buffer)
 (declare-function deft "deft")
 (declare-function deft-refresh "deft")
+(declare-function org-read-date "org")
 (declare-function org-roam-find-file "org-roam")
 (declare-function org-roam-insert "org-roam")
 (declare-function org-roam-mode "org-roam")
@@ -34,29 +35,50 @@
 (declare-function org-roam-buffer--visibility "org-roam-buffer")
 (declare-function org-roam--current-visibility "org-roam-buffer")
 (declare-function org-roam-dailies-today "org-roam-dailies")
+(declare-function org-roam-dailies-date "org-roam-dailies")
+(declare-function org-roam-dailies--file-for-time "org-roam-dailies")
 (declare-function org-journal-new-entry "org-journal")
 
 (defun +org-notes-list ()
   "Open a list of notes."
   (interactive)
-  (call-interactively #'deft)
-  (call-interactively #'deft-refresh))
+  (deft)
+  (deft-refresh))
 
 (defun +org-notes-find ()
   "Find a note."
   (interactive)
-  (call-interactively #'org-roam-find-file))
+  (org-roam-find-file))
 
 (defun +org-notes-insert ()
   "Insert a link to the note."
   (interactive)
-  (call-interactively #'org-roam-insert))
+  (org-roam-insert))
 
 (defun +org-notes-new-journal-entry ()
-  "Create new journal entry."
+  "Create new journal entry.
+
+By default it uses current date to find a daily. With
+\\[universal-argument] user may select the date."
   (interactive)
-  (call-interactively #'org-roam-dailies-today)
-  (call-interactively #'org-journal-new-entry))
+  (cond
+   ((equal current-prefix-arg '(4))     ; select date
+    (let* ((time (org-read-date nil 'to-time)))
+      (org-roam-dailies--file-for-time time)
+      (org-journal-new-entry nil time)))
+   (t
+    (org-roam-dailies-today)
+    (org-journal-new-entry nil))))
+
+(defun +org-notes-dailies-today ()
+  "Find a daily note for today."
+  (interactive)
+  (org-roam-dailies-today))
+
+(defun +org-notes-dailies-date ()
+  "Find a daily note for date specified using calendar."
+  (interactive)
+  (org-roam-dailies-date))
 
 (defun +org-notes-setup-buffer (&optional _)
   "Setup current buffer for notes viewing and editing.

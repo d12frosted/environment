@@ -78,8 +78,8 @@
 
   "n" '(nil :which-key "notes...")
   "nd" '(nil :which-key "by date...")
-  "ndd" '(org-roam-dailies-date :which-key "arbitrary date")
-  "ndt" '(org-roam-dailies-today :which-key "today")
+  "ndd" '(+org-notes-dailies-date :which-key "arbitrary date")
+  "ndt" '(+org-notes-dailies-today :which-key "today")
   "nf" '(+org-notes-find :which-key "find")
   "ng" '(org-roam-graph :which-key "graph")
   "ni" '(+org-notes-insert :which-key "insert")
