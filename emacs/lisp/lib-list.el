@@ -17,13 +17,13 @@
 ;;
 ;;; Code:
 
-(defun +enlist (exp)
+(defun +seq-enlist (exp)
   "Return EXP wrapped in a list, or as-is if already a list."
   (declare (pure t) (side-effect-free t))
   (if (listp exp) exp (list exp)))
 
-(defun +flatten (list-of-lists)
-  "Flatten LIST-OF-LISTS presented as ARGS."
+(defun +seq-flatten (list-of-lists)
+  "Flatten LIST-OF-LISTS."
   (apply #'append list-of-lists))
 
 (provide 'lib-list)

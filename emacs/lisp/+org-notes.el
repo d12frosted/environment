@@ -124,7 +124,10 @@ only supports tags set in ROAM_TAGS property."
   (interactive)
   (unless (+org-notes-buffer-p)
     (user-error "Current buffer is not a note"))
-  (let* ((tags (seq-uniq (+flatten (+flatten (org-roam-db-query [:select tags :from tags])))))
+  (let* ((tags (seq-uniq
+                (+seq-flatten
+                 (+seq-flatten
+                  (org-roam-db-query [:select tags :from tags])))))
          (tag (completing-read "Tag: " tags)))
     (when (string-empty-p tag)
       (user-error "Tag can't be empty"))

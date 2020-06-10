@@ -144,7 +144,7 @@ Examples:
   ; unsets backends for `sh-mode'
   (+company-set-backend 'sh-mode nil)"
   (declare (indent defun))
-  (dolist (mode (+enlist modes))
+  (dolist (mode (+seq-enlist modes))
     (if (null (car backends))
         (setq +company-backend-alist
               (delq (assq mode +company-backend-alist)
