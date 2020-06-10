@@ -22,5 +22,9 @@
   (declare (pure t) (side-effect-free t))
   (if (listp exp) exp (list exp)))
 
+(defun +flatten (list-of-lists)
+  "Flatten LIST-OF-LISTS presented as ARGS."
+  (apply #'append list-of-lists))
+
 (provide 'lib-list)
 ;;; lib-list.el ends here

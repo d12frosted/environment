@@ -28,6 +28,23 @@
        (match-beginning 1)
        (match-end 1)))))
 
+(defun +org-buffer-setting-set (name value)
+  "Set a buffer setting called NAME to VALUE."
+  (save-excursion
+    (widen)
+    (goto-char (point-min))
+    (if (re-search-forward (concat "^#\\+" name ": \\(.*\\)") (point-max) t)
+        (replace-match (concat "#+" name ": " value))
+      ;; find the first line that doesn't begin with ':' or '#'
+      (let ((found))
+        (while (not (or found (eobp)))
+          (beginning-of-line)
+          (if (or (looking-at "^#")
+                  (looking-at "^:"))
+              (line-move 1 t)
+            (setq found t)
+            (insert "#+" name ": " value "\n")))))))
+
 ;;;###autoload
 (defun +org-get-buffer-settings (name &optional separators)
   "Get a setting NAME from buffer as a list using SEPARATORS."

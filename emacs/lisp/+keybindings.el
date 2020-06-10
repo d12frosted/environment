@@ -85,6 +85,8 @@
   "ni" '(+org-notes-insert :which-key "insert")
   "nj" '(+org-notes-new-journal-entry :which-key "journal entry")
   "nl" '(+org-notes-list :which-key "list")
+  "nt" '(+org-notes-tags-add :which-key "tag")
+  "nT" '(+org-notes-tags-delete :which-key "untag")
 
   "b" '(nil :which-key "buffer...")
   "bM" '(+buffer/switch-to-messages :which-key "switch to messages buffer")
