@@ -36,6 +36,7 @@ set -e
 POSITIONAL=()
 SCALE=1
 FPS=24
+PTS=1
 PALETTE="custom"
 COMPRESS=0
 
@@ -61,6 +62,11 @@ do
       ;;
     --fps)
       FPS="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    --pts)
+      PTS="$2"
       shift # past argument
       shift # past value
       ;;
@@ -103,6 +109,12 @@ function print_usage() {
 
                         defaults to 24
 
+   --pts INT            (optional) specify PTS of the resulting gif
+
+                        affects speed of the playback
+
+                        defaults to 1
+
    --default-palette    (optional) enforce default palette instead of
                         specially generated one, may lead to worse quality
 
@@ -134,12 +146,13 @@ else
 fi
 
 PALETTE_FILE="${INPUT%.*}.png"
-filters="fps=${FPS},scale=iw*${SCALE}:ih*${SCALE}:flags=lanczos"
+filters="fps=${FPS},scale=iw*${SCALE}:ih*${SCALE}:flags=lanczos,setpts=${PTS}*PTS"
 
 echo "input    = ${INPUT}"
 echo "output   = ${OUTPUT}"
 echo "scale    = ${SCALE}"
 echo "fps      = ${FPS}"
+echo "pts      = ${PTS}"
 echo "palette  = ${PALETTE}"
 echo "compress = ${COMPRESS}"
 echo "args     = ${POSITIONAL[*]}"
