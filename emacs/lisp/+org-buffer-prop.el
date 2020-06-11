@@ -1,4 +1,4 @@
-;;; +org-settings.el --- Utilities for working with buffer/tree settings -*- lexical-binding: t; -*-
+;;; +org-buffer-prop.el --- Utilities for working with buffer/tree properties -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris Buliga
 ;;
@@ -18,8 +18,8 @@
 ;;; Code:
 
 ;;;###autoload
-(defun +org-get-buffer-setting (name)
-  "Get a setting called NAME from buffer as a string."
+(defun +org-buffer-prop-get (name)
+  "Get a buffer property called NAME as a string."
   (save-excursion
     (widen)
     (goto-char (point-min))
@@ -28,8 +28,8 @@
        (match-beginning 1)
        (match-end 1)))))
 
-(defun +org-buffer-setting-set (name value)
-  "Set a buffer setting called NAME to VALUE."
+(defun +org-buffer-prop-set (name value)
+  "Set a buffer property called NAME to VALUE."
   (save-excursion
     (widen)
     (goto-char (point-min))
@@ -46,22 +46,22 @@
             (insert "#+" name ": " value "\n")))))))
 
 ;;;###autoload
-(defun +org-get-buffer-settings (name &optional separators)
-  "Get a setting NAME from buffer as a list using SEPARATORS."
-  (split-string (+org-get-buffer-setting name) separators))
+(defun +org-buffer-prop-get-list (name &optional separators)
+  "Get a buffer property NAME as a list using SEPARATORS."
+  (split-string (+org-buffer-prop-get name) separators))
 
 ;;;###autoload
-(defmacro def-org-buffer-setting (name val hook prop doc)
-  "Define a buffer setting with NAME and default value VAL.
+(defmacro def-org-buffer-prop (name val hook prop doc)
+  "Define a buffer property with NAME and default value VAL.
 
-Value is loaded on HOOK from the Org buffer setting named PROP.
+Value is loaded on HOOK from the Org buffer property named PROP.
 
 DOC is used as a documentation string."
-  `(def-org-buffer-setting-generic
+  `(def-org-buffer-prop-generic
      ,name
      ,val
      ,hook
-     (+org-get-buffer-setting ,prop)
+     (+org-buffer-prop-get ,prop)
      ,(format "%s
 
 Can be set in the org-mode buffer by adding following line in the
@@ -72,18 +72,18 @@ top of the file:
               prop)))
 
 ;;;###autoload
-(defmacro def-org-buffer-setting-list (name val sep hook prop doc)
-  "Define a buffer setting with NAME and default value VAL.
+(defmacro def-org-buffer-prop-list (name val sep hook prop doc)
+  "Define a buffer property with NAME and default value VAL.
 
-Value is loaded on HOOK from the Org buffer setting named PROP
+Value is loaded on HOOK from the Org buffer property named PROP
 and then split by SEP to become a list.
 
 DOC is used as a documentation string."
-  `(def-org-buffer-setting-generic
+  `(def-org-buffer-prop-generic
      ,name
      ,val
      ,hook
-     (split-string-and-unquote (+org-get-buffer-setting ,prop) ,sep)
+     (split-string-and-unquote (+org-buffer-prop-get ,prop) ,sep)
      ,(format "%s
 
 Can be set in the org-mode buffer by adding following line in the
@@ -97,17 +97,17 @@ VALUES must be separated by '%s'."
               sep)))
 
 ;;;###autoload
-(defmacro def-org-buffer-brain-entry-setting (name hook prop doc)
-  "Define a buffer setting with NAME and default value VAL.
+(defmacro def-org-buffer-prop-brain-entry (name hook prop doc)
+  "Define a buffer property with NAME and default value VAL.
 
-Value is loaded on HOOK from the Org buffer setting named PROP.
+Value is loaded on HOOK from the Org buffer property named PROP.
 
 DOC is used as a documentation string."
-  `(def-org-buffer-setting-generic
+  `(def-org-buffer-prop-generic
      ,name
      nil
      ,hook
-     (+brain-as-entry (+org-get-buffer-setting ,prop))
+     (+brain-as-entry (+org-buffer-prop-get ,prop))
      ,(format "%s
 
 Can be set in the org-mode buffer by adding following line in the
@@ -118,8 +118,8 @@ top of the file:
               prop)))
 
 ;;;###autoload
-(defmacro def-org-buffer-setting-generic (name val hook getter doc)
-  "Define a buffer setting with NAME and default value VAL.
+(defmacro def-org-buffer-prop-generic (name val hook getter doc)
+  "Define a buffer property with NAME and default value VAL.
 
 Value is set on HOOK using a GETTER.
 
@@ -129,5 +129,5 @@ DOC is used as a documentation string."
      (add-hook ,hook (lambda ()
                        (setq-local ,name ,getter)))))
 
-(provide '+org-settings)
-;;; +org-settings.el ends here
+(provide '+org-buffer-prop)
+;;; +org-buffer-prop.el ends here

@@ -22,7 +22,7 @@
 (require '+org-pretty-props)
 (require '+org-prop)
 (require '+org-places)
-(require '+org-settings)
+(require '+org-buffer-prop)
 (require '+inventory)
 
 ;;;###autoload
@@ -51,45 +51,45 @@ in the options section.
 ;;
 ;; Buffer settings
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   cha-tea-groups-parent
   'cha-mode-hook
   "TEA_GROUPS_PARENT"
   "ID of tea groups parent entry.")
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   cha-tea-parent
   'cha-mode-hook
   "TEA_PARENT"
   "ID of tea parent entry.")
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   cha-fermentation-types-parent
   'cha-mode-hook
   "FERMENTATION_TYPES_PARENT"
   "ID of fermentation types parent entry")
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   cha-pressing-types-parent
   'cha-mode-hook
   "PRESSING_TYPES_PARENT"
   "ID of pressing types parent entry")
 
-(def-org-buffer-setting
+(def-org-buffer-prop
   cha-tea-title-format
   nil
   'cha-mode-hook
   "TEA_TITLE_FORMAT"
   "Format of the tea entry title.")
 
-(def-org-buffer-setting
+(def-org-buffer-prop
   cha-default-currency
   ""
   'cha-mode-hook
   "DEFAULT_CURRENCY"
   "Default currency.")
 
-(def-org-buffer-setting
+(def-org-buffer-prop
   cha-inventory-file
   ""
   'cha-mode-hook

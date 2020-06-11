@@ -20,7 +20,7 @@
 (require '+org)
 (require '+org-brain)
 (require '+org-link)
-(require '+org-settings)
+(require '+org-buffer-prop)
 
 (defvar-local places-config '()
   "Association list of place level and it's entry ID.
@@ -113,7 +113,7 @@ option set in the options section.
   "Get the `places-config' from the current buffer."
   (seq-map
    (lambda (x) (split-string x ":"))
-   (+org-get-buffer-settings "PLACES_CONFIG")))
+   (+org-buffer-prop-get-list "PLACES_CONFIG")))
 
 (provide '+org-places)
 ;;; +org-places.el ends here

@@ -20,7 +20,7 @@
 (require '+org)
 (require '+org-brain)
 (require '+org-link)
-(require '+org-settings)
+(require '+org-buffer-prop)
 
 (defvar-local pretty-props-config '()
   "List of properties used for ordering.
@@ -119,7 +119,7 @@ Enables the `pretty-props-mode' iff the buffer has
 
 (defun pretty-props-buffer-config ()
   "Get the `pretty-props-config' from current buffer."
-  (+org-get-buffer-settings "PROPERTIES_ORDER"))
+  (+org-buffer-prop-get-list "PROPERTIES_ORDER"))
 
 (provide '+org-pretty-props)
 ;;; +org-pretty-props.el ends here

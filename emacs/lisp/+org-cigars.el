@@ -21,7 +21,7 @@
 (require '+org-pretty-props)
 (require '+org-prop)
 (require '+org-places)
-(require '+org-settings)
+(require '+org-buffer-prop)
 (require '+inventory)
 
 ;;
@@ -53,46 +53,46 @@ option set in the options section.
 ;;
 ;; Buffer settings
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   cigars-parent
   'cigars-mode-hook
   "CIGARS_PARENT"
   "ID of cigars parent entry.")
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   cigars-brands-parent
   'cigars-mode-hook
   "BRANDS_PARENT"
   "ID of brands parent entry.")
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   cigars-materials-location-parent
   'cigars-mode-hook
   "MATERIALS_LOCATION_PARENT"
   "ID of materials location parent entry.")
 
-(def-org-buffer-setting
+(def-org-buffer-prop
   cigar-title-format
   nil
   'cigars-mode-hook
   "CIGAR_TITLE_FORMAT"
   "Format of the cigar entry title.")
 
-(def-org-buffer-setting
+(def-org-buffer-prop
   cigar-rating-title-format
   nil
   'cigars-mode-hook
   "RATING_TITLE_FORMAT"
   "Format of the rating entry title.")
 
-(def-org-buffer-setting
+(def-org-buffer-prop
   cigars-inventory-file
   nil
   'cigars-mode-hook
   "INVENTORY_FILE"
   "File name of the inventory.")
 
-(def-org-buffer-setting-list
+(def-org-buffer-prop-list
   cigars-sources
   nil
   " "

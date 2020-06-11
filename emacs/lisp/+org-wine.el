@@ -21,7 +21,7 @@
 (require '+org-pretty-props)
 (require '+org-prop)
 (require '+org-places)
-(require '+org-settings)
+(require '+org-buffer-prop)
 (require '+inventory)
 
 ;;
@@ -53,58 +53,58 @@ option set in the options section.
 ;;
 ;; Buffer settings
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   wine-parent
   'wine-mode-hook
   "WINE_PARENT"
   "ID of wine parent entry.")
 
-(def-org-buffer-setting
+(def-org-buffer-prop
   wine-title-format
   nil
   'wine-mode-hook
   "WINE_TITLE_FORMAT"
   "Format of the wine entry title.")
 
-(def-org-buffer-setting
+(def-org-buffer-prop
   wine-rating-title-format
   nil
   'wine-mode-hook
   "WINE_RATING_TITLE_FORMAT"
   "Format of the wine entry title.")
 
-(def-org-buffer-setting
+(def-org-buffer-prop
   wine-inventory-file
   nil
   'wine-mode-hook
   "INVENTORY_FILE"
   "File name of the inventory.")
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   wine-wineries-parent
   'wine-mode-hook
   "WINERIES_PARENT"
   "ID of wineries parent entry.")
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   wine-regions-parent
   'wine-mode-hook
   "REGIONS_PARENT"
   "ID of regions parent entry.")
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   wine-styles-parent
   'wine-mode-hook
   "STYLES_PARENT"
   "ID of styles parent entry.")
 
-(def-org-buffer-brain-entry-setting
+(def-org-buffer-prop-brain-entry
   wine-grapes-parent
   'wine-mode-hook
   "GRAPES_PARENT"
   "ID of grapes parent entry.")
 
-(def-org-buffer-setting-list
+(def-org-buffer-prop-list
   wine-sources
   nil
   " "
@@ -112,7 +112,7 @@ option set in the options section.
   "SOURCES"
   "List of sources (or shops) of wine.")
 
-(def-org-buffer-setting-list
+(def-org-buffer-prop-list
   wine-colours
   nil
   ", "
@@ -120,7 +120,7 @@ option set in the options section.
   "COLOURS"
   "List of colours.")
 
-(def-org-buffer-setting-list
+(def-org-buffer-prop-list
   wine-sweetness-levels
   nil
   ", "
@@ -128,7 +128,7 @@ option set in the options section.
   "SWEETNESS"
   "List of sweetness levels.")
 
-(def-org-buffer-setting-list
+(def-org-buffer-prop-list
   wine-carbonation-types
   nil
   ", "

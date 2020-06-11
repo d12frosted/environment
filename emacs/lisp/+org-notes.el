@@ -17,7 +17,7 @@
 ;;
 ;;; Code:
 
-(require '+org-settings)
+(require '+org-buffer-prop)
 (require 'lib-list)
 
 (defvar +org-notes-directory nil)
@@ -129,7 +129,7 @@ If the current buffer is not a note, does nothing."
          (tag (completing-read "Tag: " tags)))
     (when (string-empty-p tag)
       (user-error "Tag can't be empty"))
-    (+org-buffer-setting-set
+    (+org-buffer-prop-set
      "ROAM_TAGS"
      (combine-and-quote-strings (seq-uniq (cons tag (+org-notes-tags-read)))))
     (org-roam-db--update-tags)))
@@ -141,7 +141,7 @@ If the current buffer is not a note, does nothing."
     (user-error "Current buffer is not a note"))
   (let* ((tags (+org-notes-tags-read))
          (tag (completing-read "Tag: " tags nil 'require-match)))
-    (+org-buffer-setting-set
+    (+org-buffer-prop-set
      "ROAM_TAGS"
      (combine-and-quote-strings (delete tag tags)))
     (org-roam-db--update-tags)))
