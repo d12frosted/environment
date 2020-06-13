@@ -22,6 +22,10 @@
 (require '+org-link)
 (require '+org-buffer-prop)
 
+(declare-function org-map-entries "org")
+(declare-function org-get-property-block"org")
+(declare-function org-indent-line"org")
+
 (defvar-local pretty-props-config '()
   "List of properties used for ordering.
 

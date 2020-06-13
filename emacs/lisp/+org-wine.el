@@ -24,6 +24,21 @@
 (require '+org-buffer-prop)
 (require '+inventory)
 
+(declare-function org-edit-headline "org")
+(declare-function org-entry-get "org")
+(declare-function org-entry-properties "org")
+(declare-function org-map-entries "org")
+(declare-function org-read-date "org")
+(declare-function org-set-property "org")
+(declare-function org-set-tags "org")
+(declare-function org-up-heading-safe "org")
+(declare-function org-id-find "org-id")
+(declare-function org-id-get "org-id")
+(declare-function org-id-get-create "org-id")
+(declare-function org-with-point-at "org-macs")
+(declare-function outline-up-heading "outline")
+(declare-function org-brain-add-resource "org-brain")
+
 ;;
 ;; Minor mode
 

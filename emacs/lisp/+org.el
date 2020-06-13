@@ -17,20 +17,21 @@
 ;;
 ;;; Code:
 
-;;;###autoload
+(declare-function org-up-heading-safe "org")
+(declare-function org-remove-empty-drawer-at "org")
+(declare-function org-id-get-create "org-id")
+
 (defmacro +org-with-file (file &rest body)
   "Execute BODY in `org-mode' FILE."
   `(with-current-buffer (find-file-noselect ,file)
      ,@body))
 
-;;;###autoload
 (defun +org-parent-id ()
   "Return parent id of entry at point."
   (save-excursion
     (when (org-up-heading-safe)
       (org-id-get-create))))
 
-;;;###autoload
 (defun +org/remove-empty-drawer ()
   "Remove empty drawer at point."
   (interactive)
