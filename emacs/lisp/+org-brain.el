@@ -120,16 +120,24 @@ TYPE is one of nil, parent, child, friend."
 (defun +brain-is-child-of (child parent)
   "Return non-nil, when CHILD is a child of PARENT."
   (let ((children (org-brain-children (+brain-as-entry parent))))
-    (seq-contains children child #'+brain-entry-id-equal)))
+    (seq-contains-p children child #'+brain-entry-id-equal)))
 
-;;;###autoload
 (defun +brain-is-transitive-child-of (child parent)
   "Return non-nil, when CHILD is a transitive child of PARENT."
   (let ((children (org-brain-children (+brain-as-entry parent))))
-    (if (seq-contains children child #'+brain-entry-id-equal)
+    (if (seq-contains-p children child #'+brain-entry-id-equal)
         t
       (seq-some (lambda (new-parent)
                   (+brain-is-transitive-child-of child new-parent))
+                children))))
+
+(defun +brain-is-local-transitive-child-of (child parent)
+  "Return non-nil, when CHILD is a transitive child of PARENT."
+  (let* ((children (org-brain-local-children (+brain-as-entry parent))))
+    (if (seq-contains-p children child #'+brain-entry-id-equal)
+        t
+      (seq-some (lambda (new-parent)
+                  (+brain-is-local-transitive-child-of child new-parent))
                 children))))
 
 ;;;###autoload

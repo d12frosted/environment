@@ -61,7 +61,7 @@ option set in the options section.
          (link-type (nth 2 level-config))
          (level-entries (seq-map (lambda (x)
                                    (cons (car x)
-                                         (org-brain-entry-from-id (cdr x))))
+                                         (org-brain-entry-from-id (nth 1 x))))
                                  places-config))
          (entry (+brain-choose-entry-by-parent "Level: " level-id))
          (entry-id (org-brain-entry-identifier entry)))
@@ -75,19 +75,20 @@ option set in the options section.
      (lambda (x)
        (org-set-property (upcase (car x))
                          (+brain-make-link (cdr x))))
+
      ;; list of (level . specific-place-id) to set
      (seq-map
       (lambda (level-cfg)
         (cons (car level-cfg)
               (car (seq-filter
                     (lambda (e)
-                      (+brain-is-transitive-child-of entry-id e))
+                      (+brain-is-local-transitive-child-of entry-id e))
                     (org-brain-children (cdr level-cfg))))))
       ;; list of levels to set
       (seq-filter
        (lambda (level-cfg)
          (and (not (string-equal level (car level-cfg)))
-              (+brain-is-transitive-child-of entry-id (cdr level-cfg))))
+              (+brain-is-local-transitive-child-of entry-id (cdr level-cfg))))
        level-entries)))
 
     ;; set the level value
