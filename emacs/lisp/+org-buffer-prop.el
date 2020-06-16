@@ -42,8 +42,8 @@
           (if (or (looking-at "^#")
                   (looking-at "^:"))
               (line-move 1 t)
-            (setq found t)
-            (insert "#+" name ": " value "\n")))))))
+            (setq found t)))
+        (insert "#+" name ": " value "\n")))))
 
 ;;;###autoload
 (defun +org-buffer-prop-get-list (name &optional separators)
