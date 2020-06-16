@@ -607,7 +607,7 @@ macos_guard && {
     cd "$target/macos" && sudo ./defaults.sh
   }
 
-  theme "skhd" "Patch skhd application PATH" && {
+  theme_guard "skhd" "Patch skhd application PATH" && {
     check skhd && {
       "$target/bin/patch_skhd_path"
     }
