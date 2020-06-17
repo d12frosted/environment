@@ -19,6 +19,7 @@
 
 (require '+org-buffer-prop)
 (require 'lib-list)
+(require 's)
 
 (defvar +org-notes-directory nil)
 
@@ -26,9 +27,13 @@
 (defvar time-stamp-start)
 (defvar org-roam-last-window)
 (defvar org-roam-buffer)
+(declare-function seq-contains-p "seq")
 (declare-function deft "deft")
 (declare-function deft-refresh "deft")
 (declare-function org-read-date "org")
+(declare-function org-back-to-heading "org")
+(declare-function org-get-tags "org")
+(declare-function org-set-tags "org")
 (declare-function org-roam-find-file "org-roam")
 (declare-function org-roam-insert "org-roam")
 (declare-function org-roam-mode "org-roam")
@@ -60,7 +65,22 @@
 (defun +org-notes-insert ()
   "Insert a link to the note."
   (interactive)
-  (org-roam-insert))
+  (when-let*
+      ((res (org-roam-insert))
+       (path (plist-get res :path))
+       (title (plist-get res :title))
+       (roam-tags (+seq-flatten
+                   (+seq-flatten
+                    (org-roam-db-query [:select tags
+                                        :from tags
+                                        :where (= file $s1)]
+                                       path)))))
+    (when (seq-contains-p roam-tags "People")
+      (save-excursion
+        (ignore-errors
+          (org-back-to-heading)
+          (let ((tags (org-get-tags)))
+            (org-set-tags (seq-uniq (cons (+org-notes--title-to-tag title) tags)))))))))
 
 (defun +org-notes-new-journal-entry ()
   "Create new journal entry.
@@ -151,6 +171,10 @@ If the current buffer is not a note, does nothing."
   (and buffer-file-name
        (string-equal (file-name-as-directory +org-notes-directory)
                      (file-name-directory buffer-file-name))))
+
+(defun +org-notes--title-to-tag (title)
+  "Convert TITLE to tag."
+  (concat "@" (s-replace " " "" title)))
 
 (provide '+org-notes)
 ;;; +org-notes.el ends here
