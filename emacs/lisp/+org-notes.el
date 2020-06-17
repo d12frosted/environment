@@ -120,10 +120,20 @@ If the current buffer is not a note, does nothing."
           (setq org-roam-last-window (get-buffer-window))
           (unless (eq 'visible (org-roam-buffer--visibility))
             (delete-other-windows)
-            (call-interactively #'org-roam)))
+            (call-interactively #'org-roam))
+          (+org-notes-ensure-filetag))
       (when (and (fboundp #'org-roam-buffer--visibility)
                  (eq 'visible (org-roam-buffer--visibility)))
         (delete-window (get-buffer-window org-roam-buffer))))))
+
+(defun +org-notes-ensure-filetag ()
+  "Add respective file tag if it's missing in the current note."
+  (let ((tags (+org-notes-tags-read)))
+    (when (and (seq-contains-p tags "People")
+               (null (+org-buffer-prop-get "FILETAGS")))
+      (+org-buffer-prop-set
+       "FILETAGS"
+       (+org-notes--title-as-tag)))))
 
 (defun +org-notes-rebuild ()
   "Rebuild notes database."
@@ -152,7 +162,8 @@ If the current buffer is not a note, does nothing."
     (+org-buffer-prop-set
      "ROAM_TAGS"
      (combine-and-quote-strings (seq-uniq (cons tag (+org-notes-tags-read)))))
-    (org-roam-db--update-tags)))
+    (org-roam-db--update-tags)
+    (+org-notes-ensure-filetag)))
 
 (defun +org-notes-tags-delete ()
   "Delete a tag from current note."
@@ -171,6 +182,10 @@ If the current buffer is not a note, does nothing."
   (and buffer-file-name
        (string-equal (file-name-as-directory +org-notes-directory)
                      (file-name-directory buffer-file-name))))
+
+(defun +org-notes--title-as-tag ()
+  "Return title of the current note as tag."
+  (+org-notes--title-to-tag (+org-buffer-prop-get "TITLE")))
 
 (defun +org-notes--title-to-tag (title)
   "Convert TITLE to tag."
