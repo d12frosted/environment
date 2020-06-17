@@ -79,8 +79,11 @@
       (save-excursion
         (ignore-errors
           (org-back-to-heading)
-          (let ((tags (org-get-tags)))
-            (org-set-tags (seq-uniq (cons (+org-notes--title-to-tag title) tags)))))))))
+          (org-set-tags
+           (seq-uniq
+            (cons
+             (+org-notes--title-to-tag title)
+             (org-get-tags nil t)))))))))
 
 (defun +org-notes-new-journal-entry ()
   "Create new journal entry.
