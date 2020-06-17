@@ -26,9 +26,8 @@
   (scala-mode . subword-mode)
   (scala-mode . lsp)
   :mode "\\.s\\(cala\\|bt\\)$"
-  :init
-  (+scala-bootstrap)
   :config
+  (+scala-bootstrap)
   (setq scala-indent:align-parameters t
         ;; indent block comments to first asterix, not second
         scala-indent:use-javadoc-style t))
