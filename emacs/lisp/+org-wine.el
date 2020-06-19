@@ -24,6 +24,7 @@
 (require '+org-buffer-prop)
 (require '+inventory)
 
+(declare-function seq-contains-p "seq")
 (declare-function org-edit-headline "org")
 (declare-function org-entry-get "org")
 (declare-function org-entry-properties "org")
