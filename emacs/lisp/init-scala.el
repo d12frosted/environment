@@ -32,6 +32,9 @@
         ;; indent block comments to first asterix, not second
         scala-indent:use-javadoc-style t))
 
+(use-package lsp-metals
+  :after scala-mode)
+
 (use-package sbt-mode
   :commands sbt-start sbt-command
   :after scala-mode
