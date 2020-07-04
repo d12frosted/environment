@@ -107,12 +107,21 @@ TYPE is one of nil, parent, child, friend."
    nil
    t))
 
-;;;###autoload
 (defun +brain-choose-entry-by-parent (prompt parent)
   "PROMPT a brain entry from children of PARENT."
   (org-brain-choose-entry
    prompt
-   (org-brain-children (+brain-as-entry parent))
+   (seq-filter (lambda (x) (not (null x)))
+               (org-brain-children (+brain-as-entry parent)))
+   nil
+   t))
+
+(defun +brain-choose-local-entry-by-parent (prompt parent)
+  "PROMPT a brain entry from children of PARENT."
+  (org-brain-choose-entry
+   prompt
+   (seq-filter (lambda (x) (not (null x)))
+               (org-brain-local-children (+brain-as-entry parent)))
    nil
    t))
 

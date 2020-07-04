@@ -215,7 +215,7 @@ option set in the options section.
 
 (defun wine--read-winery ()
   "Read winery."
-  (+brain-choose-entry-by-parent
+  (+brain-choose-local-entry-by-parent
    "Winery: "
    wine-wineries-parent))
 
