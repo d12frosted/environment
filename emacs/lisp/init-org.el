@@ -483,6 +483,10 @@ It is relative to `org-directory', unless it is absolute.")
   :load-path (lambda () (concat straight-base-dir "straight/repos/org-roam-server/"))
   :defer t)
 
+(use-package org-roam-dashboard
+  :straight (:host github :repo "publicimageltd/org-roam-dashboard")
+  :defer t)
+
 (use-package time-stamp
   :straight (:type built-in)
   :init
