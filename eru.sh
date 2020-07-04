@@ -612,6 +612,15 @@ macos_guard && {
       "$target/bin/patch_skhd_path"
     }
   }
+
+  theme_guard "update" && {
+    # reinstall the scripting addition
+    sudo yabai --uninstall-sa
+    sudo yabai --install-sa
+
+    # load the scripting addition
+    killall Dock
+  }
 }
 
 arch_guard && {
