@@ -53,7 +53,7 @@
   (+scala--install-bin
    "metals-emacs"
    (lambda (path)
-     (shell-command
+     (async-shell-command
       (string-join
        (list "coursier bootstrap"
              "--java-opt -Xss4m"
