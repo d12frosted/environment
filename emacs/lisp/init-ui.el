@@ -106,6 +106,8 @@
                                        :foreground unspecified
                                        :background unspecified))))
    '(org-checkbox ((t (:background "#FAF7CC"))))
+   '(org-agenda-dimmed-todo-face ((((background light)) (:foreground "grey50"))
+                                  (((background dark)) (:foreground "grey50"))))
 
    ;; solaire faces
    '(solaire-default-face ((t (:inherit default :background "#FAFAFA"))))
