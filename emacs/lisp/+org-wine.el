@@ -471,6 +471,11 @@ wine entry."
 ;;
 ;; URL
 
+(defun wine/add-url ()
+  "Add an URL to the wine entry at point."
+  (interactive)
+  (while (wine--add-url (read-string "URL: "))))
+
 (defun wine--add-url (url)
   "Add URL to the wine entry."
   (when (and url (not (string-empty-p url)))
