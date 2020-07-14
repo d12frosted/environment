@@ -26,7 +26,7 @@
   (lsp-mode . lsp-lens-mode)
   :init
   (setq lsp-session-file (concat +path-etc-dir "lsp-session")
-        lsp-auto-guess-root t
+        lsp-auto-guess-root nil
         lsp-keep-workspace-alive nil))
 
 (use-package company-lsp
