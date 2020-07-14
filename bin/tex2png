@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+#
+# Convert Tex to PNG
+#
+
+set -e
+
+INPUT=
+OUTPUT=
+DENSITY=300
+QUALITY=90
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+  case $key in
+    -i|--input)
+      INPUT="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -o|--output)
+      OUTPUT="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    --density)
+      DENSITY="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    --quality)
+      QUALITY="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+function print_usage() {
+  echo "Usage:
+
+ gifify -i FILE [OPTIONS]
+
+   -i, --input FILE     (required) specify input text file
+
+   -o, --output FILE    (optional) specify output image file
+
+                        defaults to input file with extension changed to png
+
+   --density INT        (optional) specify density of the output image
+
+                        defaults to 300
+
+   --quality INT        (optional) specify quality of the output image
+
+                        defaults to 90
+"
+}
+
+if [[ -z $INPUT ]]; then
+  echo "Missing input"
+  print_usage
+  exit 1
+fi
+
+if [[ ! -f $INPUT ]]; then
+  echo "'$INPUT' is not a file"
+  print_usage
+  exit 1
+fi
+
+if [[ -z $OUTPUT ]]; then
+  OUTPUT="${INPUT%.*}.png"
+fi
+
+FILE=$(basename "$INPUT")
+WORK_DIR=$(mktemp -d)
+
+echo "input:   $INPUT"
+echo "output:  $OUTPUT"
+echo "density: $DENSITY"
+echo "quality: $QUALITY"
+
+PDF_FILE="${FILE%.*}.pdf"
+IMG_FILE=$(basename "$OUTPUT")
+
+cp "$INPUT" "$WORK_DIR/$FILE"
+(
+  cd "$WORK_DIR"
+  pdflatex "$FILE" -shell-escape
+  convert -density "$DENSITY" "$PDF_FILE" -quality "$QUALITY" "$IMG_FILE"
+)
+
+cp "$WORK_DIR/$IMG_FILE" "$OUTPUT"
