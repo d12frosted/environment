@@ -61,6 +61,7 @@ It is relative to `org-directory', unless it is absolute.")
          (org-mode . cha-mode-maybe-enable)
          (org-mode . wine-mode-maybe-enable)
          (org-mode . cigars-mode-maybe-enable)
+         (org-mode . org-display-inline-images)
          (org-clock-out . +org/remove-empty-drawer))
   :init
   ;; Setup list of Org modules that should always be loaded together
@@ -87,6 +88,9 @@ It is relative to `org-directory', unless it is absolute.")
 
   ;; open directory links in `dired'
   (add-to-list 'org-file-apps '(directory . emacs))
+
+  (add-hook 'org-cycle-hook #'org-display-inline-images)
+  (add-hook 'org-cycle-hook #'org-latex-preview)
 
   (setq
    org-adapt-indentation nil
@@ -229,6 +233,7 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package ox-latex
   :defer t
   :straight org-plus-contrib
+  :hook (org-mode . org-latex-preview)
   :commands (org-latex-preview)
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
@@ -494,6 +499,9 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-journal
   :after org-roam
+  :hook ((org-journal . org-display-inline-images)
+         (org-journal . org-latex-preview)
+         (org-journal . org-fragtog-mode))
   :init
   (setq
    org-journal-find-file #'find-file
@@ -537,6 +545,10 @@ used as title."
                            (funcall deft-parse-title-function
                                     (substring contents begin (match-end 0))))))
                    (org-roam--get-title-or-slug file))))
+
+(use-package org-fragtog
+  :defer t
+  :hook (org-mode . org-fragtog-mode))
 
 ;;; Functions
 
