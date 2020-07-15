@@ -21,7 +21,7 @@
 (require 'init-file-templates)
 (require 'init-lsp)
 
-(defconst +haskell-backend 'eglot
+(defconst +haskell-backend 'lsp-ui
   "Backend for Haskell IDE: eglot, lsp-ui, dante.")
 
 (use-package haskell-mode
@@ -61,7 +61,7 @@
   :hook ((haskell-mode . lsp))
   :commands (lsp-haskell--hie-command)
   :init
-  (setq lsp-haskell-process-path-hie "ghcide"
+  (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
         lsp-haskell-process-args-hie nil))
 
 (provide 'init-haskell)
