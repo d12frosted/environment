@@ -130,6 +130,7 @@ stuttering, increase this.")
 (require 'init-js)
 (require 'init-ruby)
 (require 'init-scala)
+(require 'init-go)
 
 ;; other
 (require 'init-fun)
