@@ -88,7 +88,6 @@ It is relative to `org-directory', unless it is absolute.")
   (+hook-with-delay 'org-mode-hook 1 #'cha-mode-maybe-enable)
   (+hook-with-delay 'org-mode-hook 1 #'wine-mode-maybe-enable)
   (+hook-with-delay 'org-mode-hook 1 #'cigars-mode-maybe-enable)
-  (+hook-with-delay 'org-mode-hook 1 #'org-display-inline-images)
 
   (+hook 'org-cycle-hook #'org-display-inline-images)
 
@@ -225,7 +224,6 @@ It is relative to `org-directory', unless it is absolute.")
   :straight org-plus-contrib
   :commands (org-latex-preview)
   :init
-  (+hook-with-delay 'org-mode-hook 1 #'org-latex-preview)
   (+hook 'org-cycle-hook #'org-latex-preview)
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
