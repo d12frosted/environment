@@ -19,6 +19,7 @@
 
 (require 'init-keybindings)
 (require 'init-path)
+(require 'init-package)
 (require 'lib-fun)
 (require 'project)
 
@@ -42,6 +43,12 @@
       (eval-with-default-dir root
         (call-interactively #'shell-command))
     (user-error "You are not in project")))
+
+(use-package rg
+  :defer t
+  :commands (rg-project)
+  :init
+  (defalias '+project-find-regexp #'rg-project))
 
 (provide 'init-project)
 ;;; init-project.el ends here
