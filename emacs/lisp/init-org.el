@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'lib-hook)
 (require 'init-env)
 (require 'init-keybindings)
 (require 'init-navigation)
@@ -396,7 +397,7 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package org-download
   :defer t
   :init
-  (+hook-with-delay 'org-mode 1 #'org-download-enable)
+  (+hook-with-delay 'org-mode-hook 1 #'org-download-enable)
   (setq-default org-download-method 'attach))
 
 (use-package toc-org
