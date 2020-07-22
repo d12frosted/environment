@@ -324,7 +324,10 @@ It is relative to `org-directory', unless it is absolute.")
 	      '(todo-state-down effort-up category-keep))
        (org-agenda-buffer-name +agenda-habits-buffer-name)))
 
-     )))
+     ))
+  :config/el-patch
+  (el-patch-defun org-install-agenda-files-menu ()
+    "No-op!"))
 
 (use-package org-edna
   :defer t
