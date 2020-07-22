@@ -91,7 +91,6 @@ It is relative to `org-directory', unless it is absolute.")
   (+hook-with-delay 'org-mode-hook 1 #'org-display-inline-images)
 
   (+hook 'org-cycle-hook #'org-display-inline-images)
-  (+hook 'org-cycle-hook #'org-latex-preview)
 
   (setq
    org-adapt-indentation nil
@@ -109,16 +108,6 @@ It is relative to `org-directory', unless it is absolute.")
 
    ;; formatting for properties
    org-property-format "%-24s %s"
-
-   ;; LaTeX preview
-   org-format-latex-options
-   (list :foreground 'default
-         :background 'default
-         :scale 1.5
-         :html-foreground "Black"
-         :html-background "Transparent"
-         :html-scale 1.0
-         :matchers '("begin" "$1" "$" "$$" "\\(" "\\["))
 
    org-todo-keywords
    '((sequence "TODO(t)" "|" "DONE(d!)")
@@ -237,9 +226,18 @@ It is relative to `org-directory', unless it is absolute.")
   :commands (org-latex-preview)
   :init
   (+hook-with-delay 'org-mode-hook 1 #'org-latex-preview)
+  (+hook 'org-cycle-hook #'org-latex-preview)
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-packages-alist '("" "color"))
+  (setq org-format-latex-options
+        (list :foreground 'default
+              :background 'default
+              :scale 1.5
+              :html-foreground "Black"
+              :html-background "Transparent"
+              :html-scale 1.0
+              :matchers '("begin" "$1" "$" "$$" "\\(" "\\[")))
   (setq org-latex-listings 'minted)
   (setq org-latex-inputenc-alist '(("utf8" . "utf8x")))
   (setq org-latex-pdf-process
