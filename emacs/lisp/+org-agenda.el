@@ -54,6 +54,7 @@ Otherwise create it from scratch."
                         (equal current-prefix-arg nil)
                         (get-buffer +agenda-main-buffer-name))))
       (+buffer-display-and-switch buffer)
+    (message "loading agenda ...")
     (org-agenda nil " ")))
 
 (defconst +agenda--refile
