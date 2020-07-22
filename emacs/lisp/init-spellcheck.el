@@ -34,6 +34,20 @@
   (+hook 'text-mode-hook #'flyspell-mode)
   (+hook 'prog-mode-hook #'flyspell-prog-mode))
 
+;; remove sometimes later
+(with-no-warnings
+  (require 'cl))
+
+(use-package flyspell-lazy
+  :after flyspell
+  :commands (flyspell-lazy-mode)
+  :defines (flyspell-lazy-idle-seconds
+            flyspell-lazy-window-idle-seconds)
+  :config
+  (setq flyspell-lazy-idle-seconds 1
+        flyspell-lazy-window-idle-seconds 3)
+  (flyspell-lazy-mode +1))
+
 (use-package flyspell-correct-ivy
   :defer t
   :commands (flyspell-correct-ivy)
