@@ -29,7 +29,7 @@ The FUNCTION is delayed to be evaluated in SECS once HOOK is
 triggered.
 
 DEPTH and LOCAL are passed as is to `+hook'."
-  (let* ((f-name-str (concat (symbol-name (+unquote function)) "-with-delay"))
+  (let* ((f-name-str (concat (symbol-name (+unquote function)) "-with-delay-timer"))
          (f-name (make-symbol f-name-str))
          (doc (format "Call `%s' in %s seconds"
                       (symbol-name (+unquote function))
