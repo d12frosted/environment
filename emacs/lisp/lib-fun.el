@@ -35,5 +35,11 @@ ARGS are passed to FN."
     (setq quit-flag nil)
     (seq-reverse result)))
 
+(defmacro eval-with-default-dir (dir &rest body)
+  "Invoke in DIR the BODY."
+  (declare (debug t) (indent 1))
+  `(let ((default-directory ,dir))
+     ,@body))
+
 (provide 'lib-fun)
 ;;; lib-fun.el ends here

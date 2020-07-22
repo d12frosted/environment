@@ -19,37 +19,29 @@
 
 (require 'init-keybindings)
 (require 'init-path)
+(require 'lib-fun)
+(require 'project)
 
-(use-package projectile
-  :diminish
-  :hook (after-init . projectile-mode)
-  :init
-  (setq projectile-mode-line-prefix ""
-        projectile-sort-order 'recentf
-	      projectile-indexing-method 'alien
-        projectile-cache-file (concat +path-cache-dir "projectile.cache")
-        projectile-known-projects-file (concat +path-cache-dir "projectile-bookmarks.eld")))
+(defalias '+project-switch #'project-switch-project)
+(defalias '+project-find-file #'project-find-file)
+(defalias '+project-find-regexp #'project-find-regexp)
 
-(declare-function projectile-project-p "projectile")
-(declare-function projectile-project-root "projectile")
+(defun +project-p ()
+  "Return non-nil when located in a project."
+  (project-current))
 
-;;;###autoload
-(defalias '+project-p #'projectile-project-p)
+(defun +project-root ()
+  "Return location of the current project."
+  (when-let ((cur (project-current)))
+    (cdr cur)))
 
-;;;###autoload
-(defalias '+project-root #'projectile-project-root)
-
-;;;###autoload
-(defun +project-name (&optional dir)
-  "Return the name of the current project.
-
-By default current working directory is used, but you can specify
-it manually by passing optional DIR argument."
-  (let ((project-root (or (projectile-project-root dir)
-                          (if dir (expand-file-name dir)))))
-    (if project-root
-        (funcall projectile-project-name-function project-root)
-      "-")))
+(defun +project-shell-command ()
+  "Invoke `shell-command' in the project's root."
+  (interactive)
+  (if-let ((root (+project-root)))
+      (eval-with-default-dir root
+        (call-interactively #'shell-command))
+    (user-error "You are not in project")))
 
 (provide 'init-project)
 ;;; init-project.el ends here

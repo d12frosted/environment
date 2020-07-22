@@ -28,7 +28,6 @@
 (+leader-def
   "C-w" '(ace-window :which-key "Ace window")
   "M-w" '(ace-window :which-key "Ace window")
-  "," '(projectile-switch-to-buffer :which-key "Switch project buffer")
 
   "/" '(nil :which-key "search...")
 
@@ -107,11 +106,10 @@
   "wv" '(+window-split-vertically-and-focus :which-key "split frame vertically and focus")
 
   "p" '(nil :which-key "project...")
-  "p!" '(projectile-run-shell-command-in-root :which-key "Run cmd in project root")
-  "p/" '(projectile-ripgrep :which-key "Grep the project")
-  "pI" '(projectile-invalidate-cache :which-key "Invalidate cache")
-  "pf" '(projectile-find-file :which-key "Find file in project")
-  "pp" '(projectile-switch-project :which-key "Switch project")
+  "p!" '(+project-shell-command :which-key "Run cmd in project root")
+  "p/" '(+project-find-regexp :which-key "Grep the project")
+  "pf" '(+project-find-file :which-key "Find file in project")
+  "pp" '(+project-switch :which-key "Switch project")
   )
 
 (+leader-def

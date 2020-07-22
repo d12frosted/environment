@@ -37,10 +37,6 @@
    ivy-height 10
    ivy-count-format "(%d/%d) "
    ivy-on-del-error-function nil)
-
-  ;; Integration with `projectile'
-  (with-eval-after-load 'projectile
-    (setq projectile-completion-system 'ivy))
   :config
   (setq
    ivy-initial-inputs-alist
@@ -50,59 +46,6 @@
 		 (counsel-M-x . "^+?")
 		 (counsel-describe-function . "^+?")
 		 (counsel-describe-variable . "^+?"))))
-
-(use-package counsel-projectile
-  :commands (counsel-projectile-find-file
-	           counsel-projectile-find-dir
-	           counsel-projectile-switch-to-buffer
-             counsel-projectile-grep
-	           counsel-projectile-ag
-             counsel-projectile-rg
-	           counsel-projectile-switch-project
-             counsel-projectile-modify-action)
-  :init
-  (global-set-key [remap projectile-find-file]        #'+ivy/projectile-find-file)
-  (global-set-key [remap projectile-find-dir]         #'counsel-projectile-find-dir)
-  (global-set-key [remap projectile-switch-to-buffer] #'counsel-projectile-switch-to-buffer)
-  (global-set-key [remap projectile-grep]             #'counsel-projectile-grep)
-  (global-set-key [remap projectile-ag]               #'counsel-projectile-ag)
-  (global-set-key [remap projectile-ripgrep]          #'counsel-projectile-rg)
-  (global-set-key [remap projectile-switch-project]   #'counsel-projectile-switch-project)
-  :config
-  (counsel-projectile-modify-action
-   'counsel-projectile-switch-project-action
-   '((default counsel-projectile-switch-project-action-dired)))
-  ;; no highlighting visited files; slows down the filtering
-  (when (fboundp 'ivy-set-display-transformer)
-    (ivy-set-display-transformer #'counsel-projectile-find-file nil)))
-
-;;;###autoload
-(defun +ivy/projectile-find-file ()
-  "A dwim version of `counsel-projectile-find-file'.
-
-This version reverts to:
-
-- `counsel-find-file' when invoked from $HOME;
-- `counsel-file-jump' when invoked from a non-project;
-- `projectile-find-file' when in a bug project (more than
-  `ivy-sort-max-size' files);
-- `counsel-projectile-find-file' otherwise.
-
-The point of this is to avoid Emacs locking up indexing massive
-file trees."
-  (interactive)
-  (call-interactively
-   (cond ((or (file-equal-p default-directory "~")
-              (when-let* ((proot (+project-root)))
-			          (file-equal-p proot "~")))
-          #'counsel-find-file)
-         ((+project-p)
-          (let ((files (projectile-current-project-files)))
-            (if (<= (length files) ivy-sort-max-size)
-                #'counsel-projectile-find-file
-              #'projectile-find-file)))
-
-         (#'counsel-file-jump))))
 
 (use-package ivy-prescient
   :hook (ivy-mode . ivy-prescient-mode)
