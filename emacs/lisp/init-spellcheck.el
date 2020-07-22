@@ -55,6 +55,7 @@
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
 (use-package writegood-mode
+  :disabled
   :hook (org-mode markdown-mode rst-mode asciidoc-mode latex-mode))
 
 (provide 'init-spellcheck)
