@@ -17,6 +17,13 @@
 ;;
 ;;; Code:
 
+(defun +unquote (exp)
+  "Return EXP unquoted."
+  (declare (pure t) (side-effect-free t))
+  (while (memq (car-safe exp) '(quote function))
+    (setq exp (cadr exp)))
+  exp)
+
 (defun +repeat-fn (fn &rest args)
   "Repeat FN and collect it's results until `C-g` is used.
 

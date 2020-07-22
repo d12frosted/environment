@@ -17,7 +17,8 @@
 ;;
 ;;; Code:
 
-(require 'use-package)
+(require 'init-package)
+(require 'lib-hook)
 
 (use-package ispell
   :config
@@ -30,8 +31,8 @@
   :defer t
   :diminish flyspell-mode
   :init
-  (add-hook 'text-mode-hook #'flyspell-mode)
-  (add-hook 'prog-mode-hook #'flyspell-prog-mode))
+  (+hook 'text-mode-hook #'flyspell-mode)
+  (+hook 'prog-mode-hook #'flyspell-prog-mode))
 
 (use-package flyspell-correct-ivy
   :defer t

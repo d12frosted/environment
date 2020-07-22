@@ -19,9 +19,14 @@
 
 (require 'init-keybindings)
 (require 'init-base)
+(require 'lib-hook)
 
 (setq-default
  vc-follow-symlinks t)
+
+;; delay `vc-refresh-state'
+(remove-hook 'find-file-hook #'vc-refresh-state)
+(+hook-with-delay 'find-file-hook 1 #'vc-refresh-state)
 
 (use-package magit
   :defer t
@@ -54,10 +59,10 @@
              git-gutter-mode
              git-gutter)
   :init
-  (add-hook 'text-mode-hook  #'+git-gutter-maybe)
-  (add-hook 'prog-mode-hook  #'+git-gutter-maybe)
-  (add-hook 'conf-mode-hook  #'+git-gutter-maybe)
-  (add-hook 'after-save-hook #'+git-gutter-maybe)
+  (+hook-with-delay 'text-mode-hook 1 #'+git-gutter-maybe)
+  (+hook-with-delay 'prog-mode-hook 1 #'+git-gutter-maybe)
+  (+hook-with-delay 'conf-mode-hook 1 #'+git-gutter-maybe)
+  (+hook 'after-save-hook #'+git-gutter-maybe)
   :config
   ;; Update git-gutter on focus (in case I was using git externally)
   (add-function :after

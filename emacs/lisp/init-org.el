@@ -56,12 +56,6 @@ It is relative to `org-directory', unless it is absolute.")
   :straight org-plus-contrib
   :commands (org-map-entries)
   :hook ((org-mode . auto-fill-mode)
-         (org-mode . places-mode-maybe-enable)
-         (org-mode . pretty-props-mode-maybe-enable)
-         (org-mode . cha-mode-maybe-enable)
-         (org-mode . wine-mode-maybe-enable)
-         (org-mode . cigars-mode-maybe-enable)
-         (org-mode . org-display-inline-images)
          (org-clock-out . +org/remove-empty-drawer))
   :init
   ;; Setup list of Org modules that should always be loaded together
@@ -89,8 +83,15 @@ It is relative to `org-directory', unless it is absolute.")
   ;; open directory links in `dired'
   (add-to-list 'org-file-apps '(directory . emacs))
 
-  (add-hook 'org-cycle-hook #'org-display-inline-images)
-  (add-hook 'org-cycle-hook #'org-latex-preview)
+  (+hook-with-delay 'org-mode-hook 1 #'places-mode-maybe-enable)
+  (+hook-with-delay 'org-mode-hook 1 #'pretty-props-mode-maybe-enable)
+  (+hook-with-delay 'org-mode-hook 1 #'cha-mode-maybe-enable)
+  (+hook-with-delay 'org-mode-hook 1 #'wine-mode-maybe-enable)
+  (+hook-with-delay 'org-mode-hook 1 #'cigars-mode-maybe-enable)
+  (+hook-with-delay 'org-mode-hook 1 #'org-display-inline-images)
+
+  (+hook 'org-cycle-hook #'org-display-inline-images)
+  (+hook 'org-cycle-hook #'org-latex-preview)
 
   (setq
    org-adapt-indentation nil
@@ -233,8 +234,9 @@ It is relative to `org-directory', unless it is absolute.")
 (use-package ox-latex
   :defer t
   :straight org-plus-contrib
-  :hook (org-mode . org-latex-preview)
   :commands (org-latex-preview)
+  :init
+  (+hook-with-delay 'org-mode-hook 1 #'org-latex-preview)
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-packages-alist '("" "color"))
@@ -394,8 +396,8 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org-download
   :defer t
-  :hook ((org-mode . org-download-enable))
   :init
+  (+hook-with-delay 'org-mode 1 #'org-download-enable)
   (setq-default org-download-method 'attach))
 
 (use-package toc-org
