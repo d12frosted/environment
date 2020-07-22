@@ -148,6 +148,7 @@ set -x NVM_SOURCE "/usr/share/nvm"
 
 # go
 set -x GOPATH "$XDG_CACHE_HOME/go"
+__append_to_path $GOPATH/bin
 
 # gopass and friends
 set -x PASSWORD_STORE "$HOME/Dropbox/.password-store"
