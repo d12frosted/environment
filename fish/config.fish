@@ -142,6 +142,11 @@ set -x DOOMDIR "$XDG_CONFIG_HOME/emacs/doom"
 set -xg GPG_TTY (tty)
 gpg-connect-agent updatestartuptty /bye >/dev/null
 
+# nix
+if test -f $HOME/.nix-profile/etc/profile.d/nix.sh
+  bass source $HOME/.nix-profile/etc/profile.d/nix.sh
+end
+
 # nvm
 set -x NVM_DIR "$XDG_CACHE_HOME/nvm"
 set -x NVM_SOURCE "/usr/share/nvm"
