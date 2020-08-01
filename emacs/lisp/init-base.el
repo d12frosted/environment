@@ -30,6 +30,10 @@
  ;; silence advised function warnings
  ad-redefinition-action 'accept
 
+ ;; easier to search
+ search-default-mode #'char-fold-to-regexp
+ replace-char-fold t
+
  ;; make `apropos' more useful
  apropos-do-all t
  auto-mode-case-fold nil
