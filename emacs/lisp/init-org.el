@@ -433,7 +433,6 @@ It is relative to `org-directory', unless it is absolute.")
              org-roam-dailies-date
              org-roam-find-file
              org-roam-insert
-             org-roam-db--clear
              org-roam-db-build-cache
              org-roam--get-title-or-slug)
   :init
@@ -446,6 +445,7 @@ It is relative to `org-directory', unless it is absolute.")
         org-roam-completion-system (if (eq +selection-system 'ivy)
                                        'ivy
                                      'default)
+        org-roam-tag-sources '(prop all-directories)
         org-roam-graph-exclude-matcher '("literature_notes"
                                          "permanent_notes"
                                          "inbox"
@@ -473,7 +473,7 @@ It is relative to `org-directory', unless it is absolute.")
         '(("d" "daily" plain #'org-roam-capture--get-point
            ""
            :immediate-finish t
-           :file-name "%<%Y-%m-%d>"
+           :file-name "journal/%<%Y-%m-%d>"
            :head "#+OPTIONS: auto-id:t\n#+TITLE: %<%A, %d %B %Y>\n#+TIME-STAMP: <>\n\n")))
   (require 'org-protocol)
   (require 'org-roam-protocol))
@@ -513,7 +513,7 @@ It is relative to `org-directory', unless it is absolute.")
    org-journal-hide-entries-p nil
    org-journal-time-prefix "* "
    org-journal-file-format "%Y-%m-%d.org"
-   org-journal-dir +org-notes-directory
+   org-journal-dir (concat +org-notes-directory "journal/")
    org-journal-cache-file (expand-file-name "org-journal.cache" +path-cache-dir)
 
    ;; strictly speaking, these are not used, because I let `org-roam' create new
