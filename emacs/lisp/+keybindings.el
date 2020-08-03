@@ -86,6 +86,8 @@
   "nl" '(+org-notes-list :which-key "list")
   "nt" '(+org-notes-tags-add :which-key "tag")
   "nT" '(+org-notes-tags-delete :which-key "untag")
+  "na" '(+org-notes-alias-add :which-key "alias")
+  "nA" '(+org-notes-alias-delete :which-key "unalias")
 
   "b" '(nil :which-key "buffer...")
   "bM" '(+buffer/switch-to-messages :which-key "switch to messages buffer")
