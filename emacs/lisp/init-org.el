@@ -24,6 +24,7 @@
 (require 'init-navigation)
 (require 'init-package)
 (require 'init-path)
+(require 'init-selection)
 (require '+company)
 (require '+org-agenda)
 (require '+org-auto-id)
@@ -442,7 +443,9 @@ It is relative to `org-directory', unless it is absolute.")
         (when +sys-mac-p "open")
         org-roam-graph-executable (executable-find "neato")
         org-roam-graph-extra-config '(("overlap" . "false"))
-        org-roam-completion-system 'ivy
+        org-roam-completion-system (if (eq +selection-system 'ivy)
+                                       'ivy
+                                     'default)
         org-roam-graph-exclude-matcher '("literature_notes"
                                          "permanent_notes"
                                          "inbox"

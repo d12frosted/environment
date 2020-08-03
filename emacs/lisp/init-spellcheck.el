@@ -18,6 +18,7 @@
 ;;; Code:
 
 (require 'init-package)
+(require 'init-selection)
 (require 'lib-hook)
 
 (use-package ispell
@@ -49,10 +50,15 @@
   (flyspell-lazy-mode +1))
 
 (use-package flyspell-correct-ivy
+  :if (eq +selection-system 'ivy)
   :defer t
   :commands (flyspell-correct-ivy)
   :init
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
+
+(use-package flyspell-correct
+  :if (eq +selection-system 'selectrum)
+  :defer t)
 
 (use-package writegood-mode
   :disabled

@@ -39,7 +39,6 @@
 ;;; Code:
 
 (require 'subr-x)
-(require 'ivy)
 (require '+org)
 
 ;;;###autoload
@@ -83,7 +82,7 @@
                     (org-entry-get nil "ITEM"))
                   id))
                blockers))
-       (select (ivy-completing-read
+       (select (completing-read
                 "Select blocker to remove:"
                 names
                 nil
