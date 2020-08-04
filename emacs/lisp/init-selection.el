@@ -54,21 +54,14 @@
 (use-package ivy-prescient
   :if (eq +selection-system 'ivy)
   :hook (ivy-mode . ivy-prescient-mode)
-  :defines (prescient-filter-method
-            prescient-save-file
-            ivy-prescient-retain-classic-highlighting
+  :defines (ivy-prescient-retain-classic-highlighting
             ivy-prescient-sort-commands)
-  :commands (prescient-persist-mode)
-  :init
-  (setq prescient-filter-method '(literal regexp initialism))
   :config
   (setq ivy-prescient-sort-commands
         '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
                counsel-git-grep counsel-ag counsel-rg counsel-imenu
                counsel-yank-pop counsel-recentf counsel-buffer-or-recentf)
-        ivy-prescient-retain-classic-highlighting t)
-  (setq prescient-save-file (concat +path-cache-dir "prescient-save.el"))
-  (prescient-persist-mode +1))
+        ivy-prescient-retain-classic-highlighting t))
 
 (use-package ivy-rich
   :if (eq +selection-system 'ivy)
@@ -83,18 +76,22 @@
 
 (use-package selectrum-prescient
   :if (eq +selection-system 'selectrum)
-  :hook (selectrum-mode . selectrum-prescient-mode)
-  :defines (prescient-filter-method prescient-save-file)
+  :hook (selectrum-mode . selectrum-prescient-mode))
+
+(use-package ctrlf
+  :if (eq +selection-system 'selectrum)
+  :hook (selectrum-mode . ctrlf-mode))
+
+(use-package prescient
+  :defer t
   :commands (prescient-persist-mode)
+  :defines (prescient-filter-method prescient-save-file)
   :init
   (setq prescient-filter-method '(literal regexp initialism))
   :config
   (setq prescient-save-file (concat +path-cache-dir "prescient-save.el"))
   (prescient-persist-mode +1))
 
-(use-package ctrlf
-  :if (eq +selection-system 'selectrum)
-  :hook (selectrum-mode . ctrlf-mode))
 
 (provide 'init-selection)
 ;;; init-selection.el ends here
