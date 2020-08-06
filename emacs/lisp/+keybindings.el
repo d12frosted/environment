@@ -63,7 +63,7 @@
   "jJ" '(avy-goto-char-timer :which-key "Chars")
   "jL" '(goto-line :which-key "Line (by number)")
   "jb" '(ace-link :which-key "Button or link")
-  "ji" '(counsel-imenu :which-key "imenu")
+  "ji" '(imenu :which-key "imenu")
   "jj" '(avy-goto-char :which-key "Char")
   "jl" '(avy-goto-line :which-key "Line (avy)")
   "jw" '(avy-goto-word-0 :which-key "Word")
