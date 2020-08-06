@@ -22,7 +22,7 @@
 (require 'init-package)
 (require 'subr-x)
 
-(defvar +selection-system 'selectrum
+(defvar +selection-system 'ivy
   "Selection system to use: ivy or selectrum.")
 
 (use-package counsel
