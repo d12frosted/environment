@@ -108,6 +108,8 @@
    '(org-checkbox ((t (:background "#FAF7CC"))))
    '(org-agenda-dimmed-todo-face ((((background light)) (:foreground "grey50"))
                                   (((background dark)) (:foreground "grey50"))))
+   '(org-roam-link ((t (:inherit org-link :foreground "#8359A3"))))
+   '(org-roam-link-current ((t (:inherit org-link :foreground "#F4847D"))))
 
    ;; solaire faces
    '(solaire-default-face ((t (:inherit default :background "#FAFAFA"))))
