@@ -216,7 +216,7 @@ It is relative to `org-directory', unless it is absolute.")
   :straight org-plus-contrib
   :defines (org-attach-file-list-property)
   :config
-  (setq org-attach-id-dir ".data/"
+  (setq org-attach-id-dir (expand-file-name ".data/" org-directory)
         org-attach-auto-tag nil
         org-attach-file-list-property nil
         org-attach-store-link-p 'attached))
