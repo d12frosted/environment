@@ -20,6 +20,7 @@
 (require 'init-keybindings)
 (require 'init-path)
 (require 'init-package)
+(require 'init-vcs)
 (require 'lib-fun)
 (require 'project)
 
@@ -43,6 +44,18 @@
       (eval-with-default-dir root
         (call-interactively #'shell-command))
     (user-error "You are not in project")))
+
+(defun +project-magit ()
+  "Start `magit-status' in the current project's root directory."
+  (interactive)
+  (magit-status-setup-buffer (project-root (project-current t))))
+
+(setq project-switch-commands
+        '((?f "Find file" project-find-file)
+          (?g "Find regexp" project-find-regexp)
+          (?d "Dired" project-dired)
+          (?v "Magit" +project-magit)
+          (?e "Eshell" project-eshell)))
 
 (use-package rg
   :defer t
