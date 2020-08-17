@@ -204,12 +204,12 @@ option set in the options section.
 (defun wine/set-region ()
   "Update region of wine at point."
   (interactive)
-  (when-let* ((id (org-id-get))
-              (prop (+org-entry-get "REGION"))
-              (old-parent-id (+org-extract-id-from-link prop))
-              (old-parent (+brain-as-entry old-parent-id)))
-    (org-brain-remove-parent (+brain-as-entry id)
-                             old-parent)
+  (let ((id (org-id-get))
+        (prop (+org-entry-get "REGION")))
+    (when-let* ((old-parent-id (+org-extract-id-from-link prop))
+                (old-parent (+brain-as-entry old-parent-id)))
+      (org-brain-remove-parent (+brain-as-entry id)
+                               old-parent))
     (+org-prompt-brain-property "REGION" wine-regions-parent id 'parent)))
 
 ;;
