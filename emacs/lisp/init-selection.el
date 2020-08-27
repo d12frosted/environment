@@ -94,49 +94,7 @@
   (setq prescient-filter-method '(literal regexp initialism))
   :config
   (setq prescient-save-file (concat +path-cache-dir "prescient-save.el"))
-  (prescient-persist-mode +1)
-
-  ;; remove once https://github.com/raxod502/prescient.el/pull/66 is merged
-  (defun prescient-filter-regexps (query &optional with-groups)
-    "Convert QUERY to list of regexps.
-Each regexp must match the candidate in order for a candidate to
-match the QUERY.
-
-If WITH-GROUPS is non-nil, enclose the initials in initialisms
-with capture groups. If it is the symbol `all', additionally
-enclose literal substrings with capture groups."
-    (mapcar
-     (lambda (subquery)
-       (string-join
-        (cl-remove
-         nil
-         (mapcar
-          (lambda (method)
-            (pcase method
-              (`literal
-               (prescient--with-group
-                (if (eq search-default-mode #'char-fold-to-regexp)
-                    (char-fold-to-regexp (regexp-quote subquery))
-                  (regexp-quote subquery))
-                (eq with-groups 'all)))
-              (`initialism
-               (prescient--initials-regexp subquery with-groups))
-              (`regexp
-               (ignore-errors
-                 ;; Ignore regexp if it's malformed.
-                 (string-match-p subquery "")
-                 subquery))
-              (`fuzzy
-               (prescient--fuzzy-regexp subquery with-groups))))
-          (pcase prescient-filter-method
-            ;; We support `literal+initialism' for backwards
-            ;; compatibility.
-            (`literal+initialism '(literal initialism))
-            ((and (pred listp) x) x)
-            (x (list x))))
-         :test #'eq)
-        "\\|"))
-     (prescient-split-query query))))
+  (prescient-persist-mode +1))
 
 (provide 'init-selection)
 ;;; init-selection.el ends here
