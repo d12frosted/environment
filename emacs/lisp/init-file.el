@@ -35,5 +35,20 @@ return the directory. Return nil if not found."
                           (directory-file-name
                            (file-name-directory dir)))))))))
 
+(defun +file-subdirs (directory &optional filep)
+  "Return subdirs or files of DIRECTORY according to FILEP."
+  (cl-remove-if
+   (lambda (file)
+     (or (string-match "\\`\\."
+                       (file-name-nondirectory file))
+         (string-match "\\`#.*#\\'"
+                       (file-name-nondirectory file))
+         (string-match "~\\'"
+                       (file-name-nondirectory file))
+         (if filep
+             (file-directory-p file)
+           (not (file-directory-p file)))))
+   (directory-files directory t)))
+
 (provide 'init-file)
 ;;; init-file.el ends here

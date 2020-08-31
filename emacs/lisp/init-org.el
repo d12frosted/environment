@@ -25,6 +25,7 @@
 (require 'init-package)
 (require 'init-path)
 (require 'init-selection)
+(require 'init-file)
 (require '+company)
 (require '+org-agenda)
 (require '+org-auto-id)
@@ -230,6 +231,7 @@ It is relative to `org-directory', unless it is absolute.")
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-packages-alist '("" "color"))
+  (setq org-preview-latex-image-directory ".ltximg/")
   (setq org-format-latex-options
         (list :foreground 'default
               :background 'default
@@ -417,6 +419,9 @@ It is relative to `org-directory', unless it is absolute.")
   :init
   (setq +org-notes-directory (concat org-directory "notes/"))
   (add-to-list 'org-agenda-files +org-notes-directory)
+  (seq-do (lambda (dir)
+            (add-to-list 'org-agenda-files dir))
+          (+file-subdirs +org-notes-directory))
   (add-to-list 'window-buffer-change-functions
                #'+org-notes-setup-buffer))
 
