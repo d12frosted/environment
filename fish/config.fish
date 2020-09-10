@@ -78,6 +78,10 @@ if command -v systemctl >/dev/null 2>&1
   systemctl --user import-environment PATH
 end
 
+# locale
+set -x LANG en_GB.UTF-8
+set -x LC_ALL en_GB.UTF-8
+
 # variables
 set -x EDITOR "emacsclient"
 set cmd_notification_threshold 8000
