@@ -76,6 +76,9 @@ It is relative to `org-directory', unless it is absolute.")
           ob-plantuml))
   (setq org-directory (concat +path-home-dir "Dropbox/vulpea/"))
   (add-to-list 'org-agenda-files org-directory)
+
+  (set-company-backend! 'org-mode
+    '(company-capf company-yasnippet company-dabbrev))
   :config
   (define-key org-mode-map (kbd "C-a") '+org-beginning-of-line)
 
@@ -233,8 +236,8 @@ It is relative to `org-directory', unless it is absolute.")
   (add-to-list 'org-latex-packages-alist '("" "color"))
   (setq org-preview-latex-image-directory ".ltximg/")
   (setq org-format-latex-options
-        (list :foreground 'default
-              :background 'default
+        (list :foreground 'auto
+              :background 'auto
               :scale 1.5
               :html-foreground "Black"
               :html-background "Transparent"
@@ -466,7 +469,8 @@ It is relative to `org-directory', unless it is absolute.")
                                          "20200401163611"
                                          "20200401163758"
                                          "20200407181600"
-                                         "20200430184542"))
+                                         "20200430184542")
+        org-roam-completions-everywhere t)
   :config
   (setq org-roam-capture-templates
         '(("d" "default" plain #'org-roam-capture--get-point
@@ -482,13 +486,6 @@ It is relative to `org-directory', unless it is absolute.")
            :head "#+OPTIONS: auto-id:t\n#+TITLE: %<%A, %d %B %Y>\n#+TIME-STAMP: <>\n\n")))
   (require 'org-protocol)
   (require 'org-roam-protocol))
-
-(use-package company-org-roam
-  :straight (:host github :repo "org-roam/company-org-roam")
-  :defer t
-  :init
-  (set-company-backend! 'org-mode
-    '(company-org-roam company-yasnippet company-dabbrev)))
 
 (use-package org-roam-server
   :straight (org-roam-server
@@ -525,9 +522,7 @@ It is relative to `org-directory', unless it is absolute.")
    ;; file via `+org-notes-new-journal-entry'.
    org-journal-date-prefix "#+TITLE: "
    org-journal-file-header "#+TIME-STAMP: <>"
-   org-journal-date-format "%A, %d %B %Y")
-  (set-company-backend! 'org-journal-mode
-    '(company-org-roam company-yasnippet company-dabbrev)))
+   org-journal-date-format "%A, %d %B %Y"))
 
 ;; remove after
 ;; https://github.com/jrblevin/deft/issues/77
