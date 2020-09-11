@@ -229,5 +229,15 @@ If the current buffer is not a note, does nothing."
   "Convert TITLE to tag."
   (concat "@" (s-replace " " "" title)))
 
+(defun +org-notes-subdir ()
+  "Select notes subdirectory."
+  (interactive)
+  (let ((dirs (cons "."
+                    (seq-map
+                     (lambda (p)
+                       (string-remove-prefix +org-notes-directory p))
+                     (+file-subdirs +org-notes-directory nil t)))))
+    (completing-read "Subdir: " dirs nil t)))
+
 (provide '+org-notes)
 ;;; +org-notes.el ends here

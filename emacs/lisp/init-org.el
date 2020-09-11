@@ -471,7 +471,7 @@ It is relative to `org-directory', unless it is absolute.")
   (setq org-roam-capture-templates
         '(("d" "default" plain #'org-roam-capture--get-point
            "%?"
-           :file-name "%<%Y%m%d%H%M%S>-${slug}"
+           :file-name "%(+org-notes-subdir)/%<%Y%m%d%H%M%S>-${slug}"
            :head "#+OPTIONS: auto-id:t\n#+TITLE: ${title}\n#+TIME-STAMP: <>\n\n"
            :unnarrowed t))
         org-roam-dailies-capture-templates
