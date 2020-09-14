@@ -66,8 +66,20 @@
       inhibit-startup-screen t
       inhibit-startup-echo-area-message t)
 
+(use-package modus-operandi-theme
+  :if +sys-graphic-p
+  :init
+  (setq modus-operandi-theme-bold-constructs t
+        modus-operandi-theme-faint-syntax t
+        modus-operandi-theme-prompts 'subtle
+        modus-operandi-theme-completions 'opionated
+        modus-operandi-theme-diffs 'desaturated
+        modus-operandi-theme-headings '((t . section)))
+  (load-theme 'modus-operandi t))
+
 (use-package leuven-theme
   :if +sys-graphic-p
+  :disabled
   :init
   (load-theme 'leuven t)
   (custom-set-faces
