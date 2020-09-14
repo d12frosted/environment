@@ -72,5 +72,13 @@ we fall back to tide."
   :init
   (setq typescript-indent-level 2))
 
+(use-package apheleia
+  :straight (apheleia
+             :host github
+             :repo "raxod502/apheleia")
+  :defer t
+  :init
+  (apheleia-global-mode +1))
+
 (provide 'init-js)
 ;;; init-js.el ends here
