@@ -36,7 +36,9 @@
               (+sys-linux-p "xdg-open"))))
 
 (use-package markdown-toc
-  :defer t)
+  :defer t
+  :init
+  (setq markdown-toc-indentation-space 2))
 
 (provide 'init-markdown)
 ;;; init-markdown.el ends here
