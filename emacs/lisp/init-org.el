@@ -476,14 +476,14 @@ It is relative to `org-directory', unless it is absolute.")
         '(("d" "default" plain #'org-roam-capture--get-point
            "%?"
            :file-name "%(+org-notes-subdir)/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+OPTIONS: auto-id:t\n#+TITLE: ${title}\n#+TIME-STAMP: <>\n\n"
+           :head "#+TITLE: ${title}\n#+OPTIONS: auto-id:t\n#+TIME-STAMP: <>\n\n"
            :unnarrowed t))
         org-roam-dailies-capture-templates
         '(("d" "daily" plain #'org-roam-capture--get-point
            ""
            :immediate-finish t
            :file-name "journal/%<%Y-%m-%d>"
-           :head "#+OPTIONS: auto-id:t\n#+TITLE: %<%A, %d %B %Y>\n#+TIME-STAMP: <>\n\n")))
+           :head "#+TITLE: %<%A, %d %B %Y>\n#+OPTIONS: auto-id:t\n#+TIME-STAMP: <>\n\n")))
   (require 'org-protocol)
   (require 'org-roam-protocol))
 
