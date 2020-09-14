@@ -146,7 +146,25 @@ It is relative to `org-directory', unless it is absolute.")
    ;; tags
    org-tag-persistent-alist '(("FOCUS" . ?f)
                               ("PROJECT" . ?p))
-   org-tags-exclude-from-inheritance '("PROJECT")))
+   org-tags-exclude-from-inheritance '("PROJECT"))
+
+  ;; not sure if it can be achieved using tangling
+  ;;
+  ;; usage example:
+  ;;   #+begin_src dot :dir %(org-attach-dir t) :file output.png :cmdline -Kdot -Tpng -Gdpi=180 :exports results
+  (defun +org-babel-execute-src-block (orig-fun &optional arg info params)
+    "Advice around `org-babel-execute-src-block'.
+
+Supports :dir expansion in the INFO block.
+
+Calls ORIG-FUN with ARG, INFO and PARAMS."
+    (let* ((info (if info (copy-tree info) (org-babel-get-src-block-info)))
+           (dir (cdr (assq :dir (nth 2 info)))))
+      (when (string-prefix-p "%" dir)
+        (setf (cdr (assq :dir (nth 2 info)))
+              (eval (car (read-from-string (string-remove-prefix "%" dir))))))
+      (apply orig-fun arg info params)))
+  (advice-add 'org-babel-execute-src-block :around #'+org-babel-execute-src-block))
 
 (use-package org-clock
   :commands org-clock-save
