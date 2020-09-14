@@ -134,6 +134,12 @@
   (unless (server-running-p)
     (server-start)))
 
+(use-package ukrainian-input-method
+  :straight (ukrainian-input-method
+             :type git
+             :host github
+             :repo "d12frosted/emacs-ukrainian-input-method"))
+
 (cl-flet ((always-yes (&rest _) t))
   (defun no-confirm (fun &rest args)
     "Apply FUN to ARGS, skipping user confirmations."
