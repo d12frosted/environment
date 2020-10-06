@@ -116,6 +116,12 @@ FN is called with NAME as the first argument and ARGS as the rest."
     (split-string val sep)))
 
 ;;;###autoload
+(defun +org-entry-get-brain (prop)
+  "Get brain PROP value of entry at point."
+  (when-let ((str (+org-entry-get prop)))
+      (+org-extract-id-from-link str)))
+
+;;;###autoload
 (defun +org-entry-get-number (prop &optional def)
   "Get number PROP value of entry at point.
 
