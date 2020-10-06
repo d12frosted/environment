@@ -402,21 +402,91 @@ when already at wine entry."
     ("GENERAL" . 4))
   "Wine rating properties and their max value.")
 
+(defvar wine--rating-props-v3
+  '(("AROMA_QUALITY" .
+     (lambda ()
+       (let* ((total 3)
+              (res total)
+              (ans t)
+              (quit-on "no taints")
+              (opts (list
+                     quit-on
+                     "aggressive ethanol"
+                     "massive brett attack"
+                     "VA, especially nail polish removal")))
+         (while ans
+           (setq ans (completing-read "Any taints? " opts))
+           (setq opts (delete ans opts))
+           (if (string-equal ans "no taints")
+               (setq ans nil)
+             (setq res (max 0 (- res 1))))
+           (when (equal res 0)
+             (setq ans nil)))
+         (cons res total))))
+
+    ("AROMA_INTENSITY" .
+     (("aroma can be perceived without putting nose into glass" . 2)
+      ("aroma can be perceived only by putting nose into glass" . 1)
+      ("closed, you need to put a lot of effort to get the aroma" . 0)))
+
+    ("AROMA_RICHNESS" .
+     (("more than 3 different notes" . 3)
+      ("only 3 notes" . 2)
+      ("only 2 notes" . 1)
+      ("only 1 note" . 0)))
+
+    ("AROMA_COMPLEXITY" .
+     (("sophisticated, multilayered" . 1)
+      ("simple" . 0)))
+
+    ("BALANCE" .
+     (("perfectly balanced, everything is in its place" . 3)
+      ("well balanced, might be a small issue" . 2)
+      ("average, either one bigger issue or two small" . 1)
+      ("unbalanced, everything else" . 0)))
+
+    ("FLAVOURS" .
+     (("multiple flavours" . 1)
+      ("only one flavour" . 0)))
+
+    ("EVOLUTION" .
+     (("taste and flavours evolve over time in mouth" . 1)
+      ("plain, straightforward" . 0)))
+
+    ("AFTERTASTE" .
+     (("long, lasting more than 30 seconds" . 2)
+      ("average, lasting more than 10 seconds" . 1)
+      ("short" . 0)))
+
+    ("GENERAL" .
+     (("life changing" . 4)
+      ("great wine, I will definitely look into tasting it once more" . 3)
+      ("good wine, will drink it again with pleasure if situation arises" . 2)
+      ("average wine, only with parents" . 1)
+      ("bad wine, only for enemies" . 0))))
+  "Wine rating properties and possible values.")
+
 (defun wine/rate (&optional date)
   "Rate wine entry at point.
 
 When DATE is omitted, date is read using `org-read-date'."
   (interactive)
   (let ((date (or date (org-read-date nil t))))
-    (wine-rate-v2 (format-time-string "%Y-%m-%d" date) date)))
+    (wine-rate-v3 (format-time-string "%Y-%m-%d" date) date)))
 
 (defun wine-rate-v2 (name date)
   "Rate a wine using Rating System V2.
 
 See `wine-rate-g` for more information on NAME and DATE usage."
-  (wine-rate-g name date 2 wine--rating-props-v2))
+  (wine-rate-generic name date 2 wine--rating-props-v2))
 
-(defun wine-rate-g (name date version props)
+(defun wine-rate-v3 (name date)
+  "Rate a wine using Rating System V3.
+
+See `wine-rate-g` for more information on NAME and DATE usage."
+  (wine-rate-generic name date 3 wine--rating-props-v3))
+
+(defun wine-rate-generic (name date version props)
   "Rate a wine at point on DATE.
 
 The procedure is simple:
@@ -431,12 +501,26 @@ The procedure is simple:
        (org-set-tags ":RATING:")
        (+org-entry-set "DATE" (format-time-string "%Y-%m-%d" date))
        (+org-entry-set-number "RATING_VERSION" version)
-       (seq-map (lambda (cfg)
-                  (+org-prompt-number-property (car cfg)
-                                               0
-                                               (format "0 to %i" (cdr cfg)))
-                  (+org-entry-set-number (concat (car cfg) "_MAX") (cdr cfg)))
-                props)
+       (seq-map
+        (lambda (cfg)
+          (cond
+           ((functionp (cdr cfg))
+            (let ((res (funcall (cdr cfg))))
+              (+org-entry-set-number (car cfg) (car res))
+              (+org-entry-set-number (concat (car cfg) "_MAX") (cdr res))))
+
+           ((numberp (cdr cfg))
+            (+org-prompt-number-property (car cfg) 0 (format "0 to %i" (cdr cfg)))
+            (+org-entry-set-number (concat (car cfg) "_MAX") (cdr cfg)))
+
+           ((listp (cdr cfg))
+            (let* ((ans (completing-read (+org--pretty-property-prompt (car cfg))
+                                         (seq-map #'car (cdr cfg))))
+                   (res (assoc ans (cdr cfg))))
+              (+org-entry-set-number (car cfg) (cdr res))
+              (+org-entry-set-number (concat (car cfg) "_MAX") (- (length (cdr cfg)) 1)))
+            )))
+        props)
        (save-buffer)
        (wine-refresh-rating t)))))
 
@@ -450,28 +534,33 @@ wine entry."
         (org-up-heading-safe)
         (wine-refresh-entry))
     (pcase (+org-entry-get-number "RATING_VERSION" 1)
-      (`2 (+org-entry-set-number
-           "SCORE"
-           (seq-reduce #'+
-                       (seq-map #'+org-entry-get-number
-                                (seq-map #'car wine--rating-props-v2))
-                       0))
-          (+org-entry-set-number
-           "SCORE_MAX"
-           (seq-reduce #'+
-                       (seq-map #'+org-entry-get-number
-                                (seq-map (lambda (prop) (concat prop "_MAX"))
-                                         (seq-map #'car wine--rating-props-v2)))
-                       0))
-          (+org-entry-set-number
-           "TOTAL"
-           (* 10.0
-              (/
-               (float (+org-entry-get-number "SCORE"))
-               (float (+org-entry-get-number "SCORE_MAX")))))))
+      (`2 (wine-refresh-rating-by wine--rating-props-v2))
+      (`3 (wine-refresh-rating-by wine--rating-props-v3)))
     (org-edit-headline
      (wine-format-title wine-rating-title-format))
     (pretty-props/entry)))
+
+(defun wine-refresh-rating-by (props)
+  "Refresh rating entry at point based on PROPS."
+  (+org-entry-set-number
+   "SCORE"
+   (seq-reduce #'+
+               (seq-map #'+org-entry-get-number
+                        (seq-map #'car props))
+               0))
+  (+org-entry-set-number
+   "SCORE_MAX"
+   (seq-reduce #'+
+               (seq-map #'+org-entry-get-number
+                        (seq-map (lambda (prop) (concat prop "_MAX"))
+                                 (seq-map #'car props)))
+               0))
+  (+org-entry-set-number
+   "TOTAL"
+   (* 10.0
+      (/
+       (float (+org-entry-get-number "SCORE"))
+       (float (+org-entry-get-number "SCORE_MAX"))))))
 
 ;;
 ;; Title
