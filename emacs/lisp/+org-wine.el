@@ -392,7 +392,7 @@ when already at wine entry."
 ;;
 ;; Ratings
 
-(defvar wine--rating-props
+(defvar wine--rating-props-v2
   '(("AROMA_QUALITY" . 3)
     ("AROMA_INTENSITY" . 2)
     ("AROMA_COMPLEXITY" . 3)
@@ -405,27 +405,38 @@ when already at wine entry."
 (defun wine/rate (&optional date)
   "Rate wine entry at point.
 
-When DATE is omitted, `current-time' is used."
+When DATE is omitted, date is read using `org-read-date'."
   (interactive)
+  (let ((date (or date (org-read-date nil t))))
+    (wine-rate-v2 (format-time-string "%Y-%m-%d" date) date)))
+
+(defun wine-rate-v2 (name date)
+  "Rate a wine using Rating System V2.
+
+See `wine-rate-g` for more information on NAME and DATE usage."
+  (wine-rate-g name date 2 wine--rating-props-v2))
+
+(defun wine-rate-g (name date version props)
+  "Rate a wine at point on DATE.
+
+The procedure is simple:
+
+1. Create a new child with NAME and 'RATING' tag.
+2. Set the DATE as property 'DATE'.
+3. Set the VERSION as property 'RATING_VERSION'.
+4. Query rating marks based on PROPS."
   (wine-with-point-at-wine
-   (let* ((date (or date (org-read-date nil t)))
-          (name (concat
-                 (format-time-string "%Y-%m-%d %A" date)
-                 " | "
-                 (org-entry-get nil "NAME")
-                 " "
-                 (org-entry-get nil "TAG")))
-          (id (+brain-new-child (org-id-get-create) name)))
+   (let* ((id (+brain-new-child (org-id-get-create) name)))
      (org-with-point-at (org-id-find id t)
        (org-set-tags ":RATING:")
        (+org-entry-set "DATE" (format-time-string "%Y-%m-%d" date))
-       (+org-entry-set-number "RATING_VERSION" 2)
+       (+org-entry-set-number "RATING_VERSION" version)
        (seq-map (lambda (cfg)
                   (+org-prompt-number-property (car cfg)
                                                0
                                                (format "0 to %i" (cdr cfg)))
                   (+org-entry-set-number (concat (car cfg) "_MAX") (cdr cfg)))
-                wine--rating-props)
+                props)
        (save-buffer)
        (wine-refresh-rating t)))))
 
@@ -443,14 +454,14 @@ wine entry."
            "SCORE"
            (seq-reduce #'+
                        (seq-map #'+org-entry-get-number
-                                (seq-map #'car wine--rating-props))
+                                (seq-map #'car wine--rating-props-v2))
                        0))
           (+org-entry-set-number
            "SCORE_MAX"
            (seq-reduce #'+
                        (seq-map #'+org-entry-get-number
                                 (seq-map (lambda (prop) (concat prop "_MAX"))
-                                         (seq-map #'car wine--rating-props)))
+                                         (seq-map #'car wine--rating-props-v2)))
                        0))
           (+org-entry-set-number
            "TOTAL"
