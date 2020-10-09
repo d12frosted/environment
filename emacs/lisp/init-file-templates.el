@@ -34,8 +34,10 @@ in `+file-templates-alist'.")
 (defvar +file-templates-alist
   `(
     ;; elisp
-    ("/.dir-locals.el$")                ; no template for dir-locals
-    ("/.settings.el$")                  ; no template for settings
+    ("dir-locals.el$"
+     :ignore t)
+    ("settings.el$"
+     :ignore t)
     (emacs-lisp-mode
      :trigger "__package")
     (snippet-mode))
@@ -139,8 +141,10 @@ PLIST may contain these properties:
 
 ;;;###autoload
 (cl-defun +file-templates--expand (pred &key project mode trigger ignore _when)
-  "Auto insert a yasnippet snippet into current file and enter
-insert mode (if evil is loaded and enabled)."
+  "Auto insert a yasnippet snippet into current file.
+
+See `+file-templates-set' for information about PRED, PROJECT,
+MODE, TRIGGER, IGNORE and _WHEN arguments."
   (when (and pred (not ignore))
     (when (if project (+project-p) t)
       (unless mode
