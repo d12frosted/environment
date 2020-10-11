@@ -34,7 +34,7 @@
     (widen)
     (goto-char (point-min))
     (if (re-search-forward (concat "^#\\+" name ": \\(.*\\)") (point-max) t)
-        (replace-match (concat "#+" name ": " value))
+        (replace-match (concat "#+" name ": " value) 'fixedcase)
       ;; find the first line that doesn't begin with ':' or '#'
       (let ((found))
         (while (not (or found (eobp)))
