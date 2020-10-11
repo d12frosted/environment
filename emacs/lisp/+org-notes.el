@@ -158,30 +158,34 @@ If the current buffer is not a note, does nothing."
   (interactive)
   (unless (+org-notes-buffer-p)
     (user-error "Current buffer is not a note"))
-  (let* ((tags (seq-uniq
-                (+seq-flatten
-                 (+seq-flatten
-                  (org-roam-db-query [:select tags :from tags])))))
-         (tag (completing-read "Tag: " tags)))
-    (when (string-empty-p tag)
-      (user-error "Tag can't be empty"))
-    (+org-buffer-prop-set
-     "ROAM_TAGS"
-     (combine-and-quote-strings (seq-uniq (cons tag (+org-notes-tags-read)))))
-    (org-roam-db--update-tags)
-    (+org-notes-ensure-filetag)))
+  (if (functionp #'org-roam-tag-add)
+      (when (org-roam-tag-add)
+        (+org-notes-ensure-filetag))
+    (let* ((tags (seq-uniq
+                  (+seq-flatten
+                   (+seq-flatten
+                    (org-roam-db-query [:select tags :from tags])))))
+           (tag (completing-read "Tag: " tags)))
+      (when (string-empty-p tag)
+        (user-error "Tag can't be empty"))
+      (+org-buffer-prop-set
+       "ROAM_TAGS"
+       (combine-and-quote-strings (seq-uniq (cons tag (+org-notes-tags-read)))))
+      (org-roam-db--update-tags))))
 
 (defun +org-notes-tags-delete ()
   "Delete a tag from current note."
   (interactive)
   (unless (+org-notes-buffer-p)
     (user-error "Current buffer is not a note"))
-  (let* ((tags (+org-notes-tags-read))
-         (tag (completing-read "Tag: " tags nil 'require-match)))
-    (+org-buffer-prop-set
-     "ROAM_TAGS"
-     (combine-and-quote-strings (delete tag tags)))
-    (org-roam-db--update-tags)))
+  (if (functionp #'org-roam-tag-delete)
+      (org-roam-tag-delete)
+    (let* ((tags (+org-notes-tags-read))
+           (tag (completing-read "Tag: " tags nil 'require-match)))
+      (+org-buffer-prop-set
+       "ROAM_TAGS"
+       (combine-and-quote-strings (delete tag tags)))
+      (org-roam-db--update-tags))))
 
 (defun +org-notes-alias-read ()
   "Return list of aliases as set in the buffer."
@@ -194,25 +198,29 @@ If the current buffer is not a note, does nothing."
   (interactive)
   (unless (+org-notes-buffer-p)
     (user-error "Current buffer is not a note"))
-  (let ((alias (read-string "Alias: " )))
-    (when (string-empty-p alias)
-      (user-error "Alias can't be empty"))
-    (+org-buffer-prop-set
-     "ROAM_ALIAS"
-     (combine-and-quote-strings (seq-uniq (cons alias (+org-notes-alias-read)))))
-    (org-roam-db--update-file (buffer-file-name (buffer-base-buffer)))))
+  (if (functionp #'org-roam-alias-add)
+      (org-roam-alias-add)
+    (let ((alias (read-string "Alias: " )))
+      (when (string-empty-p alias)
+        (user-error "Alias can't be empty"))
+      (+org-buffer-prop-set
+       "ROAM_ALIAS"
+       (combine-and-quote-strings (seq-uniq (cons alias (+org-notes-alias-read)))))
+      (org-roam-db--update-file (buffer-file-name (buffer-base-buffer))))))
 
 (defun +org-notes-alias-delete ()
   "Delete an alias from current note."
   (interactive)
   (unless (+org-notes-buffer-p)
     (user-error "Current buffer is not a note"))
-  (let* ((aliases (+org-notes-alias-read))
-         (alias (completing-read "Alias: " aliases nil 'require-match)))
-    (+org-buffer-prop-set
-     "ROAM_ALIAS"
-     (combine-and-quote-strings (delete alias aliases)))
-    (org-roam-db--update-file (buffer-file-name (buffer-base-buffer)))))
+  (if (functionp #'org-roam-alias-delete)
+      (org-roam-alias-delete)
+    (let* ((aliases (+org-notes-alias-read))
+           (alias (completing-read "Alias: " aliases nil 'require-match)))
+      (+org-buffer-prop-set
+       "ROAM_ALIAS"
+       (combine-and-quote-strings (delete alias aliases)))
+      (org-roam-db--update-file (buffer-file-name (buffer-base-buffer))))))
 
 (defun +org-notes-buffer-p ()
   "Return non-nil if the currently visited buffer is a note."
