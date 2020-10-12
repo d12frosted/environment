@@ -54,5 +54,27 @@ buffer."
   "Remove SUFFIX regexp if it is at the end of S."
   (s-chop-suffix (car (s-match suffix s)) s))
 
+(defvar +string-http-url-regexp
+  "\\(https?://.*\\)"
+  "HTTP(s) URL regexp.")
+
+(defvar +string-github-repo-url-regexp
+  "\\(https?://github\\.com/\\([-[:alnum:]]+\\)/\\([-[:alnum:]]+\\)\\).*"
+  "GitHub repo URL regexp.
+
+- 1st group is whole URL.
+- 2nd group is owner.
+- 3rd group is repository name.")
+
+(defvar +string-github-issue-url-regexp
+  "\\(https?://github\\.com/\\([-[:alnum:]]+\\)/\\([-[:alnum:]]+\\)/\\([[:alpha:]]+\\)/\\([[:digit:]]+\\)\\).*"
+  "GitHub issue/pull URL regexp.
+
+- 1st group is whole URL.
+- 2nd group is owner.
+- 3rd group is repository name.
+- 4th group is type of the object - issue or pull.
+- 5th group is the number of the object.")
+
 (provide '+string)
 ;;; +string.el ends here

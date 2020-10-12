@@ -19,11 +19,13 @@
 
 (require 'init-base)
 (require 'init-keybindings)
+(require 'init-editor)
 
 (global-set-key (kbd "C-h F") #'counsel-faces)
 (global-set-key [M-S-down] #'move-text-down)
 (global-set-key [M-S-up]   #'move-text-up)
 (global-set-key [remap move-beginning-of-line] '+beginning-of-line)
+(global-set-key (kbd "C-S-y") 'fancy-yank)
 
 (+leader-def
   "C-w" '(ace-window :which-key "Ace window")
