@@ -98,6 +98,9 @@ Possible values are: upstream, mirror and local.")
 (use-package diminish)
 (use-package bind-key)
 
+;; User heavily used packages
+(use-package s)
+
 ;; Update GPG keyring for GNU ELPA
 (use-package gnu-elpa-keyring-update)
 
