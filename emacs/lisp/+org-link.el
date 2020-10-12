@@ -19,6 +19,8 @@
 
 (require '+string)
 
+(declare-function org-link-make-string "ol")
+
 ;;;###autoload
 (defvar +org-id-link-regexp
   (concat
@@ -61,13 +63,10 @@
 If it's a link to Web page, then the domain is used as
 description."
   (interactive "sURL: ")
-  (insert
-   "[["
-   url
-   "]["
-   (or (ignore-errors (url-domain (url-generic-parse-url url)))
-       (read-string "Description: "))
-   "]]"))
+  (insert (org-link-make-string
+           url
+           (or (ignore-errors (url-domain (url-generic-parse-url url)))
+               (read-string "Description: ")))))
 
 (provide '+org-link)
 ;;; +org-link.el ends here
