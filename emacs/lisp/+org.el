@@ -17,9 +17,9 @@
 ;;
 ;;; Code:
 
-(declare-function org-up-heading-safe "org")
-(declare-function org-remove-empty-drawer-at "org")
-(declare-function org-id-get-create "org-id")
+(autoload 'org-up-heading-safe "org")
+(autoload 'org-remove-empty-drawer-at "org")
+(autoload 'org-id-get-create "org-id")
 
 (defmacro +org-with-file (file &rest body)
   "Execute BODY in `org-mode' FILE."
