@@ -140,8 +140,13 @@ function theme_guard() {
   fi
 }
 
-function macos_guard() {
-  [[ "$OS_NAME" == "macos" ]]
+function install_guard() {
+  [[ "$ACTION" == "install" ]]
+  return
+}
+
+function upgrade_guard() {
+  [[ "$ACTION" == "upgrade" ]]
   return
 }
 
@@ -357,6 +362,23 @@ if [[ "$USER" != "$fellow" ]]; then
 fi
 
 ALL="true"
+ACTION=
+case $1 in
+  install|upgrade)
+    ACTION=$1
+    ;;
+  *)
+    echo
+    if [ -z "$1" ]; then
+      error "action is not provided"
+    else
+      error "action '$1' is not supported"
+    fi
+    log "supported actions are: install, upgrade"
+    exit 1
+    ;;
+esac
+shift
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -510,38 +532,42 @@ arch_guard && {
     }
   }
 
-  theme_guard "packages" "Install all dependencies" && {
-    log "Import known GPG keys"
-    # spotify
-    curl -sS https://download.spotify.com/debian/pubkey.gpg | gpg --import
+  install_guard && {
+    theme_guard "packages" "Install all dependencies" && {
+      log "Import known GPG keys"
+      # spotify
+      curl -sS https://download.spotify.com/debian/pubkey.gpg | gpg --import
 
-    function combine_files {
-      local output
-      output=$(mktemp)
-      for f in "$@"; do
-        if [[ -f $f ]]; then
-          cat "$f" >> "$output"
-        fi
-      done
-      echo "$output"
+      function combine_files {
+        local output
+        output=$(mktemp)
+        for f in "$@"; do
+          if [[ -f $f ]]; then
+            cat "$f" >> "$output"
+          fi
+        done
+        echo "$output"
+      }
+
+      log "Install packages"
+
+      pacman_file=$(combine_files "$target/arch/Pacmanfile" "$target/arch/Pacmanfile_$USER")
+      pacman_ignore=$(combine_files "$target/arch/Pacmanignore" "$target/arch/Pacmanignore_$USER")
+      # shellcheck disable=SC2046
+      sudo aura -S --noconfirm --needed $(comm -23 "$pacman_file" "$pacman_ignore")
+
+      aur_file=$(combine_files "$target/arch/Aurfile" "$target/arch/Aurfile_$USER")
+      aur_ignore=$(combine_files "$target/arch/Aurignore" "$target/arch/Aurignore_$USER")
+      # shellcheck disable=SC2046
+      sudo aura -A --noconfirm --needed $(comm -23 "$aur_file" "$aur_ignore")
     }
-
-    log "Install packages"
-
-    pacman_file=$(combine_files "$target/arch/Pacmanfile" "$target/arch/Pacmanfile_$USER")
-    pacman_ignore=$(combine_files "$target/arch/Pacmanignore" "$target/arch/Pacmanignore_$USER")
-    # shellcheck disable=SC2046
-    sudo aura -S --noconfirm --needed $(comm -23 "$pacman_file" "$pacman_ignore")
-
-    aur_file=$(combine_files "$target/arch/Aurfile" "$target/arch/Aurfile_$USER")
-    aur_ignore=$(combine_files "$target/arch/Aurignore" "$target/arch/Aurignore_$USER")
-    # shellcheck disable=SC2046
-    sudo aura -A --noconfirm --needed $(comm -23 "$aur_file" "$aur_ignore")
   }
 
-  theme_guard "upgrade" "Upgrade Arch Linux" && {
-    sudo aura -Syu --noconfirm
-    sudo aura -Aux --noconfirm
+  upgrade_guard && {
+    theme_guard "packages" "Upgrade Arch Linux" && {
+      sudo aura -Syu --noconfirm
+      sudo aura -Aux --noconfirm
+    }
   }
 
   theme_guard "hardware" "Setup keyboard" && {
@@ -594,8 +620,17 @@ macos_guard && {
     }
   }
 
-  theme_guard "packages" "Install all dependencies" && {
-    cd "$target/macos" && brew bundle
+  install_guard && {
+    theme_guard "packages" "Install all dependencies" && {
+      cd "$target/macos" && brew bundle
+    }
+  }
+
+  upgrade_guard && {
+    theme_theme_guard "packages" "Upgrade packages" && {
+      brew update
+      brew upgrade
+    }
   }
 }
 
@@ -613,7 +648,7 @@ macos_guard && {
     }
   }
 
-  theme_guard "update" && {
+  upgrade_guard && {
     # reinstall the scripting addition
     sudo yabai --uninstall-sa
     sudo yabai --install-sa
@@ -650,10 +685,14 @@ check fish && {
   fish -c "set -U XDG_DATA_HOME $HOME/.local/share"
 }
 
-theme_guard "Emacs" "Setup Emacs" && {
-  emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-install)'
+install_guard && {
+  theme_guard "Emacs" "Setup Emacs" && {
+    emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-install)'
+  }
+}
 
-  theme_guard "upgrade" "Upgrade Emacs packages" && {
+upgrade_guard && {
+  theme_guard "Emacs" "Upgrade Emacs packages" && {
     emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-upgrade)'
   }
 }
