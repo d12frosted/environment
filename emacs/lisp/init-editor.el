@@ -50,5 +50,14 @@
                    (read-string "Description: "))))
             fancy-yank-format-link)))))
 
+(use-package apheleia
+  :straight (apheleia
+             :host github
+             :repo "raxod502/apheleia")
+  :commands (apheleia-global-mode)
+  :defer t
+  :init
+  (apheleia-global-mode +1))
+
 (provide 'init-editor)
 ;;; init-editor.el ends here
