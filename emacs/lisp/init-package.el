@@ -65,7 +65,8 @@ Possible values are: upstream, mirror and local.")
   (package-initialize))
 
 ;; Setup `straight' package manager.
-(setq-default straight-repository-branch "develop")
+(setq-default straight-repository-branch "develop"
+              straight-check-for-modifications nil)
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" +path-packages-dir))
@@ -86,6 +87,17 @@ Possible values are: upstream, mirror and local.")
 (require 'straight)
 (straight-use-package 'use-package)
 (straight-use-package 'el-patch)
+
+(defun +package-install ()
+  "Install missing packages."
+  (interactive)
+  (straight-check-all))
+
+(defun +package-upgrade ()
+  "Upgrade installed packages."
+  (interactive)
+  (straight-pull-all)
+  (+package-install))
 
 ;; Should set before loading `use-package'
 (eval-and-compile

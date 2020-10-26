@@ -651,7 +651,11 @@ check fish && {
 }
 
 theme_guard "Emacs" "Setup Emacs" && {
-  emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el"
+  emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-install)'
+
+  theme_guard "upgrade" "Upgrade Emacs packages" && {
+    emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-upgrade)'
+  }
 }
 
 theme_guard "Guardian" "Check that Emacs runs as expected" && {
