@@ -20,7 +20,7 @@
 (require 'use-package)
 
 (use-package dired
-  :straight (dired :type built-in)
+  :straight nil
   :init
   (setq
    dired-listing-switches "-alh"

@@ -48,7 +48,7 @@ already exists."
             'counsel-etags-update-tags-force 'append 'local))
 
 (use-package etags
-  :straight (:type built-in)
+  :straight nil
   :defer t
   :init
   (setq tags-revert-without-query t))

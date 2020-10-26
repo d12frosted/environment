@@ -23,7 +23,7 @@
 
 (use-package js
   :defer t
-  :straight (:type built-in)
+  :straight nil
   :init
   (setq js-indent-level 2))
 

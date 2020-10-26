@@ -432,7 +432,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 
 (use-package +org-notes
   :defer t
-  :straight (:type built-in)
+  :straight nil
   :defines (+org-notes-directory)
   :commands (+org-notes-list
              +org-notes-find
@@ -518,7 +518,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :defer t)
 
 (use-package time-stamp
-  :straight (:type built-in)
+  :straight nil
   :init
   (add-hook 'write-file-functions 'time-stamp))
 

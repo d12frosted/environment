@@ -22,7 +22,7 @@
 
 (use-package ruby-mode
   :defer t
-  :straight (:type built-in)
+  :straight nil
   :hook
   (ruby-mode . lsp)
   :init

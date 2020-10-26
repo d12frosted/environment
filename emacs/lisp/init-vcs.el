@@ -91,7 +91,7 @@
   )
 
 (use-package ediff-wind
-  :straight (ediff-wind :type built-in)
+  :straight nil
   :defer t
   :init
   (setq ediff-window-setup-function 'ediff-setup-windows-plain
