@@ -37,6 +37,10 @@
 (declare-function org-back-to-heading "org")
 (declare-function org-get-tags "org")
 (declare-function org-set-tags "org")
+(declare-function org-element-lineage "org-element")
+(declare-function org-element-context "org-element")
+(declare-function org-element-property "org-element")
+(declare-function org-with-point-at "org-macs")
 (declare-function org-roam-find-file "org-roam")
 (declare-function org-roam-insert "org-roam")
 (declare-function org-roam-mode "org-roam")
@@ -46,6 +50,8 @@
 (declare-function org-roam-alias-delete "org-roam")
 (declare-function org-roam--extract-tags "org-roam")
 (declare-function org-roam--extract-tags-prop "org-roam")
+(declare-function org-roam--list-all-files "org-roam")
+(declare-function org-roam-format-link "org-roam")
 (declare-function org-roam-db-query "org-roam-db")
 (declare-function org-roam-db-build-cache "org-roam-db")
 (declare-function org-roam-db--clear "org-roam-db")
@@ -149,6 +155,11 @@ If the current buffer is not a note, does nothing."
 (defun +org-notes-rebuild ()
   "Rebuild notes database."
   (interactive)
+  (dolist (file (org-roam--list-all-files))
+    (with-current-buffer (or (find-buffer-visiting file)
+                             (find-file-noselect file))
+      (+org-notes-fix-links)
+      (save-buffer)))
   (org-roam-db--clear)
   (org-roam-db-build-cache))
 
@@ -197,6 +208,19 @@ If the current buffer is not a note, does nothing."
                        (string-remove-prefix +org-notes-directory p))
                      (+file-subdirs +org-notes-directory nil t)))))
     (completing-read "Subdir: " dirs nil t)))
+
+(defun +org-notes-fix-links ()
+  "Fixes the links to Org Roam notes in the current buffer."
+  (interactive)
+  (let (path desc)
+    (org-with-point-at 1
+      (while (re-search-forward org-link-bracket-re nil t)
+        (setq desc (match-string 2))
+        (when-let ((link (save-match-data (org-element-lineage (org-element-context) '(link) t))))
+          (when (string-equal "file" (org-element-property :type link))
+            (setq path (expand-file-name (org-element-property :path link)))
+            (replace-match "")
+            (insert (org-roam-format-link path desc))))))))
 
 (provide '+org-notes)
 ;;; +org-notes.el ends here
