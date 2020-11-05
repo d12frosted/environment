@@ -30,6 +30,7 @@
 (defvar org-roam-buffer)
 (defvar org-directory)
 (defvar org-attach-id-dir)
+(defvar org-link-bracket-re)
 (declare-function seq-contains-p "seq")
 (declare-function deft "deft")
 (declare-function deft-refresh "deft")
@@ -74,6 +75,20 @@
   "Find a note."
   (interactive)
   (org-roam-find-file))
+
+(defun +org-notes-find-backlink ()
+  "Find a note linked to current note."
+  (interactive)
+  (when-let* ((buffer (current-buffer))
+              (file (buffer-file-name buffer))
+              (backlinks (seq-uniq (seq-map #'car (org-roam--get-backlinks file)))))
+    (org-roam-find-file
+     nil
+     nil
+     (lambda (completions)
+       (seq-filter
+        (lambda (x) (seq-contains-p backlinks (plist-get (cdr x) :path)))
+        completions)))))
 
 (defun +org-notes-insert ()
   "Insert a link to the note."
