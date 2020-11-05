@@ -82,7 +82,7 @@
                                         :from tags
                                         :where (= file $s1)]
                                        path)))))
-    (when (seq-contains-p roam-tags "People")
+    (when (seq-contains-p roam-tags "people")
       (save-excursion
         (ignore-errors
           (org-back-to-heading)
@@ -140,7 +140,7 @@ If the current buffer is not a note, does nothing."
 (defun +org-notes-ensure-filetag ()
   "Add respective file tag if it's missing in the current note."
   (let ((tags (org-roam--extract-tags)))
-    (when (and (seq-contains-p tags "People")
+    (when (and (seq-contains-p tags "people")
                (null (+org-buffer-prop-get "FILETAGS")))
       (+org-buffer-prop-set
        "FILETAGS"
