@@ -43,6 +43,7 @@
 (declare-function org-element-property "org-element")
 (declare-function org-with-point-at "org-macs")
 (declare-function org-roam-find-file "org-roam")
+(declare-function org-roam--get-backlinks "org-roam")
 (declare-function org-roam-insert "org-roam")
 (declare-function org-roam-mode "org-roam")
 (declare-function org-roam-tag-add "org-roam")
@@ -159,13 +160,56 @@ If the current buffer is not a note, does nothing."
         (delete-window (get-buffer-window org-roam-buffer))))))
 
 (defun +org-notes-ensure-filetag ()
-  "Add respective file tag if it's missing in the current note."
-  (let ((tags (org-roam--extract-tags)))
+  "Add missing file tags to the current note."
+  (let ((tags (org-roam--extract-tags))
+        (filetags (+org-buffer-prop-get "FILETAGS"))
+        (tag (+org-notes--title-as-tag)))
     (when (and (seq-contains-p tags "people")
-               (null (+org-buffer-prop-get "FILETAGS")))
+               (not (seq-contains-p filetags tag)))
       (+org-buffer-prop-set
        "FILETAGS"
-       (+org-notes--title-as-tag)))))
+       (combine-and-quote-strings (seq-uniq (cons tag filetags))))
+      (save-buffer))))
+
+(defun +org-notes-ensure-tags ()
+  "Add missing roam tags to the current note."
+  (interactive)
+  (let* ((file (buffer-file-name (buffer-base-buffer)))
+         (all-tags (org-roam--extract-tags file))
+         (tags (org-roam--extract-tags-prop file))
+         (extra))
+    (cond
+     ((seq-contains-p all-tags "litnotes")
+      (unless (seq-find (lambda (x) (string-prefix-p "Status:" x)) tags)
+        (setq extra (cons "Status:New" extra)))
+      (unless (seq-find (lambda (x) (string-prefix-p "Content:" x)) tags)
+        (setq extra (cons
+                     (concat "Content:"
+                             (completing-read "Content: "
+                                              '("Book" "Article" "Video" "Course")))
+                     extra)))))
+    (unless (null extra)
+      (org-roam--set-global-prop
+       "ROAM_TAGS"
+       (combine-and-quote-strings (seq-uniq (append extra tags))))
+      (org-roam-db--insert-tags 'update)
+      (save-buffer))))
+
+(defun +org-notes-set-status ()
+  "Change status tag of current note."
+  (interactive)
+  (when-let* ((file (buffer-file-name (buffer-base-buffer)))
+              (tags (org-roam--extract-tags-prop file))
+              (status-raw (completing-read
+                           "Status: "
+                           '("New" "Ongoing" "Done" "Dropped")))
+              (status (concat "Status:" status-raw))
+              (new-tags (cons status
+                              (seq-remove (lambda (x) (string-prefix-p "Status:" x))
+                                          tags))))
+    (org-roam--set-global-prop "ROAM_TAGS" (combine-and-quote-strings new-tags))
+      (org-roam-db--insert-tags 'update)
+      (save-buffer)))
 
 (defun +org-notes-rebuild ()
   "Rebuild notes database."
