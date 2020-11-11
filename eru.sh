@@ -155,6 +155,11 @@ function arch_guard() {
   return
 }
 
+function macos_guard() {
+  [[ "$OS_NAME" == "macos" ]]
+  return
+}
+
 function qualify_repo_url() {
   if [[ "$1" = "https://"* || "$1" = "git@"* ]]; then
     echo "$1"
