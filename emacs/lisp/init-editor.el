@@ -47,6 +47,13 @@
               (list url
                     (+vcs-url-format-github-issue owner repo type number)))
             fancy-yank-format-link))
+    (cons "\\(https?://hackage.haskell.org/package/\\([-[:alnum:]]+\\).*\\)"
+          '(fancy-yank-extract-regex
+            (lambda (url package &rest args)
+              (list
+               url
+               package))
+            fancy-yank-format-link))
     (cons +string-http-url-regexp
           '(fancy-yank-extract-regex
             (lambda (url &rest args)
