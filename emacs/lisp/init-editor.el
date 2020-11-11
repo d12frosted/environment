@@ -21,6 +21,12 @@
 (require '+vcs-url)
 (require '+string)
 
+(use-package ukrainian-input-method
+  :straight (ukrainian-input-method
+             :type git
+             :host github
+             :repo "d12frosted/emacs-ukrainian-input-method"))
+
 (use-package move-text
   :commands (move-text-down
              move-text-up))
