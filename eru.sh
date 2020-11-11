@@ -694,6 +694,7 @@ install_guard && {
 upgrade_guard && {
   theme_guard "Emacs" "Upgrade Emacs packages" && {
     emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-upgrade)'
+    emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-install)'
   }
 }
 
