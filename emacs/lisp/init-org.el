@@ -513,6 +513,12 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :load-path (lambda () (concat straight-base-dir "straight/repos/org-roam-server/"))
   :defer t)
 
+(use-package delve
+  :straight (:host github :repo "publicimageltd/delve" :branch "main")
+  :defer t
+  :config
+  (add-hook 'org-mode-hook #'delve-minor-mode-maybe-activate))
+
 (use-package org-roam-dashboard
   :straight (:host github :repo "publicimageltd/org-roam-dashboard")
   :defer t)

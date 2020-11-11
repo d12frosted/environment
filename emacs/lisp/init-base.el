@@ -134,6 +134,10 @@
   (unless (server-running-p)
     (server-start)))
 
+(use-package lister
+  :straight (:host github :repo "publicimageltd/lister" :branch "main")
+  :defer t)
+
 (cl-flet ((always-yes (&rest _) t))
   (defun no-confirm (fun &rest args)
     "Apply FUN to ARGS, skipping user confirmations."
