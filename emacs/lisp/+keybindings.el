@@ -83,6 +83,8 @@
   "nd" '(nil :which-key "by date...")
   "ndd" '(+org-notes-dailies-date :which-key "arbitrary date")
   "ndt" '(+org-notes-dailies-today :which-key "today")
+  "ndn" '(+org-notes-dailies-next :which-key "next")
+  "ndp" '(+org-notes-dailies-prev :which-key "previous")
   "nf" '(+org-notes-find :which-key "find")
   "nF" '(+org-notes-find-backlink :which-key "find backlink")
   "ng" '(org-roam-graph :which-key "graph")

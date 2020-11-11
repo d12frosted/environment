@@ -453,16 +453,18 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
              :type git
              :host github
              :repo "org-roam/org-roam")
-  :commands (org-roam-dailies-today
-             org-roam-dailies-yesterday
-             org-roam-dailies-tomorrow
-             org-roam-dailies-date
+  :commands (org-roam-dailies-find-date
+             org-roam-dailies-find-today
+             org-roam-dailies-capture-today
+             org-roam-dailies-find-yesterday
+             org-roam-dailies-find-tomorrow
              org-roam-find-file
              org-roam-insert
              org-roam-db-build-cache
              org-roam--get-title-or-slug)
   :init
   (setq org-roam-directory +org-notes-directory
+        org-roam-dailies-directory "journal/"
         org-roam-db-location (expand-file-name "org-roam.db" +path-cache-dir)
         org-roam-graph-viewer
         (when +sys-mac-p "open")
@@ -491,15 +493,16 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
         org-roam-completions-everywhere t)
   :config
   (setq org-roam-capture-templates
-        '(("d" "default" plain #'org-roam-capture--get-point
+        '(("d" "default" plain
+           #'org-roam-capture--get-point
            "%?"
            :file-name "%(+org-notes-subdir)/%<%Y%m%d%H%M%S>-${slug}"
            :head "#+TITLE: ${title}\n#+OPTIONS: auto-id:t\n#+TIME-STAMP: <>\n\n"
            :unnarrowed t))
         org-roam-dailies-capture-templates
-        '(("d" "daily" plain #'org-roam-capture--get-point
-           ""
-           :immediate-finish t
+        '(("d" "default" entry
+           #'org-roam-capture--get-point
+           "\n\n* %<%H:%M> \n\n%?"
            :file-name "journal/%<%Y-%m-%d>"
            :head "#+TITLE: %<%A, %d %B %Y>\n#+OPTIONS: auto-id:t\n#+TIME-STAMP: <>\n\n")))
   (require 'org-protocol)
@@ -527,26 +530,6 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :straight nil
   :init
   (add-hook 'write-file-functions 'time-stamp))
-
-(use-package org-journal
-  :after org-roam
-  :hook ((org-journal . org-display-inline-images)
-         (org-journal . org-latex-preview)
-         (org-journal . org-fragtog-mode))
-  :init
-  (setq
-   org-journal-find-file #'find-file
-   org-journal-hide-entries-p nil
-   org-journal-time-prefix "* "
-   org-journal-file-format "%Y-%m-%d.org"
-   org-journal-dir (concat +org-notes-directory "journal/")
-   org-journal-cache-file (expand-file-name "org-journal.cache" +path-cache-dir)
-
-   ;; strictly speaking, these are not used, because I let `org-roam' create new
-   ;; file via `+org-notes-new-journal-entry'.
-   org-journal-date-prefix "#+TITLE: "
-   org-journal-file-header "#+TIME-STAMP: <>"
-   org-journal-date-format "%A, %d %B %Y"))
 
 ;; remove after
 ;; https://github.com/jrblevin/deft/issues/77

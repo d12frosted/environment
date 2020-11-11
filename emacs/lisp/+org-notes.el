@@ -63,10 +63,13 @@
 (declare-function org-roam "org-roam-buffer")
 (declare-function org-roam-buffer--visibility "org-roam-buffer")
 (declare-function org-roam--current-visibility "org-roam-buffer")
-(declare-function org-roam-dailies-today "org-roam-dailies")
-(declare-function org-roam-dailies-date "org-roam-dailies")
-(declare-function org-roam-dailies--file-for-time "org-roam-dailies")
-(declare-function org-journal-new-entry "org-journal")
+
+(autoload 'org-roam-dailies-find-today "org-roam-dailies")
+(autoload 'org-roam-dailies-find-date "org-roam-dailies")
+(autoload 'org-roam-dailies-find-next-note "org-roam-dailies")
+(autoload 'org-roam-dailies-find-previous-note "org-roam-dailies")
+(autoload 'org-roam-dailies-capture-today "org-roam-dailies")
+(autoload 'org-roam-dailies-capture-date "org-roam-dailies")
 
 (defun +org-notes-list ()
   "Open a list of notes."
@@ -124,22 +127,29 @@ By default it uses current date to find a daily. With
   (interactive)
   (cond
    ((equal current-prefix-arg '(4))     ; select date
-    (let* ((time (org-read-date nil 'to-time)))
-      (org-roam-dailies--file-for-time time)
-      (org-journal-new-entry nil time)))
+    (org-roam-dailies-capture-date))
    (t
-    (org-roam-dailies-today)
-    (org-journal-new-entry nil))))
+    (org-roam-dailies-capture-today))))
 
 (defun +org-notes-dailies-today ()
   "Find a daily note for today."
   (interactive)
-  (org-roam-dailies-today))
+  (org-roam-dailies-find-today))
 
 (defun +org-notes-dailies-date ()
   "Find a daily note for date specified using calendar."
   (interactive)
-  (org-roam-dailies-date))
+  (org-roam-dailies-find-date))
+
+(defun +org-notes-dailies-prev ()
+  "Find a daily note that comes before current."
+  (interactive)
+  (org-roam-dailies-find-previous-note))
+
+(defun +org-notes-dailies-next ()
+  "Find a daily note that comes after current."
+  (interactive)
+  (org-roam-dailies-find-next-note))
 
 (defun +org-notes-setup-buffer (&optional _)
   "Setup current buffer for notes viewing and editing.
