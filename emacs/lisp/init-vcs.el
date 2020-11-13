@@ -31,10 +31,6 @@
 (use-package magit
   :defer t
   :config
-  ;; full-screen is my friend
-  (when (fboundp 'magit-display-buffer-fullframe-status-v1)
-    (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
-
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 
