@@ -26,13 +26,13 @@
 - 3rd group is repository name.")
 
 (defvar +vcs-url-github-issue-regexp
-  "\\(https://github\\.com/\\([-[:alnum:]]+\\)/\\([-[:alnum:]]+\\)/\\([[:alpha:]]+\\)/\\([[:digit:]]+\\)\\).*"
+  "\\(https://github\\.com/\\([-[:alnum:]]+\\)/\\([-[:alnum:]]+\\)/\\([[:alpha:]]+\\)/\\([[:alnum:]]+\\)\\).*"
   "GitHub issue/pull URL regexp.
 
 - 1st group is whole URL.
 - 2nd group is owner.
 - 3rd group is repository name.
-- 4th group is type of the object - issue/pull/miliestone.
+- 4th group is type of the object - issue/pull/miliestone/commit.
 - 5th group is the number of the object.")
 
 (defvar +vcs-url-known-github-users '("d12frosted")
@@ -55,7 +55,9 @@ part of format is omitted."
    (if (string-equal type "milestone")
        "m"
      "#")
-   number))
+   (if (string-equal type "commit")
+       (substring number 0 (min 7 (length number)))
+     number)))
 
 (provide '+vcs-url)
 ;;; +vcs-url.el ends here
