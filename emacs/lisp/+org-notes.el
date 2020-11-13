@@ -162,6 +162,7 @@ If the current buffer is not a note, does nothing."
             (org-roam-mode 1))
           (setq-local time-stamp-start "#\\+TIME-STAMP:[ 	]+\\\\?[\"<]+")
           (setq-local org-attach-id-dir (expand-file-name ".data" org-directory))
+          (setq-local org-preview-latex-image-directory (expand-file-name ".ltximg/" org-directory))
           ;; (setq org-roam-last-window (get-buffer-window))
           ;; (unless (eq 'visible (org-roam-buffer--visibility))
           ;;   (delete-other-windows)
