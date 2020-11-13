@@ -35,6 +35,14 @@
 - 4th group is type of the object - issue/pull/miliestone/commit.
 - 5th group is the number of the object.")
 
+(defvar +vcs-url-github-project-regexp
+  "\\(https://github\\.com/\\([-[:alnum:]]+\\)/\\([-[:alnum:]]+\\)/?\\)"
+  "GitHub project URL regexp.
+
+- 1st group is whole URL.
+- 2nd group is owner.
+- 3rd group is repository name.")
+
 (defvar +vcs-url-known-github-users '("d12frosted")
   "List of 'known' GitHub users.")
 
@@ -58,6 +66,16 @@ part of format is omitted."
    (if (string-equal type "commit")
        (substring number 0 (min 7 (length number)))
      number)))
+
+(defun +vcs-url-format-github-project (owner repo)
+  "Format GitHub REPO.
+
+In case OWNER is a member of `+vcs-url-known-github-users', then OWNER
+part of format is omitted."
+  (concat
+   (if (seq-contains-p +vcs-url-known-github-users owner)
+       repo
+     (concat owner "/" repo))))
 
 (provide '+vcs-url)
 ;;; +vcs-url.el ends here
