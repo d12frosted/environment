@@ -96,9 +96,9 @@ Possible values are: upstream, mirror and local.")
 (defun +package-upgrade ()
   "Upgrade installed packages."
   (interactive)
-  (delete-directory (concat +path-packages-dir "straight/build") 'recursive)
-  (delete-file (concat +path-packages-dir "straight/build-cache.el"))
   (straight-pull-all)
+  (delete-file (concat +path-packages-dir "straight/build-cache.el"))
+  (delete-directory (concat +path-packages-dir "straight/build") 'recursive)
   (+package-install))
 
 ;; Should set before loading `use-package'
