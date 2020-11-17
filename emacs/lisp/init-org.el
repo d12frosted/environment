@@ -497,14 +497,14 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
            #'org-roam-capture--get-point
            "%?"
            :file-name "%(+org-notes-subdir)/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+TITLE: ${title}\n#+OPTIONS: auto-id:t\n#+TIME-STAMP: <>\n\n"
+           :head "#+TITLE: ${title}\n#+TIME-STAMP: <>\n\n"
            :unnarrowed t))
         org-roam-dailies-capture-templates
         '(("d" "default" entry
            #'org-roam-capture--get-point
            "\n\n* %<%H:%M> \n\n%?"
            :file-name "journal/%<%Y-%m-%d>"
-           :head "#+TITLE: %<%A, %d %B %Y>\n#+OPTIONS: auto-id:t\n#+TIME-STAMP: <>\n\n")))
+           :head "#+TITLE: %<%A, %d %B %Y>\n#+TIME-STAMP: <>\n\n")))
   (require 'org-protocol)
   (require 'org-roam-protocol))
 
