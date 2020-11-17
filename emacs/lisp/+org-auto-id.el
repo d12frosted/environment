@@ -24,7 +24,7 @@
 (declare-function org-map-entries "org")
 (declare-function org-with-point-at "org-macs")
 
-(defvar +org-auto-id-props '("ID" "CUSTOM_ID")
+(defvar +org-auto-id-props '("ID")
   "List of properties that must be added when missing.")
 
 (defconst +org-auto-id-enable-regexp

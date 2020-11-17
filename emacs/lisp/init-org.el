@@ -208,7 +208,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   (setq org-id-track-globally t
         org-id-extra-files (list (expand-file-name ".archive/archive" org-directory)
                                  (expand-file-name ".archive/archive.org" org-directory))
-	      org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+	      org-id-link-to-org-use-id t
         org-id-locations-file (expand-file-name ".orgids" org-directory)))
 
 (use-package org-capture
