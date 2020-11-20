@@ -201,7 +201,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :defer t
   :straight org-plus-contrib
   :hook ((before-save . +org-auto-id-add-to-headlines-in-file)
-	       (org-capture-prepare-finalize . +org-auto-id-dwim))
+	       (org-capture-prepare-finalize . org-id-get-create))
   :init
   (setq org-id-uuid-program "uuidgen | tr \"[:upper:]\" \"[:lower:]\"")
   :config
