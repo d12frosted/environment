@@ -521,7 +521,25 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :defer t
   :init
   (autoload 'delve-minor-mode-maybe-activate "delve-minor-mode")
-  (add-hook 'org-mode-hook #'delve-minor-mode-maybe-activate))
+  (add-hook 'org-mode-hook #'delve-minor-mode-maybe-activate)
+  :config
+  (setq delve-searches
+        (list (delve-make-page-search :name "Ongoing Literature Notes"
+    			                            :constraint [:where (like tags:tags $r1)]
+                                      :args "%%Status:Ongoing%%")
+              (delve-make-page-search :name "Orphaned Pages"
+    			                            :constraint [:where tags:tags :is :null])
+	            (delve-make-page-search :name "10 Last Modified"
+			                                :postprocess #'delve-db-query-last-10-modified)
+	            (delve-make-page-search :name "10 Most Linked To"
+			                                :constraint [:order-by (desc backlinks)
+					                                                   :limit 10])
+	            (delve-make-page-search :name "10 Most Linked From"
+			                                :constraint [:order-by (desc tolinks)
+					                                                   :limit 10])
+	            (delve-make-page-search :name "10 Most Linked"
+			                                :constraint [:order-by (desc (+ backlinks tolinks))
+					                                                   :limit 10]))))
 
 (use-package org-roam-dashboard
   :straight (:host github :repo "publicimageltd/org-roam-dashboard")
