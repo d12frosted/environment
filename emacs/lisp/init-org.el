@@ -519,7 +519,8 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 (use-package delve
   :straight (:host github :repo "publicimageltd/delve" :branch "main")
   :defer t
-  :config
+  :init
+  (autoload 'delve-minor-mode-maybe-activate "delve-minor-mode")
   (add-hook 'org-mode-hook #'delve-minor-mode-maybe-activate))
 
 (use-package org-roam-dashboard
