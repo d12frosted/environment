@@ -70,6 +70,9 @@ __append_to_path /usr/texbin
 __append_to_path /usr/local/sbin
 __append_to_path /usr/local/opt/coreutils/libexec/gnubin
 __append_to_path /usr/local/opt/gnu-sed/libexec/gnubin
+__append_to_path /usr/local/opt/grep/bin
+__append_to_path /usr/local/opt/gnu-getopt/bin
+__append_to_path /usr/local/opt/texinfo/bin
 __append_to_path $HOME/Dropbox/bin
 __append_to_path $HOME/.doom-emacs/bin
 set -x PATH $HOME/.local/bin $PATH
