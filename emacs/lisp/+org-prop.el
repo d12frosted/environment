@@ -20,8 +20,13 @@
 (require '+string)
 (require '+org)
 (require '+org-brain)
+(require '+org-link)
 (require 'subr-x)
 (require 'lib-fun)
+
+(autoload 'org-set-property "org")
+(autoload 'org-entry-get "org")
+(autoload 'org-map-entries "org")
 
 ;;;###autoload
 (defun +org-prompt-property (name &optional initial)
@@ -174,7 +179,7 @@ When CHILD-HOOK is non-nil it's being called with point at child."
 
 Supports `org-roam' filenames by chopping prefix cookie."
   (+string-chop-prefix-regexp
-   "^[0-9]+\\-"
+   "^[0-9]\\{4\\}[0-9]+\\-"
    (or (+org-entry-get "CATEGORY")
        (if buffer-file-name
            (file-name-sans-extension
