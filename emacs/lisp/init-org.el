@@ -548,33 +548,6 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :init
   (add-hook 'write-file-functions 'time-stamp))
 
-;; remove after
-;; https://github.com/jrblevin/deft/issues/77
-(with-no-warnings
-  (require 'cl))
-
-(use-package deft
-  :defer t
-  :init
-  (setq
-   deft-recursive t
-   deft-use-filter-string-for-filename t
-   deft-default-extension "org"
-   deft-directory +org-notes-directory)
-  :config/el-patch
-  (defun deft-parse-title (file _)
-    "Parse the given FILE and CONTENTS and determine the title.
-If `deft-use-filename-as-title' is nil, the title is taken to
-be the first non-empty line of the FILE.  Else the base name of the FILE is
-used as title."
-    (el-patch-swap (if deft-use-filename-as-title
-                       (deft-base-filename file)
-                     (let ((begin (string-match "^.+$" contents)))
-                       (if begin
-                           (funcall deft-parse-title-function
-                                    (substring contents begin (match-end 0))))))
-                   (org-roam--get-title-or-slug file))))
-
 (use-package org-fragtog
   :defer t
   :hook (org-mode . org-fragtog-mode))
