@@ -96,10 +96,45 @@ Possible values are: upstream, mirror and local.")
 (defun +package-upgrade ()
   "Upgrade installed packages."
   (interactive)
-  (straight-pull-all)
+  (+package-fetch-all)
+  (straight-merge-all)
   (delete-file (concat +path-packages-dir "straight/build-cache.el"))
   (delete-directory (concat +path-packages-dir "straight/build") 'recursive)
   (+package-install))
+
+(defun +package-fetch-all (&optional from-upstream predicate)
+  "Try to fetch all packages from their primary remotes.
+With prefix argument FROM-UPSTREAM, fetch not just from primary
+remotes but also from upstreams (for forked packages).
+
+Return a list of recipes for packages that were not successfully
+fetched. If multiple packages come from the same local
+repository, only one is fetched.
+
+PREDICATE, if provided, filters the packages that are fetched. It
+is called with the package name as a string, and should return
+non-nil if the package should actually be fetched."
+  (interactive "P")
+  (straight--map-existing-repos-interactively
+   (lambda (package)
+     (+package-fetch-package package from-upstream 3))
+   predicate))
+
+(defun +package-fetch-package (package &optional from-upstream n)
+  "Try to fetch a PACKAGE from the primary remote.
+PACKAGE is a string naming a package. Interactively, select
+PACKAGE from the known packages in the current Emacs session
+using `completing-read'. With prefix argument FROM-UPSTREAM,
+fetch not just from primary remote but also from upstream (for
+forked packages).
+
+N is for retries."
+  (condition-case err
+      (straight-fetch-package package from-upstream)
+    (error
+     (if (> n 0)
+         (+package-fetch-package package from-upstream (- n 1))
+       (signal (car err) (cdr err))))))
 
 ;; Should set before loading `use-package'
 (eval-and-compile
