@@ -503,6 +503,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
         '(("d" "default" entry
            #'org-roam-capture--get-point
            "\n\n* %<%H:%M> \n\n%?"
+           :empty-lines 1
            :file-name "journal/%<%Y-%m-%d>"
            :head "#+TITLE: %<%A, %d %B %Y>\n#+TIME-STAMP: <>\n\n")))
   (require 'org-protocol)
