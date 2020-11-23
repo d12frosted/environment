@@ -520,9 +520,6 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 (use-package delve
   :straight (:host github :repo "publicimageltd/delve" :branch "main")
   :defer t
-  :init
-  (autoload 'delve-minor-mode-maybe-activate "delve-minor-mode")
-  (add-hook 'org-mode-hook #'delve-minor-mode-maybe-activate)
   :config
   (setq delve-searches
         (list (delve-make-page-search :name "Ongoing Literature Notes"
