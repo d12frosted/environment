@@ -20,7 +20,6 @@
 (require 'init-path)
 (require 'init-base)
 (require 'init-package)
-(require 'init-org)
 
 (use-package plantuml-mode
   :mode "\\.puml\\'"

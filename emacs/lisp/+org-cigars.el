@@ -24,6 +24,15 @@
 (require '+org-buffer-prop)
 (require '+inventory)
 
+(autoload 'org-edit-headline "org")
+(autoload 'org-entry-properties "org")
+(autoload 'org-id-find "org-id")
+(autoload 'org-id-get "org-id")
+(autoload 'org-read-date "org")
+(autoload 'org-set-tags "outline")
+(autoload 'org-with-point-at "org-macs")
+(autoload 'outline-up-heading "outline")
+
 ;;
 ;; Minor mode
 
@@ -294,7 +303,7 @@ when already at cigar entry."
          (date (or date (org-read-date nil t))))
      (inventory-add cigars-inventory-file id amount source date)
      (let ((prices (cigar-get-prices)))
-       (unless (seq-contains prices price)
+       (unless (seq-contains-p prices price)
          (+org-entry-set "PRICE" (+string-join (cons price prices) ", "))))
      (cigar-refresh-entry))))
 
