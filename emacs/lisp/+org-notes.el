@@ -155,23 +155,15 @@ By default it uses current date to find a daily. With
   "Setup current buffer for notes viewing and editing.
 
 If the current buffer is not a note, does nothing."
-  (unless (active-minibuffer-window)
-    (if (+org-notes-buffer-p)
-        (progn
-          (unless (bound-and-true-p org-roam-mode)
-            (org-roam-mode 1))
-          (setq-local time-stamp-start "#\\+TIME-STAMP:[ 	]+\\\\?[\"<]+")
-          (setq-local org-attach-id-dir (expand-file-name ".data" org-directory))
-          (setq-local org-preview-latex-image-directory (expand-file-name ".ltximg/" org-directory))
-          ;; (setq org-roam-last-window (get-buffer-window))
-          ;; (unless (eq 'visible (org-roam-buffer--visibility))
-          ;;   (delete-other-windows)
-          ;;   (call-interactively #'org-roam))
-          (+org-notes-ensure-filetag)
-          (+org-notes-ensure-tags))
-      (when (and (fboundp #'org-roam-buffer--visibility)
-                 (eq 'visible (org-roam-buffer--visibility)))
-        (delete-window (get-buffer-window org-roam-buffer))))))
+  (when (and (not (active-minibuffer-window))
+             (+org-notes-buffer-p))
+    (unless (bound-and-true-p org-roam-mode)
+      (org-roam-mode 1))
+    (setq-local time-stamp-start "#\\+TIME-STAMP:[ 	]+\\\\?[\"<]+")
+    (setq-local org-attach-id-dir (expand-file-name ".data" org-directory))
+    (setq-local org-preview-latex-image-directory (expand-file-name ".ltximg/" org-directory))
+    (+org-notes-ensure-filetag)
+    (+org-notes-ensure-tags)))
 
 (defun +org-notes-ensure-filetag ()
   "Add missing file tags to the current note."
