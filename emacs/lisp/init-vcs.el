@@ -30,6 +30,8 @@
 
 (use-package magit
   :defer t
+  :init
+  (setq magit-git-executable (executable-find "git"))
   :config
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
