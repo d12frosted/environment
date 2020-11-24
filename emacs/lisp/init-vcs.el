@@ -37,6 +37,7 @@
   (define-key magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit)
 
   (setq magit-revision-show-gravatars '("^Author:     " . "^Commit:     ")
+        magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1
         ;; show word-granularity on selected hunk
         magit-diff-refine-hunk t))
 
