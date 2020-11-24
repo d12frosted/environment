@@ -41,17 +41,17 @@
   (setq-default
    fancy-yank-rules
    (list
-    (cons +vcs-url-github-project-regexp
-          '(fancy-yank-extract-regex
-            (lambda (url owner repo &rest args)
-              (list url
-                    (+vcs-url-format-github-project owner repo)))
-            fancy-yank-format-link))
     (cons +vcs-url-github-issue-regexp
           '(fancy-yank-extract-regex
             (lambda (url owner repo type number &rest args)
               (list url
                     (+vcs-url-format-github-issue owner repo type number)))
+            fancy-yank-format-link))
+    (cons +vcs-url-github-project-regexp
+          '(fancy-yank-extract-regex
+            (lambda (url owner repo &rest args)
+              (list url
+                    (+vcs-url-format-github-project owner repo)))
             fancy-yank-format-link))
     (cons "\\(https?://hackage.haskell.org/package/\\([-[:alnum:]]+\\).*\\)"
           '(fancy-yank-extract-regex
