@@ -168,7 +168,7 @@ If the current buffer is not a note, does nothing."
 (defun +org-notes-ensure-filetag ()
   "Add missing file tags to the current note."
   (let ((tags (org-roam--extract-tags))
-        (filetags (+org-buffer-prop-get "FILETAGS"))
+        (filetags (+org-buffer-prop-get-list "FILETAGS"))
         (tag (+org-notes--title-as-tag)))
     (when (and (seq-contains-p tags "people")
                (not (seq-contains-p filetags tag)))
