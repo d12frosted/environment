@@ -285,6 +285,13 @@ If the current buffer is not a note, does nothing."
           (when (string-equal "file" (org-element-property :type link))
             (setq path (expand-file-name (org-element-property :path link)))
             (replace-match "")
+            (insert (org-roam-format-link path desc)))
+          (when (string-equal "id" (org-element-property :type link))
+            (replace-match "")
+            (setq path (car (org-roam-id-find
+                             (+string-chop-prefix-regexp ".+/" (org-element-property :path link)))))
+            (setq desc  (org-roam--with-temp-buffer path
+                          (car (org-roam--extract-titles-title))))
             (insert (org-roam-format-link path desc))))))))
 
 (provide '+org-notes)
