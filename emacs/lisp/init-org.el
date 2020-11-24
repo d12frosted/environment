@@ -61,6 +61,8 @@ It is relative to `org-directory', unless it is absolute.")
   :hook ((org-mode . auto-fill-mode)
          (org-clock-out . +org/remove-empty-drawer))
   :init
+  ;; Oh, how much I hate it
+  (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
   ;; Setup list of Org modules that should always be loaded together
   ;; with Org.
   (setq org-modules
