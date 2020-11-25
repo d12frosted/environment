@@ -580,6 +580,9 @@ arch_guard && {
       sudo mv /usr/share/X11/xkb/symbols/ua /usr/share/X11/xkb/symbols/ua.bak
     fi
     sudo cp "$XDG_CONFIG_HOME/xorg/xkb/symbols/ua" "/usr/share/X11/xkb/symbols/ua"
+
+    # Make sure that Caps doesn't miss it's purpose.
+    setxkbmap -option caps:ctrl_modifier
   }
 
   theme_guard "hardware" "Setup touchpad" && {
