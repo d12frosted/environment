@@ -656,11 +656,11 @@ macos_guard && {
     }
   }
 
-  theme "yabai" "Ensure scripting addition is installed"
-  upgrade_guard && {
+  theme_guard "yabai" "Ensure scripting addition is installed" && {
     # reinstall the scripting addition
     sudo yabai --uninstall-sa
     sudo yabai --install-sa
+    sudo yabai --load-sa
 
     # load the scripting addition
     killall Dock || true
