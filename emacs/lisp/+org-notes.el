@@ -277,22 +277,29 @@ If the current buffer is not a note, does nothing."
 (defun +org-notes-fix-links ()
   "Fixes the links to Org Roam notes in the current buffer."
   (interactive)
-  (let (path desc)
-    (org-with-point-at 1
-      (while (re-search-forward org-link-bracket-re nil t)
-        (setq desc (match-string 2))
+  (org-with-point-at 1
+    (while (re-search-forward org-link-bracket-re nil t)
+      (let ((desc (match-string 2)))
         (when-let ((link (save-match-data (org-element-lineage (org-element-context) '(link) t))))
           (when (string-equal "file" (org-element-property :type link))
-            (setq path (expand-file-name (org-element-property :path link)))
-            (replace-match "")
-            (insert (org-roam-format-link path desc)))
-          (when (string-equal "id" (org-element-property :type link))
-            (replace-match "")
-            (setq path (car (org-roam-id-find
-                             (+string-chop-prefix-regexp ".+/" (org-element-property :path link)))))
-            (setq desc  (org-roam--with-temp-buffer path
-                          (car (org-roam--extract-titles-title))))
-            (insert (org-roam-format-link path desc))))))))
+            (let ((path (expand-file-name (org-element-property :path link))))
+              (replace-match "")
+              (insert (org-roam-format-link path desc))))))))
+  (org-with-point-at 1
+    (while (re-search-forward "id:\\.\\." nil t)
+      (when-let ((link (org-element-lineage (org-element-context) '(link) t)))
+        (let* ((id (+string-chop-prefix-regexp ".+/" (org-element-property :path link)))
+               (path (car (car (org-roam-db-query
+                                [:select file
+                                 :from ids
+                                 :where (= id $s1)]
+                                id))))
+               (desc (org-roam-db--get-title path))
+               (begin (org-element-property :begin link))
+               (end (- (org-element-property :end link)
+                       (org-element-property :post-blank link))))
+          (delete-region begin end)
+          (insert (org-roam-format-link path desc)))))))
 
 (provide '+org-notes)
 ;;; +org-notes.el ends here
