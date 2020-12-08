@@ -31,6 +31,7 @@
 (defvar org-directory)
 (defvar org-attach-id-dir)
 (defvar org-link-bracket-re)
+(defvar org-any-link-re)
 (declare-function seq-contains-p "seq")
 (declare-function deft "deft")
 (declare-function deft-refresh "deft")
