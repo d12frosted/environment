@@ -308,17 +308,12 @@ If the current buffer is not a note, does nothing."
     (while (re-search-forward "id:\\.\\." nil t)
       (when-let ((link (org-element-lineage (org-element-context) '(link) t)))
         (let* ((id (+string-chop-prefix-regexp ".+/" (org-element-property :path link)))
-               (path (car (car (org-roam-db-query
-                                [:select file
-                                 :from ids
-                                 :where (= id $s1)]
-                                id))))
-               (desc (org-roam-db--get-title path))
+               (desc (+org-notes-get-title-by-id id))
                (begin (org-element-property :begin link))
                (end (- (org-element-property :end link)
                        (org-element-property :post-blank link))))
           (delete-region begin end)
-          (insert (org-roam-format-link path desc)))))))
+          (insert (org-roam-format-link id desc)))))))
 
 (provide '+org-notes)
 ;;; +org-notes.el ends here
