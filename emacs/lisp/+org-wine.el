@@ -660,5 +660,154 @@ Supports the following entries:
   "Return alist of parent id and refresh function."
   (list (cons (+brain-as-id wine-parent) #'wine-refresh-entry)))
 
+;;
+;; Migration
+
+(defun org-check-agenda-file (file)
+  "Make sure FILE exists.  If not, ask user what to do."
+  (org-remove-file file)
+	(throw 'nextfile t))
+
+(defun wine-migrate--find-note (title)
+  "Find a note with TITLE."
+  (car (+seq-flatten
+        (org-roam-db-query [:select file
+                            :from titles
+                            :where (= title $s1)]
+                           title))))
+
+(defun wine-migrate--find-country (region-entry-or-id)
+  "Find a country from REGION-ENTRY-OR-ID."
+  (let* ((entry (+brain-as-entry region-entry-or-id))
+         (parents (org-brain-parents entry))
+         (countries-id "ec4a5bd7-71c4-479a-8bbb-8f022e78f52d"))
+    (seq-find (lambda (x)
+                (seq-find (lambda (y)
+                            (string-equal countries-id (+brain-as-id y)))
+                          (org-brain-parents x)))
+              parents)))
+
+(defun wine-migrate--ensure-appellation (entry-or-id)
+  "Ensure that appellation described by ENTRY-OR-ID exists.
+
+Transitively ensures that parent region and country both exist.
+
+Return (:country-file :country-name
+        :region-file :region-name
+        :appellation-file :appellation-name)."
+  (let* ((entry (+brain-as-entry entry-or-id))
+         (id (+brain-as-id entry-or-id))
+         (name (+brain-title entry))
+         (file (wine-migrate--find-note name))
+         (region-id (let ((f (org-id-find-id-file id)))
+                      (+org-with-file  f
+                                       (goto-char (cdr (org-id-find-id-in-file id f)))
+                                       (+org-entry-get-brain "REGION"))))
+         (result (wine-migrate--ensure-region region-id)))
+    (unless file
+      (let* ((org-roam-capture-immediate-template-old org-roam-capture-immediate-template)
+             (org-roam-capture-immediate-template `("d" "default" plain
+                                                    #'org-roam-capture--get-point
+                                                    "%?"
+                                                    :file-name "wine/appellation/%<%Y%m%d%H%M%S>-${slug}"
+                                                    :head ,(concat
+                                                            "#+TITLE: ${title}\n#+TIME-STAMP: <>\n\n"
+                                                            "- country :: "
+                                                            (org-roam-format-link (plist-get result :country-file)
+                                                                                  (plist-get result :country-name))
+                                                            "\n"
+                                                            "- region :: "
+                                                            (org-roam-format-link (plist-get result :region-file)
+                                                                                  (plist-get result :region-name))
+                                                            "\n")
+                                                    :unnarrowed t
+                                                    :immediate-finish t)))
+        (org-roam-find-file-immediate name nil nil t)
+        (org-roam-db-build-cache)
+        (setq org-roam-capture-immediate-template org-roam-capture-immediate-template-old)))
+    (plist-put
+     (plist-put
+      result
+      :appellation-file (wine-migrate--find-note name))
+     :appellation-name name)))
+
+(defun wine-migrate--ensure-region (region-entry-or-id)
+  "Ensure that region described by REGION-ENTRY-OR-ID exists.
+
+Transitively ensures that country exists.
+
+Return (:country-file :country-name :region-file :region-name)."
+  (let* ((result (wine-migrate--ensure-country region-entry-or-id))
+         (region-enty (+brain-as-entry region-entry-or-id))
+         (region-name (+brain-title region-entry-or-id))
+         (region-file (wine-migrate--find-note region-name)))
+    (unless region-file
+      (let* ((org-roam-capture-templates-old org-roam-capture-templates)
+             (org-roam-capture-templates `(("d" "default" plain
+                                            #'org-roam-capture--get-point
+                                            "%?"
+                                            :file-name "wine/region/%<%Y%m%d%H%M%S>-${slug}"
+                                            :head ,(concat
+                                                    "#+TITLE: ${title}\n#+TIME-STAMP: <>\n\n"
+                                                    "- country :: "
+                                                    (org-roam-format-link (plist-get result :country-file)
+                                                                          (plist-get result :country-name))
+                                                    "\n")
+                                            :unnarrowed t
+                                            :immediate-finish t))))
+        (org-roam-find-file country-name nil nil t)
+        (org-roam-db-build-cache)
+        (setq org-roam-capture-templates org-roam-capture-templates-old)))
+    (plist-put
+     (plist-put
+      result
+      :region-file (wine-migrate--find-note region-name))
+     :region-name region-name)))
+
+(defun wine-migrate--ensure-country (region-entry-or-id)
+  "Ensure that parent country of REGION-ENTRY-OR-ID exists.
+
+Return (:country-file :country-name)."
+  (let* ((country-entry (wine-migrate--find-country region-entry-or-id))
+         (country-name (+brain-title country-entry))
+         (country-file (wine-migrate--find-note country-name)))
+    (unless country-file
+      (let* ((org-roam-capture-templates-old org-roam-capture-templates)
+             (org-roam-capture-templates `(("d" "default" plain
+                                            #'org-roam-capture--get-point
+                                            "%?"
+                                            :file-name "wine/region/%<%Y%m%d%H%M%S>-${slug}"
+                                            :head "#+TITLE: ${title}\n#+TIME-STAMP: <>\n\n"
+                                            :unnarrowed t
+                                            :immediate-finish t))))
+        (org-roam-find-file country-name nil nil t)
+        (org-roam-db-build-cache)
+        (setq org-roam-capture-templates org-roam-capture-templates-old)))
+    (list :country-file (wine-migrate--find-note country-name)
+          :country-name country-name)))
+
+(defun wine/migrate-region ()
+  "Migrate wine region to notes."
+  (interactive)
+  (unless (string-equal (+org-parent-id) (+brain-as-id wine-regions-parent))
+    (user-error "Point must be at region"))
+  (let* ((buffer (current-buffer))
+         (file (buffer-file-name buffer))
+         (children (+org-entry-get-list "BRAIN_CHILDREN" " "))
+         (context (wine-migrate--ensure-appellation (org-id-get))))
+    (switch-to-buffer buffer)
+    (seq-do (lambda (child)
+              (save-excursion
+                (goto-char (cdr (org-id-find-id-in-file child file)))
+                (+org-entry-set "APPELLATION"
+                                (org-roam-format-link (plist-get context :appellation-file)
+                                                      (plist-get context :appellation-name)))
+                (+org-entry-set "REGION"
+                                (org-roam-format-link (plist-get context :region-file)
+                                                      (plist-get context :region-name)))
+                (pretty-props/entry)))
+            children)
+    (org-cut-subtree)))
+
 (provide '+org-wine)
 ;;; +org-wine.el ends here
