@@ -257,6 +257,24 @@ If the current buffer is not a note, does nothing."
         (expand-file-name (file-name-as-directory +org-notes-directory))
         (file-name-directory buffer-file-name))))
 
+(defun +org-notes-get-title-by-id (id)
+  "Get title of note with ID."
+  (when-let* ((fls
+               (org-roam-db-query
+                [:select [file level]
+                 :from ids
+                 :where (= id $s1)]
+                id))
+              (fl (when (= 1 (length fls))
+                    (car fls)))
+              (file (car fl))
+              (level (nth 1 fl)))
+    (if (= 0 level)
+        (org-roam-db--get-title file)
+      (+org-with-file file
+        (goto-char (cdr (org-id-find-id-in-file id file)))
+        (+org-entry-get "ITEM")))))
+
 (defun +org-notes--title-as-tag ()
   "Return title of the current note as tag."
   (+org-notes--title-to-tag (+org-buffer-prop-get "TITLE")))
