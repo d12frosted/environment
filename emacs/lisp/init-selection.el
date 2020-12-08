@@ -64,6 +64,7 @@
         ivy-prescient-retain-classic-highlighting t))
 
 (use-package ivy-rich
+  :disabled
   :if (eq +selection-system 'ivy)
   :after ivy
   :commands (ivy-rich-mode)
