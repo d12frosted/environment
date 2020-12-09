@@ -801,7 +801,10 @@ Return (:country-file :country-name)."
     (switch-to-buffer buffer)
     (seq-do (lambda (child)
               (save-excursion
-                (goto-char (cdr (org-id-find-id-in-file child file)))
+                (let ((p (cdr (org-id-find-id-in-file child file))))
+                  (when (null p)
+                    (user-error "Missing wine entry %s" child))
+                  (goto-char p))
                 (+org-entry-set "APPELLATION"
                                 (org-roam-format-link (plist-get context :appellation-file)
                                                       (plist-get context :appellation-name)))
