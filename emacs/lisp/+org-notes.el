@@ -275,8 +275,7 @@ If the current buffer is not a note, does nothing."
                  :from ids
                  :where (= id $s1)]
                 id))
-              (fl (when (= 1 (length fls))
-                    (car fls)))
+              (fl (+seq-singleton fls))
               (file (car fl))
               (level (nth 1 fl)))
     (if (= 0 level)
