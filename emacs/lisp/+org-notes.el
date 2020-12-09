@@ -257,6 +257,16 @@ If the current buffer is not a note, does nothing."
         (expand-file-name (file-name-as-directory +org-notes-directory))
         (file-name-directory buffer-file-name))))
 
+(defun +org-notes-get-file-by-id (id)
+  "Get file of note with ID."
+  (+seq-singleton
+   (+seq-flatten
+    (org-roam-db-query
+     [:select file
+      :from ids
+      :where (= id $s1)]
+     id))))
+
 (defun +org-notes-get-title-by-id (id)
   "Get title of note with ID."
   (when-let* ((fls
