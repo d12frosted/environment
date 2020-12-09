@@ -701,8 +701,9 @@ Return (:country-file :country-name
          (file (wine-migrate--find-note name))
          (region-id (let ((f (org-id-find-id-file id)))
                       (+org-with-file  f
-                                       (goto-char (cdr (org-id-find-id-in-file id f)))
-                                       (+org-entry-get-brain "REGION"))))
+                        (goto-char (cdr (org-id-find-id-in-file id f)))
+                        (or (+org-entry-get-brain "REGION")
+                            (+seq-singleton (+org-entry-get-list "BRAIN_PARENTS" " "))))))
          (result (wine-migrate--ensure-region region-id)))
     (unless file
       (let* ((org-roam-capture-immediate-template-old org-roam-capture-immediate-template)
@@ -737,6 +738,8 @@ Return (:country-file :country-name
 Transitively ensures that country exists.
 
 Return (:country-file :country-name :region-file :region-name)."
+  (when (null region-entry-or-id)
+    (user-error "REGION-ENTRY-OR-ID must be a valid string"))
   (let* ((result (wine-migrate--ensure-country region-entry-or-id))
          (region-enty (+brain-as-entry region-entry-or-id))
          (region-name (+brain-title region-entry-or-id))
