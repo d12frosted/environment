@@ -26,5 +26,12 @@
   "Flatten LIST-OF-LISTS."
   (apply #'append list-of-lists))
 
+(defun +seq-singleton (list)
+  "Return the only element of the LIST.
+
+Return nil, if the LIST contains more than one element."
+  (pcase list
+    (`(,l . nil) l)))
+
 (provide 'lib-list)
 ;;; lib-list.el ends here
