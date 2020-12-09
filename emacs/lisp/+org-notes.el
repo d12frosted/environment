@@ -324,5 +324,82 @@ If the current buffer is not a note, does nothing."
           (delete-region begin end)
           (insert (org-roam-format-link id desc)))))))
 
+(defun +org-notes-meta (id)
+  "Get metadata for note with ID.
+
+Returns an org element object of the first description list in
+the buffer, e.g. list of the form
+
+- key1 :: value1
+- key2 :: value21
+- key2 :: value22
+- key3 :: value3
+
+In most cases, it's better to use either `+org-notes-meta-get' to
+retrieve a single value for a given key or
+`+org-notes-meta-get-list' to retrieve all values for a given
+key."
+  (when-let ((f (+org-notes-get-file-by-id id)))
+    (+org-with-file f
+      (when-let* ((buf (org-element-parse-buffer))
+                  (pls (org-element-map buf 'plain-list #'identity))
+                  (pl (seq-filter
+                       (lambda (pl)
+                         (equal 'descriptive
+                                (org-element-property :type pl)))
+                       pls)))
+        (org-element-map pl 'item
+          (lambda (item)
+            (cons
+             (org-element-property :tag item)
+             (org-element-contents item))))))))
+
+(defun +org-notes-meta-get (id prop &optional type)
+  "Get value of PROP for note with ID.
+
+Result depends on TYPE:
+
+- raw - org element object
+- string (default) - an interpreted object (without trailing
+  newline)
+- id - id of the linked note.
+
+If the note contains multiple values for a given PROP, the first
+one is returned. In case all values are required, use
+`+org-notes-meta-get-list'."
+  (car (+org-notes-meta-get-list id prop type)))
+
+(defun +org-notes-meta-get-list (id prop &optional type)
+  "Get all values of PROP for note with ID.
+
+Each element value depends on TYPE:
+
+- raw - org element object
+- string (default) - an interpreted object (without trailing
+  newline)
+- id - id of the linked note."
+  (setq type (or type 'string))
+  (when-let ((kvps
+              (seq-filter
+               (lambda (kvp)
+                 (string-equal
+                  prop
+                  (org-element-interpret-data
+                   (org-element-contents (car kvp)))))
+               (+org-notes-meta id))))
+    (seq-map
+     (lambda (kvp)
+       (let ((val (nth 1 kvp)))
+         (pcase type
+           (`raw val)
+           (`string (s-trim-right
+                     (substring-no-properties
+                      (org-element-interpret-data (org-element-contents val)))))
+           (`id (let ((x (car (org-element-contents val))))
+                  (when (equal 'link
+                               (org-element-type x))
+                    (org-element-property :path (car (org-element-contents val)))))))))
+     kvps)))
+
 (provide '+org-notes)
 ;;; +org-notes.el ends here
