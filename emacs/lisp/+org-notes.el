@@ -365,6 +365,7 @@ one is returned. In case all values are required, use
 `+org-notes-meta-get-list'."
   (car (+org-notes-meta-get-list id prop type)))
 
+;; TODO: add number type
 (defun +org-notes-meta-get-list (id prop &optional type)
   "Get all values of PROP for note with ID.
 
@@ -375,6 +376,26 @@ Each element value depends on TYPE:
   newline)
 - id - id of the linked note."
   (setq type (or type 'string))
+  (let* ((parsed (+org-notes-meta--get id prop))
+         (kvps (cdr parsed)))
+    (seq-map
+     (lambda (kvp)
+       (let ((val (car (cdr kvp))))
+         (pcase type
+           (`raw val)
+           (`string (s-trim-right
+                     (substring-no-properties
+                      (org-element-interpret-data (org-element-contents val)))))
+           (`id (let ((el (car (org-element-contents val))))
+                  (when (equal 'link
+                               (org-element-type el))
+                    (org-element-property :path el)))))))
+     kvps)))
+
+(defun +org-notes-meta--get (id prop)
+  "Get all values of PROP for note with ID.
+
+Returns a pair of parsed buffer and list of value of PROP."
   (when-let* ((parsed (+org-notes-meta id))
               (pl (cdr parsed))
               (kvps-all
@@ -382,7 +403,7 @@ Each element value depends on TYPE:
                  (lambda (item)
                    (cons
                     (org-element-property :tag item)
-                    (+seq-singleton (org-element-contents item))))))
+                    (org-element-contents item)))))
               (kvps
                (seq-filter
                 (lambda (kvp)
@@ -391,19 +412,25 @@ Each element value depends on TYPE:
                    (org-element-interpret-data
                     (org-element-contents (car kvp)))))
                 kvps-all)))
-    (seq-map
-     (lambda (kvp)
-       (let ((val (cdr kvp)))
-         (pcase type
-           (`raw val)
-           (`string (s-trim-right
-                     (substring-no-properties
-                      (org-element-interpret-data (org-element-contents val)))))
-           (`id (let ((x (car (org-element-contents val))))
-                  (when (equal 'link
-                               (org-element-type x))
-                    (org-element-property :path x)))))))
-     kvps)))
+    (cons (car parsed) kvps)))
+
+;; TODO: add support of different types of VALUE
+(defun +org-notes-meta-set (id prop value)
+  "Set VALUE of PROP for note with ID."
+  (when-let* ((file (+org-notes-get-file-by-id id))
+              (parsed (+org-notes-meta--get id prop))
+              (buf (car parsed))
+              (kvps (cdr parsed))
+              (el1 (car (cdr (car kvps))))
+              (el2 (org-element-set-contents
+                    (org-element-copy el1)
+                    value))
+              (begin (org-element-property :begin el1))
+              (end (org-element-property :end el1)))
+    (+org-with-file file
+      (goto-char begin)
+      (delete-region begin end)
+      (insert (org-element-interpret-data el2)))))
 
 (provide '+org-notes)
 ;;; +org-notes.el ends here
