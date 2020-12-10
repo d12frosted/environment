@@ -327,8 +327,8 @@ If the current buffer is not a note, does nothing."
 (defun +org-notes-meta (id)
   "Get metadata for note with ID.
 
-Returns an org element object of the first description list in
-the buffer, e.g. list of the form
+Returns a pair of parse buffer and the first description list in
+the note with ID, e.g. list of the form
 
 - key1 :: value1
 - key2 :: value21
@@ -348,11 +348,7 @@ key."
                          (equal 'descriptive
                                 (org-element-property :type pl)))
                        pls)))
-        (org-element-map pl 'item
-          (lambda (item)
-            (cons
-             (org-element-property :tag item)
-             (org-element-contents item))))))))
+        (cons buf pl)))))
 
 (defun +org-notes-meta-get (id prop &optional type)
   "Get value of PROP for note with ID.
@@ -379,17 +375,25 @@ Each element value depends on TYPE:
   newline)
 - id - id of the linked note."
   (setq type (or type 'string))
-  (when-let ((kvps
-              (seq-filter
-               (lambda (kvp)
-                 (string-equal
-                  prop
-                  (org-element-interpret-data
-                   (org-element-contents (car kvp)))))
-               (+org-notes-meta id))))
+  (when-let* ((parsed (+org-notes-meta id))
+              (pl (cdr parsed))
+              (kvps-all
+               (org-element-map pl 'item
+                 (lambda (item)
+                   (cons
+                    (org-element-property :tag item)
+                    (+seq-singleton (org-element-contents item))))))
+              (kvps
+               (seq-filter
+                (lambda (kvp)
+                  (string-equal
+                   prop
+                   (org-element-interpret-data
+                    (org-element-contents (car kvp)))))
+                kvps-all)))
     (seq-map
      (lambda (kvp)
-       (let ((val (nth 1 kvp)))
+       (let ((val (cdr kvp)))
          (pcase type
            (`raw val)
            (`string (s-trim-right
@@ -398,7 +402,7 @@ Each element value depends on TYPE:
            (`id (let ((x (car (org-element-contents val))))
                   (when (equal 'link
                                (org-element-type x))
-                    (org-element-property :path (car (org-element-contents val)))))))))
+                    (org-element-property :path x)))))))
      kvps)))
 
 (provide '+org-notes)

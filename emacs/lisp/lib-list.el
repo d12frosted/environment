@@ -30,8 +30,9 @@
   "Return the only element of the LIST.
 
 Return nil, if the LIST contains more than one element."
-  (pcase list
-    (`(,l . nil) l)))
+  (cond ((listp list) (pcase list
+                        (`(,l . nil) l)))
+	      (t list)))
 
 (provide 'lib-list)
 ;;; lib-list.el ends here
