@@ -327,7 +327,7 @@ If the current buffer is not a note, does nothing."
 (defun +org-notes-meta (id)
   "Get metadata for note with ID.
 
-Returns a pair of parse buffer and the first description list in
+Returns a pair of parsed buffer and the first description list in
 the note with ID, e.g. list of the form
 
 - key1 :: value1
