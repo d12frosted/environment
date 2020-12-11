@@ -327,8 +327,10 @@ If the current buffer is not a note, does nothing."
 (defun +org-notes-meta (id)
   "Get metadata for note with ID.
 
-Returns a pair of parsed buffer and the first description list in
-the note with ID, e.g. list of the form
+Return plist (:file :buffer :pl)
+
+Metadata is defined by the first description list in the note,
+e.g. list like:
 
 - key1 :: value1
 - key2 :: value21
@@ -339,16 +341,61 @@ In most cases, it's better to use either `+org-notes-meta-get' to
 retrieve a single value for a given key or
 `+org-notes-meta-get-list' to retrieve all values for a given
 key."
-  (when-let ((f (+org-notes-get-file-by-id id)))
-    (+org-with-file f
+  (when-let ((file (+org-notes-get-file-by-id id)))
+    (+org-with-file file
       (when-let* ((buf (org-element-parse-buffer))
                   (pls (org-element-map buf 'plain-list #'identity))
-                  (pl (seq-filter
+                  (pl (seq-find
                        (lambda (pl)
                          (equal 'descriptive
                                 (org-element-property :type pl)))
                        pls)))
-        (cons buf pl)))))
+        (list :file file
+              :buffer buf
+              :pl pl)))))
+
+(defun +org-notes-meta--get (id prop)
+  "Get all values of PROP for note with ID.
+
+Return plist (:file :buffer :pl :items)"
+  (when-let* ((meta (+org-notes-meta id))
+              (pl (plist-get meta :pl))
+              (items-all (org-element-map pl 'item #'identity))
+              (items
+               (seq-filter
+                (lambda (item)
+                  (string-equal
+                   prop
+                   (org-element-interpret-data
+                    (org-element-contents (org-element-property :tag item)))))
+                items-all)))
+    (plist-put meta :items items)))
+
+(defun +org-notes-meta-get-list (id prop &optional type)
+  "Get all values of PROP for note with ID.
+
+Each element value depends on TYPE:
+
+- raw - org element object
+- string (default) - an interpreted object (without trailing
+  newline)
+- id - id of the linked note."
+  (setq type (or type 'string))
+  (let* ((meta (+org-notes-meta--get id prop))
+         (items (plist-get meta :items)))
+    (seq-map
+     (lambda (item)
+       (let ((val (car (org-element-contents item))))
+         (pcase type
+           (`raw val)
+           (`string (s-trim-right
+                     (substring-no-properties
+                      (org-element-interpret-data (org-element-contents val)))))
+           (`id (let ((el (car (org-element-contents val))))
+                  (when (equal 'link
+                               (org-element-type el))
+                    (org-element-property :path el)))))))
+     items)))
 
 (defun +org-notes-meta-get (id prop &optional type)
   "Get value of PROP for note with ID.
@@ -365,72 +412,31 @@ one is returned. In case all values are required, use
 `+org-notes-meta-get-list'."
   (car (+org-notes-meta-get-list id prop type)))
 
-;; TODO: add number type
-(defun +org-notes-meta-get-list (id prop &optional type)
-  "Get all values of PROP for note with ID.
-
-Each element value depends on TYPE:
-
-- raw - org element object
-- string (default) - an interpreted object (without trailing
-  newline)
-- id - id of the linked note."
-  (setq type (or type 'string))
-  (let* ((parsed (+org-notes-meta--get id prop))
-         (kvps (cdr parsed)))
-    (seq-map
-     (lambda (kvp)
-       (let ((val (car (cdr kvp))))
-         (pcase type
-           (`raw val)
-           (`string (s-trim-right
-                     (substring-no-properties
-                      (org-element-interpret-data (org-element-contents val)))))
-           (`id (let ((el (car (org-element-contents val))))
-                  (when (equal 'link
-                               (org-element-type el))
-                    (org-element-property :path el)))))))
-     kvps)))
-
-(defun +org-notes-meta--get (id prop)
-  "Get all values of PROP for note with ID.
-
-Returns a pair of parsed buffer and list of value of PROP."
-  (when-let* ((parsed (+org-notes-meta id))
-              (pl (cdr parsed))
-              (kvps-all
-               (org-element-map pl 'item
-                 (lambda (item)
-                   (cons
-                    (org-element-property :tag item)
-                    (org-element-contents item)))))
-              (kvps
-               (seq-filter
-                (lambda (kvp)
-                  (string-equal
-                   prop
-                   (org-element-interpret-data
-                    (org-element-contents (car kvp)))))
-                kvps-all)))
-    (cons (car parsed) kvps)))
-
-;; TODO: add support of different types of VALUE
 (defun +org-notes-meta-set (id prop value)
   "Set VALUE of PROP for note with ID."
-  (when-let* ((file (+org-notes-get-file-by-id id))
-              (parsed (+org-notes-meta--get id prop))
-              (buf (car parsed))
-              (kvps (cdr parsed))
-              (el1 (car (cdr (car kvps))))
-              (el2 (org-element-set-contents
-                    (org-element-copy el1)
-                    value))
-              (begin (org-element-property :begin el1))
-              (end (org-element-property :end el1)))
-    (+org-with-file file
-      (goto-char begin)
-      (delete-region begin end)
-      (insert (org-element-interpret-data el2)))))
+  (when-let* ((meta (+org-notes-meta--get id prop))
+              (items (plist-get meta :items))
+              (img (org-element-copy (car items))))
+    (+org-with-file (plist-get meta :file)
+      ;; TODO: inline
+      (+org-notes-meta-remove id prop)
+      (goto-char (org-element-property :begin img))
+      (insert (org-element-interpret-data
+               (org-element-set-contents (org-element-copy img) value))))))
+
+(defun +org-notes-meta-remove (id prop)
+  "Delete values of PROP for note with ID."
+  (let* ((meta (+org-notes-meta--get id prop))
+         (items (plist-get meta :items))
+         (file (plist-get meta :file)))
+    (when (car items)
+      (+org-with-file file
+        (seq-do
+         (lambda (item)
+           (when-let* ((begin (org-element-property :begin item))
+                       (end (org-element-property :end item)))
+             (delete-region begin end)))
+         (seq-reverse items))))))
 
 (provide '+org-notes)
 ;;; +org-notes.el ends here
