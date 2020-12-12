@@ -358,17 +358,17 @@ key."
   "Get all values of PROP for note with ID.
 
 Return plist (:file :buffer :pl :items)"
-  (when-let* ((meta (+org-notes-meta id))
-              (pl (plist-get meta :pl))
-              (items-all (org-element-map pl 'item #'identity))
-              (items
-               (seq-filter
-                (lambda (item)
-                  (string-equal
-                   prop
-                   (org-element-interpret-data
-                    (org-element-contents (org-element-property :tag item)))))
-                items-all)))
+  (let* ((meta (+org-notes-meta id))
+         (pl (plist-get meta :pl))
+         (items-all (org-element-map pl 'item #'identity))
+         (items
+          (seq-filter
+           (lambda (item)
+             (string-equal
+              prop
+              (org-element-interpret-data
+               (org-element-contents (org-element-property :tag item)))))
+           items-all)))
     (plist-put meta :items items)))
 
 (defun +org-notes-meta-get-list (id prop &optional type)
@@ -414,15 +414,29 @@ one is returned. In case all values are required, use
 
 (defun +org-notes-meta-set (id prop value)
   "Set VALUE of PROP for note with ID."
-  (when-let* ((meta (+org-notes-meta--get id prop))
-              (items (plist-get meta :items))
-              (img (org-element-copy (car items))))
-    (+org-with-file (plist-get meta :file)
+  (let* ((meta (+org-notes-meta--get id prop))
+         (file (plist-get meta :file))
+         (items (plist-get meta :items))
+         (img (org-element-copy (car items))))
+    (+org-with-file file
       ;; TODO: inline
       (+org-notes-meta-remove id prop)
-      (goto-char (org-element-property :begin img))
-      (insert (org-element-interpret-data
-               (org-element-set-contents (org-element-copy img) value))))))
+      (cond
+       (img
+        (goto-char (org-element-property :begin img))
+        (insert (org-element-interpret-data
+                 (org-element-set-contents (org-element-copy img) value))))
+       (t
+        (let* ((pl (plist-get meta :pl))
+               (items-all (org-element-map pl 'item #'identity))
+               ;; we copy any item from the list so we don't need to deal with
+               ;; :bullet and other properties
+               (img (org-element-copy (car items-all))))
+          (goto-char (org-element-property :begin pl))
+          (insert (org-element-interpret-data
+                   (org-element-set-contents
+                    (org-element-put-property (org-element-copy img) :tag prop)
+                    value)))))))))
 
 (defun +org-notes-meta-remove (id prop)
   "Delete values of PROP for note with ID."
