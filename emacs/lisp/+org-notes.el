@@ -20,6 +20,7 @@
 (require '+org-buffer-prop)
 (require 'init-file)
 (require 'lib-list)
+(require '+string)
 (require 's)
 
 (defvar +org-notes-directory nil)
@@ -429,7 +430,8 @@ one is returned. In case all values are required, use
          (img
           (goto-char (org-element-property :begin img))
           (insert (org-element-interpret-data
-                   (org-element-set-contents (org-element-copy img) value)))
+                   (org-element-set-contents (org-element-copy img)
+                                             (+org-notes-meta--format value))))
           (when (equal (length items)
                        (length (org-element-contents pl)))
             (insert "\n")))
@@ -442,7 +444,7 @@ one is returned. In case all values are required, use
             (insert (org-element-interpret-data
                      (org-element-set-contents
                       (org-element-put-property (org-element-copy img) :tag prop)
-                      value)))))))
+                      (+org-notes-meta--format value))))))))
        (t
         ;; insert either after the last keyword in the buffer, or after the
         ;; property drawer if it is present on the first line or on the fist
@@ -453,7 +455,9 @@ one is returned. In case all values are required, use
                           (org-element-property :end element)
                         1)))
           (goto-char point)
-          (insert "- " prop " :: " value "\n\n")))))))
+          (insert "- " prop " :: "
+                  (+org-notes-meta--format value)
+                  "\n\n")))))))
 
 (defun +org-notes-meta-remove (id prop)
   "Delete values of PROP for note with ID."
@@ -473,6 +477,18 @@ one is returned. In case all values are required, use
                          (end (org-element-property :end item)))
                (delete-region begin end)))
            (seq-reverse items)))))))
+
+(defun +org-notes-meta--format (value)
+  "Format a VALUE depending on it's type."
+  (cond
+   ((stringp value)
+    (if (string-match-p +string-uuid-regexp value)
+        (org-link-make-string (concat "id:" value)
+                              (+org-notes-get-title-by-id value))
+      value))
+   ((numberp value)
+    (number-to-string value))
+   (t (user-error "Unsupported type of '%s'" value))))
 
 (provide '+org-notes)
 ;;; +org-notes.el ends here

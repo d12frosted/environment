@@ -76,5 +76,20 @@ buffer."
 - 4th group is type of the object - issue or pull.
 - 5th group is the number of the object.")
 
+(defvar +string-uuid-regexp
+  (concat
+   "\\("
+   "[a-zA-Z0-9]\\{8\\}"
+   "-"
+   "[a-zA-Z0-9]\\{4\\}"
+   "-"
+   "[a-zA-Z0-9]\\{4\\}"
+   "-"
+   "[a-zA-Z0-9]\\{4\\}"
+   "-"
+   "[a-zA-Z0-9]\\{12\\}"
+   "\\)")
+  "UUID regexp.")
+
 (provide '+string)
 ;;; +string.el ends here
