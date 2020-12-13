@@ -392,6 +392,10 @@ Each element value depends on TYPE:
            (`string (s-trim-right
                      (substring-no-properties
                       (org-element-interpret-data (org-element-contents val)))))
+           (`number (string-to-number
+                     (s-trim-right
+                      (substring-no-properties
+                       (org-element-interpret-data (org-element-contents val))))))
            (`id (let ((el (car (org-element-contents val))))
                   (when (equal 'link
                                (org-element-type el))
@@ -406,6 +410,7 @@ Result depends on TYPE:
 - raw - org element object
 - string (default) - an interpreted object (without trailing
   newline)
+- number - an interpreted number
 - id - id of the linked note.
 
 If the note contains multiple values for a given PROP, the first
