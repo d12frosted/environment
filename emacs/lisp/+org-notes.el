@@ -343,13 +343,13 @@ retrieve a single value for a given key or
 key."
   (when-let ((file (+org-notes-get-file-by-id id)))
     (+org-with-file file
-      (when-let* ((buf (org-element-parse-buffer))
-                  (pls (org-element-map buf 'plain-list #'identity))
-                  (pl (seq-find
-                       (lambda (pl)
-                         (equal 'descriptive
-                                (org-element-property :type pl)))
-                       pls)))
+      (let* ((buf (org-element-parse-buffer))
+             (pls (org-element-map buf 'plain-list #'identity))
+             (pl (seq-find
+                  (lambda (pl)
+                    (equal 'descriptive
+                           (org-element-property :type pl)))
+                  pls)))
         (list :file file
               :buffer buf
               :pl pl)))))
@@ -416,41 +416,63 @@ one is returned. In case all values are required, use
   "Set VALUE of PROP for note with ID."
   (let* ((meta (+org-notes-meta--get id prop))
          (file (plist-get meta :file))
+         (buffer (plist-get meta :buffer))
+         (pl (plist-get meta :pl))
          (items (plist-get meta :items))
          (img (org-element-copy (car items))))
     (+org-with-file file
-      ;; TODO: inline
-      (+org-notes-meta-remove id prop)
       (cond
-       (img
-        (goto-char (org-element-property :begin img))
-        (insert (org-element-interpret-data
-                 (org-element-set-contents (org-element-copy img) value))))
-       (t
-        (let* ((pl (plist-get meta :pl))
-               (items-all (org-element-map pl 'item #'identity))
-               ;; we copy any item from the list so we don't need to deal with
-               ;; :bullet and other properties
-               (img (org-element-copy (car items-all))))
-          (goto-char (org-element-property :begin pl))
+       (pl
+        ;; TODO: inline
+        (+org-notes-meta-remove id prop)
+        (cond
+         (img
+          (goto-char (org-element-property :begin img))
           (insert (org-element-interpret-data
-                   (org-element-set-contents
-                    (org-element-put-property (org-element-copy img) :tag prop)
-                    value)))))))))
+                   (org-element-set-contents (org-element-copy img) value)))
+          (when (equal (length items)
+                       (length (org-element-contents pl)))
+            (insert "\n")))
+         (t
+          (let* ((items-all (org-element-map pl 'item #'identity))
+                 ;; we copy any item from the list so we don't need to deal with
+                 ;; :bullet and other properties
+                 (img (org-element-copy (car items-all))))
+            (goto-char (org-element-property :begin pl))
+            (insert (org-element-interpret-data
+                     (org-element-set-contents
+                      (org-element-put-property (org-element-copy img) :tag prop)
+                      value)))))))
+       (t
+        ;; insert either after the last keyword in the buffer, or after the
+        ;; property drawer if it is present on the first line or on the fist
+        ;; line
+        (let* ((element (or (car (last (org-element-map buffer 'keyword #'identity)))
+                            (car (org-element-map buffer 'property-drawer #'identity))))
+               (point (if element
+                          (org-element-property :end element)
+                        1)))
+          (goto-char point)
+          (insert "- " prop " :: " value "\n\n")))))))
 
 (defun +org-notes-meta-remove (id prop)
   "Delete values of PROP for note with ID."
   (let* ((meta (+org-notes-meta--get id prop))
          (items (plist-get meta :items))
+         (pl (plist-get meta :pl))
          (file (plist-get meta :file)))
     (when (car items)
       (+org-with-file file
-        (seq-do
-         (lambda (item)
-           (when-let* ((begin (org-element-property :begin item))
-                       (end (org-element-property :end item)))
-             (delete-region begin end)))
-         (seq-reverse items))))))
+        (if (equal (length items)
+                   (length (org-element-contents pl)))
+            (delete-region (org-element-property :begin pl)
+                           (org-element-property :end pl))
+          (seq-do
+           (lambda (item)
+             (when-let* ((begin (org-element-property :begin item))
+                         (end (org-element-property :end item)))
+               (delete-region begin end)))
+           (seq-reverse items)))))))
 
 (provide '+org-notes)
 ;;; +org-notes.el ends here
