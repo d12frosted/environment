@@ -419,8 +419,14 @@ one is returned. In case all values are required, use
   (car (+org-notes-meta-get-list id prop type)))
 
 (defun +org-notes-meta-set (id prop value)
-  "Set VALUE of PROP for note with ID."
-  (let* ((meta (+org-notes-meta--get id prop))
+  "Set VALUE of PROP for note with ID.
+
+If the VALUE is a list, then each element is inserted
+separately.
+
+Please note that all occurrences of PROP are replaced by VALUE."
+  (let* ((values (if (listp value) value (list value)))
+         (meta (+org-notes-meta--get id prop))
          (file (plist-get meta :file))
          (buffer (plist-get meta :buffer))
          (pl (plist-get meta :pl))
@@ -434,9 +440,13 @@ one is returned. In case all values are required, use
         (cond
          (img
           (goto-char (org-element-property :begin img))
-          (insert (org-element-interpret-data
-                   (org-element-set-contents (org-element-copy img)
-                                             (+org-notes-meta--format value))))
+          (seq-do
+           (lambda (val)
+             (insert
+              (org-element-interpret-data
+               (org-element-set-contents (org-element-copy img)
+                                         (+org-notes-meta--format val)))))
+           values)
           (when (equal (length items)
                        (length (org-element-contents pl)))
             (insert "\n")))
@@ -446,10 +456,14 @@ one is returned. In case all values are required, use
                  ;; :bullet and other properties
                  (img (org-element-copy (car items-all))))
             (goto-char (org-element-property :begin pl))
-            (insert (org-element-interpret-data
-                     (org-element-set-contents
-                      (org-element-put-property (org-element-copy img) :tag prop)
-                      (+org-notes-meta--format value))))))))
+            (seq-do
+             (lambda (val)
+               (insert
+                (org-element-interpret-data
+                 (org-element-set-contents
+                  (org-element-put-property (org-element-copy img) :tag prop)
+                  (+org-notes-meta--format val)))))
+             values)))))
        (t
         ;; insert either after the last keyword in the buffer, or after the
         ;; property drawer if it is present on the first line or on the fist
@@ -460,9 +474,12 @@ one is returned. In case all values are required, use
                           (org-element-property :end element)
                         1)))
           (goto-char point)
-          (insert "- " prop " :: "
-                  (+org-notes-meta--format value)
-                  "\n\n")))))))
+          (seq-do
+           (lambda (val)
+             (insert "- " prop " :: "
+                     (+org-notes-meta--format val)
+                     "\n\n"))
+           values)))))))
 
 (defun +org-notes-meta-remove (id prop)
   "Delete values of PROP for note with ID."
