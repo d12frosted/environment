@@ -681,11 +681,15 @@ Supports the following entries:
   (let* ((entry (+brain-as-entry region-entry-or-id))
          (parents (org-brain-parents entry))
          (countries-id "ec4a5bd7-71c4-479a-8bbb-8f022e78f52d"))
-    (seq-find (lambda (x)
-                (seq-find (lambda (y)
-                            (string-equal countries-id (+brain-as-id y)))
-                          (org-brain-parents x)))
-              parents)))
+    (if (seq-find (lambda (x)
+                    (string-equal countries-id (+brain-as-id x)))
+                  parents)
+        entry
+      (seq-find (lambda (x)
+                  (seq-find (lambda (y)
+                              (string-equal countries-id (+brain-as-id y)))
+                            (org-brain-parents x)))
+                parents))))
 
 (defun wine-migrate--ensure-appellation (entry-or-id)
   "Ensure that appellation described by ENTRY-OR-ID exists.
@@ -699,12 +703,19 @@ Return (:country-file :country-name
          (id (+brain-as-id entry-or-id))
          (name (+brain-title entry))
          (file (wine-migrate--find-note name))
-         (region-id (let ((f (org-id-find-id-file id)))
-                      (+org-with-file  f
-                        (goto-char (cdr (org-id-find-id-in-file id f)))
-                        (or (+org-entry-get-brain "REGION")
-                            (+seq-singleton (+org-entry-get-list "BRAIN_PARENTS" " "))))))
-         (result (wine-migrate--ensure-region region-id)))
+         (country-id (let ((f (org-id-find-id-file id)))
+                       (+org-with-file  f
+                         (goto-char (cdr (org-id-find-id-in-file id f)))
+                         (+org-entry-get-brain "COUNTRY"))))
+         (region-id (unless country-id
+                      (let ((f (org-id-find-id-file id)))
+                        (+org-with-file  f
+                          (goto-char (cdr (org-id-find-id-in-file id f)))
+                          (or (+org-entry-get-brain "REGION")
+                              (+seq-singleton (+org-entry-get-list "BRAIN_PARENTS" " ")))))))
+         (result (if country-id
+                     (wine-migrate--ensure-country country-id)
+                   (wine-migrate--ensure-region region-id))))
     (unless file
       (let* ((org-roam-capture-immediate-template-old org-roam-capture-immediate-template)
              (org-roam-capture-immediate-template `("d" "default" plain
@@ -717,9 +728,17 @@ Return (:country-file :country-name
                                                             (org-roam-format-link (plist-get result :country-file)
                                                                                   (plist-get result :country-name))
                                                             "\n"
-                                                            "- region :: "
-                                                            (org-roam-format-link (plist-get result :region-file)
-                                                                                  (plist-get result :region-name))
+                                                            (when (plist-get result :region-file)
+                                                              (concat "- region :: "
+                                                                      (org-roam-format-link (plist-get result :region-file)
+                                                                                            (plist-get result :region-name))
+                                                                      "\n"))
+                                                            "- resources :: "
+                                                            (let ((url (read-string "URL: ")))
+                                                              (org-link-make-string
+                                                               url
+                                                               (or (ignore-errors (url-domain (url-generic-parse-url url)))
+                                                                   (read-string "Description: "))))
                                                             "\n")
                                                     :unnarrowed t
                                                     :immediate-finish t)))
@@ -808,9 +827,10 @@ Return (:country-file :country-name)."
                 (+org-entry-set "APPELLATION"
                                 (org-roam-format-link (plist-get context :appellation-file)
                                                       (plist-get context :appellation-name)))
-                (+org-entry-set "REGION"
-                                (org-roam-format-link (plist-get context :region-file)
-                                                      (plist-get context :region-name)))
+                (when (plist-get context :region-file)
+                  (+org-entry-set "REGION"
+                                  (org-roam-format-link (plist-get context :region-file)
+                                                        (plist-get context :region-name))))
                 (pretty-props/entry)))
             children)
     (org-cut-subtree)))
