@@ -500,6 +500,15 @@ Please note that all occurrences of PROP are replaced by VALUE."
                (delete-region begin end)))
            (seq-reverse items)))))))
 
+(defun +org-notes-meta-clean (id)
+  "Delete all meta from note with ID."
+  (when-let* ((meta (+org-notes-meta id))
+              (pl (plist-get meta :pl))
+              (file (plist-get meta :file)))
+    (+org-with-file file
+      (delete-region (org-element-property :begin pl)
+                     (org-element-property :end pl)))))
+
 (defun +org-notes-meta--format (value)
   "Format a VALUE depending on it's type."
   (cond
