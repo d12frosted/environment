@@ -23,6 +23,7 @@
 (require '+org-places)
 (require '+org-buffer-prop)
 (require '+inventory)
+(require 'wine)
 
 (autoload 'seq-contains-p "seq")
 (autoload 'org-edit-headline "org")
@@ -204,13 +205,17 @@ option set in the options section.
 (defun wine/set-region ()
   "Update region of wine at point."
   (interactive)
-  (let ((id (org-id-get))
-        (prop (+org-entry-get "REGION")))
-    (when-let* ((old-parent-id (+org-extract-id-from-link prop))
-                (old-parent (+brain-as-entry old-parent-id)))
-      (org-brain-remove-parent (+brain-as-entry id)
-                               old-parent))
-    (+org-prompt-brain-property "REGION" wine-regions-parent id 'parent)))
+  (when-let* ((id (org-id-get))
+              (prop (+org-entry-get "REGION"))
+              (old-parent-id (+org-extract-id-from-link prop))
+              (old-parent (+brain-as-entry old-parent-id)))
+    (org-brain-remove-parent (+brain-as-entry id)
+                             old-parent))
+  (when-let* ((region (wine-region-select)))
+    (+org-entry-set "APPELLATION"
+                    (org-make-link-string
+                     (concat "id:" (plist-get region :id))
+                     (plist-get region :title)))))
 
 ;;
 ;; Wineries
@@ -243,7 +248,11 @@ option set in the options section.
       (org-set-property "WINERY" (+brain-make-link winery id 'parent))
       (+org-prompt-property "NAME")
       (org-set-property "YEAR" nil)
-      (+org-prompt-brain-property "REGION" wine-regions-parent id 'parent)
+      (when-let* ((region (wine-region-select)))
+        (+org-entry-set "APPELLATION"
+                        (org-make-link-string
+                         (concat "id:" (plist-get region :id))
+                         (plist-get region :title))))
       (wine/set-grapes)
       (+org-prompt-number-property "SUGAR")
       (+org-prompt-number-property "ALCOHOL")
