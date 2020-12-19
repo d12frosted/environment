@@ -305,6 +305,11 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   (advice-add #'org-agenda-clock-out :after #'+org-save-all)
   :config
   (setq
+   ;; speed up agenda a little bit
+   org-agenda-dim-blocked-tasks nil
+   org-agenda-inhibit-startup t
+
+   ;; extend text search commands, should not slow agenda
    org-agenda-text-search-extra-files (list (expand-file-name ".archive/archive" org-directory)
                                             (expand-file-name ".archive/archive.org" org-directory))
    ;; also show state change in log mode
