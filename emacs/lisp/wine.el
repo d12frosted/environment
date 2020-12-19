@@ -17,21 +17,40 @@
 ;;
 ;;; Code:
 
+(require '+org-notes)
+
 (defun wine-region-select ()
   "Select a wine region or appellation."
   (interactive)
-  (when-let* ((res
-               (+org-notes-select
-                nil nil
-                (lambda (entry)
-                  (let ((tags (plist-get (cdr entry) :tags)))
-                    (and (seq-contains-p tags "wine")
-                         (or (seq-contains-p tags "appellation")
-                             (seq-contains-p tags "region")))))))
-              (id (+seq-singleton
-                   (+seq-flatten
-                    (+org-notes-get-file-id (plist-get res :path))))))
-    (plist-put res :id id)))
+  (+org-notes-select
+   "Region"
+   nil nil
+   (lambda (entry)
+     (let ((tags (plist-get (cdr entry) :tags)))
+       (and (seq-contains-p tags "wine")
+            (or (seq-contains-p tags "appellation")
+                (seq-contains-p tags "region")))))))
+
+(defun wine-grape-select ()
+  "Select a grape."
+  (interactive)
+  (+org-notes-select
+   "Grape"
+   nil nil
+   (lambda (entry)
+     (let ((tags (plist-get (cdr entry) :tags)))
+       (and (seq-contains-p tags "wine")
+            (seq-contains-p tags "grape"))))))
+
+(defun wine-producer-select ()
+  "Select a grape."
+  (interactive)
+  (+org-notes-select
+   nil nil
+   (lambda (entry)
+     (let ((tags (plist-get (cdr entry) :tags)))
+       (and (seq-contains-p tags "wine")
+            (seq-contains-p tags "producer"))))))
 
 (provide 'wine)
 ;;; wine.el ends here

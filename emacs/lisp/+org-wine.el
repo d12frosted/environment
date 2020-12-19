@@ -171,9 +171,12 @@ option set in the options section.
   "Set GRAPES properties."
   (interactive)
   (+org-prompt-property-repeating
-   #'+org-prompt-brain-property-fn
-   "GRAPES"
-   wine-grapes-parent))
+   (lambda (_)
+     (let ((grape (wine-grape-select)))
+       (org-make-link-string
+        (concat "id:" (plist-get grape :id))
+        (plist-get grape :title))))
+   "GRAPES"))
 
 ;;
 ;; Styles
@@ -230,22 +233,18 @@ option set in the options section.
       (pretty-props/entry)
       (save-buffer))))
 
-(defun wine--read-winery ()
-  "Read winery."
-  (+brain-choose-local-entry-by-parent
-   "Winery: "
-   wine-wineries-parent))
-
 ;;
 ;; Wine
 
 (defun wine/new-wine ()
   "Create a new wine entry."
   (interactive)
-  (let* ((winery (wine--read-winery))
+  (let* ((winery (wine-producer-select))
          (id (+brain-new-child wine-parent (cadr winery))))
     (org-with-point-at (org-id-find id t)
-      (org-set-property "WINERY" (+brain-make-link winery id 'parent))
+      (org-set-property "WINERY" (org-make-link-string
+                                  (concat "id:" (plist-get winery :id))
+                                  (plist-get winery :title)))
       (+org-prompt-property "NAME")
       (org-set-property "YEAR" nil)
       (when-let* ((region (wine-region-select)))
