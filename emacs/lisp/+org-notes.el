@@ -257,6 +257,15 @@ If the current buffer is not a note, does nothing."
                              (completing-read "Content: "
                                               '("Book" "Article" "Video" "Course")))
                      extra)))))
+    ;; check for TODO entries
+    (unless (seq-contains-p tags "Project")
+      (when (seq-find #'identity
+                      (org-element-map
+                          (org-element-parse-buffer 'headline)
+                          'headline
+                        (lambda (h)
+                          (org-element-property :todo-keyword h))))
+        (setq extra (cons "Project" extra))))
     (unless (null extra)
       (org-roam--set-global-prop
        "ROAM_TAGS"
