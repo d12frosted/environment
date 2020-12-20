@@ -286,8 +286,8 @@ If the current buffer is not a note, does nothing."
                               (seq-remove (lambda (x) (string-prefix-p "Status:" x))
                                           tags))))
     (org-roam--set-global-prop "ROAM_TAGS" (combine-and-quote-strings new-tags))
-      (org-roam-db--insert-tags 'update)
-      (save-buffer)))
+    (org-roam-db--insert-tags 'update)
+    (save-buffer)))
 
 (defun +org-notes-rebuild ()
   "Rebuild notes database."
