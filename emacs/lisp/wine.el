@@ -21,7 +21,6 @@
 
 (defun wine-region-select ()
   "Select a wine region or appellation."
-  (interactive)
   (+org-notes-select
    "Region"
    nil nil
@@ -33,7 +32,6 @@
 
 (defun wine-grape-select ()
   "Select a grape."
-  (interactive)
   (+org-notes-select
    "Grape"
    nil nil
@@ -44,7 +42,6 @@
 
 (defun wine-producer-select ()
   "Select a grape."
-  (interactive)
   (+org-notes-select
    nil nil
    (lambda (entry)
