@@ -77,7 +77,6 @@ It is relative to `org-directory', unless it is absolute.")
           ob-dot
           ob-plantuml))
   (setq org-directory (concat +path-home-dir "Dropbox/vulpea/"))
-  (add-to-list 'org-agenda-files org-directory)
 
   (set-company-backend! 'org-mode
     '(company-capf company-yasnippet company-dabbrev))
@@ -440,12 +439,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
              +org-notes-setup-buffer)
   :init
   (setq +org-notes-directory (concat org-directory "notes/"))
-  (add-to-list 'org-agenda-files +org-notes-directory)
-  (seq-do (lambda (dir)
-            (add-to-list 'org-agenda-files dir))
-          (+file-subdirs +org-notes-directory))
-  (add-to-list 'window-buffer-change-functions
-               #'+org-notes-setup-buffer))
+  (add-to-list 'window-buffer-change-functions #'+org-notes-setup-buffer))
 
 (use-package org-roam
   :defer t

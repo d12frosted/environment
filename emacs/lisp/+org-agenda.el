@@ -21,6 +21,9 @@
 (require 'init-buffer)
 (require '+org)
 
+(defvar org-directory)
+(defvar org-agenda-files)
+
 ;;;###autoload
 (defvar +agenda-hide-scheduled-and-waiting-next-tasks t)
 
@@ -50,6 +53,21 @@ function.
 
 Otherwise create it from scratch."
   (interactive)
+  (setq org-agenda-files
+        (concatenate
+         'list
+         (seq-map
+          (lambda (f) (expand-file-name f org-directory))
+          ;; TODO move this list to another place
+          '("refile-beorg.org"
+            "inbox-borysb-arch.org"
+            "inbox-d12frosted.local.org"))
+         (seq-map
+          #'car
+          (seq-filter
+           (lambda (entry)
+             (seq-contains-p (cadr entry) "Project"))
+           (org-roam-db-query [:select * :from tags])))))
   (if-let ((buffer (and +agenda-main-cache-buffer
                         (equal current-prefix-arg nil)
                         (get-buffer +agenda-main-buffer-name))))
