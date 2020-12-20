@@ -228,6 +228,13 @@ If the current buffer is not a note, does nothing."
     (+org-notes-ensure-filetag)
     (+org-notes-ensure-tags)))
 
+(defun +org-notes-pre-save-hook ()
+  "Do all the dirty stuff when file is being saved."
+  (when (and (not (active-minibuffer-window))
+             (+org-notes-buffer-p))
+    (+org-notes-ensure-filetag)
+    (+org-notes-ensure-tags)))
+
 (defun +org-notes-ensure-filetag ()
   "Add missing file tags to the current note."
   (let ((tags (org-roam--extract-tags))
@@ -237,8 +244,7 @@ If the current buffer is not a note, does nothing."
                (not (seq-contains-p filetags tag)))
       (+org-buffer-prop-set
        "FILETAGS"
-       (combine-and-quote-strings (seq-uniq (cons tag filetags))))
-      (save-buffer))))
+       (combine-and-quote-strings (seq-uniq (cons tag filetags)))))))
 
 (defun +org-notes-ensure-tags ()
   "Add missing roam tags to the current note."
@@ -269,9 +275,7 @@ If the current buffer is not a note, does nothing."
     (unless (null extra)
       (org-roam--set-global-prop
        "ROAM_TAGS"
-       (combine-and-quote-strings (seq-uniq (append extra tags))))
-      (org-roam-db--insert-tags 'update)
-      (save-buffer))))
+       (combine-and-quote-strings (seq-uniq (append extra tags)))))))
 
 (defun +org-notes-set-status ()
   "Change status tag of current note."

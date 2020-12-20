@@ -436,10 +436,12 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :defines (+org-notes-directory)
   :commands (+org-notes-list
              +org-notes-find
-             +org-notes-setup-buffer)
+             +org-notes-setup-buffer
+             +org-notes-pre-save-hook)
   :init
   (setq +org-notes-directory (concat org-directory "notes/"))
-  (add-to-list 'window-buffer-change-functions #'+org-notes-setup-buffer))
+  (add-to-list 'window-buffer-change-functions #'+org-notes-setup-buffer)
+  (add-hook 'before-save-hook #'+org-notes-pre-save-hook))
 
 (use-package org-roam
   :defer t
