@@ -40,22 +40,6 @@ top of the file:
   :lighter " pretty-props"
   (setq-local pretty-props-config (pretty-props-buffer-config)))
 
-;;;###autoload
-(defun pretty-props-mode-maybe-enable ()
-  "Conditionally enable `pretty-props-mode' in the `org-mode' buffer.
-
-Enables the `pretty-props-mode' iff the buffer has
-'pretty-props-mode:t' option set in the options section.
-
-  #+OPTIONS: pretty-props-mode:t"
-  (when (and (eq major-mode 'org-mode)
-             (eq buffer-read-only nil))
-    (save-excursion
-      (widen)
-      (goto-char (point-min))
-      (when (re-search-forward "^#\\+OPTIONS:.*pretty-props-mode:t" (point-max) t)
-        (pretty-props-mode)))))
-
 (defun pretty-props/buffer ()
   "Prettify properties of all entries in the buffer."
   (interactive)

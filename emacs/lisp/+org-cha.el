@@ -32,22 +32,6 @@
   (places-mode)
   (pretty-props-mode))
 
-;;;###autoload
-(defun cha-mode-maybe-enable ()
-  "Conditionally enable `cha-mode' in the `org-mode' buffer.
-
-Enables the `cha-mode' iff the buffer has 'cha-mode:t' option set
-in the options section.
-
-  #+OPTIONS: cha-mode:t"
-  (when (and (eq major-mode 'org-mode)
-             (eq buffer-read-only nil))
-    (save-excursion
-      (widen)
-      (goto-char (point-min))
-      (when (re-search-forward "^#\\+OPTIONS:.*cha-mode:t" (point-max) t)
-        (cha-mode)))))
-
 ;;
 ;; Buffer settings
 

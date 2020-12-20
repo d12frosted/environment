@@ -36,22 +36,6 @@ top of the file:
   :lighter " 🌏"
   (setq-local places-config (places-buffer-config)))
 
-;;;###autoload
-(defun places-mode-maybe-enable ()
-  "Conditionally enable `places-mode' in the `org-mode' buffer.
-
-Enables the `places-mode' iff the buffer has 'places-mode:t'
-option set in the options section.
-
-  #+OPTIONS: places-mode:t"
-  (when (and (eq major-mode 'org-mode)
-             (eq buffer-read-only nil))
-    (save-excursion
-      (widen)
-      (goto-char (point-min))
-      (when (re-search-forward "^#\\+OPTIONS:.*places-mode:t" (point-max) t)
-        (places-mode)))))
-
 (defun places/set-dwim ()
   "Set the location properties for headline at point."
   (interactive)
