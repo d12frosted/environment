@@ -91,12 +91,6 @@ It is relative to `org-directory', unless it is absolute.")
   ;; open directory links in `dired'
   (add-to-list 'org-file-apps '(directory . emacs))
 
-  (+hook-with-delay 'org-mode-hook 1 #'places-mode-maybe-enable)
-  (+hook-with-delay 'org-mode-hook 1 #'pretty-props-mode-maybe-enable)
-  (+hook-with-delay 'org-mode-hook 1 #'cha-mode-maybe-enable)
-  (+hook-with-delay 'org-mode-hook 1 #'wine-mode-maybe-enable)
-  (+hook-with-delay 'org-mode-hook 1 #'cigars-mode-maybe-enable)
-
   (+hook 'org-cycle-hook #'org-display-inline-images)
 
   (setq

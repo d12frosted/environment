@@ -52,22 +52,6 @@
   (places-mode)
   (pretty-props-mode))
 
-;;;###autoload
-(defun wine-mode-maybe-enable ()
-  "Conditionally enable `wine-mode' in the `org-mode' buffer.
-
-Enables the `wine-mode' iff the buffer has 'wine-mode:t'
-option set in the options section.
-
-  #+OPTIONS: wine-mode:t"
-  (when (and (eq major-mode 'org-mode)
-             (eq buffer-read-only nil))
-    (save-excursion
-      (widen)
-      (goto-char (point-min))
-      (when (re-search-forward "^#\\+OPTIONS:.*wine-mode:t" (point-max) t)
-        (wine-mode)))))
-
 ;;
 ;; Buffer settings
 
