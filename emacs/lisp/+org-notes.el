@@ -293,9 +293,12 @@ If the current buffer is not a note, does nothing."
   "Rebuild notes database."
   (interactive)
   (dolist (file (org-roam--list-all-files))
+    (message "processing %s" file)
     (with-current-buffer (or (find-buffer-visiting file)
                              (find-file-noselect file))
       (+org-notes-fix-links)
+      (+org-notes-ensure-tags)
+      (+org-notes-ensure-filetag)
       (save-buffer)))
   (org-roam-db--clear)
   (org-roam-db-build-cache))
