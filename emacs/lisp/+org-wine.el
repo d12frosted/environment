@@ -88,24 +88,6 @@
   "WINERIES_PARENT"
   "ID of wineries parent entry.")
 
-(def-org-buffer-prop-brain-entry
-  wine-regions-parent
-  'wine-mode-hook
-  "REGIONS_PARENT"
-  "ID of regions parent entry.")
-
-(def-org-buffer-prop-brain-entry
-  wine-styles-parent
-  'wine-mode-hook
-  "STYLES_PARENT"
-  "ID of styles parent entry.")
-
-(def-org-buffer-prop-brain-entry
-  wine-grapes-parent
-  'wine-mode-hook
-  "GRAPES_PARENT"
-  "ID of grapes parent entry.")
-
 (def-org-buffer-prop-list
   wine-sources
   nil
@@ -163,31 +145,7 @@
    "GRAPES"))
 
 ;;
-;; Styles
-
-(defun wine/new-style ()
-  "Create a new style entry."
-  (interactive)
-  (let* ((name (read-string "Name: "))
-         (id (+brain-new-child wine-styles-parent name)))
-    (org-with-point-at (org-id-find id t)
-      (save-buffer)
-      (pretty-props/entry)
-      (save-buffer))))
-
-;;
 ;; Regions
-
-(defun wine/new-region ()
-  "Create a new region entry."
-  (interactive)
-  (let* ((name (read-string "Name: "))
-         (id (+brain-new-child wine-regions-parent name)))
-    (org-with-point-at (org-id-find id t)
-      (save-buffer)
-      (places/set-dwim)
-      (pretty-props/entry)
-      (save-buffer))))
 
 (defun wine/set-region ()
   "Update region of wine at point."
