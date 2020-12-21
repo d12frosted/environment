@@ -43,6 +43,7 @@
 (defun wine-producer-select ()
   "Select a grape."
   (+org-notes-select
+   "Producer"
    nil nil
    (lambda (entry)
      (let ((tags (plist-get (cdr entry) :tags)))
