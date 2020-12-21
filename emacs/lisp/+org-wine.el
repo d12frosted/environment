@@ -182,7 +182,7 @@
   "Create a new wine entry."
   (interactive)
   (let* ((winery (wine-producer-select))
-         (id (+brain-new-child wine-parent (cadr winery))))
+         (id (+brain-new-child wine-parent (plist-get winery :title))))
     (org-with-point-at (org-id-find id t)
       (org-set-property "WINERY" (org-make-link-string
                                   (concat "id:" (plist-get winery :id))
