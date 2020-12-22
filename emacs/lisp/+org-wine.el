@@ -619,23 +619,6 @@ Supports the following entries:
   "Make sure FILE exists.  If not, ask user what to do."
 	(throw 'nextfile t))
 
-(defun wine-migrate--find-note (title &optional tag)
-  "Find a note with TITLE.
-
-If TAG is non-nil, return the file only if it tagged
-appropriately."
-  (let ((files (+seq-flatten
-                (org-roam-db-query [:select file
-                                    :from titles
-                                    :where (= title $s1)]
-                                   title))))
-    (if tag
-        (seq-find
-         (lambda (file)
-           (seq-contains-p (org-roam--extract-tags file) tag))
-         files)
-      (car files))))
-
 (defun wine/migrate-grape ()
   "Migrate grape to note."
   (interactive)
@@ -646,7 +629,7 @@ appropriately."
          (entry-id (org-id-get))
          (entry (+brain-as-entry entry-id))
          (entry-name (+brain-title entry))
-         (note-file (wine-migrate--find-note entry-name tag)))
+         (note-file (+org-notes-find-file entry-name tag)))
     (unless note-file
       (let* ((url (read-string "URL: "))
              (org-roam-capture-immediate-template-old org-roam-capture-immediate-template)
@@ -679,7 +662,7 @@ appropriately."
         (org-roam-db-build-cache)
         (setq org-roam-capture-immediate-template org-roam-capture-immediate-template-old)
         (switch-to-buffer buffer)))
-    (let* ((note-file (wine-migrate--find-note entry-name "grape"))
+    (let* ((note-file (+org-notes-find-file entry-name "grape"))
            (note-id (+org-notes-get-file-id note-file)))
       (save-excursion
         (goto-char 1)
