@@ -631,8 +631,10 @@ Supports the following entries:
          (entry-id (org-id-get))
          (entry (+brain-as-entry entry-id))
          (entry-name (+brain-title entry))
-         (note-file (+org-notes-find-file entry-name tag)))
-    (unless note-file
+         (note (seq-find (lambda (entry)
+                           (seq-contains-p (plist-get entry :tags) tag))
+                         (+org-notes-search entry-name))))
+    (unless note
       (let* ((url (read-string "URL: "))
              (org-roam-capture-immediate-template-old org-roam-capture-immediate-template)
              (org-roam-capture-immediate-template `("d" "default" plain
@@ -662,16 +664,16 @@ Supports the following entries:
                               (org-roam--extract-titles-alias)))))
             (org-roam-db--update-file (buffer-file-name (buffer-base-buffer)))))
         (org-roam-db-build-cache)
-        (setq org-roam-capture-immediate-template org-roam-capture-immediate-template-old)
-        (switch-to-buffer buffer)))
-    (let* ((note-file (+org-notes-find-file entry-name "grape"))
-           (note-id (+org-notes-get-file-id note-file)))
-      (save-excursion
-        (goto-char 1)
-        (replace-regexp (format "\\[\\[brain:%s\\]\\[[^]]+\\]\\]"
-                                entry-id)
-                        (org-make-link-string (concat "id:" (car note-id))
-                                              entry-name))))
+        (switch-to-buffer buffer)
+        (setq note (seq-find (lambda (entry)
+                               (seq-contains-p (plist-get entry :tags) tag))
+                             (+org-notes-search entry-name)))))
+    (save-excursion
+      (goto-char 1)
+      (replace-regexp (format "\\[\\[brain:%s\\]\\[[^]]+\\]\\]"
+                              entry-id)
+                      (org-make-link-string (concat "id:" (car (plist-get note :id)))
+                                            entry-name)))
     (org-cut-subtree)))
 
 (provide '+org-wine)

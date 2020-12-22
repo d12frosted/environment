@@ -376,24 +376,6 @@ If the current buffer is not a note, does nothing."
         (goto-char (cdr (org-id-find-id-in-file id file)))
         (+org-entry-get "ITEM")))))
 
-(defun +org-notes-find-file (title &optional tag)
-  "Search a note with TITLE.
-
-If TAG is non-nil, return the file only if it tagged
-appropriately."
-  (let ((files
-         (+seq-flatten
-          (org-roam-db-query [:select file
-                              :from titles
-                              :where (= title $s1)]
-                             title))))
-    (if tag
-        (seq-find
-         (lambda (file)
-           (seq-contains-p (org-roam--extract-tags file) tag))
-         files)
-      (car files))))
-
 (defun +org-notes-search (title)
   "Search notes with TITLE."
   (let ((files
