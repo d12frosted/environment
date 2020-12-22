@@ -57,16 +57,5 @@
   "Extract headline id from LINK."
   (+string-match-n 2 +org-id-link-regexp link))
 
-(defun +org-insert-url (url)
-  "Insert org link for URL.
-
-If it's a link to Web page, then the domain is used as
-description."
-  (interactive "sURL: ")
-  (insert (org-link-make-string
-           url
-           (or (ignore-errors (url-domain (url-generic-parse-url url)))
-               (read-string "Description: ")))))
-
 (provide '+org-link)
 ;;; +org-link.el ends here
