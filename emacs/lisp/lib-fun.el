@@ -24,14 +24,27 @@
     (setq exp (cadr exp)))
   exp)
 
-(defun +repeat-fn (fn &rest args)
+(defun +repeat-fn (fn filter &rest args)
   "Repeat FN and collect it's results until `C-g` is used.
 
+Repeat cycle stops when `C-g` is used or FILTER returns nil.
+
+If FILTER is nil, it does not affect repeat cycle.
+
+If FILTER returns nil, the computed value is not added to result.
+
 ARGS are passed to FN."
-  (let (result (inhibit-quit t))
+  (let (result
+        value
+        (continue t)
+        (inhibit-quit t))
     (with-local-quit
-      (while t
-        (setq result (cons (apply fn args) result))))
+      (while continue
+        (setq value (apply fn args))
+        (if (and filter
+                 (null (funcall filter value)))
+            (setq continue nil)
+          (setq result (cons value result)))))
     (setq quit-flag nil)
     (seq-reverse result)))
 
