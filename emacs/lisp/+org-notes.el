@@ -117,7 +117,9 @@ which takes as its argument an alist of path-completions.  See
          (id (+seq-singleton
               (+seq-flatten
                (+org-notes-get-file-id (plist-get res :path))))))
-    (plist-put res :id id)))
+    (if id
+        (plist-put res :id id)
+      (plist-put res :title title-with-tags))))
 
 (defun +org-notes--get-title-path-completions ()
   "Return an alist for completion.

@@ -136,13 +136,15 @@
 (defun wine/set-grapes ()
   "Set GRAPES properties."
   (interactive)
-  (+org-prompt-property-repeating
-   (lambda (_)
-     (let ((grape (wine-grape-select)))
-       (org-make-link-string
-        (concat "id:" (plist-get grape :id))
-        (plist-get grape :title))))
-   "GRAPES"))
+  (let ((buffer (current-buffer)))
+    (+org-prompt-property-repeating
+     (lambda (&rest args)
+       (let ((grape (wine-grape-select)))
+         (switch-to-buffer buffer)
+         (org-make-link-string
+          (concat "id:" (plist-get grape :id))
+          (plist-get grape :title))))
+     "GRAPES")))
 
 ;;
 ;; Regions
