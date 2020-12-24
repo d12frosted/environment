@@ -17,7 +17,7 @@
 ;;
 ;;; Code:
 
-(require 'use-package)
+(require 'init-package)
 
 (defconst +sys-mac-p (eq system-type 'darwin))
 (defconst +sys-linux-p (eq system-type 'gnu/linux))
@@ -33,7 +33,6 @@
   :commands (exec-path-from-shell-initialize)
   :init
   (setq exec-path-from-shell-shell-name "/usr/local/bin/fish"
-        exec-path-from-shell-check-startup-files nil
         exec-path-from-shell-debug nil)
   (exec-path-from-shell-initialize))
 
