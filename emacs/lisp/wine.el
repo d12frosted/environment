@@ -58,7 +58,8 @@
             (let ((tags (plist-get (cdr entry) :tags)))
               (and (seq-contains-p tags "wine")
                    (seq-contains-p tags "grape")))))))
-    (unless (plist-get result :id)
+    (if (plist-get result :id)
+        result
       (let ((org-roam-capture-immediate-template wine-grape-template)
             (title (plist-get result :title)))
         (org-roam-find-file-immediate title nil nil t)
