@@ -114,9 +114,7 @@ which takes as its argument an alist of path-completions.  See
          (title-with-tags (org-roam-completion--completing-read (concat prompt ": ") completions
                                                                 :initial-input initial-prompt))
          (res (cdr (assoc title-with-tags completions)))
-         (id (+seq-singleton
-              (+seq-flatten
-               (+org-notes-get-file-id (plist-get res :path))))))
+         (id (+org-notes-get-file-id (plist-get res :path))))
     (if id
         (plist-put res :id id)
       (plist-put res :title title-with-tags))))
