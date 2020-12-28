@@ -602,12 +602,12 @@ Supports the following entries:
   "Make sure FILE exists.  If not, ask user what to do."
 	(throw 'nextfile t))
 
-(defun wine/migrate-grape ()
-  "Migrate grape to note."
+(defun wine/migrate-producer ()
+  "Migrate producer to note."
   (interactive)
-  (unless (string-equal (+org-parent-id) (+brain-as-id wine-grapes-parent))
-    (user-error "Point must be at grape"))
-  (let* ((tag "grape")
+  (unless (string-equal (+org-parent-id) (+brain-as-id wine-wineries-parent))
+    (user-error "Point must be at winery"))
+  (let* ((tag "producer")
          (buffer (current-buffer))
          (entry-id (org-id-get))
          (entry (+brain-as-entry entry-id))
@@ -616,34 +616,15 @@ Supports the following entries:
                            (seq-contains-p (plist-get entry :tags) tag))
                          (+org-notes-search entry-name))))
     (unless note
-      (let* ((url (read-string "URL: "))
-             (org-roam-capture-immediate-template-old org-roam-capture-immediate-template)
+      (let* ((org-roam-capture-immediate-template-old org-roam-capture-immediate-template)
              (org-roam-capture-immediate-template `("d" "default" plain
                                                     #'org-roam-capture--get-point
                                                     "%?"
                                                     :file-name ,(concat "wine/" tag "/%<%Y%m%d%H%M%S>-${slug}")
-                                                    :head ,(concat
-                                                            "#+TITLE: ${title}\n#+TIME-STAMP: <>\n\n"
-                                                            (when url
-                                                              (concat
-                                                               "- resources :: "
-                                                               (org-link-make-string
-                                                                url
-                                                                (or (ignore-errors (url-domain (url-generic-parse-url url)))
-                                                                    (read-string "Description: ")))
-                                                               "\n")))
+                                                    :head "#+TITLE: ${title}\n#+TIME-STAMP: <>\n\n"
                                                     :unnarrowed t
                                                     :immediate-finish t)))
         (org-roam-find-file-immediate entry-name nil nil t)
-        (let ((synonym "dummy"))
-          (while (not (string-empty-p synonym))
-            (setq synonym (read-string "Synonym: "))
-            (org-roam--set-global-prop
-             "ROAM_ALIAS"
-             (combine-and-quote-strings
-              (seq-uniq (cons synonym
-                              (org-roam--extract-titles-alias)))))
-            (org-roam-db--update-file (buffer-file-name (buffer-base-buffer)))))
         (org-roam-db-build-cache)
         (switch-to-buffer buffer)
         (setq note (seq-find (lambda (entry)
@@ -651,10 +632,18 @@ Supports the following entries:
                              (+org-notes-search entry-name)))))
     (save-excursion
       (goto-char 1)
-      (replace-regexp (format "\\[\\[brain:%s\\]\\[[^]]+\\]\\]"
-                              entry-id)
-                      (org-make-link-string (concat "id:" (car (plist-get note :id)))
-                                            entry-name)))
+      (org-with-wide-buffer
+       (while (re-search-forward (format "\\[\\[brain-parent:%s\\]\\[[^]]+\\]\\]"
+                                         entry-id)
+                                 nil
+                                 'noerror)
+         (replace-match (org-make-link-string (concat "id:" (plist-get note :id))
+                                              entry-name))))
+      ;; (replace-regexp (format "\\[\\[brain-parent:%s\\]\\[[^]]+\\]\\]"
+      ;;                         entry-id)
+      ;;                 (org-make-link-string (concat "id:" (plist-get note :id))
+      ;;                                       entry-name))
+      )
     (org-cut-subtree)))
 
 (provide '+org-wine)
