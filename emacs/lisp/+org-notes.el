@@ -386,7 +386,8 @@ If the current buffer is not a note, does nothing."
      (lambda (file)
        (list :path file
              :title title
-             :tags (org-roam--extract-tags file)
+             :tags (+org-with-file file
+                     (org-roam--extract-tags file))
              :id (+org-notes-get-file-id file)))
      files)))
 
