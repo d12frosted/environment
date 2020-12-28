@@ -88,12 +88,6 @@
 (autoload 'org-roam-dailies-capture-date "org-roam-dailies")
 (autoload 'org-roam-completion--completing-read "org-roam-completion")
 
-(defun +org-notes-list ()
-  "Open a list of notes."
-  (interactive)
-  (deft)
-  (deft-refresh))
-
 (defun +org-notes-select (prompt &optional initial-prompt completions filter-fn)
   "Select a note.
 
