@@ -23,11 +23,12 @@
   "Natively compile files in DIR."
   (add-hook 'comp-async-cu-done-hook
             (lambda (f)
-              (message "done compiling %s" f)))
+              (message "done compiling %s" f)
+              (message "%s files left..." (length comp-files-queue))))
   (native-compile-async dir t)
   (while comp-files-queue
-    (message "compiling %s files..." (length comp-files-queue))
-    (sleep-for 2)))
+    ;; so batch mode stays alive
+    (sleep-for 1)))
 
 (provide '+native-comp)
 ;;; +native-comp.el ends here
