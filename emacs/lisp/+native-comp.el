@@ -18,6 +18,11 @@
 ;;; Code:
 
 (require 'comp)
+(require 'init-path)
+
+;; Place eln-cache in `+path-cache-dir'.
+(setf (car comp-eln-load-path)
+      (concat +path-cache-dir "eln/"))
 
 (defun +native-compile (dir)
   "Natively compile files in DIR."

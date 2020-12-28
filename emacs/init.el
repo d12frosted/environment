@@ -87,6 +87,9 @@ stuttering, increase this.")
 ;; Configurations
 ;;
 
+(when (featurep 'nativecomp)
+  (require '+native-comp))
+
 ;; core
 (require 'init-path)
 (require 'init-package)
