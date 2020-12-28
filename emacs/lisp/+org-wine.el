@@ -82,12 +82,6 @@
   "INVENTORY_FILE"
   "File name of the inventory.")
 
-(def-org-buffer-prop-brain-entry
-  wine-wineries-parent
-  'wine-mode-hook
-  "WINERIES_PARENT"
-  "ID of wineries parent entry.")
-
 (def-org-buffer-prop-list
   wine-sources
   nil
@@ -163,19 +157,6 @@
                     (org-make-link-string
                      (concat "id:" (plist-get region :id))
                      (plist-get region :title)))))
-
-;;
-;; Wineries
-
-(defun wine/new-winery ()
-  "Create a new winery entry."
-  (interactive)
-  (let* ((name (read-string "Name: "))
-         (id (+brain-new-child wine-wineries-parent name)))
-    (org-with-point-at (org-id-find id t)
-      (save-buffer)
-      (pretty-props/entry)
-      (save-buffer))))
 
 ;;
 ;; Wine
