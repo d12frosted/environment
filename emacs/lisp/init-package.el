@@ -164,5 +164,19 @@ N is for retries."
     (with-eval-after-load 'swiper
       (add-to-list 'swiper-font-lock-exclude 'benchmark-init/tree-mode))))
 
+(when (featurep 'nativecomp)
+  (eval-when-compile
+    (require 'comp))
+
+  (defun +native-compile ()
+    "Natively compile init.el."
+    (add-hook 'comp-async-cu-done-hook
+              (lambda (f)
+                (message "done compiling %s" f)))
+    (native-compile-async +path-emacs-dir t)
+    (while comp-files-queue
+      (message "compiling %s files..." (length comp-files-queue))
+      (sleep-for 2))))
+
 (provide 'init-package)
 ;;; init-package.el ends here

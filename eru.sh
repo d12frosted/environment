@@ -698,6 +698,7 @@ check fish && {
 install_guard && {
   theme_guard "Emacs" "Setup Emacs" && {
     emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-install)'
+    emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+native-compile)' || true
   }
 }
 
@@ -705,6 +706,7 @@ upgrade_guard && {
   theme_guard "Emacs" "Upgrade Emacs packages" && {
     emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-upgrade)'
     emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-install)'
+    emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+native-compile)' || true
   }
 }
 
