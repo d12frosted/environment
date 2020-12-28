@@ -70,6 +70,7 @@
 (autoload 'org-roam--list-all-files "org-roam")
 (autoload 'org-roam--set-global-prop "org-roam")
 (autoload 'org-roam-format-link "org-roam")
+(autoload 'org-roam--prepend-tag-string "org-roam")
 (autoload 'org-roam-db-query "org-roam-db")
 (autoload 'org-roam-db-build-cache "org-roam-db")
 (autoload 'org-roam-db--clear "org-roam-db")
@@ -85,6 +86,7 @@
 (autoload 'org-roam-dailies-find-previous-note "org-roam-dailies")
 (autoload 'org-roam-dailies-capture-today "org-roam-dailies")
 (autoload 'org-roam-dailies-capture-date "org-roam-dailies")
+(autoload 'org-roam-completion--completing-read "org-roam-completion")
 
 (defun +org-notes-list ()
   "Open a list of notes."
