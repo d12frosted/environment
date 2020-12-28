@@ -697,12 +697,14 @@ check fish && {
 
 install_guard && {
   theme_guard "Emacs" "Setup Emacs" && {
-    cellar=$(brew --cellar emacs-plus@28)
-    version=$(brew info --json=v1 emacs-plus@28 | jq -r '.[0].installed[0].version')
-    built_in="${cellar}/${version}/share/emacs/${version}/lisp/"
-    emacs --batch \
-      --load "$XDG_CONFIG_HOME/emacs/lisp/+native-comp.el" \
-      --eval "(+native-compile \"$built_in\")"
+    macos_guard && {
+      cellar=$(brew --cellar emacs-plus@28)
+      version=$(brew info --json=v1 emacs-plus@28 | jq -r '.[0].installed[0].version')
+      built_in="${cellar}/${version}/share/emacs/${version}/lisp/"
+      emacs --batch \
+        --load "$XDG_CONFIG_HOME/emacs/lisp/+native-comp.el" \
+        --eval "(+native-compile \"$built_in\")"
+    }
     emacs --batch --load "$XDG_CONFIG_HOME/emacs/init.el" --eval '(+package-install)'
     emacs --batch \
       --load "$XDG_CONFIG_HOME/emacs/lisp/+native-comp.el" \
