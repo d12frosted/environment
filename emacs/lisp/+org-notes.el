@@ -251,31 +251,36 @@ If the current buffer is not a note, does nothing."
   (interactive)
   (let* ((file (buffer-file-name (buffer-base-buffer)))
          (all-tags (org-roam--extract-tags file))
-         (tags (org-roam--extract-tags-prop file))
-         (extra))
-    (cond
-     ((seq-contains-p all-tags "litnotes")
+         (prop-tags (org-roam--extract-tags-prop file))
+         (tags prop-tags))
+
+    ;; process litnotes
+    (when (seq-contains-p all-tags "litnotes")
       (unless (seq-find (lambda (x) (string-prefix-p "Status:" x)) tags)
-        (setq extra (cons "Status:New" extra)))
+        (setq tags (cons "Status:New" tags)))
       (unless (seq-find (lambda (x) (string-prefix-p "Content:" x)) tags)
-        (setq extra (cons
-                     (concat "Content:"
-                             (completing-read "Content: "
-                                              '("Book" "Article" "Video" "Course")))
-                     extra)))))
-    ;; check for TODO entries
-    (unless (seq-contains-p tags "Project")
-      (when (seq-find #'identity
-                      (org-element-map
-                          (org-element-parse-buffer 'headline)
-                          'headline
-                        (lambda (h)
-                          (org-element-property :todo-keyword h))))
-        (setq extra (cons "Project" extra))))
-    (unless (null extra)
+        (setq tags (cons
+                    (concat "Content:"
+                            (completing-read "Content: "
+                                             '("Book" "Article" "Video" "Course")))
+                    tags))))
+
+    ;; process projects
+    (if-let ((projectp
+              (seq-find (lambda (type)
+                          (eq type 'todo))
+                        (org-element-map
+                            (org-element-parse-buffer 'headline)
+                            'headline
+                          (lambda (h)
+                            (and (org-element-property :todo-keyword h)
+                                 (org-element-property :todo-type h)))))))
+        (setq tags (cons "Project" tags))
+      (setq tags (remove "Project" tags)))
+    (unless (eq prop-tags tags)
       (org-roam--set-global-prop
        "ROAM_TAGS"
-       (combine-and-quote-strings (seq-uniq (append extra tags)))))))
+       (combine-and-quote-strings (seq-uniq tags))))))
 
 (defun +org-notes-set-status ()
   "Change status tag of current note."
