@@ -17,8 +17,7 @@
 ;;
 ;;; Code:
 
-(setq-default +package-archives 'upstream
-              +benchmark-enable nil)
+(setq-default +benchmark-enable nil)
 
 (defvar +gc-cons-threshold 16777216     ; 16mb
   "The default value to use for `gc-cons-threshold'.

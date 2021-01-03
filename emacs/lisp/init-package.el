@@ -19,50 +19,8 @@
 
 (require 'init-path)
 
-(defvar +package-archives 'upstream
-  "Package archives.
-
-Possible values are: upstream, mirror and local.")
-
 (defvar +benchmark-enable nil
   "Benchmark loading when non-nil.")
-
-(defun +package/set-archives (archives)
-  "Set specific package ARCHIVES repository."
-  (interactive
-   (list (intern (completing-read
-                  "Choose package archives: "
-                  '(upstream mirror local)))))
-
-  (setq package-archives
-        (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                            (not (gnutls-available-p))))
-               (proto (if no-ssl "http" "https")))
-          (pcase archives
-            ('upstream
-             `(,(cons "gnu"   (concat proto "://elpa.gnu.org/packages/"))
-               ,(cons "melpa" (concat proto "://melpa.org/packages/"))
-               ,(cons "org"   (concat proto "://orgmode.org/elpa/"))))
-            ('mirror
-             `(,(cons "gnu"   (concat proto "://gitlab.com/d12frosted/elpa-mirror/raw/master/gnu/"))
-               ,(cons "melpa" (concat proto "://gitlab.com/d12frosted/elpa-mirror/raw/master/melpa/"))
-               ,(cons "org"   (concat proto "://gitlab.com/d12frosted/elpa-mirror/raw/master/org/"))))
-            ('local
-             `(,(cons "gnu"   (concat +path-elpa-mirror-dir "gnu/"))
-               ,(cons "melpa" (concat +path-elpa-mirror-dir "melpa/"))
-               ,(cons "org"   (concat +path-elpa-mirror-dir "org/"))))
-            (archives
-             (error "Unknown archives: `%s'" archives))))))
-
-(+package/set-archives +package-archives)
-
-;; Initialize packages
-(unless (bound-and-true-p package--initialized) ; To avoid warnings in 27
-  (setq
-   package-enable-at-startup nil        ; To prevent initializing twice
-   package-user-dir (expand-file-name "elpa" +path-packages-dir)
-   package-gnupghome-dir (expand-file-name "gpg" +path-packages-dir))
-  (package-initialize))
 
 ;; Setup `straight' package manager.
 (setq-default straight-repository-branch "develop"
