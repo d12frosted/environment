@@ -54,7 +54,7 @@ function.
 Otherwise create it from scratch."
   (interactive)
   (setq org-agenda-files
-        (concatenate
+        (cl-concatenate
          'list
          (seq-map
           (lambda (f) (expand-file-name f org-directory))

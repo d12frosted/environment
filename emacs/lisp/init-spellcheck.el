@@ -35,10 +35,6 @@
   (+hook 'text-mode-hook #'flyspell-mode)
   (+hook 'prog-mode-hook #'flyspell-prog-mode))
 
-;; remove sometimes later
-(with-no-warnings
-  (require 'cl))
-
 (use-package flyspell-lazy
   :after flyspell
   :commands (flyspell-lazy-mode)
