@@ -27,67 +27,6 @@
 
 (defvar +org-notes-directory nil)
 
-;; compiler
-(defvar time-stamp-start)
-(defvar org-roam-last-window)
-(defvar org-roam-buffer)
-(defvar org-directory)
-(defvar org-attach-id-dir)
-(defvar org-link-bracket-re)
-(defvar org-any-link-re)
-(defvar org-roam-mode)
-(autoload 'seq-contains-p "seq")
-(autoload 'deft "deft")
-(autoload 'deft-refresh "deft")
-(autoload 'org-read-date "org")
-(autoload 'org-back-to-heading "org")
-(autoload 'org-get-tags "org")
-(autoload 'org-set-tags "org")
-(autoload 'org-id-find-id-in-file "org-id")
-(autoload 'org-element-lineage "org-element")
-(autoload 'org-element-context "org-element")
-(autoload 'org-element-property "org-element")
-(autoload 'org-element-parse-buffer "org-element")
-(autoload 'org-element-map "org-element")
-(autoload 'org-element-interpret-data "org-element")
-(autoload 'org-element-contents "org-element")
-(autoload 'org-element-type "org-element")
-(autoload 'org-element-copy "org-element")
-(autoload 'org-element-set-contents "org-element")
-(autoload 'org-element-put-property "org-element")
-(autoload 'org-link-make-string "ol")
-(autoload 'org-with-point-at "org-macs")
-(autoload 'org-roam-find-file "org-roam")
-(autoload 'org-roam--get-backlinks "org-roam")
-(autoload 'org-roam-insert "org-roam")
-(autoload 'org-roam-mode "org-roam")
-(autoload 'org-roam-tag-add "org-roam")
-(autoload 'org-roam-tag-delete "org-roam")
-(autoload 'org-roam-alias-add "org-roam")
-(autoload 'org-roam-alias-delete "org-roam")
-(autoload 'org-roam--extract-tags "org-roam")
-(autoload 'org-roam--extract-tags-prop "org-roam")
-(autoload 'org-roam--list-all-files "org-roam")
-(autoload 'org-roam--set-global-prop "org-roam")
-(autoload 'org-roam-format-link "org-roam")
-(autoload 'org-roam--prepend-tag-string "org-roam")
-(autoload 'org-roam-db-query "org-roam-db")
-(autoload 'org-roam-db-build-cache "org-roam-db")
-(autoload 'org-roam-db--clear "org-roam-db")
-(autoload 'org-roam-db--insert-tags "org-roam-db")
-(autoload 'org-roam-db--update-tags "org-roam-db")
-(autoload 'org-roam-db--get-title "org-roam-db")
-(autoload 'org-roam "org-roam-buffer")
-(autoload 'org-roam-buffer--visibility "org-roam-buffer")
-(autoload 'org-roam--current-visibility "org-roam-buffer")
-(autoload 'org-roam-dailies-find-today "org-roam-dailies")
-(autoload 'org-roam-dailies-find-date "org-roam-dailies")
-(autoload 'org-roam-dailies-find-next-note "org-roam-dailies")
-(autoload 'org-roam-dailies-find-previous-note "org-roam-dailies")
-(autoload 'org-roam-dailies-capture-today "org-roam-dailies")
-(autoload 'org-roam-dailies-capture-date "org-roam-dailies")
-(autoload 'org-roam-completion--completing-read "org-roam-completion")
-
 (defun +org-notes-select (prompt &optional initial-prompt completions filter-fn)
   "Select a note.
 
@@ -110,7 +49,7 @@ which takes as its argument an alist of path-completions.  See
          (title-with-tags (org-roam-completion--completing-read (concat prompt ": ") completions
                                                                 :initial-input initial-prompt))
          (res (cdr (assoc title-with-tags completions)))
-         (id (+org-notes-get-file-id (plist-get res :path))))
+         (id (vulpea-db-get-id-by-file (plist-get res :path))))
     (if id
         (plist-put res :id id)
       (plist-put res :title title-with-tags))))
@@ -336,62 +275,6 @@ If the current buffer is not a note, does nothing."
         (expand-file-name (file-name-as-directory +org-notes-directory))
         (file-name-directory buffer-file-name))))
 
-(defun +org-notes-get-file-id (file)
-  "Get ID of note represented by FILE."
-  (+seq-singleton
-   (car
-    (org-roam-db-query
-     [:select id
-      :from ids
-      :where (and (= file $s1)
-                  (= level $s2))]
-     file
-     0))))
-
-(defun +org-notes-get-file-by-id (id)
-  "Get file of note with ID."
-  (+seq-singleton
-   (+seq-flatten
-    (org-roam-db-query
-     [:select file
-      :from ids
-      :where (= id $s1)]
-     id))))
-
-(defun +org-notes-get-title-by-id (id)
-  "Get title of note with ID."
-  (when-let* ((fls
-               (org-roam-db-query
-                [:select [file level]
-                 :from ids
-                 :where (= id $s1)]
-                id))
-              (fl (+seq-singleton fls))
-              (file (car fl))
-              (level (nth 1 fl)))
-    (if (= 0 level)
-        (org-roam-db--get-title file)
-      (+org-with-file file
-        (goto-char (cdr (org-id-find-id-in-file id file)))
-        (+org-entry-get "ITEM")))))
-
-(defun +org-notes-search (title)
-  "Search notes with TITLE."
-  (let ((files
-         (+seq-flatten
-          (org-roam-db-query [:select file
-                              :from titles
-                              :where (= title $s1)]
-                             title))))
-    (seq-map
-     (lambda (file)
-       (list :path file
-             :title title
-             :tags (+org-with-file file
-                     (org-roam--extract-tags file))
-             :id (+org-notes-get-file-id file)))
-     files)))
-
 (defun +org-notes--title-as-tag ()
   "Return title of the current note as tag."
   (+org-notes--title-to-tag (+org-buffer-prop-get "TITLE")))
@@ -425,208 +308,12 @@ If the current buffer is not a note, does nothing."
     (while (re-search-forward "id:\\.\\." nil t)
       (when-let ((link (org-element-lineage (org-element-context) '(link) t)))
         (let* ((id (+string-chop-prefix-regexp ".+/" (org-element-property :path link)))
-               (desc (+org-notes-get-title-by-id id))
+               (desc (vulpea-db-get-title-by-id id))
                (begin (org-element-property :begin link))
                (end (- (org-element-property :end link)
                        (org-element-property :post-blank link))))
           (delete-region begin end)
           (insert (org-roam-format-link id desc)))))))
-
-(defun +org-notes-meta (id)
-  "Get metadata for note with ID.
-
-Return plist (:file :buffer :pl)
-
-Metadata is defined by the first description list in the note,
-e.g. list like:
-
-- key1 :: value1
-- key2 :: value21
-- key2 :: value22
-- key3 :: value3
-
-In most cases, it's better to use either `+org-notes-meta-get' to
-retrieve a single value for a given key or
-`+org-notes-meta-get-list' to retrieve all values for a given
-key."
-  (when-let ((file (+org-notes-get-file-by-id id)))
-    (+org-with-file file
-      (let* ((buf (org-element-parse-buffer))
-             (pls (org-element-map buf 'plain-list #'identity))
-             (pl (seq-find
-                  (lambda (pl)
-                    (equal 'descriptive
-                           (org-element-property :type pl)))
-                  pls)))
-        (list :file file
-              :buffer buf
-              :pl pl)))))
-
-(defun +org-notes-meta--get (id prop)
-  "Get all values of PROP for note with ID.
-
-Return plist (:file :buffer :pl :items)"
-  (let* ((meta (+org-notes-meta id))
-         (pl (plist-get meta :pl))
-         (items-all (org-element-map pl 'item #'identity))
-         (items
-          (seq-filter
-           (lambda (item)
-             (string-equal
-              prop
-              (org-element-interpret-data
-               (org-element-contents (org-element-property :tag item)))))
-           items-all)))
-    (plist-put meta :items items)))
-
-(defun +org-notes-meta-get-list (id prop &optional type)
-  "Get all values of PROP for note with ID.
-
-Each element value depends on TYPE:
-
-- raw - org element object
-- string (default) - an interpreted object (without trailing
-  newline)
-- id - id of the linked note."
-  (setq type (or type 'string))
-  (let* ((meta (+org-notes-meta--get id prop))
-         (items (plist-get meta :items)))
-    (seq-map
-     (lambda (item)
-       (let ((val (car (org-element-contents item))))
-         (pcase type
-           (`raw val)
-           (`string (s-trim-right
-                     (substring-no-properties
-                      (org-element-interpret-data (org-element-contents val)))))
-           (`number (string-to-number
-                     (s-trim-right
-                      (substring-no-properties
-                       (org-element-interpret-data (org-element-contents val))))))
-           (`id (let ((el (car (org-element-contents val))))
-                  (when (equal 'link
-                               (org-element-type el))
-                    (org-element-property :path el)))))))
-     items)))
-
-(defun +org-notes-meta-get (id prop &optional type)
-  "Get value of PROP for note with ID.
-
-Result depends on TYPE:
-
-- raw - org element object
-- string (default) - an interpreted object (without trailing
-  newline)
-- number - an interpreted number
-- id - id of the linked note.
-
-If the note contains multiple values for a given PROP, the first
-one is returned. In case all values are required, use
-`+org-notes-meta-get-list'."
-  (car (+org-notes-meta-get-list id prop type)))
-
-(defun +org-notes-meta-set (id prop value)
-  "Set VALUE of PROP for note with ID.
-
-If the VALUE is a list, then each element is inserted
-separately.
-
-Please note that all occurrences of PROP are replaced by VALUE."
-  (let* ((values (if (listp value) value (list value)))
-         (meta (+org-notes-meta--get id prop))
-         (file (plist-get meta :file))
-         (buffer (plist-get meta :buffer))
-         (pl (plist-get meta :pl))
-         (items (plist-get meta :items))
-         (img (org-element-copy (car items))))
-    (+org-with-file file
-      (cond
-       (pl
-        ;; TODO: inline
-        (+org-notes-meta-remove id prop)
-        (cond
-         (img
-          (goto-char (org-element-property :begin img))
-          (seq-do
-           (lambda (val)
-             (insert
-              (org-element-interpret-data
-               (org-element-set-contents (org-element-copy img)
-                                         (+org-notes-meta--format val)))))
-           values)
-          (when (equal (length items)
-                       (length (org-element-contents pl)))
-            (insert "\n")))
-         (t
-          (let* ((items-all (org-element-map pl 'item #'identity))
-                 ;; we copy any item from the list so we don't need to deal with
-                 ;; :bullet and other properties
-                 (img (org-element-copy (car items-all))))
-            (goto-char (org-element-property :begin pl))
-            (seq-do
-             (lambda (val)
-               (insert
-                (org-element-interpret-data
-                 (org-element-set-contents
-                  (org-element-put-property (org-element-copy img) :tag prop)
-                  (+org-notes-meta--format val)))))
-             values)))))
-       (t
-        ;; insert either after the last keyword in the buffer, or after the
-        ;; property drawer if it is present on the first line or on the fist
-        ;; line
-        (let* ((element (or (car (last (org-element-map buffer 'keyword #'identity)))
-                            (car (org-element-map buffer 'property-drawer #'identity))))
-               (point (if element
-                          (org-element-property :end element)
-                        1)))
-          (goto-char point)
-          (seq-do
-           (lambda (val)
-             (insert "- " prop " :: "
-                     (+org-notes-meta--format val)
-                     "\n\n"))
-           values)))))))
-
-(defun +org-notes-meta-remove (id prop)
-  "Delete values of PROP for note with ID."
-  (let* ((meta (+org-notes-meta--get id prop))
-         (items (plist-get meta :items))
-         (pl (plist-get meta :pl))
-         (file (plist-get meta :file)))
-    (when (car items)
-      (+org-with-file file
-        (if (equal (length items)
-                   (length (org-element-contents pl)))
-            (delete-region (org-element-property :begin pl)
-                           (org-element-property :end pl))
-          (seq-do
-           (lambda (item)
-             (when-let* ((begin (org-element-property :begin item))
-                         (end (org-element-property :end item)))
-               (delete-region begin end)))
-           (seq-reverse items)))))))
-
-(defun +org-notes-meta-clean (id)
-  "Delete all meta from note with ID."
-  (when-let* ((meta (+org-notes-meta id))
-              (pl (plist-get meta :pl))
-              (file (plist-get meta :file)))
-    (+org-with-file file
-      (delete-region (org-element-property :begin pl)
-                     (org-element-property :end pl)))))
-
-(defun +org-notes-meta--format (value)
-  "Format a VALUE depending on it's type."
-  (cond
-   ((stringp value)
-    (if (string-match-p +string-uuid-regexp value)
-        (org-link-make-string (concat "id:" value)
-                              (+org-notes-get-title-by-id value))
-      value))
-   ((numberp value)
-    (number-to-string value))
-   (t (user-error "Unsupported type of '%s'" value))))
 
 (provide '+org-notes)
 ;;; +org-notes.el ends here

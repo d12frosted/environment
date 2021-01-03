@@ -20,9 +20,6 @@
 (require 'lib-fun)
 (require '+org-notes)
 
-(defvar org-roam-capture-immediate-template)
-(autoload 'org-roam-find-file-immediate "org-roam")
-
 ;;; Regions and Appellations
 
 (defun wine-region-select ()
@@ -67,7 +64,7 @@
         (seq-find
          (lambda (entry)
            (seq-contains-p (plist-get entry :tags) "grape"))
-         (+org-notes-search title))))))
+         (vulpea-db-search-by-title title))))))
 
 ;;; Producers
 

@@ -614,7 +614,7 @@ Supports the following entries:
          (entry-name (+brain-title entry))
          (note (seq-find (lambda (entry)
                            (seq-contains-p (plist-get entry :tags) tag))
-                         (+org-notes-search entry-name))))
+                         (vulpea-db-search-by-title entry-name))))
     (unless note
       (let* ((org-roam-capture-immediate-template-old org-roam-capture-immediate-template)
              (org-roam-capture-immediate-template `("d" "default" plain
@@ -629,7 +629,7 @@ Supports the following entries:
         (switch-to-buffer buffer)
         (setq note (seq-find (lambda (entry)
                                (seq-contains-p (plist-get entry :tags) tag))
-                             (+org-notes-search entry-name)))))
+                             (vulpea-db-search-by-title entry-name)))))
     (save-excursion
       (goto-char 1)
       (org-with-wide-buffer

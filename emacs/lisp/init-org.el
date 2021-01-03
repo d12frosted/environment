@@ -430,6 +430,13 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :init
   (add-hook 'org-mode-hook 'toc-org-mode))
 
+(use-package vulpea
+  :defer t
+  :straight (vulpea
+             :type git
+             :host github
+             :repo "d12frosted/vulpea"))
+
 (use-package +org-notes
   :defer t
   :straight nil
