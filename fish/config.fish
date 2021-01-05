@@ -65,6 +65,7 @@ function __append_to_path -a path
   end
 end
 set -x PATH $XDG_CONFIG_HOME/bin $PATH
+__append_to_path /opt/local/bin
 __append_to_path $GEM_HOME/bin
 __append_to_path /usr/texbin
 __append_to_path /usr/local/sbin

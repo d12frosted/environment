@@ -41,9 +41,11 @@ set -e
 KERNEL_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
 KERNEL_RELEASE=$(uname -r | tr '[:upper:]' '[:lower:]')
 OS_NAME="unknown"
+OS_VERSION="unknown"
 case $KERNEL_NAME in
   darwin)
     OS_NAME=macos
+    OS_VERSION=$(sw_vers -productVersion)
     ;;
   linux)
     case $KERNEL_RELEASE in
@@ -116,6 +118,7 @@ intro
 log "Kernel name:      $KERNEL_NAME"
 log "Kernel release:   $KERNEL_RELEASE"
 log "Operating system: $OS_NAME"
+log "OS version:       $OS_VERSION"
 log "User:             $USER"
 log
 
@@ -622,9 +625,35 @@ arch_guard && {
 macos_guard && {
   theme_guard "packages" "Ensure brew exists" && {
     check brew || {
-      info "Installing brew"
+      log "Installing brew"
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
       brew update
+    }
+  }
+
+  theme_guard "packages" "Ensure MacPorts exists" && {
+    check port || {
+      log "Installing MacPorts"
+      mp_build_dir=$(mktemp -d)
+      version=$(curl -s https://api.github.com/repos/macports/macports-base/releases/latest \
+        | grep "tag_name" \
+        | awk '{print substr($2, 3, length($2)-4)}')
+      url="https://github.com/macports/macports-base/archive/v${version}.zip"
+      os_part="unknown"
+      case $OS_VERSION in
+        11.0.*)
+          os_part="_1-11-BigSur"
+          ;;
+        *)
+          error "Unsupported OS Version - $OS_VERSION"
+          error "Can not install MacPorts"
+          exit 1
+          ;;
+      esac
+      file="MacPorts-${version}${os_part}.pkg"
+      url="https://github.com/macports/macports-base/releases/download/v${version}/${file}"
+      curl -L -o "${mp_build_dir}/${file}" "$url"
+      sudo installer -pkg "${mp_build_dir}/${file}" -target /
     }
   }
 
