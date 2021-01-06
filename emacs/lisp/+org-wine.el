@@ -196,7 +196,7 @@
   "Create a new wine entry based on wine entry at point."
   (interactive)
   (wine-require-wine-entry)
-  (let* ((winery (+brain-as-entry (+org-entry-get-brain "WINERY")))
+  (let* ((winery (+org-entry-get "WINERY"))
          (name (+org-entry-get "NAME"))
          (region (+org-entry-get "REGION"))
          (appellation (+org-entry-get "APPELLATION"))
@@ -206,7 +206,7 @@
          (carbonation (+org-entry-get "CARBONATION"))
          (id (+brain-new-child wine-parent (cadr winery))))
     (org-with-point-at (org-id-find id t)
-      (+org-entry-set "WINERY" (+brain-make-link winery id 'parent))
+      (+org-entry-set "WINERY" winery)
       (+org-entry-set "NAME" name)
       (+org-entry-set "REGION" region)
       (+org-entry-set "APPELLATION" appellation)
