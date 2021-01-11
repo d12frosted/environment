@@ -664,7 +664,7 @@ macos_guard && {
   }
 
   upgrade_guard && {
-    theme_theme_guard "packages" "Upgrade packages" && {
+    theme_guard "packages" "Upgrade packages" && {
       brew update
       brew upgrade
     }
