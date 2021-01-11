@@ -191,6 +191,8 @@ If the current buffer is not a note, does nothing."
 
     ;; process litnotes
     (when (seq-contains-p all-tags "litnotes")
+      (unless (+org-buffer-prop-get "ROAM_KEY")
+        (+org-buffer-prop-set "ROAM_KEY" (read-string "URL: ")))
       (unless (seq-find (lambda (x) (string-prefix-p "Status:" x)) tags)
         (setq tags (cons "Status:New" tags)))
       (unless (seq-find (lambda (x) (string-prefix-p "Content:" x)) tags)
