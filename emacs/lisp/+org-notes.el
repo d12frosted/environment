@@ -318,5 +318,53 @@ If the current buffer is not a note, does nothing."
           (delete-region begin end)
           (insert (org-roam-format-link id desc)))))))
 
+(defun +org-notes-migrate-journal-entry ()
+  "Migrate a journal entry."
+  (interactive)
+  ;; (vulpea-db-get-id-by-file "journal/2021-01-05.org")
+  (save-excursion
+    (beginning-of-line)
+    (unless (org-looking-at-p org-heading-regexp)
+      (user-error "Must be at a heading"))
+    (let* ((pom (point))
+           (hl (org-element-at-point))
+           (content-begin (org-element-property :contents-begin hl))
+           (content-end (org-element-property :contents-end hl))
+           (propd (save-excursion
+                    (goto-char content-begin)
+                    (org-element-at-point)))
+           (content-begin (org-element-property :end propd))
+           (content (buffer-substring content-begin content-end))
+           (id (org-entry-get pom "ID"))
+           (title (org-entry-get pom"ITEM"))
+           (date (substring title 0 10))
+           (time (org-read-date nil t date)))
+
+      (org-roam-dailies-calendar--install-hook)
+
+      (with-temp-file (expand-file-name (concat "journal/" date ".org")
+                                        org-roam-directory)
+        (org-mode)
+        (insert ":PROPERTIES:\n"
+                ":ID:                     " id "\n"
+                ":END:\n"
+                "#+TITLE: " (org-format-time-string "%A, %d %B %Y" time) "\n"
+                "#+TIME-STAMP:\n"
+                "\n"
+                content)
+        (goto-char (point-min))
+        (while (re-search-forward org-heading-regexp nil 'no-error)
+          (message (buffer-substring (point-at-bol) (point-at-eol)))
+          (save-excursion
+            (org-promote)
+            (org-fix-position-after-promote)
+            (org-promote)
+            (org-fix-position-after-promote)
+            (org-promote)
+            (org-fix-position-after-promote))))
+      (org-roam-db-build-cache)
+      (goto-char pom)
+      (org-cut-subtree))))
+
 (provide '+org-notes)
 ;;; +org-notes.el ends here
