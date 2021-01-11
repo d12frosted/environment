@@ -21,26 +21,6 @@
 (require 'init-package)
 (require 'init-lsp)
 
-(use-package scala-mode
-  :hook
-  (scala-mode . subword-mode)
-  (scala-mode . lsp)
-  :mode "\\.s\\(cala\\|bt\\)$"
-  :config
-  (+scala-bootstrap)
-  (setq scala-indent:align-parameters t
-        ;; indent block comments to first asterix, not second
-        scala-indent:use-javadoc-style t))
-
-(use-package lsp-metals
-  :after scala-mode)
-
-(use-package sbt-mode
-  :commands sbt-start sbt-command
-  :after scala-mode
-  :config
-  (setq sbt:program-options '("-Dsbt.supershell=false")))
-
 (defun +scala-bootstrap ()
   "Bootstrap Scala development."
   (+scala--install-bin
@@ -74,6 +54,26 @@
   (unless (executable-find bin)
     (let ((path (concat +path-home-dir ".local/bin/" bin)))
       (funcall install-fn path))))
+
+(use-package scala-mode
+  :hook
+  (scala-mode . subword-mode)
+  (scala-mode . lsp)
+  :mode "\\.s\\(cala\\|bt\\)$"
+  :config
+  (+scala-bootstrap)
+  (setq scala-indent:align-parameters t
+        ;; indent block comments to first asterix, not second
+        scala-indent:use-javadoc-style t))
+
+(use-package lsp-metals
+  :after scala-mode)
+
+(use-package sbt-mode
+  :commands sbt-start sbt-command
+  :after scala-mode
+  :config
+  (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 (provide 'init-scala)
 ;;; init-scala.el ends here
