@@ -204,7 +204,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
         org-id-extra-files (list (expand-file-name ".archive/archive" org-directory)
                                  (expand-file-name ".archive/archive.org" org-directory))
 	      org-id-link-to-org-use-id t
-        org-id-locations-file (expand-file-name ".orgids" org-directory)))
+        org-id-locations-file (expand-file-name "org-id-locations" +path-cache-dir)))
 
 (use-package org-capture
   :defer t
