@@ -23,7 +23,6 @@
 (require '+org-places)
 (require '+org-buffer-prop)
 (require '+inventory)
-(require 'wine)
 
 (autoload 'seq-contains-p "seq")
 (autoload 'org-edit-headline "org")
