@@ -37,5 +37,8 @@
   :config
   (flycheck-package-setup))
 
+(use-package flycheck-eldev
+  :after flycheck)
+
 (provide 'init-elisp)
 ;;; init-elisp.el ends here
