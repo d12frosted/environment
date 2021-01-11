@@ -53,21 +53,14 @@ function.
 
 Otherwise create it from scratch."
   (interactive)
+  (require 'org-roam)
   (setq org-agenda-files
-        (cl-concatenate
-         'list
-         (seq-map
-          (lambda (f) (expand-file-name f org-directory))
-          ;; TODO move this list to another place
-          '("refile-beorg.org"
-            "inbox-borysb-arch.org"
-            "inbox-d12frosted.local.org"))
-         (seq-map
-          #'car
-          (seq-filter
-           (lambda (entry)
-             (seq-contains-p (cadr entry) "Project"))
-           (org-roam-db-query [:select * :from tags])))))
+        (seq-map
+         #'car
+         (seq-filter
+          (lambda (entry)
+            (seq-contains-p (cadr entry) "Project"))
+          (org-roam-db-query [:select * :from tags]))))
   (if-let ((buffer (and +agenda-main-cache-buffer
                         (equal current-prefix-arg nil)
                         (get-buffer +agenda-main-buffer-name))))

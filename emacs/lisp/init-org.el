@@ -446,7 +446,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
              +org-notes-setup-buffer
              +org-notes-pre-save-hook)
   :init
-  (setq +org-notes-directory (concat org-directory "notes/"))
+  (setq +org-notes-directory org-directory )
   (add-to-list 'window-buffer-change-functions #'+org-notes-setup-buffer)
   (add-hook 'before-save-hook #'+org-notes-pre-save-hook))
 
