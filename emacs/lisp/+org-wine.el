@@ -116,27 +116,17 @@
 ;;
 ;; Grapes
 
-(defun wine/new-grape ()
-  "Create a new grape entry."
-  (interactive)
-  (let* ((name (read-string "Name: "))
-         (id (+brain-new-child wine-grapes-parent name)))
-    (org-with-point-at (org-id-find id t)
-      (save-buffer)
-      (pretty-props/entry)
-      (save-buffer))))
-
 (defun wine/set-grapes ()
   "Set GRAPES properties."
   (interactive)
   (let ((buffer (current-buffer)))
     (+org-prompt-property-repeating
      (lambda (&rest args)
-       (let ((grape (wine-grape-select)))
+       (let ((grape (vino-grape-select)))
          (switch-to-buffer buffer)
          (org-make-link-string
-          (concat "id:" (plist-get grape :id))
-          (plist-get grape :title))))
+          (concat "id:" (vulpea-note-id grape))
+          (vulpea-note-title grape))))
      "GRAPES")))
 
 ;;
@@ -151,78 +141,14 @@
               (old-parent (+brain-as-entry old-parent-id)))
     (org-brain-remove-parent (+brain-as-entry id)
                              old-parent))
-  (when-let* ((region (wine-region-select)))
+  (when-let* ((region (vino-region-select)))
     (+org-entry-set "APPELLATION"
                     (org-make-link-string
-                     (concat "id:" (plist-get region :id))
-                     (plist-get region :title)))))
+                     (concat "id:" (vulpea-note-id region))
+                     (vulpea-note-title region)))))
 
 ;;
 ;; Wine
-
-(defun wine/new-wine ()
-  "Create a new wine entry."
-  (interactive)
-  (let* ((winery (wine-producer-select))
-         (id (+brain-new-child wine-parent (plist-get winery :title))))
-    (org-with-point-at (org-id-find id t)
-      (org-set-property "WINERY" (org-make-link-string
-                                  (concat "id:" (plist-get winery :id))
-                                  (plist-get winery :title)))
-      (+org-prompt-property "NAME")
-      (org-set-property "YEAR" nil)
-      (when-let* ((region (wine-region-select)))
-        (+org-entry-set "APPELLATION"
-                        (org-make-link-string
-                         (concat "id:" (plist-get region :id))
-                         (plist-get region :title))))
-      (wine/set-grapes)
-      (+org-prompt-number-property "SUGAR")
-      (+org-prompt-number-property "ALCOHOL")
-      (+org-prompt-property "PRICE")
-      (org-set-property "VOLUME" nil)
-      (+org-prompt-completing-property "COLOUR" wine-colours)
-      (+org-prompt-completing-property "SWEETNESS" wine-sweetness-levels)
-      (+org-prompt-completing-property "CARBONATION" wine-carbonation-types)
-      (while (wine--add-url (read-string "URL: ")))
-      (when (y-or-n-p "Acquire? ")
-        (call-interactively #'wine/acquire))
-      (save-buffer)
-      (wine-refresh-entry)
-      (save-buffer))))
-
-(defun wine/copy-wine ()
-  "Create a new wine entry based on wine entry at point."
-  (interactive)
-  (wine-require-wine-entry)
-  (let* ((winery (+org-entry-get "WINERY"))
-         (name (+org-entry-get "NAME"))
-         (region (+org-entry-get "REGION"))
-         (appellation (+org-entry-get "APPELLATION"))
-         (grapes (+org-entry-get "GRAPES"))
-         (volume (+org-entry-get "VOLUME"))
-         (colour (+org-entry-get "COLOUR"))
-         (carbonation (+org-entry-get "CARBONATION"))
-         (id (+brain-new-child wine-parent (cadr winery))))
-    (org-with-point-at (org-id-find id t)
-      (+org-entry-set "WINERY" winery)
-      (+org-entry-set "NAME" name)
-      (+org-entry-set "REGION" region)
-      (+org-entry-set "APPELLATION" appellation)
-      (+org-entry-set "GRAPES" grapes)
-      (+org-entry-set "VOLUME" volume)
-      (+org-entry-set "COLOUR" colour)
-      (+org-entry-set "CARBONATION" carbonation)
-      (+org-prompt-property "YEAR")
-      (+org-prompt-number-property "SUGAR")
-      (+org-prompt-number-property "ALCOHOL")
-      (+org-prompt-property "PRICE")
-      (while (wine--add-url (read-string "URL: ")))
-      (when (y-or-n-p "Acquire? ")
-        (call-interactively #'wine/acquire))
-      (save-buffer)
-      (wine-refresh-entry)
-      (save-buffer))))
 
 (defun wine-entry-p ()
   "Return non-nil when entry at point is wine entry."

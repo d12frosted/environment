@@ -437,6 +437,13 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
              :host github
              :repo "d12frosted/vulpea"))
 
+(use-package vino
+  :defer t
+  :straight (vino
+             :type git
+             :host github
+             :repo "d12frosted/vino"))
+
 (use-package +org-notes
   :defer t
   :straight nil
