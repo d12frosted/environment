@@ -43,30 +43,15 @@
 (defvar +agenda-habits-buffer-name "*agenda:habits*"
   "Name of the habits agenda buffer.")
 
+(defun +agenda-files-update (&rest _)
+  "Update the value of `org-agenda-files'."
+  (setq org-agenda-files (+org-notes-project-files)))
+
 ;;;###autoload
 (defun +agenda/main ()
-  "Show main `org-agenda' view.
-
-If it already exists and no \\[universal-argument] is passed,
-just switch to that buffer using `+buffer-display-and-switch'
-function.
-
-Otherwise create it from scratch."
+  "Show main `org-agenda' view."
   (interactive)
-  (require 'org-roam)
-  (setq org-agenda-files
-        (seq-map
-         #'car
-         (seq-filter
-          (lambda (entry)
-            (seq-contains-p (cadr entry) "Project"))
-          (org-roam-db-query [:select * :from tags]))))
-  (if-let ((buffer (and +agenda-main-cache-buffer
-                        (equal current-prefix-arg nil)
-                        (get-buffer +agenda-main-buffer-name))))
-      (+buffer-display-and-switch buffer)
-    (message "loading agenda ...")
-    (org-agenda nil " ")))
+  (org-agenda nil " "))
 
 (defconst +agenda--refile
   '(tags "REFILE"

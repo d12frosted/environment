@@ -81,6 +81,8 @@ It is relative to `org-directory', unless it is absolute.")
   (set-company-backend! 'org-mode
     '(company-capf company-yasnippet company-dabbrev))
   :config
+  (advice-add 'org-agenda :before #'+agenda-files-update)
+
   (define-key org-mode-map (kbd "C-a") '+org-beginning-of-line)
 
   ;; open files in the same window
@@ -453,7 +455,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
              +org-notes-setup-buffer
              +org-notes-pre-save-hook)
   :init
-  (setq +org-notes-directory org-directory )
+  (setq +org-notes-directory org-directory)
   (add-to-list 'window-buffer-change-functions #'+org-notes-setup-buffer)
   (add-hook 'before-save-hook #'+org-notes-pre-save-hook))
 
@@ -472,6 +474,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
              org-roam-find-file
              org-roam-insert
              org-roam-db-build-cache
+             org-roam-db-query
              org-roam--get-title-or-slug)
   :init
   (setq org-roam-directory +org-notes-directory

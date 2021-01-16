@@ -149,6 +149,30 @@ By default it uses current date to find a daily. With
   (interactive)
   (org-roam-dailies-find-next-note))
 
+(defun +org-notes-project-p ()
+  "Return non-nil if current buffer has any todo entry.
+
+TODO entries marked as done are ignored, meaning the this
+function returns nil if current buffer contains only completed
+tasks."
+  (seq-find
+   (lambda (type)
+     (eq type 'todo))
+   (org-element-map
+    (org-element-parse-buffer 'headline)
+    'headline
+    (lambda (h)
+      (org-element-property :todo-type h)))))
+
+(defun +org-notes-project-files ()
+  "Return a list of note files containing Project tag."
+  (seq-map
+   #'car
+   (org-roam-db-query
+    [:select file
+     :from tags
+     :where (like tags (quote "%\"Project\"%"))])))
+
 (defun +org-notes-setup-buffer (&optional _)
   "Setup current buffer for notes viewing and editing.
 
@@ -203,15 +227,7 @@ If the current buffer is not a note, does nothing."
                     tags))))
 
     ;; process projects
-    (if-let ((projectp
-              (seq-find (lambda (type)
-                          (eq type 'todo))
-                        (org-element-map
-                            (org-element-parse-buffer 'headline)
-                            'headline
-                          (lambda (h)
-                            (and (org-element-property :todo-keyword h)
-                                 (org-element-property :todo-type h)))))))
+    (if (+org-notes-project-p)
         (setq tags (cons "Project" tags))
       (setq tags (remove "Project" tags)))
     (unless (eq prop-tags tags)
