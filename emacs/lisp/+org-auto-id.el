@@ -20,12 +20,16 @@
 (autoload 'org-map-entries "org")
 (autoload 'org-id-get-create "org-id")
 
+(defvar-local +org-auto-id-enable t
+  "When non-nil automatically generate IDs for entries in file.")
+
 ;;;###autoload
 (defun +org-auto-id-add-to-headlines-in-file ()
   "Add ID property to the current file and all its headlines.
 
 Only missing properties are added."
-  (when (and (or (eq major-mode 'org-mode)
+  (when (and +org-auto-id-enable
+             (or (eq major-mode 'org-mode)
                  (eq major-mode 'org-journal-mode))
              (eq buffer-read-only nil))
     (save-excursion
