@@ -27,6 +27,7 @@
 (require 'init-selection)
 (require 'init-file)
 (require '+company)
+(require '+inventory)
 (require '+org-agenda)
 (require '+org-auto-id)
 (require '+org-cha)
@@ -432,20 +433,6 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :init
   (add-hook 'org-mode-hook 'toc-org-mode))
 
-(use-package vulpea
-  :defer t
-  :straight (vulpea
-             :type git
-             :host github
-             :repo "d12frosted/vulpea"))
-
-(use-package vino
-  :defer t
-  :straight (vino
-             :type git
-             :host github
-             :repo "d12frosted/vino"))
-
 (use-package +org-notes
   :defer t
   :straight nil
@@ -458,6 +445,100 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   (setq +org-notes-directory org-directory)
   (add-to-list 'window-buffer-change-functions #'+org-notes-setup-buffer)
   (add-hook 'before-save-hook #'+org-notes-pre-save-hook))
+
+(use-package vulpea
+  :defer t
+  :straight (vulpea
+             :type git
+             :host github
+             :repo "d12frosted/vulpea"))
+
+(use-package vino
+  :defer t
+  :straight (vino
+             :type git
+             :host github
+             :repo "d12frosted/vino")
+  :init
+  (setq wine-inventory-file (expand-file-name "wine.journal" +org-notes-directory)
+        vino-availability-fn (lambda (id)
+                               (cons
+                                (inventory-total-in wine-inventory-file id)
+                                (inventory-total-out wine-inventory-file id)))
+        vino-availability-add-fn (lambda (id amount source date)
+                                   (inventory-add wine-inventory-file id amount source date))
+        vino-availability-sub-fn (lambda (id amount action date)
+                                   (inventory-sub wine-inventory-file id amount action date))
+        vino-rating-props
+        '((1 . (("SCORE" . 3)))
+          (2 . (("AROMA_QUALITY" . 3)
+                ("AROMA_INTENSITY" . 2)
+                ("AROMA_COMPLEXITY" . 3)
+                ("BALANCE" . 3)
+                ("FLAVOURS" . 2)
+                ("AFTERTASTE" . 3)
+                ("GENERAL" . 4)))
+          (3 . (("AROMA_QUALITY" .
+                 (lambda ()
+                   (let* ((total 3)
+                          (res total)
+                          (ans t)
+                          (quit-on "no taints")
+                          (opts (list
+                                 quit-on
+                                 "aggressive ethanol"
+                                 "massive brett attack"
+                                 "VA, especially nail polish removal")))
+                     (while ans
+                       (setq ans (completing-read "Any taints? " opts))
+                       (setq opts (delete ans opts))
+                       (if (string-equal ans "no taints")
+                           (setq ans nil)
+                         (setq res (max 0 (- res 1))))
+                       (when (equal res 0)
+                         (setq ans nil)))
+                     (cons res total))))
+
+                ("AROMA_INTENSITY" .
+                 (("aroma can be perceived without putting nose into glass" . 2)
+                  ("aroma can be perceived only by putting nose into glass" . 1)
+                  ("closed, you need to put a lot of effort to get the aroma" . 0)))
+
+                ("AROMA_RICHNESS" .
+                 (("more than 3 different notes" . 3)
+                  ("only 3 notes" . 2)
+                  ("only 2 notes" . 1)
+                  ("only 1 note" . 0)))
+
+                ("AROMA_COMPLEXITY" .
+                 (("sophisticated, multilayered" . 1)
+                  ("simple" . 0)))
+
+                ("BALANCE" .
+                 (("perfectly balanced, everything is in its place" . 3)
+                  ("well balanced, might be a small issue" . 2)
+                  ("average, either one bigger issue or two small" . 1)
+                  ("unbalanced, everything else" . 0)))
+
+                ("FLAVOURS" .
+                 (("multiple flavours" . 1)
+                  ("only one flavour" . 0)))
+
+                ("EVOLUTION" .
+                 (("taste and flavours evolve over time in mouth" . 1)
+                  ("plain, straightforward" . 0)))
+
+                ("AFTERTASTE" .
+                 (("long, lasting more than 30 seconds" . 2)
+                  ("average, lasting more than 10 seconds" . 1)
+                  ("short" . 0)))
+
+                ("GENERAL" .
+                 (("life changing" . 4)
+                  ("great wine, I will definitely look into tasting it once more" . 3)
+                  ("good wine, will drink it again with pleasure if situation arises" . 2)
+                  ("average wine, only with parents" . 1)
+                  ("bad wine, only for enemies" . 0))))))))
 
 (use-package org-roam
   :defer t
