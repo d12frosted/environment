@@ -289,6 +289,7 @@ If the current buffer is not a note, does nothing."
 (defun +org-notes-buffer-p ()
   "Return non-nil if the currently visited buffer is a note."
   (and buffer-file-name
+       (eq major-mode 'org-mode)
        (string-prefix-p
         (expand-file-name (file-name-as-directory +org-notes-directory))
         (file-name-directory buffer-file-name))))
