@@ -18,10 +18,6 @@
 ;;; Code:
 
 (require '+org)
-(require '+org-pretty-props)
-(require '+org-prop)
-(require '+org-places)
-(require '+org-buffer-prop)
 
 ;;
 ;; Ratings

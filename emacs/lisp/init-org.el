@@ -30,8 +30,6 @@
 (require '+inventory)
 (require '+org-agenda)
 (require '+org-auto-id)
-(require '+org-cha)
-(require '+org-cigars)
 (require '+org-dependent)
 (require '+org-wine)
 (require '+org-capture)
