@@ -257,7 +257,7 @@
 
       ;; now, let's rate
       (seq-do (lambda (rcfg)
-                (let ((rid (vino-entry-rate--create
+                (let ((rid (vino-rating--create
                             vino-id
                             (plist-get rcfg :date)
                             (plist-get rcfg :version)
