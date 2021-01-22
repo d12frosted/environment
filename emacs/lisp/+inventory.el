@@ -28,6 +28,27 @@
     (string-to-number (car (seq-drop-while #'string-empty-p (reverse lines))))))
 
 ;;;###autoload
+(defun inventory-balance-list (file)
+  "Get balance of all entries in FILE."
+  (let* ((cmd (concat "hledger -f '"
+                      file
+                      "' b 'goods:' "
+                      "--format '%(account) %(total)'"))
+         (res (shell-command-to-string cmd))
+         (lines (split-string res "\n")))
+    (seq-reduce
+     (lambda (r x)
+       (if (string-prefix-p "goods:" x)
+           (let* ((pair (split-string x " "))
+                  (id (string-remove-prefix "goods:" (car pair)))
+                  (amt (string-to-number (nth 1 pair))))
+             (cons (cons id amt) r))
+         r))
+     lines
+     nil)
+    ))
+
+;;;###autoload
 (defun inventory-total-in (file id)
   "Get total income for ID in FILE."
   (inventory-balance file id "amt:>0"))
