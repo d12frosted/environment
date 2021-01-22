@@ -101,11 +101,13 @@
 
 (defun org-check-agenda-file (file)
   "Make sure FILE exists.  If not, ask user what to do."
-	(throw 'nextfile t))
+	;; (throw 'nextfile t)
+  )
 
 (defun wine/migrate-wine ()
   "Migrate producer to note."
   (interactive)
+  (org-show-subtree)
   (let* ((p (point))
          (old-id (org-entry-get p "ID"))
          (colour (pcase (org-entry-get p "COLOUR")
@@ -168,7 +170,7 @@
                                                (+org-entry-get-number (car cfg))
                                                (+org-entry-get-number (concat (car cfg) "_MAX")))))
                                      props))
-                            (subtree (org-copy-subtree))
+                            (_ (org-copy-subtree))
                             (content (with-temp-buffer
                                        (org-mode)
                                        (org-paste-subtree)
@@ -177,7 +179,7 @@
                                               (p2 (org-element-property :contents-end els)))
                                          (goto-char p1)
                                          (setq p1 (org-element-property :end (org-element-context)))
-                                         (buffer-substring p1 p2)))))
+                                         (buffer-substring-no-properties p1 p2)))))
                        (list :date date
                              :values values
                              :version version
@@ -193,7 +195,7 @@
                                  (org-paste-subtree)
                                  (goto-char (point-min))
                                  (ignore-errors (org-metaleft))
-                                 (buffer-substring (point-min) (point-max))))
+                                 (buffer-substring-no-properties (point-min) (point-max))))
                              "-RATING"
                              'tree)))
          (wine-content (progn
@@ -216,7 +218,7 @@
                                (unless (equal 'headline (org-element-type ctx))
                                  (org-next-visible-heading 1)))
                              (setq p2 (org-element-property :begin (org-element-context)))
-                             (buffer-substring-no-properties p1 p2))))))
+                             (buffer-substring-no-properties p1 p2)))))
 
     ;; now we have all the information, so let's create a vino entry
     (let* ((vino-entry (make-vino-entry
@@ -237,9 +239,7 @@
                         :consumed 0
                         :rating nil
                         :ratings nil))
-           (vino-id (vino-entry--create vino-entry old-id))
-           (_ (org-roam-db-build-cache))
-           (vino-note (vino-entry-note-get-dwim vino-id)))
+           (vino-note (vino-entry--create vino-entry old-id)))
       ;; we now have a file dedicated for vino entry
       ;; let's fill it with headings-to-move and wine-content
       (vulpea-utils-with-file (vulpea-note-path vino-note)
@@ -253,16 +253,16 @@
                 headings-to-move))
 
       ;; and don't forget to update availability
-      (vino-entry-update-availability vino-id)
+      (vino-entry-update-availability (vulpea-note-id vino-note))
 
       ;; now, let's rate
       (seq-do (lambda (rcfg)
-                (let ((rid (vino-rating--create
-                            vino-id
-                            (plist-get rcfg :date)
-                            (plist-get rcfg :version)
-                            (plist-get rcfg :values))))
-                  (vulpea-utils-with-file (vulpea-note-path (vulpea-db-get-by-id rid))
+                (let ((rnote (vino-rating--create
+                              (vulpea-note-id vino-note)
+                              (plist-get rcfg :date)
+                              (plist-get rcfg :version)
+                              (plist-get rcfg :values))))
+                  (vulpea-utils-with-file (vulpea-note-path rnote)
                     (goto-char (point-max))
                     (insert "\n")
                     (insert (plist-get rcfg :content))
