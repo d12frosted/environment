@@ -96,6 +96,27 @@
       ("bad wine, only for enemies" . 0))))
   "Wine rating properties and possible values.")
 
+(defun vino-entry-find-file-available ()
+  "Select and visit available `vino-entry'."
+  (interactive)
+  (let* ((available (seq-map
+                     #'car
+                     (inventory-balance-list
+                      wine-inventory-file)))
+         (res (vulpea-select
+               "Wine"
+               nil nil
+               (lambda (note)
+                 (let ((tags (vulpea-note-tags note)))
+                   (and (seq-contains-p tags "wine")
+                        (seq-contains-p tags "cellar")
+                        (seq-contains-p available (vulpea-note-id note))))))))
+    (if (vulpea-note-id res)
+        (find-file (vulpea-note-path res))
+      (user-error
+       "Can not visit vino entry that does not exist: %s"
+       (vulpea-note-title res)))))
+
 ;;
 ;; Migration
 
