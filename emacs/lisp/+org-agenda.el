@@ -72,8 +72,8 @@
                   (vulpea-note-path person))))
          (tags (seq-map #'+org-notes--title-to-tag names))
          (query (string-join tags "|")))
-    (setq org-agenda-overriding-arguments (list t query))
-    (org-agenda nil "M")))
+    (dlet ((org-agenda-overriding-arguments (list t query)))
+      (org-agenda nil "M"))))
 
 (defconst +agenda--refile
   '(tags "REFILE"
