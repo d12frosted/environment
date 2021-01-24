@@ -53,6 +53,19 @@ It is relative to `org-directory', unless it is absolute.")
     latex
     html))
 
+(use-package +org-notes
+  :defer t
+  :straight nil
+  :defines (+org-notes-directory)
+  :commands (+org-notes-list
+             +org-notes-find
+             +org-notes-setup-buffer
+             +org-notes-pre-save-hook)
+  :init
+  (setq +org-notes-directory (concat +path-home-dir "Dropbox/vulpea/"))
+  (add-to-list 'window-buffer-change-functions #'+org-notes-setup-buffer)
+  (add-hook 'before-save-hook #'+org-notes-pre-save-hook))
+
 (use-package org
   :defer t
   :straight org-plus-contrib
@@ -75,7 +88,7 @@ It is relative to `org-directory', unless it is absolute.")
           ob-emacs-lisp
           ob-dot
           ob-plantuml))
-  (setq org-directory (concat +path-home-dir "Dropbox/vulpea/"))
+  (setq org-directory (concat +path-home-dir "Dropbox/org/"))
 
   (set-company-backend! 'org-mode
     '(company-capf company-yasnippet company-dabbrev))
@@ -213,7 +226,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :config
   (dolist (var '(+capture-inbox-file
                  +capture-journal-file))
-    (set var (expand-file-name (symbol-value var) org-directory)))
+    (set var (expand-file-name (symbol-value var) +org-notes-directory)))
   (unless org-default-notes-file
     (setq org-default-notes-file +capture-inbox-file))
   (setq org-capture-templates
@@ -234,7 +247,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :straight org-plus-contrib
   :defines (org-attach-file-list-property)
   :config
-  (setq org-attach-id-dir (expand-file-name ".data/" org-directory)
+  (setq org-attach-id-dir (expand-file-name ".data/" +org-notes-directory)
         org-attach-auto-tag nil
         org-attach-file-list-property nil
         org-attach-store-link-p 'attached))
@@ -410,7 +423,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
             orgability-agenda-topics-column)
   :init
   (setq
-   orgability-file (expand-file-name "orgability.org" org-directory)
+   orgability-file (expand-file-name "orgability.org" +org-notes-directory)
    orgability-agenda-topics-column 36))
 
 (use-package org-board
@@ -430,19 +443,6 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :after org
   :init
   (add-hook 'org-mode-hook 'toc-org-mode))
-
-(use-package +org-notes
-  :defer t
-  :straight nil
-  :defines (+org-notes-directory)
-  :commands (+org-notes-list
-             +org-notes-find
-             +org-notes-setup-buffer
-             +org-notes-pre-save-hook)
-  :init
-  (setq +org-notes-directory org-directory)
-  (add-to-list 'window-buffer-change-functions #'+org-notes-setup-buffer)
-  (add-hook 'before-save-hook #'+org-notes-pre-save-hook))
 
 (use-package vulpea
   :defer t
