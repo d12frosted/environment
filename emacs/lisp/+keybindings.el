@@ -96,6 +96,18 @@
   "na" '(+org-notes-alias-add :which-key "alias")
   "nA" '(+org-notes-alias-delete :which-key "unalias")
 
+  "v" '(nil :which-key "vino...")
+  "vv" '(vino-entry-find-file :which-key "find vino")
+  "vf" '(nil :which-key "find...")
+  "vfa" '(vino-entry-find-file-available :which-key "available vino")
+  "vfg" '(vino-grape-find-file :which-key "grape")
+  "vfp" '(vino-producer-find-file :which-key "producer")
+  "vfr" '(vino-region-find-file :which-key "region")
+  "vn" '(vino-entry-create :which-key "create vino")
+  "va" '(vino-entry-acquire :which-key "acquire vino")
+  "vc" '(vino-entry-consume :which-key "consume vino")
+  "vr" '(vino-entry-rate :which-key "rate vino")
+
   "b" '(nil :which-key "buffer...")
   "bM" '(+buffer/switch-to-messages :which-key "switch to messages buffer")
   "bS" '(+file/sudo-this :which-key "sudo edit this file")
