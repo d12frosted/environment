@@ -18,7 +18,6 @@
 ;;; Code:
 
 (require '+org)
-(require '+org-brain)
 (require '+org-link)
 (require '+org-buffer-prop)
 

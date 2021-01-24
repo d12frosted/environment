@@ -76,7 +76,6 @@
   "oA" '(org-agenda :which-key "agenda dispatch")
   "oa" '(+agenda/main :which-key "agenda")
   "op" '(+agenda/person :which-key "person")
-  "ob" '(org-brain-visualize :which-key "brain node")
   "or" '(+orgability/list :which-key "reading list")
   "ow" '(+agenda/wix :which-key "work agenda")
 
@@ -131,12 +130,7 @@
   "p!" '(+project-shell-command :which-key "Run cmd in project root")
   "p/" '(+project-find-regexp :which-key "Grep the project")
   "pf" '(+project-find-file :which-key "Find file in project")
-  "pp" '(+project-switch :which-key "Switch project")
-  )
-
-(+leader-def
-  :keymaps 'org-brain-visualize-mode-map
-  "jb" '(+ace-link-brain-visualize :which-key "Brain entry"))
+  "pp" '(+project-switch :which-key "Switch project"))
 
 (provide '+keybindings)
 ;;; +keybindings.el ends here

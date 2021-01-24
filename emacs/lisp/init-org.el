@@ -368,44 +368,6 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :defer t
   :hook ((org-mode . org-edna-mode)))
 
-(use-package org-brain
-  :defer t
-  :defines (org-brain-targets-match)
-  :commands (org-brain-title<
-             org-brain-path-entry-name
-             org-brain-entry-name
-             org-brain-entry-from-id
-             org-brain--name-and-id-at-point)
-  :init
-  (setq org-brain-path org-directory
-        org-brain-scan-directories-recursively nil
-        org-brain-targets-match "NOTE"
-	      org-brain-visualize-sort-function #'org-brain-title<
-        org-brain-child-linebreak-sexp 0
-	      org-brain-visualize-default-choices 'all
-	      org-brain-title-max-length 36)
-  (add-hook 'org-brain-visualize-text-hook #'org-latex-preview)
-  :config
-  (defun +ace-link-brain-visualize ()
-    "Open a visible link in an `org-brain-visualize-mode' buffer."
-    (interactive)
-    (ace-link-help))
-  (defun org-brain--file-targets (file)
-    "Return alist of (name . entry-id) for all entries (including the file) in FILE."
-    (let* ((file-relative (org-brain-path-entry-name file))
-           (file-entry-name (org-brain-entry-name file-relative)))
-      (append (list (cons file-entry-name file-relative))
-              (with-temp-buffer
-                (insert-file-contents file)
-                (delay-mode-hooks
-                  (org-mode)
-                  (mapcar (lambda (entry)
-                            (cons (concat file-entry-name "::" (car entry))
-                                  (cadr entry)))
-                          (remove nil (org-map-entries
-                                       #'org-brain--name-and-id-at-point
-                                       org-brain-targets-match)))))))))
-
 (use-package org-drawer-list
   :defer t
   :straight (org-drawer-list

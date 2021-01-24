@@ -19,7 +19,6 @@
 
 (require '+string)
 (require '+org)
-(require '+org-brain)
 (require '+org-link)
 (require 'subr-x)
 (require 'lib-fun)
@@ -72,32 +71,6 @@ useful to explain it."
                      "): "))))
       (read-number prompt initial)))))
 
-;;;###autoload
-(defun +org-prompt-brain-property (name parent &optional source type)
-  "Prompt for a brain entry and set is as property with NAME.
-
-Candidates are children of PARENT brain entry.
-
-SOURCE and TYPE are passed to `+brain-make-link'."
-  (org-set-property
-   name
-   (+org-prompt-brain-property-fn name parent source type)))
-
-(defun +org-prompt-brain-property-fn (name parent &optional source type)
-  "Prompt for a brain entry and make a link for it.
-
-NAME is a target property.
-
-Candidates are children of PARENT brain entry.
-
-SOURCE and TYPE are passed to `+brain-make-link'."
-  (+brain-make-link
-   (+brain-choose-entry-by-parent
-    (format "%s: " (capitalize name))
-    parent)
-   source
-   type))
-
 (defun +org--pretty-property-prompt (prop)
   "Create a pretty prompt from PROP."
   (capitalize (replace-regexp-in-string "_" " " prop)))
@@ -119,12 +92,6 @@ FN is called with NAME as the first argument and ARGS as the rest."
   "Get list PROP value of entry at point using SEP."
   (when-let ((val (+org-entry-get prop)))
     (split-string val sep)))
-
-;;;###autoload
-(defun +org-entry-get-brain (prop)
-  "Get brain PROP value of entry at point."
-  (when-let ((str (+org-entry-get prop)))
-      (+org-extract-id-from-link str)))
 
 ;;;###autoload
 (defun +org-entry-get-number (prop &optional def)
