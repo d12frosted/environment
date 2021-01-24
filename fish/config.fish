@@ -163,6 +163,10 @@ set -x NVM_SOURCE "/usr/share/nvm"
 set -x GOPATH "$XDG_CACHE_HOME/go"
 __append_to_path $GOPATH/bin
 
+# homebrew
+set -x HOMEBREW_NO_ANALYTICS 1
+set -x HOMEBREW_NO_AUTO_UPDATE 1
+
 # gopass and friends
 set -x PASSWORD_STORE "$HOME/Dropbox/.password-store"
 
