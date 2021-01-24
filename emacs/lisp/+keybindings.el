@@ -75,6 +75,7 @@
   "o" '(nil :which-key "open...")
   "oA" '(org-agenda :which-key "agenda dispatch")
   "oa" '(+agenda/main :which-key "agenda")
+  "op" '(+agenda/person :which-key "person")
   "ob" '(org-brain-visualize :which-key "brain node")
   "or" '(+orgability/list :which-key "reading list")
   "ow" '(+agenda/wix :which-key "work agenda")

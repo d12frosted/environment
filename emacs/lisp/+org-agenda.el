@@ -53,6 +53,28 @@
   (interactive)
   (org-agenda nil " "))
 
+;;;###autoload
+(defun +agenda/person ()
+  "Show main `org-agenda' view."
+  (interactive)
+  (let* ((person (vulpea-select
+                  "Person"
+                  nil nil
+                  (lambda (note)
+                    (seq-contains-p (vulpea-note-tags note)
+                                    "people"))))
+         (names (seq-map
+                 #'car
+                 (org-roam-db-query
+                  [:select title
+                   :from titles
+                   :where (= file $s1)]
+                  (vulpea-note-path person))))
+         (tags (seq-map #'+org-notes--title-to-tag names))
+         (query (string-join tags "|")))
+    (setq org-agenda-overriding-arguments (list t query))
+    (org-agenda nil "M")))
+
 (defconst +agenda--refile
   '(tags "REFILE"
          ((org-agenda-overriding-header "To refile")
