@@ -101,12 +101,8 @@ contains all the funny stuff."
       ((res (org-roam-insert))
        (path (plist-get res :path))
        (title (plist-get res :title))
-       (roam-tags (+seq-flatten
-                   (+seq-flatten
-                    (org-roam-db-query [:select tags
-                                        :from tags
-                                        :where (= file $s1)]
-                                       path)))))
+       (roam-tags (org-roam-with-file path nil
+                    (org-roam--extract-tags path))))
     (when (seq-contains-p roam-tags "people")
       (save-excursion
         (ignore-errors
