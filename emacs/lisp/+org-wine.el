@@ -164,7 +164,7 @@
                             (seq-reverse
                              (+org-entry-get-list "GRAPES" "\\]\\]"))))))
          (price (+org-entry-get-list "PRICE" ", "))
-         (sugar (let ((v (+org-entry-get-number "SUGAR")))
+         (sugar (let ((v (+org-entry-get-number "SUGAR" -1)))
                   (if (< v 0)
                       nil
                     v)))
@@ -178,7 +178,7 @@
                             (props (pcase version
                                      (`3 wine--rating-props-v3)
                                      (`2 wine--rating-props-v2)
-                                     (`1 '(("SCORE" . 10)))
+                                     (`1 '(("TOTAL" . 10)))
                                      (v (user-error "Unsupported rating version %i" version))))
                             (date (+org-entry-get "DATE"))
                             (values (seq-map
@@ -270,7 +270,7 @@
           (insert wine-content)
           (insert "\n"))
         (seq-do (lambda (str)
-                  (insert str "\n"))
+                  (insert str))
                 headings-to-move))
 
       ;; and don't forget to update availability
