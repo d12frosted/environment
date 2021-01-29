@@ -45,5 +45,20 @@
   (message "starting capture ...")
   (org-capture nil "j"))
 
+(defun +capture-person-link ()
+  "Select a person note and return link string."
+  (let ((person (vulpea-select
+                 "Person"
+                 nil nil
+                 (lambda (note)
+                   (let ((tags (vulpea-note-tags note)))
+                     (seq-contains-p tags "people"))))))
+    (org-set-tags
+     (seq-uniq
+      (cons
+       (+org-notes--title-to-tag (vulpea-note-title person))
+       (org-get-tags nil t))))
+    (vulpea-utils-link-make-string person)))
+
 (provide '+org-capture)
 ;;; +org-capture.el ends here

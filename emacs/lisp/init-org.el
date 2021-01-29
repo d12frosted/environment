@@ -230,17 +230,17 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   (unless org-default-notes-file
     (setq org-default-notes-file +capture-inbox-file))
   (setq org-capture-templates
-	'(("t" "todo" plain (file +capture-inbox-file)
-	   "* TODO %?\n%U\n" :clock-in t :clock-resume t)
+	      '(("t" "todo" plain (file +capture-inbox-file)
+	         "* TODO %?\n%U\n" :clock-in t :clock-resume t)
 
-	  ("j" "Journal" entry (file+olp+datetree +capture-journal-file)
-	   "* %?\n%U\n" :clock-in t :clock-resume t :time-prompt t)
-  
-	  ("n" "note" entry (file +capture-inbox-file)
-	   "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+	        ("j" "Journal" entry (file+olp+datetree +capture-journal-file)
+	         "* %?\n%U\n" :clock-in t :clock-resume t :time-prompt t)
 
-	  ("m" "Meeting" entry (file +capture-inbox-file)
-	   "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t))))
+	        ("n" "note" entry (file +capture-inbox-file)
+	         "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+
+	        ("m" "Meeting" entry (file +capture-inbox-file)
+	         "* MEETING with %(+capture-person-link) :MEETING:\n%U\n%?" :clock-in t :clock-resume t))))
 
 (use-package org-attach
   :defer t
