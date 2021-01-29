@@ -108,7 +108,17 @@
 (use-package marginalia
   :if (eq +selection-system 'consult)
   :init
-  (marginalia-mode))
+  (marginalia-mode)
+  ;; When using Selectrum, ensure that Selectrum is refreshed when cycling annotations.
+  (advice-add #'marginalia-cycle
+              :after
+              (lambda ()
+                (when (bound-and-true-p selectrum-mode)
+                  (selectrum-exhibit))))
+
+  (setq marginalia-annotators '(marginalia-annotators-heavy
+                                marginalia-annotators-light
+                                nil)))
 
 (provide 'init-selection)
 ;;; init-selection.el ends here
