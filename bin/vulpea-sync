@@ -2,5 +2,5 @@
 
 echo "Sync Vulpea files in $VULPEA_DIR"
 cd "$VULPEA_DIR" && {
-  git commit --all -m "[$(date '+%d/%m/%y %H:%M:%S')] sync"
+  git commit -m "[$(date '+%d/%m/%y %H:%M:%S')] sync"
 }
