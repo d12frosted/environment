@@ -77,7 +77,8 @@
   :hook ((after-init . selectrum-mode)))
 
 (use-package selectrum-prescient
-  :if (eq +selection-system 'selectrum)
+  :if (or (eq +selection-system 'selectrum)
+          (eq +selection-system 'consult))
   :hook (selectrum-mode . selectrum-prescient-mode))
 
 (use-package ctrlf
