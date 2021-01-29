@@ -23,5 +23,8 @@
   :commands roguel-ike
   :custom (roguel-ike-save-directory (concat +path-cache-dir "roguel-ike/")))
 
+(use-package telega
+  :defer t)
+
 (provide 'init-fun)
 ;;; init-fun.el ends here
