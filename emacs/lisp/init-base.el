@@ -98,7 +98,6 @@
 
  ;; Formatting
  delete-trailing-lines nil  ; `ws-butler' is used for better whitespace handling
- fill-column 80
  sentence-end-double-space nil
  word-wrap t
 
