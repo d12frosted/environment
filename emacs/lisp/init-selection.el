@@ -22,8 +22,8 @@
 (require 'init-package)
 (require 'subr-x)
 
-(defvar +selection-system 'ivy
-  "Selection system to use: ivy or selectrum.")
+(defvar +selection-system 'consult
+  "Selection system to use: ivy, selectrum or consult.")
 
 (use-package counsel
   :if (eq +selection-system 'ivy)
@@ -72,7 +72,8 @@
   (ivy-rich-mode))
 
 (use-package selectrum
-  :if (eq +selection-system 'selectrum)
+  :if (or (eq +selection-system 'selectrum)
+          (eq +selection-system 'consult))
   :hook ((after-init . selectrum-mode)))
 
 (use-package selectrum-prescient
@@ -96,6 +97,17 @@
   :config
   (setq prescient-save-file (concat +path-cache-dir "prescient-save.el"))
   (prescient-persist-mode +1))
+
+(use-package consult
+  :if (eq +selection-system 'consult))
+
+(use-package embark-consult
+  :if (eq +selection-system 'consult))
+
+(use-package marginalia
+  :if (eq +selection-system 'consult)
+  :init
+  (marginalia-mode))
 
 (provide 'init-selection)
 ;;; init-selection.el ends here
