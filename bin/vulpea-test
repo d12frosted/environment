@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+file="$HOME/.cache/emacs/cache/vulpea_test"
+mode=
+
+if [ -f "$file" ]; then
+  mode="master"
+  rm "$file"
+else
+  mode="test"
+  touch "$file"
+fi
+
+cd ~/.cache/emacs/packages/28.0.50/straight/repos/org-roam/ && {
+  if [ "$mode" = "test" ]; then
+    git checkout v2
+  else
+    git checkout master
+  fi
+}

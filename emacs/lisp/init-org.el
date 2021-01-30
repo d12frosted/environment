@@ -34,7 +34,11 @@
 (require '+org-wine)
 (require '+org-capture)
 
-(defvar +org-notes-test-mode nil)
+(defvar +org-notes-test-mode
+  (file-exists-p (expand-file-name "vulpea_test"
+                                   +path-cache-dir)))
+
+(message "+org-notes-test-mode => %s" +org-notes-test-mode)
 
 (defvar +capture-inbox-file (format "inbox-%s.org" +sys-name)
   "The path to the inbox file.
