@@ -34,6 +34,8 @@
 (require '+org-wine)
 (require '+org-capture)
 
+(defvar +org-notes-test-mode nil)
+
 (defvar +capture-inbox-file (format "inbox-%s.org" +sys-name)
   "The path to the inbox file.
 
@@ -62,7 +64,10 @@ It is relative to `org-directory', unless it is absolute.")
              +org-notes-setup-buffer
              +org-notes-pre-save-hook)
   :init
-  (setq +org-notes-directory (concat +path-home-dir "Dropbox/vulpea/"))
+  (setq +org-notes-directory (concat +path-home-dir
+                                     (if +org-notes-test-mode
+                                         "vulpea-test/"
+                                       "Dropbox/vulpea/")))
   (add-to-list 'window-buffer-change-functions #'+org-notes-setup-buffer)
   (add-hook 'before-save-hook #'+org-notes-pre-save-hook))
 
@@ -520,7 +525,11 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :init
   (setq org-roam-directory +org-notes-directory
         org-roam-dailies-directory "journal/"
-        org-roam-db-location (expand-file-name "org-roam.db" +path-cache-dir)
+        ;; org-roam-db-location (expand-file-name "org-roam.db" +path-cache-dir)
+        org-roam-db-location (expand-file-name (if +org-notes-test-mode
+                                                   "org-roam-test.db"
+                                                 "org-roam.db")
+                                               +path-cache-dir)
         org-roam-graph-viewer
         (when +sys-mac-p "open")
         org-roam-graph-executable (executable-find "neato")
