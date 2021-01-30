@@ -22,7 +22,6 @@
 (require 'init-editor)
 (require 'init-org)
 
-(global-set-key (kbd "C-h F") #'counsel-faces)
 (global-set-key [M-S-down] #'move-text-down)
 (global-set-key [M-S-up]   #'move-text-up)
 (global-set-key [remap move-beginning-of-line] '+beginning-of-line)
@@ -61,7 +60,7 @@
   "gt" '(git-timemachine-toggle :which-key "time machine")
 
   "i" '(nil :which-key "insert...")
-  "iu" '(counsel-unicode-char :which-key "Unicode character")
+  "iu" '(insert-char :which-key "Unicode character")
 
   "j" '(nil :which-key "jump...")
   "jJ" '(avy-goto-char-timer :which-key "Chars")

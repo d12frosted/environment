@@ -32,7 +32,12 @@
              counsel-file-jump)
   :hook ((after-init . ivy-mode)
          (ivy-mode . counsel-mode))
-  :bind (("M-x" . counsel-M-x))
+  :general
+  (+leader-def
+    "iu" '(counsel-unicode-char :which-key "Unicode character"))
+  :bind
+  (("M-x" . counsel-M-x)
+   ("C-h F" . counsel-faces))
   :init
   (setq
    enable-recursive-minibuffers t
@@ -100,10 +105,25 @@
   (prescient-persist-mode +1))
 
 (use-package consult
-  :if (eq +selection-system 'consult))
+  :if (eq +selection-system 'consult)
+  :bind
+  (("M-y" . consult-yank-pop))
+  :general
+  (+leader-def
+    "bb" '(consult-buffer :which-key "Grep the project")
+    "pg" '(consult-grep :which-key "Grep the project")
+    "ji" '(consult-imenu :which-key "imenu")))
+
+(use-package embark
+  :ensure t
+  :bind
+  ("C-M-a" . embark-act))
 
 (use-package embark-consult
-  :if (eq +selection-system 'consult))
+  :if (eq +selection-system 'consult)
+  :after (embark consult)
+  :hook
+  (embark-collect-mode . embark-consult-preview-minor-mode))
 
 (use-package marginalia
   :if (eq +selection-system 'consult)
