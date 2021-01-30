@@ -68,7 +68,7 @@ It is relative to `org-directory', unless it is absolute.")
 
 (use-package org
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :commands (org-map-entries)
   :hook ((org-mode . auto-fill-mode)
          (org-clock-out . +org/remove-empty-drawer))
@@ -177,7 +177,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 
 (use-package org-clock
   :commands org-clock-save
-  :straight org-plus-contrib
+  :straight org
   :init
   (setq
    org-clock-persist-file (expand-file-name "org-clock-save.el" +path-etc-dir)
@@ -191,7 +191,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 
 (use-package org-refile
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :init
   (setq org-outline-path-complete-in-steps nil
         org-refile-targets '((nil :maxlevel . 4)
@@ -202,13 +202,13 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 
 (use-package org-indent
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :diminish org-indent-mode
   :hook ((org-mode . org-indent-mode)))
 
 (use-package org-id
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :hook ((before-save . +org-auto-id-add-to-headlines-in-file)
 	       (org-capture-prepare-finalize . org-id-get-create))
   :init
@@ -222,7 +222,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 
 (use-package org-capture
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :config
   (dolist (var '(+capture-inbox-file
                  +capture-journal-file))
@@ -244,7 +244,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 
 (use-package org-attach
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :defines (org-attach-file-list-property)
   :config
   (setq org-attach-id-dir (expand-file-name ".data/" +org-notes-directory)
@@ -254,7 +254,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 
 (use-package ox-latex
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :commands (org-latex-preview)
   :init
   (+hook 'org-cycle-hook #'org-latex-preview)
@@ -279,19 +279,19 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 
 (use-package ox-beamer
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :config
   (add-to-list 'org-beamer-environments-extra
                '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}")))
 
 (use-package ob-plantuml
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :defines (org-plantuml-jar-path))
 
 (use-package org-archive
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :config
   (setq
    org-archive-location (concat org-directory ".archive/archive_%s" "::" "datetree/*")
@@ -299,7 +299,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
 
 (use-package org-agenda
   :defer t
-  :straight org-plus-contrib
+  :straight org
   :commands (org-agenda-refile
              org-agenda-todo
              org-agenda-clock-in
