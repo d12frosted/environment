@@ -43,7 +43,8 @@
 - 2nd group is owner.
 - 3rd group is repository name.")
 
-(defvar +vcs-url-known-github-users '("d12frosted")
+(defvar +vcs-url-known-github-users '("d12frosted"
+                                      "org-roam")
   "List of 'known' GitHub users.")
 
 (defun +vcs-url-format-github-issue (owner repo type number)
