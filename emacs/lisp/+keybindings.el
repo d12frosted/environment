@@ -41,6 +41,7 @@
 
   "c" '(nil :which-key "capture...")
   "cX" '(org-capture :which-key "dispatch...")
+  "ca" '(+capture-article :which-key "article")
   "cj" '(+org-notes-new-journal-entry :which-key "journal")
   "cl" '(org-store-link :which-key "link")
   "cm" '(+capture-meeting :which-key "meeting")
@@ -84,7 +85,6 @@
   "ndp" '(+org-notes-dailies-prev :which-key "previous")
   "nf" '(+org-notes-find :which-key "find")
   "nF" '(+org-notes-find-backlink :which-key "find backlink")
-  "ng" '(org-roam-graph :which-key "graph")
   "ni" '(+org-notes-insert :which-key "insert")
   "nt" '(+org-notes-tags-add :which-key "tag")
   "nT" '(+org-notes-tags-delete :which-key "untag")
