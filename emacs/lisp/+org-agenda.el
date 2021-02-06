@@ -59,7 +59,7 @@
   (interactive)
   (let* ((person (vulpea-select
                   "Person"
-                  nil nil
+                  :filter-fn
                   (lambda (note)
                     (seq-contains-p (vulpea-note-tags note)
                                     "people"))))

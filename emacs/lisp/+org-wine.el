@@ -105,7 +105,7 @@
                       wine-inventory-file)))
          (res (vulpea-select
                "Wine"
-               nil nil
+               :filter-fn
                (lambda (note)
                  (let ((tags (vulpea-note-tags note)))
                    (and (seq-contains-p tags "wine")

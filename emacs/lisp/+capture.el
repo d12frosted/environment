@@ -76,7 +76,7 @@ It is relative to `org-directory', unless it is absolute.")
   "Return a template for a meeting capture."
   (let ((person (vulpea-select
                  "Person"
-                 nil nil
+                 :filter-fn
                  (lambda (note)
                    (let ((tags (vulpea-note-tags note)))
                      (seq-contains-p tags "people"))))))
