@@ -17,6 +17,15 @@
 ;;
 ;;; Code:
 
+(require 'init-env)
+;; (require 'org-capture)
+;; (require 'vulpea)
+
+(defvar +capture-inbox-file (format "inbox-%s.org" +sys-name)
+  "The path to the inbox file.
+
+It is relative to `org-directory', unless it is absolute.")
+
 (defun +capture-task ()
   "A short-cut for capturing todo task."
   (interactive)

@@ -25,7 +25,6 @@
 (require '+org-dependent)
 (require '+org-wine)
 (require 'cl-lib)
-(require 'init-env)
 (require 'init-file)
 (require 'init-keybindings)
 (require 'init-navigation)
@@ -37,18 +36,6 @@
 (defvar +org-notes-test-mode
   (file-exists-p (expand-file-name "vulpea_test"
                                    +path-cache-dir)))
-
-(message "+org-notes-test-mode => %s" +org-notes-test-mode)
-
-(defvar +capture-inbox-file (format "inbox-%s.org" +sys-name)
-  "The path to the inbox file.
-
-It is relative to `org-directory', unless it is absolute.")
-
-(defvar +capture-journal-file "journal.org"
-  "The path to the journal file.
-
-It is relative to `org-directory', unless it is absolute.")
 
 (defvar +org-refile-ignore-tags '("JOURNAL" "REFILE")
   "List of tags to ignore during refile.")
@@ -233,8 +220,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :defer t
   :straight org
   :config
-  (dolist (var '(+capture-inbox-file
-                 +capture-journal-file))
+  (dolist (var '(+capture-inbox-file))
     (set var (expand-file-name (symbol-value var) +org-notes-directory)))
   (unless org-default-notes-file
     (setq org-default-notes-file +capture-inbox-file))
