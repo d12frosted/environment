@@ -532,8 +532,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
                                                    "org-roam-test.db"
                                                  "org-roam.db")
                                                +path-cache-dir)
-        org-roam-graph-viewer
-        (when +sys-mac-p "open")
+        org-roam-graph-viewer (when +sys-mac-p "open")
         org-roam-graph-executable (executable-find "neato")
         org-roam-graph-extra-config '(("overlap" . "false"))
         org-roam-completion-system (if (eq +selection-system 'ivy)
