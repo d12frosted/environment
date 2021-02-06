@@ -417,7 +417,8 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :straight (vulpea
              :type git
              :host github
-             :repo "d12frosted/vulpea"))
+             :repo "d12frosted/vulpea")
+  :commands (vulpea-select))
 
 (use-package vino
   :defer t
