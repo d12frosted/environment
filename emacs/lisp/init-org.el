@@ -97,7 +97,7 @@ It is relative to `org-directory', unless it is absolute.")
           ob-emacs-lisp
           ob-dot
           ob-plantuml))
-  (setq org-directory (concat +path-home-dir "Dropbox/org/"))
+  (setq org-directory (concat +path-home-dir "Dropbox/vulpea/"))
 
   (set-company-backend! 'org-mode
     '(company-capf company-yasnippet company-dabbrev))
@@ -300,7 +300,7 @@ Calls ORIG-FUN with ARG, INFO and PARAMS."
   :straight org
   :config
   (setq
-   org-archive-location (concat org-directory ".archive/archive_%s" "::" "datetree/*")
+   org-archive-location (concat org-directory ".archive/%s_archive" "::" "datetree/*")
    org-archive-save-context-info '(time file ltags itags todo category olpath)))
 
 (use-package org-agenda
