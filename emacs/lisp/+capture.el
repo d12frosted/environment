@@ -1,4 +1,4 @@
-;;; +org-capture.el --- Org capture shortcuts -*- lexical-binding: t; -*-
+;;; +capture.el --- Org capture shortcuts -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2019 Boris Buliga
 ;;
@@ -17,13 +17,13 @@
 ;;
 ;;; Code:
 
-(defun +org/capture-task ()
+(defun +capture-task ()
   "A short-cut for capturing todo task."
   (interactive)
   (message "starting capture ...")
   (org-capture nil "t"))
 
-(defun +org/capture-meeting ()
+(defun +capture-meeting ()
   "A short-cut for capturing meeting."
   (interactive)
   (message "starting capture ...")
@@ -78,5 +78,5 @@
               (vulpea-note-title person)
               " on [%<%Y-%m-%d %a>] :MEETING:\n%U\n\n%?"))))
 
-(provide '+org-capture)
-;;; +org-capture.el ends here
+(provide '+capture)
+;;; +capture.el ends here

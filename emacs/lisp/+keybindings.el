@@ -43,8 +43,8 @@
   "cX" '(org-capture :which-key "dispatch...")
   "cj" '(+org-notes-new-journal-entry :which-key "journal")
   "cl" '(org-store-link :which-key "link")
-  "cm" '(+org/capture-meeting :which-key "meeting")
-  "cx" '(+org/capture-task :which-key "task")
+  "cm" '(+capture-meeting :which-key "meeting")
+  "cx" '(+capture-task :which-key "task")
 
   "g" '(nil :which-key "git...")
   "gS" '(magit-stage-file :which-key "stage file")

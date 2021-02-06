@@ -17,22 +17,22 @@
 ;;
 ;;; Code:
 
-(require 'cl-lib)
-(require 'lib-hook)
-(require 'init-env)
-(require 'init-keybindings)
-(require 'init-navigation)
-(require 'init-package)
-(require 'init-path)
-(require 'init-selection)
-(require 'init-file)
+(require '+capture)
 (require '+company)
 (require '+inventory)
 (require '+org-agenda)
 (require '+org-auto-id)
 (require '+org-dependent)
 (require '+org-wine)
-(require '+org-capture)
+(require 'cl-lib)
+(require 'init-env)
+(require 'init-file)
+(require 'init-keybindings)
+(require 'init-navigation)
+(require 'init-package)
+(require 'init-path)
+(require 'init-selection)
+(require 'lib-hook)
 
 (defvar +org-notes-test-mode
   (file-exists-p (expand-file-name "vulpea_test"
