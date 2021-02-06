@@ -29,18 +29,6 @@
   (message "starting capture ...")
   (org-capture nil "m"))
 
-(defun +org/capture-note ()
-  "A short-cut for capturing note."
-  (interactive)
-  (message "starting capture ...")
-  (org-capture nil "n"))
-
-(defun +org/capture-journal ()
-  "A short-cut for capturing journal entry."
-  (interactive)
-  (message "starting capture ...")
-  (org-capture nil "j"))
-
 (defun +capture-meeting-target ()
   "Return a target for a meeting capture."
   (let ((person (org-capture-get :meeting-person)))

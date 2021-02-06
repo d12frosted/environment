@@ -41,11 +41,9 @@
 
   "c" '(nil :which-key "capture...")
   "cX" '(org-capture :which-key "dispatch...")
-  "cj" '(+org/capture-journal :which-key "journal")
+  "cj" '(+org-notes-new-journal-entry :which-key "journal")
   "cl" '(org-store-link :which-key "link")
   "cm" '(+org/capture-meeting :which-key "meeting")
-  "cn" '(+org/capture-note :which-key "note")
-  "co" '(orgability-clip :which-key "orgability ")
   "cx" '(+org/capture-task :which-key "task")
 
   "g" '(nil :which-key "git...")
@@ -88,8 +86,6 @@
   "nF" '(+org-notes-find-backlink :which-key "find backlink")
   "ng" '(org-roam-graph :which-key "graph")
   "ni" '(+org-notes-insert :which-key "insert")
-  "nj" '(+org-notes-new-journal-entry :which-key "journal entry")
-  "nl" '(+org-notes-list :which-key "list")
   "nt" '(+org-notes-tags-add :which-key "tag")
   "nT" '(+org-notes-tags-delete :which-key "untag")
   "na" '(+org-notes-alias-add :which-key "alias")
