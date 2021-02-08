@@ -40,8 +40,14 @@
 (require 'seq)
 (require 'subr-x)
 
+;; Add Lisp directory to `load-path'. Since we might be running in CI
+;; or other environments, stick to XDG_CONFIG_HOME value if possible.
 (add-to-list 'load-path
-             (expand-file-name "lisp" user-emacs-directory))
+             (expand-file-name
+              "lisp"
+              (if-let ((xdg (getenv "XDG_CONFIG_HOME")))
+                  (expand-file-name "emacs/" xdg)
+                user-emacs-directory)))
 
 (setq-default
  elpa-bootstrap-p t

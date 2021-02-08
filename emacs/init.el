@@ -36,13 +36,16 @@
 ;;
 ;;; Code:
 
-(add-to-list 'load-path
-             (expand-file-name "lisp" user-emacs-directory))
+;; Add Lisp directory to `load-path'. Since we might be running in CI
+;; or other environments, stick to XDG_CONFIG_HOME value if possible.
+(let ((emacs-dir (if-let ((xdg (getenv "XDG_CONFIG_HOME")))
+                     (expand-file-name "emacs/" xdg)
+                   user-emacs-directory)))
+  (add-to-list 'load-path (expand-file-name "lisp" emacs-dir))
 
-(if (string-match-p ".*eldev.*" user-emacs-directory)
-    (load-file "lisp/init-autoloads.el")
+  ;; Load `init-autoloads' if it was generated.
   (load-file (expand-file-name "lisp/init-autoloads.el"
-                               user-emacs-directory)))
+                               emacs-dir)))
 
 ;; Adjust garbage collection thresholds during startup, and thereafter
 (let ((normal-gc-cons-threshold (* 20 1024 1024))

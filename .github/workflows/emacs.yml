@@ -5,6 +5,10 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      XDG_CONFIG_HOME: ${{ github.workspace }}
+
     strategy:
       matrix:
         emacs_version:

@@ -363,6 +363,14 @@ function download_bin() {
 theme "Supporting" "Defining variables"
 
 target=$HOME/.config
+if [[ -d "$XDG_CONFIG_HOME" ]]; then
+  target="$XDG_CONFIG_HOME"
+fi
+
+log ">>> target = $target"
+cd "$target" && {
+  ls -l
+}
 
 export XDG_CONFIG_HOME=$target
 export XDG_CONFIG_CACHE="$HOME/.cache"
