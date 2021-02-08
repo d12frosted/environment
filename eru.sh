@@ -153,6 +153,11 @@ function upgrade_guard() {
   return
 }
 
+function test_guard() {
+  [[ "$ACTION" == "test" ]]
+  return
+}
+
 function arch_guard() {
   [[ "$OS_NAME" == "arch" ]]
   return
@@ -372,7 +377,7 @@ fi
 ALL="true"
 ACTION=
 case $1 in
-  install|upgrade)
+  install|upgrade|test)
     ACTION=$1
     ;;
   *)
@@ -725,10 +730,10 @@ check fish && {
 }
 
 install_guard && {
-  theme_guard "Emacs" "Setup Emacs" && {
+  theme_guard "Emacs" "Setup Emacs configurations" && {
+    emacs --batch --load "$XDG_CONFIG_HOME/emacs/bootstrap.el"
     cd "$XDG_CONFIG_HOME/emacs" && {
-      emacs --batch --load "bootstrap.el"
-      make all
+      make compile lint
       eldev exec t
     }
   }
@@ -738,7 +743,16 @@ upgrade_guard && {
   theme_guard "Emacs" "Upgrade Emacs packages" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
       emacs --batch --load "bootstrap.el"
-      make all
+      make compile lint
+      eldev exec t
+    }
+  }
+}
+
+test_guard && {
+  theme_guard "Emacs" "Test Emacs configurations" && {
+    cd "$XDG_CONFIG_HOME/emacs" && {
+      make test
       eldev exec t
     }
   }
