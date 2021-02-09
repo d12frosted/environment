@@ -133,5 +133,22 @@ real notes. Maybe it also means experimental features.")
   (add-to-list 'org-link-frame-setup '(file . find-file))
   (setq org-indirect-buffer-display 'current-window))
 
+
+
+(use-package org-clock
+  :built-in t
+  :defer t
+  :init
+  (setq
+   org-clock-persist-file (expand-file-name "org-clock-save.el"
+                                            path-etc-dir)
+   ;; remove clocked tasks with 0:00 duration
+   org-clock-out-remove-zero-time-clocks t
+   org-clock-persist 'history
+   ;; Resume when clocking into task with open clock
+   org-clock-in-resume t)
+  :config
+  (add-hook 'kill-emacs-hook #'org-clock-save))
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
