@@ -163,7 +163,7 @@ real notes. Maybe it also means experimental features.")
                         (org-agenda-files :maxlevel . 4))
    org-refile-use-outline-path t
    org-refile-allow-creating-parent-nodes nil
-   org-refile-target-verify-function 'vulpea-refile-verify-target))
+   org-refile-target-verify-function #'vulpea-refile-verify-target))
 
 
 
