@@ -164,5 +164,13 @@ real notes. Maybe it also means experimental features.")
    org-refile-allow-creating-parent-nodes nil
    org-refile-target-verify-function 'vulpea-refile-verify-target))
 
+
+
+(use-package org-indent
+  :built-in t
+  :defer t
+  :diminish org-indent-mode
+  :hook ((org-mode . org-indent-mode)))
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
