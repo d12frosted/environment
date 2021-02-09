@@ -172,5 +172,25 @@ real notes. Maybe it also means experimental features.")
   :diminish org-indent-mode
   :hook ((org-mode . org-indent-mode)))
 
+
+
+(use-package org-id
+  :built-in t
+  :defer t
+  :hook ((before-save . vulpea-id-auto-assign)
+         (org-capture-prepare-finalize . org-id-get-create))
+  :init
+  (setq org-id-uuid-program
+        "uuidgen | tr \"[:upper:]\" \"[:lower:]\"")
+  :config
+  (setq
+   org-id-track-globally t
+   org-id-extra-files
+   (list (expand-file-name ".archive/archive" org-directory)
+         (expand-file-name ".archive/archive.org" org-directory))
+   org-id-link-to-org-use-id t
+   org-id-locations-file (expand-file-name "org-id-locations"
+                                           path-cache-dir)))
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
