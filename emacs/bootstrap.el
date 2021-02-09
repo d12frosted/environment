@@ -53,6 +53,11 @@
  elpa-bootstrap-p t
  load-prefer-newer t)
 
+(require 'init-elpa)
+(use-package s)
+(use-package dash)
+(use-package async)
+
 (seq-map
  (lambda (f)
    (when (string-suffix-p ".el" f)
