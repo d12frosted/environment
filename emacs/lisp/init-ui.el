@@ -56,7 +56,8 @@
 (add-to-list 'default-frame-alist '(menu-bar-lines . 0))
 (add-to-list 'default-frame-alist '(vertical-scroll-bars))
 ;; for some reason only this removes the clutter with xmonad
-(scroll-bar-mode -1)
+(when env-graphic-p
+  (scroll-bar-mode -1))
 
 ;; y/n instead of yes/no
 (fset #'yes-or-no-p #'y-or-n-p)
