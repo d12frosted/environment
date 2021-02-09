@@ -67,6 +67,7 @@
 ;; core
 (require 'init-env)
 (require 'init-editor)
+(require 'init-ui)
 (require 'init-kbd)
 (provide 'init)
 ;;; init.el ends here
