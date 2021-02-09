@@ -69,6 +69,7 @@
 (require 'init-editor)
 (require 'init-ui)
 (require 'init-buffer)
+(require 'init-window)
 (require 'init-kbd)
 (provide 'init)
 ;;; init.el ends here
