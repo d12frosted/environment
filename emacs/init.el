@@ -76,6 +76,7 @@
 (require 'init-selection)
 (require 'init-project)
 (require 'init-vcs)
+(require 'init-ide)
 
 ;; languages
 (require 'init-elisp)
