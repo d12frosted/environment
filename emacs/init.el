@@ -71,5 +71,8 @@
 (require 'init-buffer)
 (require 'init-window)
 (require 'init-kbd)
+
+;; utilities
+(require 'init-selection)
 (provide 'init)
 ;;; init.el ends here
