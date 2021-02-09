@@ -68,6 +68,7 @@ real notes. Maybe it also means experimental features.")
         '(org-agenda
           org-archive
           org-capture
+          org-refile
           org-id
           org-attach))
 
