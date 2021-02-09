@@ -64,5 +64,7 @@
 (use-package dash)
 (use-package async)
 
+;; core
+(require 'init-env)
 (provide 'init)
 ;;; init.el ends here
