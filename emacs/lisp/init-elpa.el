@@ -65,6 +65,8 @@
 
 If NO-REFRESH is non-nil, the available package lists will not be
 re-downloaded in order to locate PACKAGE."
+  (when elpa-bootstrap-p
+    (message "elpa-require-package %s" package))
   (or (package-installed-p package min-version)
       (let* ((known (cdr (assoc package package-archive-contents)))
              (versions (mapcar #'package-desc-version known)))
@@ -126,12 +128,14 @@ The package name is noted by adding it to
 
 OLDFUN is called wall PACKAGE and rest of the ARGS."
   (when elpa-bootstrap-p
-    (message "package %s was required" package))
+    (message "using %s package" package))
   (unless (or (plist-get args :quelpa)
               (plist-get args :built-in))
     (elpa-require-package package))
   (when (plist-get args :built-in)
     (setq args (plist-delete args :built-in)))
+  (when elpa-bootstrap-p
+    (message "return control flow to use-package for %s" package))
   (apply oldfun package args))
 
 (advice-add 'use-package :around #'elpa-use-package-install)
