@@ -12,9 +12,11 @@ else
 fi
 
 cd ~/.cache/emacs/packages/28.0.50/straight/repos/org-roam/ && {
+  branch=master
   if [ "$mode" = "test" ]; then
-    git checkout v2
-  else
-    git checkout master
+    branch="v2"
   fi
+
+  git checkout "$branch"
+  git pull -r origin "$branch"
 }
