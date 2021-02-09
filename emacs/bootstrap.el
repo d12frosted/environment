@@ -43,6 +43,9 @@
  elpa-bootstrap-p t
  load-prefer-newer t)
 
+(when (getenv "CI")
+  (setq-default package-check-signature nil))
+
 ;; Since we might be running in CI or other environments, stick to
 ;; XDG_CONFIG_HOME value if possible.
 (load (expand-file-name

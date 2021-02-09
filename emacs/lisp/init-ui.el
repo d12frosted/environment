@@ -120,7 +120,8 @@
   :commands (mode-line-debug-mode)
   :init (mode-line-debug-mode 1))
 
-;; install it from sources, because ELPA version is broken
+;; Install it from sources, because ELPA version has invalid
+;; signature.
 (use-package spinner
   :quelpa (spinner
            :fetcher github
