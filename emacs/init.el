@@ -74,5 +74,6 @@
 
 ;; utilities
 (require 'init-selection)
+(require 'init-vcs)
 (provide 'init)
 ;;; init.el ends here
