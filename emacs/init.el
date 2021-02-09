@@ -77,6 +77,7 @@
 (require 'init-project)
 (require 'init-vcs)
 (require 'init-ide)
+(require 'init-vulpea)
 
 ;; languages
 (require 'init-elisp)
