@@ -40,23 +40,19 @@
 (require 'seq)
 (require 'subr-x)
 
-;; Add Lisp directory to `load-path'. Since we might be running in CI
-;; or other environments, stick to XDG_CONFIG_HOME value if possible.
-(add-to-list 'load-path
-             (expand-file-name
-              "lisp"
-              (if-let ((xdg (getenv "XDG_CONFIG_HOME")))
-                  (expand-file-name "emacs/" xdg)
-                user-emacs-directory)))
+;; Since we might be running in CI or other environments, stick to
+;; XDG_CONFIG_HOME value if possible.
+(defvar emacs-home
+  (if-let ((xdg (getenv "XDG_CONFIG_HOME")))
+      (expand-file-name "emacs/" xdg)
+    user-emacs-directory))
+
+;; Add Lisp directory to `load-path'.
+(add-to-list 'load-path (expand-file-name "lisp" emacs-home))
 
 (setq-default
  elpa-bootstrap-p t
  load-prefer-newer t)
-
-(require 'init-elpa)
-(use-package s)
-(use-package dash)
-(use-package async)
 
 (seq-map
  (lambda (f)
@@ -67,12 +63,7 @@
        (let ((m (intern f)))
          (message "loading %s" m)
          (require m)))))
- (directory-files
-  (expand-file-name
-   "lisp/"
-   (if (string-match-p ".*eldev.*" user-emacs-directory)
-       "."
-     user-emacs-directory))))
+ (directory-files (expand-file-name "lisp/" emacs-home)))
 
 (provide 'bootstrap)
 ;;; bootstrap.el ends here
