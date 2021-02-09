@@ -150,5 +150,19 @@ real notes. Maybe it also means experimental features.")
   :config
   (add-hook 'kill-emacs-hook #'org-clock-save))
 
+
+
+(use-package org-refile
+  :built-in t
+  :defer t
+  :init
+  (setq
+   org-outline-path-complete-in-steps nil
+   org-refile-targets '((nil :maxlevel . 4)
+                        (org-agenda-files :maxlevel . 4))
+   org-refile-use-outline-path t
+   org-refile-allow-creating-parent-nodes nil
+   org-refile-target-verify-function 'vulpea-refile-verify-target))
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
