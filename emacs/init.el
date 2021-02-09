@@ -76,5 +76,8 @@
 (require 'init-selection)
 (require 'init-project)
 (require 'init-vcs)
+
+;; languages
+(require 'init-elisp)
 (provide 'init)
 ;;; init.el ends here
