@@ -58,6 +58,7 @@ real notes. Maybe it also means experimental features.")
   :hook ((org-mode . auto-fill-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
+  :min-version "9.4"
   :init
   ;; This is where my ~heart~ org files are.
   (setq org-directory vulpea-directory)

@@ -53,6 +53,8 @@
 ;;; Standard package repositories
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("org" . "https://orgmode.org/elpa/") t)
 
 
 ;;; On-demand installation of packages
@@ -66,7 +68,13 @@
 If NO-REFRESH is non-nil, the available package lists will not be
 re-downloaded in order to locate PACKAGE."
   (when elpa-bootstrap-p
-    (message "elpa-require-package %s" package))
+    (message (format "elpa-require-package %s%s"
+                     package
+                     (if min-version
+                         (concat " " min-version)
+                       ""))))
+  (when (stringp min-version)
+    (setq min-version (version-to-list min-version)))
   (or (package-installed-p package min-version)
       (let* ((known (cdr (assoc package package-archive-contents)))
              (versions (mapcar #'package-desc-version known)))
@@ -129,11 +137,17 @@ The package name is noted by adding it to
 OLDFUN is called wall PACKAGE and rest of the ARGS."
   (when elpa-bootstrap-p
     (message "using %s package" package))
+
+  ;; install package
   (unless (or (plist-get args :quelpa)
               (plist-get args :built-in))
-    (elpa-require-package package))
-  (when (plist-get args :built-in)
-    (setq args (plist-delete args :built-in)))
+    (elpa-require-package package (plist-get args :min-version)))
+
+  ;; cleanup custom properties
+  (setq args (plist-delete args :built-in))
+  (setq args (plist-delete args :min-version))
+
+  ;; return control to `use-package'
   (when elpa-bootstrap-p
     (message "return control flow to use-package for %s" package))
   (apply oldfun package args))
