@@ -37,6 +37,7 @@
 
 (require 'lib-eval)
 (require 'init-vcs)
+(require 'init-kbd)
 (require 'project)
 
 ;; TODO: move project etc file out of XDG_CONFIG_HOME
@@ -73,6 +74,13 @@
   :commands (rg-project)
   :init
   (defalias 'project-find-regexp #'rg-project))
+
+(leader-def
+  "p" '(nil :which-key "project...")
+  "p!" '(project-shell-command :which-key "Run cmd in project root")
+  "p/" '(project-find-regexp :which-key "Grep the project")
+  "pf" '(project-find-file :which-key "Find file in project")
+  "pp" '(project-switch :which-key "Switch project"))
 
 (provide 'init-project)
 ;;; init-project.el ends here
