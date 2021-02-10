@@ -35,6 +35,10 @@
 ;;
 ;;; Code:
 
+(require 'init-kbd)
+
+
+
 (defvar vcs-url-github-repo-regexp
   (format "\\(%s/\\(%s\\)/\\(%s\\)\\).*"
           "https://github\\.com"
@@ -76,6 +80,8 @@
                                      "org-roam")
   "List of 'known' GitHub users.")
 
+
+
 ;;;###autoload
 (defun vcs-url-format-github-issue (owner repo type number)
   "Format GitHub issue.
@@ -108,6 +114,22 @@ part of format is omitted."
    (if (seq-contains-p vcs-url-known-github-users owner)
        repo
      (concat owner "/" repo))))
+
+
+
+(leader-def
+  "g" '(nil :which-key "git...")
+  "gS" '(magit-stage-file :which-key "stage file")
+  "gU" '(magit-unstage-file :which-key "unstage file")
+  "g[" '(git-gutter:previous-hunk :which-key "previous hunk")
+  "g]" '(git-gutter:next-hunk :which-key "next hunk")
+  "gd" '(magit-dispatch :which-key "dispatch")
+  "gf" '(magit-find-file :which-key "find-file")
+  "gg" '(magit-status :which-key "status")
+  "gi" '(magit-init :which-key "initialize repo")
+  "gt" '(git-timemachine-toggle :which-key "time machine"))
+
+
 
 (provide 'lib-vcs)
 ;;; lib-vcs.el ends here
