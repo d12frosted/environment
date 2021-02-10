@@ -36,6 +36,9 @@
 ;;; Code:
 
 (require 'init-path)
+(require 'init-kbd)
+
+
 
 (defvar buffer-fallback-name "*scratch*"
   "The name of the buffer to fall back to.
@@ -49,9 +52,13 @@ By default this is the scratch buffer. See
 `buffer-fallback-name' to change this."
   (get-buffer-create buffer-fallback-name))
 
+
+
 (defun buffer-display-and-switch (buffer-or-name)
   "Display BUFFER-OR-NAME in some window and switch to it."
   (select-window (display-buffer buffer-or-name)))
+
+
 
 (defvar buffer-messages-display-fn #'buffer-display-and-switch
   "The function to use to display messages buffer.
@@ -72,6 +79,8 @@ Must accept one argument: the buffer to display.")
   (interactive)
   (let ((buffer-messages-display-fn #'switch-to-buffer))
     (buffer-pop-messages)))
+
+
 
 (defvar buffer-scratch-files-dir (concat path-etc-dir "scratch/")
   "Where to store project scratch files.
@@ -166,6 +175,37 @@ ARG is passed to `buffer-pop-scratch'."
                                  t "^[^.]" t))
     (delete-file file)
     (message "Deleted '%s'" (file-name-nondirectory file))))
+
+
+
+(defun buffer-sudo-edit (&optional arg)
+  "Edit currently visited file as root.
+
+With a prefix ARG prompt for a file to visit. Will also prompt
+for a file to visit if current buffer is not visiting a file."
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:"
+                         (read-file-name "Find file(as root): ")))
+    (find-alternate-file
+     (concat "/sudo:root@localhost:"
+             buffer-file-name))))
+
+
+
+(leader-def
+  "b" '(nil :which-key "buffer...")
+  "bM" '(buffer-switch-to-messages
+         :which-key "switch to messages buffer")
+  "bS" '(buffer-sudo-edit :which-key "sudo edit this file")
+  "bX" '(buffer-switch-to-scratch :which-key "pop scratch buffer")
+  "bb" '(switch-to-buffer :which-key "switch buffer")
+  "bk" '(kill-this-buffer :which-key "kill buffer")
+  "bm" '(buffer-pop-messages :which-key "pop messages buffer")
+  "bs" '(save-buffer :which-key "save buffer")
+  "bx" '(buffer-pop-scratch :which-key "pop scratch buffer"))
+
+
 
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
