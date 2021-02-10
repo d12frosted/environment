@@ -140,7 +140,8 @@ OLDFUN is called wall PACKAGE and rest of the ARGS."
 
   ;; install package
   (unless (or (plist-get args :quelpa)
-              (plist-get args :built-in))
+              (plist-get args :built-in)
+              (plist-get args :ensure))
     (elpa-require-package package (plist-get args :min-version)))
 
   ;; cleanup custom properties

@@ -37,6 +37,7 @@
 ;;; Code:
 
 (require 'init-path)
+(require 'init-elpa)
 
 (defvar vulpea-test-mode
   (file-exists-p
@@ -54,11 +55,13 @@ real notes. Maybe it also means experimental features.")
 
 
 
+(when elpa-bootstrap-p
+  (quelpa 'org :upgrade t))
+
 (use-package org
   :hook ((org-mode . auto-fill-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
-  :min-version "9.4"
   :init
   ;; This is where my ~heart~ org files are.
   (setq org-directory vulpea-directory)
