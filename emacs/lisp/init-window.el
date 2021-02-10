@@ -35,6 +35,8 @@
 ;;
 ;;; Code:
 
+(require 'init-kbd)
+
 ;; Prefer vertical splits by default
 (setq split-height-threshold nil
       split-width-threshold 160)
@@ -77,6 +79,24 @@ the undo expires."
       (jump-to-register ?_)
     (window-configuration-to-register ?_)
     (delete-other-windows)))
+
+(leader-def
+  "C-w" '(ace-window :which-key "Ace window")
+  "M-w" '(ace-window :which-key "Ace window")
+
+  "w"  '(nil :which-key "window...")
+  "wS" '(window-split-horizontally
+         :which-key "split frame horizontally")
+  "wV" '(window-split-vertically
+         :which-key "split frame vertically")
+  "wk" '(delete-window
+         :which-key "kill window")
+  "wm" '(window-zoom
+         :which-key "kill other windows")
+  "ws" '(window-split-horizontally-and-focus
+         :which-key "split frame horizontally and focus")
+  "wv" '(window-split-vertically-and-focus
+         :which-key "split frame vertically and focus"))
 
 (provide 'init-window)
 ;;; init-window.el ends here
