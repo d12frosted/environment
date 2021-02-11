@@ -212,5 +212,17 @@
 
 
 
+(use-package org-archive
+  :built-in t
+  :defer t
+  :init
+  (setq-default
+   org-archive-location
+   (concat org-directory ".archive/%s_archive" "::" "datetree/*")
+   org-archive-save-context-info
+   '(time file ltags itags todo category olpath)))
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
