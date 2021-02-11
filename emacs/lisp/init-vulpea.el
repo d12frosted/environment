@@ -143,6 +143,7 @@ real notes. Maybe it also means experimental features.")
 (use-package org-clock
   :built-in t
   :defer t
+  :commands (org-clock-save)
   :init
   (setq
    org-clock-persist-file (expand-file-name "org-clock-save.el"
