@@ -31,3 +31,6 @@ cabal.sandbox.config
 
 # ItelliJ Idea
 *.iml
+
+# Emacs
+*~
