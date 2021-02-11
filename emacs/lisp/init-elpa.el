@@ -78,9 +78,9 @@ re-downloaded in order to locate PACKAGE."
              (versions (mapcar #'package-desc-version known)))
         (if (cl-some (lambda (v) (version-list-<= min-version v))
                      versions)
-            (if (eq package 'org)
-              (package-install-from-archive
-               (cadr (assoc package package-archive-contents)))
+            (if min-version
+                (package-install-from-archive
+                 (cadr (assoc package package-archive-contents)))
               (package-install package))
           (if no-refresh
               (error "No version of %s >= %S is available"
