@@ -1,4 +1,5 @@
-((emacs-lisp-mode . ((fill-column . 70)
+((emacs-lisp-mode . ((byte-compile-error-on-warn . t)
+                     (fill-column . 70)
                      (indent-tabs-mode . nil)
                      (elisp-lint-indent-specs . ((vulpea-utils-with-file . 1)
                                                  (vulpea-utils-with-note . 1)
