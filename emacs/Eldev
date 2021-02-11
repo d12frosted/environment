@@ -88,6 +88,14 @@
 
 
 
+;; Always load autoloads file.
+(add-hook 'eldev-compile-hook
+          (lambda ()
+            (eldev--load-autoloads-file
+             (expand-file-name "lisp/init-autoloads.el" eldev-project-dir))))
+
+
+
 ;; Use MELPA unstable do download development dependencies.
 (eldev-use-package-archive 'melpa-unstable)
 
