@@ -7,6 +7,7 @@ clean:
 
 .PHONY: compile
 compile:
+	eldev -C --unstable -a -dtT build :autoloads
 	eldev -C --unstable -a -dtT compile
 
 .PHONY: lint

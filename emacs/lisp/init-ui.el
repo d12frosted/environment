@@ -59,6 +59,7 @@
 ;; for some reason only this removes the clutter with xmonad
 (use-package scroll-bar
   :built-in t
+  :commands (scroll-bar-mode)
   :init
   (scroll-bar-mode -1))
 

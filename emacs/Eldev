@@ -1,7 +1,5 @@
 ; -*- mode: emacs-lisp; lexical-binding: t; no-byte-compile: t -*-
 
-(eldev-require-version "0.7.2")
-
 ;; Be explicit about main file.
 (setf eldev-project-main-file "init.el")
 
@@ -37,7 +35,7 @@
   :type           many-to-one
   :short-name     "AUTOLOADS"
   :message        target
-  :source-files   (:and "lisp/*.el" (:not ("lisp/init-autoloads.el")))
+  :source-files   (:and "lisp/*.el" (:not ("lisp/*autoloads.el")))
   :targets        (lambda (_sources) "lisp/init-autoloads.el")
   :define-cleaner (eldev-cleaner-autoloads
                    "Delete the generated package autoloads files."
