@@ -200,5 +200,17 @@
 
 
 
+(use-package org-attach
+  :built-in t
+  :defer t
+  :config
+  (setq-default
+   org-attach-id-dir (expand-file-name ".data/" vulpea-directory)
+   org-attach-auto-tag nil
+   org-attach-file-list-property nil
+   org-attach-store-link-p 'attached))
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
