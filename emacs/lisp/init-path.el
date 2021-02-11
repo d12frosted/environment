@@ -47,8 +47,13 @@ In a nutshell, it's just a value of $HOME.")
   "The root directory for personal configurations.")
 
 (defconst path-emacs-dir
-  (eval-when-compile (file-truename user-emacs-directory))
+  (file-name-as-directory
+   (expand-file-name "emacs/" path-config-dir))
   "The path to this Emacs directory.")
+
+(defconst path-autoloads-file
+  (expand-file-name "lisp/init-autoloads.el" path-emacs-dir)
+  "The path to personal autoloads file.")
 
 (defconst path-emacs-private-dir
   (concat path-home-dir "Dropbox/apps/Emacs/")
