@@ -55,8 +55,8 @@ real notes. Maybe it also means experimental features.")
 
 
 
-(when elpa-bootstrap-p
-  (quelpa 'org :upgrade t))
+(use-package org-plus-contrib
+  :defer t)
 
 (use-package org
   :hook ((org-mode . auto-fill-mode)
