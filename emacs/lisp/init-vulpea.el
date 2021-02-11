@@ -190,5 +190,15 @@
    org-id-locations-file (expand-file-name "org-id-locations"
                                            path-cache-dir)))
 
+
+
+(use-package org-capture
+  :built-in t
+  :defer t
+  :config
+  (vulpea-capture-setup))
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
