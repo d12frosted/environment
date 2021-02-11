@@ -104,6 +104,14 @@
 ;; Tell checkdoc not to demand two spaces after a period.
 (setq sentence-end-double-space nil)
 
+(defun eldev-lint-find-files-absolute (f &rest args)
+  "Call F with ARGS and ensure that result is absolute paths."
+  (seq-map (lambda (p)
+             (expand-file-name p eldev-project-dir))
+           (apply f args)))
+
+(advice-add 'eldev-lint-find-files :around #'eldev-lint-find-files-absolute)
+
 ;; Use elisp-lint by default
 (setf eldev-lint-default '(elisp))
 (with-eval-after-load 'elisp-lint
