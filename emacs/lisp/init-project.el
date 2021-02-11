@@ -66,7 +66,7 @@
       '((?f "Find file" project-find-file)
         (?g "Find regexp" project-find-regexp)
         (?d "Dired" project-dired)
-        (?v "Magit" +project-magit)
+        (?v "Magit" project-magit)
         (?e "Eshell" project-eshell)))
 
 (use-package rg
