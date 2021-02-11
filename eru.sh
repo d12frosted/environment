@@ -732,6 +732,12 @@ check fish && {
   fish -c "set -U XDG_DATA_HOME $HOME/.local/share"
 }
 
+theme_guard "Emacs" "Setup Eldev" && {
+  eldev_bin=$HOME/.local/bin/eldev
+  curl -fsSL https://raw.github.com/doublep/eldev/master/bin/eldev > "$eldev_bin"
+  chmod a+x "$eldev_bin"
+}
+
 install_guard && {
   theme_guard "Emacs" "Setup Emacs configurations" && {
     emacs --batch --load "$XDG_CONFIG_HOME/emacs/bootstrap.el"
