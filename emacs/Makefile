@@ -7,12 +7,12 @@ clean:
 
 .PHONY: compile
 compile:
-	eldev -C --unstable -p -dtT compile
+	eldev -C --unstable -a -dtT compile
 
 .PHONY: lint
 lint:
-	eldev -C --unstable -p -dtT lint
+	eldev -C --unstable -a -dtT lint
 
 .PHONY: test
 test:
-	eldev -C --unstable -p -dtT test
+	eldev -C --unstable -a -dtT test
