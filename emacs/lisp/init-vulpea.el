@@ -39,7 +39,13 @@
 (require 'init-elpa)
 (require 'lib-vulpea)
 
+
 
+(use-package vulpea
+  :quelpa (vulpea
+           :fetcher github
+           :repo "d12frosted/vulpea")
+  :defer t)
 
 
 
