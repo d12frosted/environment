@@ -36,11 +36,12 @@
 ;;; Code:
 
 (require 'lib-eval)
+(require 'init-path)
 (require 'init-vcs)
 (require 'init-kbd)
 (require 'project)
 
-;; TODO: move project etc file out of XDG_CONFIG_HOME
+(setq project-list-file (expand-file-name "projects" path-etc-dir))
 
 (defalias 'project-switch #'project-switch-project)
 
