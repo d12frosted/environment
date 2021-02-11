@@ -36,22 +36,10 @@
 ;;
 ;;; Code:
 
-(require 'init-path)
 (require 'init-elpa)
+(require 'lib-vulpea)
 
-(defvar vulpea-test-mode
-  (file-exists-p
-   (expand-file-name "vulpea_test" path-cache-dir))
-  "Non-nil if notes should start in a test mode.
 
-Probably that means using directory with test notes instead of
-real notes. Maybe it also means experimental features.")
-
-(defvar vulpea-directory
-  (expand-file-name
-   (if vulpea-test-mode "vulpea-test/" "Dropbox/vulpea/")
-   path-home-dir)
-  "Directory containing notes.")
 
 
 
