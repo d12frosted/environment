@@ -53,8 +53,6 @@
 ;;; Standard package repositories
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives
-             '("org" . "https://orgmode.org/elpa/") t)
 
 
 ;;; On-demand installation of packages
@@ -80,7 +78,10 @@ re-downloaded in order to locate PACKAGE."
              (versions (mapcar #'package-desc-version known)))
         (if (cl-some (lambda (v) (version-list-<= min-version v))
                      versions)
-            (package-install package)
+            (if (eq package 'org)
+              (package-install-from-archive
+               (cadr (assoc package package-archive-contents)))
+              (package-install package))
           (if no-refresh
               (error "No version of %s >= %S is available"
                      package

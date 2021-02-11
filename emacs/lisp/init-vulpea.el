@@ -56,6 +56,7 @@ real notes. Maybe it also means experimental features.")
 
 
 (use-package org
+  :min-version "9.4.4"
   :hook ((org-mode . auto-fill-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
