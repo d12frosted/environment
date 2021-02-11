@@ -15,6 +15,9 @@
 
 
 
+;; Use MELPA unstable do download development dependencies.
+(eldev-use-package-archive 'melpa-unstable)
+
 ;; These dependencies are needed for `init-elpa' module to work
 ;; properly when using compile command.
 (eldev-add-extra-dependencies 'build 'use-package)
@@ -96,11 +99,6 @@
 
 
 
-;; Use MELPA unstable do download development dependencies.
-(eldev-use-package-archive 'melpa-unstable)
-
-
-
 ;; Tell checkdoc not to demand two spaces after a period.
 (setq sentence-end-double-space nil)
 
@@ -136,3 +134,5 @@
             (eldev-load-project-dependencies 'lint nil t)
             (require 'emacsql)
             (call-interactively #'emacsql-fix-vector-indentation)))
+
+
