@@ -81,8 +81,10 @@
 (require 'init-vcs)
 (require 'init-ide)
 (require 'init-vulpea)
+(require 'init-file-templates)
 
 ;; languages
 (require 'init-elisp)
+
 (provide 'init)
 ;;; init.el ends here

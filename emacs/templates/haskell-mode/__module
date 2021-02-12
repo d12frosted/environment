@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# expand-env: ((yas-indent-line 'fixed))
+# --
+{-|
+Module      : `(haskell-guess-module-name-from-file-name (buffer-file-name))`
+Description : ${1:Module short description}
+Copyright   : (c) `user-full-name`, `(format-time-string "%Y")`
+License     : MIT
+Maintainer  : `user-mail-address`
+Stability   : experimental
+Portability : POSIX
+
+${2:Module long description}
+-}
+
+--------------------------------------------------------------------------------
+
+module `(haskell-guess-module-name-from-file-name (buffer-file-name))` where
+
+--------------------------------------------------------------------------------
+
+$0
+
+--------------------------------------------------------------------------------
