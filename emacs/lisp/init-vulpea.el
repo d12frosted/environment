@@ -224,5 +224,41 @@
 
 
 
+(use-package org-agenda
+  :built-in t
+  :defer t
+  :config
+  (setq
+   ;; speed up agenda a little bit
+   org-agenda-dim-blocked-tasks nil
+   org-agenda-inhibit-startup t
+
+   ;; also show state change in log mode
+   org-agenda-log-mode-items '(closed clock state)
+
+   ;; more structured view
+   org-agenda-prefix-format
+   '((agenda . " %-24:(+org-entry-category) %?-12t %12s")
+     (todo . " %-24:(+org-entry-category)")
+     (tags . " %-24:(+org-entry-category)")
+     (search . " %-24:(+org-entry-category)"))
+   org-agenda-todo-keyword-format "%-1s"
+   org-agenda-tags-column 0
+
+   ;; show agenda in current window
+   org-agenda-window-setup 'current-window
+
+   org-agenda-custom-commands
+   `((" " "Agenda"
+      (,vulpea-agenda-cmd-refile
+       ,vulpea-agenda-cmd-today
+       ,vulpea-agenda-cmd-focus
+       ,vulpea-agenda-cmd-stuck-projects
+       ,vulpea-agenda-cmd-projects
+       ,vulpea-agenda-cmd-waiting)
+      ((org-agenda-buffer-name vulpea-agenda-main-buffer-name))))))
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
