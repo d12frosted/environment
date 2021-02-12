@@ -163,5 +163,23 @@
                   marginalia-annotators-light
                   nil)))
 
+
+
+(use-package transient
+  :defer t
+  :init
+  (setq
+   transient-levels-file (expand-file-name
+                          "transient/levels.el"
+                          path-cache-dir)
+   transient-values-file (expand-file-name
+                          "transient/values.el"
+                          path-cache-dir)
+   transient-history-file (expand-file-name
+                           "transient/history.el"
+                           path-cache-dir)))
+
+
+
 (provide 'init-selection)
 ;;; init-selection.el ends here
