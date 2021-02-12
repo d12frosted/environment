@@ -260,5 +260,36 @@
 
 
 
+(use-package org-roam
+  :quelpa (org-roam
+           :fetcher github
+           :repo "org-roam/org-roam")
+  :defer t
+  :init
+  (setq
+   org-roam-directory vulpea-directory
+   org-roam-dailies-directory "journal/"
+   org-roam-db-location (expand-file-name
+                         (if vulpea-test-mode
+                             "org-roam-test.db"
+                           "org-roam.db")
+                         path-cache-dir)
+   org-roam-completion-everywhere t
+   org-roam-completion-system (if (eq selection-system 'ivy)
+                                  'ivy
+                                'default)
+   org-roam-tag-sources '(prop all-directories)
+
+   ;; graph settings
+   org-roam-graph-viewer (when env-sys-mac-p "open")
+   org-roam-graph-executable (executable-find "neato")
+   org-roam-graph-extra-config '(("overlap" . "false")))
+  :config
+  ;; v2 support
+  (when (fboundp 'org-roam-setup)
+    (org-roam-setup)))
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
