@@ -56,6 +56,9 @@
 (require 'init-path)
 (require 'init-elpa)
 
+;; Setup `custom-file`.
+(setq custom-file (concat path-local-dir "custom.el"))
+
 ;; load autoloads file if it was generated
 (load path-autoloads-file 'no-error)
 

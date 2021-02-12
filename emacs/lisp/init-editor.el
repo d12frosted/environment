@@ -45,7 +45,6 @@
  search-default-mode #'char-fold-to-regexp
  replace-char-fold t)
 
-(setq custom-file (concat path-local-dir "custom.el"))
 
 ;; electric everything (but there must be a way to disable it)
 (when (fboundp 'electric-pair-mode)
