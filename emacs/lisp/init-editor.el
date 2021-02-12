@@ -40,11 +40,14 @@
 (require 'lib-vcs)
 (require 'lib-string)
 
+
+
 ;; easier to search
 (setq-default
  search-default-mode #'char-fold-to-regexp
  replace-char-fold t)
 
+
 
 ;; electric everything (but there must be a way to disable it)
 (when (fboundp 'electric-pair-mode)
@@ -54,7 +57,9 @@
   "Disable the command `electric-indent-mode' locally."
   (electric-indent-local-mode -1))
 
+
 ;; Whitespaces
+
 (setq-default
  indent-tabs-mode nil
  tab-width 2
@@ -88,14 +93,20 @@
         (append ws-butler-global-exempt-modes
                 '(special-mode comint-mode term-mode eshell-mode))))
 
+
+
 ;; TODO: bind to a key
 (use-package unfill
   :defer t)
+
+
 
 (use-package ukrainian-input-method
   :quelpa (ukrainian-input-method
            :fetcher github
            :repo "d12frosted/emacs-ukrainian-input-method"))
+
+
 
 (use-package move-text
   :commands (move-text-down
@@ -103,6 +114,8 @@
   :bind
   (([M-S-down] . #'move-text-down)
    ([M-S-up] . #'move-text-up)))
+
+
 
 (use-package fancy-yank
   :quelpa (fancy-yank
@@ -144,15 +157,21 @@
                    (read-string "Description: "))))
             fancy-yank-format-link)))))
 
+
+
 (use-package avy
   :defer t)
 
 (use-package ace-link
   :defer t)
 
+
+
 (use-package mwim
   :defer t
   :bind (("C-a" . mwim-beginning)))
+
+
 
 (provide 'init-editor)
 ;;; init-editor.el ends here
