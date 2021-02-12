@@ -160,10 +160,19 @@
 
 
 (use-package avy
-  :defer t)
+  :defer t
+  :general
+  (leader-def
+    "jj" '(avy-goto-char :which-key "Char")
+    "jl" '(avy-goto-line :which-key "Line (avy)")
+    "jw" '(avy-goto-word-0 :which-key "Word")
+    "jJ" '(avy-goto-char-timer :which-key "Chars")))
 
 (use-package ace-link
-  :defer t)
+  :defer t
+  :general
+  (leader-def
+    "jb" '(ace-link :which-key "Button or link")))
 
 
 
