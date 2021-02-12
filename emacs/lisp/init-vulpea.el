@@ -36,7 +36,10 @@
 ;;
 ;;; Code:
 
+(require 'init-path)
 (require 'init-elpa)
+(require 'init-env)
+(require 'init-selection)
 (require 'lib-vulpea)
 
 
@@ -45,7 +48,10 @@
   :quelpa (vulpea
            :fetcher github
            :repo "d12frosted/vulpea")
-  :defer t)
+  :defer t
+  :general
+  (leader-def
+    "n" '(nil :which-key "vulpea...")))
 
 
 
@@ -195,6 +201,15 @@
 (use-package org-capture
   :built-in t
   :defer t
+  :general
+  (leader-def
+    "c" '(nil :which-key "capture...")
+    "cX" '(org-capture :which-key "dispatch")
+    "ca" '(vulpea-capture-article :which-key "article")
+    "cj" '(vulpea-capture-journal :which-key "journal")
+    "cl" '(org-store-link :which-key "link")
+    "cm" '(vulpea-capture-meeting :which-key "meeting")
+    "cx" '(vulpea-capture-task :which-key "task"))
   :config
   (vulpea-capture-setup))
 

@@ -43,6 +43,7 @@
 (require 'vulpea)
 (require 'org)
 (require 'org-capture)
+(require 'org-roam)
 
 (defvar vulpea-capture-inbox-file
   (format "inbox-%s.org" env-sys-name)
@@ -65,7 +66,21 @@ It is relative to `vulpea-directory', unless it is absolute.")
            (function vulpea-capture-meeting-target)
            (function vulpea-capture-meeting-template)
            :clock-in t
-           :clock-resume t))))
+           :clock-resume t))
+        org-roam-capture-templates
+        '(("d" "default" plain
+           #'org-roam-capture--get-point
+           "%?"
+           :file-name "%(+org-notes-subdir)/%<%Y%m%d%H%M%S>-${slug}"
+           :head "#+TITLE: ${title}\n\n"
+           :unnarrowed t))
+        org-roam-dailies-capture-templates
+        '(("d" "default" entry
+           #'org-roam-capture--get-point
+           "\n\n* %<%H:%M> \n\n%?"
+           :empty-lines 1
+           :file-name "journal/%<%Y-%m-%d>"
+           :head "#+TITLE: %<%A, %d %B %Y>\n\n"))))
 
 ;;;###autoload
 (defun vulpea-capture-task ()
@@ -206,6 +221,18 @@ Authors can be created on the fly. See
     (vulpea-utils-with-note note
       (vulpea-meta-set note "authors" people t))
     (find-file (vulpea-note-path note))))
+
+(defun vulpea-capture-journal ()
+  "Capture a journal entry.
+
+By default it uses current date to find a daily. With
+\\[universal-argument] user may select the date."
+  (interactive)
+  (cond
+   ((equal current-prefix-arg '(4))     ; select date
+    (org-roam-dailies-capture-date))
+   (t
+    (org-roam-dailies-capture-today))))
 
 (provide 'lib-vulpea-capture)
 ;;; lib-vulpea-capture.el ends here
