@@ -81,6 +81,7 @@
 (require 'init-vcs)
 (require 'init-ide)
 (require 'init-vulpea)
+(require 'init-vino)
 (require 'init-file-templates)
 
 ;; languages
