@@ -1,6 +1,6 @@
 ;;; lib-vulpea-id.el --- ID utilities -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2021 Boris Buliga
+;; Copyright (c) 2015-2021 Boris Buliga
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
@@ -9,7 +9,7 @@
 ;;
 ;; Created: 08 Feb 2021
 ;;
-;; URL: https://github.com/d12frosted/
+;; URL: https://github.com/d12frosted/environment/emacs
 ;;
 ;; License: GPLv3
 ;;
