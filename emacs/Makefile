@@ -22,4 +22,5 @@ lint:
 
 .PHONY: test
 test:
+	eldev exec t
 	eldev -C --unstable -a -dtT test
