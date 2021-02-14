@@ -36,7 +36,7 @@
 ;;; Code:
 
 (require 'init-env)
-(require 'lib-vulpea)
+(require 'config-vulpea)
 (require 'lib-fun)
 
 ;; external dependencies

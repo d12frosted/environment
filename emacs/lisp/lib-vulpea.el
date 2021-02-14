@@ -36,8 +36,8 @@
 ;;; Code:
 
 (require 'init-elpa)
-(require 'init-vulpea)
 
+(require 'config-vulpea)
 (require 'lib-directory)
 
 (require 'org-roam)

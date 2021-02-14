@@ -120,9 +120,7 @@
   (defun package-lint--package-prefix-cleanup (f &rest args)
     "Call F with ARGS and cleanup it's result."
     (let ((r (apply f args)))
-      (replace-regexp-in-string
-       "lib-" ""
-       (replace-regexp-in-string "init-" "" r))))
+      (replace-regexp-in-string "\\(init\\|lib\\|config\\)-" "" r)))
   (advice-add 'package-lint--get-package-prefix :around #'package-lint--package-prefix-cleanup))
 
 ;; Teach linter how to properly indent emacsql vectors.
