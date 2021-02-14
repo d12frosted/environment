@@ -22,6 +22,7 @@
 (eldev-add-extra-dependencies 'build 'quelpa)
 (eldev-add-extra-dependencies 'build 'quelpa-use-package)
 (eldev-add-extra-dependencies 'build 'auto-package-update)
+(eldev-add-extra-dependencies 'build 'gnu-elpa-keyring-update)
 
 
 
