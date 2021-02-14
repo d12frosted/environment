@@ -38,6 +38,8 @@
 (require 'init-elpa)
 (require 'init-vulpea)
 
+(require 'lib-directory)
+
 (require 'org-roam)
 (require 'org-roam-dailies)
 
@@ -181,6 +183,20 @@
   "Find a daily note that comes after current."
   (interactive)
   (org-roam-dailies-find-next-note))
+
+
+
+;;;###autoload
+(defun vulpea-subdir-select ()
+  "Select notes subdirectory."
+  (interactive)
+  (let ((dirs (cons
+               "."
+               (seq-map
+                (lambda (p)
+                  (string-remove-prefix vulpea-directory p))
+                (directory-subdirs vulpea-directory 'recursive)))))
+    (completing-read "Subdir: " dirs nil t)))
 
 
 

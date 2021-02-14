@@ -58,29 +58,30 @@ It is relative to `vulpea-directory', unless it is absolute.")
     (set var (expand-file-name (symbol-value var) vulpea-directory)))
   (unless org-default-notes-file
     (setq org-default-notes-file vulpea-capture-inbox-file))
-  (setq org-capture-templates
-        '(("t" "todo" plain (file vulpea-capture-inbox-file)
-           "* TODO %?\n%U\n" :clock-in t :clock-resume t)
+  (setq
+   org-capture-templates
+   '(("t" "todo" plain (file vulpea-capture-inbox-file)
+      "* TODO %?\n%U\n" :clock-in t :clock-resume t)
 
-          ("m" "Meeting" entry
-           (function vulpea-capture-meeting-target)
-           (function vulpea-capture-meeting-template)
-           :clock-in t
-           :clock-resume t))
-        org-roam-capture-templates
-        '(("d" "default" plain
-           #'org-roam-capture--get-point
-           "%?"
-           :file-name "%(+org-notes-subdir)/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+TITLE: ${title}\n\n"
-           :unnarrowed t))
-        org-roam-dailies-capture-templates
-        '(("d" "default" entry
-           #'org-roam-capture--get-point
-           "\n\n* %<%H:%M> \n\n%?"
-           :empty-lines 1
-           :file-name "journal/%<%Y-%m-%d>"
-           :head "#+TITLE: %<%A, %d %B %Y>\n\n"))))
+     ("m" "Meeting" entry
+      (function vulpea-capture-meeting-target)
+      (function vulpea-capture-meeting-template)
+      :clock-in t
+      :clock-resume t))
+   org-roam-capture-templates
+   '(("d" "default" plain
+      #'org-roam-capture--get-point
+      "%?"
+      :file-name "%(vulpea-subdir-select)/%<%Y%m%d%H%M%S>-${slug}"
+      :head "#+TITLE: ${title}\n\n"
+      :unnarrowed t))
+   org-roam-dailies-capture-templates
+   '(("d" "default" entry
+      #'org-roam-capture--get-point
+      "\n\n* %<%H:%M> \n\n%?"
+      :empty-lines 1
+      :file-name "journal/%<%Y-%m-%d>"
+      :head "#+TITLE: %<%A, %d %B %Y>\n\n"))))
 
 ;;;###autoload
 (defun vulpea-capture-task ()
