@@ -114,7 +114,9 @@
   "Call F with ARGS and ensure that result is absolute paths."
   (seq-map (lambda (p)
              (expand-file-name p eldev-project-dir))
-           (apply f args)))
+           (seq-filter (lambda (p)
+                         (not (string-suffix-p "autoloads.el" p)))
+                       (apply f args))))
 
 (advice-add 'eldev-lint-find-files :around #'eldev-lint-find-files-absolute)
 
