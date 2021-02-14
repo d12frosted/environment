@@ -1,9 +1,10 @@
-.PHONY: all
-all: compile lint test
-
 .PHONY: clean
 clean:
 	eldev clean all
+
+.PHONY: bootstrap
+bootstrap:
+	eldev -C --unstable -a -dtT bootstrap
 
 .PHONY: compile
 compile:

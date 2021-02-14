@@ -740,10 +740,8 @@ theme_guard "Emacs" "Setup Eldev" && {
 
 install_guard && {
   theme_guard "Emacs" "Setup Emacs configurations" && {
-    emacs --batch --load "$XDG_CONFIG_HOME/emacs/bootstrap.el"
     cd "$XDG_CONFIG_HOME/emacs" && {
-      make compile lint
-      eldev exec t
+      make bootstrap compile lint test
     }
   }
 }
@@ -751,9 +749,7 @@ install_guard && {
 upgrade_guard && {
   theme_guard "Emacs" "Upgrade Emacs packages" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
-      emacs --batch --load "bootstrap.el"
-      make compile lint
-      eldev exec t
+      make bootstrap upgrade compile lint test
     }
   }
 }
