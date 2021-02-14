@@ -306,5 +306,13 @@
 
 
 
+(use-package org-download
+  :defer t
+  :hook ((org-mode . org-download-enable))
+  :init
+  (setq-default org-download-method 'attach))
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
