@@ -1,4 +1,4 @@
-;;; lib-vulpea.el --- Capturing tasks and notes -*- lexical-binding: t; -*-
+;;; lib-vulpea.el --- Vulpea utilities -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2021 Boris Buliga
 ;;
@@ -31,25 +31,141 @@
 ;;
 ;;; Commentary:
 ;;
-;; Various utilities for capturing tasks and notes.
+;; Various utilities extending `vulpea' and `org-roam'.
 ;;
 ;;; Code:
 
-(require 'init-path)
+(require 'init-elpa)
 
-(defvar vulpea-test-mode
-  (file-exists-p
-   (expand-file-name "vulpea_test" path-cache-dir))
-  "Non-nil if notes should start in a test mode.
+(require 'org-roam)
+(require 'org-roam-dailies)
 
-Probably that means using directory with test notes instead of
-real notes. Maybe it also means experimental features.")
+
 
-(defvar vulpea-directory
-  (expand-file-name
-   (if vulpea-test-mode "vulpea-test/" "Dropbox/vulpea/")
-   path-home-dir)
-  "Directory containing notes.")
+;;;###autoload
+(defun vulpea-find ()
+  "Find a note."
+  (interactive)
+  (org-roam-find-file))
+
+;;;###autoload
+(defun vulpea-find-backlink ()
+  "Find a note linked to current note."
+  (interactive)
+  (when-let* ((buffer (current-buffer))
+              (file (buffer-file-name buffer))
+              (backlinks (seq-uniq
+                          (seq-map
+                           #'car
+                           (org-roam--get-backlinks file)))))
+    (org-roam-find-file
+     nil
+     nil
+     (lambda (completions)
+       (seq-filter
+        (lambda (x) (seq-contains-p backlinks
+                                    (plist-get (cdr x) :path)))
+        completions)))))
+
+
+
+;;;###autoload
+(defun vulpea-insert ()
+  "Insert a link to the note."
+  (interactive)
+  (when-let*
+      ((res (org-roam-insert))
+       (path (plist-get res :path))
+       (title (plist-get res :title))
+       (roam-tags (org-roam-with-file path nil
+                    (org-roam--extract-tags path))))
+    (when (seq-contains-p roam-tags "people")
+      (save-excursion
+        (ignore-errors
+          (org-back-to-heading)
+          (org-set-tags
+           (seq-uniq
+            (cons
+             (vulpea--title-to-tag title)
+             (org-get-tags nil t)))))))))
+
+
+
+(defun vulpea-tags-add ()
+  "Add a tag to current note."
+  (interactive)
+  (when (org-roam-tag-add)
+    (vulpea-ensure-filetag)))
+
+(defun vulpea-tags-delete ()
+  "Delete a tag from current note."
+  (interactive)
+  (org-roam-tag-delete))
+
+(defun vulpea-ensure-filetag ()
+  "Add missing FILETAGS to the current note."
+  (let ((tags (org-roam--extract-tags))
+        (filetags (ignore-errors
+                    (vulpea-buffer-prop-get-list "FILETAGS")))
+        (tag (vulpea--title-as-tag)))
+    (when (and (seq-contains-p tags "people")
+               (not (seq-contains-p filetags tag)))
+      (vulpea-buffer-prop-set
+       "FILETAGS"
+       (combine-and-quote-strings (seq-uniq (cons tag filetags)))))))
+
+(defun vulpea-ensure-roam-tags ()
+  "Add missing ROAM tags to the current note.")
+
+
+
+(defun vulpea-alias-add ()
+  "Add an alias to current note."
+  (interactive)
+  (org-roam-alias-add))
+
+(defun vulpea-alias-delete ()
+  "Delete an alias from current note."
+  (interactive)
+  (org-roam-alias-delete))
+
+
+
+;;;###autoload
+(defun vulpea-dailies-today ()
+  "Find a daily note for today."
+  (interactive)
+  (org-roam-dailies-find-today))
+
+;;;###autoload
+(defun vulpea-dailies-date ()
+  "Find a daily note for date specified using calendar."
+  (interactive)
+  (org-roam-dailies-find-date))
+
+;;;###autoload
+(defun vulpea-dailies-prev ()
+  "Find a daily note that comes before current."
+  (interactive)
+  (org-roam-dailies-find-previous-note))
+
+;;;###autoload
+(defun vulpea-dailies-next ()
+  "Find a daily note that comes after current."
+  (interactive)
+  (org-roam-dailies-find-next-note))
+
+
+
+(defun vulpea--title-as-tag ()
+  "Return title of the current note as tag."
+  (vulpea--title-to-tag (vulpea-buffer-prop-get "TITLE")))
+
+(defun vulpea--title-to-tag (title)
+  "Convert TITLE to tag."
+  (concat "@" (s-replace " " "" title)))
+
+
 
 (provide 'lib-vulpea)
 ;;; lib-vulpea.el ends here

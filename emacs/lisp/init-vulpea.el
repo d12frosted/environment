@@ -40,7 +40,22 @@
 (require 'init-elpa)
 (require 'init-env)
 (require 'init-selection)
-(require 'lib-vulpea)
+
+
+
+(defvar vulpea-test-mode
+  (file-exists-p
+   (expand-file-name "vulpea_test" path-cache-dir))
+  "Non-nil if notes should start in a test mode.
+
+Probably that means using directory with test notes instead of
+real notes. Maybe it also means experimental features.")
+
+(defvar vulpea-directory
+  (expand-file-name
+   (if vulpea-test-mode "vulpea-test/" "Dropbox/vulpea/")
+   path-home-dir)
+  "Directory containing notes.")
 
 
 
@@ -51,7 +66,19 @@
   :defer t
   :general
   (leader-def
-    "n" '(nil :which-key "vulpea...")))
+    "n" '(nil :which-key "vulpea...")
+    "nd" '(nil :which-key "by date...")
+    "ndd" '(vulpea-dailies-date :which-key "arbitrary date")
+    "ndt" '(vulpea-dailies-today :which-key "today")
+    "ndn" '(vulpea-dailies-next :which-key "next")
+    "ndp" '(vulpea-dailies-prev :which-key "previous")
+    "nf" '(vulpea-find :which-key "find")
+    "nF" '(vulpea-find-backlink :which-key "find backlink")
+    "ni" '(vulpea-insert :which-key "insert")
+    "nt" '(vulpea-tags-add :which-key "tag")
+    "nT" '(vulpea-tags-delete :which-key "untag")
+    "na" '(vulpea-alias-add :which-key "alias")
+    "nA" '(vulpea-alias-delete :which-key "unalias")))
 
 
 
