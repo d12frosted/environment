@@ -102,17 +102,20 @@
 
 
 
+;;;###autoload
 (defun vulpea-tags-add ()
   "Add a tag to current note."
   (interactive)
   (when (org-roam-tag-add)
     (vulpea-ensure-filetag)))
 
+;;;###autoload
 (defun vulpea-tags-delete ()
   "Delete a tag from current note."
   (interactive)
   (org-roam-tag-delete))
 
+;;;###autoload
 (defun vulpea-ensure-filetag ()
   "Add missing FILETAGS to the current note."
   (let ((tags (org-roam--extract-tags))
@@ -125,16 +128,19 @@
        "FILETAGS"
        (combine-and-quote-strings (seq-uniq (cons tag filetags)))))))
 
+;;;###autoload
 (defun vulpea-ensure-roam-tags ()
   "Add missing ROAM tags to the current note.")
 
 
 
+;;;###autoload
 (defun vulpea-alias-add ()
   "Add an alias to current note."
   (interactive)
   (org-roam-alias-add))
 
+;;;###autoload
 (defun vulpea-alias-delete ()
   "Delete an alias from current note."
   (interactive)
@@ -142,6 +148,7 @@
 
 
 
+;;;###autoload
 (defun vulpea-pre-save-hook ()
   "Do all the dirty stuff when file is being saved."
   (when (and (not (active-minibuffer-window))
