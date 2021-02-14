@@ -15,6 +15,7 @@
 
 ;; Use MELPA unstable do download development dependencies.
 (eldev-use-package-archive 'melpa-unstable)
+(eldev-use-package-archive 'gnu)
 
 ;; These dependencies are needed for `init-elpa' module to work
 ;; properly when using compile command.
