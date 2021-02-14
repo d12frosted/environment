@@ -21,11 +21,20 @@
 (eldev-add-extra-dependencies 'build 'use-package)
 (eldev-add-extra-dependencies 'build 'quelpa)
 (eldev-add-extra-dependencies 'build 'quelpa-use-package)
+(eldev-add-extra-dependencies 'build 'auto-package-update)
 
 
 
-(eldev-defcommand eldev-bootstrap (&rest parameters)
-  "Install project dependencies."
+(defvar elpa-upgrade-p nil)
+
+(eldev-defoption elpa-bootstrap-upgrade-option ()
+  "Upgrade all dependencies."
+  :options (--upgrade)
+  :for-command (bootstrap)
+  (setf elpa-upgrade-p t))
+
+(eldev-defcommand elpa-bootstrap (&rest parameters)
+  "Install or upgrade project dependencies."
   (setq-default
    elpa-bootstrap-p t
    load-prefer-newer t)
@@ -39,7 +48,12 @@
          "init.el"
          (if-let ((xdg (getenv "XDG_CONFIG_HOME")))
              (expand-file-name "emacs/" xdg)
-           user-emacs-directory))))
+           user-emacs-directory)))
+
+  (when elpa-upgrade-p
+    (eldev-load-project-dependencies)
+    (auto-package-update-now)
+    (quelpa-upgrade-all)))
 
 
 

@@ -44,12 +44,14 @@
 (defvar elpa-bootstrap-p nil)
 
 
+
 (setq package-user-dir
       (expand-file-name
        "elpa/"
        path-packages-dir))
 
 
+
 ;;; Standard package repositories
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
@@ -126,10 +128,12 @@ The package name is noted by adding it to
                                  package-selected-packages))))))
 
 
+
 (let ((package-check-signature nil))
   (elpa-require-package 'gnu-elpa-keyring-update))
 
 
+
 (elpa-require-package 'use-package)
 
 (defun elpa-use-package-install (oldfun package &rest args)
@@ -157,6 +161,7 @@ OLDFUN is called wall PACKAGE and rest of the ARGS."
 (advice-add 'use-package :around #'elpa-use-package-install)
 
 
+
 (setq-default quelpa-dir
               (expand-file-name
                "quelpa/"
@@ -169,6 +174,13 @@ OLDFUN is called wall PACKAGE and rest of the ARGS."
   (add-to-list 'load-path quelpa-dir))
 
 (use-package quelpa-use-package)
+
+
+
+(use-package auto-package-update
+  :defer t)
+
+
 
 (provide 'init-elpa)
 ;;; init-elpa.el ends here

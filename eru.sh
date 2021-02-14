@@ -749,7 +749,7 @@ install_guard && {
 upgrade_guard && {
   theme_guard "Emacs" "Upgrade Emacs packages" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
-      make bootstrap upgrade compile lint test
+      make upgrade compile lint test
     }
   }
 }

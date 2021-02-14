@@ -6,6 +6,10 @@ clean:
 bootstrap:
 	eldev -C --unstable -a -dtT bootstrap
 
+.PHONY: upgrade
+upgrade:
+	eldev -C --unstable -a -dtT bootstrap --upgrade
+
 .PHONY: compile
 compile:
 	eldev clean elc
