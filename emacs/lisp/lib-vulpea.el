@@ -53,6 +53,21 @@
         (expand-file-name (file-name-as-directory vulpea-directory))
         (file-name-directory buffer-file-name))))
 
+(defun vulpea-project-p ()
+  "Return non-nil if current buffer has any todo entry.
+
+TODO entries marked as done are ignored, meaning the this
+function returns nil if current buffer contains only completed
+tasks."
+  (seq-find
+   (lambda (type)
+     (eq type 'todo))
+   (org-element-map
+    (org-element-parse-buffer 'headline)
+    'headline
+    (lambda (h)
+      (org-element-property :todo-type h)))))
+
 
 
 ;;;###autoload
@@ -132,7 +147,38 @@
 
 ;;;###autoload
 (defun vulpea-ensure-roam-tags ()
-  "Add missing ROAM tags to the current note.")
+  "Add missing ROAM tags to the current note."
+  (let* ((file (buffer-file-name (buffer-base-buffer)))
+         (all-tags (org-roam--extract-tags file))
+         (prop-tags (org-roam--extract-tags-prop file))
+         (tags prop-tags))
+
+    ;; process litnotes
+    (when (seq-contains-p all-tags "litnotes")
+      (unless (vulpea-buffer-prop-get "ROAM_KEY")
+        (vulpea-buffer-prop-set "ROAM_KEY" (read-string "URL: ")))
+      (unless (seq-find (lambda (x) (string-prefix-p "Status:" x))
+                        tags)
+        (setq tags (cons "Status:New" tags)))
+      (unless (seq-find (lambda (x) (string-prefix-p "Content:" x))
+                        tags)
+        (setq tags (cons
+                    (concat "Content:"
+                            (completing-read
+                             "Content: "
+                             '("Book" "Article" "Video" "Course")))
+                    tags))))
+
+    ;; process projects
+    (if (vulpea-project-p)
+        (setq tags (cons "Project" tags))
+      (setq tags (remove "Project" tags)))
+    (unless (eq prop-tags tags)
+      ;; TODO: change after
+      ;; https://github.com/org-roam/org-roam/pull/1420
+      (org-roam--set-global-prop
+       "ROAM_TAGS"
+       (combine-and-quote-strings (seq-uniq tags))))))
 
 
 
