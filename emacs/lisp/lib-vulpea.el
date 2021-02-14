@@ -36,9 +36,20 @@
 ;;; Code:
 
 (require 'init-elpa)
+(require 'init-vulpea)
 
 (require 'org-roam)
 (require 'org-roam-dailies)
+
+
+
+(defun vulpea-buffer-p ()
+  "Return non-nil if the currently visited buffer is a note."
+  (and buffer-file-name
+       (eq major-mode 'org-mode)
+       (string-prefix-p
+        (expand-file-name (file-name-as-directory vulpea-directory))
+        (file-name-directory buffer-file-name))))
 
 
 
@@ -128,6 +139,15 @@
   "Delete an alias from current note."
   (interactive)
   (org-roam-alias-delete))
+
+
+
+(defun vulpea-pre-save-hook ()
+  "Do all the dirty stuff when file is being saved."
+  (when (and (not (active-minibuffer-window))
+             (vulpea-buffer-p))
+    (vulpea-ensure-filetag)
+    (vulpea-ensure-roam-tags)))
 
 
 

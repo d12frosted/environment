@@ -64,6 +64,7 @@ real notes. Maybe it also means experimental features.")
            :fetcher github
            :repo "d12frosted/vulpea")
   :defer t
+  :hook ((before-save . vulpea-pre-save-hook))
   :general
   (leader-def
     "n" '(nil :which-key "vulpea...")
