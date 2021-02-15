@@ -86,6 +86,7 @@
 
 ;; languages
 (require 'init-elisp)
+(require 'init-yaml)
 
 (provide 'init)
 ;;; init.el ends here
