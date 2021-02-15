@@ -170,10 +170,17 @@ OLDFUN is called wall PACKAGE and rest of the ARGS."
 (use-package quelpa
   :defines (quelpa-dir)
   :init
-  (setq-default quelpa-checkout-melpa-p elpa-bootstrap-p)
+  (setq-default
+   quelpa-checkout-melpa-p elpa-bootstrap-p
+   quelpa-update-melpa-p elpa-bootstrap-p
+   quelpa-autoremove-p nil)
   (add-to-list 'load-path quelpa-dir))
 
-(use-package quelpa-use-package)
+(use-package quelpa-use-package
+  :defer t
+  :init
+  (setq-default
+   quelpa-use-package-inhibit-loading-quelpa t))
 
 
 
