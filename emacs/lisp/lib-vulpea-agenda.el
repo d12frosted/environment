@@ -35,12 +35,15 @@
 ;;
 ;;; Code:
 
+(require 'init-elpa)
+(require 'lib-vulpea)
+
 (require 'org)
 (require 'org-habit)
+(require 'vulpea)
 
 
 
-;;;###autoload
 (defvar vulpea-agenda-hide-scheduled-and-waiting-next-tasks t
   "Non-nil means to hide scheduled and waiting tasks.
 
@@ -49,9 +52,45 @@ Affects the following commands:
 - `vulpea-agenda-cmd-focus'
 - `vulpea-agenda-cmd-waiting'")
 
-;;;###autoload
 (defvar vulpea-agenda-main-buffer-name "*agenda:main*"
   "Name of the main agenda buffer.")
+
+
+
+;;;###autoload
+(defun vulpea-agenda-main ()
+  "Show main `org-agenda' view."
+  (interactive)
+  (org-agenda nil " "))
+
+;;;###autoload
+(defun vulpea-agenda-person ()
+  "Show main `org-agenda' view."
+  (interactive)
+  (let* ((person (vulpea-select
+                  "Person"
+                  :filter-fn
+                  (lambda (note)
+                    (seq-contains-p (vulpea-note-tags note)
+                                    "people"))))
+         (names (seq-map
+                 #'car
+                 (org-roam-db-query
+                  [:select title
+                   :from titles
+                   :where (= file $s1)]
+                  (vulpea-note-path person))))
+         (tags (seq-map #'vulpea--title-to-tag names))
+         (query (string-join tags "|")))
+    (dlet ((org-agenda-overriding-arguments (list t query)))
+      (org-agenda nil "M"))))
+
+
+
+;;;###autoload
+(defun vulpea-agenda-files-update (&rest _)
+  "Update the value of `org-agenda-files'."
+  (setq org-agenda-files (vulpea-project-files)))
 
 
 ;; Commands

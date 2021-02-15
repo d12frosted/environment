@@ -257,7 +257,13 @@
 (use-package org-agenda
   :built-in t
   :defer t
+  :general
+  (leader-def
+    "oA" '(org-agenda :which-key "agenda dispatch")
+    "oa" '(vulpea-agenda-main :which-key "agenda")
+    "op" '(vulpea-agenda-person :which-key "person"))
   :config
+  (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
   (setq
    ;; speed up agenda a little bit
    org-agenda-dim-blocked-tasks nil

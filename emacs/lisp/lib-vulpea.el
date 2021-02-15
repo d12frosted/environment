@@ -41,6 +41,7 @@
 (require 'lib-directory)
 
 (require 'org-roam)
+(require 'org-roam-db)
 (require 'org-roam-dailies)
 
 
@@ -53,6 +54,8 @@
         (expand-file-name (file-name-as-directory vulpea-directory))
         (file-name-directory buffer-file-name))))
 
+
+
 (defun vulpea-project-p ()
   "Return non-nil if current buffer has any todo entry.
 
@@ -63,10 +66,20 @@ tasks."
    (lambda (type)
      (eq type 'todo))
    (org-element-map
-    (org-element-parse-buffer 'headline)
-    'headline
-    (lambda (h)
-      (org-element-property :todo-type h)))))
+       (org-element-parse-buffer 'headline)
+       'headline
+     (lambda (h)
+       (org-element-property :todo-type h)))))
+
+;;;###autoload
+(defun vulpea-project-files ()
+  "Return a list of note files containing Project tag."
+  (seq-map
+   #'car
+   (org-roam-db-query
+    [:select file
+     :from tags
+     :where (like tags (quote "%\"Project\"%"))])))
 
 
 

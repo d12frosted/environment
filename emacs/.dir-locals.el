@@ -4,6 +4,7 @@
                      (elisp-lint-indent-specs . ((vulpea-utils-with-file . 1)
                                                  (vulpea-utils-with-note . 1)
                                                  (org-roam-with-file . 2)
+                                                 (org-element-map . 2)
                                                  (leader-def . 0)
                                                  (general-create-definer . 1)
                                                  (eval-with-default-dir . 1)
