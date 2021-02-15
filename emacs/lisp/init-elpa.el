@@ -177,7 +177,6 @@ OLDFUN is called wall PACKAGE and rest of the ARGS."
   (add-to-list 'load-path quelpa-dir))
 
 (use-package quelpa-use-package
-  :defer t
   :init
   (setq-default
    quelpa-use-package-inhibit-loading-quelpa t))
