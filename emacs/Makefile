@@ -4,6 +4,8 @@ clean:
 
 .PHONY: bootstrap
 bootstrap:
+	eldev clean autoloads
+	eldev -C --unstable -a -dtT build :autoloads
 	eldev -C --unstable -a -dtT bootstrap
 
 .PHONY: upgrade
@@ -13,7 +15,6 @@ upgrade:
 .PHONY: compile
 compile:
 	eldev clean elc
-	eldev -C --unstable -a -dtT build :autoloads
 	eldev -C --unstable -a -dtT compile
 
 .PHONY: lint
