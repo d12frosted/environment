@@ -82,6 +82,8 @@ Affects the following commands:
                   (vulpea-note-path person))))
          (tags (seq-map #'vulpea--title-to-tag names))
          (query (string-join tags "|")))
+    ;; silence byte compiler on Emacs 27
+    (identity query)
     (dlet ((org-agenda-overriding-arguments (list t query)))
       (org-agenda nil "M"))))
 
