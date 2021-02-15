@@ -53,5 +53,9 @@
 (use-package form-feed
   :hook ((emacs-lisp-mode . form-feed-mode)))
 
+(use-package emacsql
+  :defer t
+  :hook ((emacs-lisp-mode . emacsql-fix-vector-indentation)))
+
 (provide 'init-elisp)
 ;;; init-elisp.el ends here
