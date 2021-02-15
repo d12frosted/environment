@@ -197,6 +197,18 @@ tasks."
 
 
 ;;;###autoload
+(defun vulpea-setup ()
+  "Setup current buffer for notes viewing and editing."
+  (when (and (not (active-minibuffer-window))
+             (vulpea-buffer-p))
+    (unless (bound-and-true-p org-roam-mode)
+      (org-roam-mode 1))
+    (setq-local org-preview-latex-image-directory
+                (expand-file-name "ltximg/" path-cache-dir))
+    (vulpea-ensure-filetag)
+    (vulpea-ensure-roam-tags)))
+
+;;;###autoload
 (defun vulpea-pre-save-hook ()
   "Do all the dirty stuff when file is being saved."
   (when (and (not (active-minibuffer-window))
