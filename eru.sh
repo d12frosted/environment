@@ -741,7 +741,7 @@ theme_guard "Emacs" "Setup Eldev" && {
 install_guard && {
   theme_guard "Emacs" "Setup Emacs configurations" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
-      make bootstrap compile lint test
+      make bootstrap compile lint
     }
   }
 }
@@ -749,7 +749,7 @@ install_guard && {
 upgrade_guard && {
   theme_guard "Emacs" "Upgrade Emacs packages" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
-      make upgrade compile lint test
+      make upgrade compile lint
     }
   }
 }
@@ -758,7 +758,6 @@ test_guard && {
   theme_guard "Emacs" "Test Emacs configurations" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
       make test
-      eldev exec t
     }
   }
 }
