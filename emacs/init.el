@@ -88,6 +88,7 @@
 
 ;; languages
 (require 'init-elisp)
+(require 'init-sh)
 (require 'init-json)
 (require 'init-yaml)
 
