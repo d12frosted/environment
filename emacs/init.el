@@ -83,6 +83,7 @@
 (require 'init-vulpea)
 (require 'init-vino)
 (require 'init-file-templates)
+(require 'init-dired)
 
 ;; languages
 (require 'init-elisp)
