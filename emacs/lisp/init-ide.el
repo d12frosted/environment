@@ -82,6 +82,13 @@
   :config
   (global-flycheck-mode +1))
 
+;; See lisp/dash-functional.el for more information. Here we simply
+;; make sure that our mock is loaded instead of upstream.
+(eval-when-compile
+  (let ((dir (expand-file-name "lisp" path-emacs-dir)))
+    (delete dir load-path)
+    (add-to-list 'load-path dir)))
+
 (use-package lsp-mode
   :hook
   (lsp-mode . lsp-lens-mode)
