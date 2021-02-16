@@ -130,12 +130,18 @@
 ;; In general, `package-lint' is useful. But package prefix naming
 ;; policy is not useful for personal configurations. So we chop
 ;; lib/init part from the package name.
+;;
+;; And `eval-after-load'. In general it's not a good idea to use it in
+;; packages, but these are configurations.
 (with-eval-after-load 'package-lint
   (defun package-lint--package-prefix-cleanup (f &rest args)
     "Call F with ARGS and cleanup it's result."
     (let ((r (apply f args)))
       (replace-regexp-in-string "\\(init\\|lib\\|config\\|compat\\)-?" "" r)))
-  (advice-add 'package-lint--get-package-prefix :around #'package-lint--package-prefix-cleanup))
+  (advice-add 'package-lint--get-package-prefix :around #'package-lint--package-prefix-cleanup)
+
+  (defun package-lint--check-eval-after-load ()
+    "Do nothing."))
 
 ;; Teach linter how to properly indent emacsql vectors.
 (eldev-add-extra-dependencies 'lint 'emacsql)

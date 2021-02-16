@@ -5,6 +5,7 @@
                                                  (vulpea-utils-with-note . 1)
                                                  (org-roam-with-file . 2)
                                                  (org-element-map . 2)
+                                                 (file-templates-set . defun)
                                                  (leader-def . 0)
                                                  (dlet . 1)
                                                  (general-create-definer . 1)

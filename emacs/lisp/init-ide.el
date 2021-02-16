@@ -114,7 +114,8 @@
   (lsp-mode . dap-ui-mode))
 
 (use-package eglot
-  :defer t)
+  :defer t
+  :defines (eglot-server-programs))
 
 (provide 'init-ide)
 ;;; init-ide.el ends here
