@@ -6,6 +6,7 @@
                                                  (org-roam-with-file . 2)
                                                  (org-element-map . 2)
                                                  (leader-def . 0)
+                                                 (dlet . 1)
                                                  (general-create-definer . 1)
                                                  (eval-with-default-dir . 1)
                                                  (use-package . 1)))))
