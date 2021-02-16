@@ -9,5 +9,6 @@
                                                  (dlet . 1)
                                                  (general-create-definer . 1)
                                                  (eval-with-default-dir . 1)
+                                                 (bui-define-interface . 2)
                                                  (use-package . 1)))))
  (org-mode . ((fill-column . 80))))
