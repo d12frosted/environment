@@ -84,6 +84,7 @@
 (require 'init-vino)
 (require 'init-file-templates)
 (require 'init-dired)
+(require 'init-spell)
 
 ;; languages
 (require 'init-elisp)
