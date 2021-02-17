@@ -210,7 +210,7 @@ tasks."
 
 
 ;;;###autoload
-(defun vulpea-setup ()
+(defun vulpea-setup (&optional _)
   "Setup current buffer for notes viewing and editing."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
