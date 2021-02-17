@@ -216,8 +216,6 @@ tasks."
              (vulpea-buffer-p))
     (unless (bound-and-true-p org-roam-mode)
       (org-roam-mode 1))
-    (setq-local org-preview-latex-image-directory
-                (expand-file-name "ltximg/" path-cache-dir))
     (vulpea-ensure-filetag)
     (vulpea-ensure-roam-tags)))
 

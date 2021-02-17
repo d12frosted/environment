@@ -335,5 +335,48 @@
 
 
 
+(use-package ox-latex
+  :built-in t
+  :defer t
+  :config
+  (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
+  (add-to-list 'org-latex-packages-alist '("" "color"))
+  (setq org-preview-latex-image-directory
+        (expand-file-name "ltximg/" path-cache-dir))
+  (setq org-format-latex-options
+        (list :foreground 'auto
+              :background 'auto
+              :scale 1.5
+              :html-foreground "Black"
+              :html-background "Transparent"
+              :html-scale 1.0
+              :matchers '("begin" "$1" "$" "$$" "\\(" "\\[")))
+  (setq org-latex-listings 'minted)
+  (setq org-latex-inputenc-alist '(("utf8" . "utf8x")))
+  (setq org-latex-pdf-process
+        (seq-map
+         (lambda (_)
+           (string-join '("pdflatex"
+                          "-shell-escape"
+                          "-interaction nonstopmode"
+                          "-output-directory %o %f")
+                        " "))
+         '(1 2 3))))
+
+(use-package ox-beamer
+  :built-in t
+  :defer t
+  :config
+  (add-to-list
+   'org-beamer-environments-extra
+   '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}")))
+
+(use-package ob-plantuml
+  :built-in t
+  :defer t
+  :defines (org-plantuml-jar-path))
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
