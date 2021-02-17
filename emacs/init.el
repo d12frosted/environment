@@ -88,6 +88,7 @@
 (require 'init-file-templates)
 (require 'init-dired)
 (require 'init-spell)
+(require 'init-pdf)
 
 ;; languages
 (require 'init-elisp)
