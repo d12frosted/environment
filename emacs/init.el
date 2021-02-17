@@ -100,7 +100,7 @@
 ;; variables into `custom-file'. And to be honest, I hate to allow
 ;; them every time I restart Emacs.
 (when (file-exists-p custom-file)
-  (load custom-file))
+  (load custom-file nil 'nomessage))
 
 (provide 'init)
 ;;; init.el ends here
