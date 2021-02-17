@@ -94,6 +94,22 @@
                 '(special-mode comint-mode term-mode eshell-mode))))
 
 
+;; Backup files
+
+(setq
+ ;; put all backup files somewhere in `path-cache-dir'
+ backup-directory-alist
+ (list (cons "." (expand-file-name "backup-files"
+                                   path-cache-dir)))
+ ;; silently delete old versions
+ delete-old-versions t
+ ;; setup amount of new/old versions
+ kept-new-versions 2
+ kept-old-versions 2
+ ;; use version numbers for backup
+ version-control t)
+
+
 
 ;; TODO: bind to a key
 (use-package unfill
