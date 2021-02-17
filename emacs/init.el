@@ -89,6 +89,7 @@
 (require 'init-dired)
 (require 'init-spell)
 (require 'init-pdf)
+(require 'init-telega)
 
 ;; languages
 (require 'init-elisp)
