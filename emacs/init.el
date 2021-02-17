@@ -93,5 +93,11 @@
 (require 'init-json)
 (require 'init-yaml)
 
+;; I don't use `customize' interface, but .dir-locals.el put 'safe'
+;; variables into `custom-file'. And to be honest, I hate to allow
+;; them every time I restart Emacs.
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 (provide 'init)
 ;;; init.el ends here
