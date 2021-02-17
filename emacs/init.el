@@ -59,8 +59,11 @@
 ;; Setup `custom-file`.
 (setq custom-file (concat path-local-dir "custom.el"))
 
-;; load autoloads file if it was generated
-(load path-autoloads-file 'no-error)
+;; load autoloads file
+(unless (file-exists-p path-autoloads-file)
+  (error "Autoloads file doesn't exist, please run '%s'"
+         "eru install emacs"))
+(load path-autoloads-file nil 'nomessage)
 
 ;; popular packages
 (use-package s)
