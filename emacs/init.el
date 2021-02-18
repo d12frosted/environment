@@ -72,11 +72,11 @@
 
 ;; core
 (require 'init-env)
+(require 'init-kbd)
 (require 'init-editor)
 (require 'init-ui)
 (require 'init-buffer)
 (require 'init-window)
-(require 'init-kbd)
 
 ;; utilities
 (require 'init-selection)

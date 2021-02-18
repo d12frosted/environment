@@ -35,6 +35,7 @@
 ;;
 ;;; Code:
 
+(require 'init-elpa)
 (require 'init-env)
 
 (use-package general
