@@ -50,8 +50,12 @@
           (buf (pdf-tools-install 'no-query)))
       (when (bufferp buf)
         (add-hook 'compilation-finish-functions
-                  (lambda (_buffer _status)
-                    (setq wait-p nil))
+                  (lambda (buffer _status)
+                    (setq wait-p nil)
+                    (message
+                     (with-current-buffer buffer
+                       (buffer-substring (point-min)
+                                         (point-max)))))
                   nil t)
         (while wait-p
           (message "building pdf-tools...")
