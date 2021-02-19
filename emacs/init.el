@@ -67,7 +67,7 @@
 
 ;; popular packages
 (use-package s)
-(use-package dash)
+(use-package dash :min-version "2.18.0")
 (use-package async)
 
 ;; core
