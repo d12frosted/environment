@@ -46,20 +46,22 @@
   :init
   (setq-default pdf-view-display-size 'fit-page)
   (when elpa-bootstrap-p
-    (let ((wait-p t)
-          (buf (pdf-tools-install 'no-query)))
-      (when (bufferp buf)
-        (add-hook 'compilation-finish-functions
-                  (lambda (buffer _status)
-                    (setq wait-p nil)
-                    (message
-                     (with-current-buffer buffer
-                       (buffer-substring (point-min)
-                                         (point-max)))))
-                  nil t)
-        (while wait-p
-          (message "building pdf-tools...")
-          (sleep-for 1)))))
+    (require 'pdf-tools)
+    (unless (file-exists-p pdf-info-epdfinfo-program)
+      (let ((wait-p t)
+            (buf (pdf-tools-install 'no-query)))
+        (when (bufferp buf)
+          (add-hook 'compilation-finish-functions
+                    (lambda (buffer _status)
+                      (setq wait-p nil)
+                      (message
+                       (with-current-buffer buffer
+                         (buffer-substring (point-min)
+                                           (point-max)))))
+                    nil t)
+          (while wait-p
+            (message "building pdf-tools...")
+            (sleep-for 1))))))
   :config
   (add-hook 'pdf-view-mode-hook #'pdf-setup-view-mode))
 
