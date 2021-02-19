@@ -97,6 +97,7 @@
 (require 'init-sh)
 (require 'init-json)
 (require 'init-yaml)
+(require 'init-js)
 
 ;; I don't use `customize' interface, but .dir-locals.el put 'safe'
 ;; variables into `custom-file'. And to be honest, I hate to allow
