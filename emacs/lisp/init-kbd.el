@@ -38,9 +38,7 @@
 (require 'init-elpa)
 (require 'init-env)
 
-(use-package general
-  :commands (general-define-key
-             general-create-definer))
+(use-package general)
 
 (general-create-definer leader-def
   :states nil

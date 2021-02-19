@@ -117,8 +117,8 @@
   :commands (all-the-icons-material))
 
 (use-package minions
-  :commands (minions-mode)
-  :init (minions-mode 1))
+  :init
+  (minions-mode 1))
 
 (use-package mode-line-debug
   :commands (mode-line-debug-mode)
