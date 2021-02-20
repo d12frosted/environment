@@ -111,9 +111,10 @@
 
 
 
-;; TODO: bind to a key
 (use-package unfill
-  :defer t)
+  :defer t
+  :bind
+  (("M-q" . #'unfill-toggle)))
 
 
 
