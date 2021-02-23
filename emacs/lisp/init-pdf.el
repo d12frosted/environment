@@ -39,8 +39,6 @@
 
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
-  :defines (pdf-annot-list-document-buffer
-            pdf-annot-list-buffer)
   :commands (pdf-info-close
              pdf-tools-install)
   :init
@@ -72,9 +70,11 @@
 
 (defun pdf-cleanup-windows ()
   "Kill left-over annotation buffers on document death."
-  (when (buffer-live-p pdf-annot-list-document-buffer)
+  (when (and (boundp 'pdf-annot-list-document-buffer)
+             (buffer-live-p pdf-annot-list-document-buffer))
     (pdf-info-close pdf-annot-list-document-buffer))
-  (when (buffer-live-p pdf-annot-list-buffer)
+  (when (and (boundp 'pdf-annot-list-buffer)
+             (buffer-live-p pdf-annot-list-buffer))
     (kill-buffer pdf-annot-list-buffer))
   (let ((contents-buffer (get-buffer "*Contents*")))
     (when (and contents-buffer (buffer-live-p contents-buffer))
