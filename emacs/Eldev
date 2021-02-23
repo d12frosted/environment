@@ -13,9 +13,13 @@
 
 
 
+;; There are dependencies for linting phase, they should be installed
+;; by Eldev from MELPA and GNU ELPA (latter is enabled by default).
 (eldev-use-package-archive 'melpa)
 
 
+;; Bootstrap flow. Basically set `elpa-bootstrap-p' to `t' and load
+;; init.el, which forces straight.el to install all dependencies.
 
 (defun elpa-bootstrap ()
   "Bootstrap personal configurations."
@@ -26,21 +30,24 @@
   (require 'init-path)
   (load (expand-file-name "init.el" path-emacs-dir)))
 
+;; We want to run this before any build command. This is also needed
+;; for `flyspell-eldev` to be aware of packages installed via
+;; straight.el.
 (add-hook 'eldev-build-system-hook #'elpa-bootstrap)
 
 
+;; Upgrade flow. Hooks into Eldev upgrade flow.
 
 (defun elpa-upgrade ()
   "Bootstrap personal configurations."
   (elpa-bootstrap)
-  ;; (straight--map-existing-repos-interactively
-  ;;  (lambda (package)
-  ;;    (elpa-fetch-package package nil 3)))
-  ;; (straight-merge-all)
-  ;; (delete-file (concat path-packages-dir "straight/build-cache.el"))
-  ;; (delete-directory (concat path-packages-dir "straight/build") 'recursive)
-  ;; (straight-check-all)
-  )
+  (straight--map-existing-repos-interactively
+   (lambda (package)
+     (elpa-fetch-package package nil 3)))
+  (straight-merge-all)
+  (delete-file (concat path-packages-dir "straight/build-cache.el"))
+  (delete-directory (concat path-packages-dir "straight/build") 'recursive)
+  (straight-check-all))
 
 (defun elpa-fetch-package (package &optional from-upstream n)
   "Try to fetch a PACKAGE from the primary remote.
@@ -111,6 +118,7 @@ N is for retries."
     (expand-file-name "lisp/init-autoloads.el" eldev-project-dir))))
 
 
+;; Linting configurations.
 
 ;; Tell checkdoc not to demand two spaces after a period.
 (setq sentence-end-double-space nil)

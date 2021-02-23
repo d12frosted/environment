@@ -1,3 +1,6 @@
+:PROPERTIES:
+:ID:                     3b821421-56ce-4e57-b0a1-96402a58292c
+:END:
 #+begin_html
 <p align="center">
   <img width="256px" src="images/d12frosted.png" alt="Banner">
@@ -7,12 +10,18 @@
   <a href="https://github.com/d12frosted/environment/actions?query=workflow%3ACI">
     <img src="https://github.com/d12frosted/environment/workflows/CI/badge.svg" alt="CI Status Badge">
   </a>
+  <a href="https://github.com/d12frosted/environment/actions?query=workflow%3AEmacs">
+    <img src="https://github.com/d12frosted/environment/workflows/Emacs/badge.svg" alt="Emacs Status Badge">
+  </a>
 </p>
 #+end_html
 
 This repository contains configurations for applications and tools I am using.
 
 ** What's inside?
+:PROPERTIES:
+:ID:                     c108c207-8c20-443e-bff8-dfc122e672b6
+:END:
 
 All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for
 sure). Configurations are divided into domains like =emacs=, =git=, =haskell=,
@@ -41,6 +50,9 @@ script that creates the universe. Supported platforms are [[https://www.apple.co
 #+END_HTML
 
 ** Eru domain
+:PROPERTIES:
+:ID:                     480c4e71-7304-4f15-aee7-ee823e5feb19
+:END:
 
 As you might know, Eru is the supreme deity of Arda. The first things that Eru
 created where the Ainur. He then bade the Ainur to sing to him. Each Ainu had a
@@ -101,6 +113,9 @@ only specified are sang.
 You can read a little bit more about Eru in a [[https://d12frosted.io/posts/2018-11-04-revisiting-eru.html][Revisiting Eru]] blog post.
 
 ** Can I use your files?
+:PROPERTIES:
+:ID:                     5a965bd5-6306-41df-b987-60ee0a151c0a
+:END:
 
 Sure, just take whatever you find fancy. Though keep in mind few things. These
 configurations are *personal* configurations, so they are based on my needs and
@@ -112,6 +127,9 @@ questions or problems. Pull requests and suggestions are warmly welcome!
 If you do use any parts of my configurations, do it only on your own risk. 
 
 ** Acknowledgements
+:PROPERTIES:
+:ID:                     db6ecccb-962c-4d18-bbd3-70631bbf6c68
+:END:
 
 These configurations would not have been possible without the work of and the
 inspiration from following people.

@@ -1,0 +1,171 @@
+:PROPERTIES:
+:ID:                     ea43e2a0-19b7-4959-bb3e-8de7b3e9d671
+:END:
+
+#+begin_html
+<h1 align="center">d12frosted environment / Emacs</h1>
+<p align="center">
+  <a href="https://github.com/d12frosted/environment/actions?query=workflow%3AEmacs">
+    <img src="https://github.com/d12frosted/environment/workflows/Emacs/badge.svg" alt="Emacs Status Badge">
+  </a>
+</p>
+#+end_html
+
+Personal frustration and the biggest time waster in my life (comparable to video
+games). Please, turn away and retain your sanity. Otherwise you might end up
+tracking all your tasks, notes, thoughts and wine in Emacs.
+
+Aside from configuring Emacs for my personal needs, this project has several
+additional design goals in mind.
+
+1. Byte compilation must succeed without any warnings.
+2. Linter must be happy.
+3. Loading must be fast (less than a second).
+4. Ability to write applications that could be separate packages, but are too
+   personal or too experimental to be worth the effort.
+6. Ability to write and run tests.
+
+In order to achieve these goals, the following approach is used.
+
+1. All lisp files are divided into 3 categories.
+   1. =init= files that configure built-in and external packages via
+      =use-package= interface. They must not =require= (e.g. eagerly load) any
+      packages that should be loaded lazily. All =init= files are required by
+      main =init.el=.
+   2. =config= files that contain configuration variables or constants. Safe to
+      =require= from any place as they do not contribute much into loading time.
+   3. =lib= files that should not be required directly from other files and
+      should be loaded via =autoloads= file generated during build process.
+      These files are fine to =require= any packages they need to make byte
+      compiler happy.
+2. All the build process, consisting of bootstrapping, =autoloads= generation,
+   byte complication, linting, testing and upgrading is managed by [[https://github.com/doublep/eldev/][Eldev]]. See
+   [[Eldev][Eldev]] file details.
+3. Life cycle of configurations are install, upgrade and test. They are executed
+   using [[../eru.sh][eru]] script. Read further for details.
+4. [[https://github.com/raxod502/straight.el/][straight.el]] is used as a package manager instead of =package.el= or any other
+   system. While being pretty complex, in my opinion it is the most stable and
+   reliable package manager when it comes to installing and upgrading packages.
+5. For better =flycheck= experience there is [[https://github.com/flycheck/flycheck-eldev][flycheck-eldev]].
+6. [[https://github.com/gonewest818/elisp-lint][elisp-lint]] is used for linting, some custom rules applied (for
+   =package-lint=).
+7. Testing framework of choice is [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]].
+
+* How to run
+:PROPERTIES:
+:ID:                     d7eece6c-f4e2-4e9f-91c2-8bfbde71b9b6
+:END:
+
+** Requirements
+:PROPERTIES:
+:ID:                     2c6869c0-18e7-4b03-8b1b-936884e6f9a3
+:END:
+
+All requirements are installed by =eru=. But the full (and dramatically huge)
+list of dependencies is here:
+
+- Emacs 27 or higher - installed by =eru install packages=.
+- [[https://github.com/doublep/eldev][Eldev]] - installed by =eru install emacs=.
+
+** Install Emacs
+:PROPERTIES:
+:ID:                     f4a40168-971c-4952-9a13-25c249f191b6
+:END:
+
+For OS X users I recommend to install [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]] (who would guess?) - GNU Emacs
+with some sane defaults, available via [[https://brew.sh][brew]] package manager.
+
+#+BEGIN_SRC
+$ brew tap d12frosted/emacs-plus
+$ brew install emacs-plus --HEAD
+#+END_SRC
+
+You are free™ to use whatever Emacs variant you wish to use, though I don't give
+any guarantees that it will work with these configurations. In case you wish to
+investigate more on this topic, please refer to [[http://emacs.stackexchange.com/a/274/5161][this answer]].
+
+** Install configurations
+:PROPERTIES:
+:ID:                     6dd80d47-0c82-494a-92e3-14f6b15f8133
+:END:
+
+*** Using =eru=
+:PROPERTIES:
+:ID:                     e6695e2e-c47e-4e4f-8064-3f36ddc6cca0
+:END:
+
+#+begin_src bash
+$ eru install emacs
+#+end_src
+
+*** Manual
+:PROPERTIES:
+:ID:                     92685c2c-099b-4d03-aabb-458ad6041f4a
+:END:
+
+Install [[https://github.com/doublep/eldev][Eldev]].
+
+#+begin_src bash
+  $ eldev_bin=$HOME/.local/bin/eldev
+  $ curl -fsSL https://raw.github.com/doublep/eldev/master/bin/eldev > "$eldev_bin"
+  $ chmod a+x "$eldev_bin"
+#+end_src
+
+Bootstrap Emacs configurations, compile them and lint.
+
+#+begin_src bash
+  $ cd "$XDG_CONFIG_HOME/emacs" && make bootstrap compile lint
+#+end_src
+
+** Upgrade dependencies
+:PROPERTIES:
+:ID:                     edfafbfb-2466-4162-a060-e1cfe49c01dd
+:END:
+
+*** Using =eru=
+:PROPERTIES:
+:ID:                     2e3561bd-5c86-49e5-9362-60b35baf4e38
+:END:
+
+#+begin_src bash
+  $ eru upgrade emacs
+#+end_src
+
+*** Manual
+:PROPERTIES:
+:ID:                     5324beaf-a155-40ec-b905-800331ac0be9
+:END:
+
+#+begin_src bash
+  $ cd "$XDG_CONFIG_HOME/emacs" && make upgrade compile lint
+#+end_src
+
+** Run tests
+:PROPERTIES:
+:ID:                     598f8169-bab4-418e-8597-9eed21cd964c
+:END:
+
+*** Using =eru=
+:PROPERTIES:
+:ID:                     8f02e45c-4718-4c14-94fd-6f5081763ce2
+:END:
+
+#+begin_src bash
+  $ eru test emacs
+#+end_src
+
+*** Manual
+:PROPERTIES:
+:ID:                     7796b84e-2977-4298-a9c8-eb9271db98b6
+:END:
+
+#+begin_src bash
+  $ cd "$XDG_CONFIG_HOME/emacs" && make test
+#+end_src
+
+* Interesting modules
+:PROPERTIES:
+:ID:                     6bbb0b6b-dee7-4e9d-a334-df636e4105fb
+:END:
+
+/Section is under construction. Please return in -2147483648 seconds./
