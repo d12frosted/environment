@@ -154,6 +154,8 @@ gpg-connect-agent updatestartuptty /bye >/dev/null
 if test -f $HOME/.nix-profile/etc/profile.d/nix.sh
   bass source $HOME/.nix-profile/etc/profile.d/nix.sh
 end
+# multi-user installation
+__append_to_path /nix/var/nix/profiles/default/bin
 
 # nvm
 set -x NVM_DIR "$XDG_CACHE_HOME/nvm"
