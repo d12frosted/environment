@@ -36,6 +36,7 @@
 ;;; Code:
 
 (require 'init-elpa)
+(require 'init-env)
 
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
@@ -43,7 +44,8 @@
              pdf-tools-install)
   :init
   (setq-default pdf-view-display-size 'fit-page)
-  (when elpa-bootstrap-p
+  (when (and elpa-bootstrap-p
+             (not env-sys-mac-p))
     (require 'pdf-tools)
     (unless (file-exists-p pdf-info-epdfinfo-program)
       (let ((wait-p t)

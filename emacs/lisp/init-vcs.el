@@ -116,7 +116,7 @@
     nil nil 'bottom))
 
 (use-package ediff-wind
-  :built-in t
+  :straight nil
   :defer t
   :init
   (setq ediff-window-setup-function 'ediff-setup-windows-plain

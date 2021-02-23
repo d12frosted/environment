@@ -51,140 +51,48 @@
        path-packages-dir))
 
 
+;; bootstrap straight.el
 
-;;; Standard package repositories
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+(setq-default
+ straight-repository-branch "develop"
+ straight-check-for-modifications nil
+ straight-use-package-by-default t
+ straight-base-dir path-packages-dir)
 
-
-;;; On-demand installation of packages
-
-(defun elpa-require-package (package
-                             &optional
-                             min-version
-                             no-refresh)
-  "Install given PACKAGE, optionally requiring MIN-VERSION.
-
-If NO-REFRESH is non-nil, the available package lists will not be
-re-downloaded in order to locate PACKAGE."
-  (when elpa-bootstrap-p
-    (message (format "elpa-require-package %s%s"
-                     package
-                     (if min-version
-                         (concat " " min-version)
-                       ""))))
-  (when (stringp min-version)
-    (setq min-version (version-to-list min-version)))
-  (or (package-installed-p package min-version)
-      (let* ((known (cdr (assoc package package-archive-contents)))
-             (versions (mapcar #'package-desc-version known)))
-        (if (cl-some (lambda (v) (version-list-<= min-version v))
-                     versions)
-            (if min-version
-                (package-install-from-archive
-                 (cadr (assoc package package-archive-contents)))
-              (package-install package))
-          (if no-refresh
-              (error "No version of %s >= %S is available"
-                     package
-                     min-version)
-            (package-refresh-contents)
-            (elpa-require-package package min-version t))))))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el"
+                         path-packages-dir))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         (concat "https://raw.githubusercontent.com/"
+                 "raxod502/straight.el/"
+                 "develop/install.el")
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
 
-;;; Fire up package.el
+;; use-package
 
-(setq package-enable-at-startup nil)
-(package-initialize)
-
-
-;; package.el updates the saved version of package-selected-packages
-;; correctly only after custom-file has been loaded, which is a bug.
-;; We work around this by adding the required packages to
-;; package-selected-packages after startup is complete.
-
-(defvar elpa-required-packages nil)
-
-(defun elpa-note-selected (oldfun package &rest args)
-  "Note if OLDFUN reports PACKAGE was successfully installed.
-
-The package name is noted by adding it to
-`elpa-required-packages'. This function is used as an advice for
-`elpa-require-package', to which ARGS are passed."
-  (let ((available (apply oldfun package args)))
-    (prog1
-        available
-      (when available
-        (add-to-list 'elpa-required-packages package)))))
-
-(advice-add 'elpa-require-package :around 'elpa-note-selected)
-
-(when (fboundp 'package--save-selected-packages)
-  (elpa-require-package 'seq)
-  (add-hook 'after-init-hook
-            (lambda ()
-              (package--save-selected-packages
-               (seq-uniq (append elpa-required-packages
-                                 package-selected-packages))))))
+(setq-default
+ use-package-enable-imenu-support t)
+(straight-use-package 'use-package)
 
 
 
-(let ((package-check-signature nil))
-  (elpa-require-package 'gnu-elpa-keyring-update))
+(use-package el-patch
+  :straight t)
 
 
+;; popular packages
 
-(elpa-require-package 'use-package)
-
-(defun elpa-use-package-install (oldfun package &rest args)
-  "Automatically install packages configured via `use-package'.
-
-OLDFUN is called wall PACKAGE and rest of the ARGS."
-  (when elpa-bootstrap-p
-    (message "using %s package" package))
-
-  ;; install package
-  (unless (or (plist-get args :quelpa)
-              (plist-get args :built-in)
-              (plist-get args :ensure))
-    (elpa-require-package package (plist-get args :min-version)))
-
-  ;; cleanup custom properties
-  (setq args (plist-delete args :built-in))
-  (setq args (plist-delete args :min-version))
-
-  ;; return control to `use-package'
-  (when elpa-bootstrap-p
-    (message "return control flow to use-package for %s" package))
-  (apply oldfun package args))
-
-(advice-add 'use-package :around #'elpa-use-package-install)
-
-
-
-(setq-default quelpa-dir
-              (expand-file-name
-               "quelpa/"
-               path-packages-dir))
-
-(use-package quelpa
-  :defines (quelpa-dir)
-  :init
-  (setq-default
-   quelpa-checkout-melpa-p elpa-bootstrap-p
-   quelpa-update-melpa-p elpa-bootstrap-p
-   quelpa-autoremove-p nil)
-  (add-to-list 'load-path quelpa-dir))
-
-(use-package quelpa-use-package
-  :init
-  (setq-default
-   quelpa-use-package-inhibit-loading-quelpa t))
-
-
-
-(use-package auto-package-update
-  :defer t)
+(use-package s)
+(use-package dash)
+(use-package async)
 
 
 

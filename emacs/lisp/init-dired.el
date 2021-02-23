@@ -40,7 +40,7 @@
 
 
 (use-package dired
-  :built-in t
+  :straight nil
   :init
   (setq
    dired-listing-switches "-alh"

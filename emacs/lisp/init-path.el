@@ -86,7 +86,7 @@ Use this for files that change often, like cache files.")
                             emacs-major-version
                             emacs-minor-version)
                     path-local-dir)
-  "Where package.el and quelpa plugins are stored.")
+  "Where packages are stored.")
 
 (provide 'init-path)
 ;;; init-path.el ends here

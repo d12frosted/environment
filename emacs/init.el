@@ -60,15 +60,11 @@
 (setq custom-file (concat path-local-dir "custom.el"))
 
 ;; load autoloads file
-(unless (file-exists-p path-autoloads-file)
-  (error "Autoloads file doesn't exist, please run '%s'"
-         "eru install emacs"))
-(load path-autoloads-file nil 'nomessage)
-
-;; popular packages
-(use-package s)
-(use-package dash :min-version "2.18.0")
-(use-package async)
+(unless elpa-bootstrap-p
+  (unless (file-exists-p path-autoloads-file)
+    (error "Autoloads file doesn't exist, please run '%s'"
+           "eru install emacs"))
+  (load path-autoloads-file nil 'nomessage))
 
 ;; core
 (require 'init-env)

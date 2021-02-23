@@ -58,7 +58,7 @@
 
 ;; for some reason only this removes the clutter with xmonad
 (use-package scroll-bar
-  :built-in t
+  :straight nil
   :commands (scroll-bar-mode)
   :init
   (scroll-bar-mode -1))
@@ -127,9 +127,10 @@
 ;; Install it from sources, because ELPA version has invalid
 ;; signature.
 (use-package spinner
-  :quelpa (spinner
-           :fetcher github
-           :repo "Malabarba/spinner.el"))
+  :straight (spinner
+             :type git
+             :host github
+             :repo "Malabarba/spinner.el"))
 
 
 
@@ -137,9 +138,10 @@
   :defer t)
 
 (use-package lister
-  :quelpa (lister
-           :fetcher github
-           :repo "publicimageltd/lister")
+  :straight (lister
+             :type git
+             :host github
+             :repo "publicimageltd/lister")
   :defer t)
 
 

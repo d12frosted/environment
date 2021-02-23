@@ -6,11 +6,10 @@ clean:
 bootstrap:
 	eldev clean autoloads
 	eldev -C --unstable -a -dtT build :autoloads
-	eldev -C --unstable -a -dtT bootstrap
 
 .PHONY: upgrade
 upgrade:
-	eldev -C --unstable -a -dtT bootstrap --upgrade
+	eldev -C --unstable -a -dtT upgrade
 
 .PHONY: compile
 compile:

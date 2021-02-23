@@ -81,9 +81,10 @@
  word-wrap t)
 
 (use-package ws-butler
-  :quelpa (ws-butler
-           :fetcher github
-           :repo "hlissner/ws-butler")
+  :straight (ws-butler
+             :type git
+             :host github
+             :repo "hlissner/ws-butler")
   :diminish
   :commands (ws-butler-global-mode)
   :init
@@ -119,9 +120,10 @@
 
 
 (use-package ukrainian-input-method
-  :quelpa (ukrainian-input-method
-           :fetcher github
-           :repo "d12frosted/emacs-ukrainian-input-method"))
+  :straight (ukrainian-input-method
+             :type git
+             :host github
+             :repo "d12frosted/emacs-ukrainian-input-method"))
 
 
 
@@ -135,9 +137,10 @@
 
 
 (use-package fancy-yank
-  :quelpa (fancy-yank
-           :fetcher github
-           :repo "d12frosted/fancy-yank")
+  :straight (fancy-yank
+             :type git
+             :host github
+             :repo "d12frosted/fancy-yank")
   :commands (fancy-yank)
   :init
   (setq-default

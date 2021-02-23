@@ -44,7 +44,7 @@
               ("C-a" . beginning-of-line)))
 
 (use-package eldoc
-  :built-in t
+  :straight nil
   :diminish eldoc-mode)
 
 (use-package flycheck-eldev

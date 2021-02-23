@@ -47,8 +47,9 @@
   :if (and env-sys-mac-p env-graphic-p)
   :commands (exec-path-from-shell-initialize)
   :init
-  (setq exec-path-from-shell-shell-name "/usr/local/bin/fish"
-        exec-path-from-shell-debug nil)
+  (setq-default
+   exec-path-from-shell-shell-name "/usr/local/bin/fish"
+   exec-path-from-shell-debug nil)
   (exec-path-from-shell-initialize))
 
 (provide 'init-env)

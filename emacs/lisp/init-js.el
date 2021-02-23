@@ -41,7 +41,7 @@
 (require 'init-ide)
 
 (use-package js
-  :built-in t
+  :straight nil
   :defer t
   :init
   (setq js-indent-level 2))

@@ -45,9 +45,10 @@
 
 
 (use-package vulpea
-  :quelpa (vulpea
-           :fetcher github
-           :repo "d12frosted/vulpea")
+  :straight (vulpea
+             :type git
+             :host github
+             :repo "d12frosted/vulpea")
   :defer t
   :hook ((before-save . vulpea-pre-save-hook))
   :init
@@ -71,7 +72,6 @@
 
 
 (use-package org
-  :min-version "9.4.4"
   :hook ((org-mode . auto-fill-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
@@ -154,7 +154,7 @@
 
 
 (use-package org-clock
-  :built-in t
+  :straight nil
   :defer t
   :commands (org-clock-save)
   :init
@@ -172,7 +172,7 @@
 
 
 (use-package org-refile
-  :built-in t
+  :straight nil
   :defer t
   :init
   (setq
@@ -186,7 +186,7 @@
 
 
 (use-package org-indent
-  :built-in t
+  :straight nil
   :defer t
   :diminish org-indent-mode
   :hook ((org-mode . org-indent-mode)))
@@ -194,7 +194,7 @@
 
 
 (use-package org-id
-  :built-in t
+  :straight nil
   :defer t
   :hook ((before-save . vulpea-id-auto-assign)
          (org-capture-prepare-finalize . org-id-get-create))
@@ -214,7 +214,7 @@
 
 
 (use-package org-capture
-  :built-in t
+  :straight nil
   :defer t
   :general
   (leader-def
@@ -231,7 +231,7 @@
 
 
 (use-package org-attach
-  :built-in t
+  :straight nil
   :defer t
   :config
   (setq-default
@@ -243,7 +243,7 @@
 
 
 (use-package org-archive
-  :built-in t
+  :straight nil
   :defer t
   :init
   (setq-default
@@ -255,7 +255,7 @@
 
 
 (use-package org-agenda
-  :built-in t
+  :straight nil
   :defer t
   :general
   (leader-def
@@ -297,9 +297,10 @@
 
 
 (use-package org-roam
-  :quelpa (org-roam
-           :fetcher github
-           :repo "org-roam/org-roam")
+  :straight (org-roam
+             :type git
+             :host github
+             :repo "org-roam/org-roam")
   :defer t
   :init
   (setq
@@ -336,7 +337,7 @@
 
 
 (use-package ox-latex
-  :built-in t
+  :straight nil
   :defer t
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
@@ -364,7 +365,7 @@
          '(1 2 3))))
 
 (use-package ox-beamer
-  :built-in t
+  :straight nil
   :defer t
   :config
   (add-to-list
@@ -372,7 +373,7 @@
    '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}")))
 
 (use-package ob-plantuml
-  :built-in t
+  :straight nil
   :defer t
   :defines (org-plantuml-jar-path))
 

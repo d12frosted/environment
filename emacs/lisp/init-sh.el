@@ -46,7 +46,7 @@
   "A list of common commands to be fontified in `sh-mode'.")
 
 (use-package sh-script
-  :built-in t
+  :straight nil
   :commands (sh-shell-process)
   :config
   ;; setup indentation

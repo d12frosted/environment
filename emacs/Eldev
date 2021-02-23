@@ -9,53 +9,56 @@
 ;; path, so we have to put other Emacs Lisp files in directory. Help
 ;; Eldev commands to locate them.
 (eldev-add-loading-roots 'build "lisp")
-(eldev-add-loading-roots 'lint "lisp")
+(eldev-add-loading-roots 'bootstrap "lisp")
 
 
 
-;; Use MELPA unstable do download development dependencies.
-(eldev-use-package-archive 'melpa-unstable)
-(eldev-use-package-archive 'gnu)
-
-;; These dependencies are needed for `init-elpa' module to work
-;; properly when using compile command.
-(eldev-add-extra-dependencies 'build 'use-package)
-(eldev-add-extra-dependencies 'build 'quelpa)
-(eldev-add-extra-dependencies 'build 'quelpa-use-package)
-(eldev-add-extra-dependencies 'build 'auto-package-update)
-(eldev-add-extra-dependencies 'build 'gnu-elpa-keyring-update)
+(eldev-use-package-archive 'melpa)
 
 
 
-(defvar elpa-upgrade-p nil)
-
-(eldev-defoption elpa-bootstrap-upgrade-option ()
-  "Upgrade all dependencies."
-  :options (--upgrade)
-  :for-command (bootstrap)
-  (setf elpa-upgrade-p t))
-
-(eldev-defcommand elpa-bootstrap (&rest parameters)
-  "Install or upgrade project dependencies."
+(defun elpa-bootstrap ()
+  "Bootstrap personal configurations."
   (setq-default
    elpa-bootstrap-p t
    load-prefer-newer t)
+  (eldev--inject-loading-roots 'bootstrap)
+  (require 'init-path)
+  (load (expand-file-name "init.el" path-emacs-dir)))
 
-  (when (getenv "CI")
-    (setq-default package-check-signature nil))
+(add-hook 'eldev-build-system-hook #'elpa-bootstrap)
 
-  ;; Since we might be running in CI or other environments, stick to
-  ;; XDG_CONFIG_HOME value if possible.
-  (load (expand-file-name
-         "init.el"
-         (if-let ((xdg (getenv "XDG_CONFIG_HOME")))
-             (expand-file-name "emacs/" xdg)
-           user-emacs-directory)))
+
 
-  (when elpa-upgrade-p
-    (eldev-load-project-dependencies)
-    (auto-package-update-now)
-    (quelpa-upgrade-all)))
+(defun elpa-upgrade ()
+  "Bootstrap personal configurations."
+  (elpa-bootstrap)
+  ;; (straight--map-existing-repos-interactively
+  ;;  (lambda (package)
+  ;;    (elpa-fetch-package package nil 3)))
+  ;; (straight-merge-all)
+  ;; (delete-file (concat path-packages-dir "straight/build-cache.el"))
+  ;; (delete-directory (concat path-packages-dir "straight/build") 'recursive)
+  ;; (straight-check-all)
+  )
+
+(defun elpa-fetch-package (package &optional from-upstream n)
+  "Try to fetch a PACKAGE from the primary remote.
+PACKAGE is a string naming a package. Interactively, select
+PACKAGE from the known packages in the current Emacs session
+using `completing-read'. With prefix argument FROM-UPSTREAM,
+fetch not just from primary remote but also from upstream (for
+forked packages).
+
+N is for retries."
+  (condition-case err
+      (straight-fetch-package package from-upstream)
+    (error
+     (if (> n 0)
+         (elpa-fetch-package package from-upstream (- n 1))
+       (signal (car err) (cdr err))))))
+
+(add-hook 'eldev-upgrade-hook #'elpa-upgrade)
 
 
 
@@ -100,9 +103,9 @@
 
 
 
-;; Always   load autoloads file.
+;; Always load autoloads file.
 (add-hook
- 'eldev-compile-hook
+ 'eldev-build-system-hook
  (lambda ()
    (eldev--load-autoloads-file
     (expand-file-name "lisp/init-autoloads.el" eldev-project-dir))))

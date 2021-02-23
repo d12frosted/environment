@@ -38,9 +38,10 @@
 (require 'init-elpa)
 
 (use-package vino
-  :quelpa (vino
-           :fetcher github
-           :repo "d12frosted/vino")
+  :straight (vino
+             :type git
+             :host github
+             :repo "d12frosted/vino")
   :defer t
   :general
   (leader-def
