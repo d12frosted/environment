@@ -36,6 +36,7 @@
 ;;; Code:
 
 (require 'init-elpa)
+(require 'init-kbd)
 (require 'init-selection)
 
 (use-package ispell
@@ -69,8 +70,11 @@
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
 (use-package flyspell-correct
-  :if (eq selection-system 'selectrum)
-  :defer t)
+  :defer t
+  :general
+  (leader-def
+    "[s" '(flyspell-correct-wrapper
+           :which-key "Spelling correction")))
 
 (provide 'init-spell)
 ;;; init-spell.el ends here
