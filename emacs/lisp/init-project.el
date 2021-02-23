@@ -49,6 +49,11 @@
   "Return non-nil when located in a project."
   (project-current))
 
+;; Emacs 27
+(unless (fboundp 'project-root)
+  (cl-defmethod project-root ((project (head transient)))
+    (cdr project)))
+
 (defun project-shell-command ()
   "Invoke `shell-command' in the project's root."
   (interactive)
