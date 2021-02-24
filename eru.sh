@@ -390,7 +390,7 @@ case $1 in
     else
       error "action '$1' is not supported"
     fi
-    log "supported actions are: install, upgrade"
+    log "supported actions are: install, upgrade, test"
     exit 1
     ;;
 esac
