@@ -382,19 +382,19 @@ ACTION=
 case $1 in
   install|upgrade|test)
     ACTION=$1
+    shift
     ;;
   *)
     echo
     if [ -z "$1" ]; then
-      error "action is not provided"
+      ACTION=install
     else
       error "action '$1' is not supported"
+      log "supported actions are: install, upgrade, test"
+      exit 1
     fi
-    log "supported actions are: install, upgrade, test"
-    exit 1
     ;;
 esac
-shift
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
