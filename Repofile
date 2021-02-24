@@ -1,4 +1,4 @@
 $XDG_CONFIG_HOME                   github    d12frosted/environment             master
-$HOME/.elpa-mirror                 github    d12frosted/elpa-mirror             master
-$HOME/.spacemacs                   github    syl20bnr/spacemacs                 develop
-$HOME/.doom-emacs                  github    hlissner/doom-emacs                develop
+$DEVELOPER/vulpea                  github    d12frosted/vulpea                  master
+$DEVELOPER/vino                    github    d12frosted/vino                    master
+$DEVELOPER/org-roam                github    org-roam/org-roam                  master
