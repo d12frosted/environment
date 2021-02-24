@@ -486,10 +486,6 @@ macos_guard && theme_guard "SSH" "Checking SSH keys" && {
   fi
 }
 
-theme_guard "Repositories" "Sync environment repository" && {
-  sync_repo "$XDG_CONFIG_HOME" "github" "d12frosted/environment" || true
-}
-
 theme_guard "Repositories" "Sync repositories from Repofiles" && {
   map_lines sync_repo "$target/Repofile" || true
   map_lines sync_repo "$XDG_CONFIG_CACHE/eru/Repofile" || true
