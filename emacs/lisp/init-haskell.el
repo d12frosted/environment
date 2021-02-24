@@ -47,8 +47,9 @@
   :init
   (when (eq haskell-backend 'eglot)
     (with-eval-after-load 'eglot
-      (add-to-list 'eglot-server-programs
-                   '(haskell-mode . ("ghcide" "--lsp")))))
+      (when (boundp 'eglot-server-programs)
+        (add-to-list 'eglot-server-programs
+                     '(haskell-mode . ("ghcide" "--lsp"))))))
   :config
   (file-templates-set
     'haskell-mode
