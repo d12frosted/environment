@@ -31,7 +31,7 @@
 ;;
 ;;; Commentary:
 ;;
-;; Making Emacs beautiful.
+;; Making Emacs beautiful. See also `early-init'.
 ;;
 ;;; Code:
 
@@ -50,11 +50,6 @@
 
 ;; disable cursort blinking
 (blink-cursor-mode -1)
-
-;; Less clutter
-(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
-(add-to-list 'default-frame-alist '(menu-bar-lines . 0))
-(add-to-list 'default-frame-alist '(vertical-scroll-bars))
 
 ;; for some reason only this removes the clutter with xmonad
 (use-package scroll-bar
