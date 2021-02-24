@@ -81,9 +81,12 @@ you can still call upon his help and you can even ask him to help with specific
 theme or themes only.
 
 #+BEGIN_SRC bash
-  $ ./eru.sh                       # to help with all themes
-  $ ./eru.sh repositories          # to help with repositories
-  $ ./eru.sh repositories packages # to help with repositories and packages
+  $ ./eru.sh [install]                     # to help with all themes
+  $ ./eru.sh install repositories          # to help with repositories
+  $ ./eru.sh install repositories packages # to help with repositories and packages
+  $ ./eru.sh install emacs                 # to help with emacs
+  $ ./eru.sh upgrade emacs                 # to upgrade emacs packages
+  $ ./eru.sh test emacs                    # to test emacs configurations
 #+END_SRC
 
 =Eru.sh= reveals all available themes. For example,
