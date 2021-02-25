@@ -40,8 +40,6 @@
 
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
-  :commands (pdf-info-close
-             pdf-tools-install)
   :init
   (setq-default pdf-view-display-size 'fit-page)
   (when (and elpa-bootstrap-p
