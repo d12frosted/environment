@@ -1,7 +1,10 @@
 ; -*- mode: emacs-lisp; lexical-binding: t; no-byte-compile: t -*-
 
 ;; Be explicit about main file.
-(setf eldev-project-main-file "init.el")
+(setf eldev-project-main-file "init.el"
+      eldev-main-fileset '("init.el"
+                           "early-init.el"
+                           "lisp/*.el"))
 
 
 
