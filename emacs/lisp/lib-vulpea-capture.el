@@ -155,7 +155,6 @@ It is relative to `vulpea-directory', unless it is absolute.")
             ":ID:                     ${id}\n"
             ":END:\n"
             "#+TITLE: ${title}\n"
-            "#+TIME-STAMP: <>\n"
             "\n")
     :unnarrowed t
     :immediate-finish t)
@@ -174,7 +173,6 @@ Variables in the capture context are provided by
             ":ID:                     ${id}\n"
             ":END:\n"
             "#+TITLE: ${title}\n"
-            "#+TIME-STAMP: <>\n"
             "#+ROAM_KEY: ${url}\n"
             "#+ROAM_TAGS: Content:Article Status:New\n"
             "\n")
