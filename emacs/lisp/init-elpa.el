@@ -57,7 +57,12 @@
  straight-repository-branch "develop"
  straight-check-for-modifications nil
  straight-use-package-by-default t
- straight-base-dir path-packages-dir)
+ straight-base-dir path-packages-dir
+ straight-profiles (list
+                    (cons nil
+                          (expand-file-name
+                           "versions/default.el"
+                           path-emacs-dir))))
 
 (defvar bootstrap-version)
 (let ((bootstrap-file

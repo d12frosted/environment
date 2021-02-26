@@ -48,6 +48,7 @@
    (lambda (package)
      (elpa-fetch-package package nil 3)))
   (straight-merge-all)
+  (straight-thaw-versions)
   (delete-file (concat path-packages-dir "straight/build-cache.el"))
   (delete-directory (concat path-packages-dir "straight/build") 'recursive)
   (straight-check-all))
