@@ -24,3 +24,7 @@ lint:
 test:
 	eldev exec t
 	eldev -C --unstable -a -dtT test
+
+.PHONY: roam
+roam:
+	eldev exec "(org-roam-db-build-cache)"

@@ -302,6 +302,7 @@
              :host github
              :repo "org-roam/org-roam")
   :defer t
+  :commands (org-roam-db-build-cache)
   :init
   (setq
    org-roam-directory vulpea-directory
