@@ -41,6 +41,7 @@
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . auto-revert-mode)
+  :commands (pdf-info-close)
   :init
   (setq-default pdf-view-display-size 'fit-page)
   (when (and elpa-bootstrap-p
