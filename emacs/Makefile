@@ -27,4 +27,4 @@ test:
 
 .PHONY: roam
 roam:
-	eldev exec "(org-roam-db-build-cache)"
+	eldev exec "(vulpea-db-build)"

@@ -257,6 +257,14 @@ tasks. The only exception is headings tagged as REFILE."
 
 
 ;;;###autoload
+(defun vulpea-db-build ()
+  "Update notes database."
+  (when (file-directory-p vulpea-directory)
+    (org-roam-db-build-cache)))
+
+
+
+;;;###autoload
 (defun vulpea-subdir-select ()
   "Select notes subdirectory."
   (interactive)
