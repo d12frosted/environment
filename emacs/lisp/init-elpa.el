@@ -38,8 +38,6 @@
 
 (require 'lib-plist)
 (require 'init-path)
-(require 'package)
-(require 'cl-lib)
 
 (defvar elpa-bootstrap-p nil)
 
