@@ -99,5 +99,10 @@
 
 
 
+;; profiler
+(use-package esup :defer t)
+
+
+
 (provide 'init-elpa)
 ;;; init-elpa.el ends here
