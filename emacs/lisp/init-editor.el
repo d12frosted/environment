@@ -95,20 +95,10 @@
                 '(special-mode comint-mode term-mode eshell-mode))))
 
 
-;; Backup files
+;; Disable backup files. While I find them useful in general, they
+;; keep interfering with `org-roam'.
 
-(setq
- ;; put all backup files somewhere in `path-cache-dir'
- backup-directory-alist
- (list (cons "." (expand-file-name "backup-files"
-                                   path-cache-dir)))
- ;; silently delete old versions
- delete-old-versions t
- ;; setup amount of new/old versions
- kept-new-versions 2
- kept-old-versions 2
- ;; use version numbers for backup
- version-control t)
+(setq make-backup-files nil)
 
 
 
