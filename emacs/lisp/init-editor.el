@@ -131,7 +131,8 @@
              :type git
              :host github
              :repo "d12frosted/fancy-yank")
-  :commands (fancy-yank)
+  :bind
+  (("C-Y" . #'fancy-yank))
   :init
   (setq-default
    fancy-yank-rules
