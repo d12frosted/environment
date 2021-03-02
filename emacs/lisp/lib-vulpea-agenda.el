@@ -333,7 +333,9 @@ Refer to `org-agenda-prefix-format' for more information."
                       "")))
          (extra (- size (length title))))
     (if (< extra 0)
-        (substring title 0 size)
+        (concat
+         (substring title 0 (- size 3))
+         "...")
       (concat title (make-string extra ?\ )))))
 
 
