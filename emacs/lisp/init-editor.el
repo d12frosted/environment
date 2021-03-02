@@ -130,7 +130,7 @@
              :host github
              :repo "d12frosted/fancy-yank")
   :bind
-  (("C-Y" . #'fancy-yank))
+  (("C-S-y" . #'fancy-yank))
   :init
   (setq-default
    fancy-yank-rules
