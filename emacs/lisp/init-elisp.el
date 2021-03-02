@@ -57,5 +57,8 @@
   :defer t
   :hook ((emacs-lisp-mode . emacsql-fix-vector-indentation)))
 
+(use-package buttercup
+  :defer t)
+
 (provide 'init-elisp)
 ;;; init-elisp.el ends here
