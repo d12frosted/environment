@@ -316,14 +316,13 @@ Callers of this function already widen the buffer view."
 (defun vulpea-agenda-category ()
   "Get category of item at point.
 
-Supports `org-roam' filenames by chopping prefix cookie."
-  (string-chop-prefix-regexp
-   "^[0-9]\\{4\\}[0-9]+\\-"
-   (or (org-entry-get nil "CATEGORY")
-       (if buffer-file-name
-           (file-name-sans-extension
-            (file-name-nondirectory buffer-file-name))
-         ""))))
+Supports `org-roam' filenames."
+  (or (car-safe (org-roam--extract-titles-title))
+      (org-get-category)
+      (if buffer-file-name
+          (file-name-sans-extension
+           (file-name-nondirectory buffer-file-name))
+        "")))
 
 
 
