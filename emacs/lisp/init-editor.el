@@ -118,8 +118,6 @@
 
 
 (use-package move-text
-  :commands (move-text-down
-             move-text-up)
   :bind
   (([M-S-down] . #'move-text-down)
    ([M-S-up] . #'move-text-up)))
