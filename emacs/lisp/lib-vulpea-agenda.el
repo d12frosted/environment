@@ -313,16 +313,28 @@ Callers of this function already widen the buffer view."
 
 
 ;;;###autoload
-(defun vulpea-agenda-category ()
-  "Get category of item at point.
+(defun vulpea-agenda-category (size)
+  "Get category of item at point for agenda.
 
-Supports `org-roam' filenames."
-  (or (car-safe (org-roam--extract-titles-title))
-      (org-get-category)
-      (if buffer-file-name
-          (file-name-sans-extension
-           (file-name-nondirectory buffer-file-name))
-        "")))
+Resulting string respects SIZE, either by chopping characters
+from the right or adding extra spaces to the right.
+
+Usage example:
+
+  (setq org-agenda-prefix-format
+        '((agenda . \" %(vulpea-agenda-category 24) %?-12t %12s\")))
+
+Refer to `org-agenda-prefix-format' for more information."
+  (let* ((title (or (car-safe (org-roam--extract-titles-title))
+                    (org-get-category)
+                    (if buffer-file-name
+                        (file-name-sans-extension
+                         (file-name-nondirectory buffer-file-name))
+                      "")))
+         (extra (- size (length title))))
+    (if (< extra 0)
+        (substring title 0 size)
+      (concat title (make-string extra ?\ )))))
 
 
 

@@ -274,10 +274,10 @@
 
    ;; more structured view
    org-agenda-prefix-format
-   '((agenda . " %-24:(vulpea-agenda-category) %?-12t %12s")
-     (todo . " %-24:(vulpea-agenda-category)")
-     (tags . " %-24:(vulpea-agenda-category)")
-     (search . " %-24:(vulpea-agenda-category)"))
+   '((agenda . " %(vulpea-agenda-category 24) %?-12t %12s")
+     (todo . " %(vulpea-agenda-category 24)")
+     (tags . " %(vulpea-agenda-category 24)")
+     (search . " %(vulpea-agenda-category 24)"))
    org-agenda-todo-keyword-format "%-1s"
    org-agenda-tags-column 0
 
