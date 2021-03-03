@@ -9,7 +9,7 @@
 ;;
 ;; Created: 17 Feb 2021
 ;;
-;; URL: https://github.com/d12frosted/environment/emacs
+;; URL: https://github.com/d12frosted/environment/tree/master/emacs
 ;;
 ;; License: GPLv3
 ;;
