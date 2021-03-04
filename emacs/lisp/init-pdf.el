@@ -33,6 +33,18 @@
 ;;
 ;; PDF viewing support.
 ;;
+;; Building pdf-tools on macOS can be daunting. One of the solutions
+;; is to use nix package manager (from nix user perspective ,nix is a
+;; solution for every problem):
+;;
+;;   $ cd $HOME/.cache/emacs/packages/28.0/straight/build/pdf-tools/build/server
+;;   $ nix-shell -p pkg-config poppler autoconf automake libtool libpng
+;;   $ autoreconf -i -f
+;;   $ ./autobuild -i $HOME/.cache/emacs/packages/28.0/straight/build/pdf-tools --os nixos
+;;
+;; See https://github.com/politza/pdf-tools/issues/645#issuecomment-772255271
+;; for more information
+;;
 ;;; Code:
 
 (require 'init-elpa)
