@@ -37,10 +37,10 @@
 ;; is to use nix package manager (from nix user perspective ,nix is a
 ;; solution for every problem):
 ;;
-;;   $ cd $HOME/.cache/emacs/packages/28.0/straight/build/pdf-tools/build/server
-;;   $ nix-shell -p pkg-config poppler autoconf automake libtool libpng
-;;   $ autoreconf -i -f
-;;   $ ./autobuild -i $HOME/.cache/emacs/packages/28.0/straight/build/pdf-tools --os nixos
+;; $ cd $PACKAGES/straight/build/pdf-tools/build/server
+;; $ nix-shell -p pkg-config poppler autoconf automake libtool libpng
+;; $ autoreconf -i -f
+;; $ ./autobuild -i $PACKAGES/straight/build/pdf-tools --os nixos
 ;;
 ;; See https://github.com/politza/pdf-tools/issues/645#issuecomment-772255271
 ;; for more information
