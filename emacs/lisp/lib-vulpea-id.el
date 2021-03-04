@@ -33,12 +33,25 @@
 ;;
 ;; Various ID utilities.
 ;;
+;; Automatic ID generation is controlled by `vulpea-id-auto-targets'.
+;; It can be configured from init.el file, or from .dir-locals.el file
+;; (for example ,to disable automatic generation):
+;;
+;;   ((org-mode . ((vulpea-id-auto-targets . nil))))
+;;
 ;;; Code:
 
 (require 'org-id)
 
 (defvar vulpea-id-auto-targets '(file headings)
-  "Targets for automatic ID assignment.")
+  "Targets for automatic ID assignment.
+
+Each element of this list can be one of the following:
+
+- file - to automatically set ID on the file level;
+- headings - to automatically set ID for each heading in the file.
+
+Empty list means no id assignment is needed.")
 
 ;;;###autoload
 (defun vulpea-id-auto-assign ()
