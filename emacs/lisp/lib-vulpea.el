@@ -212,7 +212,7 @@ tasks. The only exception is headings tagged as REFILE."
 
 
 ;;;###autoload
-(defun vulpea-setup (&optional _)
+(defun vulpea-setup-buffer (&optional _)
   "Setup current buffer for notes viewing and editing."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))

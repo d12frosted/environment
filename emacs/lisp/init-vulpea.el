@@ -52,7 +52,7 @@
   :defer t
   :hook ((before-save . vulpea-pre-save-hook))
   :init
-  (add-to-list 'window-buffer-change-functions #'vulpea-setup)
+  (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer)
   :general
   (leader-def
     "n" '(nil :which-key "vulpea...")
