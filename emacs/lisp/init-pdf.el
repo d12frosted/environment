@@ -42,8 +42,8 @@
 ;; $ autoreconf -i -f
 ;; $ ./autobuild -i $PACKAGES/straight/build/pdf-tools --os nixos
 ;;
-;; See https://github.com/politza/pdf-tools/issues/645#issuecomment-772255271
-;; for more information
+;; See https://github.com/politza/pdf-tools/issues/645 for more
+;; information.
 ;;
 ;;; Code:
 
