@@ -49,10 +49,6 @@
              :type git
              :host github
              :repo "d12frosted/vulpea")
-  :defer t
-  :hook ((before-save . vulpea-pre-save-hook))
-  :init
-  (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer)
   :general
   (leader-def
     "n" '(nil :which-key "vulpea...")
@@ -67,7 +63,13 @@
     "nt" '(vulpea-tags-add :which-key "tag")
     "nT" '(vulpea-tags-delete :which-key "untag")
     "na" '(vulpea-alias-add :which-key "alias")
-    "nA" '(vulpea-alias-delete :which-key "unalias")))
+    "nA" '(vulpea-alias-delete :which-key "unalias"))
+  :commands (vulpea-setup)
+  :hook ((before-save . vulpea-pre-save-hook))
+  :init
+  (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer)
+  :config
+  (vulpea-setup))
 
 
 
