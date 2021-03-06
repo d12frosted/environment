@@ -59,6 +59,7 @@
     "vr" '(vino-entry-rate :which-key "rate vino"))
   :init
   (setq-default
+   vino-db-location (expand-file-name "vino.db" path-cache-dir)
    vino-inventory-file (expand-file-name "wine.journal"
                                          vulpea-directory)
    vino-availability-fn #'vino-availability-get
@@ -141,7 +142,10 @@
          ("great wine, will look into tasting it once more" . 3)
          ("good wine, will drink it again with pleasure" . 2)
          ("average wine, only with parents" . 1)
-         ("bad wine, only for enemies" . 0))))))))
+         ("bad wine, only for enemies" . 0)))))))
+  :config
+  (when (functionp 'vino-setup)
+    (vino-setup)))
 
 (provide 'init-vino)
 ;;; init-vino.el ends here
