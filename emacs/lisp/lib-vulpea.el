@@ -63,15 +63,14 @@
 TODO entries marked as done are ignored, meaning the this
 function returns nil if current buffer contains only completed
 tasks. The only exception is headings tagged as REFILE."
-  (seq-find
-   (lambda (h)
-     (or (eq 'todo (org-element-property :todo-type h))
-         (seq-contains-p (org-element-property :tags h)
-                         "REFILE")))
-   (org-element-map
-       (org-element-parse-buffer 'headline)
-       'headline
-     #'identity)))
+  (org-element-map
+      (org-element-parse-buffer 'headline)
+      'headline
+    (lambda (h)
+      (or (eq 'todo (org-element-property :todo-type h))
+          (seq-contains-p (org-element-property :tags h)
+                          "REFILE")))
+    nil 'first-match))
 
 ;;;###autoload
 (defun vulpea-project-files ()
