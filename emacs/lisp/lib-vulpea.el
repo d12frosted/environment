@@ -211,6 +211,29 @@ tasks. The only exception is headings tagged as REFILE."
 
 
 ;;;###autoload
+(defun vulpea-status-set ()
+  "Change status tag of the current note."
+  (interactive)
+  (when-let*
+      ((file (buffer-file-name (buffer-base-buffer)))
+       (tags (org-roam--extract-tags-prop file))
+       (status-raw (completing-read
+                    "Status: "
+                    '("New" "Ongoing" "Done" "Dropped")))
+       (status (concat "Status:" status-raw))
+       (new-tags (cons status
+                       (seq-remove
+                        (lambda (x)
+                          (string-prefix-p "Status:" x))
+                        tags))))
+    (org-roam--set-global-prop
+     "ROAM_TAGS" (combine-and-quote-strings new-tags))
+    (org-roam-db--insert-tags 'update)
+    (save-buffer)))
+
+
+
+;;;###autoload
 (defun vulpea-setup-buffer (&optional _)
   "Setup current buffer for notes viewing and editing."
   (when (and (not (active-minibuffer-window))
