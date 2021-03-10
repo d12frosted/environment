@@ -98,10 +98,6 @@
    lsp-auto-guess-root nil
    lsp-keep-workspace-alive nil))
 
-(use-package company-lsp
-  :defer t
-  :commands company-lsp)
-
 (use-package lsp-ui
   :defer t
   :commands lsp-ui-mode)
