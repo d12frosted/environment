@@ -78,6 +78,32 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(defvar elpa-straight-retry-count 3
+  "Amount of retries for `straight' operations.")
+
+(defun elpa-straight-with-retry (orig-fn &rest args)
+  "Wrapper around ORIG-FN supporting retries.
+
+ORIG-FN is called with ARGS and retried
+`elpa-straight-retry-count' times."
+  (let ((n elpa-straight-retry-count))
+    (while (> n 0)
+      (condition-case err
+          (progn
+            (apply orig-fn args)
+            (setq n 0))
+        (error
+         (setq n (- n 1))
+         (unless (> n 0)
+           (signal (car err) (cdr err))))))))
+
+(advice-add #'straight-fetch-package
+            :around
+            #'elpa-straight-with-retry)
+(advice-add #'straight--clone-repository
+            :around
+            #'elpa-straight-with-retry)
+
 
 ;; use-package
 

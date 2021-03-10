@@ -44,30 +44,12 @@
 (defun elpa-upgrade ()
   "Bootstrap personal configurations."
   (elpa-bootstrap)
-  (straight--map-existing-repos-interactively
-   (lambda (package)
-     (elpa-fetch-package package nil 3)))
+  (straight-fetch-all)
   (straight-merge-all)
   (straight-thaw-versions)
   (delete-file (concat path-packages-dir "straight/build-cache.el"))
   (delete-directory (concat path-packages-dir "straight/build") 'recursive)
   (straight-check-all))
-
-(defun elpa-fetch-package (package &optional from-upstream n)
-  "Try to fetch a PACKAGE from the primary remote.
-PACKAGE is a string naming a package. Interactively, select
-PACKAGE from the known packages in the current Emacs session
-using `completing-read'. With prefix argument FROM-UPSTREAM,
-fetch not just from primary remote but also from upstream (for
-forked packages).
-
-N is for retries."
-  (condition-case err
-      (straight-fetch-package package from-upstream)
-    (error
-     (if (> n 0)
-         (elpa-fetch-package package from-upstream (- n 1))
-       (signal (car err) (cdr err))))))
 
 (add-hook 'eldev-upgrade-hook #'elpa-upgrade)
 
