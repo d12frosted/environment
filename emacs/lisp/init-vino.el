@@ -41,7 +41,8 @@
   :straight (vino
              :type git
              :host github
-             :repo "d12frosted/vino")
+             :repo "d12frosted/vino"
+             :branch "feature/vino-db")
   :defer t
   :general
   (leader-def
@@ -57,9 +58,11 @@
     "va" '(vino-entry-acquire :which-key "acquire vino")
     "vc" '(vino-entry-consume :which-key "consume vino")
     "vr" '(vino-entry-rate :which-key "rate vino"))
+  :hook ((after-init . vino-setup))
   :init
   (setq-default
    vino-db-location (expand-file-name "vino.db" path-cache-dir)
+   vino-db-gc-threshold most-positive-fixnum
    vino-inventory-file (expand-file-name "wine.journal"
                                          vulpea-directory)
    vino-availability-fn #'vino-availability-get
@@ -142,10 +145,7 @@
          ("great wine, will look into tasting it once more" . 3)
          ("good wine, will drink it again with pleasure" . 2)
          ("average wine, only with parents" . 1)
-         ("bad wine, only for enemies" . 0)))))))
-  :config
-  (when (functionp 'vino-setup)
-    (vino-setup)))
+         ("bad wine, only for enemies" . 0))))))))
 
 (provide 'init-vino)
 ;;; init-vino.el ends here

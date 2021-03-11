@@ -65,11 +65,10 @@
     "na" '(vulpea-alias-add :which-key "alias")
     "nA" '(vulpea-alias-delete :which-key "unalias"))
   :commands (vulpea-setup)
-  :hook ((before-save . vulpea-pre-save-hook))
+  :hook ((after-init . vulpea-setup)
+         (before-save . vulpea-pre-save-hook))
   :init
-  (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer)
-  :config
-  (vulpea-setup))
+  (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer))
 
 
 

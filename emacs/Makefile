@@ -27,4 +27,4 @@ test:
 
 .PHONY: roam
 roam:
-	eldev exec "(vulpea-db-build)"
+	eldev exec "(progn (run-hooks 'after-init-hook) (vulpea-db-build))"
