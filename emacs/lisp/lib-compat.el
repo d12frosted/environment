@@ -37,12 +37,11 @@
 ;;
 ;;; Code:
 
-(if (> emacs-major-version 28)
-    (error "Redundant compat function: dlet")
-  (defalias 'dlet #'compat-dlet))
+(when (> emacs-major-version 28)
+  (error "Redundant compat function: dlet"))
 
 ;;;###autoload
-(defmacro compat-dlet (binders &rest body)
+(defmacro dlet (binders &rest body)
   "Like `let*' but using dynamic scoping.
 
 Dynamically bind the BINDERS and evaluate the BODY."
