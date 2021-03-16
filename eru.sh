@@ -72,6 +72,21 @@ fi
 
 export PATH=$HOME/.local/bin:$PATH
 
+target=$HOME/.config
+if [[ -d "$XDG_CONFIG_HOME" ]]; then
+  target="$XDG_CONFIG_HOME"
+fi
+
+export XDG_CONFIG_HOME=$target
+export XDG_CONFIG_CACHE="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+export DEVELOPER=$HOME/Developer
+if [[ "$USER" != "$fellow" ]]; then
+  export DEVELOPER=$HOME/Developer/personal
+fi
+
 #
 # Logging
 #
@@ -120,6 +135,7 @@ log "Kernel release:   $KERNEL_RELEASE"
 log "Operating system: $OS_NAME"
 log "OS version:       $OS_VERSION"
 log "User:             $USER"
+log "XDG_CONFIG_HOME:  $XDG_CONFIG_HOME"
 log
 
 #
@@ -361,21 +377,6 @@ function download_bin() {
 #
 
 theme "Supporting" "Defining variables"
-
-target=$HOME/.config
-if [[ -d "$XDG_CONFIG_HOME" ]]; then
-  target="$XDG_CONFIG_HOME"
-fi
-
-export XDG_CONFIG_HOME=$target
-export XDG_CONFIG_CACHE="$HOME/.cache"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CACHE_HOME="$HOME/.cache"
-
-export DEVELOPER=$HOME/Developer
-if [[ "$USER" != "$fellow" ]]; then
-  export DEVELOPER=$HOME/Developer/personal
-fi
 
 ALL="true"
 ACTION=
