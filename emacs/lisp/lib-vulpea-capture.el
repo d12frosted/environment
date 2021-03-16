@@ -140,7 +140,7 @@ It is relative to `vulpea-directory', unless it is absolute.")
                      (seq-contains-p tags "people"))))))
     (org-capture-put :meeting-person person)
     (if (vulpea-note-id person)
-        "* MEETING [%<%Y-%m-%d %a>] :MEETING:REFILE:\n%U\n\n%?"
+        "* MEETING [%<%Y-%m-%d %a>] :REFILE:MEETING:\n%U\n\n%?"
       (concat "* MEETING with "
               (vulpea-note-title person)
               " on [%<%Y-%m-%d %a>] :MEETING:\n%U\n\n%?"))))
