@@ -76,6 +76,9 @@ target=$HOME/.config
 if [[ -d "$XDG_CONFIG_HOME" ]]; then
   target="$XDG_CONFIG_HOME"
 fi
+if [[ -d "$GITHUB_WORKSPACE" ]]; then
+  target="$GITHUB_WORKSPACE"
+fi
 
 export XDG_CONFIG_HOME=$target
 export XDG_CONFIG_CACHE="$HOME/.cache"
