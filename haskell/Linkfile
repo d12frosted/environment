@@ -1,4 +1,3 @@
 .ghci ~/.ghci
-cabal-config ~/.cabal/config
 stack-global.yaml ~/.stack/global-project/stack.yaml
 stack.yaml ~/.stack/config.yaml
