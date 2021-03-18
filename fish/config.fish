@@ -143,9 +143,6 @@ if command -v systemctl >/dev/null 2>&1
   systemctl --user import-environment VULPEA_DIR
 end
 
-# Emacs
-set -x DOOMDIR "$XDG_CONFIG_HOME/emacs/doom"
-
 # gpg + ssh
 set -gx GPG_TTY (tty)
 gpg-connect-agent updatestartuptty /bye >/dev/null
