@@ -727,9 +727,9 @@ arch_guard && {
 
 theme "Fish" "Setup fish variables"
 check fish && {
-  fish -c "set -U XDG_CONFIG_HOME $target"
-  fish -c "set -U XDG_CACHE_HOME $HOME/.cache"
-  fish -c "set -U XDG_DATA_HOME $HOME/.local/share"
+  fish -c "set -gx XDG_CONFIG_HOME $target"
+  fish -c "set -gx XDG_CACHE_HOME $HOME/.cache"
+  fish -c "set -gx XDG_DATA_HOME $HOME/.local/share"
 }
 
 theme_guard "Emacs" "Setup Eldev" && {

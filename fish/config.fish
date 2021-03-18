@@ -61,10 +61,10 @@ end
 # PATH
 function __append_to_path -a path
   if test -d $path
-    set -x PATH $path $PATH
+    set -gx PATH $path $PATH
   end
 end
-set -x PATH $XDG_CONFIG_HOME/bin $PATH
+set -gx PATH $XDG_CONFIG_HOME/bin $PATH
 __append_to_path /opt/local/bin
 __append_to_path $GEM_HOME/bin
 __append_to_path /usr/texbin
@@ -76,18 +76,18 @@ __append_to_path /usr/local/opt/gnu-getopt/bin
 __append_to_path /usr/local/opt/texinfo/bin
 __append_to_path $HOME/Dropbox/bin
 __append_to_path $HOME/.doom-emacs/bin
-set -x PATH $HOME/.local/bin $PATH
+set -gx PATH $HOME/.local/bin $PATH
 
 if command -v systemctl >/dev/null 2>&1
   systemctl --user import-environment PATH
 end
 
 # locale
-set -x LANG en_GB.UTF-8
-set -x LC_ALL en_GB.UTF-8
+set -gx LANG en_GB.UTF-8
+set -gx LC_ALL en_GB.UTF-8
 
 # variables
-set -x EDITOR "emacsclient"
+set -gx EDITOR "emacsclient"
 set cmd_notification_threshold 8000
 
 # aliases
@@ -137,8 +137,8 @@ set fish_pager_color_progress cyan
 complete -c eru -a 'ssh repositories linking packages guardian os hardware' --no-files
 
 # Vulpea
-set -x VULPEA_DIR "$HOME/Dropbox/vulpea"
-set -x BUDGET_DIR "$HOME/Dropbox/budget"
+set -gx VULPEA_DIR "$HOME/Dropbox/vulpea"
+set -gx BUDGET_DIR "$HOME/Dropbox/budget"
 if command -v systemctl >/dev/null 2>&1
   systemctl --user import-environment VULPEA_DIR
 end
@@ -147,7 +147,7 @@ end
 set -x DOOMDIR "$XDG_CONFIG_HOME/emacs/doom"
 
 # gpg + ssh
-set -xg GPG_TTY (tty)
+set -gx GPG_TTY (tty)
 gpg-connect-agent updatestartuptty /bye >/dev/null
 
 # nix
@@ -158,19 +158,19 @@ end
 __append_to_path /nix/var/nix/profiles/default/bin
 
 # nvm
-set -x NVM_DIR "$XDG_CACHE_HOME/nvm"
-set -x NVM_SOURCE "/usr/share/nvm"
+set -gx NVM_DIR "$XDG_CACHE_HOME/nvm"
+set -gx NVM_SOURCE "/usr/share/nvm"
 
 # go
-set -x GOPATH "$XDG_CACHE_HOME/go"
+set -gx GOPATH "$XDG_CACHE_HOME/go"
 __append_to_path $GOPATH/bin
 
 # homebrew
-set -x HOMEBREW_NO_ANALYTICS 1
-set -x HOMEBREW_NO_AUTO_UPDATE 1
+set -gx HOMEBREW_NO_ANALYTICS 1
+set -gx HOMEBREW_NO_AUTO_UPDATE 1
 
 # gopass and friends
-set -x PASSWORD_STORE "$HOME/Dropbox/.password-store"
+set -gx PASSWORD_STORE "$HOME/Dropbox/.password-store"
 
 # private post-configs
 safe_source $PRIVATE_FISH_CONFIGS_HOME/postconfig.fish
