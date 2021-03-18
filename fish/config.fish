@@ -157,6 +157,9 @@ end
 # multi-user installation
 __append_to_path /nix/var/nix/profiles/default/bin
 
+# haskell
+set -gx GHCUP_USE_XDG_DIRS 1
+
 # nvm
 set -gx NVM_DIR "$XDG_CACHE_HOME/nvm"
 set -gx NVM_SOURCE "/usr/share/nvm"
