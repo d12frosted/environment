@@ -1,4 +1,6 @@
 $XDG_CONFIG_HOME                   github    d12frosted/environment             master
 $DEVELOPER/vulpea                  github    d12frosted/vulpea                  master
 $DEVELOPER/vino                    github    d12frosted/vino                    master
+$DEVELOPER/talks                   github    d12frosted/talks                   master
+$DEVELOPER/talks-private           github    d12frosted/talks-private           master
 $DEVELOPER/org-roam                github    org-roam/org-roam                  master
