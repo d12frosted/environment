@@ -68,8 +68,7 @@ xmonadConfig
                  , wsOther
                  ]
 
-  -- Unfortunately, use urxvt
-  , terminal = "urxvt"
+  , terminal = "kitty"
   } `additionalKeysP` keybindings
 
 --------------------------------------------------------------------------------
