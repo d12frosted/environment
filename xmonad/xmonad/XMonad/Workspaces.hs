@@ -46,6 +46,7 @@ manageAppsWorkspace
     , [ className =? "Slack" --> doShift wsChat ]
     , [ className =? "DBeaver" --> doShift wsCode2 ]
     , [ className =? "Java" --> doShift wsOther ]
+    , [ className =? "zoom" --> doShift wsMedia ]
     ]
 
 --------------------------------------------------------------------------------
