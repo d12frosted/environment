@@ -82,7 +82,7 @@
   :commands (lsp-haskell--hie-command)
   :init
   (setq-default
-   lsp-haskell-process-path-hie "haskell-language-server-wrapper"
+   lsp-haskell-process-path-hie (executable-find "hsl-wrapper")
    lsp-haskell-process-args-hie nil))
 
 (provide 'init-haskell)

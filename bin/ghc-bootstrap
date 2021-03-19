@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -e
+
+file="cabal.project"
+token="with-compiler"
+
+function check() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+check ghcup || {
+  echo "Could not find ghcup in your PATH."
+  echo "Make sure it's installed and try again."
+  exit 1
+}
+
+if [ ! -f "$file" ]; then
+  echo "Could not find $file file!"
+  echo "Please cd into cabal project root."
+  exit 1
+fi
+
+with_compiler=$(grep -m 1 "$token" "$file" || echo "")
+
+if [ -z "$with_compiler" ]; then
+  echo "Your $file doesn't have $token."
+  exit 1
+fi
+
+ghc_version=${with_compiler#$token: ghc-}
+
+echo "Your project requires GHC $ghc_version"
+
+ghcup install hls
+ghcup install ghc "$ghc_version"
+ghcup set ghc "$ghc_version"
+
+echo "Success!"
