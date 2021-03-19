@@ -507,6 +507,25 @@ theme_guard "Linking" "Link all files as defined in Linkfiles" && {
   done
 }
 
+export GHCUP_USE_XDG_DIRS=1
+theme_guard "packages" "Ensure ghcup installation" && {
+  check ghcup || {
+    # https://www.haskell.org/ghcup/
+    export BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+    curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+  }
+
+  upgrade_guard && {
+    ghcup upgrade
+  }
+}
+
+theme_guard "packages" "Ensure HLS installation" && {
+  check haskell-language-server-wrapper || {
+    ghcup install hls
+  }
+}
+
 arch_guard && {
   theme_guard "packages" "Bootstrap Arch Linux" && {
     section "Install crutial dependenices"
@@ -627,25 +646,6 @@ arch_guard && {
     # correct permissions
     find ~/.gnupg -type f -exec chmod 600 {} \;
     find ~/.gnupg -type d -exec chmod 700 {} \;
-  }
-}
-
-export GHCUP_USE_XDG_DIRS=1
-theme_guard "packages" "Ensure ghcup installation" && {
-  check ghcup || {
-    # https://www.haskell.org/ghcup/
-    export BOOTSTRAP_HASKELL_NONINTERACTIVE=1
-    curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
-  }
-
-  upgrade_guard && {
-    ghcup upgrade
-  }
-}
-
-theme_guard "packages" "Ensure HLS installation" && {
-  check haskell-language-server-wrapper || {
-    ghcup install hls
   }
 }
 
