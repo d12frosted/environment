@@ -122,6 +122,7 @@ ORIG-FN is called with ARGS and retried
 (use-package s)
 (use-package dash)
 (use-package async)
+(use-package request)
 
 
 

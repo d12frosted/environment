@@ -14,5 +14,6 @@
                                                  (use-package . 1)
                                                  (buffer-lines-map . 1)
                                                  (buffer-lines-each . 1)
-                                                 (buffer-lines-each-t . 1)))))
+                                                 (buffer-lines-each-t . 1)
+                                                 (request . defun)))))
  (org-mode . ((fill-column . 80))))
