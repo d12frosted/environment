@@ -165,6 +165,9 @@ set -gx NVM_SOURCE "/usr/share/nvm"
 set -gx GOPATH "$XDG_CACHE_HOME/go"
 __append_to_path $GOPATH/bin
 
+# .net
+__append_to_path "$HOME/.dotnet/tools"
+
 # homebrew
 set -gx HOMEBREW_NO_ANALYTICS 1
 set -gx HOMEBREW_NO_AUTO_UPDATE 1

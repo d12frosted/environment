@@ -17,6 +17,8 @@ clipnotify
 ctags
 docker
 docker-compose
+dotnet-runtime
+dotnet-sdk
 dunst
 dwarffortress
 expect
