@@ -380,5 +380,10 @@
 
 
 
+(use-package toc-org
+  :hook (org-mode . toc-org-mode))
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
