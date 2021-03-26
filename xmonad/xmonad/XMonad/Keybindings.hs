@@ -30,6 +30,7 @@ keybindings =
   , ("M-<Esc>", toggleKbd)
   , ("M-S-<Esc>", toggleKbd')
   , ("M-<Print>", spawn "scrot")
+  , ("M-C-<Print>", spawn "flameshot gui")
   , ("M-o c", clipmenu)
   , ("M-o e", emacs)
   , ("M-o n", network)
