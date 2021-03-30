@@ -208,6 +208,49 @@ tasks. The only exception is headings tagged as REFILE."
   (interactive)
   (org-roam-alias-delete))
 
+;;;###autoload
+(defun vulpea-alias-extract ()
+  "Extract an alias from current note as a separate note.
+
+Make all the links to this alias point to newly created note."
+  (interactive)
+  (if-let* ((aliases (org-roam--extract-titles-alias))
+            (file (buffer-file-name (current-buffer))))
+      (let* ((alias (completing-read
+                     "Alias: " aliases nil 'require-match))
+             (backlinks (seq-uniq
+                         (seq-map
+                          #'car
+                          (org-roam--get-backlinks file))))
+             (id-old (vulpea-db-get-id-by-file file)))
+        ;; TODO: once better aliases are merged stop doing things
+        ;; manually.
+        (org-roam--set-global-prop
+         "roam_alias"
+         (combine-and-quote-strings (delete alias aliases)))
+        (org-roam-db--update-file
+         (buffer-file-name (buffer-base-buffer)))
+        (let* ((note (vulpea-create
+                      alias
+                      (list
+                       :file-name "%<%Y%m%d%H%M%S>-${slug}"
+                       :head "#+title: ${title}\n\n"
+                       :unnarrowed t
+                       :immediate-finish t))))
+          (seq-each
+           (lambda (file)
+             (vulpea-utils-with-file file
+               (goto-char (point-min))
+               (let ((link-old (org-link-make-string
+                                (concat "id:" id-old)
+                                alias))
+                     (link-new (vulpea-utils-link-make-string note)))
+                 (while (search-forward link-old nil 'noerror)
+                   (replace-match link-new))))
+             (org-roam-db--update-file file))
+           backlinks)))
+    (user-error "No aliases to extract")))
+
 
 
 ;;;###autoload
