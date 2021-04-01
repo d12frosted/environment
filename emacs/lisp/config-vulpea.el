@@ -35,7 +35,7 @@
 ;;
 ;;; Code:
 
-(require 'init-path)
+(require 'config-path)
 
 (defvar vulpea-test-mode
   (file-exists-p

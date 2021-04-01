@@ -36,7 +36,7 @@
 ;;; Code:
 
 (require 'lib-eval)
-(require 'init-path)
+(require 'config-path)
 (require 'init-vcs)
 (require 'init-kbd)
 (require 'project)

@@ -1,4 +1,4 @@
-;;; init-path.el --- Path constants -*- lexical-binding: t; -*-
+;;; config-path.el --- Path constants -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2021 Boris Buliga
 ;;
@@ -88,5 +88,5 @@ Use this for files that change often, like cache files.")
                     path-local-dir)
   "Where packages are stored.")
 
-(provide 'init-path)
-;;; init-path.el ends here
+(provide 'config-path)
+;;; config-path.el ends here

@@ -35,7 +35,7 @@
 ;;
 ;;; Code:
 
-(require 'init-path)
+(require 'config-path)
 (require 'init-kbd)
 
 

@@ -53,7 +53,7 @@
                              normal-gc-cons-threshold))))
 
 ;; bootstrap
-(require 'init-path)
+(require 'config-path)
 (require 'init-elpa)
 
 ;; Setup `custom-file`.

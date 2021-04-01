@@ -36,7 +36,7 @@
 ;;; Code:
 
 (require 'lib-hook)
-(require 'init-path)
+(require 'config-path)
 (require 'init-elpa)
 
 (setq-default vc-follow-symlinks t)

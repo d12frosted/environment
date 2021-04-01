@@ -36,7 +36,7 @@
 ;;
 ;;; Code:
 
-(require 'init-path)
+(require 'config-path)
 (require 'init-ui)
 
 (use-package company

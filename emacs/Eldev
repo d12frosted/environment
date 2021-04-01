@@ -30,7 +30,7 @@
    elpa-bootstrap-p t
    load-prefer-newer t)
   (eldev--inject-loading-roots 'bootstrap)
-  (require 'init-path)
+  (require 'config-path)
   (load (expand-file-name "init.el" path-emacs-dir)))
 
 ;; We want to run this before any build command. This is also needed
