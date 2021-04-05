@@ -36,7 +36,6 @@
 ;;
 ;;; Code:
 
-(require 'lib-plist)
 (require 'config-path)
 
 (defvar elpa-bootstrap-p nil)
