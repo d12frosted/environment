@@ -78,7 +78,7 @@ It is relative to `vulpea-directory', unless it is absolute.")
    org-roam-dailies-capture-templates
    '(("d" "default" entry
       #'org-roam-capture--get-point
-      "\n\n* %<%H:%M> \n\n%?"
+      "\n\n* %<%H:%M>\n\n%?"
       :empty-lines 1
       :file-name "journal/%<%Y-%m-%d>"
       :head "#+TITLE: %<%A, %d %B %Y>\n\n"))))
