@@ -38,7 +38,7 @@
 ;;;###autoload
 (defun inventory-balance (file id &optional query)
   "Get balance of ID in FILE using QUERY."
-  (let* ((cmd (format "hledger -f %s b %s '%s'" file id query))
+  (let* ((cmd (format "hledger -f %s balance %s '%s'" file id query))
          (res (shell-command-to-string cmd))
          (lines (split-string res "\n")))
     (string-to-number
@@ -49,7 +49,7 @@
   "Get balance of all entries in FILE."
   (let* ((cmd (concat "hledger -f '"
                       file
-                      "' b 'goods:' "
+                      "' balance 'goods:' "
                       "--format '%(account) %(total)'"))
          (res (shell-command-to-string cmd))
          (lines (split-string res "\n")))
