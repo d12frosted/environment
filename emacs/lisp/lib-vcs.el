@@ -39,22 +39,11 @@
 
 
 
-(defvar vcs-url-github-repo-regexp
-  (format "\\(%s/\\(%s\\)/\\(%s\\)\\).*"
-          "https://github\\.com"
-          "[-[:alnum:]]+"
-          "[-[:alnum:]]+")
-  "GitHub repo URL regexp.
-
-- 1st group is whole URL.
-- 2nd group is owner.
-- 3rd group is repository name.")
-
 (defvar vcs-url-github-issue-regexp
   (format "\\(%s/\\(%s\\)/\\(%s\\)/\\(%s\\)/\\(%s\\)\\).*"
           "https://github\\.com"
-          "[-[:alnum:]]+"
-          "[-[:alnum:]]+"
+          "[-\\.[:alnum:]]+"
+          "[-\\.[:alnum:]]+"
           "[[:alpha:]]+"
           "[[:alnum:]]+")
   "GitHub issue/pull URL regexp.
@@ -68,8 +57,8 @@
 (defvar vcs-url-github-project-regexp
   (format "\\(%s/\\(%s\\)/\\(%s\\)/?\\)"
           "https://github\\.com"
-          "[-[:alnum:]]+"
-          "[-[:alnum:]]+")
+          "[-\\.[:alnum:]]+"
+          "[-\\.[:alnum:]]+")
   "GitHub project URL regexp.
 
 - 1st group is whole URL.
