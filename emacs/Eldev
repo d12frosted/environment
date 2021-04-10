@@ -16,13 +16,14 @@
 
 
 
-;; There are dependencies for linting phase, they should be installed
-;; by Eldev from MELPA and GNU ELPA (latter is enabled by default).
+;; There are dependencies for testing and linting phases, they should
+;; be installed by Eldev from MELPA and GNU ELPA (latter is enabled by
+;; default).
 (eldev-use-package-archive 'melpa)
 
 
 ;; Bootstrap flow. Basically set `elpa-bootstrap-p' to `t' and load
-;; init.el, which forces straight.el to install all dependencies.
+;; init.el, which forces `init-elpa' to install all dependencies.
 
 (defun elpa-bootstrap ()
   "Bootstrap personal configurations."
