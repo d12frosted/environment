@@ -85,12 +85,14 @@
 
 ORIG-FN is called with ARGS and retried
 `elpa-straight-retry-count' times."
-  (let ((n elpa-straight-retry-count))
+  (let ((n elpa-straight-retry-count)
+        (res nil))
     (while (> n 0)
       (condition-case err
           (progn
-            (apply orig-fn args)
-            (setq n 0))
+            (setq res (apply orig-fn args)
+                  n 0)
+            res)
         (error
          (setq n (- n 1))
          (unless (> n 0)
