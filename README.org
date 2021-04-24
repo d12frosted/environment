@@ -149,4 +149,4 @@ inspiration from following people.
 - [[https://github.com/Malabarba][Artur Malabarba]] shares valuable pieces of advice and ideas in his blog.
 - [[https://github.com/hlissner/][Henrik Lissner]] as author of Doom Emacs he inspired and helped me a lot.
 
-[[https://openclipart.org/detail/248550/d12-twelve-sided-dice][D12 Twelve Sided Dice]] created by [[https://openclipart.org/artist/dwmoook][dwmoook]] and modified by [[https://d12frosted.io][Boris Buliga]].
+[[images/d12frosted.png][D12 Twelve Sided Dice]] created by [[https://www.behance.net/irynarutylo][Iryna Rutylo]].
