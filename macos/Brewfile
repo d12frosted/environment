@@ -42,7 +42,6 @@ brew "skhd", args: ["with-logging", "HEAD"], restart_service: :changed
 brew "terminal-notifier", link: true
 brew "tree"
 brew "wget"
-brew "yabai", restart_service: :changed
 
 # scala
 brew "maven"

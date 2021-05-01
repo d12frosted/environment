@@ -712,11 +712,29 @@ macos_guard && {
     }
   }
 
-  theme_guard "yabai" "Ensure scripting addition is installed" && {
-    # reinstall the scripting addition
-    sudo yabai --uninstall-sa
-    sudo yabai --install-sa
-    sudo yabai --load-sa
+  install_guard && {
+    theme_guard "yabai" "Install yabai" && {
+      brew install koekeishiya/formulae/yabai --HEAD
+      codesign -fs 'yabai-cert' "$(which yabai)"
+      sudo yabai --install-sa
+      sudo yabai --load-sa
+      brew services start yabai
+      echo "$(whoami) ALL = (root) NOPASSWD: /usr/local/bin/yabai --load-sa" \
+        | sudo tee -a /private/etc/sudoers.d/yabai
+    }
+  }
+
+  upgrade_guard && {
+    theme_guard "yabai" "Upgrade yabai" && {
+      export YABAI_CERT=
+      brew services stop koekeishiya/formulae/yabai || true
+      brew uninstall koekeishiya/formulae/yabai
+      brew install koekeishiya/formulae/yabai --HEAD
+      codesign -fs "${YABAI_CERT:-yabai-cert}" "$(brew --prefix yabai)/bin/yabai"
+      sudo yabai --uninstall-sa
+      sudo yabai --install-sa
+      brew services start yabai
+    }
   }
 }
 
