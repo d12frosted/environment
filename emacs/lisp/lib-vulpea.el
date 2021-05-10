@@ -222,8 +222,6 @@ start the capture process."
 
 Make all the links to this alias point to newly created note."
   (interactive)
-  ;; TODO: once better aliases are merged stop doing things
-  ;; manually.
   (if-let* ((node (org-roam-node-at-point 'assert))
             (aliases (org-roam-node-aliases node)))
       (let* ((alias (completing-read
@@ -231,12 +229,8 @@ Make all the links to this alias point to newly created note."
              (backlinks (seq-map
                          #'org-roam-backlink-source-node
                          (org-roam-backlinks-get node)))
-             (id-old (org-roam-node-id node))
-             (aliases (delete alias aliases)))
-        (if aliases
-            (org-set-property "ROAM_ALIASES"
-                              (combine-and-quote-strings aliases))
-          (org-delete-property "ROAM_ALIASES"))
+             (id-old (org-roam-node-id node)))
+        (org-roam-alias-remove alias)
         (org-roam-db-update-file (org-roam-node-file node))
         (let* ((note (vulpea-create
                       alias
