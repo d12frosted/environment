@@ -78,8 +78,9 @@ Affects the following commands:
                  #'car
                  (org-roam-db-query
                   [:select title
-                   :from titles
-                   :where (= file $s1)]
+                   :from nodes
+                   :where (and (= file $s1)
+                               (= level 0))]
                   (vulpea-note-path person))))
          (tags (seq-map #'vulpea--title-to-tag names))
          (query (string-join tags "|")))
