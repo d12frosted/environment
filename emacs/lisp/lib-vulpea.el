@@ -165,45 +165,42 @@ start the capture process."
 ;;;###autoload
 (defun vulpea-ensure-filetag ()
   "Add missing FILETAGS to the current note."
-  (let ((tags (vulpea-buffer-tags-get))
-        (tag (vulpea--title-as-tag)))
-    (when (and (seq-contains-p tags "people")
-               (not (seq-contains-p tags tag)))
-      (vulpea-buffer-tags-add tag))))
+  (let* ((tags (vulpea-buffer-tags-get))
+         (original-tags tags))
 
-;;;###autoload
-(defun vulpea-ensure-roam-tags ()
-  "Add missing ROAM tags to the current note."
-  (save-excursion
-    (goto-char (point-min))
-    (let* ((tags (vulpea-buffer-tags-get))
-           (original-tags tags))
+    ;; process people
+    (when (seq-contains-p tags "people")
+      (let ((tag (vulpea--title-as-tag)))
+        (unless (seq-contains-p tags tag)
+          (setq tags (cons tag tags)))))
 
-      ;; process litnotes
-      (when (seq-contains-p tags "litnotes")
-        (unless (org-entry-get (point) "ROAM_REFS")
-          (org-roam-ref-add (read-string "URL: ")))
-        (unless (seq-find (lambda (x)
-                            (string-prefix-p "status/" x))
-                          tags)
-          (setq tags (cons "status/new" tags)))
-        (unless (seq-find (lambda (x)
-                            (string-prefix-p "content/" x))
-                          tags)
-          (setq tags (cons
-                      (concat
-                       "Content:"
-                       (completing-read
-                        "content/"
-                        '("book" "article" "video" "course")))
-                      tags))))
+    ;; process litnotes
+    (when (seq-contains-p tags "litnotes")
+      (unless (org-entry-get (point) "ROAM_REFS")
+        (org-roam-ref-add (read-string "URL: ")))
+      (unless (seq-find (lambda (x)
+                          (string-prefix-p "status/" x))
+                        tags)
+        (setq tags (cons "status/new" tags)))
+      (unless (seq-find (lambda (x)
+                          (string-prefix-p "content/" x))
+                        tags)
+        (setq tags (cons
+                    (concat
+                     "Content:"
+                     (completing-read
+                      "content/"
+                      '("book" "article" "video" "course")))
+                    tags))))
 
-      ;; process projects
-      (if (vulpea-project-p)
-          (setq tags (cons "project" tags))
-        (setq tags (remove "project" tags)))
-      (unless (eq original-tags tags)
-        (apply #'vulpea-buffer-tags-set (seq-uniq tags))))))
+    ;; process projects
+    (if (vulpea-project-p)
+        (setq tags (cons "project" tags))
+      (setq tags (remove "project" tags)))
+
+    ;; update tags if changed
+    (unless (eq original-tags tags)
+      (apply #'vulpea-buffer-tags-set (seq-uniq tags)))))
 
 
 
@@ -285,16 +282,14 @@ Make all the links to this alias point to newly created note."
   "Setup current buffer for notes viewing and editing."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
-    (vulpea-ensure-filetag)
-    (vulpea-ensure-roam-tags)))
+    (vulpea-ensure-filetag)))
 
 ;;;###autoload
 (defun vulpea-pre-save-hook ()
   "Do all the dirty stuff when file is being saved."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
-    (vulpea-ensure-filetag)
-    (vulpea-ensure-roam-tags)))
+    (vulpea-ensure-filetag)))
 
 
 
