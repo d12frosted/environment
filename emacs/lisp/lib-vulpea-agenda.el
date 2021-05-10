@@ -74,14 +74,9 @@ Affects the following commands:
                   (lambda (note)
                     (seq-contains-p (vulpea-note-tags note)
                                     "people"))))
-         (names (seq-map
-                 #'car
-                 (org-roam-db-query
-                  [:select title
-                   :from nodes
-                   :where (and (= file $s1)
-                               (= level 0))]
-                  (vulpea-note-path person))))
+         (node (org-roam-node-from-id (vulpea-note-id person)))
+         (names (cons (org-roam-node-title node)
+                      (org-roam-node-aliases node)))
          (tags (seq-map #'vulpea--title-to-tag names))
          (query (string-join tags "|")))
     (dlet ((org-agenda-overriding-arguments (list t query)))
