@@ -72,7 +72,7 @@ It is relative to `vulpea-directory', unless it is absolute.")
    '(("d" "default" plain "%?"
       :if-new (file+head
                "%(vulpea-subdir-select)/%<%Y%m%d%H%M%S>-${slug}"
-               "#+title: ${title}\n")
+               "#+title: ${title}\n\n")
       :unnarrowed t))
    org-roam-dailies-capture-templates
    `(("d" "default" entry
