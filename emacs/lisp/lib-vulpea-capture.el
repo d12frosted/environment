@@ -78,7 +78,8 @@ It is relative to `vulpea-directory', unless it is absolute.")
    `(("d" "default" entry
       "* %<%H:%M>\n\n%?"
       :if-new (file+head
-               ,(expand-file-name "%<%Y-%m-%d>.org" org-roam-dailies-directory)
+               ,(expand-file-name "%<%Y-%m-%d>.org"
+                                  org-roam-dailies-directory)
                "#+title: %<%A, %d %B %Y>\n")))))
 
 ;;;###autoload
