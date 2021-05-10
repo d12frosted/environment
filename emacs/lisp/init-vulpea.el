@@ -65,7 +65,6 @@
     "nT" '(vulpea-tags-delete :which-key "untag")
     "na" '(vulpea-alias-add :which-key "alias")
     "nA" '(vulpea-alias-delete :which-key "unalias"))
-  :commands (vulpea-setup)
   :hook ((before-save . vulpea-pre-save-hook))
   :init
   (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer))
@@ -310,16 +309,7 @@
                              "org-roam-test.db"
                            "org-roam.db")
                          path-cache-dir)
-   org-roam-completion-everywhere t
-   org-roam-completion-system (if (eq selection-system 'ivy)
-                                  'ivy
-                                'default)
-   org-roam-tag-sources '(prop all-directories)
-
-   ;; graph settings
-   org-roam-graph-viewer (when env-sys-mac-p "open")
-   org-roam-graph-executable (executable-find "neato")
-   org-roam-graph-extra-config '(("overlap" . "false")))
+   org-roam-completion-everywhere t)
   :config
   (org-roam-setup))
 
