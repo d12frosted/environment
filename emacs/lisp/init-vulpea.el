@@ -48,7 +48,8 @@
   :straight (vulpea
              :type git
              :host github
-             :repo "d12frosted/vulpea")
+             :repo "d12frosted/vulpea"
+             :branch "feature/org-roam-v2")
   :general
   (leader-def
     "n" '(nil :which-key "vulpea...")
@@ -65,8 +66,7 @@
     "na" '(vulpea-alias-add :which-key "alias")
     "nA" '(vulpea-alias-delete :which-key "unalias"))
   :commands (vulpea-setup)
-  :hook ((after-init . vulpea-setup)
-         (before-save . vulpea-pre-save-hook))
+  :hook ((before-save . vulpea-pre-save-hook))
   :init
   (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer))
 
@@ -143,7 +143,7 @@
   (setq
    org-tag-persistent-alist '(("FOCUS" . ?f)
                               ("PROJECT" . ?p))
-   org-tags-exclude-from-inheritance '("PROJECT"))
+   org-use-tag-inheritance nil)
   :config
   ;; open directory links in `dired'
   (add-to-list 'org-file-apps '(directory . emacs))
@@ -298,11 +298,8 @@
 
 
 (use-package org-roam
-  :straight (org-roam
-             :type git
-             :host github
-             :repo "org-roam/org-roam")
   :defer t
+  :commands (org-roam-setup)
   :init
   (setq
    org-roam-directory vulpea-directory
@@ -323,9 +320,7 @@
    org-roam-graph-executable (executable-find "neato")
    org-roam-graph-extra-config '(("overlap" . "false")))
   :config
-  ;; v2 support
-  (when (fboundp 'org-roam-setup)
-    (org-roam-setup)))
+  (org-roam-setup))
 
 
 

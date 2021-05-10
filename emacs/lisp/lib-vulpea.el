@@ -85,29 +85,44 @@ tasks. The only exception is headings tagged as REFILE."
 
 
 ;;;###autoload
-(defun vulpea-find ()
-  "Find a note."
+(defun vulpea-find (&optional nodes require-match)
+  "Find and open a note.
+
+Unless list of NODES is given, all notes are subject of
+selection. Each node is `org-roam-node'.
+
+When REQUIRE-MATCH is nil user may select a non-existent note and
+start the capture process."
   (interactive)
-  (org-roam-find-file))
+  (let ((node (org-roam-node-read
+               nil
+               (lambda (ns)
+                 (if nodes
+                     (seq-filter
+                      (lambda (n)
+                        (seq-contains-p
+                         nodes (cdr n)
+                         (lambda (a b)
+                           (string-equal (org-roam-node-id a)
+                                         (org-roam-node-id b)))))
+                      ns)
+                   ns)))))
+    (if (org-roam-node-file node)
+        (org-roam-node-visit node)
+      (when (not require-match)
+        (org-roam-capture-
+         :node node
+         :props '(:finalize find-file))))))
 
 ;;;###autoload
 (defun vulpea-find-backlink ()
   "Find a note linked to current note."
   (interactive)
-  (when-let* ((buffer (current-buffer))
-              (file (buffer-file-name buffer))
-              (backlinks (seq-uniq
-                          (seq-map
-                           #'car
-                           (org-roam--get-backlinks file)))))
-    (org-roam-find-file
-     nil
-     nil
-     (lambda (completions)
-       (seq-filter
-        (lambda (x) (seq-contains-p backlinks
-                                    (plist-get (cdr x) :path)))
-        completions)))))
+  (let* ((node (org-roam-node-at-point 'assert))
+         (backlinks (seq-map
+                     #'org-roam-backlink-source-node
+                     (org-roam-backlinks-get node))))
+    (vulpea-find backlinks 'require-match)))
 
 
 
@@ -116,12 +131,10 @@ tasks. The only exception is headings tagged as REFILE."
   "Insert a link to the note."
   (interactive)
   (when-let*
-      ((res (org-roam-insert))
-       (path (plist-get res :path))
-       (title (plist-get res :title))
-       (roam-tags (org-roam-with-file path nil
-                    (org-roam--extract-tags path))))
-    (when (seq-contains-p roam-tags "people")
+      ((node (org-roam-node-insert))
+       (title (org-roam-node-title node))
+       (tags (org-roam-node-tags node)))
+    (when (seq-contains-p tags "people")
       (save-excursion
         (ignore-errors
           (org-back-to-heading)
@@ -137,62 +150,57 @@ tasks. The only exception is headings tagged as REFILE."
 (defun vulpea-tags-add ()
   "Add a tag to current note."
   (interactive)
-  (when (org-roam-tag-add)
+  (when (call-interactively #'org-roam-tag-add)
     (vulpea-ensure-filetag)))
 
 ;;;###autoload
 (defun vulpea-tags-delete ()
   "Delete a tag from current note."
   (interactive)
-  (org-roam-tag-delete))
+  (call-interactively #'org-roam-tag-remove))
 
 ;;;###autoload
 (defun vulpea-ensure-filetag ()
   "Add missing FILETAGS to the current note."
-  (let ((tags (org-roam--extract-tags))
-        (filetags (ignore-errors
-                    (vulpea-buffer-prop-get-list "FILETAGS")))
+  (let ((tags (vulpea-buffer-tags-get))
         (tag (vulpea--title-as-tag)))
     (when (and (seq-contains-p tags "people")
-               (not (seq-contains-p filetags tag)))
-      (vulpea-buffer-prop-set
-       "FILETAGS"
-       (combine-and-quote-strings (seq-uniq (cons tag filetags)))))))
+               (not (seq-contains-p tags tag)))
+      (vulpea-buffer-tags-add tag))))
 
 ;;;###autoload
 (defun vulpea-ensure-roam-tags ()
   "Add missing ROAM tags to the current note."
-  (let* ((file (buffer-file-name (buffer-base-buffer)))
-         (all-tags (org-roam--extract-tags file))
-         (prop-tags (org-roam--extract-tags-prop file))
-         (tags prop-tags))
+  (save-excursion
+    (goto-char (point-min))
+    (let* ((tags (vulpea-buffer-tags-get))
+           (original-tags tags))
 
-    ;; process litnotes
-    (when (seq-contains-p all-tags "litnotes")
-      (unless (vulpea-buffer-prop-get "ROAM_KEY")
-        (vulpea-buffer-prop-set "ROAM_KEY" (read-string "URL: ")))
-      (unless (seq-find (lambda (x) (string-prefix-p "Status:" x))
-                        tags)
-        (setq tags (cons "Status:New" tags)))
-      (unless (seq-find (lambda (x) (string-prefix-p "Content:" x))
-                        tags)
-        (setq tags (cons
-                    (concat "Content:"
-                            (completing-read
-                             "Content: "
-                             '("Book" "Article" "Video" "Course")))
-                    tags))))
+      ;; process litnotes
+      (when (seq-contains-p tags "litnotes")
+        (unless (org-entry-get (point) "ROAM_REFS")
+          (org-roam-ref-add (read-string "URL: ")))
+        (unless (seq-find (lambda (x)
+                            (string-prefix-p "status/" x))
+                          tags)
+          (setq tags (cons "status/new" tags)))
+        (unless (seq-find (lambda (x)
+                            (string-prefix-p "content/" x))
+                          tags)
+          (setq tags (cons
+                      (concat
+                       "Content:"
+                       (completing-read
+                        "content/"
+                        '("book" "article" "video" "course")))
+                      tags))))
 
-    ;; process projects
-    (if (vulpea-project-p)
-        (setq tags (cons "Project" tags))
-      (setq tags (remove "Project" tags)))
-    (unless (eq prop-tags tags)
-      ;; TODO: change after
-      ;; https://github.com/org-roam/org-roam/pull/1420
-      (org-roam--set-global-prop
-       "ROAM_TAGS"
-       (combine-and-quote-strings (seq-uniq tags))))))
+      ;; process projects
+      (if (vulpea-project-p)
+          (setq tags (cons "project" tags))
+        (setq tags (remove "project" tags)))
+      (unless (eq original-tags tags)
+        (apply #'vulpea-buffer-tags-set (seq-uniq tags))))))
 
 
 
@@ -200,13 +208,13 @@ tasks. The only exception is headings tagged as REFILE."
 (defun vulpea-alias-add ()
   "Add an alias to current note."
   (interactive)
-  (org-roam-alias-add))
+  (call-interactively #'org-roam-alias-add))
 
 ;;;###autoload
 (defun vulpea-alias-delete ()
   "Delete an alias from current note."
   (interactive)
-  (org-roam-alias-delete))
+  (call-interactively #'org-roam-alias-remove))
 
 ;;;###autoload
 (defun vulpea-alias-extract ()
@@ -214,40 +222,40 @@ tasks. The only exception is headings tagged as REFILE."
 
 Make all the links to this alias point to newly created note."
   (interactive)
-  (if-let* ((aliases (org-roam--extract-titles-alias))
-            (file (buffer-file-name (current-buffer))))
+  ;; TODO: once better aliases are merged stop doing things
+  ;; manually.
+  (if-let* ((node (org-roam-node-at-point 'assert))
+            (aliases (org-roam-node-aliases node)))
       (let* ((alias (completing-read
                      "Alias: " aliases nil 'require-match))
-             (backlinks (seq-uniq
-                         (seq-map
-                          #'car
-                          (org-roam--get-backlinks file))))
-             (id-old (vulpea-db-get-id-by-file file)))
-        ;; TODO: once better aliases are merged stop doing things
-        ;; manually.
-        (org-roam--set-global-prop
-         "roam_alias"
-         (combine-and-quote-strings (delete alias aliases)))
-        (org-roam-db--update-file
-         (buffer-file-name (buffer-base-buffer)))
+             (backlinks (seq-map
+                         #'org-roam-backlink-source-node
+                         (org-roam-backlinks-get node)))
+             (id-old (org-roam-node-id node))
+             (aliases (delete alias aliases)))
+        (if aliases
+            (org-set-property "ROAM_ALIASES"
+                              (combine-and-quote-strings aliases))
+          (org-delete-property "ROAM_ALIASES"))
+        (org-roam-db-update-file (org-roam-node-file node))
         (let* ((note (vulpea-create
                       alias
-                      (list
-                       :file-name "%<%Y%m%d%H%M%S>-${slug}"
-                       :head "#+title: ${title}\n\n"
-                       :unnarrowed t
-                       :immediate-finish t))))
+                      "%<%Y%m%d%H%M%S>-${slug}.org"
+                      :immediate-finish t
+                      :unnarrowed t)))
           (seq-each
-           (lambda (file)
-             (vulpea-utils-with-file file
+           (lambda (node)
+             (vulpea-utils-with-file (org-roam-node-file node)
                (goto-char (point-min))
-               (let ((link-old (org-link-make-string
-                                (concat "id:" id-old)
-                                alias))
-                     (link-new (vulpea-utils-link-make-string note)))
+               (let ((link-old
+                      (org-link-make-string
+                       (concat "id:" id-old)
+                       alias))
+                     (link-new
+                      (vulpea-utils-link-make-string note)))
                  (while (search-forward link-old nil 'noerror)
                    (replace-match link-new))))
-             (org-roam-db--update-file file))
+             (org-roam-db-update-file (org-roam-node-file node)))
            backlinks)))
     (user-error "No aliases to extract")))
 
@@ -259,19 +267,18 @@ Make all the links to this alias point to newly created note."
   (interactive)
   (when-let*
       ((file (buffer-file-name (buffer-base-buffer)))
-       (tags (org-roam--extract-tags-prop file))
+       (tags (vulpea-buffer-prop-get-list "filetags"))
        (status-raw (completing-read
                     "Status: "
-                    '("New" "Ongoing" "Done" "Dropped")))
-       (status (concat "Status:" status-raw))
+                    '("new" "ongoing" "done" "dropped")))
+       (status (concat "status/" status-raw))
        (new-tags (cons status
                        (seq-remove
                         (lambda (x)
-                          (string-prefix-p "Status:" x))
+                          (string-prefix-p "status/" x))
                         tags))))
-    (org-roam--set-global-prop
-     "ROAM_TAGS" (combine-and-quote-strings new-tags))
-    (org-roam-db--insert-tags 'update)
+    (vulpea-buffer-prop-set "filetags" new-tags)
+    (org-roam-db-update-file file)
     (save-buffer)))
 
 
@@ -281,8 +288,6 @@ Make all the links to this alias point to newly created note."
   "Setup current buffer for notes viewing and editing."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
-    (unless (bound-and-true-p org-roam-mode)
-      (org-roam-mode 1))
     (vulpea-ensure-filetag)
     (vulpea-ensure-roam-tags)))
 
@@ -326,7 +331,8 @@ Make all the links to this alias point to newly created note."
 (defun vulpea-db-build ()
   "Update notes database."
   (when (file-directory-p vulpea-directory)
-    (org-roam-db-build-cache)))
+    (org-roam-db-sync)
+    (vulpea-migrate-db)))
 
 
 
@@ -346,11 +352,81 @@ Make all the links to this alias point to newly created note."
 
 (defun vulpea--title-as-tag ()
   "Return title of the current note as tag."
-  (vulpea--title-to-tag (vulpea-buffer-prop-get "TITLE")))
+  (vulpea--title-to-tag (vulpea-buffer-prop-get "title")))
 
 (defun vulpea--title-to-tag (title)
   "Convert TITLE to tag."
   (concat "@" (s-replace " " "" title)))
+
+
+
+(defun vulpea-migrate-buffer ()
+  "Migrate current buffer note to `org-roam' v2."
+  ;; Create file level ID if it doesn't exist yet
+  (org-with-point-at 1
+    (org-id-get-create))
+
+  ;; update title (just to make sure it's lowercase)
+  (vulpea-buffer-title-set (vulpea-buffer-prop-get "title"))
+
+  ;; move roam_key into properties drawer roam_ref
+  (when-let* ((ref (vulpea-buffer-prop-get "roam_key")))
+    (org-set-property "ROAM_REFS" ref)
+    (let ((case-fold-search t))
+      (org-with-point-at 1
+        (while (re-search-forward "^#\\+roam_key:" (point-max) t)
+          (beginning-of-line)
+          (kill-line 1)))))
+
+  ;; move roam_alias into properties drawer roam_aliases
+  (when-let* ((aliases (vulpea-buffer-prop-get-list "roam_alias")))
+    (org-set-property "ROAM_ALIASES"
+                      (combine-and-quote-strings aliases))
+    (let ((case-fold-search t))
+      (org-with-point-at 1
+        (while (re-search-forward "^#\\+roam_alias:" (point-max) t)
+          (beginning-of-line)
+          (kill-line 1)))))
+
+  ;; move roam_tags into filetags
+  (let* ((roam-tags (vulpea-buffer-prop-get-list "roam_tags"))
+         (file-tags (seq-filter
+                     (lambda (x) (not (string-empty-p x)))
+                     (split-string
+                      (string-remove-prefix
+                       org-roam-directory
+                       (file-name-directory (buffer-file-name)))
+                      "/")))
+         (tags (seq-map
+                (lambda (tag)
+                  (setq tag (string-replace ":" "/" tag))
+                  (setq tag (string-replace " " "_" tag))
+                  (if (or
+                       (string-prefix-p "status" tag 'ignore-case)
+                       (string-prefix-p "content" tag 'ignore-case)
+                       (string-equal "Project" tag))
+                      (setq tag (downcase tag)))
+                  tag)
+                (seq-uniq (append roam-tags file-tags)))))
+    (when tags
+      (apply #'vulpea-buffer-tags-set tags)
+      (let ((case-fold-search t))
+        (org-with-point-at 1
+          (while (re-search-forward "^#\\+roam_tags:" (point-max) t)
+            (beginning-of-line)
+            (kill-line 1))))))
+
+  (save-buffer))
+
+(defun vulpea-migrate-db ()
+  "Migrate all notes."
+  (dolist (f (org-roam--list-all-files))
+    (with-current-buffer (find-file f)
+      (message "migrating %s" f)
+      (vulpea-migrate-buffer)))
+
+  ;; Step 2: Build cache
+  (org-roam-db-sync 'force))
 
 
 

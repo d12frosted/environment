@@ -106,6 +106,16 @@ ORIG-FN is called with ARGS and retried
             #'elpa-straight-with-retry)
 
 
+;; overrides
+
+(straight-override-recipe
+ '(org-roam
+   :type git
+   :host github
+   :repo "org-roam/org-roam"
+   :branch "v2"))
+
+
 ;; use-package
 
 (setq-default

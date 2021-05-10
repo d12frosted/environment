@@ -336,7 +336,7 @@ Refer to `org-agenda-prefix-format' for more information."
   (let* ((file-name (when buffer-file-name
                       (file-name-sans-extension
                        (file-name-nondirectory buffer-file-name))))
-         (title (car-safe (org-roam--extract-titles-title)))
+         (title (vulpea-buffer-prop-get "title"))
          (category (org-get-category))
          (result
           (or (if (and
