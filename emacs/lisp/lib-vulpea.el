@@ -331,8 +331,7 @@ Make all the links to this alias point to newly created note."
 (defun vulpea-db-build ()
   "Update notes database."
   (when (file-directory-p vulpea-directory)
-    (org-roam-db-sync)
-    (vulpea-migrate-db)))
+    (org-roam-db-sync)))
 
 
 
