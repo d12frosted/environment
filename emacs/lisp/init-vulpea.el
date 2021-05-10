@@ -303,7 +303,8 @@
   :init
   (setq
    org-roam-directory vulpea-directory
-   org-roam-dailies-directory "journal/"
+   org-roam-dailies-directory (expand-file-name
+                               "journal/" org-roam-directory)
    org-roam-db-location (expand-file-name
                          (if vulpea-test-mode
                              "org-roam-test.db"

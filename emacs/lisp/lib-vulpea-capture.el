@@ -69,19 +69,17 @@ It is relative to `vulpea-directory', unless it is absolute.")
       :clock-in t
       :clock-resume t))
    org-roam-capture-templates
-   '(("d" "default" plain
-      #'org-roam-capture--get-point
-      "%?"
-      :file-name "%(vulpea-subdir-select)/%<%Y%m%d%H%M%S>-${slug}"
-      :head "#+TITLE: ${title}\n\n"
+   '(("d" "default" plain "%?"
+      :if-new (file+head
+               "%(vulpea-subdir-select)/%<%Y%m%d%H%M%S>-${slug}"
+               "#+title: ${title}\n")
       :unnarrowed t))
    org-roam-dailies-capture-templates
-   '(("d" "default" entry
-      #'org-roam-capture--get-point
-      "\n\n* %<%H:%M>\n\n%?"
-      :empty-lines 1
-      :file-name "journal/%<%Y-%m-%d>"
-      :head "#+TITLE: %<%A, %d %B %Y>\n\n"))))
+   `(("d" "default" entry
+      "* %<%H:%M>\n\n%?"
+      :if-new (file+head
+               ,(expand-file-name "%<%Y-%m-%d>.org" org-roam-dailies-directory)
+               "#+title: %<%A, %d %B %Y>\n")))))
 
 ;;;###autoload
 (defun vulpea-capture-task ()
