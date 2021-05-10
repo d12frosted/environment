@@ -142,7 +142,10 @@
   (setq
    org-tag-persistent-alist '(("FOCUS" . ?f)
                               ("PROJECT" . ?p))
-   org-use-tag-inheritance nil)
+   org-use-tag-inheritance t
+   org-tags-exclude-from-inheritance '("project"
+                                       "litnotes"
+                                       "people"))
   :config
   ;; open directory links in `dired'
   (add-to-list 'org-file-apps '(directory . emacs))
