@@ -87,5 +87,11 @@ ARGS are passed to FN."
     (when (null continue)
       value)))
 
+;;;###autoload
+(defun fun-noop (&rest _)
+  "Do nothing.
+
+Useful for temporarily disabling a function.")
+
 (provide 'lib-fun)
 ;;; lib-fun.el ends here

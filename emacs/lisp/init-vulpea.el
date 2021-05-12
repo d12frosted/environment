@@ -50,6 +50,7 @@
              :host github
              :repo "d12frosted/vulpea"
              :branch "feature/org-roam-v2")
+  :defer t
   :general
   (leader-def
     "n" '(nil :which-key "vulpea...")
@@ -67,7 +68,8 @@
     "nA" '(vulpea-alias-delete :which-key "unalias"))
   :hook ((before-save . vulpea-pre-save-hook))
   :init
-  (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer))
+  (add-to-list 'window-buffer-change-functions
+               #'vulpea-setup-buffer))
 
 
 
@@ -81,13 +83,7 @@
 
   ;; Setup list of Org modules that should always be loaded together
   ;; with Org.
-  (setq org-modules
-        '(org-agenda
-          org-archive
-          org-capture
-          org-refile
-          org-id
-          org-attach))
+  (setq org-modules '(org-id org-attach))
 
   ;; pretty org files
   (setq
@@ -301,7 +297,8 @@
 
 (use-package org-roam
   :defer t
-  :commands (org-roam-setup)
+  :commands (org-roam-setup
+             org-roam-db-sync)
   :init
   (setq
    org-roam-directory vulpea-directory
@@ -314,7 +311,17 @@
                          path-cache-dir)
    org-roam-completion-everywhere t)
   :config
-  (org-roam-setup))
+  ;; For some reason org-roam is loaded on init and twice! Suspect it
+  ;; is related to the fact that I am loading it from different
+  ;; branch.
+  ;;
+  ;; So since I need a quick remedy, I noop `org-roam-db-sync' during
+  ;; setup, because I sync data base time to time from terminal via
+  ;; eru.
+  (advice-add #'org-roam-db-sync :around #'fun-noop)
+  (ignore-errors
+    (org-roam-setup))
+  (advice-remove #'org-roam-db-sync #'fun-noop))
 
 
 
