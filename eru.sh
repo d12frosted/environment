@@ -774,7 +774,7 @@ theme_guard "Emacs" "Setup Eldev" && {
 install_guard && {
   theme_guard "Emacs" "Setup Emacs configurations" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
-      make bootstrap compile lint roam
+      make bootstrap compile lint vulpea
     }
   }
 }

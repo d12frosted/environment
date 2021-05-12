@@ -25,6 +25,6 @@ test:
 	eldev exec t
 	eldev -C --unstable -a -dtT test
 
-.PHONY: roam
-roam:
+.PHONY: vulpea
+vulpea:
 	eldev exec "(progn (run-hooks 'after-init-hook) (vulpea-db-build))"
