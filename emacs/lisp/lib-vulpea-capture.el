@@ -71,7 +71,7 @@ It is relative to `vulpea-directory', unless it is absolute.")
    org-roam-capture-templates
    '(("d" "default" plain "%?"
       :if-new (file+head
-               "%(vulpea-subdir-select)/%<%Y%m%d%H%M%S>-${slug}"
+               "%(vulpea-subdir-select)/%<%Y%m%d%H%M%S>-${slug}.org"
                "#+title: ${title}\n\n")
       :unnarrowed t))
    org-roam-dailies-capture-templates
