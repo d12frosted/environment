@@ -40,6 +40,7 @@
 (require 'config-vulpea)
 (require 'lib-directory)
 
+(require 'vulpea)
 (require 'org-roam)
 (require 'org-roam-db)
 (require 'org-roam-dailies)
