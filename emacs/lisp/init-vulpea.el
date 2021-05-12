@@ -77,6 +77,7 @@
   :hook ((org-mode . auto-fill-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
+  :commands (org-check-agenda-file)
   :init
   ;; This is where my ~heart~ org files are.
   (setq org-directory vulpea-directory)
@@ -142,6 +143,11 @@
    org-tags-exclude-from-inheritance '("project"
                                        "litnotes"
                                        "people"))
+
+  ;; avoid noisy `org-check-agenda-file'
+  (advice-add #'org-check-agenda-file
+              :around
+              #'vulpea-check-agenda-file)
   :config
   ;; open directory links in `dired'
   (add-to-list 'org-file-apps '(directory . emacs))

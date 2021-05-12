@@ -352,6 +352,20 @@ Make all the links to this alias point to newly created note."
 
 
 
+;;;###autoload
+;; org-check-agenda-file
+(defun vulpea-check-agenda-file (&rest _)
+  "A noop advice for `org-check-agenda-file'.
+
+Since this function is called from multiple places, it is very
+irritating to answer this question every time new note is created.
+
+Also, it doesn't matter if the file in question is present in the
+list of `org-agenda-files' or not, since it is built dynamically
+via `vulpea-agenda-files-update'.")
+
+
+
 (defun vulpea-migrate-buffer ()
   "Migrate current buffer note to `org-roam' v2."
   ;; Create file level ID if it doesn't exist yet
