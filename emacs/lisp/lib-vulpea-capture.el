@@ -80,7 +80,7 @@ It is relative to `vulpea-directory', unless it is absolute.")
       :if-new (file+head
                ,(expand-file-name "%<%Y-%m-%d>.org"
                                   org-roam-dailies-directory)
-               "#+title: %<%A, %d %B %Y>\n")))))
+               "#+title: %<%A, %d %B %Y>\n#+filetags: journal\n\n")))))
 
 ;;;###autoload
 (defun vulpea-capture-task ()
