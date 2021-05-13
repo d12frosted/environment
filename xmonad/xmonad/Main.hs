@@ -68,7 +68,7 @@ xmonadConfig
                  , wsOther
                  ]
 
-  , terminal = "kitty"
+  , terminal = "alacritty"
   } `additionalKeysP` keybindings
 
 --------------------------------------------------------------------------------
