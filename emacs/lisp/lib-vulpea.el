@@ -200,7 +200,9 @@ start the capture process."
       (setq tags (remove "project" tags)))
 
     ;; update tags if changed
-    (unless (eq original-tags tags)
+    (when (seq-difference
+           (seq-uniq tags)
+           (seq-uniq original-tags))
       (apply #'vulpea-buffer-tags-set (seq-uniq tags)))))
 
 
