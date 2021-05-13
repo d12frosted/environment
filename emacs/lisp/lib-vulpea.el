@@ -166,8 +166,16 @@ start the capture process."
 ;;;###autoload
 (defun vulpea-ensure-filetag ()
   "Add missing FILETAGS to the current note."
-  (let* ((tags (vulpea-buffer-tags-get))
-         (original-tags tags))
+  (let* ((path-tags
+          (seq-filter
+           (lambda (x) (not (string-empty-p x)))
+           (split-string
+            (string-remove-prefix
+             vulpea-directory
+             (file-name-directory (buffer-file-name)))
+            "/")))
+         (original-tags (vulpea-buffer-tags-get))
+         (tags (seq-uniq (append original-tags path-tags))))
 
     ;; process people
     (when (seq-contains-p tags "people")
