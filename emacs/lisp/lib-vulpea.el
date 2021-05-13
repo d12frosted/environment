@@ -89,33 +89,33 @@ tasks. The only exception is headings tagged as REFILE."
 
 
 ;;;###autoload
-(defun vulpea-find (&optional nodes require-match)
+(defun vulpea-find (&optional notes require-match)
   "Find and open a note.
 
-Unless list of NODES is given, all notes are subject of
-selection. Each node is `org-roam-node'.
+Unless list of NOTES is given, all existing notes are subject of
+selection.
 
 When REQUIRE-MATCH is nil user may select a non-existent note and
 start the capture process."
   (interactive)
-  (let ((node (org-roam-node-read
-               nil
-               (lambda (ns)
-                 (if nodes
-                     (seq-filter
-                      (lambda (n)
-                        (seq-contains-p
-                         nodes (cdr n)
-                         (lambda (a b)
-                           (string-equal (org-roam-node-id a)
-                                         (org-roam-node-id b)))))
-                      ns)
-                   ns)))))
-    (if (org-roam-node-file node)
-        (org-roam-node-visit node)
+  (let ((note (vulpea-select
+               "Note"
+               :filter-fn
+               (lambda (note)
+                 (and (= (vulpea-note-level note) 0)
+                      (or (null notes)
+                          (seq-contains-p
+                           notes note
+                           (lambda (a b)
+                             (string-equal
+                              (vulpea-note-id a)
+                              (vulpea-note-id b))))))))))
+    (if-let* ((file (vulpea-note-path note))
+              (buffer (find-file-noselect file)))
+        (pop-to-buffer-same-window buffer)
       (when (not require-match)
         (org-roam-capture-
-         :node node
+         :node (org-roam-node-create :title note)
          :props '(:finalize find-file))))))
 
 ;;;###autoload
