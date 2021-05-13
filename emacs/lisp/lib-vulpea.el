@@ -154,8 +154,9 @@ start the capture process."
 (defun vulpea-tags-add ()
   "Add a tag to current note."
   (interactive)
-  (when (call-interactively #'org-roam-tag-add)
-    (vulpea-ensure-filetag)))
+  (org-with-point-at 1
+    (when (call-interactively #'org-roam-tag-add)
+      (vulpea-ensure-filetag))))
 
 ;;;###autoload
 (defun vulpea-tags-delete ()
