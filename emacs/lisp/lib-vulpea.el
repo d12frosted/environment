@@ -124,7 +124,9 @@ start the capture process."
   (interactive)
   (let* ((node (org-roam-node-at-point 'assert))
          (backlinks (seq-map
-                     #'org-roam-backlink-source-node
+                     (-compose
+                      #'vulpea-note-from-node
+                      #'org-roam-backlink-source-node)
                      (org-roam-backlinks-get node))))
     (vulpea-find backlinks 'require-match)))
 
