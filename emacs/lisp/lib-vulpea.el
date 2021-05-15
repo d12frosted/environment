@@ -115,7 +115,7 @@ start the capture process."
         (pop-to-buffer-same-window buffer)
       (when (not require-match)
         (org-roam-capture-
-         :node (org-roam-node-create :title note)
+         :node (org-roam-node-create :title (vulpea-note-title note))
          :props '(:finalize find-file))))))
 
 ;;;###autoload
