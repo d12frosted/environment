@@ -1,3 +1,6 @@
+:PROPERTIES:
+:ID:                     92d3d8e1-7043-4d69-827d-e84a3c4a1797
+:END:
 #+TITLE:        fish
 #+AUTHOR:       Boris Buliga
 #+EMAIL:        boris@d12frosted.io
@@ -7,11 +10,17 @@
 [[https://d12frosted.io/posts/2015-02-07-make-the-fish-fly.html][Make the Fish fly]]. If it doesn't fly, it's not a [[https://fishshell.com][fish]].
 
 * Dependencies
+:PROPERTIES:
+:ID:                     3e05618c-04f1-4da5-8f5e-89192c0706d4
+:END:
 
 It's impossible to maintain the list of dependencies in documentation. =eru= is
 your friend.
 
 * Custom lambda-prompt
+:PROPERTIES:
+:ID:                     af6c9ab5-86c9-453c-b0e0-068cefc77696
+:END:
 
 [[file:images/prompt.png]]
 
@@ -26,14 +35,3 @@ Strong points of my custom [[file:functions/fish_prompt.fish][fish_prompt]] are:
 4. minimalistic
 
 [[file:images/notification.png]]
-
-* Batteries
-
-Uses [[https://github.com/jorgebucaran/fisher][fisher]] to install packages.
-
-There are some useful functions that come with my configs.
-
-1. =dnvm= - wrapper for [[https://github.com/aspnet/dnvm][dnvm]].
-2. =hglog= - pretty =log= for mercurial repository.
-3. =convert_texture= - convert input texture to specified format using
-   =TexturePacker=. For more information, checkout =$ TexturePacker --help=.

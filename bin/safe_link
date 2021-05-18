@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#
+# Extracted from Eru.sh
+#
+# Use at your own risk.
+#
+
+set -e
+
+s="$1"
+t="$2"
+d=$(dirname "$t")
+
+if [[ -d "$d" ]]; then
+  owner=$(stat -f '%Su' "$d")
+  if [[ "$owner" != "root" && "$owner" != "$USER" ]]; then
+    echo "can not link '$s' to '$t'"
+    echo "owner of '$d' is $owner"
+    echo "allowed owners: root or $USER"
+    exit 1
+  fi
+fi
+
+if [[ ! -f "$s" && ! -d "$s" ]]; then
+  echo "can not link '$s' as it does not exist"
+  exit 1
+fi
+
+if [[ ! -d $d ]]; then
+  echo "create $d"
+  mkdir -p "$d"
+fi
+
+if [[ -L "$t" ]]; then
+  echo "relink $s -> $t"
+  if [[ "$owner" = "root" ]]; then
+    sudo rm "$t"
+  else
+    rm "$t"
+  fi
+else
+  echo "link $s -> $t"
+fi
+
+if [[ "$owner" = "root" ]]; then
+  sudo ln -s "$s" "$t"
+else
+  ln -s "$s" "$t"
+fi

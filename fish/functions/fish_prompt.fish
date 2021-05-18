@@ -62,9 +62,11 @@ end
 
 function __d12_prompt__check_duration
   if test $CMD_DURATION
-    if test $CMD_DURATION -ge $cmd_notification_threshold
-      __d12_prompt__on_duration_exceeded $CMD_DURATION
-      __d12_prompt__notify_completion $CMD_DURATION
+    if test $CMD_NOTIFICATION_THRESHOLD
+      if test $CMD_DURATION -ge $CMD_NOTIFICATION_THRESHOLD
+        __d12_prompt__on_duration_exceeded $CMD_DURATION
+        __d12_prompt__notify_completion $CMD_DURATION
+      end
     end
   end
   set CMD_DURATION 0

@@ -110,16 +110,21 @@ function section() {
   echo -e "\033[0;34m=> $*\033[0m"
 }
 
-function theme() {
-  echo -e "\033[1;32m=> $1 Theme :: ${*:2}\033[0m"
+function a_theme() {
+  local text=">>> $2 :: ${*:3}"
+  echo
+	echo '┌────────────────────────────────────────────────────────────────────────────┐'
+	echo -ne "│ \033[$1m$text\033[0m"
+	printf "%$((76 - $(echo $text | wc -c)))s│\n"
+	echo '└────────────────────────────────────────────────────────────────────────────┘'
 }
 
 function optional_theme() {
-  echo -e "\033[1;32m-> $1 Theme :: ${*:2}\033[0m"
+  a_theme "1;32" "$1" "${*:2}"
 }
 
 function inactive_theme() {
-  echo -e "\033[1;37m-> $1 Theme :: ${*:2}\033[0m"
+  a_theme "1;37" "$1" "${*:2}"
 }
 
 #
@@ -131,8 +136,8 @@ together a Great Music. And since I have kindled you with the Flame
 Imperishable, ye shall show forth your powers in adorning this theme, each with
 his own thoughts and devices, if he will. But I win sit and hearken, and be glad
 that through you great beauty has been wakened into song."
-intro
 
+log
 log "Kernel name:      $KERNEL_NAME"
 log "Kernel release:   $KERNEL_RELEASE"
 log "Operating system: $OS_NAME"
@@ -145,7 +150,7 @@ log
 # Helpers
 #
 
-theme "Supporting" "Defining helpers"
+section "Defining helpers"
 
 function theme_guard() {
   key=$(echo "$1" | tr '[:upper:]' '[:lower:]')
@@ -187,199 +192,15 @@ function macos_guard() {
   return
 }
 
-function qualify_repo_url() {
-  if [[ "$1" = "https://"* || "$1" = "git@"* ]]; then
-    echo "$1"
-  elif [[ "$2" = "github" ]]; then
-    if [[ "$USE_HTTPS" = "true" ]]; then
-      echo  "https://github.com/$1.git"
-    else
-      echo "git@github.com:$1.git"
-    fi
-  elif [[ "$2" = "gitlab" ]]; then
-    if [[ "$USE_HTTPS" = "true" ]]; then
-      echo  "https://gitlab.com/$1.git"
-    else
-      echo "git@gitlab.com:$1.git"
-    fi
-  fi
-}
-
-function git_lg() {
-  git --no-pager \
-      log \
-      --graph \
-      --pretty=format:'%Cred%h%Creset %C(bold blue)<%an> -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' \
-      "$*"
-}
-
-function sync_repo() {
-  section "sync_repo $*"
-
-  wd=$(eval echo "$1")
-  remote="$2"
-  url=$(qualify_repo_url "$3" "$remote")
-  branch="$4"
-  if [[ $branch = "" ]]; then
-    branch="master"
-  fi
-
-  if [[ -d "$wd/.git" ]]; then
-    log "$wd already exists"
-  else
-    git clone "$url" "$wd" -b "$branch"
-  fi
-
-  cd "$wd" && {
-    git diff-index --quiet HEAD -- || {
-      error "Your working directory is not clean."
-      error "Please commit or stash all changes before proceeding."
-      return 1
-    }
-
-    current_branch=$(git symbolic-ref --short HEAD)
-    if [[ $branch != "$current_branch" ]]; then
-      log "Switching from $current_branch to $branch"
-      git checkout "$branch"
-    fi
-
-    if [[ -d .git/refs/remotes/$remote ]]; then
-      current_url=$(git remote get-url $remote)
-      if [[ $current_url != "$url" ]]; then
-        log "Remote '$remote' has wrong url, so updating it"
-        log "  $current_url -> $url"
-        git remote set-url $remote "$url"
-      fi
-    else
-      log "Could not find remote '$remote', so adding it"
-      git remote add $remote "$url"
-    fi
-
-    log "fetch $remote"
-    git fetch $remote
-    if [[ $(git rev-parse HEAD) == $(git rev-parse $remote/$branch) ]]; then
-      log "Everything up-to-date"
-      return 0
-    fi
-
-    if [ "$(git rev-list HEAD..$remote/$branch --count)" != 0 ]; then
-      log "Fetched changes:"
-      git_lg HEAD..$remote/$branch
-      log
-    fi
-
-    log "rebase onto $remote/$branch"
-    git rebase $remote/$branch
-
-    if [[ "$url" = *"$fellow"* ]]; then
-      if [ "$(git rev-list $remote/$branch..HEAD --count)" != 0 ]; then
-        log "Changes to push:"
-        git_lg $remote/$branch..HEAD
-        log
-      fi
-
-      log "pushing changes"
-      git push $remote $branch
-    fi
-  }
-}
-
-function ensure_dir() {
-  if [[ ! -d "$1" ]]; then
-    log "create $1"
-    mkdir -p "$1"
-  fi
-}
-
 function check() {
   command -v "$1" >/dev/null 2>&1
-}
-
-function linkfile() {
-  local file="$1"
-  if [ -f "$file" ]; then
-    (
-      cd "$(dirname "$file")"
-      map_lines safe_link "$file"
-    )
-  fi
-}
-
-function safe_link() {
-  local f
-  local s
-  local t
-  local d
-  local owner
-
-  # shellcheck disable=SC2086
-  f=$(eval echo $1)
-  s="$(pwd)/$f"
-  t=$(eval echo "$2")
-  d=$(dirname "$t")
-
-  if [[ -d "$d" ]]; then
-    owner=$(stat -c '%U' "$d")
-    if [[ "$owner" != "root" && "$owner" != "$USER" ]]; then
-      error "can not link '$s' to '$t'"
-      error "owner of '$d' is $owner"
-      error "allowed owners: root or $USER"
-      exit 1
-    fi
-  fi
-
-
-  if [[ ! -f "$s" && ! -d "$s" ]]; then
-    error "can not link '$s' as it does not exist"
-    exit 1
-  fi
-
-  if [[ ! -d $d ]]; then
-    log "create $d"
-    mkdir -p "$d"
-  fi
-
-  if [[ -L "$t" ]]; then
-    log "relink $s -> $t"
-    if [[ "$owner" = "root" ]]; then
-      sudo rm "$t"
-    else
-      rm "$t"
-    fi
-  else
-    log "link $s -> $t"
-  fi
-
-  if [[ "$owner" = "root" ]]; then
-    sudo ln -s "$s" "$t"
-  else
-    ln -s "$s" "$t"
-  fi
-}
-
-function map_lines() {
-  if [[ -f "$2" ]]; then
-    while IFS='' read -r line || [[ -n "$line" ]]; do
-      if [[ "$line" != "#"* ]]; then
-        # shellcheck disable=SC2086
-        $1 $line
-      fi
-    done < "$2"
-  fi
-}
-
-function download_bin() {
-  fp="$HOME/.local/bin/$1"
-  curl --silent -o "$fp" "$2"
-  chmod a+x "$HOME/.local/bin/$1"
-  hash -r
 }
 
 #
 # Setup variables
 #
 
-theme "Supporting" "Defining variables"
+section "Defining variables"
 
 ALL="true"
 ACTION=
@@ -389,7 +210,6 @@ case $1 in
     shift
     ;;
   *)
-    echo
     if [ -z "$1" ]; then
       ACTION=install
     else
@@ -447,83 +267,34 @@ trap unlock INT TERM EXIT
 # Actual bootstrap
 #
 
-theme "Guardian" "Ensure all directories exists"
-ensure_dir "$HOME/.local/bin"
-ensure_dir "$DEVELOPER"
-ensure_dir "$HOME/Dropbox/apps/Emacs"
+section "Make Eru more approachable"
+$XDG_CONFIG_HOME/bin/safe_link $XDG_CONFIG_HOME/eru.sh $HOME/.local/bin/eru
 
-# TODO: make it working on Linux from command line
-macos_guard && theme_guard "SSH" "Checking SSH keys" && {
-  if [[ "$INTERACTIVE" = "true" ]]; then
-    ssh_key_add_url="https://github.com/settings/ssh/new"
-    ssh_key_path="$HOME/.ssh/id_rsa"
-    ssh_key_pub_path="${ssh_key_path}.pub"
-    ssh_config_path="$HOME/.ssh/config"
-
-    if [[ -f "$ssh_key_path" ]]; then
-      log "SSH key found at $ssh_key_path."
-    else
-      log "No SSH key found."
-      mkdir -p "$(dirname "$ssh_key_path")"
-      ssh-keygen -t rsa -b 4096 -C "$USER" -f "$ssh_key_path"
-      log "SSH key was generated."
-    fi
-
-    log "Starting ssh-agent"
-    eval "$(ssh-agent -s)"
-
-    macos_guard && {
-      log "Automatically load SSH key and use Keychain"
-      echo "Host *
- AddKeysToAgent yes
- UseKeychain yes
- IdentityFile $ssh_key_path" > "$ssh_config_path"
-    }
-
-    log "Add SSH key to ssh-agent"
-    ssh-add -K ~/.ssh/id_rsa
-
-    log "Make sure to add SSH key to GitHub"
-    pbcopy < "$ssh_key_pub_path"
-    open "$ssh_key_add_url"
-    read -rp "Press enter to continue"
-  fi
-}
-
-theme_guard "Repositories" "Sync repositories from Repofiles" && {
-  map_lines sync_repo "$target/Repofile" || true
-  map_lines sync_repo "$XDG_CONFIG_CACHE/eru/Repofile" || true
-}
-
-theme_guard "Linking" "Link all files as defined in Linkfiles" && {
-  linkfile "$target/Linkfile"
-  linkfile "$XDG_CONFIG_CACHE/eru/Linkfile"
-  linkfile "$XDG_CONFIG_CACHE/eru/Linkfile_${KERNEL_NAME}"
-  for f in "$target"/**/Linkfile; do
-    linkfile "$f"
-  done
-  for f in "$target"/**/Linkfile_"${KERNEL_NAME}"; do
-    linkfile "$f"
-  done
-}
-
-export GHCUP_USE_XDG_DIRS=1
-theme_guard "packages" "Ensure ghcup installation" && {
-  check ghcup || {
-    # https://www.haskell.org/ghcup/
-    export BOOTSTRAP_HASKELL_NONINTERACTIVE=1
-    curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
-  }
-
-  upgrade_guard && {
-    ghcup upgrade
+theme_guard "system" "ensure nix installation" && {
+  check nix && {
+    echo "Found nix executable at $(which nix)"
+    echo "Nothing to do"
+  } || {
+    install_script="$(mktemp -d)/install"
+    curl -L https://nixos.org/nix/install -o "$install_script"
+	  chmod +x "$install_script"
+	  "$install_script" --daemon
   }
 }
 
-theme_guard "packages" "Ensure HLS installation" && {
-  check haskell-language-server-wrapper || {
-    ghcup install hls
-  }
+theme_guard "system" "build nix environment" && {
+  result="$(mktemp -d)/result"
+  echo "building to $result"
+  nix build \
+    --experimental-features "nix-command flakes" --impure \
+    -I hm-config=$XDG_CONFIG_HOME/modules/home.nix \
+    -o "$result" \
+    $XDG_CONFIG_HOME/#darwinConfigurations.${fellow}.system
+  echo "switching environment"
+  "$result"/sw/bin/darwin-rebuild switch \
+    --impure \
+    -I hm-config=$XDG_CONFIG_HOME/modules/home.nix \
+    --flake $XDG_CONFIG_HOME/#${fellow}
 }
 
 arch_guard && {
@@ -649,95 +420,6 @@ arch_guard && {
   }
 }
 
-macos_guard && {
-  theme_guard "packages" "Ensure brew exists" && {
-    check brew || {
-      log "Installing brew"
-      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      brew update
-    }
-  }
-
-  theme_guard "packages" "Ensure MacPorts exists" && {
-    check port || {
-      log "Installing MacPorts"
-      mp_build_dir=$(mktemp -d)
-      version=$(curl -s https://api.github.com/repos/macports/macports-base/releases/latest \
-        | grep "tag_name" \
-        | awk '{print substr($2, 3, length($2)-4)}')
-      url="https://github.com/macports/macports-base/archive/v${version}.zip"
-      os_part="unknown"
-      case $OS_VERSION in
-        11.0.*)
-          os_part="_1-11-BigSur"
-          ;;
-        *)
-          error "Unsupported OS Version - $OS_VERSION"
-          error "Can not install MacPorts"
-          exit 1
-          ;;
-      esac
-      file="MacPorts-${version}${os_part}.pkg"
-      url="https://github.com/macports/macports-base/releases/download/v${version}/${file}"
-      curl -L -o "${mp_build_dir}/${file}" "$url"
-      sudo installer -pkg "${mp_build_dir}/${file}" -target /
-    }
-  }
-
-  install_guard && {
-    theme_guard "packages" "Install all dependencies" && {
-      cd "$target/macos" && brew bundle
-    }
-  }
-
-  upgrade_guard && {
-    theme_guard "packages" "Upgrade packages" && {
-      brew update
-      brew upgrade
-    }
-  }
-}
-
-theme "Git" "Create a local git config file"
-touch "$target/git/local.config"
-
-macos_guard && {
-  theme_guard "OS" "Write all defaults" && {
-    cd "$target/macos" && sudo ./defaults.sh
-  }
-
-  theme_guard "skhd" "Patch skhd application PATH" && {
-    check skhd && {
-      "$target/bin/patch_skhd_path"
-    }
-  }
-
-  install_guard && {
-    theme_guard "yabai" "Install yabai" && {
-      brew install koekeishiya/formulae/yabai --HEAD
-      codesign -fs 'yabai-cert' "$(which yabai)"
-      sudo yabai --install-sa
-      sudo yabai --load-sa
-      brew services start yabai
-      echo "$(whoami) ALL = (root) NOPASSWD: /usr/local/bin/yabai --load-sa" \
-        | sudo tee -a /private/etc/sudoers.d/yabai
-    }
-  }
-
-  upgrade_guard && {
-    theme_guard "yabai" "Upgrade yabai" && {
-      export YABAI_CERT=
-      brew services stop koekeishiya/formulae/yabai || true
-      brew uninstall koekeishiya/formulae/yabai
-      brew install koekeishiya/formulae/yabai --HEAD
-      codesign -fs "${YABAI_CERT:-yabai-cert}" "$(brew --prefix yabai)/bin/yabai"
-      sudo yabai --uninstall-sa
-      sudo yabai --install-sa
-      brew services start yabai
-    }
-  }
-}
-
 arch_guard && {
   theme_guard "xmonad" "Rebuild Xmonad configurations" && {
     section "Install xmonad"
@@ -758,21 +440,14 @@ arch_guard && {
   }
 }
 
-theme "Fish" "Setup fish variables"
-check fish && {
-  fish -c "set -gx XDG_CONFIG_HOME $target"
-  fish -c "set -gx XDG_CACHE_HOME $HOME/.cache"
-  fish -c "set -gx XDG_DATA_HOME $HOME/.local/share"
-}
-
-theme_guard "Emacs" "Setup Eldev" && {
+theme_guard "Emacs" "setup Eldev" && {
   eldev_bin=$HOME/.local/bin/eldev
   curl -fsSL https://raw.github.com/doublep/eldev/master/bin/eldev > "$eldev_bin"
   chmod a+x "$eldev_bin"
 }
 
 install_guard && {
-  theme_guard "Emacs" "Setup Emacs configurations" && {
+  theme_guard "Emacs" "setup Emacs configurations" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
       make bootstrap compile lint vulpea
     }
@@ -780,7 +455,7 @@ install_guard && {
 }
 
 upgrade_guard && {
-  theme_guard "Emacs" "Upgrade Emacs packages" && {
+  theme_guard "Emacs" "upgrade Emacs packages" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
       make upgrade compile lint
     }
@@ -788,15 +463,11 @@ upgrade_guard && {
 }
 
 test_guard && {
-  theme_guard "Emacs" "Test Emacs configurations" && {
+  theme_guard "Emacs" "test Emacs configurations" && {
     cd "$XDG_CONFIG_HOME/emacs" && {
       make test
     }
   }
-}
-
-theme_guard "Guardian" "Check that Emacs runs as expected" && {
-  emacs --batch -l "$target/emacs/test.el"
 }
 
 true
