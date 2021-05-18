@@ -231,6 +231,7 @@ yabai -m space --focus 1
 # floating apps and windows
 yabai -m rule --add app="^System Preferences$" manage=off
 yabai -m rule --add app="^Cryptomator$" manage=off
+yabai -m rule --add app="^Emacs$" title!='^$' manage=on
       '';
     };
   };
