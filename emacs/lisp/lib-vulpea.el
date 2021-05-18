@@ -89,50 +89,6 @@ tasks. The only exception is headings tagged as REFILE."
 
 
 ;;;###autoload
-(defun vulpea-find (&optional notes require-match)
-  "Find and open a note.
-
-Unless list of NOTES is given, all existing notes are subject of
-selection.
-
-When REQUIRE-MATCH is nil user may select a non-existent note and
-start the capture process."
-  (interactive)
-  (let ((note (vulpea-select
-               "Note"
-               :filter-fn
-               (lambda (note)
-                 (and (= (vulpea-note-level note) 0)
-                      (or (null notes)
-                          (seq-contains-p
-                           notes note
-                           (lambda (a b)
-                             (string-equal
-                              (vulpea-note-id a)
-                              (vulpea-note-id b))))))))))
-    (if-let* ((file (vulpea-note-path note))
-              (buffer (find-file-noselect file)))
-        (pop-to-buffer-same-window buffer)
-      (when (not require-match)
-        (org-roam-capture-
-         :node (org-roam-node-create :title (vulpea-note-title note))
-         :props '(:finalize find-file))))))
-
-;;;###autoload
-(defun vulpea-find-backlink ()
-  "Find a note linked to current note."
-  (interactive)
-  (let* ((node (org-roam-node-at-point 'assert))
-         (backlinks (seq-map
-                     (-compose
-                      #'vulpea-note-from-node
-                      #'org-roam-backlink-source-node)
-                     (org-roam-backlinks-get node))))
-    (vulpea-find backlinks 'require-match)))
-
-
-
-;;;###autoload
 (defun vulpea-insert (&optional filter-fn)
   "Insert a link to the existing note.
 

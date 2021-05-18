@@ -69,7 +69,11 @@
   :hook ((before-save . vulpea-pre-save-hook))
   :init
   (add-to-list 'window-buffer-change-functions
-               #'vulpea-setup-buffer))
+               #'vulpea-setup-buffer)
+  (setq-default
+   vulpea-find-default-filter
+   (lambda (note)
+     (= (vulpea-note-level note) 0))))
 
 
 
