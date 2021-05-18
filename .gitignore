@@ -1,3 +1,10 @@
+# nix managed
+git
+gnupg
+ssh
+fish/config.fish
+fish/conf.d/
+
 # haskell
 # https://github.com/commercialhaskell/stack/blob/master/.gitignore
 .stack-work/
@@ -10,9 +17,6 @@ melkor.cabal
 NuGet/
 xbuild/
 
-# git
-git/local.config
-git/local/*
 
 # output files
 *.out
