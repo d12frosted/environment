@@ -441,7 +441,8 @@ via `vulpea-agenda-files-update'.")
 
   ;; move roam_tags into filetags
   (let* ((roam-tags (vulpea-buffer-prop-get-list "roam_tags"))
-         (file-tags (seq-filter
+         (file-tags (vulpea-buffer-prop-get-list "filetags"))
+         (path-tags (seq-filter
                      (lambda (x) (not (string-empty-p x)))
                      (split-string
                       (string-remove-prefix
@@ -458,7 +459,7 @@ via `vulpea-agenda-files-update'.")
                        (string-equal "Project" tag))
                       (setq tag (downcase tag)))
                   tag)
-                (seq-uniq (append roam-tags file-tags)))))
+                (seq-uniq (append roam-tags file-tags path-tags)))))
     (when tags
       (apply #'vulpea-buffer-tags-set tags)
       (let ((case-fold-search t))
