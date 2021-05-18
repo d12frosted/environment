@@ -128,5 +128,17 @@ if ! pgrep -x "gpg-agent" > /dev/null
 end
       '';
     };
+
+    alacritty = {
+      enable = true;
+      settings = {
+        font = {
+          size = 12;
+          normal = {
+            family = "Source Code Pro";
+          };
+        };
+      };
+    };
   };
 }
