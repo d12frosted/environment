@@ -1,3 +1,10 @@
+# References:
+#
+# https://github.com/cmacrae/config
+# https://www.tweag.io/blog/2020-05-25-flakes/
+# https://www.tweag.io/blog/2020-06-25-eval-cache/
+# https://www.tweag.io/blog/2020-07-31-nixos-flakes/
+
 {
   description = "d12frosted systems configuration";
 

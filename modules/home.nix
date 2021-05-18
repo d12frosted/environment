@@ -1,5 +1,11 @@
 { pkgs, lib, config, ... }:
 
+# References:
+#
+# https://nix-community.github.io/home-manager/options.html
+# https://github.com/jwiegley/nix-config/blob/master/config/home.nix
+# https://github.com/cmacrae/config/blob/master/modules/macintosh.nix
+
 let
   home            = builtins.getEnv "HOME";
   tmpdir          = "/tmp";

@@ -1,5 +1,11 @@
 { config, lib, pkgs, ... }:
 
+# References:
+#
+# https://daiderd.com/nix-darwin/manual/index.html#sec-options
+# https://github.com/jwiegley/nix-config/blob/master/config/darwin.nix
+# https://github.com/cmacrae/config/blob/master/modules/macintosh.nix
+
 let
   fullName       = "Boris Buliga";
   home           = builtins.getEnv "HOME";
