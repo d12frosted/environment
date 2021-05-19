@@ -295,6 +295,7 @@ theme_guard "system" "build nix environment" && {
 }
 
 section "Make Eru more approachable"
+export PATH=$HOME/.nix-profile/bin:$PATH
 $XDG_CONFIG_HOME/bin/safe_link $XDG_CONFIG_HOME/eru.sh $HOME/.local/bin/eru
 
 arch_guard && {
