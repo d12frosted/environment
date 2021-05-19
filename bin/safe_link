@@ -12,7 +12,7 @@ t="$2"
 d=$(dirname "$t")
 
 if [[ -d "$d" ]]; then
-  owner=$(stat -f '%Su' "$d")
+  owner=$(stat -c '%U' "$d")
   if [[ "$owner" != "root" && "$owner" != "$USER" ]]; then
     echo "can not link '$s' to '$t'"
     echo "owner of '$d' is $owner"

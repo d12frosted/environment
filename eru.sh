@@ -267,9 +267,6 @@ trap unlock INT TERM EXIT
 # Actual bootstrap
 #
 
-section "Make Eru more approachable"
-$XDG_CONFIG_HOME/bin/safe_link $XDG_CONFIG_HOME/eru.sh $HOME/.local/bin/eru
-
 theme_guard "system" "ensure nix installation" && {
   check nix && {
     echo "Found nix executable at $(which nix)"
@@ -296,6 +293,9 @@ theme_guard "system" "build nix environment" && {
     -I hm-config=$XDG_CONFIG_HOME/modules/home.nix \
     --flake $XDG_CONFIG_HOME/#${fellow}
 }
+
+section "Make Eru more approachable"
+$XDG_CONFIG_HOME/bin/safe_link $XDG_CONFIG_HOME/eru.sh $HOME/.local/bin/eru
 
 arch_guard && {
   theme_guard "packages" "Bootstrap Arch Linux" && {
