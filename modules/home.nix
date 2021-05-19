@@ -60,6 +60,9 @@ in {
         magithub = {
           online = true;
         };
+        github = {
+          user = "d12frosted";
+        };
       };
       signing = {
         key = "F9EBF09436BCB50F";
