@@ -166,7 +166,7 @@ as its argument a `vulpea-note'."
                (file-name-directory file))
               "/"))))
          (original-tags (vulpea-buffer-tags-get))
-         (tags (seq-uniq (append original-tags path-tags))))
+         (tags (append original-tags path-tags)))
 
     ;; process people
     (when (seq-contains-p tags "people")
@@ -198,10 +198,11 @@ as its argument a `vulpea-note'."
         (setq tags (cons "project" tags))
       (setq tags (remove "project" tags)))
 
+    (setq tags (seq-uniq tags))
+
     ;; update tags if changed
-    (when (seq-difference
-           (seq-uniq tags)
-           (seq-uniq original-tags))
+    (when (or (seq-difference tags original-tags)
+              (seq-difference original-tags tags))
       (apply #'vulpea-buffer-tags-set (seq-uniq tags)))))
 
 
