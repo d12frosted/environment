@@ -83,6 +83,10 @@ experimental-features = nix-command flakes
         orientation = "left";
       };
     };
+
+    keyboard = {
+      remapCapsLockToControl = true;
+    };
   };
 
   users = {
