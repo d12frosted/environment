@@ -142,7 +142,7 @@
   :if (eq selection-system 'consult)
   :after (embark consult)
   :hook
-  (embark-collect-mode . embark-consult-preview-minor-mode))
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package marginalia
   :if (eq selection-system 'consult)
