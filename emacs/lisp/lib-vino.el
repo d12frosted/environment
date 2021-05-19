@@ -37,6 +37,7 @@
 ;;; Code:
 
 (require 'init-elpa)
+(require 'lib-inventory)
 (require 'vino)
 
 (defvar vino-inventory-file nil

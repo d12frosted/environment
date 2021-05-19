@@ -44,6 +44,7 @@
 (require 'org)
 (require 'org-capture)
 (require 'org-roam)
+(require 'org-cliplink)
 
 (defvar vulpea-capture-inbox-file
   (format "inbox-%s.org" env-sys-name)

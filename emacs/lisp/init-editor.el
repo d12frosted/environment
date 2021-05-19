@@ -129,6 +129,7 @@
              :type git
              :host github
              :repo "d12frosted/fancy-yank")
+  :commands (fancy-yank)
   :bind
   (("C-S-y" . #'fancy-yank))
   :init
