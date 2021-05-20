@@ -114,10 +114,10 @@ set -g __nixos_path_original $PATH
       '')
     (lib.mkAfter ''
 function __nixos_path_fix -d "fix PATH value"
-  set -l result $__nixos_path_original
+  set -l result (string replace '$HOME' "$HOME" $__nixos_path_original)
   for elt in $PATH
     if not contains -- $elt $result
-      set -ag result $elt
+      set -a result $elt
     end
   end
   set -g PATH $result
