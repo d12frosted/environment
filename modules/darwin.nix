@@ -85,6 +85,7 @@ experimental-features = nix-command flakes
     };
 
     keyboard = {
+      enableKeyMapping = true;
       remapCapsLockToControl = true;
     };
   };
