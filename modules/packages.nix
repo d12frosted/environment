@@ -19,7 +19,6 @@ in [
   gnuplot
   gnused
   gnutar
-  haskellPackages.cabal-install
   haskellPackages.haskell-language-server
   hledger
   home-manager

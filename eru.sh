@@ -298,6 +298,25 @@ section "Make Eru more approachable"
 export PATH=$HOME/.nix-profile/bin:$PATH
 $XDG_CONFIG_HOME/bin/safe_link $XDG_CONFIG_HOME/eru.sh $HOME/.local/bin/eru
 
+export GHCUP_USE_XDG_DIRS=1
+theme_guard "system" "ensure ghcup installation" && {
+  check ghcup || {
+    # https://www.haskell.org/ghcup/
+    export BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+    curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+  }
+
+  upgrade_guard && {
+    ghcup upgrade
+  }
+}
+
+theme_guard "system" "ensure HLS installation" && {
+  check haskell-language-server-wrapper || {
+    ghcup install hls
+  }
+}
+
 arch_guard && {
   theme_guard "packages" "Bootstrap Arch Linux" && {
     section "Install crutial dependenices"
