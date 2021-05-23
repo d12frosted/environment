@@ -70,8 +70,13 @@
   :init
   (add-to-list 'window-buffer-change-functions
                #'vulpea-setup-buffer)
+  (add-hook 'vulpea-insert-handle-functions
+            #'vulpea-insert-handle)
   (setq-default
    vulpea-find-default-filter
+   (lambda (note)
+     (= (vulpea-note-level note) 0))
+   vulpea-insert-default-filter
    (lambda (note)
      (= (vulpea-note-level note) 0))))
 

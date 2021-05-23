@@ -89,52 +89,19 @@ tasks. The only exception is headings tagged as REFILE."
 
 
 ;;;###autoload
-(defun vulpea-insert (&optional filter-fn)
-  "Insert a link to the existing note.
-
-FILTER-FN is the function to apply on the candidates, which takes
-as its argument a `vulpea-note'."
-  (interactive)
-  (unwind-protect
-      (atomic-change-group
-        (let* (region-text
-               beg end
-               (_ (when (region-active-p)
-                    (setq
-                     beg (set-marker
-                          (make-marker) (region-beginning))
-                     end (set-marker
-                          (make-marker) (region-end))
-                     region-text
-                     (org-link-display-format
-                      (buffer-substring-no-properties
-                       beg end)))))
-               (note (vulpea-select
-                      "Note"
-                      :filter-fn filter-fn
-                      :initial-prompt region-text
-                      :require-match t))
-               (description (or region-text
-                                (vulpea-note-title note))))
-          (when region-text
-            (delete-region beg end)
-            (set-marker beg nil)
-            (set-marker end nil))
-          (insert (org-link-make-string
-                   (concat "id:" (vulpea-note-id note))
-                   description))
-          (when-let ((title (vulpea-note-title note))
-                     (tags (vulpea-note-tags note)))
-            (when (seq-contains-p tags "people")
-              (save-excursion
-                (ignore-errors
-                  (org-back-to-heading)
-                  (org-set-tags
-                   (seq-uniq
-                    (cons
-                     (vulpea--title-to-tag title)
-                     (org-get-tags nil t))))))))))
-    (deactivate-mark)))
+(defun vulpea-insert-handle (note)
+  "Hook to be called on NOTE after `vulpea-insert'."
+  (when-let* ((title (vulpea-note-title note))
+              (tags (vulpea-note-tags note)))
+    (when (seq-contains-p tags "people")
+      (save-excursion
+        (ignore-errors
+          (org-back-to-heading)
+          (org-set-tags
+           (seq-uniq
+            (cons
+             (vulpea--title-to-tag title)
+             (org-get-tags nil t)))))))))
 
 
 
