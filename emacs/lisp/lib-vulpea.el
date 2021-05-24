@@ -97,11 +97,14 @@ tasks. The only exception is headings tagged as REFILE."
       (save-excursion
         (ignore-errors
           (org-back-to-heading)
-          (org-set-tags
-           (seq-uniq
-            (cons
-             (vulpea--title-to-tag title)
-             (org-get-tags nil t)))))))))
+          (when (eq 'todo (org-element-property
+                           :todo-type
+                           (org-element-at-point)))
+            (org-set-tags
+             (seq-uniq
+              (cons
+               (vulpea--title-to-tag title)
+               (org-get-tags nil t))))))))))
 
 
 
