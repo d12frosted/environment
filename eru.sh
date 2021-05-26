@@ -267,36 +267,40 @@ trap unlock INT TERM EXIT
 # Actual bootstrap
 #
 
-theme_guard "system" "ensure nix installation" && {
-  check nix && {
-    echo "Found nix executable at $(which nix)"
-    echo "Nothing to do"
-  } || {
-    install_script="$(mktemp -d)/install"
-    curl -L https://nixos.org/nix/install -o "$install_script"
-	  chmod +x "$install_script"
-	  "$install_script" --daemon
+macos_guard && {
+  theme_guard "system" "ensure nix installation" && {
+    if check nix; then
+      echo "Found nix executable at $(which nix)"
+      echo "Nothing to do"
+    else
+      install_script="$(mktemp -d)/install"
+      curl -L https://nixos.org/nix/install -o "$install_script"
+	    chmod +x "$install_script"
+	    "$install_script" --daemon
+    fi
+    export PATH=$HOME/.nix-profile/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH
+  }
+
+  theme_guard "system" "build nix environment" && {
+    cd "$XDG_CONFIG_HOME" && {
+      section "building configurations"
+      nix build \
+        --experimental-features "nix-command flakes" --impure \
+        -I hm-config="$XDG_CONFIG_HOME/modules/home.nix" \
+        ./#darwinConfigurations.${fellow}.system
+
+      section "switching to configurations"
+      result/sw/bin/darwin-rebuild switch \
+        --impure \
+        -I hm-config="$XDG_CONFIG_HOME/modules/home.nix" \
+        --flake ./#${fellow}
+    }
   }
 }
 
-theme_guard "system" "build nix environment" && {
-  result="$(mktemp -d)/result"
-  echo "building to $result"
-  nix build \
-    --experimental-features "nix-command flakes" --impure \
-    -I hm-config=$XDG_CONFIG_HOME/modules/home.nix \
-    -o "$result" \
-    $XDG_CONFIG_HOME/#darwinConfigurations.${fellow}.system
-  echo "switching environment"
-  "$result"/sw/bin/darwin-rebuild switch \
-    --impure \
-    -I hm-config=$XDG_CONFIG_HOME/modules/home.nix \
-    --flake $XDG_CONFIG_HOME/#${fellow}
+theme_guard "system" "make Eru more approachable" && {
+  "$XDG_CONFIG_HOME/bin/safe_link" "$XDG_CONFIG_HOME/eru.sh" "$HOME/.local/bin/eru"
 }
-
-section "Make Eru more approachable"
-export PATH=$HOME/.nix-profile/bin:$PATH
-$XDG_CONFIG_HOME/bin/safe_link $XDG_CONFIG_HOME/eru.sh $HOME/.local/bin/eru
 
 export GHCUP_USE_XDG_DIRS=1
 theme_guard "system" "ensure ghcup installation" && {
