@@ -103,27 +103,12 @@ experimental-features = nix-command flakes
   programs = {
     fish.enable = true;
     fish.shellInit = ''
-__nixos_path_fix
+# see https://github.com/LnL7/nix-darwin/issues/122
+set -gp PATH /nix/var/nix/profiles/default/bin
+set -gp PATH /run/current-system/sw/bin
+set -gp PATH /Users/d12frosted/.nix-profile/bin
     '';
   };
-
-  # see https://github.com/LnL7/nix-darwin/issues/122
-  environment.etc."fish/nixos-env-preinit.fish".text = lib.mkMerge [
-    (lib.mkBefore ''
-set -g __nixos_path_original $PATH
-      '')
-    (lib.mkAfter ''
-function __nixos_path_fix -d "fix PATH value"
-  set -l result (string replace '$HOME' "$HOME" $__nixos_path_original)
-  for elt in $PATH
-    if not contains -- $elt $result
-      set -a result $elt
-    end
-  end
-  set -g PATH $result
-end
-   '')
-  ];
 
   services = {
     nix-daemon.enable = true;
