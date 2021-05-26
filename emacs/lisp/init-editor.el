@@ -103,7 +103,7 @@
 
 
 (use-package unfill
-  :defer t
+  :commands (unfill-toggle)
   :bind
   (("M-q" . #'unfill-toggle)))
 
@@ -118,6 +118,8 @@
 
 
 (use-package move-text
+  :commands (move-text-up
+             move-text-down)
   :bind
   (([M-S-down] . #'move-text-down)
    ([M-S-up] . #'move-text-up)))
