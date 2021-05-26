@@ -157,9 +157,9 @@ tasks. The only exception is headings tagged as REFILE."
                         tags)
         (setq tags (cons
                     (concat
-                     "Content:"
+                     "content/"
                      (completing-read
-                      "content/"
+                      "content:"
                       '("book" "article" "video" "course")))
                     tags))))
 
