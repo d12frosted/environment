@@ -44,7 +44,10 @@ in {
       enable-ssh-support
       default-cache-ttl 86400
       max-cache-ttl 86400
+    '' + lib.optionalString pkgs.stdenv.isDarwin ''
       pinentry-program ${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac
+    '' + lib.optionalString pkgs.stdenv.isLinux ''
+       pinentry-program ${pkgs.pinentry-qt}
     '';
   };
 
@@ -126,6 +129,11 @@ in {
         }
       ];
       interactiveShellInit = ''
+# see https://github.com/LnL7/nix-darwin/issues/122
+set -gp PATH /nix/var/nix/profiles/default/bin
+set -gp PATH /run/current-system/sw/bin
+set -gp PATH /Users/d12frosted/.nix-profile/bin
+
 if test "$TERM" != "linux"
   base16 tomorrow
 end

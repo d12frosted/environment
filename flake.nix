@@ -10,7 +10,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-20.09-darwin";
     darwin.url = "github:lnl7/nix-darwin";
     home.url = "github:nix-community/home-manager";
     emacs.url = "github:cmacrae/emacs";
@@ -22,19 +21,35 @@
     home.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, darwin, home, emacs, emacs-overlay, spacebar }: {
-    darwinConfigurations.d12frosted = darwin.lib.darwinSystem {
-      modules = [
-        ./modules/darwin.nix
-        home.darwinModules.home-manager
-        {
-          nixpkgs.overlays = [
-            emacs.overlay
-            emacs-overlay.overlay
-            spacebar.overlay
-          ];
-        }
+  outputs = { self, nixpkgs, darwin, home, emacs, emacs-overlay, spacebar }:
+    let
+      overlays = [
+        emacs-overlay.overlay
+        spacebar.overlay
+        (import ./overlays)
       ];
+    in {
+      darwinConfigurations.d12frosted = darwin.lib.darwinSystem {
+        modules = [
+          ./modules/darwin.nix
+          home.darwinModules.home-manager
+          {
+            nixpkgs.overlays = [emacs.overlay] ++ overlays;
+          }
+        ];
+      };
+
+      homeConfigurations = {
+        borysb = home.lib.homeManagerConfiguration {
+          configuration = { pkgs, lib, config, ... }: {
+            imports = [ ./modules/home.nix ];
+            nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = overlays;
+          };
+          system = "x86_64-linux";
+          homeDirectory = "/home/d12frosted";
+          username = "d12frosted";
+        };
+      };
     };
-  };
 }

@@ -103,12 +103,6 @@ experimental-features = nix-command flakes
 
   programs = {
     fish.enable = true;
-    fish.shellInit = ''
-# see https://github.com/LnL7/nix-darwin/issues/122
-set -gp PATH /nix/var/nix/profiles/default/bin
-set -gp PATH /run/current-system/sw/bin
-set -gp PATH /Users/d12frosted/.nix-profile/bin
-    '';
   };
 
   services = {

@@ -267,34 +267,56 @@ trap unlock INT TERM EXIT
 # Actual bootstrap
 #
 
-macos_guard && {
-  theme_guard "system" "ensure nix installation" && {
-    if check nix; then
-      echo "Found nix executable at $(which nix)"
-      echo "Nothing to do"
-    else
-      install_script="$(mktemp -d)/install"
-      curl -L https://nixos.org/nix/install -o "$install_script"
-	    chmod +x "$install_script"
-	    "$install_script" --daemon
-    fi
-    export PATH=$HOME/.nix-profile/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH
-  }
+arch_guard && {
+  theme_guard "system" "bootstrap Arch Linux" && {
+    section "Install crutial dependenices"
+    sudo pacman -S --noconfirm --needed base-devel git pacman-contrib
 
-  theme_guard "system" "build nix environment" && {
-    cd "$XDG_CONFIG_HOME" && {
-      section "building configurations"
-      nix build \
-        --experimental-features "nix-command flakes" --impure \
-        -I hm-config="$XDG_CONFIG_HOME/modules/home.nix" \
-        ./#darwinConfigurations.${fellow}.system
-
-      section "switching to configurations"
-      result/sw/bin/darwin-rebuild switch \
-        --impure \
-        -I hm-config="$XDG_CONFIG_HOME/modules/home.nix" \
-        --flake ./#${fellow}
+    section "Install aura"
+    check aura || {
+      sudo mkdir -p /var/cache/pacman/pkg
+      aura_dir=$(mktemp -d)
+      git clone https://aur.archlinux.org/aura-bin.git "$aura_dir"
+      cd "$aura_dir" && {
+        makepkg -si --noconfirm
+      }
     }
+  }
+}
+
+export PATH=$HOME/.nix-profile/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH
+
+theme_guard "system" "ensure nix installation" && {
+  if check nix; then
+    echo "Found nix executable at $(which nix)"
+    echo "Nothing to do"
+  else
+    install_script="$(mktemp -d)/install"
+    curl -L https://nixos.org/nix/install -o "$install_script"
+	  chmod +x "$install_script"
+	  "$install_script" --daemon
+  fi
+}
+
+theme_guard "system" "build nix environment" && {
+  cd "$XDG_CONFIG_HOME" && {
+
+    section "building configurations"
+    macos_guard && nix build \
+      --experimental-features "nix-command flakes" --impure \
+      -I hm-config="$XDG_CONFIG_HOME/modules/home.nix" \
+      ./#darwinConfigurations.${fellow}.system
+    arch_guard && nix-env -f '<nixpkgs>' -iA nixUnstable
+    arch_guard && nix build \
+      --experimental-features 'nix-command flakes' \
+      ./#homeConfigurations.borysb.activationPackage
+
+    section "switching to configurations"
+    macos_guard && result/sw/bin/darwin-rebuild switch \
+      --impure \
+      -I hm-config="$XDG_CONFIG_HOME/modules/home.nix" \
+      --flake ./#${fellow}
+    arch_guard && ./result/activate switch
   }
 }
 
@@ -322,46 +344,6 @@ theme_guard "system" "ensure HLS installation" && {
 }
 
 arch_guard && {
-  theme_guard "packages" "Bootstrap Arch Linux" && {
-    section "Install crutial dependenices"
-    # sudo pacman -Syu --noconfirm
-    sudo pacman -S --noconfirm --needed base-devel git pacman-contrib
-
-    section "Rank mirrors for pacman"
-    mirrorlist="/etc/pacman.d/mirrorlist"
-    mirrorlist_bak="${mirrorlist}.bak"
-    if [[ -f "$mirrorlist_bak" ]]; then
-      log "Not updating mirrors list, because '$mirrorlist_bak' exists"
-      log "Delete in order to re-rank mirrors"
-    else
-      mirrorlist_tmp=$(mktemp)
-      curl -s 'https://www.archlinux.org/mirrorlist/?country=all&protocol=https&ip_version=4' \
-        | sed -e 's/^#Server/Server/' -e '/^#/d' > "$mirrorlist_tmp"
-      sudo cp "$mirrorlist_tmp" "$mirrorlist_bak"
-      # shellcheck disable=SC2024
-      sudo sh -c "rankmirrors -n 6 '$mirrorlist_bak' > '$mirrorlist'"
-    fi
-
-    section "Install aura for simpler AUR access"
-    check aura || {
-      sudo mkdir -p /var/cache/pacman/pkg
-      aura_dir=$(mktemp -d)
-      git clone https://aur.archlinux.org/aura-bin.git "$aura_dir"
-      cd "$aura_dir" && {
-        makepkg -si --noconfirm
-      }
-    }
-
-    section "Install yay for simpler AUR access"
-    check yay || {
-      yay_dir=$(mktemp -d)
-      git clone https://aur.archlinux.org/yay.git "$yay_dir"
-      cd "$yay_dir" && {
-        makepkg -si --noconfirm
-      }
-    }
-  }
-
   install_guard && {
     theme_guard "packages" "Install all dependencies" && {
       log "Import known GPG keys"

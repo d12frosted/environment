@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, lib, stdenv, ... }:
 
 with pkgs;
 let exe = haskell.lib.justStaticExecutables;
@@ -35,12 +35,13 @@ in [
   ripgrep
   rsync
   shellcheck
-  skhd
   sqlite
-  terminal-notifier
   unrar
   unzip
   wget
+] ++ lib.optionals stdenv.isDarwin [
+  skhd
+  terminal-notifier
   xquartz
   yabai
   youtube-dl
