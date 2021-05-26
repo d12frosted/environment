@@ -34,6 +34,7 @@ in [
   openssl
   ripgrep
   rsync
+  shellcheck
   skhd
   sqlite
   terminal-notifier
