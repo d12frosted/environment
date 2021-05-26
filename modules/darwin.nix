@@ -90,6 +90,7 @@ experimental-features = nix-command flakes
     };
   };
 
+  networking.hostName = "d12frosted";
   users = {
     users.d12frosted = {
      shell = pkgs.fish;
