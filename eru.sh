@@ -298,6 +298,13 @@ theme_guard "system" "ensure nix installation" && {
   fi
 }
 
+upgrade_guard && {
+  theme_guard "system" "upgrade nix environment" && {
+    nix-channel --update
+    cd "$XDG_CONFIG_HOME" && nix flake update
+  }
+}
+
 theme_guard "system" "build nix environment" && {
   cd "$XDG_CONFIG_HOME" && {
 
