@@ -152,7 +152,7 @@
 
 
 
-(cl-defstruct vulpea-litnote
+(cl-defstruct litnotes-entry
   note
   title
   meta
@@ -160,11 +160,10 @@
   content
   authors)
 
-(defun vulpea-litnote (note)
-  "Create a `vulpea-litnote' from NOTE."
-  (let* ((meta (vulpea-meta note))
-         (authors (vulpea-buffer-meta-get-list! meta "authors" 'note)))
-    (make-vulpea-litnote
+(defun litnotes-entry (note)
+  "Create a `litnotes-entry' from NOTE."
+  (let ((meta (vulpea-meta note)))
+    (make-litnotes-entry
      :note note
      :title (vulpea-note-title note)
      :meta meta
@@ -178,14 +177,15 @@
                 (lambda (x)
                   (string-prefix-p "content/" x))
                 (vulpea-note-tags note)))
-     :authors authors)))
+     :authors (vulpea-buffer-meta-get-list!
+               meta "authors" 'note))))
 
 
 
 (defun litnotes-entries ()
-  "Fetch a list of `vulpea-litnote' entries."
+  "Fetch a list of `litnotes-entry' entries."
   (seq-map
-   #'vulpea-litnote
+   #'litnotes-entry
    (seq-remove
     #'vulpea-note-primary-title
     (vulpea-db-query
@@ -199,21 +199,44 @@
 (define-derived-mode litnotes-mode
   lister-mode "litnotes"
   "Major mode for browsing litnotes."
-  (lister-setup (current-buffer) #'litnotes-mapper))
+  (lister-setup (current-buffer) #'litnotes-buffer-mapper))
 
 (defconst litnotes-mode-map
   (let ((map (make-sparse-keymap)))
     ;; inherit standard key bindings:
     (set-keymap-parent map lister-mode-map)
-    (define-key map (kbd "<RET>") #'litnotes-visit)
-    (define-key map "\t"          #'litnotes-expand-toggle-sublist)
-    (define-key map (kbd "s")     #'litnotes-set-status)
+    (define-key map (kbd "<RET>") #'litnotes-buffer-visit-note)
+    (define-key map "\t"          #'litnotes-buffer-toggle-sublist)
+    (define-key map (kbd "s")     #'litnotes-buffer-set-status)
     map)
   "Key map for `litnotes-mode'.")
 
-
+;;;###autoload
+(defun litnotes ()
+  "Display a list of litnotes."
+  (interactive)
+  (let* ((name "*litnotes*")
+         (_ (and (get-buffer name)
+                 (kill-buffer name)))
+         (buffer (generate-new-buffer name))
+         (notes (litnotes-entries))
+         (data-list (seq-sort-by
+                     #'car
+                     #'litnotes-status-compare
+                     (seq-group-by
+                      #'litnotes-entry-status
+                      notes))))
+    (with-current-buffer buffer
+      (litnotes-mode)
+      (setq litnotes-data data-list)
+      (lister-highlight-mode 1)
+      (lister-insert-sequence
+       buffer (point) litnotes-status-order)
+      (lister-goto buffer :first)
+      (litnotes-buffer-expand-sublist buffer (point)))
+    (switch-to-buffer buffer)))
 
-(defun litnotes-mapper (data)
+(defun litnotes-buffer-mapper (data)
   "DATA mapper for `litnotes-mode'."
   (if (stringp data)
       (concat
@@ -229,11 +252,11 @@
         'face 'litnotes-group-counter-face))
     (concat
      (litnotes-content-display
-      (vulpea-litnote-content data))
+      (litnotes-entry-content data))
      (propertize
-      (vulpea-litnote-title data)
+      (litnotes-entry-title data)
       'face 'litnotes-entry-title-face)
-     (when (vulpea-litnote-authors data)
+     (when (litnotes-entry-authors data)
        (concat
         " by "
         (string-join
@@ -242,47 +265,27 @@
             (propertize
              (vulpea-note-title note)
              'face 'litnotes-entry-authors-face))
-          (vulpea-litnote-authors data))
+          (litnotes-entry-authors data))
          ", "))))))
 
-
+(defun litnotes-buffer-groups-refresh (buffer)
+  "Refresh groups in litnotes BUFFER."
+  (lister-walk-all
+   buffer
+   (lambda (data)
+     (lister-replace buffer (point) data))
+   #'stringp))
 
-(defun litnotes ()
-  "Display a list of litnotes."
-  (interactive)
-  (let* ((name "*litnotes*")
-         (_ (and (get-buffer name)
-                 (kill-buffer name)))
-         (buffer (generate-new-buffer name))
-         (notes (litnotes-entries))
-         (data-list (seq-sort-by
-                     #'car
-                     #'litnotes-status-compare
-                     (seq-group-by
-                      #'vulpea-litnote-status
-                      notes))))
-    (with-current-buffer buffer
-      (litnotes-mode)
-      (setq litnotes-data data-list)
-      (lister-highlight-mode 1)
-      (lister-insert-sequence
-       buffer (point) litnotes-status-order)
-      (lister-goto buffer :first)
-      (litnotes-expand-and-insert buffer (point)))
-    (switch-to-buffer buffer)))
-
-
-
-(defun litnotes-expand-toggle-sublist ()
+(defun litnotes-buffer-toggle-sublist ()
   "Close or open the item's sublist at point."
   (interactive)
   (let* ((buffer (current-buffer))
-	       (pos (point)))
+         (pos (point)))
     (if (ignore-errors (lister-sublist-below-p buffer pos))
-	      (lister-remove-sublist-below buffer pos)
-      (litnotes-expand-and-insert buffer pos))))
+        (lister-remove-sublist-below buffer pos)
+      (litnotes-buffer-expand-sublist buffer pos))))
 
-(defun litnotes-expand-and-insert (buffer pos)
+(defun litnotes-buffer-expand-sublist (buffer pos)
   "Expand litnotes in the current list.
 
 BUFFER must be a valid lister buffer populated with litnotes
@@ -290,94 +293,95 @@ items. POS can be an integer or the symbol `:point'."
   (interactive (list (current-buffer) (point)))
   (let* ((position
           (pcase pos
-		        ((and (pred integerp) pos) pos)
-		        (:point (with-current-buffer buffer (point)))
-		        (_ (error "Invalid value for POS: %s" pos))))
-	       (item (lister-get-data buffer position))
-	       (sublist (cdr (assoc item litnotes-data))))
+            ((and (pred integerp) pos) pos)
+            (:point (with-current-buffer buffer (point)))
+            (_ (error "Invalid value for POS: %s" pos))))
+         (item (lister-get-data buffer position))
+         (sublist (cdr (assoc item litnotes-data))))
     (if sublist
-	      (with-temp-message "Inserting expansion results..."
-	        (lister-insert-sublist-below buffer position sublist))
+        (with-temp-message "Inserting expansion results..."
+          (lister-insert-sublist-below buffer position sublist))
       (user-error "No expansion found"))))
 
-(defun litnotes-visit ()
+(defun litnotes-buffer-visit-note ()
   "Visit a litnote at point."
   (interactive)
   (let* ((buffer (current-buffer))
-	       (pos (point))
+         (pos (point))
          (item (lister-get-data buffer pos)))
-    (if (vulpea-litnote-p item)
+    (if (litnotes-entry-p item)
         (org-roam-node-visit
          (org-roam-node-from-id
-          (vulpea-note-id (vulpea-litnote-note item)))
+          (vulpea-note-id (litnotes-entry-note item)))
          'other-window)
       (user-error "Not a litnote"))))
 
-(defun litnotes-set-status ()
+(defun litnotes-buffer-set-status ()
   "Set status of a litnote at point."
   (interactive)
   (let* ((buffer (current-buffer))
          (pos (point))
          (item (lister-get-data buffer pos)))
-    (if (vulpea-litnote-p item)
-        (let* ((old-status (vulpea-litnote-status item))
+    (if (litnotes-entry-p item)
+        (let* ((old-status (litnotes-entry-status item))
                (status (litnotes-status-read old-status))
-               (note (vulpea-litnote-note item))
+               (note (litnotes-entry-note item))
                (file (vulpea-note-path note)))
           (vulpea-utils-with-file file
-            (let* ((tags (vulpea-buffer-prop-get-list "filetags"))
-                   (new-tags (litnotes-tags-set-status tags status)))
-              (vulpea-buffer-prop-set-list "filetags" new-tags)
-              (org-roam-db-update-file file)
-              (save-buffer)))
-          (setf (vulpea-litnote-status item) status)
-          (setq litnotes-data
-                (seq-map
-                 (lambda (kvs)
-                   (cond
-                    ((string-equal old-status (car kvs))
-                     (cons (car kvs)
-                           (seq-remove
-                            (lambda (x)
-                              (string-equal
-                               (vulpea-note-id (vulpea-litnote-note x))
-                               (vulpea-note-id note)))
-                            (cdr kvs))))
-                    ((string-equal status (car kvs))
-                     (cons (car kvs)
-                           (cons item (cdr kvs))))
-                    (t kvs)))
-                 litnotes-data))
-
-          ;; move item from one group to another
-          (lister-remove buffer pos)
-          (lister-walk-all
-           buffer
-           (lambda (_)
-             (let ((pos (point)))
-               (when (ignore-errors
-                       (lister-sublist-below-p buffer pos))
-                 (let* ((next-item (lister-end-of-lines buffer pos))
-                        (next-level (lister-get-level-at buffer next-item)))
-                   (lister-insert
-                    buffer
-                    next-item
-                    item
-                    next-level)))))
-           (lambda (data)
-             (and (stringp data)
-                  (string-equal status data))))
-
-          ;; update counters
-          (lister-walk-all
-           buffer
-           (lambda (data)
-             (lister-replace buffer (point) data))
-           #'stringp))
+            (litnotes-status-set status))
+          (setf (litnotes-entry-status item) status)
+          (setq litnotes-data (litnotes-data-change-group
+                               item old-status status))
+          (litnotes-buffer-change-group buffer pos item status)
+          (litnotes-buffer-groups-refresh buffer))
       (user-error "Not a litnote"))))
+
+(defun litnotes-buffer-change-group (buffer pos item new-group)
+  "Move ITEM at POS to NEW-GROUP in litnotes BUFFER."
+  ;; basically, remove whatever is in point
+  (lister-remove buffer pos)
+
+  ;; add to new group if it's expanded
+  (lister-walk-all
+   buffer
+   (lambda (_)
+     (let ((pos (point)))
+       (when (ignore-errors
+               (lister-sublist-below-p buffer pos))
+         (let* ((next-item (lister-end-of-lines buffer pos))
+                (next-level (lister-get-level-at buffer next-item)))
+           (lister-insert
+            buffer
+            next-item
+            item
+            next-level)))))
+   (lambda (data)
+     (and (stringp data)
+          (string-equal new-group data)))))
 
 ;; TODO: add filtering
 ;; TODO: add other groupings
+
+
+
+(defun litnotes-data-change-group (item old-group new-group)
+  "Move ITEM from OLD-GROUP to NEW-GROUP in cached data."
+  (seq-map
+   (lambda (kvs)
+     (cond
+      ((string-equal old-group (car kvs))
+       (cons (car kvs)
+             (seq-remove
+              (lambda (x)
+                (string-equal
+                 (vulpea-note-id (litnotes-entry-note x))
+                 (vulpea-note-id (litnotes-entry-note item))))
+              (cdr kvs))))
+      ((string-equal new-group (car kvs))
+       (cons (car kvs)
+             (cons item (cdr kvs))))
+      (t kvs)))
+   litnotes-data))
 
 
 
@@ -391,7 +395,7 @@ items. POS can be an integer or the symbol `:point'."
       (setq tags (cons
                   (litnotes-content-to-tag
                    (completing-read
-                    "content:"
+                    "Content:"
                     litnotes-content-order))
                   tags))))
   tags)
@@ -399,17 +403,16 @@ items. POS can be an integer or the symbol `:point'."
 
 
 ;;;###autoload
-(defun litnotes-status-set ()
-  "Change status tag of the current litnote."
-  (interactive)
+(defun litnotes-status-set (&optional status)
+  "Change STATUS tag of the current litnote."
   (when-let*
       ((file (buffer-file-name (buffer-base-buffer)))
        (tags (vulpea-buffer-prop-get-list "filetags"))
        (old-status (litnotes-status-from-tag
                     (seq-find #'litnotes-status-tag-p tags)))
-       (status (litnotes-status-read old-status))
+       (status (or status (litnotes-status-read old-status)))
        (new-tags (litnotes-tags-set-status tags status)))
-    (vulpea-buffer-prop-set "filetags" new-tags)
+    (vulpea-buffer-prop-set-list "filetags" new-tags)
     (org-roam-db-update-file file)
     (save-buffer)))
 
