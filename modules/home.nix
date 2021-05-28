@@ -134,6 +134,30 @@ set -gp PATH /nix/var/nix/profiles/default/bin
 set -gp PATH /run/current-system/sw/bin
 set -gp PATH /Users/d12frosted/.nix-profile/bin
 
+set fish_greeting "
+                       &    &     &
+                        &&&&  &  && &
+                &   &     && &&&&&&&
+                 &&& &       &&&& &&&
+              &&&&& &&& &   /~&&& &&   &&
+             && &&&&_&_&_ & \&&&&&&&& && &&
+                  &   &&\&&&&__&&&&&&&_/&&&  & &
+                         \|\\\__/_/   &&& &
+                         \_   _//     & &
+                               \\
+                                \\
+                                //~
+                                \\
+                                /~
+                                 /~
+             ;,'             (---./~~\.---)
+     _o_    ;:;'   ,          (          )
+ ,-.'---`.__ ;      ~,         (________)
+((j`~=~=~',-'     ,____.
+ `-\     /        |    j
+    `-=-'          `--'
+"
+
 if test "$TERM" != "linux"
   base16 tomorrow
 end
