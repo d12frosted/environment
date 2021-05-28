@@ -179,6 +179,9 @@ end
             family = "Source Code Pro";
           };
         };
+        window = {
+          decorations = "none";
+        };
       };
     };
   };
