@@ -31,7 +31,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; This module provides various utilities for viewing litnotes.
+;; This module provides various utilities for viewing and managing
+;; litnotes.
 ;;
 ;;; Code:
 
@@ -39,6 +40,11 @@
 (require 'lister)
 (require 'lister-highlight)
 (require 'all-the-icons)
+
+
+
+(defconst vulpea-litnotes-tag "litnotes"
+  "Tag of all them litnotes.")
 
 
 
@@ -88,9 +94,24 @@
         (concat icon " " status)
       status)))
 
+(defconst vulpea-litnotes-status-tag-prefix "status/"
+  "Prefix of the status tag.")
+
+(defun vulpea-litnotes-status-to-tag (status)
+  "Return a tag representing STATUS."
+  (concat vulpea-litnotes-status-tag-prefix status))
+
+(defun vulpea-litnotes-status-from-tag (tag)
+  "Return a status representing as TAG."
+  (string-remove-prefix vulpea-litnotes-status-tag-prefix tag))
+
+(defun vulpea-litnotes-status-tag-p (tag)
+  "Return non-nil when TAG represents a status."
+  (string-prefix-p vulpea-litnotes-status-tag-prefix tag))
+
 
 
-(defvar vulpea-litnotes-content-order '("book" "article" "video")
+(defvar vulpea-litnotes-content-order '("book" "article" "video" "course")
   "List describing order in which content type should appear.")
 
 (defun vulpea-litnotes-content-compare (a b)
@@ -107,6 +128,21 @@
     (if (and icon (featurep 'all-the-icons))
         (concat icon " ")
       "")))
+
+(defconst vulpea-litnotes-content-tag-prefix "content/"
+  "Prefix of the content tag.")
+
+(defun vulpea-litnotes-content-to-tag (content)
+  "Return a tag representing CONTENT."
+  (concat vulpea-litnotes-content-tag-prefix content))
+
+(defun vulpea-litnotes-content-from-tag (tag)
+  "Return a content representing as TAG."
+  (string-remove-prefix vulpea-litnotes-content-tag-prefix tag))
+
+(defun vulpea-litnotes-content-tag-p (tag)
+  "Return non-nil when TAG represents a content."
+  (string-prefix-p vulpea-litnotes-content-tag-prefix tag))
 
 
 
@@ -126,11 +162,9 @@
      :note note
      :title (vulpea-note-title note)
      :meta meta
-     :status (string-remove-prefix
-              "status/"
+     :status (vulpea-litnotes-status-from-tag
               (seq-find
-               (lambda (x)
-                 (string-prefix-p "status/" x))
+               #'vulpea-litnotes-status-tag-p
                (vulpea-note-tags note)))
      :content (string-remove-prefix
                "content/"
@@ -151,7 +185,7 @@
     (vulpea-db-query
      (lambda (x)
        (seq-contains-p (vulpea-note-tags x)
-                       "litnotes"))))))
+                       vulpea-litnotes-tag))))))
 
 
 
@@ -284,7 +318,7 @@ items. POS can be an integer or the symbol `:point'."
                 (completing-read
                  "Status: "
                  (-remove-item old-status vulpea-litnotes-status-order)))
-               (status (concat "status/" status-raw))
+               (status (vulpea-litnotes-status-to-tag status-raw))
                (note (vulpea-litnote-note item))
                (file (vulpea-note-path note)))
           (vulpea-utils-with-file file
@@ -292,7 +326,7 @@ items. POS can be an integer or the symbol `:point'."
                    (new-tags (cons
                               status
                               (-remove-item
-                               (concat "status/" old-status)
+                               (vulpea-litnotes-status-to-tag old-status)
                                tags))))
               (vulpea-buffer-prop-set-list "filetags" new-tags)
               (org-roam-db-update-file file)
@@ -345,6 +379,43 @@ items. POS can be an integer or the symbol `:point'."
 
 ;; TODO: add filtering
 ;; TODO: add other groupings
+
+
+
+;;;###autoload
+(defun vulpea-litnotes-ensure-filetags (tags)
+  "Ensure that TAGS contain the right set of tags."
+  (when (seq-contains-p tags vulpea-litnotes-tag)
+    (unless (seq-find #'vulpea-litnotes-status-tag-p tags)
+      (setq tags (cons (vulpea-litnotes-status-to-tag "new") tags)))
+    (unless (seq-find #'vulpea-litnotes-content-tag-p tags)
+      (setq tags (cons
+                  (vulpea-litnotes-content-to-tag
+                   (completing-read
+                    "content:"
+                    vulpea-litnotes-content-order))
+                  tags))))
+  tags)
+
+
+
+;;;###autoload
+(defun vulpea-litnotes-status-set ()
+  "Change status tag of the current litnote."
+  (interactive)
+  (when-let*
+      ((file (buffer-file-name (buffer-base-buffer)))
+       (tags (vulpea-buffer-prop-get-list "filetags"))
+       (status-raw (completing-read
+                    "Status: " vulpea-litnotes-status-order))
+       (status (vulpea-litnotes-status-to-tag status-raw))
+       (new-tags (cons status
+                       (seq-remove
+                        #'vulpea-litnotes-status-tag-p
+                        tags))))
+    (vulpea-buffer-prop-set "filetags" new-tags)
+    (org-roam-db-update-file file)
+    (save-buffer)))
 
 
 

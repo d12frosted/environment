@@ -145,23 +145,7 @@ tasks. The only exception is headings tagged as REFILE."
           (setq tags (cons tag tags)))))
 
     ;; process litnotes
-    (when (seq-contains-p tags "litnotes")
-      (unless (org-entry-get (point) "ROAM_REFS")
-        (org-roam-ref-add (read-string "URL: ")))
-      (unless (seq-find (lambda (x)
-                          (string-prefix-p "status/" x))
-                        tags)
-        (setq tags (cons "status/new" tags)))
-      (unless (seq-find (lambda (x)
-                          (string-prefix-p "content/" x))
-                        tags)
-        (setq tags (cons
-                    (concat
-                     "content/"
-                     (completing-read
-                      "content:"
-                      '("book" "article" "video" "course")))
-                    tags))))
+    (setq tags (vulpea-litnotes-ensure-filetags tags))
 
     ;; process projects
     (if (vulpea-project-p)
@@ -225,28 +209,6 @@ Make all the links to this alias point to newly created note."
              (org-roam-db-update-file (org-roam-node-file node)))
            backlinks)))
     (user-error "No aliases to extract")))
-
-
-
-;;;###autoload
-(defun vulpea-status-set ()
-  "Change status tag of the current note."
-  (interactive)
-  (when-let*
-      ((file (buffer-file-name (buffer-base-buffer)))
-       (tags (vulpea-buffer-prop-get-list "filetags"))
-       (status-raw (completing-read
-                    "Status: "
-                    '("new" "ongoing" "done" "dropped")))
-       (status (concat "status/" status-raw))
-       (new-tags (cons status
-                       (seq-remove
-                        (lambda (x)
-                          (string-prefix-p "status/" x))
-                        tags))))
-    (vulpea-buffer-prop-set "filetags" new-tags)
-    (org-roam-db-update-file file)
-    (save-buffer)))
 
 
 
