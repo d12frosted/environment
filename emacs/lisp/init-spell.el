@@ -42,7 +42,7 @@
 (use-package ispell
   :config
   (setq ispell-dictionary "english"
-        ispell-program-name "aspell")
+        ispell-program-name (executable-find "aspell"))
   (when (equal (file-name-base ispell-program-name) "aspell")
     (add-to-list 'ispell-extra-args "--sug-mode=ultra")))
 

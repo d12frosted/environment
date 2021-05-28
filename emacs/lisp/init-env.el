@@ -48,7 +48,7 @@
   :commands (exec-path-from-shell-initialize)
   :init
   (setq-default
-   exec-path-from-shell-shell-name "/usr/local/bin/fish"
+   exec-path-from-shell-shell-name (executable-find "fish")
    exec-path-from-shell-debug nil)
   (exec-path-from-shell-initialize))
 
