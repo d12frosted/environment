@@ -169,3 +169,18 @@ Points of interest:
     =vulpea-ensure-filetag=, used as hooks.
 - =init-vulpea.el= - module that sets up all hooks (e.g. =org-agenda=,
   =before-save= and =window-buffer-change-functions=).
+
+** Almost intelligent meeting capture flow
+
+It is described in greater details at [[https://d12frosted.io/posts/2021-05-21-task-management-with-roam-vol7.html][d12frosted.io]], but in short, whenever a
+meeting starts, I want to select a person I have a meeting with and capture
+notes under =Meetings= outline in that persons file.
+
+Points of interest:
+
+- =lib-vulpea-capture=
+  - =vulpea-capture-setup= - a function that sets up capture templates.
+  - =vulpea-capture-meeting-template= - a function that prompts to select a
+    person and depending on the result returns different templates.
+  - =vulpea-capture-meeting-target= - a function that picks a target for
+    captured note depending on selection from =vulpea-capture-meeting-template=.
