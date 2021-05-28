@@ -1,6 +1,3 @@
-:PROPERTIES:
-:ID:                     3b821421-56ce-4e57-b0a1-96402a58292c
-:END:
 #+begin_html
 <h1 align="center">d12frosted environment</h1>
 <p align="center">
@@ -19,9 +16,6 @@
 This repository contains configurations for applications and tools I am using.
 
 ** What's inside?
-:PROPERTIES:
-:ID:                     c108c207-8c20-443e-bff8-dfc122e672b6
-:END:
 
 All configurations that I fear to loose by making =rm -rf ~/= (accidentally, for
 sure). Configurations are divided into domains like =emacs=, =git=, =haskell=,
@@ -37,22 +31,19 @@ script that creates the universe. Supported platforms are [[https://www.apple.co
   - [[https://github.com/koekeishiya/yabai][yabai]] and [[https://github.com/koekeishiya/skhd][skhd]] fulfill this role on macOS;
   - [[https://xmonad.org][xmonad]] with [[https://xmobar.org][xmobar]] are eXcellent choice.
 
-#+BEGIN_HTML
+#+begin_html
 <p align="center">
   <img src="images/desktop_mac.png" width="100%"/>
 </p>
-#+END_HTML
+#+end_html
 
-#+BEGIN_HTML
+#+begin_html
 <p align="center">
   <img src="images/desktop_arch.png" width="100%"/>
 </p>
-#+END_HTML
+#+end_html
 
 ** Eru domain
-:PROPERTIES:
-:ID:                     480c4e71-7304-4f15-aee7-ee823e5feb19
-:END:
 
 As you might know, Eru is the supreme deity of Arda. The first things that Eru
 created where the Ainur. He then bade the Ainur to sing to him. Each Ainu had a
@@ -63,49 +54,70 @@ So when I get a new clean system there is nothing yet. And so I call upon the
 wisdom and power of =Eru.sh= - the one who creates Ainur and the 'World and All
 That Is'.
 
-#+BEGIN_SRC bash
+#+begin_src bash
   $ curl https://raw.githubusercontent.com/d12frosted/environment/master/eru.sh | bash
-#+END_SRC
+#+end_src
 
 I just have to wait patiently, while everything is being downloaded and
 installed, while all configuration cogs are being placed on the right spot.
 
-#+BEGIN_HTML
+#+begin_html
 <p align="center">
   <img src="images/eru-example-1.png" width="100%"/>
 </p>
-#+END_HTML
+#+end_html
 
 The good thing about =Eru.sh= is that after the 'World and All That Is' creation
 you can still call upon his help and you can even ask him to help with specific
 theme or themes only.
 
-#+BEGIN_SRC bash
+#+begin_src bash
   $ ./eru.sh [install]                     # to help with all themes
   $ ./eru.sh install repositories          # to help with repositories
   $ ./eru.sh install repositories packages # to help with repositories and packages
   $ ./eru.sh install emacs                 # to help with emacs
   $ ./eru.sh upgrade emacs                 # to upgrade emacs packages
   $ ./eru.sh test emacs                    # to test emacs configurations
-#+END_SRC
+#+end_src
 
 =Eru.sh= reveals all available themes. For example,
 
 #+BEGIN_SRC text
-  => Guardian Theme :: Checking operating system
-  => Supporting Theme :: Defining helpers
-  => Supporting Theme :: Defining variables
-  => Guardian Theme :: Ensure all directories exists
-  -> SSH Theme :: Checking SSH keys
-  -> Repositories Theme :: Sync environment repository
-  -> Repositories Theme :: Sync repositories from Repofile
-  -> Linking Theme :: Link all files as defined in Linkfile
+  => Defining helpers
+  => Defining variables
+
+  ┌────────────────────────────────────────────────────────────────────────────┐
+  │ >>> system :: ensure nix installation                                      │
+  └────────────────────────────────────────────────────────────────────────────┘
+
+  ┌────────────────────────────────────────────────────────────────────────────┐
+  │ >>> system :: build nix environment                                        │
+  └────────────────────────────────────────────────────────────────────────────┘
+
+  ┌────────────────────────────────────────────────────────────────────────────┐
+  │ >>> system :: make Eru more approachable                                   │
+  └────────────────────────────────────────────────────────────────────────────┘
+
+  ┌────────────────────────────────────────────────────────────────────────────┐
+  │ >>> system :: ensure ghcup installation                                    │
+  └────────────────────────────────────────────────────────────────────────────┘
+
+  ┌────────────────────────────────────────────────────────────────────────────┐
+  │ >>> system :: ensure HLS installation                                      │
+  └────────────────────────────────────────────────────────────────────────────┘
+
+  ┌────────────────────────────────────────────────────────────────────────────┐
+  │ >>> Emacs :: setup Eldev                                                   │
+  └────────────────────────────────────────────────────────────────────────────┘
+
+  ┌────────────────────────────────────────────────────────────────────────────┐
+  │ >>> Emacs :: setup Emacs configurations                                    │
+  └────────────────────────────────────────────────────────────────────────────┘
 #+END_SRC
 
-Every theme that begins with ~=>~ is a mandatory theme - the one you can't skip.
-Every theme prefixed with ~->~ is an optional one. If you don't specify any
-themes, all optional themes are sung. If you do specify at least one theme -
-only specified are sang.
+Everything wrapped into /beautiful/ rectangle is a theme that you can select. By
+default, if you do not specify any themes, all themes are sung. If you do
+specify at least one theme - only specified are sang.
 
 #+BEGIN_HTML
 <p align="center">
@@ -113,12 +125,10 @@ only specified are sang.
 </p>
 #+END_HTML
 
-You can read a little bit more about Eru in a [[https://d12frosted.io/posts/2018-11-04-revisiting-eru.html][Revisiting Eru]] blog post.
+You can read a little bit more about Eru in a [[https://d12frosted.io/posts/2018-11-04-revisiting-eru.html][Revisiting Eru]] blog post. Though
+it might be already a little bit outdated.
 
 ** Can I use your files?
-:PROPERTIES:
-:ID:                     5a965bd5-6306-41df-b987-60ee0a151c0a
-:END:
 
 Sure, just take whatever you find fancy. Though keep in mind few things. These
 configurations are *personal* configurations, so they are based on my needs and
@@ -127,12 +137,9 @@ case. I don't have a goal to provide exhaustive documentation, except for things
 that worth the effort. Though I will be glad to help you if you have any
 questions or problems. Pull requests and suggestions are warmly welcome!
 
-If you do use any parts of my configurations, do it only on your own risk. 
+If you do use any parts of my configurations, do it only on your own risk.
 
 ** Acknowledgements
-:PROPERTIES:
-:ID:                     db6ecccb-962c-4d18-bbd3-70631bbf6c68
-:END:
 
 These configurations would not have been possible without the work of and the
 inspiration from following people.
