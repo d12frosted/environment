@@ -320,17 +320,12 @@ items. POS can be an integer or the symbol `:point'."
          (item (lister-get-data buffer pos)))
     (if (vulpea-litnote-p item)
         (let* ((old-status (vulpea-litnote-status item))
-               (status-raw (litnotes-status-read old-status))
-               (status (litnotes-status-to-tag status-raw))
+               (status (litnotes-status-read old-status))
                (note (vulpea-litnote-note item))
                (file (vulpea-note-path note)))
           (vulpea-utils-with-file file
             (let* ((tags (vulpea-buffer-prop-get-list "filetags"))
-                   (new-tags (cons
-                              status
-                              (-remove-item
-                               (litnotes-status-to-tag old-status)
-                               tags))))
+                   (new-tags (litnotes-tags-set-status tags status)))
               (vulpea-buffer-prop-set-list "filetags" new-tags)
               (org-roam-db-update-file file)
               (save-buffer)))
@@ -347,7 +342,7 @@ items. POS can be an integer or the symbol `:point'."
                                (vulpea-note-id (vulpea-litnote-note x))
                                (vulpea-note-id note)))
                             (cdr kvs))))
-                    ((string-equal status-raw (car kvs))
+                    ((string-equal status (car kvs))
                      (cons (car kvs)
                            (cons item (cdr kvs))))
                     (t kvs)))
@@ -370,7 +365,7 @@ items. POS can be an integer or the symbol `:point'."
                     next-level)))))
            (lambda (data)
              (and (stringp data)
-                  (string-equal status-raw data))))
+                  (string-equal status data))))
 
           ;; update counters
           (lister-walk-all
@@ -411,15 +406,24 @@ items. POS can be an integer or the symbol `:point'."
        (tags (vulpea-buffer-prop-get-list "filetags"))
        (old-status (litnotes-status-from-tag
                     (seq-find #'litnotes-status-tag-p tags)))
-       (status-raw (litnotes-status-read old-status))
-       (status (litnotes-status-to-tag status-raw))
-       (new-tags (cons status
-                       (seq-remove
-                        #'litnotes-status-tag-p
-                        tags))))
+       (status (litnotes-status-read old-status))
+       (new-tags (litnotes-tags-set-status tags status)))
     (vulpea-buffer-prop-set "filetags" new-tags)
     (org-roam-db-update-file file)
     (save-buffer)))
+
+
+
+(defun litnotes-tags-set-status (tags status)
+  "Add STATUS to TAGS and return result.
+
+STATUS is converted into proper tag, an any other status tag is
+removed from TAGS."
+  (cons
+   (litnotes-status-to-tag status)
+   (seq-remove
+    #'litnotes-status-tag-p
+    tags)))
 
 
 
