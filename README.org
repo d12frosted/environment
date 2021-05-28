@@ -24,7 +24,7 @@ sure). Configurations are divided into domains like =emacs=, =git=, =haskell=,
 All of the configurations as well as dependencies are maintained using Eru - a
 script that creates the universe. Supported platforms are [[https://www.apple.com/macos][macOS]] and [[https://www.archlinux.org][Arch Linux]].
 
-- [[https://github.com/d12frosted/homebrew-emacs-plus][Emacs]] is my editor.
+- [[https://github.com/d12frosted/homebrew-emacs-plus][Emacs]] is my editor (see [[emacs/README.org][dedicated README]] for more information).
 - [[https://fishshell.com][Fish]] is my shell.
 - World is full of windows, and tiling window managers are here to ease the pain
   of existence.
@@ -127,6 +127,10 @@ specify at least one theme - only specified are sang.
 
 You can read a little bit more about Eru in a [[https://d12frosted.io/posts/2018-11-04-revisiting-eru.html][Revisiting Eru]] blog post. Though
 it might be already a little bit outdated.
+
+** Emacs
+
+Check out [[emacs/README.org][dedicated README]] for more information.
 
 ** Can I use your files?
 
