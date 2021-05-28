@@ -66,7 +66,7 @@
     "nT" '(vulpea-tags-delete :which-key "untag")
     "na" '(vulpea-alias-add :which-key "alias")
     "nA" '(vulpea-alias-delete :which-key "unalias")
-    "ol" '(vulpea-litnotes :which-key "litnotes"))
+    "ol" '(litnotes :which-key "litnotes"))
   :hook ((before-save . vulpea-pre-save-hook))
   :init
   (add-to-list 'window-buffer-change-functions
