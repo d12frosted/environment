@@ -195,12 +195,13 @@
 
 
 
+;;;###autoload
 (define-derived-mode litnotes-mode
   lister-mode "litnotes"
   "Major mode for browsing litnotes."
   (lister-setup (current-buffer) #'litnotes-mapper))
 
-(defvar litnotes-mode-map
+(defconst litnotes-mode-map
   (let ((map (make-sparse-keymap)))
     ;; inherit standard key bindings:
     (set-keymap-parent map lister-mode-map)

@@ -39,6 +39,7 @@
 
 (require 'config-vulpea)
 (require 'lib-directory)
+(require 'lib-litnotes)
 
 (require 'vulpea)
 (require 'org-roam)
@@ -145,7 +146,7 @@ tasks. The only exception is headings tagged as REFILE."
           (setq tags (cons tag tags)))))
 
     ;; process litnotes
-    (setq tags (vulpea-litnotes-ensure-filetags tags))
+    (setq tags (litnotes-ensure-filetags tags))
 
     ;; process projects
     (if (vulpea-project-p)
