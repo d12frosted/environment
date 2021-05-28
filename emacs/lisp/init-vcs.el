@@ -91,10 +91,10 @@
              git-gutter-mode
              git-gutter)
   :init
-  (hook-with-delay 'text-mode-hook 1 #'vcs-gutter-maybe)
-  (hook-with-delay 'prog-mode-hook 1 #'vcs-gutter-maybe)
-  (hook-with-delay 'conf-mode-hook 1 #'vcs-gutter-maybe)
-  (add-hook 'after-save-hook #'vcs-gutter-maybe)
+  ;; (hook-with-delay 'text-mode-hook 1 #'vcs-gutter-maybe)
+  ;; (hook-with-delay 'prog-mode-hook 1 #'vcs-gutter-maybe)
+  ;; (hook-with-delay 'conf-mode-hook 1 #'vcs-gutter-maybe)
+  ;; (add-hook 'after-save-hook #'vcs-gutter-maybe)
   :config
   ;; Update git-gutter on focus (in case I was using git externally)
   (add-function :after
