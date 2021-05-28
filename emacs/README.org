@@ -54,13 +54,14 @@ In order to achieve these goals, the following approach is used.
 All requirements are installed by =eru=. But the full (and dramatically huge)
 list of dependencies is here:
 
-- Emacs 27 or higher - installed by =eru install packages=.
+- Emacs 27 or higher - installed by =eru install system=.
 - [[https://github.com/doublep/eldev][Eldev]] - installed by =eru install emacs=.
 
 ** Install Emacs
 
 For OS X users I recommend to install [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]] (who would guess?) - GNU Emacs
-with some sane defaults, available via [[https://brew.sh][brew]] package manager.
+with some sane defaults, available via [[https://brew.sh][brew]] package manager, though in general I
+prefer (and highly recommend) using [[https://nixos.org/][nix]] or [[https://www.macports.org/][macports]] instead of [[https://brew.sh][brew]].
 
 #+BEGIN_SRC
 $ brew tap d12frosted/emacs-plus
