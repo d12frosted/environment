@@ -17,4 +17,5 @@
                                                  (buffer-lines-each . 1)
                                                  (buffer-lines-each-t . 1)
                                                  (request . defun)))))
- (org-mode . ((fill-column . 80))))
+ (org-mode . ((fill-column . 80)
+              (vulpea-id-auto-targets . nil))))

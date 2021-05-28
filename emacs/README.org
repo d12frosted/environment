@@ -1,7 +1,3 @@
-:PROPERTIES:
-:ID:                     ea43e2a0-19b7-4959-bb3e-8de7b3e9d671
-:END:
-
 #+begin_html
 <h1 align="center">d12frosted environment / Emacs</h1>
 <p align="center">
@@ -52,14 +48,8 @@ In order to achieve these goals, the following approach is used.
 7. Testing framework of choice is [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]].
 
 * How to run
-:PROPERTIES:
-:ID:                     d7eece6c-f4e2-4e9f-91c2-8bfbde71b9b6
-:END:
 
 ** Requirements
-:PROPERTIES:
-:ID:                     2c6869c0-18e7-4b03-8b1b-936884e6f9a3
-:END:
 
 All requirements are installed by =eru=. But the full (and dramatically huge)
 list of dependencies is here:
@@ -68,9 +58,6 @@ list of dependencies is here:
 - [[https://github.com/doublep/eldev][Eldev]] - installed by =eru install emacs=.
 
 ** Install Emacs
-:PROPERTIES:
-:ID:                     f4a40168-971c-4952-9a13-25c249f191b6
-:END:
 
 For OS X users I recommend to install [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]] (who would guess?) - GNU Emacs
 with some sane defaults, available via [[https://brew.sh][brew]] package manager.
@@ -85,9 +72,6 @@ any guarantees that it will work with these configurations. In case you wish to
 investigate more on this topic, please refer to [[http://emacs.stackexchange.com/a/274/5161][this answer]].
 
 ** Install configurations
-:PROPERTIES:
-:ID:                     6dd80d47-0c82-494a-92e3-14f6b15f8133
-:END:
 
 *** Using =eru=
 :PROPERTIES:
@@ -118,9 +102,6 @@ Bootstrap Emacs configurations, compile them and lint.
 #+end_src
 
 ** Upgrade dependencies
-:PROPERTIES:
-:ID:                     edfafbfb-2466-4162-a060-e1cfe49c01dd
-:END:
 
 *** Using =eru=
 :PROPERTIES:
@@ -141,9 +122,6 @@ Bootstrap Emacs configurations, compile them and lint.
 #+end_src
 
 ** Run tests
-:PROPERTIES:
-:ID:                     598f8169-bab4-418e-8597-9eed21cd964c
-:END:
 
 *** Using =eru=
 :PROPERTIES:
@@ -164,8 +142,29 @@ Bootstrap Emacs configurations, compile them and lint.
 #+end_src
 
 * Interesting modules
-:PROPERTIES:
-:ID:                     6bbb0b6b-dee7-4e9d-a334-df636e4105fb
-:END:
 
 /Section is under construction. Please return in -2147483648 seconds./
+
+** Dynamic and fast agenda
+
+At the moment of writing this, I already have more than 10k org files. Most of
+them do not contain any TODOs. When =org-agenda= is built, it needs to traverse
+all these files. So the idea is to build =org-agenda-files= dynamically before
+=org-agenda= is executed by marking files containing TODOs on file change and by
+using wonderfully fast query capabilities of =org-roam=. You can read more at
+[[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][d12frosted.io]].
+
+Points of interest:
+
+- =lib-vulpea-agenda.el=
+  - =vulpea-agenda-files-update= - a function that updates =org-agenda-files= to
+    contain only files marked with =project= tag (e.g. containing TODOs).
+- =lib-vulpea.el=
+  - =vulpea-project-files= - a function to query the list of files marked with
+    =project= tag (e.g. containing TODOs).
+  - =vulpea-ensure-filetag= - a function that adds or removes =project= tag from
+    current buffer depending on existence or absence of TODOs.
+  - =vulpea-setup-buffer= and =vulpea-pre-save-hook= - functions that execute
+    =vulpea-ensure-filetag=, used as hooks.
+- =init-vulpea.el= - module that sets up all hooks (e.g. =org-agenda=,
+  =before-save= and =window-buffer-change-functions=).
