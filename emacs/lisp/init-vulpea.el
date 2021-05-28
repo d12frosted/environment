@@ -287,6 +287,9 @@
    ;; also show state change in log mode
    org-agenda-log-mode-items '(closed clock state)
 
+   ;; tags
+   org-agenda-show-inherited-tags nil
+
    ;; more structured view
    org-agenda-prefix-format
    '((agenda . " %(vulpea-agenda-category 24) %?-12t %12s")
@@ -304,8 +307,6 @@
       (,vulpea-agenda-cmd-refile
        ,vulpea-agenda-cmd-today
        ,vulpea-agenda-cmd-focus
-       ,vulpea-agenda-cmd-stuck-projects
-       ,vulpea-agenda-cmd-projects
        ,vulpea-agenda-cmd-waiting)
       ((org-agenda-buffer-name vulpea-agenda-main-buffer-name))))))
 
