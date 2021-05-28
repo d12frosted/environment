@@ -109,6 +109,12 @@
   "Return non-nil when TAG represents a status."
   (string-prefix-p vulpea-litnotes-status-tag-prefix tag))
 
+(defun vulpea-litnotes-status-read (&optional old-status)
+  "Read a status excluding OLD-STATUS."
+  (completing-read
+   "Status: "
+   (-remove-item old-status vulpea-litnotes-status-order)))
+
 
 
 (defvar vulpea-litnotes-content-order '("book" "article" "video" "course")
@@ -314,10 +320,7 @@ items. POS can be an integer or the symbol `:point'."
          (item (lister-get-data buffer pos)))
     (if (vulpea-litnote-p item)
         (let* ((old-status (vulpea-litnote-status item))
-               (status-raw
-                (completing-read
-                 "Status: "
-                 (-remove-item old-status vulpea-litnotes-status-order)))
+               (status-raw (vulpea-litnotes-status-read old-status))
                (status (vulpea-litnotes-status-to-tag status-raw))
                (note (vulpea-litnote-note item))
                (file (vulpea-note-path note)))
@@ -406,8 +409,9 @@ items. POS can be an integer or the symbol `:point'."
   (when-let*
       ((file (buffer-file-name (buffer-base-buffer)))
        (tags (vulpea-buffer-prop-get-list "filetags"))
-       (status-raw (completing-read
-                    "Status: " vulpea-litnotes-status-order))
+       (old-status (vulpea-litnotes-status-from-tag
+                    (seq-find #'vulpea-litnotes-status-tag-p tags)))
+       (status-raw (vulpea-litnotes-status-read old-status))
        (status (vulpea-litnotes-status-to-tag status-raw))
        (new-tags (cons status
                        (seq-remove
