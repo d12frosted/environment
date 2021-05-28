@@ -152,6 +152,13 @@ shift + alt - 6 : yabai -m window --space 6; yabai -m space --focus 6
 
 ################################################################################
 #
+# window manipulation
+#
+
+alt - return : yabai -m window --swap first
+
+################################################################################
+#
 # Applications
 #
 
