@@ -178,9 +178,32 @@ notes under =Meetings= outline in that persons file.
 
 Points of interest:
 
-- =lib-vulpea-capture=
+- =lib-vulpea-capture-el=
   - =vulpea-capture-setup= - a function that sets up capture templates.
   - =vulpea-capture-meeting-template= - a function that prompts to select a
     person and depending on the result returns different templates.
   - =vulpea-capture-meeting-target= - a function that picks a target for
     captured note depending on selection from =vulpea-capture-meeting-template=.
+
+** straight.el with retries
+
+I have already covered this topic at [[https://d12frosted.io/posts/2021-04-08-straight-el-retries.html][d12frosted.io]]. In short, =init-elpa.el=
+file contains functionality to automatically retry [[https://github.com/raxod502/straight.el/][raxod502/straight.el]]
+operations. Take a look at definition and usage of =elpa-straight-with-retry=.
+
+** Managing litnotes
+
+#+begin_html
+<p align="center">
+  <img src="images/litnotes-1.png" width="100%"/>
+</p>
+#+end_html
+
+Not so long ago I've started to take notes while I am reading books, articles,
+listening to videos, or completing courses. Previously it was a scattered mess
+(mostly left in my e-reading application), but now I have it all under
+=litnotes= directory in my Org directory.
+
+In order to list all my reading notes, I've built a solution based on
+[[https://github.com/publicimageltd/lister][publicimageltd/lister]], [[https://github.com/d12frosted/vulpea][vulpea]] and [[https://github.com/org-roam/org-roam/][org-roam]] libraries. Take a look at
+=lib-litnotes.el= file, your entry point is =litnotes= function.
