@@ -148,44 +148,6 @@ It is relative to `vulpea-directory', unless it is absolute.")
               (vulpea-note-title person)
               " on [%<%Y-%m-%d %a>] :MEETING:\n%U\n\n%?"))))
 
-(defvar vulpea-capture-person-template
-  `("d" "default" plain
-    #'org-roam-capture--get-point
-    "%?"
-    :file-name "people/%<%Y%m%d%H%M%S>-${slug}"
-    :head ,(concat
-            ":PROPERTIES:\n"
-            ":ID:                     ${id}\n"
-            ":END:\n"
-            "#+TITLE: ${title}\n"
-            "\n")
-    :unnarrowed t
-    :immediate-finish t)
-  "Capture template for person.
-
-Variables in the capture context are provided by
-`vulpea-create'.")
-
-(defvar vulpea-capture-article-template
-  `("d" "default" plain
-    #'org-roam-capture--get-point
-    "%?"
-    :file-name "litnotes/%<%Y%m%d%H%M%S>-${slug}"
-    :head ,(concat
-            ":PROPERTIES:\n"
-            ":ID:                     ${id}\n"
-            ":END:\n"
-            "#+TITLE: ${title}\n"
-            "#+ROAM_KEY: ${url}\n"
-            "#+ROAM_TAGS: Content:Article Status:New\n"
-            "\n")
-    :unnarrowed t
-    :immediate-finish t)
-  "Capture template for article.
-
-Variables in the capture context are provided by
-`vulpea-capture-article'.")
-
 ;;;###autoload
 (defun vulpea-capture-article ()
   "Capture an article using `vulpea-capture-article-template'.
@@ -215,14 +177,18 @@ Authors can be created on the fly. See
                         person
                       (vulpea-create
                        (vulpea-note-title person)
-                       vulpea-capture-person-template))))
+                       "people/%<%Y%m%d%H%M%S>-${slug}.org"
+                       :immediate-finish t))))
                 nil))
-       (note (vulpea-create title
-                            vulpea-capture-article-template
-                            (list (cons 'url url)))))
-    (vulpea-utils-with-note note
-      (vulpea-meta-set note "authors" people t))
-    (find-file (vulpea-note-path note))))
+       (note (vulpea-create
+              title
+              "litnotes/%<%Y%m%d%H%M%S>-${slug}.org"
+              :tags '("litnotes" "content/article" "status/new")
+              :properties (list (cons "ROAM_REFS" url))
+              :immediate-finish t)))
+    (vulpea-meta-set note "authors" people t)
+    (find-file (vulpea-note-path note))
+    (save-buffer)))
 
 (defun vulpea-capture-journal ()
   "Capture a journal entry.
