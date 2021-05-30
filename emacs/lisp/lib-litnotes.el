@@ -342,8 +342,9 @@ items. POS can be an integer or the symbol `:point'."
           (vulpea-utils-with-file file
             (litnotes-status-set status))
           (setf (litnotes-entry-status item) status)
-          (setq litnotes-buffer-data (litnotes-buffer-data-change-group
-                                      item old-status status))
+          (setq litnotes-buffer-data
+                (litnotes-buffer-data-change-group
+                 item old-status status))
           (litnotes-buffer-change-group buffer pos item status)
           (litnotes-buffer-groups-refresh buffer))
       (user-error "Not a litnote"))))
