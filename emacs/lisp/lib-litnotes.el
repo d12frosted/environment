@@ -70,13 +70,13 @@
 
 
 
-(defvar litnotes-status-order '("ongoing" "new" "done" "dropped")
-  "List describing order in which status should appear.")
+(defvar litnotes-status-values '("ongoing" "new" "done" "dropped")
+  "List with all valid values of status.")
 
 (defun litnotes-status-compare (a b)
   "Compare status A with status B."
-  (< (seq-position litnotes-status-order a)
-     (seq-position litnotes-status-order b)))
+  (< (seq-position litnotes-status-values a)
+     (seq-position litnotes-status-values b)))
 
 (defun litnotes-status-display (status)
   "Display STATUS."
@@ -108,17 +108,17 @@
   "Read a status excluding OLD-STATUS."
   (completing-read
    "Status: "
-   (-remove-item old-status litnotes-status-order)))
+   (-remove-item old-status litnotes-status-values)))
 
 
 
-(defvar litnotes-content-order '("book" "article" "video" "course")
-  "List describing order in which content type should appear.")
+(defvar litnotes-content-types '("book" "article" "video" "course")
+  "List with all valid content types.")
 
 (defun litnotes-content-compare (a b)
   "Compare content A with content B."
-  (< (seq-position litnotes-content-order a)
-     (seq-position litnotes-content-order b)))
+  (< (seq-position litnotes-content-types a)
+     (seq-position litnotes-content-types b)))
 
 (defun litnotes-content-display (content)
   "Display CONTENT."
@@ -230,7 +230,7 @@
       (setq litnotes-buffer-data (litnotes-buffer-data))
       (lister-highlight-mode 1)
       (lister-insert-sequence
-       buffer (point) litnotes-status-order)
+       buffer (point) litnotes-status-values)
       (lister-goto buffer :first)
       (litnotes-buffer-expand-sublist buffer (point)))
     (switch-to-buffer buffer)))
@@ -407,7 +407,7 @@ items. POS can be an integer or the symbol `:point'."
                   (litnotes-content-to-tag
                    (completing-read
                     "Content:"
-                    litnotes-content-order))
+                    litnotes-content-types))
                   tags))))
   tags)
 
