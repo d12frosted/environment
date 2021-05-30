@@ -112,6 +112,26 @@ listening to videos, or completing courses. Previously it was a scattered mess
 In order to list all my reading notes, I've built a solution based on
 [[https://github.com/publicimageltd/lister][publicimageltd/lister]], [[https://github.com/d12frosted/vulpea][vulpea]] and [[https://github.com/org-roam/org-roam/][org-roam]] libraries. Take a look at
 =lib-litnotes.el= file, your entry point is =litnotes= function.
+
+Right now this buffer has minimal functionality:
+
+- List all litnotes grouped by status (see =litnotes-status-values=).
+- Configurable faces for each element.
+- Tab expansion to hide or show specific group (e.g. status).
+- Visiting note (=TAB= visits litnote in other window, =RETURN= visits in
+  current window).
+- Assign status to a note at point (by default, =s=).
+
+More functionality to come:
+
+- Ability to change default grouping (e.g. by content type, author or no
+  grouping at all).
+- Interactive sorting.
+- Interactive filtering.
+
+This is a playground for building more complex solution to support something
+like [[https://github.com/d12frosted/vino][vino]].
+
 * How to run
 
 ** Requirements
