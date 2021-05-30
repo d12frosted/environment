@@ -212,6 +212,7 @@
     (set-keymap-parent map lister-mode-map)
     (define-key map "\t"          #'litnotes-buffer-expand)
     (define-key map (kbd "<RET>") #'litnotes-buffer-visit)
+    (define-key map (kbd "g")     #'litnotes-buffer-refresh)
     (define-key map (kbd "s")     #'litnotes-buffer-set-status)
     map)
   "Key map for `litnotes-mode'.")
@@ -280,6 +281,13 @@
    (lambda (data)
      (lister-replace buffer (point) data))
    #'stringp))
+
+(defun litnotes-buffer-refresh ()
+  "Refresh litnotes buffer."
+  (interactive)
+  (let ((pos (point)))
+    (litnotes)
+    (goto-char pos)))
 
 (defun litnotes-buffer-expand (buffer pos)
   "Perform expansion on item at POS in litnotes BUFFER."
