@@ -47,6 +47,71 @@ In order to achieve these goals, the following approach is used.
    =package-lint=).
 7. Testing framework of choice is [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]].
 
+* Interesting modules
+
+/Section is under construction. Please return in -2147483648 seconds./
+
+** Dynamic and fast agenda
+
+At the moment of writing this, I already have more than 10k org files. Most of
+them do not contain any TODOs. When =org-agenda= is built, it needs to traverse
+all these files. So the idea is to build =org-agenda-files= dynamically before
+=org-agenda= is executed by marking files containing TODOs on file change and by
+using wonderfully fast query capabilities of =org-roam=. You can read more at
+[[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][d12frosted.io]].
+
+Points of interest:
+
+- =lib-vulpea-agenda.el=
+  - =vulpea-agenda-files-update= - a function that updates =org-agenda-files= to
+    contain only files marked with =project= tag (e.g. containing TODOs).
+- =lib-vulpea.el=
+  - =vulpea-project-files= - a function to query the list of files marked with
+    =project= tag (e.g. containing TODOs).
+  - =vulpea-ensure-filetag= - a function that adds or removes =project= tag from
+    current buffer depending on existence or absence of TODOs.
+  - =vulpea-setup-buffer= and =vulpea-pre-save-hook= - functions that execute
+    =vulpea-ensure-filetag=, used as hooks.
+- =init-vulpea.el= - module that sets up all hooks (e.g. =org-agenda=,
+  =before-save= and =window-buffer-change-functions=).
+
+** Almost intelligent meeting capture flow
+
+It is described in greater details at [[https://d12frosted.io/posts/2021-05-21-task-management-with-roam-vol7.html][d12frosted.io]], but in short, whenever a
+meeting starts, I want to select a person I have a meeting with and capture
+notes under =Meetings= outline in that persons file.
+
+Points of interest:
+
+- =lib-vulpea-capture-el=
+  - =vulpea-capture-setup= - a function that sets up capture templates.
+  - =vulpea-capture-meeting-template= - a function that prompts to select a
+    person and depending on the result returns different templates.
+  - =vulpea-capture-meeting-target= - a function that picks a target for
+    captured note depending on selection from =vulpea-capture-meeting-template=.
+
+** straight.el with retries
+
+I have already covered this topic at [[https://d12frosted.io/posts/2021-04-08-straight-el-retries.html][d12frosted.io]]. In short, =init-elpa.el=
+file contains functionality to automatically retry [[https://github.com/raxod502/straight.el/][raxod502/straight.el]]
+operations. Take a look at definition and usage of =elpa-straight-with-retry=.
+
+** Managing litnotes
+
+#+begin_html
+<p align="center">
+  <img src="images/litnotes-1.png" width="100%"/>
+</p>
+#+end_html
+
+Not so long ago I've started to take notes while I am reading books, articles,
+listening to videos, or completing courses. Previously it was a scattered mess
+(mostly left in my e-reading application), but now I have it all under
+=litnotes= directory in my Org directory.
+
+In order to list all my reading notes, I've built a solution based on
+[[https://github.com/publicimageltd/lister][publicimageltd/lister]], [[https://github.com/d12frosted/vulpea][vulpea]] and [[https://github.com/org-roam/org-roam/][org-roam]] libraries. Take a look at
+=lib-litnotes.el= file, your entry point is =litnotes= function.
 * How to run
 
 ** Requirements
@@ -141,69 +206,3 @@ Bootstrap Emacs configurations, compile them and lint.
 #+begin_src bash
   $ cd "$XDG_CONFIG_HOME/emacs" && make test
 #+end_src
-
-* Interesting modules
-
-/Section is under construction. Please return in -2147483648 seconds./
-
-** Dynamic and fast agenda
-
-At the moment of writing this, I already have more than 10k org files. Most of
-them do not contain any TODOs. When =org-agenda= is built, it needs to traverse
-all these files. So the idea is to build =org-agenda-files= dynamically before
-=org-agenda= is executed by marking files containing TODOs on file change and by
-using wonderfully fast query capabilities of =org-roam=. You can read more at
-[[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][d12frosted.io]].
-
-Points of interest:
-
-- =lib-vulpea-agenda.el=
-  - =vulpea-agenda-files-update= - a function that updates =org-agenda-files= to
-    contain only files marked with =project= tag (e.g. containing TODOs).
-- =lib-vulpea.el=
-  - =vulpea-project-files= - a function to query the list of files marked with
-    =project= tag (e.g. containing TODOs).
-  - =vulpea-ensure-filetag= - a function that adds or removes =project= tag from
-    current buffer depending on existence or absence of TODOs.
-  - =vulpea-setup-buffer= and =vulpea-pre-save-hook= - functions that execute
-    =vulpea-ensure-filetag=, used as hooks.
-- =init-vulpea.el= - module that sets up all hooks (e.g. =org-agenda=,
-  =before-save= and =window-buffer-change-functions=).
-
-** Almost intelligent meeting capture flow
-
-It is described in greater details at [[https://d12frosted.io/posts/2021-05-21-task-management-with-roam-vol7.html][d12frosted.io]], but in short, whenever a
-meeting starts, I want to select a person I have a meeting with and capture
-notes under =Meetings= outline in that persons file.
-
-Points of interest:
-
-- =lib-vulpea-capture-el=
-  - =vulpea-capture-setup= - a function that sets up capture templates.
-  - =vulpea-capture-meeting-template= - a function that prompts to select a
-    person and depending on the result returns different templates.
-  - =vulpea-capture-meeting-target= - a function that picks a target for
-    captured note depending on selection from =vulpea-capture-meeting-template=.
-
-** straight.el with retries
-
-I have already covered this topic at [[https://d12frosted.io/posts/2021-04-08-straight-el-retries.html][d12frosted.io]]. In short, =init-elpa.el=
-file contains functionality to automatically retry [[https://github.com/raxod502/straight.el/][raxod502/straight.el]]
-operations. Take a look at definition and usage of =elpa-straight-with-retry=.
-
-** Managing litnotes
-
-#+begin_html
-<p align="center">
-  <img src="images/litnotes-1.png" width="100%"/>
-</p>
-#+end_html
-
-Not so long ago I've started to take notes while I am reading books, articles,
-listening to videos, or completing courses. Previously it was a scattered mess
-(mostly left in my e-reading application), but now I have it all under
-=litnotes= directory in my Org directory.
-
-In order to list all my reading notes, I've built a solution based on
-[[https://github.com/publicimageltd/lister][publicimageltd/lister]], [[https://github.com/d12frosted/vulpea][vulpea]] and [[https://github.com/org-roam/org-roam/][org-roam]] libraries. Take a look at
-=lib-litnotes.el= file, your entry point is =litnotes= function.
