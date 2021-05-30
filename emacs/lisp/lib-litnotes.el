@@ -70,11 +70,6 @@
 
 
 
-(defvar-local litnotes-data nil
-  "Associative list of all litnotes grouped by status.")
-
-
-
 (defvar litnotes-status-order '("ongoing" "new" "done" "dropped")
   "List describing order in which status should appear.")
 
@@ -202,6 +197,9 @@
 
 
 
+(defvar-local litnotes-buffer-data nil
+  "Associative list of all litnotes grouped by status.")
+
 ;;;###autoload
 (define-derived-mode litnotes-mode
   lister-mode "litnotes"
@@ -225,23 +223,23 @@
   (let* ((name "*litnotes*")
          (_ (and (get-buffer name)
                  (kill-buffer name)))
-         (buffer (generate-new-buffer name))
-         (notes (litnotes-entries))
-         (data-list (seq-sort-by
-                     #'car
-                     #'litnotes-status-compare
-                     (seq-group-by
-                      #'litnotes-entry-status
-                      notes))))
+         (buffer (generate-new-buffer name)))
     (with-current-buffer buffer
       (litnotes-mode)
-      (setq litnotes-data data-list)
+      (setq litnotes-buffer-data (litnotes-buffer-data))
       (lister-highlight-mode 1)
       (lister-insert-sequence
        buffer (point) litnotes-status-order)
       (lister-goto buffer :first)
       (litnotes-buffer-expand-sublist buffer (point)))
     (switch-to-buffer buffer)))
+
+(defun litnotes-buffer-data ()
+  "Get data for litnotes buffer."
+  (seq-sort-by
+   #'car
+   #'litnotes-status-compare
+   (seq-group-by #'litnotes-entry-status (litnotes-entries))))
 
 (defun litnotes-buffer-mapper (data)
   "DATA mapper for `litnotes-mode'."
@@ -254,7 +252,7 @@
        (propertize
         (concat "("
                 (number-to-string
-                 (length (cdr (assoc data litnotes-data))))
+                 (length (cdr (assoc data litnotes-buffer-data))))
                 ")")
         'face 'litnotes-group-counter-face))
     (concat
@@ -308,7 +306,7 @@ items. POS can be an integer or the symbol `:point'."
             (:point (with-current-buffer buffer (point)))
             (_ (error "Invalid value for POS: %s" pos))))
          (item (lister-get-data buffer position))
-         (sublist (cdr (assoc item litnotes-data))))
+         (sublist (cdr (assoc item litnotes-buffer-data))))
     (if sublist
         (with-temp-message "Inserting expansion results..."
           (lister-insert-sublist-below buffer position sublist))
@@ -336,8 +334,8 @@ items. POS can be an integer or the symbol `:point'."
           (vulpea-utils-with-file file
             (litnotes-status-set status))
           (setf (litnotes-entry-status item) status)
-          (setq litnotes-data (litnotes-data-change-group
-                               item old-status status))
+          (setq litnotes-buffer-data (litnotes-buffer-data-change-group
+                                      item old-status status))
           (litnotes-buffer-change-group buffer pos item status)
           (litnotes-buffer-groups-refresh buffer))
       (user-error "Not a litnote"))))
@@ -365,12 +363,7 @@ items. POS can be an integer or the symbol `:point'."
      (and (stringp data)
           (string-equal new-group data)))))
 
-;; TODO: add filtering
-;; TODO: add other groupings
-
-
-
-(defun litnotes-data-change-group (item old-group new-group)
+(defun litnotes-buffer-data-change-group (item old-group new-group)
   "Move ITEM from OLD-GROUP to NEW-GROUP in cached data."
   (seq-map
    (lambda (kvs)
@@ -387,7 +380,10 @@ items. POS can be an integer or the symbol `:point'."
        (cons (car kvs)
              (cons item (cdr kvs))))
       (t kvs)))
-   litnotes-data))
+   litnotes-buffer-data))
+
+;; TODO: add filtering
+;; TODO: add other groupings
 
 
 
