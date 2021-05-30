@@ -180,6 +180,13 @@
      :authors (vulpea-buffer-meta-get-list!
                meta "authors" 'note))))
 
+(defun litnotes-entry-visit (entry &optional other-window)
+  "Visit a litnote ENTRY possible in OTHER-WINDOW."
+  (org-roam-node-visit
+   (org-roam-node-from-id
+    (vulpea-note-id (litnotes-entry-note entry)))
+   other-window))
+
 
 
 (defun litnotes-entries ()
@@ -205,8 +212,8 @@
   (let ((map (make-sparse-keymap)))
     ;; inherit standard key bindings:
     (set-keymap-parent map lister-mode-map)
-    (define-key map (kbd "<RET>") #'litnotes-buffer-visit-note)
-    (define-key map "\t"          #'litnotes-buffer-toggle-sublist)
+    (define-key map "\t"          #'litnotes-buffer-expand)
+    (define-key map (kbd "<RET>") #'litnotes-buffer-visit)
     (define-key map (kbd "s")     #'litnotes-buffer-set-status)
     map)
   "Key map for `litnotes-mode'.")
@@ -276,14 +283,18 @@
      (lister-replace buffer (point) data))
    #'stringp))
 
-(defun litnotes-buffer-toggle-sublist ()
-  "Close or open the item's sublist at point."
-  (interactive)
-  (let* ((buffer (current-buffer))
-         (pos (point)))
-    (if (ignore-errors (lister-sublist-below-p buffer pos))
-        (lister-remove-sublist-below buffer pos)
-      (litnotes-buffer-expand-sublist buffer pos))))
+(defun litnotes-buffer-expand (buffer pos)
+  "Perform expansion on item at POS in litnotes BUFFER."
+  (interactive (list (current-buffer) (point)))
+  (let ((item (lister-get-data buffer pos)))
+    (cond
+     ((litnotes-entry-p item)
+      (litnotes-entry-visit item 'other-window))
+
+     ((ignore-errors (lister-sublist-below-p buffer pos))
+      (lister-remove-sublist-below buffer pos))
+
+     (t (litnotes-buffer-expand-sublist buffer pos)))))
 
 (defun litnotes-buffer-expand-sublist (buffer pos)
   "Expand litnotes in the current list.
@@ -303,17 +314,12 @@ items. POS can be an integer or the symbol `:point'."
           (lister-insert-sublist-below buffer position sublist))
       (user-error "No expansion found"))))
 
-(defun litnotes-buffer-visit-note ()
-  "Visit a litnote at point."
-  (interactive)
-  (let* ((buffer (current-buffer))
-         (pos (point))
-         (item (lister-get-data buffer pos)))
+(defun litnotes-buffer-visit (buffer pos)
+  "Visit a litnote at POS from BUFFER."
+  (interactive (list (current-buffer) (point)))
+  (let* ((item (lister-get-data buffer pos)))
     (if (litnotes-entry-p item)
-        (org-roam-node-visit
-         (org-roam-node-from-id
-          (vulpea-note-id (litnotes-entry-note item)))
-         'other-window)
+        (litnotes-entry-visit item)
       (user-error "Not a litnote"))))
 
 (defun litnotes-buffer-set-status ()
