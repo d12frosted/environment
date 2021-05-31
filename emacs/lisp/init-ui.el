@@ -51,6 +51,13 @@
 ;; disable cursort blinking
 (blink-cursor-mode -1)
 
+;; play around with frame title (which I rarely see)
+(setq frame-title-format
+      '("%b@"
+        (:eval (or (file-remote-p default-directory 'host)
+                   system-name))
+        " — Emacs"))
+
 ;; for some reason only this removes the clutter with xmonad
 (use-package scroll-bar
   :straight nil
