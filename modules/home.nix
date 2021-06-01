@@ -115,61 +115,6 @@ in {
       };
     };
 
-    fish = {
-      enable = true;
-      plugins = [
-        {
-          name = "base16-shell-fish";
-          src = pkgs.fetchFromGitHub {
-            owner = "smh";
-            repo = "base16-shell-fish";
-            rev = "a43cfd58a65923fa7eb2e0295ef37854d393a4d4";
-            sha256 = "0869qq08836s7g969nv7zdzz5xmgiyd70salb542bifqy2vy55x1";
-          };
-        }
-      ];
-      interactiveShellInit = ''
-# see https://github.com/LnL7/nix-darwin/issues/122
-set -gp PATH /nix/var/nix/profiles/default/bin
-set -gp PATH /run/current-system/sw/bin
-set -gp PATH /Users/d12frosted/.nix-profile/bin
-
-set fish_greeting "
-                       &    &     &
-                        &&&&  &  && &
-                &   &     && &&&&&&&
-                 &&& &       &&&& &&&
-              &&&&& &&& &   /~&&& &&   &&
-             && &&&&_&_&_ & \&&&&&&&& && &&
-                  &   &&\&&&&__&&&&&&&_/&&&  & &
-                         \|\\\__/_/   &&& &
-                         \_   _//     & &
-                               \\
-                                \\
-                                //~
-                                \\
-                                /~
-                                 /~
-             ;,'             (---./~~\.---)
-     _o_    ;:;'   ,          (          )
- ,-.'---`.__ ;      ~,         (________)
-((j`~=~=~',-'     ,____.
- `-\     /        |    j
-    `-=-'          `--'
-"
-
-if test "$TERM" != "linux"
-  base16 tomorrow
-end
-      '';
-      loginShellInit = ''
-set -gx GPG_TTY (tty)
-if ! pgrep -x "gpg-agent" > /dev/null
-  ${pkgs.gnupg}/bin/gpgconf --launch gpg-agent
-end
-      '';
-    };
-
     alacritty = {
       enable = true;
       settings = {
