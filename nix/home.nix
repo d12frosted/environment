@@ -44,7 +44,7 @@ in {
     '' + lib.optionalString pkgs.stdenv.isDarwin ''
       pinentry-program ${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac
     '' + lib.optionalString pkgs.stdenv.isLinux ''
-       pinentry-program ${pkgs.pinentry-qt}
+       pinentry-program ${pkgs.pinentry-qt}/bin/pinentry-qt
     '';
   };
 
