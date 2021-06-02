@@ -287,6 +287,11 @@ theme_guard "system" "ensure nix installation" && {
     curl -L https://nixos.org/nix/install -o "$install_script"
 	  chmod +x "$install_script"
 	  "$install_script" --daemon
+    arch_guard && {
+      nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
+      nix-channel --update
+      nix-env -iA unstable.nixUnstable
+    }
   fi
 }
 
@@ -305,7 +310,6 @@ theme_guard "system" "build nix environment" && {
       --experimental-features "nix-command flakes" --impure \
       -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
       ./#darwinConfigurations.${fellow}.system
-    arch_guard && nix-env -f '<nixpkgs>' -iA nixUnstable
     arch_guard && nix build \
       --experimental-features 'nix-command flakes' \
       ./#homeConfigurations.borysb.activationPackage
