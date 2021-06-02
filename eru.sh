@@ -351,16 +351,6 @@ theme_guard "system" "ensure HLS installation" && {
   }
 }
 
-theme_guard "system" "ensure fisher installation" && {
-  check fisher || {
-    export fisher_path="$XDG_DATA_HOME/fisher"
-    fisher="$(mktemp -d)/fisher"
-    curl -sL https://git.io/fisher -o "$fisher"
-    fish -c "source '$fisher' && fisher install jorgebucaran/fisher"
-  }
-  fish -c "fisher update"
-}
-
 arch_guard && {
   install_guard && {
     theme_guard "packages" "Install all dependencies" && {

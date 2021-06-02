@@ -2,6 +2,8 @@
 git
 gnupg
 ssh
+fish/config.fish
+fish/conf.d/
 
 # haskell
 # https://github.com/commercialhaskell/stack/blob/master/.gitignore

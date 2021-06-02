@@ -31,10 +31,7 @@ in {
       XDG_CONFIG_HOME            = config.xdg.configHome;
       XDG_DATA_HOME              = config.xdg.dataHome;
     };
-    sessionPath = [
-      "${config.xdg.configHome}/bin"
-      "${home}/.local/bin"
-    ];
+    sessionPath = [];
   };
 
   xdg = {
@@ -113,6 +110,100 @@ in {
           };
         };
       };
+    };
+
+    fish = {
+      enable = true;
+      plugins = [
+        {
+          name = "base16-fish";
+          src = pkgs.fetchFromGitHub {
+            owner = "tomyun";
+            repo = "base16-fish";
+            rev = "2f6dd973a9075dabccd26f1cded09508180bf5fe";
+            sha256 = "PebymhVYbL8trDVVXxCvZgc0S5VxI7I1Hv4RMSquTpA=";
+          };
+        }
+        {
+          name = "tide";
+          src = pkgs.fetchFromGitHub {
+            owner = "IlanCosman";
+            repo = "tide";
+            rev = "630ae9f7d93c5f53880e7d59ae4e61f6390b71a1";
+            sha256 = "XTpkjQOdFXBO9NlEwOMX26bbuxojVmdtxDcfLKXFUdE=";
+          };
+        }
+        {
+          name = "done";
+          src = pkgs.fetchFromGitHub {
+            owner = "franciscolourenco";
+            repo = "done";
+            rev = "37117c3d8ed6b820f6dc647418a274ebd1281832";
+            sha256 = "cScH1NzsuQnDZq0XGiay6o073WSRIAsshkySRa/gJc0=";
+          };
+        }
+      ];
+      shellInit = ''
+# tide configurations
+if not set -q __tide_installed
+  echo "installing tide..."
+  _tide_init_install
+  set -U __tide_installed 1
+end
+set -g tide_prompt_char_icon "λ"
+if test "$TERM" = linux
+  set -g tide_prompt_char_icon ">"
+end
+set -g tide_left_prompt_items pwd git newline prompt_char
+set -g tide_right_prompt_items status cmd_duration context jobs time
+
+# done configurations
+set -g __done_notification_command 'notify send -t "$title" -m "$message"'
+set -g __done_enabled 1
+set -g __done_allow_nongraphical 1
+'';
+      interactiveShellInit = ''
+# see https://github.com/LnL7/nix-darwin/issues/122
+set -gp PATH /nix/var/nix/profiles/default/bin
+set -gp PATH /run/current-system/sw/bin
+set -gp PATH ${home}/.nix-profile/bin
+set -gp PATH ${home}/.local/bin
+set -gp PATH ${config.xdg.configHome}/bin
+
+set fish_greeting "
+                       &    &     &
+                        &&&&  &  && &
+                &   &     && &&&&&&&
+                 &&& &       &&&& &&&
+              &&&&& &&& &   /~&&& &&   &&
+             && &&&&_&_&_ & \&&&&&&&& && &&
+                  &   &&\&&&&__&&&&&&&_/&&&  & &
+                         \|\\\__/_/   &&& &
+                         \_   _//     & &
+                               \\
+                                \\
+                                //~
+                                \\
+                                /~
+                                 /~
+             ;,'             (---./~~\.---)
+     _o_    ;:;'   ,          (          )
+ ,-.'---`.__ ;      ~,         (________)
+((j`~=~=~',-'     ,____.
+ `-\     /        |    j
+    `-=-'          `--'
+"
+
+if test "$TERM" != "linux"
+  base16-tomorrow
+end
+      '';
+      loginShellInit = ''
+set -gx GPG_TTY (tty)
+if ! pgrep -x "gpg-agent" > /dev/null
+  ${pkgs.gnupg}/bin/gpgconf --launch gpg-agent
+end
+      '';
     };
 
     alacritty = {

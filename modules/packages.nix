@@ -6,7 +6,6 @@ in [
   alacritty
   aspell
   aspellDicts.en
-  base16-shell
   coreutils
   emacs
   ffmpeg
