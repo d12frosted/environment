@@ -26,12 +26,12 @@
       overlays = [
         emacs-overlay.overlay
         spacebar.overlay
-        (import ./overlays)
+        (import ./nix/overlays)
       ];
     in {
       darwinConfigurations.d12frosted = darwin.lib.darwinSystem {
         modules = [
-          ./modules/darwin.nix
+          ./nix/darwin.nix
           home.darwinModules.home-manager
           {
             nixpkgs.overlays = [emacs.overlay] ++ overlays;
@@ -42,7 +42,7 @@
       homeConfigurations = {
         borysb = home.lib.homeManagerConfiguration {
           configuration = { pkgs, lib, config, ... }: {
-            imports = [ ./modules/home.nix ];
+            imports = [ ./nix/home.nix ];
             nixpkgs.config.allowUnfree = true;
             nixpkgs.overlays = overlays;
           };

@@ -312,7 +312,7 @@ theme_guard "system" "build nix environment" && {
     section "building configurations"
     macos_guard && nix build \
       --experimental-features "nix-command flakes" --impure \
-      -I hm-config="$XDG_CONFIG_HOME/modules/home.nix" \
+      -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
       ./#darwinConfigurations.${fellow}.system
     arch_guard && nix-env -f '<nixpkgs>' -iA nixUnstable
     arch_guard && nix build \
@@ -322,7 +322,7 @@ theme_guard "system" "build nix environment" && {
     section "switching to configurations"
     macos_guard && result/sw/bin/darwin-rebuild switch \
       --impure \
-      -I hm-config="$XDG_CONFIG_HOME/modules/home.nix" \
+      -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
       --flake ./#${fellow}
     arch_guard && ./result/activate switch
   }
