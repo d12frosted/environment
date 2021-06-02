@@ -108,14 +108,14 @@ function exec() {
       ;;
     enable)
       echo "1" > "$XDG_DATA_HOME/notify/status"
-      check notify-send && {
-        notify send -t "DUNST_COMMAND_RESUME"
+      check dunstctl && {
+        dunstctl set-paused false
       }
       ;;
     disable)
       echo "0" > "$XDG_DATA_HOME/notify/status"
-      check notify-send && {
-        notify send -t "DUNST_COMMAND_PAUSE"
+      check dunstctl && {
+        dunstctl set-paused true
       }
       ;;
     toggle)
