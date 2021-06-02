@@ -46,7 +46,7 @@ autolock &
 
 # Being distracted by some obnoxious notifications is so nice.
 dunst &
-notify-enable
+notify enable
 
 # Tame the clipboard as well
 clipmenud &
