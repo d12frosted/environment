@@ -52,6 +52,9 @@ case $KERNEL_NAME in
       *arch*|*coreos*)
         OS_NAME="arch"
         ;;
+      *fc*)
+        OS_NAME="fedora"
+        ;;
     esac
     ;;
   *)
@@ -179,6 +182,16 @@ function arch_guard() {
   return
 }
 
+function fedora_guard() {
+  [[ "$OS_NAME" == "fedora" ]]
+  return
+}
+
+function linux_guard() {
+  [[ "$KERNEL_NAME" == "linux" ]]
+  return
+}
+
 function macos_guard() {
   [[ "$OS_NAME" == "macos" ]]
   return
@@ -285,9 +298,13 @@ theme_guard "system" "ensure nix installation" && {
   else
     install_script="$(mktemp -d)/install"
     curl -L https://nixos.org/nix/install -o "$install_script"
-	  chmod +x "$install_script"
-	  "$install_script" --daemon
-    arch_guard && {
+    chmod +x "$install_script"
+    if fedora_guard; then
+      "$install_script"
+    else
+      "$install_script" --daemon
+    fi
+    linux_guard && {
       nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
       nix-channel --update
       nix-env -iA unstable.nixUnstable
@@ -310,7 +327,7 @@ theme_guard "system" "build nix environment" && {
       --experimental-features "nix-command flakes" --impure \
       -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
       ./#darwinConfigurations.${fellow}.system
-    arch_guard && nix build \
+    linux_guard && nix build \
       --experimental-features 'nix-command flakes' \
       ./#homeConfigurations.borysb.activationPackage
 
@@ -319,7 +336,7 @@ theme_guard "system" "build nix environment" && {
       --impure \
       -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
       --flake ./#${fellow}
-    arch_guard && ./result/activate switch
+    linux_guard && ./result/activate switch
   }
 }
 
@@ -429,7 +446,7 @@ arch_guard && {
   }
 }
 
-arch_guard && {
+linux_guard && {
   theme_guard "xmonad" "Rebuild Xmonad configurations" && {
     section "Install xmonad"
     (
