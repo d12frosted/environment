@@ -72,16 +72,7 @@ fi
 
 mkdir -p "$HOME/.local/bin/"
 export PATH=$HOME/.local/bin:$PATH
-
-target=$HOME/.config
-if [[ -d "$XDG_CONFIG_HOME" ]]; then
-  target="$XDG_CONFIG_HOME"
-fi
-if [[ -d "$GITHUB_WORKSPACE" ]]; then
-  target="$GITHUB_WORKSPACE"
-fi
-
-export XDG_CONFIG_HOME=$target
+export XDG_CONFIG_HOME=${GITHUB_WORKSPACE:-${XDG_CONFIG_HOME:-$HOME/.config}}
 export XDG_CONFIG_CACHE="$HOME/.cache"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
@@ -371,13 +362,13 @@ arch_guard && {
 
       log "Install packages"
 
-      pacman_file=$(combine_files "$target/arch/Pacmanfile" "$target/arch/Pacmanfile_$USER")
-      pacman_ignore=$(combine_files "$target/arch/Pacmanignore" "$target/arch/Pacmanignore_$USER")
+      pacman_file=$(combine_files "$XDG_CONFIG_HOME/arch/Pacmanfile" "$XDG_CONFIG_HOME/arch/Pacmanfile_$USER")
+      pacman_ignore=$(combine_files "$XDG_CONFIG_HOME/arch/Pacmanignore" "$XDG_CONFIG_HOME/arch/Pacmanignore_$USER")
       # shellcheck disable=SC2046
       sudo aura -S --noconfirm --needed $(comm -23 "$pacman_file" "$pacman_ignore")
 
-      aur_file=$(combine_files "$target/arch/Aurfile" "$target/arch/Aurfile_$USER")
-      aur_ignore=$(combine_files "$target/arch/Aurignore" "$target/arch/Aurignore_$USER")
+      aur_file=$(combine_files "$XDG_CONFIG_HOME/arch/Aurfile" "$XDG_CONFIG_HOME/arch/Aurfile_$USER")
+      aur_ignore=$(combine_files "$XDG_CONFIG_HOME/arch/Aurignore" "$XDG_CONFIG_HOME/arch/Aurignore_$USER")
       # shellcheck disable=SC2046
       sudo aura -A --noconfirm --needed $(comm -23 "$aur_file" "$aur_ignore")
     }
