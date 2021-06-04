@@ -3,11 +3,9 @@
 with pkgs;
 let exe = haskell.lib.justStaticExecutables;
 in [
-  alacritty
   aspell
   aspellDicts.en
   coreutils
-  emacs
   ffmpeg
   fish
   fontconfig
@@ -39,9 +37,13 @@ in [
   unzip
   wget
 ] ++ lib.optionals stdenv.isDarwin [
+  alacritty
+  emacs
   skhd
   terminal-notifier
   xquartz
   yabai
   youtube-dl
+] ++ lib.optionals stdenv.isLinux [
+  emacsGit
 ]
