@@ -29,6 +29,7 @@ in [
   nixpkgs-fmt
   openssh
   openssl
+  python39Packages.pygments
   ripgrep
   rsync
   shellcheck
