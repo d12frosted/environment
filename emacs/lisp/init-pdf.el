@@ -57,24 +57,36 @@
              pdf-tools-install)
   :init
   (setq-default pdf-view-display-size 'fit-page)
-  (when (and elpa-bootstrap-p
-             (not env-sys-mac-p))
+  (when elpa-bootstrap-p
     (require 'pdf-tools)
     (unless (file-exists-p pdf-info-epdfinfo-program)
-      (let ((wait-p t)
-            (buf (pdf-tools-install 'no-query)))
-        (when (bufferp buf)
-          (add-hook 'compilation-finish-functions
-                    (lambda (buffer _status)
-                      (setq wait-p nil)
-                      (message
-                       (with-current-buffer buffer
-                         (buffer-substring (point-min)
-                                           (point-max)))))
-                    nil t)
-          (while wait-p
-            (message "building pdf-tools...")
-            (sleep-for 1))))))
+      (let ((default-directory
+              (expand-file-name "build/server/"
+                                pdf-tools-directory)))
+        (message "building pdf-tools...")
+        (let* ((error-buffer (generate-new-buffer
+                              "*pdf-tool-error*"))
+               (res (shell-command
+                     (format
+                      "nix-shell -p %s --command '%s'"
+                      (string-join '("pkg-config"
+                                     "poppler"
+                                     "autoconf"
+                                     "automake"
+                                     "libtool"
+                                     "libpng")
+                                   " ")
+                      (concat "autoreconf -i -f"
+                              " && "
+                              "./autobuild -i "
+                              pdf-tools-directory
+                              " --os nixos"))
+                     nil
+                     error-buffer)))
+          (unless (zerop res)
+            (message (with-current-buffer error-buffer
+                       (buffer-string)))
+            (error "Failed to build pdf-tools"))))))
   :config
   (add-hook 'pdf-view-mode-hook #'pdf-setup-view-mode))
 
