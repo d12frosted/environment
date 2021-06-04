@@ -154,13 +154,19 @@ set -g tide_prompt_char_icon "λ"
 if test "$TERM" = linux
   set -g tide_prompt_char_icon ">"
 end
-set -g tide_left_prompt_items pwd git newline prompt_char
-set -g tide_right_prompt_items status cmd_duration context jobs time
+set -g tide_left_prompt_items time context jobs pwd git newline status cmd_duration prompt_char
+set -g tide_right_prompt_items
+set -g tide_right_prompt_suffix ' '
+set -g tide_time_format '[%T]'
+set -g tide_time_color brmagenta
+set -g tide_cmd_duration_threshold 8000
+set -g tide_cmd_duration_color brcyan
 
 # done configurations
 set -g __done_notification_command 'notify send -t "$title" -m "$message"'
 set -g __done_enabled 1
 set -g __done_allow_nongraphical 1
+set -g __done_min_cmd_duration $tide_cmd_duration_threshold
 '';
       interactiveShellInit = ''
 # see https://github.com/LnL7/nix-darwin/issues/122
