@@ -172,8 +172,8 @@ set -g __done_min_cmd_duration $tide_cmd_duration_threshold
 # see https://github.com/LnL7/nix-darwin/issues/122
 set -gp PATH /nix/var/nix/profiles/default/bin
 set -gp PATH /run/current-system/sw/bin
-set -gp PATH ${home}/.nix-profile/bin
-set -gp PATH ${home}/.local/bin
+set -gp PATH $HOME/.nix-profile/bin
+set -gp PATH $HOME/.local/bin
 set -gp PATH ${config.xdg.configHome}/bin
 
 set fish_greeting "
