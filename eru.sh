@@ -323,8 +323,6 @@ theme_guard "system" "build nix environment" && {
   }
 }
 
-export NIX_PATH=${NIX_PATH:+$NIX_PATH:}nixpkgs=$HOME/.nix-defexpr/channels_root/nixpkgs
-
 theme_guard "system" "make Eru more approachable" && {
   "$XDG_CONFIG_HOME/bin/safe_link" "$XDG_CONFIG_HOME/eru.sh" "$HOME/.local/bin/eru"
 }

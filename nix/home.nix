@@ -176,6 +176,8 @@ set -gp PATH $HOME/.nix-profile/bin
 set -gp PATH $HOME/.local/bin
 set -gp PATH ${config.xdg.configHome}/bin
 
+set -gp NIX_PATH nixpkgs=$HOME/.nix-defexpr/channels_root/nixpkgs
+
 set fish_greeting "
                        &    &     &
                         &&&&  &  && &
