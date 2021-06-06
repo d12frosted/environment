@@ -3,8 +3,6 @@
 with pkgs;
 let exe = haskell.lib.justStaticExecutables;
 in [
-  aspell
-  aspellDicts.en
   coreutils
   ffmpeg
   fish
@@ -48,4 +46,8 @@ in [
   youtube-dl
 ] ++ lib.optionals stdenv.isLinux [
   emacsGit
+] ++ [
+  # all things editor
+  (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
+] ++ [
 ]
