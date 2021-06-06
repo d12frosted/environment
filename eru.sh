@@ -333,7 +333,7 @@ theme_guard "system" "make Eru more approachable" && {
 }
 
 export GHCUP_USE_XDG_DIRS=1
-theme_guard "system" "ensure ghcup installation" && {
+theme_guard "haskell" "ensure ghcup installation" && {
   check ghcup || {
     # https://www.haskell.org/ghcup/
     export BOOTSTRAP_HASKELL_NONINTERACTIVE=1
@@ -345,7 +345,7 @@ theme_guard "system" "ensure ghcup installation" && {
   }
 }
 
-theme_guard "system" "ensure HLS installation" && {
+theme_guard "haskell" "ensure HLS installation" && {
   check haskell-language-server-wrapper || {
     ghcup install hls
   }
