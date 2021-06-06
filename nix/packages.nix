@@ -14,24 +14,17 @@ in [
   gnuplot
   gnused
   gnutar
-  haskellPackages.haskell-language-server
   hledger
   home-manager
+  hpack
   jq
   killall
   kubectl
-  librsvg
-  libxml2
-  libxslt
-  nixfmt
-  nixpkgs-fmt
   openssh
   openssl
-  ormolu
   python39Packages.pygments
   ripgrep
   rsync
-  shellcheck
   sqlite
   unrar
   unzip
@@ -39,6 +32,7 @@ in [
 ] ++ lib.optionals stdenv.isDarwin [
   alacritty
   emacs
+  pinentry_mac
   skhd
   terminal-notifier
   xquartz
@@ -49,5 +43,17 @@ in [
 ] ++ [
   # all things editor
   (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
+  nixfmt
+  nixpkgs-fmt
+  ormolu
+  shellcheck
 ] ++ [
+  # all things haskell
+  cabal2nix
+  hpack
+] ++ [
+  # stuff used during compilation
+  librsvg
+  libxml2
+  libxslt
 ]
