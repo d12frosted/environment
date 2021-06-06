@@ -276,7 +276,9 @@ arch_guard && {
   }
 }
 
-export PATH=$HOME/.nix-profile/bin:/run/current-system/sw/bin:/nix/var/nix/profiles/default/bin:$PATH
+export PATH=$HOME/.nix-profile/bin:$PATH
+export PATH=/run/current-system/sw/bin:$PATH
+export PATH=/nix/var/nix/profiles/default/bin:$PATH
 
 theme_guard "system" "ensure nix installation" && {
   if check nix; then
