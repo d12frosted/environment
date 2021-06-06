@@ -24,7 +24,6 @@ experimental-features = nix-command flakes
     trustedUsers = [ "root" "d12frosted" ];
 
     binaryCaches = [
-      # Nightly Emacs build cache for github.com/cmacrae/emacs
       "https://cachix.org/api/v1/cache/emacs"
       "https://cachix.org/api/v1/cache/nix-community"
       "https://cachix.org/api/v1/cache/deploy-rs"
@@ -72,6 +71,15 @@ experimental-features = nix-command flakes
       NSGlobalDomain = {
         AppleKeyboardUIMode = 3;
         ApplePressAndHoldEnabled = false;
+        InitialKeyRepeat = 12;
+        KeyRepeat = 2;
+        AppleShowAllExtensions = true;
+        NSAutomaticCapitalizationEnabled = false;
+        NSAutomaticDashSubstitutionEnabled = false;
+        NSAutomaticPeriodSubstitutionEnabled = false;
+        NSAutomaticQuoteSubstitutionEnabled = false;
+        NSAutomaticSpellingCorrectionEnabled = false;
+        NSTableViewDefaultSizeMode = 2;
         _HIHideMenuBar = false;
         "com.apple.keyboard.fnState" = true;
         "com.apple.mouse.tapBehavior" = 1;
@@ -83,6 +91,18 @@ experimental-features = nix-command flakes
         autohide = true;
         launchanim = false;
         orientation = "left";
+        minimize-to-application = true;
+        show-recents = false;
+        static-only = true;
+        tilesize = 32;
+      };
+
+      finder = {
+        AppleShowAllExtensions = true;
+      };
+
+      trackpad = {
+        Clicking = true;
       };
     };
 
