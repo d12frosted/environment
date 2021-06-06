@@ -137,14 +137,15 @@ current workspace."
                          (window-list))))
     (when (fboundp 'magit-mode-get-buffers)
       (mapc #'vcs--kill-buffer (magit-mode-get-buffers)))
-    (async-start
-     (lambda ()
-       (dolist (buffer (buffer-list))
-         (with-current-buffer buffer
-           (vc-refresh-state)
-           (when (fboundp 'vcs-gutter-update)
-             (vcs-gutter-update)))))
-     'ignore)))
+    ;; (async-start
+    ;;  (lambda ()
+    ;;    (dolist (buffer (buffer-list))
+    ;;      (with-current-buffer buffer
+    ;;        (vc-refresh-state)
+    ;;        (when (fboundp 'vcs-gutter-update)
+    ;;          (vcs-gutter-update)))))
+    ;;  'ignore)
+    ))
 
 (defun vcs--kill-buffer (buffer)
   "Gracefully kill `magit' BUFFER.
