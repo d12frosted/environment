@@ -29,6 +29,7 @@ in [
   nixpkgs-fmt
   openssh
   openssl
+  ormolu
   python39Packages.pygments
   ripgrep
   rsync
