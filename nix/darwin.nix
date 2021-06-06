@@ -28,11 +28,13 @@ experimental-features = nix-command flakes
       "https://cachix.org/api/v1/cache/emacs"
       "https://cachix.org/api/v1/cache/nix-community"
       "https://cachix.org/api/v1/cache/deploy-rs"
+      "https://hydra.iohk.io"
     ];
 
     binaryCachePublicKeys = [
       "emacs.cachix.org-1:b1SMJNLY/mZF6GxQE+eDBeps7WnkT0Po55TAyzwOxTY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
     ];
 
     trustedBinaryCaches = config.nix.binaryCaches;
