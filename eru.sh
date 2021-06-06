@@ -283,11 +283,14 @@ theme_guard "system" "ensure nix installation" && {
     echo "Found nix executable at $(which nix)"
     echo "Nothing to do"
   else
-    install_script="$(mktemp -d)/install"
-    curl -L https://nixos.org/nix/install -o "$install_script"
-	  chmod +x "$install_script"
-	  "$install_script" --daemon
+    section "install nix"
+    macos_guard && {
+      # TODO: remove once nix 2.4 lands
+      sh <(curl https://abathur-nix-install-tests.cachix.org/serve/yihf8zbs0jwph2rs9qfh80dnilijxdi2/install) --tarball-url-prefix https://abathur-nix-install-tests.cachix.org/serve
+    }
     arch_guard && {
+      sh <(curl -L https://nixos.org/nix/install) --daemon
+      # TODO: remove once nix 2.4 lands
       nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
       nix-channel --update
       nix-env -iA unstable.nixUnstable
