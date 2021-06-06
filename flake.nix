@@ -25,7 +25,6 @@
     let
       overlays = [
         emacs-overlay.overlay
-        spacebar.overlay
         (import ./nix/overlays)
       ];
     in {
@@ -34,7 +33,10 @@
           ./nix/darwin.nix
           home.darwinModules.home-manager
           {
-            nixpkgs.overlays = [emacs.overlay] ++ overlays;
+            nixpkgs.overlays = [
+              emacs.overlay
+              spacebar.overlay
+            ] ++ overlays;
           }
         ];
       };
