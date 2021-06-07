@@ -25,6 +25,7 @@ in [
   python39Packages.pygments
   ripgrep
   rsync
+  source-code-pro
   sqlite
   unrar
   unzip
