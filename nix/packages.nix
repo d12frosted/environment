@@ -52,9 +52,4 @@ in [
   # all things haskell
   cabal2nix
   hpack
-] ++ [
-  # stuff used during compilation
-  librsvg
-  libxml2
-  libxslt
 ]
