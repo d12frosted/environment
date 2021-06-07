@@ -125,12 +125,12 @@ in {
           };
         }
         {
-          name = "tide";
+          name = "hydro";
           src = pkgs.fetchFromGitHub {
-            owner = "IlanCosman";
-            repo = "tide";
-            rev = "630ae9f7d93c5f53880e7d59ae4e61f6390b71a1";
-            sha256 = "XTpkjQOdFXBO9NlEwOMX26bbuxojVmdtxDcfLKXFUdE=";
+            owner = "jorgebucaran";
+            repo = "hydro";
+            rev = "a5877e9ef76b3e915c06143630bffc5ddeaba2a1";
+              sha256 = "nJ8nQqaTWlISWXx5a0WeUA4+GL7Fe25658UIqKa389E=";
           };
         }
         {
@@ -144,31 +144,18 @@ in {
         }
       ];
       shellInit = ''
-# tide configurations
-if not set -q __tide_installed
-  echo "installing tide..."
-  _tide_init_install
-  set -U __tide_installed 1
-end
-set -g tide_prompt_char_icon "λ"
+# prompt configurations
+set -g hydro_symbol_prompt "λ"
 if test "$TERM" = linux
-  set -g tide_prompt_char_icon ">"
+  set -g hydro_symbol_prompt ">"
 end
-set -g tide_left_prompt_items time context jobs pwd git newline status cmd_duration prompt_char
-set -g tide_right_prompt_items
-set -g tide_right_prompt_suffix ' '
-set -g tide_time_format '[%T]'
-set -g tide_time_color brmagenta
-set -g tide_cmd_duration_threshold 8000
-set -g tide_cmd_duration_color brcyan
 
 # done configurations
 set -g __done_notification_command 'notify send -t "$title" -m "$message"'
 set -g __done_enabled 1
 set -g __done_allow_nongraphical 1
-set -g __done_min_cmd_duration $tide_cmd_duration_threshold
-'';
-      interactiveShellInit = ''
+set -g __done_min_cmd_duration 8000
+
 # see https://github.com/LnL7/nix-darwin/issues/122
 set -gp PATH /nix/var/nix/profiles/default/bin
 set -gp PATH /run/current-system/sw/bin
@@ -177,7 +164,8 @@ set -gp PATH $HOME/.local/bin
 set -gp PATH ${config.xdg.configHome}/bin
 
 set -gp NIX_PATH nixpkgs=$HOME/.nix-defexpr/channels_root/nixpkgs
-
+'';
+      interactiveShellInit = ''
 set fish_greeting "
                        &    &     &
                         &&&&  &  && &
