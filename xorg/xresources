@@ -2,7 +2,7 @@
 ! Resolution
 !
 
-Xft.dpi: 133
+! Xft.dpi: 133
 Xft.autohint: 0
 Xft.lcdfilter:  lcddefault
 Xft.hintstyle:  hintfull
@@ -15,7 +15,7 @@ Xft.rgba: rgb
 !
 
 XTerm*utf8: 1
-XTerm*faceName: xft:Source Code Pro:size=12
+XTerm*faceName: xft:Source Code Pro:size=10
 XTerm*metaSendsEscape: true
 XTerm.*backarrowKey: false
 XTerm*deleteIsDEL: true
