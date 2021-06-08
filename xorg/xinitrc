@@ -45,11 +45,11 @@ xautolock &
 fehbg &
 
 # Being distracted by some obnoxious notifications is so nice.
-dunst &
-notify enable
+# dunst &
+# notify enable
 
 # Tame the clipboard as well
-clipmenud &
+# clipmenud &
 
 # Because every X needs some algebra to tame it.
 d12-xmonad
