@@ -19,12 +19,12 @@ import XMonad.Workspaces
 --------------------------------------------------------------------------------
 
 dmenu :: MonadIO m => m ()
-dmenu = spawn "dmenu_run -h 32 -fn 'Source Code Pro-10'"
+dmenu = spawn "dmenu_run -l 4 -nb '#f3fcf3' -nf '#050505' -fn 'Source Code Pro-12'"
 
 --------------------------------------------------------------------------------
 
 clipmenu :: MonadIO m => m ()
-clipmenu = spawn "clipmenu -i -h 32 -fn 'Source Code Pro-10'"
+clipmenu = spawn "clipmenu -i -h 32 -fn 'Source Code Pro-12'"
 
 --------------------------------------------------------------------------------
 
