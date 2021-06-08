@@ -17,12 +17,12 @@ do
       shift
       ;;
     --layout)
-      target_layout=$1
+      target_layout=$2
       shift
       shift
       ;;
     --variant)
-      target_variant=$1
+      target_variant=$2
       shift
       shift
       ;;
