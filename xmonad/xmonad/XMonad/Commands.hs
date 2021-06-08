@@ -1,24 +1,20 @@
--- | Custom interactive commands that usually run by pressing some magic key
--- bindings.
-
 --------------------------------------------------------------------------------
-
 {-# LANGUAGE LambdaCase #-}
 
 --------------------------------------------------------------------------------
 
+-- | Custom interactive commands that usually run by pressing some magic key
+-- bindings.
 module XMonad.Commands where
 
 --------------------------------------------------------------------------------
 
-import           XMonad.Window
-import           XMonad.Workspaces
-
 --------------------------------------------------------------------------------
 
-import           Control.Monad.IO.Class (MonadIO)
-import           XMonad
-import           XMonad.StackSet
+import XMonad
+import XMonad.StackSet
+import XMonad.Window
+import XMonad.Workspaces
 
 --------------------------------------------------------------------------------
 
@@ -50,9 +46,10 @@ network = do
 --------------------------------------------------------------------------------
 
 firefox :: X ()
-firefox = findApp "firefox" >>= \case
-  Nothing  -> spawn "firefox" >> windows (greedyView wsWeb)
-  Just win -> windows . focusWindow $ win
+firefox =
+  findApp "firefox" >>= \case
+    Nothing -> spawn "firefox" >> windows (greedyView wsWeb)
+    Just win -> windows . focusWindow $ win
 
 --------------------------------------------------------------------------------
 

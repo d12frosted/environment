@@ -15,7 +15,6 @@ import           XMonad.Workspaces
 
 --------------------------------------------------------------------------------
 
-import           Data.Default (def)
 import           Data.Semigroup
 import           System.Environment
 import           XMonad

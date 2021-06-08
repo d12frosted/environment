@@ -1,0 +1,10 @@
+packages: *.cabal
+
+source-repository-package
+    type: git
+    location: https://github.com/d12frosted/path-extra
+    tag: master
+
+package xmobar
+  flags: +all_extensions
+  all_extensions: True

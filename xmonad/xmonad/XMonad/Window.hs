@@ -11,7 +11,6 @@ module XMonad.Window where
 
 --------------------------------------------------------------------------------
 
-import           Control.Applicative      ((<$>))
 import           Data.List                (find)
 import           Graphics.X11.Xlib.Extras
 import           Prelude

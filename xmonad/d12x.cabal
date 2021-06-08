@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a30495a845741f04836c26f9126b8282cd529564f52c68f19d4652388358543e
+-- hash: 877dee89ff234551b0976a648357cfc9c4745da8f85cf2c4cc8e512971fb8e97
 
 name:           d12x
 version:        0.1.0.0
@@ -26,7 +26,8 @@ library
       Paths_d12x
   hs-source-dirs:
       lib
-  default-extensions: OverloadedStrings
+  default-extensions:
+      OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
       base
@@ -39,15 +40,16 @@ executable d12-xmobar
       Paths_d12x
   hs-source-dirs:
       xmobar
-  default-extensions: OverloadedStrings
+  default-extensions:
+      OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
       base
-    , d12-hs-path
     , d12x
     , data-default
     , mtl
     , path
+    , path-extra
     , process
     , xmobar
   default-language: Haskell2010
@@ -62,7 +64,8 @@ executable d12-xmonad
       Paths_d12x
   hs-source-dirs:
       xmonad
-  default-extensions: OverloadedStrings
+  default-extensions:
+      OverloadedStrings
   ghc-options: -Wall -Werror
   build-depends:
       X11
