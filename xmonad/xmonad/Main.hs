@@ -67,7 +67,7 @@ xmonadConfig
                  , wsOther
                  ]
 
-  , terminal = "alacritty"
+  , terminal = "xterm"
   } `additionalKeysP` keybindings
 
 --------------------------------------------------------------------------------
