@@ -179,6 +179,11 @@ function arch_guard() {
   return
 }
 
+function linux_guard() {
+  [[ "$KERNEL_NAME" == "linux" ]]
+  return
+}
+
 function macos_guard() {
   [[ "$OS_NAME" == "macos" ]]
   return
@@ -276,9 +281,9 @@ arch_guard && {
   }
 }
 
-export PATH=$HOME/.nix-profile/bin:$PATH
-export PATH=/run/current-system/sw/bin:$PATH
 export PATH=/nix/var/nix/profiles/default/bin:$PATH
+export PATH=/run/current-system/sw/bin:$PATH
+export PATH=$HOME/.nix-profile/bin:$PATH
 
 theme_guard "system" "ensure nix installation" && {
   if check nix; then
@@ -290,7 +295,7 @@ theme_guard "system" "ensure nix installation" && {
       # TODO: remove once nix 2.4 lands
       sh <(curl https://abathur-nix-install-tests.cachix.org/serve/yihf8zbs0jwph2rs9qfh80dnilijxdi2/install) --tarball-url-prefix https://abathur-nix-install-tests.cachix.org/serve
     }
-    arch_guard && {
+    linux_guard && {
       sh <(curl -L https://nixos.org/nix/install) --daemon
       # TODO: remove once nix 2.4 lands
       nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
@@ -315,7 +320,7 @@ theme_guard "system" "build nix environment" && {
       --experimental-features "nix-command flakes" --impure \
       -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
       ./#darwinConfigurations.${fellow}.system
-    arch_guard && nix build \
+    linux_guard && nix build \
       --experimental-features 'nix-command flakes' \
       ./#homeConfigurations.borysb.activationPackage
 
@@ -324,7 +329,7 @@ theme_guard "system" "build nix environment" && {
       --impure \
       -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
       --flake ./#${fellow}
-    arch_guard && ./result/activate switch
+    linux_guard && ./result/activate switch
   }
 }
 
@@ -348,6 +353,52 @@ theme_guard "haskell" "ensure ghcup installation" && {
 theme_guard "haskell" "ensure HLS installation" && {
   check haskell-language-server-wrapper || {
     ghcup install hls
+  }
+}
+
+linux_guard && {
+  theme_guard "system" "inject xorg stuff" && {
+    safe_link "$XDG_CONFIG_HOME/xorg/xinitrc" "$HOME/.xinitrc"
+    safe_link "$XDG_CONFIG_HOME/xorg/bin/switch_kbd_layout" /usr/local/bin/switch_kbd_layout
+    safe_link "$XDG_CONFIG_HOME/xorg/bin/autolock" /usr/local/bin/xautolocker
+    safe_link "$XDG_CONFIG_HOME/xorg/bin/lock" /usr/local/bin/xlocker
+  }
+
+  theme_guard "system" "Setup keyboard" && {
+    if [[ ! -f /usr/share/X11/xkb/symbols/ua.bak ]]; then
+      sudo mv /usr/share/X11/xkb/symbols/ua /usr/share/X11/xkb/symbols/ua.bak
+    fi
+    sudo cp "$XDG_CONFIG_HOME/xorg/xkb/symbols/ua" "/usr/share/X11/xkb/symbols/ua"
+
+    # Make sure that Caps doesn't miss it's purpose.
+    setxkbmap -option caps:ctrl_modifier
+  }
+
+  theme_guard "system" "Setup touchpad" && {
+    sudo cp "$XDG_CONFIG_HOME/xorg/30-touchpad.conf" "/etc/X11/xorg.conf.d/30-touchpad.conf"
+  }
+
+  theme_guard "system" "Setup autolock" && {
+    sudo cp "$XDG_CONFIG_HOME/arch/lock@.service" /etc/systemd/system/lock@.service
+    systemctl enable "lock@${USER}.service" || error "systemd is not working"
+  }
+
+  theme_guard "xmonad" "Rebuild Xmonad configurations" && {
+    section "Install xmonad"
+    (
+      cd "$XDG_CONFIG_HOME/xmonad"
+      cabal install --installdir="$HOME/.local/bin" --overwrite-policy=always || {
+        notify send -a "Eru" -t "Failed to compile xmonad" -u critical
+      }
+    )
+
+    section "Restart xmonad"
+    if pgrep d12-xmonad; then
+      log "Found running instance of xmonad. Restarting..."
+      d12-xmonad --restart
+    else
+      log "No running instance of xmonad is found. Meh..."
+    fi
   }
 }
 
@@ -390,25 +441,6 @@ arch_guard && {
     }
   }
 
-  theme_guard "hardware" "Setup keyboard" && {
-    if [[ ! -f /usr/share/X11/xkb/symbols/ua.bak ]]; then
-      sudo mv /usr/share/X11/xkb/symbols/ua /usr/share/X11/xkb/symbols/ua.bak
-    fi
-    sudo cp "$XDG_CONFIG_HOME/xorg/xkb/symbols/ua" "/usr/share/X11/xkb/symbols/ua"
-
-    # Make sure that Caps doesn't miss it's purpose.
-    setxkbmap -option caps:ctrl_modifier
-  }
-
-  theme_guard "hardware" "Setup touchpad" && {
-    sudo cp "$XDG_CONFIG_HOME/xorg/30-touchpad.conf" "/etc/X11/xorg.conf.d/30-touchpad.conf"
-  }
-
-  theme_guard "hardware" "Setup autolock" && {
-    sudo cp "$XDG_CONFIG_HOME/arch/lock@.service" /etc/systemd/system/lock@.service
-    systemctl enable "lock@${USER}.service" || error "systemd is not working"
-  }
-
   theme_guard "hardware" "Setup backlight rules" && {
     tmp_rule=$(mktemp)
     for backlight in /sys/class/backlight/*; do
@@ -431,26 +463,6 @@ arch_guard && {
     # correct permissions
     find ~/.gnupg -type f -exec chmod 600 {} \;
     find ~/.gnupg -type d -exec chmod 700 {} \;
-  }
-}
-
-arch_guard && {
-  theme_guard "xmonad" "Rebuild Xmonad configurations" && {
-    section "Install xmonad"
-    (
-      cd "$XDG_CONFIG_HOME/xmonad"
-      stack --allow-different-user install || {
-        notify send -a "Eru" -t "Failed to compile xmonad" -u critical
-      }
-    )
-
-    section "Restart xmonad"
-    if pgrep d12-xmonad; then
-      log "Found running instance of xmonad. Restarting..."
-      d12-xmonad --restart
-    else
-      log "No running instance of xmonad is found. Meh..."
-    fi
   }
 }
 
