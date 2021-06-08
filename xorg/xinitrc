@@ -42,7 +42,7 @@ setxkbmap -option caps:ctrl_modifier
 xautolock &
 
 # I rarely see my wallpapers. But when I do, I am happy.
-~/.fehbg &
+fehbg &
 
 # Being distracted by some obnoxious notifications is so nice.
 dunst &

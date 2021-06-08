@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+feh --no-fehbg --bg-scale "$HOME/Dropbox/resources/wallpapers/denise-nouvion-wallpapers-4-2560x1440.jpg"
