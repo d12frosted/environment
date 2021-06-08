@@ -67,16 +67,16 @@ toggleKbd' = spawn "switch_kbd_layout"
 --------------------------------------------------------------------------------
 
 vlmInc :: MonadIO m => m ()
-vlmInc = spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 +5%"
+vlmInc = spawn "amixer set Master 5%+"
 
 vlmDec :: MonadIO m => m ()
-vlmDec = spawn "pactl set-sink-mute 0 false ; pactl set-sink-volume 0 -5%"
+vlmDec = spawn "amixer set Master 5%-"
 
 vlmMute :: MonadIO m => m ()
-vlmMute = spawn "pactl set-sink-mute 0 toggle"
+vlmMute = spawn "amixer -D pulse set Master 1+ toggle"
 
 micMute :: MonadIO m => m ()
-micMute = spawn "pactl set-source-mute 1 toggle"
+micMute = spawn "amixer -D pulse set Capture 1+ toggle"
 
 --------------------------------------------------------------------------------
 
