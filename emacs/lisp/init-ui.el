@@ -92,9 +92,15 @@
  ;; hide curosrs in other windoes
  cursor-in-non-selected-windows nil)
 
-(when (and env-sys-mac-p env-graphic-p)
+(when env-graphic-p
   (setq-default line-spacing 1)
-  (add-to-list 'default-frame-alist '(font . "Source Code Pro")))
+  (cond
+   (env-sys-mac-p
+    (add-to-list 'default-frame-alist
+                 '(font . "Source Code Pro")))
+   (env-sys-linux-p
+    (add-to-list 'default-frame-alist
+                 '(font . "Source Code Pro 10")))))
 
 (use-package modus-themes
   :if env-graphic-p
