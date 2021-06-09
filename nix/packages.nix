@@ -40,8 +40,10 @@ in [
   yabai
   youtube-dl
 ] ++ lib.optionals stdenv.isLinux [
-  emacsGit
   dropbox-cli
+  emacsGit
+  scrot
+  zip
 ] ++ [
   # all things editor
   (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
