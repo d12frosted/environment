@@ -9,8 +9,7 @@ module XMonad.Commands where
 
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
-
+import Utils.Color
 import XMonad
 import XMonad.StackSet
 import XMonad.Window
@@ -19,7 +18,15 @@ import XMonad.Workspaces
 --------------------------------------------------------------------------------
 
 dmenu :: MonadIO m => m ()
-dmenu = spawn "dmenu_run -l 4 -nb '#f3fcf3' -nf '#050505' -fn 'Source Code Pro-12'"
+dmenu =
+  spawn $
+    unwords
+      [ "dmenu_run -l 4 -nb",
+        popupBg,
+        "-nf",
+        popupFg,
+        "-fn 'Source Code Pro-12'"
+      ]
 
 --------------------------------------------------------------------------------
 

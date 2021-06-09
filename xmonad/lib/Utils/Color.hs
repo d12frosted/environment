@@ -1,17 +1,15 @@
--- | Defines colours used in the XMonad and XMobar configurations.
-
 --------------------------------------------------------------------------------
-
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes        #-}
+{-# LANGUAGE RankNTypes #-}
 
 --------------------------------------------------------------------------------
 
+-- | Defines colours used in the XMonad and XMobar configurations.
 module Utils.Color where
 
 --------------------------------------------------------------------------------
 
-import           Data.String
+import Data.String
 
 --------------------------------------------------------------------------------
 
@@ -76,5 +74,13 @@ iconAlertBg = "#fef0f0"
 
 iconAlertFg :: Color
 iconAlertFg = textRegular
+
+--------------------------------------------------------------------------------
+
+popupBg :: Color
+popupBg = "#f3fcf3"
+
+popupFg :: Color
+popupFg = "#050505"
 
 --------------------------------------------------------------------------------
