@@ -341,8 +341,11 @@ via `vulpea-agenda-files-update'.")
                       "/")))
          (tags (seq-map
                 (lambda (tag)
-                  (setq tag (string-replace ":" "/" tag))
-                  (setq tag (string-replace " " "_" tag))
+                  (setq tag (replace-regexp-in-string
+                             ;; see `org-tag-re'
+                             "[^[:alnum:]_@#%]"
+                             "_"        ; use any valid char - _@#%
+                             tag))
                   (if (or
                        (string-prefix-p "status" tag 'ignore-case)
                        (string-prefix-p "content" tag 'ignore-case)
