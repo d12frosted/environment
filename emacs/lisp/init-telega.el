@@ -40,6 +40,12 @@
 (require 'init-kbd)
 
 (use-package telega
+  :straight (telega
+             :type git
+             :host github
+             :repo "zevlg/telega.el"
+             :branch "releases"
+             :files (:defaults "contrib" "etc" "server" "Makefile"))
   :defer t
   :general
   (leader-def
