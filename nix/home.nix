@@ -195,9 +195,10 @@ set fish_greeting "
     `-=-'          `--'
 "
 
-if test "$TERM" != "linux"
-  base16-tomorrow
+if test "$TERM" = "linux"
+  clear
 end
+base16-tomorrow
       '';
       loginShellInit = ''
 set -gx GPG_TTY (tty)
