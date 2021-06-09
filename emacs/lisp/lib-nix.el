@@ -1,4 +1,4 @@
-;;; init-nix.el --- Nix support -*- lexical-binding: t; -*-
+;;; lib-nix.el --- Utilities for using Nix -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2021 Boris Buliga
 ;;
@@ -7,7 +7,7 @@
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "27.1"))
 ;;
-;; Created: 15 May 2021
+;; Created: 09 June 2021
 ;;
 ;; URL: https://github.com/d12frosted/environment/tree/master/emacs
 ;;
@@ -31,14 +31,32 @@
 ;;
 ;;; Commentary:
 ;;
-;; Nix support.
+;; Various utilities for working with Nix.
 ;;
 ;;; Code:
 
-(require 'init-elpa)
+;;;###autoload
+(cl-defun nix-shell-command (&key
+                             deps
+                             command
+                             message-intro
+                             message-error)
+  "Execute COMMAND in nix-shell with DEPS.
 
-(use-package nix-mode
-  :mode "\\.nix\\'")
+If result is non-zero, error is printed in messages buffer.
 
-(provide 'init-nix)
-;;; init-nix.el ends here
+Basically, executes nix-shell -p DEPS --command 'COMMAND'"
+  (message message-intro)
+  (let* ((error-buffer (generate-new-buffer "*nix-shell-error*"))
+         (cmd (format
+               "nix-shell -p %s --command '%s'"
+               (string-join deps " ")
+               command))
+         (res (shell-command cmd nil error-buffer)))
+    (unless (zerop res)
+      (message (with-current-buffer error-buffer
+                 (buffer-string)))
+      (error message-error))))
+
+(provide 'lib-nix)
+;;; lib-nix.el ends here
