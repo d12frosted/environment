@@ -59,34 +59,25 @@
   (setq-default pdf-view-display-size 'fit-page)
   (when elpa-bootstrap-p
     (require 'pdf-tools)
+    (require 'lib-nix)
     (unless (file-exists-p pdf-info-epdfinfo-program)
       (let ((default-directory
               (expand-file-name "build/server/"
                                 pdf-tools-directory)))
-        (message "building pdf-tools...")
-        (let* ((error-buffer (generate-new-buffer
-                              "*pdf-tool-error*"))
-               (res (shell-command
-                     (format
-                      "nix-shell -p %s --command '%s'"
-                      (string-join '("pkg-config"
-                                     "poppler"
-                                     "autoconf"
-                                     "automake"
-                                     "libtool"
-                                     "libpng")
-                                   " ")
-                      (concat "autoreconf -i -f"
-                              " && "
-                              "./autobuild -i "
-                              pdf-tools-directory
-                              " --os nixos"))
-                     nil
-                     error-buffer)))
-          (unless (zerop res)
-            (message (with-current-buffer error-buffer
-                       (buffer-string)))
-            (error "Failed to build pdf-tools"))))))
+        (nix-shell-command
+         :message-intro "building pdf-tools..."
+         :message-error "Failed to build pdf-tools"
+         :deps '("pkg-config"
+                 "poppler"
+                 "autoconf"
+                 "automake"
+                 "libtool"
+                 "libpng")
+         :command (concat "autoreconf -i -f"
+                          " && "
+                          "./autobuild -i "
+                          pdf-tools-directory
+                          " --os nixos")))))
   :config
   (add-hook 'pdf-view-mode-hook #'pdf-setup-view-mode))
 
