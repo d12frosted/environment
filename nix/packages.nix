@@ -30,6 +30,7 @@ in [
   unrar
   unzip
   wget
+  yarn
 ] ++ lib.optionals stdenv.isDarwin [
   alacritty
   emacs
