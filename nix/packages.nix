@@ -30,7 +30,6 @@ in [
   unrar
   unzip
   wget
-  yarn
 ] ++ lib.optionals stdenv.isDarwin [
   alacritty
   emacs
@@ -54,4 +53,10 @@ in [
   # all things haskell
   cabal2nix
   hpack
+] ++ [
+  # all things node :fear:
+  yarn
+  nodePackages.npm
+  nodePackages.pnpm
+  nodejs
 ]
