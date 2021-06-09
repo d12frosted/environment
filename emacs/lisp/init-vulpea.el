@@ -280,9 +280,10 @@
   :config
   (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
   (setq
-   ;; speed up agenda a little bit
    org-agenda-dim-blocked-tasks nil
-   org-agenda-inhibit-startup t
+   ;; setting it to t speeds up agenda, but... initial visibility is
+   ;; not honored, which for me is a bigger issue
+   org-agenda-inhibit-startup nil
 
    ;; also show state change in log mode
    org-agenda-log-mode-items '(closed clock state)
