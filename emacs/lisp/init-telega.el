@@ -49,7 +49,27 @@
   :defer t
   :general
   (leader-def
-    "t" '(:keymap telega-prefix-map)))
+    "t" '(:keymap telega-prefix-map))
+  :init
+  (when elpa-bootstrap-p
+    (require 'telega-server)
+    (require 'lib-nix)
+    (let ((exec-path (cons telega-directory exec-path))
+          (default-directory telega--lib-directory))
+      (unless (executable-find "telega-server")
+        (nix-shell-command
+         :message-intro "building telega-server..."
+         :message-error "Failed to build telega-server"
+         :deps '("pkg-config" "tdlib")
+         :command (concat
+                   (or (executable-find "gmake")
+                       "make")
+                   " "
+                   "LIBS_PREFIX="
+                   (expand-file-name telega-server-libs-prefix) " "
+                   "INSTALL_PREFIX="
+                   (expand-file-name telega-directory) " "
+                   "server-reinstall"))))))
 
 (provide 'init-telega)
 ;;; init-telega.el ends here
