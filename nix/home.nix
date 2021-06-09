@@ -64,6 +64,11 @@ in {
           user = "d12frosted";
         };
       };
+      includes = [
+        {
+          path = "${config.xdg.configHome}/git/local.config";
+        }
+      ];
       signing = {
         key = "F9EBF09436BCB50F";
         signByDefault = true;
