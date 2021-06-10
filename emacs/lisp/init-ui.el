@@ -102,6 +102,10 @@
     (add-to-list 'default-frame-alist
                  '(font . "Source Code Pro 10")))))
 
+(defun ui-reset-line-spacing ()
+  "Locally reset `line-spacing'."
+  (setq-local line-spacing nil))
+
 (use-package modus-themes
   :if env-graphic-p
   :init

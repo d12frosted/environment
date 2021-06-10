@@ -47,6 +47,7 @@
              :branch "releases"
              :files (:defaults "contrib" "etc" "server" "Makefile"))
   :defer t
+  :hook ((telega-chat-mode . ui-reset-line-spacing))
   :general
   (leader-def
     "t" '(:keymap telega-prefix-map))
