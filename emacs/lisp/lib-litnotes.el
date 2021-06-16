@@ -5,7 +5,7 @@
 ;; Author: Boris Buliga <d12frosted@d12frosted.io>
 ;; Maintainer: Boris Buliga <d12frosted@d12frosted.io>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1"))
+;; Package-Requires: ((emacs "27.2"))
 ;;
 ;; Created: 27 May 2021
 ;;

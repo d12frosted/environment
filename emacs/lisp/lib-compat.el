@@ -5,7 +5,7 @@
 ;; Author:  <d12frosted@borysb-arch>
 ;; Maintainer:  <d12frosted@borysb-arch>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1"))
+;; Package-Requires: ((emacs "27.2"))
 ;;
 ;; Created: 16 Feb 2021
 ;;
