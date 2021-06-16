@@ -218,6 +218,8 @@ Make all the links to this alias point to newly created note."
   "Setup current buffer for notes viewing and editing."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
+    (org-with-point-at 1
+      (org-hide-drawer-toggle 'off))
     (vulpea-ensure-filetag)))
 
 ;;;###autoload
