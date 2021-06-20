@@ -26,6 +26,7 @@ in [
   ripgrep
   rsync
   source-code-pro
+  symbola
   sqlite
   unrar
   unzip
