@@ -52,4 +52,4 @@ fehbg &
 # clipmenud &
 
 # Because every X needs some algebra to tame it.
-d12-xmonad
+exec dbus-launch d12-xmonad
