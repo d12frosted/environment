@@ -211,6 +211,11 @@ end
       '';
     };
 
+    rofi = {
+      enable = true;
+      font = "Source Code Pro 10";
+    };
+
     alacritty = {
       enable = true;
       settings = {
