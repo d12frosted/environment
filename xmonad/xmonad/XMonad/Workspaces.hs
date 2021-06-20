@@ -1,15 +1,14 @@
 --------------------------------------------------------------------------------
 
--- | Configurations for workspaces.
-
 --------------------------------------------------------------------------------
 
+-- | Configurations for workspaces.
 module XMonad.Workspaces where
 
 --------------------------------------------------------------------------------
 
-import           Data.Semigroup
-import           XMonad
+import Data.Semigroup
+import XMonad
 
 --------------------------------------------------------------------------------
 
@@ -37,16 +36,16 @@ wsOther = "\xf18c"
 --------------------------------------------------------------------------------
 
 manageAppsWorkspace :: Query (Endo WindowSet)
-manageAppsWorkspace
-  = composeAll . concat $
-    [ [ stringProperty "WM_WINDOW_ROLE" =? "browser" --> doShift wsWeb ]
-    , [ className =? "jetbrains-idea" --> doShift wsCode2 ]
-    , [ className =? "Spotify" --> doShift wsMedia ]
-    , [ className =? "TelegramDesktop" --> doShift wsChat ]
-    , [ className =? "Slack" --> doShift wsChat ]
-    , [ className =? "DBeaver" --> doShift wsCode2 ]
-    , [ className =? "Java" --> doShift wsOther ]
-    , [ className =? "zoom" --> doShift wsMedia ]
+manageAppsWorkspace =
+  composeAll . concat $
+    [ [stringProperty "WM_WINDOW_ROLE" =? "browser" --> doShift wsWeb],
+      [className =? "jetbrains-idea" --> doShift wsCode2],
+      [className =? "Spotify" --> doShift wsMedia],
+      [className =? "TelegramDesktop" --> doShift wsChat],
+      [className =? "Slack" --> doShift wsChat],
+      [className =? "DBeaver" --> doShift wsCode2],
+      [className =? "Java" --> doShift wsOther],
+      [className =? "zoom" --> doShift wsMedia]
     ]
 
 --------------------------------------------------------------------------------

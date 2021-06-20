@@ -1,41 +1,25 @@
 -- | Keybindings for XMonad. Because why not?
-
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
-
 module XMonad.Keybindings where
 
---------------------------------------------------------------------------------
-
-import           XMonad.Commands
-
---------------------------------------------------------------------------------
-
-import           XMonad
-
---------------------------------------------------------------------------------
+import XMonad
+import XMonad.Commands
 
 keybindings :: [(String, X ())]
 keybindings =
-  [ ("M-q", rebuild)
-  , ("M-p", dmenu)
-  , ("<XF86AudioRaiseVolume>", vlmInc)
-  , ("<XF86AudioLowerVolume>", vlmDec)
-  , ("<XF86AudioMute>", vlmMute)
-  , ("<XF86AudioMicMute>", micMute)
-  , ("<XF86MonBrightnessUp>", brightnessInc)
-  , ("<XF86MonBrightnessDown>", brightnessDec)
-  , ("M-S-z", xlock)
-  , ("M-<Esc>", toggleKbd)
-  , ("M-S-<Esc>", toggleKbd')
-  , ("M-<Print>", spawn "scrot")
-  , ("M-C-<Print>", spawn "flameshot gui")
-  , ("M-o c", clipmenu)
-  , ("M-o e", emacs)
-  , ("M-o n", network)
-  , ("M-o i", firefox)
-  , ("M-t n", notificationToggle)
+  [ ("M-q", spawn "eru xmonad"),
+    ("M-p", spawn "rofi -show run"),
+    ("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+"),
+    ("<XF86AudioLowerVolume>", spawn "amixer set Master 5%-"),
+    ("<XF86AudioMute>", spawn "amixer -D pulse set Master 1+ toggle"),
+    ("<XF86AudioMicMute>", spawn "amixer -D pulse set Capture 1+ toggle"),
+    ("<XF86MonBrightnessUp>", spawn "brightness inc"),
+    ("<XF86MonBrightnessDown>", spawn "brightness dec"),
+    ("M-S-z", spawn "xlocker"),
+    ("M-<Esc>", spawn "switch_kbd_layout --use-cyrillic"),
+    ("M-S-<Esc>", spawn "switch_kbd_layout"),
+    ("M-<Print>", spawn "scrot"),
+    ("M-C-<Print>", spawn "flameshot gui"),
+    ("M-o e", spawn "emacs"),
+    ("M-o i", firefox),
+    ("M-t n", spawn "notify toggle")
   ]
-
---------------------------------------------------------------------------------
