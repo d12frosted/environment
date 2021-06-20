@@ -43,6 +43,7 @@ in [
 ] ++ lib.optionals stdenv.isLinux [
   dropbox-cli
   emacsGit
+  flameshot
   scrot
   zip
 ] ++ [
