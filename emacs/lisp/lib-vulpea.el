@@ -42,6 +42,7 @@
 (require 'lib-litnotes)
 
 (require 'vulpea)
+(require 'vino)
 (require 'org-roam)
 (require 'org-roam-db)
 (require 'org-roam-dailies)
@@ -261,7 +262,8 @@ Make all the links to this alias point to newly created note."
 (defun vulpea-db-build ()
   "Update notes database."
   (when (file-directory-p vulpea-directory)
-    (org-roam-db-sync)))
+    (org-roam-db-sync)
+    (vino-db-sync)))
 
 
 
