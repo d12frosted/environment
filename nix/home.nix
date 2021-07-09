@@ -212,7 +212,7 @@ end
     };
 
     rofi = {
-      enable = true;
+      enable = pkgs.stdenv.isLinux;
       font = "Source Code Pro 10";
     };
 
