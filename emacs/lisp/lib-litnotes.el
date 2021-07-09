@@ -112,7 +112,11 @@
 
 
 
-(defvar litnotes-content-types '("book" "article" "video" "course")
+(defvar litnotes-content-types '("book"
+                                 "article"
+                                 "video"
+                                 "course"
+                                 "game")
   "List with all valid content types.")
 
 (defun litnotes-content-compare (a b)
@@ -125,7 +129,8 @@
   (let ((icon (pcase content
                 (`"book" (all-the-icons-faicon "book"))
                 (`"article" (all-the-icons-faicon "align-justify"))
-                (`"video" (all-the-icons-material "videocam")))))
+                (`"video" (all-the-icons-material "videocam"))
+                (`"game" (all-the-icons-faicon "gamepad")))))
     (if (and icon (featurep 'all-the-icons))
         (concat icon " ")
       "")))
