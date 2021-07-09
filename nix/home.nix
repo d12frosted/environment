@@ -31,6 +31,7 @@ in {
       XDG_DATA_HOME     = config.xdg.dataHome;
       FONTCONFIG_FILE   = "${config.xdg.configHome}/fontconfig/fonts.conf";
       FONTCONFIG_PATH   = "${config.xdg.configHome}/fontconfig";
+      BUDGET_DIR        = "${home}/Dropbox/budget";
     };
     sessionPath = [];
   };
