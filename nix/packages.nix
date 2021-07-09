@@ -33,7 +33,7 @@ in [
   wget
 ] ++ lib.optionals stdenv.isDarwin [
   alacritty
-  emacs
+  (emacs.override { nativeComp = false; })
   pinentry_mac
   skhd
   terminal-notifier
