@@ -236,7 +236,7 @@ Make all the links to this alias point to newly created note."
 (defun vulpea-dailies-today ()
   "Find a daily note for today."
   (interactive)
-  (org-roam-dailies-find-today))
+  (org-roam-dailies-goto-today))
 
 ;;;###autoload
 (defun vulpea-dailies-date ()
