@@ -319,6 +319,7 @@
              org-roam-db-sync)
   :init
   (setq
+   org-roam-v2-ack t
    org-roam-directory vulpea-directory
    org-roam-dailies-directory (expand-file-name
                                "journal/" org-roam-directory)
