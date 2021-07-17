@@ -248,13 +248,13 @@ Make all the links to this alias point to newly created note."
 (defun vulpea-dailies-prev ()
   "Find a daily note that comes before current."
   (interactive)
-  (org-roam-dailies-find-previous-note))
+  (org-roam-dailies-goto-previous-note))
 
 ;;;###autoload
 (defun vulpea-dailies-next ()
   "Find a daily note that comes after current."
   (interactive)
-  (org-roam-dailies-find-next-note))
+  (org-roam-dailies-goto-next-note))
 
 
 
