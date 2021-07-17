@@ -242,7 +242,7 @@ Make all the links to this alias point to newly created note."
 (defun vulpea-dailies-date ()
   "Find a daily note for date specified using calendar."
   (interactive)
-  (org-roam-dailies-find-date))
+  (org-roam-dailies-goto-date))
 
 ;;;###autoload
 (defun vulpea-dailies-prev ()
