@@ -134,15 +134,15 @@
     "pg" '(consult-grep :which-key "Grep the project")
     "ji" '(consult-imenu :which-key "imenu")))
 
-(use-package embark
-  :bind
-  ("C-M-a" . embark-act))
+;; (use-package embark
+;;   :bind
+;;   ("C-M-a" . embark-act))
 
-(use-package embark-consult
-  :if (eq selection-system 'consult)
-  :after (embark consult)
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+;; (use-package embark-consult
+;;   :if (eq selection-system 'consult)
+;;   :after (embark consult)
+;;   :hook
+;;   (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package marginalia
   :if (eq selection-system 'consult)
