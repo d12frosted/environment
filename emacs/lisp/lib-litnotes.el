@@ -423,12 +423,39 @@ items. POS can be an integer or the symbol `:point'."
   "Change STATUS tag of the current litnote."
   (when-let*
       ((file (buffer-file-name (buffer-base-buffer)))
+       (id (vulpea-db-get-id-by-file file))
        (tags (vulpea-buffer-prop-get-list "filetags"))
        (old-status (litnotes-status-from-tag
                     (seq-find #'litnotes-status-tag-p tags)))
        (status (or status (litnotes-status-read old-status)))
        (new-tags (litnotes-tags-set-status tags status)))
     (vulpea-buffer-prop-set-list "filetags" new-tags)
+    (org-time-stamp-format (current-time) 'interactive)
+    (unless (vulpea-meta-get id "added")
+      (vulpea-meta-set
+       id "added"
+       (litnotes-format-time (current-time) t 'inactive)
+       'append))
+    (pcase status
+      (`"ongoing"
+       (vulpea-meta-remove id "completed")
+       (vulpea-meta-remove id "dropped")
+       (vulpea-meta-set
+        id "started"
+        (litnotes-format-time (current-time) 'with-hm 'inactive)
+        'append))
+      (`"done"
+       (vulpea-meta-remove id "dropped")
+       (vulpea-meta-set
+        id "completed"
+        (litnotes-format-time (current-time) 'with-hm 'inactive)
+        'append))
+      (`"dropped"
+       (vulpea-meta-remove id "completed")
+       (vulpea-meta-set
+        id "dropped"
+        (litnotes-format-time (current-time) 'with-hm 'inactive)
+        'append)))
     (org-roam-db-update-file file)
     (save-buffer)))
 
@@ -444,6 +471,39 @@ removed from TAGS."
    (seq-remove
     #'litnotes-status-tag-p
     tags)))
+
+
+
+(defun litnotes-format-time (time &optional with-hm inactive extra)
+  "Format a date stamp for the date given by the internal TIME.
+
+See `format-time-string' for the format of TIME.
+
+WITH-HM means use the stamp format that includes the time of the
+day.
+
+INACTIVE means use square brackets instead of angular ones, so
+that the stamp will not contribute to the agenda.
+
+EXTRA is unknown thing."
+  (let ((fmt (funcall (if with-hm 'cdr 'car)
+                      org-time-stamp-formats)))
+    (when inactive
+      (setq fmt (concat "[" (substring fmt 1 -1) "]")))
+    (when (listp extra)
+      (setq extra (car extra))
+      (if (and (stringp extra)
+               (string-match "\\([0-9]+\\):\\([0-9]+\\)" extra))
+          (setq extra (format
+                       "-%02d:%02d"
+                       (string-to-number (match-string 1 extra))
+                       (string-to-number (match-string 2 extra))))
+        (setq extra nil)))
+    (when extra
+      (setq fmt (concat (substring fmt 0 -1)
+                        extra
+                        (substring fmt -1))))
+    (concat (format-time-string fmt time))))
 
 
 
