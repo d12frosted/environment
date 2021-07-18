@@ -41,8 +41,7 @@
   :straight (vino
              :type git
              :host github
-             :repo "d12frosted/vino"
-             :branch "feature/org-roam-v2")
+             :repo "d12frosted/vino")
   :defer t
   :general
   (leader-def

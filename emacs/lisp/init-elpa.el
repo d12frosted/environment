@@ -108,13 +108,6 @@ ORIG-FN is called with ARGS and retried
 
 ;; overrides
 
-(straight-override-recipe
- '(org-roam
-   :type git
-   :host github
-   :repo "org-roam/org-roam"
-   :branch "v2"))
-
 
 ;; use-package
 

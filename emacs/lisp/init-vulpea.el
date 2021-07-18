@@ -48,8 +48,7 @@
   :straight (vulpea
              :type git
              :host github
-             :repo "d12frosted/vulpea"
-             :branch "feature/org-roam-v2")
+             :repo "d12frosted/vulpea")
   :defer t
   :general
   (leader-def
