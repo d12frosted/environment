@@ -29,6 +29,7 @@ in [
   source-code-pro
   symbola
   sqlite
+  texlive.combined.scheme-full
   unrar
   unzip
   wget
