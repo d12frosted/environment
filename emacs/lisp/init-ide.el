@@ -38,6 +38,7 @@
 
 (require 'config-path)
 (require 'init-ui)
+(require 'init-selection)
 
 (use-package company
   :defer 2
@@ -112,6 +113,16 @@
 (use-package eglot
   :defer t
   :defines (eglot-server-programs))
+
+(use-package consult-lsp
+  :if (eq selection-system 'consult)
+  :defer t
+  :after lsp
+  :config
+  (define-key
+    lsp-mode-map
+    [remap xref-find-apropos]
+    #'consult-lsp-symbols))
 
 (provide 'init-ide)
 ;;; init-ide.el ends here
