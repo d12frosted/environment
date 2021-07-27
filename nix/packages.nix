@@ -26,8 +26,6 @@ in [
   python39Packages.pygments
   ripgrep
   rsync
-  source-code-pro
-  symbola
   sqlite
   texlive.combined.scheme-full
   unrar
@@ -66,4 +64,15 @@ in [
   nodePackages.npm
   nodePackages.pnpm
   nodejs
+] ++ [
+  # fonts
+  fontconfig
+  liberation_ttf
+  noto-fonts
+  noto-fonts-cjk
+  noto-fonts-emoji
+  source-code-pro
+  source-sans-pro
+  source-serif-pro
+  symbola
 ]
