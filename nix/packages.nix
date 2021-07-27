@@ -24,6 +24,7 @@ in [
   openssh
   openssl
   python39Packages.pygments
+  qutebrowser
   ripgrep
   rsync
   sqlite
