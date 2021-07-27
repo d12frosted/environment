@@ -60,10 +60,12 @@ in [
   hpack
 ] ++ [
   # all things node :fear:
-  yarn
   nodePackages.npm
   nodePackages.pnpm
+  nodePackages.typescript
+  nodePackages.typescript-language-server
   nodejs
+  yarn
 ] ++ [
   # fonts
   fontconfig
