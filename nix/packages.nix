@@ -20,6 +20,7 @@ in [
   jq
   killall
   kubectl
+  libwebp
   openssh
   openssl
   python39Packages.pygments
