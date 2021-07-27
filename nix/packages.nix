@@ -44,6 +44,7 @@ in [
   dropbox-cli
   emacsGit
   flameshot
+  pcmanfm
   rofi
   scrot
   zip
