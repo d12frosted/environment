@@ -139,6 +139,8 @@
   (advice-add 'package-lint--get-package-prefix :around #'package-lint--package-prefix-cleanup)
 
   (defun package-lint--check-eval-after-load ()
+    "Do nothing.")
+  (defun package-lint--check-autoloads-on-private-functions (&rest _)
     "Do nothing."))
 
 ;; Teach linter how to properly indent emacsql vectors.

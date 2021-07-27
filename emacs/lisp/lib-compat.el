@@ -57,5 +57,17 @@ Dynamically bind the BINDERS and evaluate the BODY."
                binders)
      (let* ,binders ,@body)))
 
+;;;###autoload
+(defun cl--plist-remove (plist member)
+  "Remove MEMBER from PLIST.
+
+`telega' needs this function."
+  (cond
+   ((null plist) nil)
+   ((null member) plist)
+   ((eq plist member) (cddr plist))
+   (t `(,(car plist) ,(cadr plist)
+        ,@(cl--plist-remove (cddr plist) member)))))
+
 (provide 'lib-compat)
 ;;; lib-compat.el ends here
