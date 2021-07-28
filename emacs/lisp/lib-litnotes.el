@@ -128,7 +128,7 @@
   "Display CONTENT."
   (let ((icon (pcase content
                 (`"book" (all-the-icons-faicon "book"))
-                (`"article" (all-the-icons-faicon "align-justify"))
+                (`"article" (all-the-icons-faicon "newspaper-o"))
                 (`"video" (all-the-icons-material "videocam"))
                 (`"game" (all-the-icons-faicon "gamepad")))))
     (if (and icon (featurep 'all-the-icons))
