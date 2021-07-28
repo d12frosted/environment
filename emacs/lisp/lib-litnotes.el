@@ -248,12 +248,12 @@
 (defun litnotes-buffer-data ()
   "Get data for litnotes buffer."
   (seq-sort-by
-    #'car
-    #'litnotes-status-compare
-    (seq-group-by #'litnotes-entry-status
-                  (seq-sort
-                   #'litnotes-entry-compare
-                   (litnotes-entries)))))
+   #'car
+   #'litnotes-status-compare
+   (seq-group-by #'litnotes-entry-status
+                 (seq-sort
+                  #'litnotes-entry-compare
+                  (litnotes-entries)))))
 
 (defun litnotes-buffer-mapper (data)
   "DATA mapper for `litnotes-mode'."
