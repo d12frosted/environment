@@ -180,6 +180,11 @@
      :authors (vulpea-buffer-meta-get-list!
                meta "authors" 'note))))
 
+(defun litnotes-entry-compare (a b)
+  "Compare entries A and B by title."
+  (string< (litnotes-entry-title a)
+           (litnotes-entry-title b)))
+
 (defun litnotes-entry-visit (entry &optional other-window)
   "Visit a litnote ENTRY possible in OTHER-WINDOW."
   (org-roam-node-visit
@@ -243,9 +248,12 @@
 (defun litnotes-buffer-data ()
   "Get data for litnotes buffer."
   (seq-sort-by
-   #'car
-   #'litnotes-status-compare
-   (seq-group-by #'litnotes-entry-status (litnotes-entries))))
+    #'car
+    #'litnotes-status-compare
+    (seq-group-by #'litnotes-entry-status
+                  (seq-sort
+                   #'litnotes-entry-compare
+                   (litnotes-entries)))))
 
 (defun litnotes-buffer-mapper (data)
   "DATA mapper for `litnotes-mode'."
