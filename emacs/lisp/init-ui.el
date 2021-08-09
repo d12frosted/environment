@@ -97,10 +97,7 @@
   (cond
    (env-sys-mac-p
     (add-to-list 'default-frame-alist
-                 '(font . "Source Code Pro")))
-   (env-sys-linux-p
-    (add-to-list 'default-frame-alist
-                 '(font . "Source Code Pro 10")))))
+                 '(font . "Source Code Pro")))))
 
 (defun ui-reset-line-spacing ()
   "Locally reset `line-spacing'."
