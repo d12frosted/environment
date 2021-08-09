@@ -76,6 +76,7 @@ export XDG_CONFIG_HOME=${GITHUB_WORKSPACE:-${XDG_CONFIG_HOME:-$HOME/.config}}
 export XDG_CONFIG_CACHE="$HOME/.cache"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
+export PATH=$XDG_CONFIG_HOME/bin:$PATH
 
 export DEVELOPER=$HOME/Developer
 if [[ "$USER" != "$fellow" ]]; then
@@ -267,8 +268,8 @@ trap unlock INT TERM EXIT
 
 arch_guard && {
   theme_guard "system" "bootstrap Arch Linux" && {
-    section "Install crutial dependenices"
-    sudo pacman -S --noconfirm --needed base-devel git pacman-contrib
+    section "Install crutial dependencies"
+    sudo pacman -S --noconfirm --needed base-devel git pacman-contrib rsync physlock
 
     section "Install aura"
     check aura || {
@@ -279,6 +280,23 @@ arch_guard && {
         makepkg -si --noconfirm
       }
     }
+
+    section "Install X"
+    sudo pacman -S --noconfirm --needed xorg xterm libxss
+
+    section "Install audio"
+    sudo pacman -S --noconfirm --needed \
+      alsa-oss \
+      alsa-lib \
+      alsa-utils \
+      alsa-firmware \
+      alsa-ucm-conf \
+      sof-firmware \
+      pulseaudio \
+      pulseaudio-alsa
+
+    section "Install video"
+    sudo pacman -S --noconfirm --needed vlc
   }
 }
 
@@ -304,6 +322,22 @@ theme_guard "system" "ensure nix installation" && {
       nix-env -iA unstable.nixUnstable
     }
   fi
+}
+
+arch_guard && {
+  theme_guard "system" "ensure nixGL installation" && {
+    if check nixGL; then
+      echo "Found nixGL executable at $(which nixGL)"
+      echo "Nothing to do"
+    else
+      echo "install nixGL"
+      nixgl_dir=$(mktemp --directory)
+      git clone https://github.com/guibou/nixGL "$nixgl_dir"
+      cd "$nixgl_dir" && {
+        nix-env -f ./ -iA nixGLDefault
+      }
+    fi
+  }
 }
 
 upgrade_guard && {
@@ -357,6 +391,14 @@ theme_guard "haskell" "ensure HLS installation" && {
   }
 }
 
+arch_guard && {
+  theme_guard "system" "Install qutebrowser" && {
+    sudo pacman -S --noconfirm --needed qutebrowser
+    /usr/share/qutebrowser/scripts/dictcli.py install en-US
+  }
+
+}
+
 linux_guard && {
   theme_guard "system" "inject xorg stuff" && {
     safe_link "$XDG_CONFIG_HOME/xorg/xinitrc" "$HOME/.xinitrc"
@@ -366,7 +408,7 @@ linux_guard && {
   }
 
   theme_guard "system" "Setup keyboard" && {
-    if [[ ! -f /usr/share/X11/xkb/symbols/ua.bak ]]; then
+    if [[ -f /usr/share/X11/xkb/symbols/ua && ! -f /usr/share/X11/xkb/symbols/ua.bak ]]; then
       sudo mv /usr/share/X11/xkb/symbols/ua /usr/share/X11/xkb/symbols/ua.bak
     fi
     sudo cp "$XDG_CONFIG_HOME/xorg/xkb/symbols/ua" "/usr/share/X11/xkb/symbols/ua"
@@ -382,6 +424,13 @@ linux_guard && {
   theme_guard "system" "Setup autolock" && {
     sudo cp "$XDG_CONFIG_HOME/arch/lock@.service" /etc/systemd/system/lock@.service
     systemctl enable "lock@${USER}.service" || error "systemd is not working"
+  }
+
+  theme_guard "system" "Setup clock" && {
+    sudo cp "$XDG_CONFIG_HOME/arch/09-timezone" /etc/NetworkManager/dispatcher.d/09-timezone
+    sudo chmod 755 /etc/NetworkManager/dispatcher.d/09-timezone
+    systemctl enable NetworkManager-dispatcher
+    systemctl start NetworkManager-dispatcher
   }
 
   theme_guard "xmonad" "Rebuild Xmonad configurations" && {
@@ -475,6 +524,7 @@ theme_guard "Emacs" "setup Eldev" && {
 
 install_guard && {
   theme_guard "Emacs" "setup Emacs configurations" && {
+    mkdir -p "$XDG_CACHE_HOME/emacs/etc"
     cd "$XDG_CONFIG_HOME/emacs" && {
       make bootstrap compile lint vulpea
     }

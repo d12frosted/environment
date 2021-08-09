@@ -18,20 +18,19 @@ in {
     packages = pkgs.callPackage ./packages.nix {};
 
     sessionVariables = {
-      ASPELL_CONF       = "dict-dir ${home}/.nix-profile/lib/aspell";
-      BASE16_HOME       = "${pkgs.base16-shell}";
-      EDITOR            = "${emacsclient}";
-      EMACS_SERVER_FILE = "${emacs-server}";
-      GNUPGHOME         = "${config.xdg.configHome}/gnupg";
-      NIX_CONF          = "${config.xdg.configHome}/nix";
-      PROJECTS_HOME     = "${home}/Developer";
-      SSH_AUTH_SOCK     = "${config.xdg.configHome}/gnupg/S.gpg-agent.ssh";
-      XDG_CACHE_HOME    = config.xdg.cacheHome;
-      XDG_CONFIG_HOME   = config.xdg.configHome;
-      XDG_DATA_HOME     = config.xdg.dataHome;
-      FONTCONFIG_FILE   = "${config.xdg.configHome}/fontconfig/fonts.conf";
-      FONTCONFIG_PATH   = "${config.xdg.configHome}/fontconfig";
-      BUDGET_DIR        = "${home}/Dropbox/budget";
+      ASPELL_CONF           = "dict-dir ${home}/.nix-profile/lib/aspell";
+      BASE16_HOME           = "${pkgs.base16-shell}";
+      EDITOR                = "${emacsclient}";
+      EMACS_SERVER_FILE     = "${emacs-server}";
+      GNUPGHOME             = "${config.xdg.configHome}/gnupg";
+      NIX_CONF              = "${config.xdg.configHome}/nix";
+      PROJECTS_HOME         = "${home}/Developer";
+      SSH_AUTH_SOCK         = "${config.xdg.configHome}/gnupg/S.gpg-agent.ssh";
+      XDG_CACHE_HOME        = config.xdg.cacheHome;
+      XDG_CONFIG_HOME       = config.xdg.configHome;
+      XDG_DATA_HOME         = config.xdg.dataHome;
+      BUDGET_DIR            = "${home}/Dropbox/budget";
+      QT_XCB_GL_INTEGRATION = "none";
     };
     sessionPath = [];
   };
@@ -230,6 +229,15 @@ end
           decorations = "none";
         };
       };
+    };
+  };
+
+  services = {
+    gpg-agent = {
+      enableSshSupport = true;
+      sshKeys = [
+        "${home}/.ssh/id_rsa"
+      ];
     };
   };
 }

@@ -24,7 +24,6 @@ in [
   openssh
   openssl
   python39Packages.pygments
-  qutebrowser
   ripgrep
   rsync
   sqlite
@@ -41,13 +40,19 @@ in [
   xquartz
   yabai
   youtube-dl
+  qutebrowser
 ] ++ lib.optionals stdenv.isLinux [
   dropbox-cli
   emacsGit
+  feh
+  firefox
   flameshot
   pcmanfm
   rofi
   scrot
+  slack
+  tree
+  xdg-utils
   zip
 ] ++ [
   # all things editor
@@ -79,4 +84,5 @@ in [
   source-sans-pro
   source-serif-pro
   symbola
+  font-awesome_4
 ]
