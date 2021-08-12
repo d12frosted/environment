@@ -58,7 +58,7 @@ config env =
             " ",
             Icon.static "\x2328" <> " %kbd%",
             " ",
-            Icon.static "\xf1eb" <> " %wlp3s0wi%",
+            Icon.static "\xf1eb" <> " %wlan0wi%",
             " ",
             "%battery%",
             " ",
@@ -143,9 +143,9 @@ config env =
           Run $ Kbd [],
           Run $
             Wireless
-              "wlp3s0"
+              "wlan0"
               [ "--template",
-                "<essid>"
+                "<ssid>"
               ]
               100,
           Run $ NotificationStatus 10,
