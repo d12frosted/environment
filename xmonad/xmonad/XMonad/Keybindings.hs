@@ -11,7 +11,7 @@ keybindings =
     ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ +5%"),
     ("<XF86AudioLowerVolume>", spawn "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ -5%"),
     ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle"),
-    ("<XF86AudioMicMute>", spawn "pactl set-source-mute 1 toggle"),
+    ("<XF86AudioMicMute>", spawn "pactl set-source-mute @DEFAULT_SOURCE@ toggle"),
     ("<XF86MonBrightnessUp>", spawn "brightness inc"),
     ("<XF86MonBrightnessDown>", spawn "brightness dec"),
     ("M-S-z", spawn "xlocker"),
