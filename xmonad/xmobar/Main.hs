@@ -1,13 +1,9 @@
---------------------------------------------------------------------------------
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RankNTypes #-}
 
---------------------------------------------------------------------------------
-
 module Main (main) where
-
---------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 
@@ -57,6 +53,8 @@ config env =
             "%dropbox-status%",
             " ",
             "%default:Master%",
+            " ",
+            "%default:Capture%",
             " ",
             Icon.static "\x2328" <> " %kbd%",
             " ",
@@ -119,6 +117,23 @@ config env =
                 Icon.static "\x1F507",
                 "-O",
                 Icon.static "\x1F50A",
+                "-c",
+                Color.textRegular,
+                "-C",
+                Color.textRegular
+              ]
+              10,
+          Run $
+            Volume
+              "default"
+              "Capture"
+              [ "--template",
+                "<status> <volume>%",
+                "--",
+                "-o",
+                Icon.static "\xf131",
+                "-O",
+                Icon.static "\xf130",
                 "-c",
                 Color.textRegular,
                 "-C",
