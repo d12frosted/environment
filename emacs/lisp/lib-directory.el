@@ -40,16 +40,18 @@
 
 If REC is non-nil then do recursive search."
   (let ((res
-         (seq-remove
-          (lambda (file)
-            (or (string-match "\\`\\."
-                              (file-name-nondirectory file))
-                (string-match "\\`#.*#\\'"
-                              (file-name-nondirectory file))
-                (string-match "~\\'"
-                              (file-name-nondirectory file))
-                (not (file-directory-p file))))
-          (directory-files directory t))))
+         (seq-map
+          #'file-name-as-directory
+          (seq-remove
+           (lambda (file)
+             (or (string-match "\\`\\."
+                               (file-name-nondirectory file))
+                 (string-match "\\`#.*#\\'"
+                               (file-name-nondirectory file))
+                 (string-match "~\\'"
+                               (file-name-nondirectory file))
+                 (not (file-directory-p file))))
+           (directory-files directory t)))))
     (if rec
         (apply
          #'append
