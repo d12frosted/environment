@@ -314,7 +314,7 @@
 
 (use-package org-roam
   :defer t
-  :commands (org-roam-setup
+  :commands (org-roam-db-autosync-enable
              org-roam-db-sync)
   :init
   (setq
@@ -338,7 +338,7 @@
   ;; eru.
   (advice-add #'org-roam-db-sync :around #'fun-noop)
   (ignore-errors
-    (org-roam-setup))
+    (org-roam-db-autosync-enable))
   (advice-remove #'org-roam-db-sync #'fun-noop))
 
 
