@@ -183,11 +183,12 @@ Authors can be created on the fly. See
        (note (vulpea-create
               title
               "litnotes/%<%Y%m%d%H%M%S>-${slug}.org"
-              :tags '("litnotes" "content/article" "status/new")
+              :tags '("litnotes" "content/article")
               :properties (list (cons "ROAM_REFS" url))
               :immediate-finish t)))
     (vulpea-meta-set note "authors" people t)
     (find-file (vulpea-note-path note))
+    (litnotes-status-set "new")
     (save-buffer)))
 
 (defun vulpea-capture-journal ()
