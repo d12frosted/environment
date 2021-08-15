@@ -41,9 +41,8 @@
 
 (setq-default vc-follow-symlinks t)
 
-(remove-hook 'find-file-hook #'vc-refresh-state)
-
-(hook-with-delay 'find-file-hook 1 #'vc-refresh-state)
+;; (remove-hook 'find-file-hook #'vc-refrqesh-state)
+;; (hook-with-delay 'find-file-hook 1 #'vc-refresh-state)
 
 (use-package magit
   :defer t
@@ -79,48 +78,18 @@
 (use-package git-timemachine
   :defer t)
 
-(use-package git-gutter-fringe
-  :defer t
-  :defines (git-gutter-mode)
-  :commands (git-gutter-fr:init
-             git-gutter-fr:view-diff-infos
-             git-gutter-fr:clear
-             git-gutter:view-diff-infos
-             git-gutter:clear-diff-infos
-             git-gutter:update-all-windows
-             git-gutter-mode
-             git-gutter)
-  :init
-  ;; (hook-with-delay 'text-mode-hook 1 #'vcs-gutter-maybe)
-  ;; (hook-with-delay 'prog-mode-hook 1 #'vcs-gutter-maybe)
-  ;; (hook-with-delay 'conf-mode-hook 1 #'vcs-gutter-maybe)
-  ;; (add-hook 'after-save-hook #'vcs-gutter-maybe)
-  :config
-  ;; Update git-gutter on focus (in case I was using git externally)
-  (add-function :after
-                after-focus-change-function
-                #'git-gutter:update-all-windows)
-
-  ;; update git-gutter when using magit commands
-  (advice-add #'magit-stage-file   :after #'vcs-gutter-update)
-  (advice-add #'magit-unstage-file :after #'vcs-gutter-update)
-
-  ;; places the git gutter outside the margins.
-  (setq-default fringes-outside-margins t)
-  ;; thin fringe bitmaps
-  (define-fringe-bitmap 'git-gutter-fr:added [224]
-    nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:modified [224]
-    nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
-    nil nil 'bottom))
-
 (use-package ediff-wind
   :straight nil
   :defer t
   :init
   (setq ediff-window-setup-function 'ediff-setup-windows-plain
         ediff-split-window-function 'split-window-horizontally))
+
+(use-package diff-hl
+  :defer t
+  :hook ((prog-mode . turn-on-diff-hl-mode)
+         (vc-dir-mode . turn-on-diff-hl-mode)
+         (dired-mode . diff-hl-dired-mode)))
 
 (defun vcs-quit (&optional _kill-buffer)
   "Clean up magit buffers after quitting `magit-status'.
@@ -136,16 +105,7 @@ current workspace."
                              (eq major-mode 'magit-status-mode)))
                          (window-list))))
     (when (fboundp 'magit-mode-get-buffers)
-      (mapc #'vcs--kill-buffer (magit-mode-get-buffers)))
-    ;; (async-start
-    ;;  (lambda ()
-    ;;    (dolist (buffer (buffer-list))
-    ;;      (with-current-buffer buffer
-    ;;        (vc-refresh-state)
-    ;;        (when (fboundp 'vcs-gutter-update)
-    ;;          (vcs-gutter-update)))))
-    ;;  'ignore)
-    ))
+      (mapc #'vcs--kill-buffer (magit-mode-get-buffers)))))
 
 (defun vcs--kill-buffer (buffer)
   "Gracefully kill `magit' BUFFER.
@@ -162,34 +122,6 @@ don't wait at all."
               (run-with-timer 5 nil #'vcs--kill-buffer buffer)
             (kill-process process)
             (kill-buffer buffer)))))))
-
-(defun vcs-gutter-update (&rest _)
-  "Refresh `git-gutter'."
-  (when git-gutter-mode
-    (ignore (git-gutter))))
-
-(defun vcs-gutter-maybe ()
-  "Enable `git-gutter' in non-remote buffers."
-  (when (and buffer-file-name
-             (vc-backend buffer-file-name)
-             (not (file-remote-p buffer-file-name)))
-    (if (display-graphic-p)
-        (progn
-          (require 'git-gutter-fringe)
-          (setq-local git-gutter:init-function
-                      #'git-gutter-fr:init)
-          (setq-local git-gutter:view-diff-function
-                      #'git-gutter-fr:view-diff-infos)
-          (setq-local git-gutter:clear-function
-                      #'git-gutter-fr:clear)
-          (setq-local git-gutter:window-width -1))
-      (setq-local git-gutter:init-function 'nil)
-      (setq-local git-gutter:view-diff-function
-                  #'git-gutter:view-diff-infos)
-      (setq-local git-gutter:clear-function
-                  #'git-gutter:clear-diff-infos)
-      (setq-local git-gutter:window-width 1))
-    (git-gutter-mode +1)))
 
 (provide 'init-vcs)
 ;;; init-vcs.el ends here
