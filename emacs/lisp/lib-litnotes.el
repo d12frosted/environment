@@ -155,30 +155,26 @@
 (cl-defstruct litnotes-entry
   note
   title
-  meta
   status
   content
   authors)
 
 (defun litnotes-entry (note)
   "Create a `litnotes-entry' from NOTE."
-  (let ((meta (vulpea-meta note)))
-    (make-litnotes-entry
-     :note note
-     :title (vulpea-note-title note)
-     :meta meta
-     :status (litnotes-status-from-tag
-              (seq-find
-               #'litnotes-status-tag-p
-               (vulpea-note-tags note)))
-     :content (string-remove-prefix
-               "content/"
-               (seq-find
-                (lambda (x)
-                  (string-prefix-p "content/" x))
-                (vulpea-note-tags note)))
-     :authors (vulpea-buffer-meta-get-list!
-               meta "authors" 'note))))
+  (make-litnotes-entry
+   :note note
+   :title (vulpea-note-title note)
+   :status (litnotes-status-from-tag
+            (seq-find
+             #'litnotes-status-tag-p
+             (vulpea-note-tags note)))
+   :content (string-remove-prefix
+             "content/"
+             (seq-find
+              (lambda (x)
+                (string-prefix-p "content/" x))
+              (vulpea-note-tags note)))
+   :authors (vulpea-note-meta-get-list note "authors" 'note)))
 
 (defun litnotes-entry-compare (a b)
   "Compare entries A and B by title."
