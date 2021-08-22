@@ -83,19 +83,23 @@
 
 ICON-ARGS are properties that are passed to `all-the-icons'
 functions. You may use it to pass :height and :v-adjust."
-  (let ((icon (pcase status
-                (`"ongoing"
-                 (all-the-icons-faicon "spinner" icon-args))
-                (`"new"
-                 (all-the-icons-faicon "inbox" icon-args))
-                (`"done"
-                 (all-the-icons-faicon "check" icon-args))
-                (`"dropped"
-                 (all-the-icons-faicon "times" icon-args)))))
+  (let ((icon-fn (pcase status
+                   (`"ongoing" #'all-the-icons-faicon)
+                   (`"new" #'all-the-icons-faicon)
+                   (`"done" #'all-the-icons-faicon)
+                   (`"dropped" #'all-the-icons-faicon)))
+        (icon-name (pcase status
+                     (`"ongoing" "spinner")
+                     (`"new" "inbox")
+                     (`"done" "check")
+                     (`"dropped" "times"))))
     (if (featurep 'all-the-icons)
-        ;; this way we align everything horizontally
-        (concat icon "\t" status)
-      status)))
+        (concat
+         (apply icon-fn icon-name icon-args)
+         ;; this way we align everything horizontally
+         "\t"
+         status)
+      "")))
 
 (defconst litnotes-status-tag-prefix "status/"
   "Prefix of the status tag.")
@@ -137,20 +141,23 @@ functions. You may use it to pass :height and :v-adjust."
 
 ICON-ARGS are properties that are passed to `all-the-icons'
 functions. You may use it to pass :height and :v-adjust."
-  (let ((icon (pcase content
-                (`"book"
-                 (all-the-icons-faicon "book" icon-args))
-                (`"article"
-                 (all-the-icons-faicon "file-text" icon-args))
-                (`"video"
-                 (all-the-icons-faicon "video-camera" icon-args))
-                (`"game"
-                 (all-the-icons-faicon "gamepad" icon-args))
-                (`"course"
-                 (all-the-icons-faicon "university" icon-args)))))
-    (if (and icon (featurep 'all-the-icons))
-        ;; this way we align everything horizontally
-        (concat icon "\t")
+  (let ((icon-fn (pcase content
+                   (`"book" #'all-the-icons-faicon)
+                   (`"article" #'all-the-icons-faicon)
+                   (`"video" #'all-the-icons-faicon)
+                   (`"game" #'all-the-icons-faicon)
+                   (`"course" #'all-the-icons-faicon)))
+        (icon-name (pcase content
+                     (`"book" "book")
+                     (`"article" "file-text")
+                     (`"video" "video-camera")
+                     (`"game" "gamepad")
+                     (`"course" "university"))))
+    (if (featurep 'all-the-icons)
+        (concat
+         (apply icon-fn icon-name icon-args)
+         ;; this way we align everything horizontally
+         "\t")
       "")))
 
 (defconst litnotes-content-tag-prefix "content/"
