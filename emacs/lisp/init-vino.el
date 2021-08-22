@@ -67,6 +67,7 @@
    vino-availability-fn #'vino-availability-get
    vino-availability-add-fn #'vino-availability-add
    vino-availability-sub-fn #'vino-availability-sub
+   vino-sources-fn #'vino-sources
    vino-rating-props
    '((1 . (("SCORE" . 3)))
      (2 . (("AROMA_QUALITY" . 3)

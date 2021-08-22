@@ -123,5 +123,10 @@
       (read-only-mode))
     (display-buffer buf)))
 
+;;;###autoload
+(defun vino-sources (_)
+  "Get the list of vino sources."
+  (inventory-sources vino-inventory-file))
+
 (provide 'lib-vino)
 ;;; lib-vino.el ends here

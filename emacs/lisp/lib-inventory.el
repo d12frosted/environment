@@ -102,5 +102,17 @@ When DATE is omitted, `current-time' is used."
     id
     file)))
 
+;;;###autoload
+(defun inventory-sources (file)
+  "Get the list of sources in FILE."
+  (let* ((cmd (concat "hledger -f '" file "' accounts"))
+         (res (shell-command-to-string cmd))
+         (lines (split-string res "\n")))
+    (seq-map
+     (lambda (s) (string-remove-prefix "source:" s))
+     (seq-filter
+      (lambda (s) (string-prefix-p "source:" s))
+      lines))))
+
 (provide 'lib-inventory)
 ;;; lib-inventory.el ends here
