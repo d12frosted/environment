@@ -88,6 +88,7 @@
 (use-package diff-hl
   :defer t
   :hook ((prog-mode . turn-on-diff-hl-mode)
+         (text-mode . turn-on-diff-hl-mode)
          (vc-dir-mode . turn-on-diff-hl-mode)
          (dired-mode . diff-hl-dired-mode)))
 
