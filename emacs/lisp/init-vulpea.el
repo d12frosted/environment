@@ -67,7 +67,7 @@
     "nA" '(vulpea-alias-delete :which-key "unalias")
     "ol" '(litnotes :which-key "litnotes"))
   :hook ((before-save . vulpea-pre-save-hook)
-         (org-roam-db-autosync-mode . vulpea-db-setup))
+         (org-roam-db-autosync-mode . vulpea-db-autosync-enable))
   :init
   (add-to-list 'window-buffer-change-functions
                #'vulpea-setup-buffer)
