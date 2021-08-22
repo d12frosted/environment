@@ -87,7 +87,8 @@
   :hook ((org-mode . auto-fill-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
-  :commands (org-check-agenda-file)
+  :commands (org-check-agenda-file
+             org-link-set-parameters)
   :init
   ;; This is where my ~heart~ org files are.
   (setq org-directory vulpea-directory)
@@ -217,6 +218,8 @@
   (setq org-id-uuid-program
         "uuidgen | tr \"[:upper:]\" \"[:lower:]\"")
   :config
+  (org-link-set-parameters
+   "id" :activate-func #'vulpea-activate-link)
   (setq
    org-id-track-globally t
    org-id-extra-files

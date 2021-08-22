@@ -221,6 +221,7 @@ Make all the links to this alias point to newly created note."
              (vulpea-buffer-p))
     (org-with-point-at 1
       (org-hide-drawer-toggle 'off))
+    (setq-local tab-width 1)
     (vulpea-ensure-filetag)))
 
 ;;;###autoload
@@ -302,6 +303,22 @@ irritating to answer this question every time new note is created.
 Also, it doesn't matter if the file in question is present in the
 list of `org-agenda-files' or not, since it is built dynamically
 via `vulpea-agenda-files-update'.")
+
+
+
+;;;###autoload
+(defun vulpea-activate-link (start end path _brackets)
+  "Activate a link between START and END for PATH."
+  (when (string-match-p string-uuid-regexp path)
+    (when-let ((note (vulpea-db-get-by-id path)))
+      (when (seq-contains-p (vulpea-note-tags note) litnotes-tag)
+        (let* ((entry (litnotes-entry note))
+               (descr (concat (litnotes-content-display
+                               (litnotes-entry-content entry)
+                               :height 0.8 :v-adjust 0.04)
+                              (litnotes-entry-title entry))))
+          (put-text-property start end 'display descr)
+          (put-text-property start end 'width (length descr)))))))
 
 
 
