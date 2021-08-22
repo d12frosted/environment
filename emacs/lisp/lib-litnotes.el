@@ -78,15 +78,23 @@
   (< (seq-position litnotes-status-values a)
      (seq-position litnotes-status-values b)))
 
-(defun litnotes-status-display (status)
-  "Display STATUS."
+(defun litnotes-status-display (status &rest icon-args)
+  "Display STATUS.
+
+ICON-ARGS are properties that are passed to `all-the-icons'
+functions. You may use it to pass :height and :v-adjust."
   (let ((icon (pcase status
-                (`"ongoing" (all-the-icons-faicon "spinner"))
-                (`"new" (all-the-icons-faicon "inbox"))
-                (`"done" (all-the-icons-faicon "check"))
-                (`"dropped" (all-the-icons-faicon "times")))))
+                (`"ongoing"
+                 (all-the-icons-faicon "spinner" icon-args))
+                (`"new"
+                 (all-the-icons-faicon "inbox" icon-args))
+                (`"done"
+                 (all-the-icons-faicon "check" icon-args))
+                (`"dropped"
+                 (all-the-icons-faicon "times" icon-args)))))
     (if (featurep 'all-the-icons)
-        (concat icon " " status)
+        ;; this way we align everything horizontally
+        (concat icon "\t" status)
       status)))
 
 (defconst litnotes-status-tag-prefix "status/"
@@ -124,16 +132,25 @@
   (< (seq-position litnotes-content-types a)
      (seq-position litnotes-content-types b)))
 
-(defun litnotes-content-display (content)
-  "Display CONTENT."
+(defun litnotes-content-display (content &rest icon-args)
+  "Display CONTENT.
+
+ICON-ARGS are properties that are passed to `all-the-icons'
+functions. You may use it to pass :height and :v-adjust."
   (let ((icon (pcase content
-                (`"book" (all-the-icons-faicon "book"))
-                (`"article" (all-the-icons-faicon "newspaper-o"))
-                (`"video" (all-the-icons-material "videocam"))
-                (`"game" (all-the-icons-faicon "gamepad"))
-                (`"course" (all-the-icons-faicon "university")))))
+                (`"book"
+                 (all-the-icons-faicon "book" icon-args))
+                (`"article"
+                 (all-the-icons-faicon "file-text" icon-args))
+                (`"video"
+                 (all-the-icons-faicon "video-camera" icon-args))
+                (`"game"
+                 (all-the-icons-faicon "gamepad" icon-args))
+                (`"course"
+                 (all-the-icons-faicon "university" icon-args)))))
     (if (and icon (featurep 'all-the-icons))
-        (concat icon " ")
+        ;; this way we align everything horizontally
+        (concat icon "\t")
       "")))
 
 (defconst litnotes-content-tag-prefix "content/"
@@ -235,6 +252,7 @@
     (with-current-buffer buffer
       (litnotes-mode)
       (setq litnotes-buffer-data (litnotes-buffer-data))
+      (setq-local tab-width 4)
       (lister-highlight-mode 1)
       (lister-insert-sequence
        buffer (point) litnotes-status-values)
