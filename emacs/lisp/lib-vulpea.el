@@ -314,20 +314,22 @@ via `vulpea-agenda-files-update'.")
       (when (seq-contains-p (vulpea-note-tags note) litnotes-tag)
         (let* ((visible-start (or (match-beginning 3)
                                   (match-beginning 2)))
-	             (visible-end (or (match-end 3) (match-end 2)))
+               (visible-end (or (match-end 3) (match-end 2)))
                (entry (litnotes-entry note))
-               (descr (concat (litnotes-content-display
-                               (litnotes-entry-content entry)
-                               :height 0.8 :v-adjust 0.04)
+               (icon (litnotes-content-display
+                      (litnotes-entry-content entry)
+                      :height 0.8 :v-adjust 0.04))
+               (descr (concat icon
                               (buffer-substring
                                visible-start visible-end)))
+               (l (length descr))
                (descr (s-truncate (- end start) descr))
                (hidden `(invisible
-			                   ,(or (org-link-get-parameter "id" :display)
-				                      'org-link))))
+                         ,(or (org-link-get-parameter "id" :display)
+                              'org-link))))
           (remove-text-properties start visible-start hidden)
           (remove-text-properties visible-end end hidden)
-          (add-text-properties (+ start (length descr)) end hidden)
+          (add-text-properties (+ start l) end hidden)
           (put-text-property start end 'display descr))))))
 
 
