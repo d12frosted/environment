@@ -142,17 +142,17 @@ functions. You may use it to pass :height and :v-adjust."
 ICON-ARGS are properties that are passed to `all-the-icons'
 functions. You may use it to pass :height and :v-adjust."
   (let ((icon-fn (pcase content
-                   (`"book" #'all-the-icons-faicon)
-                   (`"article" #'all-the-icons-faicon)
-                   (`"video" #'all-the-icons-faicon)
-                   (`"game" #'all-the-icons-faicon)
-                   (`"course" #'all-the-icons-faicon)))
+                   (`"book" #'all-the-icons-material)
+                   (`"article" #'all-the-icons-material)
+                   (`"video" #'all-the-icons-material)
+                   (`"game" #'all-the-icons-material)
+                   (`"course" #'all-the-icons-material)))
         (icon-name (pcase content
-                     (`"book" "book")
-                     (`"article" "file-text")
-                     (`"video" "video-camera")
-                     (`"game" "gamepad")
-                     (`"course" "university"))))
+                     (`"book" "local_library")
+                     (`"article" "insert_drive_file")
+                     (`"video" "videocam")
+                     (`"game" "videogame_asset")
+                     (`"course" "school"))))
     (if (featurep 'all-the-icons)
         (concat
          (apply icon-fn icon-name icon-args)
