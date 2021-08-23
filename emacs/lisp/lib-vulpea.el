@@ -309,28 +309,34 @@ via `vulpea-agenda-files-update'.")
 ;;;###autoload
 (defun vulpea-activate-link (start end path _brackets)
   "Activate a link between START and END for PATH."
-  (when (string-match-p string-uuid-regexp path)
-    (when-let ((note (vulpea-db-get-by-id path)))
-      (when (seq-contains-p (vulpea-note-tags note) litnotes-tag)
-        (let* ((visible-start (or (match-beginning 3)
-                                  (match-beginning 2)))
-               (visible-end (or (match-end 3) (match-end 2)))
-               (entry (litnotes-entry note))
-               (icon (litnotes-content-display
-                      (litnotes-entry-content entry)
-                      :height 0.8 :v-adjust 0.04))
-               (descr (concat icon
-                              (buffer-substring
-                               visible-start visible-end)))
-               (l (length descr))
-               (descr (s-truncate (- end start) descr))
-               (hidden `(invisible
-                         ,(or (org-link-get-parameter "id" :display)
-                              'org-link))))
-          (remove-text-properties start visible-start hidden)
-          (remove-text-properties visible-end end hidden)
-          (add-text-properties (+ start l) end hidden)
-          (put-text-property start end 'display descr))))))
+  (let ((visible-start (or (match-beginning 3)
+                           (match-beginning 2)))
+        (visible-end (or (match-end 3) (match-end 2))))
+    (when-let* ((uuid-p (string-match-p string-uuid-regexp path))
+                (note (vulpea-db-get-by-id path))
+                (tags (vulpea-note-tags note))
+                (icon (cond
+                       ((seq-contains-p tags litnotes-tag)
+                        (litnotes-content-display
+                         (litnotes-entry-content
+                          (litnotes-entry note))
+                         :height 0.8 :v-adjust 0.04))
+                       ((seq-contains-p tags "people")
+                        (concat
+                         (all-the-icons-material
+                          "person" :height 0.8 :v-adjust 0.04)
+                         "\t"))))
+                (desc (buffer-substring visible-start visible-end))
+                (desc (concat icon desc))
+                (desc (s-truncate (- end start) desc))
+                (l (length desc))
+                (hidden `(invisible
+                          ,(or (org-link-get-parameter "id" :display)
+                               'org-link))))
+      (remove-text-properties start visible-start hidden)
+      (remove-text-properties visible-end end hidden)
+      (add-text-properties (+ start l) end hidden)
+      (put-text-property start end 'display desc))))
 
 
 
