@@ -243,6 +243,8 @@
     "cl" '(org-store-link :which-key "link")
     "cm" '(vulpea-capture-meeting :which-key "meeting")
     "cx" '(vulpea-capture-task :which-key "task"))
+  :init
+  (setq-default org-capture-bookmark nil)
   :config
   (vulpea-capture-setup))
 
