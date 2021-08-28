@@ -88,37 +88,40 @@
   "Display buffer with balances."
   (interactive)
   (let* ((name "*vino inventory*")
-         (buf (buffer-generate name 'unique)))
-    (with-current-buffer buf
-      (let ((balances (inventory-balance-list vino-inventory-file)))
-        (seq-do
-         (lambda (kvp)
-           (let* ((id (car kvp))
-                  (am (cdr kvp))
-                  (note (vulpea-db-get-by-id id)))
-             (insert (format "%05.2f" am)
-                     "  "
-                     (vulpea-note-title note)
-                     "\n")))
-         balances)
-        (insert "\n"
-                "---"
-                "\n"
-                "total: "
-                (format "%05.2f"
-                        (seq-reduce
-                         (lambda (r v) (+ r (cdr v)))
-                         balances
-                         0))
-                " ("
-                (format "%i"
-                        (seq-reduce
-                         (lambda (r v) (+ r (max 1 (cdr v))))
-                         balances
-                         0))
-                " bottles)"))
+         (buffer (buffer-generate name 'unique))
+         (balances (->> (inventory-balance-list vino-inventory-file)
+                        (-map
+                         (-partial #'-update-at 0
+                                   #'vulpea-db-get-by-id))
+                        (seq-sort-by
+                         (-compose #'vulpea-note-title #'car)
+                         #'string<)))
+         (total (--reduce-from
+                 (+ acc (cdr it))
+                 0
+                 balances))
+         (bottles (--reduce-from
+                   (+ acc (max 1 (cdr it)))
+                   0
+                   balances)))
+    (with-current-buffer buffer
+      (seq-do
+       (lambda (kvp)
+         (insert
+          (format "%05.2f" (cdr kvp))
+          "  "
+          (vulpea-note-title (car kvp))
+          "\n"))
+       balances)
+      (insert "\n"
+              "---"
+              "\n"
+              "total: "
+              (format "%05.2f" total)
+              " ("
+              (format "%i" bottles) " bottles)")
       (read-only-mode))
-    (display-buffer buf)))
+    (display-buffer buffer)))
 
 ;;;###autoload
 (defun vino-sources (_)
