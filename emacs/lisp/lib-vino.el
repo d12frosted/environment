@@ -110,16 +110,17 @@
          (insert
           (format "%05.2f" (cdr kvp))
           "  "
-          (vulpea-note-title (car kvp))
+          (vulpea-utils-link-make-string (car kvp))
           "\n"))
        balances)
       (insert "\n"
               "---"
               "\n"
-              "total: "
+              "total: *"
               (format "%05.2f" total)
-              " ("
+              "* ("
               (format "%i" bottles) " bottles)")
+      (org-mode)
       (read-only-mode))
     (display-buffer buffer)))
 
