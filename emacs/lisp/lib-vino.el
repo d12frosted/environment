@@ -88,10 +88,7 @@
   "Display buffer with balances."
   (interactive)
   (let* ((name "*vino inventory*")
-         (buf (get-buffer name)))
-    (when buf
-      (kill-buffer buf))
-    (setq buf (generate-new-buffer name))
+         (buf (buffer-generate name 'unique)))
     (with-current-buffer buf
       (let ((balances (inventory-balance-list vino-inventory-file)))
         (seq-do

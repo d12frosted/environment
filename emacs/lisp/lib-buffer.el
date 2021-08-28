@@ -116,5 +116,19 @@ is not present."
         (replace-region-contents l0 l1 (lambda () (funcall fn s)))
         (forward-line)))))
 
+;;;###autoload
+(defun buffer-generate (name &optional unique inhibit-buffer-hooks)
+  "Create and return a buffer with a name based on NAME.
+
+Unless UNIQUE, choose the buffer’s name using
+‘generate-new-buffer-name’. Otherwise if buffer with NAME already
+exists, recreate it.
+
+See ‘get-buffer-create’ for the meaning of INHIBIT-BUFFER-HOOKS."
+  (when unique
+    (when-let ((buffer (get-buffer name)))
+      (kill-buffer buffer)))
+  (generate-new-buffer name inhibit-buffer-hooks))
+
 (provide 'lib-buffer)
 ;;; lib-buffer.el ends here

@@ -253,9 +253,7 @@ functions. You may use it to pass :height and :v-adjust."
   "Display a list of litnotes."
   (interactive)
   (let* ((name "*litnotes*")
-         (_ (and (get-buffer name)
-                 (kill-buffer name)))
-         (buffer (generate-new-buffer name)))
+         (buffer (buffer-generate name 'unique)))
     (with-current-buffer buffer
       (litnotes-mode)
       (setq litnotes-buffer-data (litnotes-buffer-data))
