@@ -264,7 +264,8 @@ Make all the links to this alias point to newly created note."
   "Update notes database."
   (when (file-directory-p vulpea-directory)
     (org-roam-db-sync)
-    (vino-db-sync)))
+    (vino-db-sync)
+    (org-roam-update-org-id-locations)))
 
 
 
