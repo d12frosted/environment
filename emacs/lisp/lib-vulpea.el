@@ -325,6 +325,15 @@ via `vulpea-agenda-files-update'.")
                         (concat
                          (all-the-icons-material
                           "person" :height 0.8 :v-adjust 0.04)
+                         "\t"))
+                       ((seq-contains-p tags "grape")
+                        (concat "🍇" "\t"))
+                       ((seq-contains-p tags "cellar")
+                        (concat "🍷" "\t"))
+                       ((seq-contains-p tags "aroma")
+                        (concat
+                         (all-the-icons-material
+                          "local_florist" :height 0.8 :v-adjust 0.04)
                          "\t"))))
                 (desc (buffer-substring visible-start visible-end))
                 (desc (concat icon desc))
