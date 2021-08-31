@@ -6,7 +6,8 @@
   outputs = { self, nixpkgs, flake-utils, haskellNix }:
     flake-utils.lib.eachSystem [ "x86_64-linux" "x86_64-darwin" ] (system:
     let
-      overlays = [ haskellNix.overlay
+      overlays = [
+        haskellNix.overlay
         (final: prev: {
           # This overlay adds our project to pkgs
           helloProject =
@@ -20,18 +21,16 @@
                 hlint = {};
                 haskell-language-server = {};
               };
-              # This adds `js-unknown-ghcjs-cabal` to the shell.
-              shell.crossPlatform = p: [p.ghcjs];
             };
+        })
+        (self: super: {
+          Xpm = self.xorg.libXpm;
         })
       ];
       pkgs = import nixpkgs { inherit system overlays; };
-      flake = pkgs.helloProject.flake {
-        # This adds support for `nix build .#js-unknown-ghcjs-cabal:hello:exe:hello`
-        crossPlatforms = p: [p.ghcjs];
-      };
+      flake = pkgs.helloProject.flake {};
     in flake // {
       # Built by `nix build .`
-      defaultPackage = flake.packages."hello:exe:hello";
+      defaultPackage = flake.packages."d12x:lib:d12x";
     });
 }
