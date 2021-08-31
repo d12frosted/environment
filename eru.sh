@@ -40,6 +40,7 @@ set -e
 
 KERNEL_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
 KERNEL_RELEASE=$(uname -r | tr '[:upper:]' '[:lower:]')
+NODENAME=$(uname --nodename)
 OS_NAME="unknown"
 OS_VERSION="unknown"
 case $KERNEL_NAME in
@@ -51,6 +52,11 @@ case $KERNEL_NAME in
     case $KERNEL_RELEASE in
       *arch*|*coreos*)
         OS_NAME="arch"
+        ;;
+    esac
+    case $NODENAME in
+      nixos)
+        OS_NAME="nixos"
         ;;
     esac
     ;;
@@ -176,8 +182,8 @@ function test_guard() {
   return
 }
 
-function arch_guard() {
-  [[ "$OS_NAME" == "arch" ]]
+function nixos_guard() {
+  [[ "$OS_NAME" == "nixos" ]]
   return
 }
 
@@ -266,43 +272,10 @@ trap unlock INT TERM EXIT
 # Actual bootstrap
 #
 
-arch_guard && {
-  theme_guard "system" "bootstrap Arch Linux" && {
-    section "Install crutial dependencies"
-    sudo pacman -S --noconfirm --needed base-devel git pacman-contrib rsync physlock
-
-    section "Install aura"
-    check aura || {
-      sudo mkdir -p /var/cache/pacman/pkg
-      aura_dir=$(mktemp -d)
-      git clone https://aur.archlinux.org/aura-bin.git "$aura_dir"
-      cd "$aura_dir" && {
-        makepkg -si --noconfirm
-      }
-    }
-
-    section "Install X"
-    sudo pacman -S --noconfirm --needed xorg xterm libxss
-
-    section "Install audio"
-    sudo pacman -S --noconfirm --needed \
-      alsa-oss \
-      alsa-lib \
-      alsa-utils \
-      alsa-firmware \
-      alsa-ucm-conf \
-      sof-firmware \
-      pulseaudio \
-      pulseaudio-alsa
-
-    section "Install video"
-    sudo pacman -S --noconfirm --needed vlc
-  }
-}
-
 export PATH=/nix/var/nix/profiles/default/bin:$PATH
 export PATH=/run/current-system/sw/bin:$PATH
 export PATH=$HOME/.nix-profile/bin:$PATH
+export PATH=/run/wrappers/bin:$PATH
 
 theme_guard "system" "ensure nix installation" && {
   if check nix; then
@@ -313,29 +286,15 @@ theme_guard "system" "ensure nix installation" && {
     macos_guard && {
       # TODO: remove once nix 2.4 lands
       sh <(curl https://abathur-nix-install-tests.cachix.org/serve/yihf8zbs0jwph2rs9qfh80dnilijxdi2/install) --tarball-url-prefix https://abathur-nix-install-tests.cachix.org/serve
+      # sh <(curl -L https://nixos.org/nix/install) --daemon
     }
-    linux_guard && {
-      sh <(curl -L https://nixos.org/nix/install) --daemon
-      # TODO: remove once nix 2.4 lands
+  fi
+  # TODO: remove once nix 2.4 lands
+  nixos_guard && {
+    if [ -z "$(nix-channel --list)" ]; then
       nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
       nix-channel --update
       nix-env -iA unstable.nixUnstable
-    }
-  fi
-}
-
-arch_guard && {
-  theme_guard "system" "ensure nixGL installation" && {
-    if check nixGL; then
-      echo "Found nixGL executable at $(which nixGL)"
-      echo "Nothing to do"
-    else
-      echo "install nixGL"
-      nixgl_dir=$(mktemp --directory)
-      git clone https://github.com/guibou/nixGL "$nixgl_dir"
-      cd "$nixgl_dir" && {
-        nix-env -f ./ -iA nixGLDefault
-      }
     fi
   }
 }
@@ -349,22 +308,19 @@ upgrade_guard && {
 
 theme_guard "system" "build nix environment" && {
   cd "$XDG_CONFIG_HOME" && {
-
-    section "building configurations"
-    macos_guard && nix build \
-      --experimental-features "nix-command flakes" --impure \
-      -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
-      ./#darwinConfigurations.${fellow}.system
-    linux_guard && nix build \
-      --experimental-features 'nix-command flakes' \
-      ./#homeConfigurations.borysb.activationPackage
-
-    section "switching to configurations"
-    macos_guard && result/sw/bin/darwin-rebuild switch \
-      --impure \
-      -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
-      --flake ./#${fellow}
-    linux_guard && ./result/activate switch
+    macos_guard && {
+      nix build \
+        --experimental-features "nix-command flakes" --impure \
+        -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
+        ./#darwinConfigurations.${fellow}.system
+      result/sw/bin/darwin-rebuild switch \
+        --impure \
+        -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
+        --flake ./#${fellow}
+    }
+    nixos_guard && {
+      sudo nixos-rebuild switch --flake .
+    }
   }
 }
 
@@ -391,55 +347,25 @@ theme_guard "haskell" "ensure HLS installation" && {
   }
 }
 
-arch_guard && {
-  theme_guard "system" "Install qutebrowser" && {
-    sudo pacman -S --noconfirm --needed qutebrowser
-    /usr/share/qutebrowser/scripts/dictcli.py install en-US
-  }
-
-}
-
-linux_guard && {
-  theme_guard "system" "inject xorg stuff" && {
-    safe_link "$XDG_CONFIG_HOME/xorg/xinitrc" "$HOME/.xinitrc"
-    safe_link "$XDG_CONFIG_HOME/xorg/bin/switch_kbd_layout" /usr/local/bin/switch_kbd_layout
-    safe_link "$XDG_CONFIG_HOME/xorg/bin/autolock" /usr/local/bin/xautolocker
-    safe_link "$XDG_CONFIG_HOME/xorg/bin/lock" /usr/local/bin/xlocker
-  }
-
-  theme_guard "system" "Setup keyboard" && {
-    if [[ -f /usr/share/X11/xkb/symbols/ua && ! -f /usr/share/X11/xkb/symbols/ua.bak ]]; then
-      sudo mv /usr/share/X11/xkb/symbols/ua /usr/share/X11/xkb/symbols/ua.bak
-    fi
-    sudo cp "$XDG_CONFIG_HOME/xorg/xkb/symbols/ua" "/usr/share/X11/xkb/symbols/ua"
-
-    # Make sure that Caps doesn't miss it's purpose.
-    setxkbmap -option caps:ctrl_modifier
-  }
-
-  theme_guard "system" "Setup touchpad" && {
-    sudo cp "$XDG_CONFIG_HOME/xorg/30-touchpad.conf" "/etc/X11/xorg.conf.d/30-touchpad.conf"
-  }
-
-  theme_guard "system" "Setup autolock" && {
-    sudo cp "$XDG_CONFIG_HOME/arch/lock@.service" /etc/systemd/system/lock@.service
-    systemctl enable "lock@${USER}.service" || error "systemd is not working"
-  }
-
-  theme_guard "system" "Setup clock" && {
-    sudo cp "$XDG_CONFIG_HOME/arch/09-timezone" /etc/NetworkManager/dispatcher.d/09-timezone
-    sudo chmod 755 /etc/NetworkManager/dispatcher.d/09-timezone
-    systemctl enable NetworkManager-dispatcher
-    systemctl start NetworkManager-dispatcher
-  }
-
+nixos_guard && {
   theme_guard "xmonad" "Rebuild Xmonad configurations" && {
     section "Install xmonad"
     (
       cd "$XDG_CONFIG_HOME/xmonad"
-      cabal install --installdir="$HOME/.local/bin" --overwrite-policy=always || {
-        notify send -a "Eru" -t "Failed to compile xmonad" -u critical
-      }
+
+      echo "Build d12-xmonad"
+      nix build .#d12x:exe:d12-xmonad
+      rm "$HOME/.local/bin/d12-xmonad"
+      cp ./result/bin/d12-xmonad "$HOME/.local/bin/d12-xmonad"
+      chown "$USER" "$HOME/.local/bin/d12-xmonad"
+      chgrp wheel "$HOME/.local/bin/d12-xmonad"
+
+      echo "Build d12-xmobar"
+      nix build .#d12x:exe:d12-xmobar
+      rm "$HOME/.local/bin/d12-xmobar"
+      cp ./result/bin/d12-xmobar "$HOME/.local/bin/d12-xmobar"
+      chown "$USER" "$HOME/.local/bin/d12-xmobar"
+      chgrp wheel "$HOME/.local/bin/d12-xmobar"
     )
 
     section "Restart xmonad"
@@ -449,70 +375,6 @@ linux_guard && {
     else
       log "No running instance of xmonad is found. Meh..."
     fi
-  }
-}
-
-arch_guard && {
-  install_guard && {
-    theme_guard "packages" "Install all dependencies" && {
-      log "Import known GPG keys"
-      # spotify
-      curl -sS https://download.spotify.com/debian/pubkey.gpg | gpg --import
-
-      function combine_files {
-        local output
-        output=$(mktemp)
-        for f in "$@"; do
-          if [[ -f $f ]]; then
-            cat "$f" >> "$output"
-          fi
-        done
-        echo "$output"
-      }
-
-      log "Install packages"
-
-      pacman_file=$(combine_files "$XDG_CONFIG_HOME/arch/Pacmanfile" "$XDG_CONFIG_HOME/arch/Pacmanfile_$USER")
-      pacman_ignore=$(combine_files "$XDG_CONFIG_HOME/arch/Pacmanignore" "$XDG_CONFIG_HOME/arch/Pacmanignore_$USER")
-      # shellcheck disable=SC2046
-      sudo aura -S --noconfirm --needed $(comm -23 "$pacman_file" "$pacman_ignore")
-
-      aur_file=$(combine_files "$XDG_CONFIG_HOME/arch/Aurfile" "$XDG_CONFIG_HOME/arch/Aurfile_$USER")
-      aur_ignore=$(combine_files "$XDG_CONFIG_HOME/arch/Aurignore" "$XDG_CONFIG_HOME/arch/Aurignore_$USER")
-      # shellcheck disable=SC2046
-      sudo aura -A --noconfirm --needed $(comm -23 "$aur_file" "$aur_ignore")
-    }
-  }
-
-  upgrade_guard && {
-    theme_guard "packages" "Upgrade Arch Linux" && {
-      sudo aura -Syu --noconfirm
-      sudo aura -Aux --noconfirm
-    }
-  }
-
-  theme_guard "hardware" "Setup backlight rules" && {
-    tmp_rule=$(mktemp)
-    for backlight in /sys/class/backlight/*; do
-      name=$(basename "$backlight")
-      echo "ACTION==\"add\", SUBSYSTEM==\"backlight\", KERNEL==\"$name\", RUN+=\"/bin/chgrp video /sys/class/backlight/%k/brightness\"" >> "$tmp_rule"
-      echo "ACTION==\"add\", SUBSYSTEM==\"backlight\", KERNEL==\"$name\", RUN+=\"/bin/chmod g+w /sys/class/backlight/%k/brightness\"" >> "$tmp_rule"
-    done
-    sudo cp "$tmp_rule" /etc/udev/rules.d/backlight.rules
-    if id -nG "$USER" | grep -qw "video"; then
-      echo "You are already able to adjust brightness level"
-    else
-      echo "Adding you to 'video' user group"
-      sudo gpasswd -a "$USER" video
-    fi
-  }
-
-  theme_guard "gnupg" "Fix permissions" && {
-    # make sure that I am the owner
-    chown -R "$(whoami)" ~/.gnupg/
-    # correct permissions
-    find ~/.gnupg -type f -exec chmod 600 {} \;
-    find ~/.gnupg -type d -exec chmod 700 {} \;
   }
 }
 

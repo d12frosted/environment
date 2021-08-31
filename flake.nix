@@ -11,17 +11,17 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     darwin.url = "github:lnl7/nix-darwin";
-    home.url = "github:nix-community/home-manager";
+    home-manager.url = "github:nix-community/home-manager";
     emacs.url = "github:cmacrae/emacs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     spacebar.url = "github:cmacrae/spacebar";
 
     # Follows
     darwin.inputs.nixpkgs.follows = "nixpkgs";
-    home.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, darwin, home, emacs, emacs-overlay, spacebar }:
+  outputs = { self, nixpkgs, darwin, home-manager, emacs, emacs-overlay, spacebar }:
     let
       overlays = [
         emacs-overlay.overlay
@@ -31,7 +31,7 @@
       darwinConfigurations.d12frosted = darwin.lib.darwinSystem {
         modules = [
           ./nix/darwin.nix
-          home.darwinModules.home-manager
+          home-manager.darwinModules.home-manager
           {
             nixpkgs.overlays = [
               emacs.overlay
@@ -41,17 +41,18 @@
         ];
       };
 
-      homeConfigurations = {
-        borysb = home.lib.homeManagerConfiguration {
-          configuration = { pkgs, lib, config, ... }: {
-            imports = [ ./nix/home.nix ];
-            nixpkgs.config.allowUnfree = true;
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./nix/nixos.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.d12frosted = import ./nix/home.nix;
             nixpkgs.overlays = overlays;
-          };
-          system = "x86_64-linux";
-          homeDirectory = "/home/d12frosted";
-          username = "d12frosted";
-        };
+          }
+        ];
       };
     };
 }

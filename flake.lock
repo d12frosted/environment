@@ -87,18 +87,18 @@
         "type": "github"
       }
     },
-    "home": {
+    "home-manager": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1625516974,
-        "narHash": "sha256-hq4eAl7wJoGwjtHCdqItjb81XgjVL5K79NX3jSmNRMA=",
+        "lastModified": 1629729582,
+        "narHash": "sha256-P8bSE0v/alIafhsDVPwIZyBMz4YfHc2H0mOabnsf1so=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "97d183e2e466808f5d7cd1c838815bedd88f37fe",
+        "rev": "9029fd2b9de2147480efab55f351343f4fed73b9",
         "type": "github"
       },
       "original": {
@@ -160,7 +160,7 @@
         "darwin": "darwin",
         "emacs": "emacs",
         "emacs-overlay": "emacs-overlay",
-        "home": "home",
+        "home-manager": "home-manager",
         "nixpkgs": "nixpkgs_2",
         "spacebar": "spacebar"
       }

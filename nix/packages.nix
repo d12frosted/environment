@@ -7,6 +7,8 @@ in [
   ffmpeg
   fish
   fontconfig
+  gcc
+  git
   git-lfs
   gnugrep
   gnumake
@@ -75,6 +77,7 @@ in [
   yarn
 ] ++ [
   # fonts
+  font-awesome_4
   fontconfig
   liberation_ttf
   noto-fonts
@@ -84,5 +87,4 @@ in [
   source-sans-pro
   source-serif-pro
   symbola
-  font-awesome_4
 ]

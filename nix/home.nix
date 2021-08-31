@@ -7,10 +7,10 @@
 # https://github.com/cmacrae/config/blob/master/modules/macintosh.nix
 
 let
-  home            = builtins.getEnv "HOME";
-  tmpdir          = "/tmp";
-  emacs-server    = "${tmpdir}/emacs-emacs/server";
-  emacsclient     = "${pkgs.emacs}/bin/emacsclient -s ${emacs-server}";
+  home         = config.home.homeDirectory;
+  tmpdir       = "/tmp";
+  emacs-server = "${tmpdir}/emacs-emacs/server";
+  emacsclient  = "${pkgs.emacs}/bin/emacsclient -s ${emacs-server}";
 in {
   home = {
     # These are packages that should always be present in the user
@@ -33,7 +33,26 @@ in {
       QT_XCB_GL_INTEGRATION = "none";
     };
     sessionPath = [];
+
+    keyboard.options = [
+      "caps:ctrl_modifier"
+    ];
   };
+
+  # services.picom.enable = true;
+  home.file.".xinitrc".text = ''
+    # I need this so much outside of Emacs.
+    xset r rate 180 26
+
+    # Make sure that Caps doesn't miss it's purpose.
+    setxkbmap -option caps:ctrl_modifier
+
+    # I rarely see my wallpapers. But when I do, I am happy.
+    fehbg &
+
+    # Every X needs some algebra to tame it.
+    exec dbus-launch d12-xmonad
+  '';
 
   xdg = {
     enable = true;
@@ -168,6 +187,7 @@ set -g __done_min_cmd_duration 8000
 set -gp PATH /nix/var/nix/profiles/default/bin
 set -gp PATH /run/current-system/sw/bin
 set -gp PATH $HOME/.nix-profile/bin
+set -gp PATH /run/wrappers/bin
 set -gp PATH $HOME/.local/bin
 set -gp PATH ${config.xdg.configHome}/bin
 
@@ -220,7 +240,6 @@ end
       enable = true;
       settings = {
         font = {
-          size = 12;
           normal = {
             family = "Source Code Pro";
           };
