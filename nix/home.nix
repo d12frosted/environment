@@ -22,10 +22,8 @@ in {
       BASE16_HOME           = "${pkgs.base16-shell}";
       EDITOR                = "${emacsclient}";
       EMACS_SERVER_FILE     = "${emacs-server}";
-      GNUPGHOME             = "${config.xdg.configHome}/gnupg";
       NIX_CONF              = "${config.xdg.configHome}/nix";
       PROJECTS_HOME         = "${home}/Developer";
-      SSH_AUTH_SOCK         = "${config.xdg.configHome}/gnupg/S.gpg-agent.ssh";
       XDG_CACHE_HOME        = config.xdg.cacheHome;
       XDG_CONFIG_HOME       = config.xdg.configHome;
       XDG_DATA_HOME         = config.xdg.dataHome;
@@ -55,19 +53,7 @@ in {
   '';
   home.file.".xsession".executable = true;
 
-  xdg = {
-    enable = true;
-
-    configFile."gnupg/gpg-agent.conf".text = ''
-      enable-ssh-support
-      default-cache-ttl 86400
-      max-cache-ttl 86400
-    '' + lib.optionalString pkgs.stdenv.isDarwin ''
-      pinentry-program ${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac
-    '' + lib.optionalString pkgs.stdenv.isLinux ''
-       pinentry-program ${pkgs.pinentry-qt}/bin/pinentry-qt
-    '';
-  };
+  xdg.enable = true;
 
   fonts.fontconfig.enable = true;
 
@@ -100,7 +86,6 @@ in {
 
     gpg = {
       enable = true;
-      homedir = "${config.xdg.configHome}/gnupg";
       settings = {
         default-key = "F9EBF09436BCB50F";
 
