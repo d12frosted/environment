@@ -66,7 +66,12 @@ experimental-features = nix-command flakes
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-  services.xserver.displayManager.startx.enable = true;
+  services.xserver.desktopManager.xfce.enable = true;
+  services.xserver.desktopManager.xfce.enableXfwm = false;
+  services.xserver.desktopManager.xfce.noDesktop = true;
+
+  # Make sure that Caps doesn't miss it's purpose.
+  services.xserver.xkbOptions = "caps:ctrl_modifier";
 
   # Enable sound.
   sound.enable = true;

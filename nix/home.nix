@@ -39,20 +39,21 @@ in {
     ];
   };
 
-  # services.picom.enable = true;
-  home.file.".xinitrc".text = ''
-    # I need this so much outside of Emacs.
-    xset r rate 180 26
+  home.file.".xsession".text = ''
+    export PATH=$HOME/.local/bin:$PATH
+    export PATH=$HOME/.config/bin:$PATH
+    export XDG_CONFIG_HOME=${config.xdg.configHome}
 
-    # Make sure that Caps doesn't miss it's purpose.
-    setxkbmap -option caps:ctrl_modifier
+    # I need this so much outside of Emacs.
+    ${pkgs.xorg.xset}/bin/xset r rate 180 26
 
     # I rarely see my wallpapers. But when I do, I am happy.
     fehbg &
 
-    # Every X needs some algebra to tame it.
-    exec dbus-launch d12-xmonad
+    # Because every X needs some algebra to tame it.
+    dbus-launch d12-xmonad
   '';
+  home.file.".xsession".executable = true;
 
   xdg = {
     enable = true;
