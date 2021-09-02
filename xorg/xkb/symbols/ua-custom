@@ -4,7 +4,7 @@
 //
 
 default  partial alphanumeric_keys
-xkb_symbols "basic" {
+xkb_symbols "ua-custom" {
 
   name[Group1]= "Ukrainian";
 

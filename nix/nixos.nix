@@ -73,6 +73,14 @@ experimental-features = nix-command flakes
   # Make sure that Caps doesn't miss it's purpose.
   services.xserver.xkbOptions = "caps:ctrl_modifier";
 
+  services.xserver.extraLayouts = {
+    ua-custom = {
+      description = "Custom xkb UA layout.";
+      languages = [ "ua" ];
+      symbolsFile = ../xorg/xkb/symbols/ua-custom;
+  };
+  };
+
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
