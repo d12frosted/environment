@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# Select the next keyboard layout from the list [us, ua] or [us, us intl].
+
+use_cyrillic=
+target_layout=
+target_variant=
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+    --use-cyrillic)
+      use_cyrillic=t
+      shift
+      ;;
+    --layout)
+      target_layout=$2
+      shift
+      shift
+      ;;
+    --variant)
+      target_variant=$2
+      shift
+      shift
+      ;;
+    *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+if [[ -z "$target_layout" ]]; then
+  layout=$(setxkbmap -query | awk '/layout/{print $2}')
+  variant=$(setxkbmap -query | awk '/variant/{print $2}')
+  case $layout in
+    us)
+      if [ -z "$use_cyrillic" ]; then
+        target_layout=us
+        case $variant in
+          intl)
+            target_variant=
+            ;;
+          *)
+            target_variant=intl
+          ;;
+        esac
+      else
+        target_layout=ua-custom
+      fi
+      ;;
+    *)
+      target_layout=us
+      ;;
+  esac
+fi
+
+setxkbmap -layout $target_layout -variant $target_variant
