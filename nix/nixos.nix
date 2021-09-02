@@ -70,6 +70,9 @@ experimental-features = nix-command flakes
   services.xserver.desktopManager.xfce.enableXfwm = false;
   services.xserver.desktopManager.xfce.noDesktop = true;
 
+  services.physlock.enable = true;
+  services.physlock.allowAnyUser = true;
+
   # Make sure that Caps doesn't miss it's purpose.
   services.xserver.xkbOptions = "caps:ctrl_modifier";
 

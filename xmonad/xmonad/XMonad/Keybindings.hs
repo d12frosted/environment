@@ -14,7 +14,7 @@ keybindings =
     ("<XF86AudioMicMute>", spawn "pactl set-source-mute @DEFAULT_SOURCE@ toggle"),
     ("<XF86MonBrightnessUp>", spawn "brightness inc"),
     ("<XF86MonBrightnessDown>", spawn "brightness dec"),
-    ("M-S-z", spawn "xlocker"),
+    ("M-S-z", spawn "xlock-wrapper"),
     ("M-<Esc>", spawn "switch_kbd_layout --use-cyrillic"),
     ("M-S-<Esc>", spawn "switch_kbd_layout"),
     ("M-<Print>", spawn "scrot"),
