@@ -56,6 +56,9 @@
 (defun editor-disable-electric-indent ()
   "Disable the command `electric-indent-mode' locally."
   (electric-indent-local-mode -1))
+(defun editor-disable-electric-pair ()
+  "Disable the command `electric-pair-mode' locally."
+  (electric-pair-local-mode -1))
 
 
 ;; Whitespaces
