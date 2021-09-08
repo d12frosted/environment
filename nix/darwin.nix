@@ -37,11 +37,6 @@ experimental-features = nix-command flakes
     ];
 
     trustedBinaryCaches = config.nix.binaryCaches;
-
-    nixPath = lib.mkForce [{
-      ssh-config-file = "${xdg_configHome}/.ssh/config";
-      ssh-auth-sock   = "${xdg_configHome}/gnupg/S.gpg-agent.ssh";
-    }];
   };
 
   nixpkgs = {
@@ -124,9 +119,10 @@ experimental-features = nix-command flakes
     };
   };
 
-  programs = {
-    fish.enable = true;
-  };
+  programs.fish.enable = true;
+
+  programs.gnupg.agent.enable = true;
+  programs.gnupg.agent.enableSSHSupport = true;
 
   services = {
     nix-daemon.enable = true;
