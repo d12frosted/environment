@@ -20,6 +20,5 @@ keybindings =
     ("M-<Print>", spawn "scrot"),
     ("M-C-<Print>", spawn "flameshot gui"),
     ("M-o e", spawn "emacs"),
-    ("M-o i", firefox),
-    ("M-t n", spawn "notify toggle")
+    ("M-o i", firefox)
   ]
