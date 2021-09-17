@@ -14,14 +14,13 @@
     home-manager.url = "github:nix-community/home-manager";
     emacs.url = "github:cmacrae/emacs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
-    spacebar.url = "github:cmacrae/spacebar";
 
     # Follows
     darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, emacs, emacs-overlay, spacebar }:
+  outputs = { self, nixpkgs, darwin, home-manager, emacs, emacs-overlay }:
     let
       overlays = [
         emacs-overlay.overlay
@@ -35,7 +34,6 @@
           {
             nixpkgs.overlays = [
               emacs.overlay
-              spacebar.overlay
             ] ++ overlays;
           }
         ];
