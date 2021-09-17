@@ -140,7 +140,8 @@ experimental-features = nix-command flakes
   programs.gnupg.agent.enableSSHSupport = true;
   programs.gnupg.agent.pinentryFlavor = "qt";
 
-  virtualisation.virtualbox.host.enable = true;
+  # virtualisation.virtualbox.host.enable = true;
   # virtualisation.virtualbox.host.enableExtensionPack = true;
-  users.extraGroups.vboxusers.members = [ "d12frosted" ];
+  # virtualisation.virtualbox.guest.enable = true;
+  # users.extraGroups.vboxusers.members = [ "d12frosted" ];
 }
