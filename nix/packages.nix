@@ -23,6 +23,7 @@ in [
   killall
   kubectl
   libwebp
+  ncdu
   openssh
   openssl
   python39Packages.pygments
