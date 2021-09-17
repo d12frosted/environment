@@ -1,2 +1,2 @@
 [Service]
-ExecStart=/bin/bash -c 'vulpea-sync'
+ExecStart=/usr/bin/env bash -c 'vulpea-sync'
