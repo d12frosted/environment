@@ -150,7 +150,8 @@
   :straight (lister
              :type git
              :host github
-             :repo "publicimageltd/lister")
+             :repo "publicimageltd/lister"
+             :branch "archive-version-0.7.2")
   :defer t)
 
 
