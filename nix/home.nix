@@ -248,6 +248,7 @@ end
 
   services = {
     gpg-agent = {
+      enable = true;
       enableSshSupport = true;
       sshKeys = [
         "${home}/.ssh/id_rsa"
