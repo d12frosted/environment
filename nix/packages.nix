@@ -7,7 +7,6 @@ in [
   ffmpeg
   fish
   fontconfig
-  gcc
   git
   git-filter-repo
   git-lfs
@@ -36,7 +35,6 @@ in [
   unzip
   wget
 ] ++ lib.optionals stdenv.isDarwin [
-  alacritty
   (emacs.override { nativeComp = false; })
   pinentry_mac
   skhd
@@ -53,7 +51,6 @@ in [
   firefox
   flameshot
   pcmanfm
-  rofi
   scrot
   slack
   tree
@@ -92,22 +89,8 @@ in [
   symbola
 ] ++ lib.optionals stdenv.isLinux [
   # work
-  file
   globalprotect-openconnect
   jetbrains.idea-ultimate
   networkmanager-openconnect
   openconnect
-  patchelf
-  pkg-config
-  steam-run
-  zoom-us
-  (
-    let
-      python-packages-global = python-packages: with python-packages; [
-        pip
-        setuptools
-        importlib-resources
-      ];
-    in python39.withPackages python-packages-global
-  )
 ]
