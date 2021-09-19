@@ -288,6 +288,13 @@ theme_guard "system" "ensure nix installation" && {
       sh <(curl https://abathur-nix-install-tests.cachix.org/serve/yihf8zbs0jwph2rs9qfh80dnilijxdi2/install) --tarball-url-prefix https://abathur-nix-install-tests.cachix.org/serve
       # sh <(curl -L https://nixos.org/nix/install) --daemon
     }
+    linux_guard && {
+      sh <(curl -L https://nixos.org/nix/install) --daemon
+      # TODO: remove once nix 2.4 lands
+      nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
+      nix-channel --update
+      nix-env -iA unstable.nixUnstable
+    }
   fi
   # TODO: remove once nix 2.4 lands
   nixos_guard && {
@@ -321,6 +328,12 @@ theme_guard "system" "build nix environment" && {
     nixos_guard && {
       sudo nixos-rebuild switch --flake .
     }
+    linux_guard && ! nixos_guard && {
+      nix build \
+        --experimental-features 'nix-command flakes' \
+        ./#homeConfigurations.borysb.activationPackage
+      ./result/activate switch
+    }
   }
 }
 
@@ -347,25 +360,29 @@ theme_guard "haskell" "ensure HLS installation" && {
   }
 }
 
-nixos_guard && {
+linux_guard && {
   theme_guard "xmonad" "Rebuild Xmonad configurations" && {
     section "Install xmonad"
     (
       cd "$XDG_CONFIG_HOME/xmonad"
 
-      echo "Build d12-xmonad"
-      nix build .#d12x:exe:d12-xmonad
-      rm "$HOME/.local/bin/d12-xmonad"
-      cp ./result/bin/d12-xmonad "$HOME/.local/bin/d12-xmonad"
-      chown "$USER" "$HOME/.local/bin/d12-xmonad"
-      chgrp wheel "$HOME/.local/bin/d12-xmonad"
+      if nixos_guard; then
+        echo "Build d12-xmonad"
+        nix build .#d12x:exe:d12-xmonad
+        rm -f "$HOME/.local/bin/d12-xmonad"
+        cp ./result/bin/d12-xmonad "$HOME/.local/bin/d12-xmonad"
+        chown "$USER" "$HOME/.local/bin/d12-xmonad"
+        chgrp wheel "$HOME/.local/bin/d12-xmonad"
 
-      echo "Build d12-xmobar"
-      nix build .#d12x:exe:d12-xmobar
-      rm "$HOME/.local/bin/d12-xmobar"
-      cp ./result/bin/d12-xmobar "$HOME/.local/bin/d12-xmobar"
-      chown "$USER" "$HOME/.local/bin/d12-xmobar"
-      chgrp wheel "$HOME/.local/bin/d12-xmobar"
+        echo "Build d12-xmobar"
+        nix build .#d12x:exe:d12-xmobar
+        rm -f "$HOME/.local/bin/d12-xmobar"
+        cp ./result/bin/d12-xmobar "$HOME/.local/bin/d12-xmobar"
+        chown "$USER" "$HOME/.local/bin/d12-xmobar"
+        chgrp wheel "$HOME/.local/bin/d12-xmobar"
+      else
+        cabal install --installdir="$HOME/.local/bin" --overwrite-policy=always
+      fi
     )
 
     section "Restart xmonad"
