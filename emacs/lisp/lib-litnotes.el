@@ -449,6 +449,7 @@ items. POS can be an integer or the symbol `:point'."
 ;;;###autoload
 (defun litnotes-status-set (&optional status)
   "Change STATUS tag of the current litnote."
+  (interactive)
   (when-let*
       ((file (buffer-file-name (buffer-base-buffer)))
        (id (vulpea-db-get-id-by-file file))
