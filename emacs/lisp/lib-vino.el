@@ -165,6 +165,114 @@
     (switch-to-buffer buffer)))
 
 ;;;###autoload
+(defun vino-rating-mark-as-posted-action (button)
+  "Mark rating note as posted in some network.
+
+BUTTON should be a proper button with following properties:
+
+- note - a `vulpea-note' object
+- network - string"
+  (let ((note (button-get button 'note))
+        (network (button-get button 'network)))
+    (vulpea-meta-set note network "true" 'append)))
+
+;;;###autoload
+(defun vino-display-network-candidates ()
+  "Display ratings for posting on various networks."
+  (interactive)
+  (let* ((name "*delectable*")
+         (buffer (buffer-generate name 'unique))
+         (notes (vulpea-db-query
+                 (lambda (note)
+                   (let ((tags (vulpea-note-tags note))
+                         (vs (seq-map (lambda (network)
+                                        (vulpea-note-meta-get note network))
+                                      '("delectable" "vivino"))))
+                     (and
+                      (seq-contains-p tags "wine")
+                      (seq-contains-p tags "rating")
+                      (seq-some (lambda (v)
+                                  (or (null v)
+                                      (not (string-equal v "true"))))
+                                vs))))))
+         (notes (seq-sort-by (lambda (note)
+                               (vulpea-note-meta-get note "date"))
+                             #'string>
+                             notes))
+         (notes (seq-take notes 36))
+         (notes (seq-sort-by (lambda (note)
+                               (vulpea-note-meta-get note "date"))
+                             #'string<
+                             notes)))
+    (emacsql-with-transaction (vino-db)
+      (with-current-buffer buffer
+        (seq-do
+         (lambda (note)
+           (let* ((rating (vino-db-get-rating (vulpea-note-id note)))
+                  (delectable (vulpea-note-meta-get note "delectable"))
+                  (delectable (or (null delectable)
+                                  (not (string-equal delectable "true"))))
+                  (vivino (vulpea-note-meta-get note "vivino"))
+                  (vivino (or (null vivino)
+                              (not (string-equal vivino "true")))))
+             (insert
+              (propertize
+               (vulpea-note-title (vino-rating-wine rating))
+               'face 'outline-1)
+              "\n\n")
+             (when (or vivino delectable)
+               (insert "Mark on "))
+             (when vivino
+               (insert-text-button
+                "Vivino"
+                'note note
+                'network "vivino"
+                'action #'vino-rating-mark-as-posted-action))
+             (when (and vivino delectable)
+               (insert " | "))
+             (when delectable
+               (insert-text-button
+                "Delectable"
+                'note note
+                'network "delectable"
+                'action #'vino-rating-mark-as-posted-action))
+             (insert
+              "\n\n"
+              "Total: "
+              (format "%05.2f" (vino-rating-total rating))
+              " / "
+              (format "%03.1f" (/ (vino-rating-total rating) 2))
+              " / "
+              (format "%i" (let* ((s5 (/ (vino-rating-total rating) 2))
+                                  (a (pcase (floor s5)
+                                       (`5 100)
+                                       (`4 90)
+                                       (`3 80)
+                                       (`2 70)
+                                       (`1 60)
+                                       (`0 50)))
+                                  (b (* 10 (- s5 (floor s5)))))
+                                 (round (+ a b))))
+              "\n\n")
+             (insert
+              (vulpea-utils-with-note note
+                (let* ((meta (vulpea-buffer-meta))
+                       (pl (plist-get meta :pl)))
+                  (buffer-substring-no-properties
+                   (org-element-property :end pl)
+                   (point-max)))))
+             (delete-char -1)
+             (call-interactively #'unfill-paragraph)
+             (insert
+              "\n\n"
+              "Tasted on " (vino-rating-date rating) "\n"
+              "\n")))
+         notes)
+        (read-only-mode)
+        (goto-char (point-min))))
+    (switch-to-buffer buffer)))
+
+;;;###autoload
 (defun vino-sources (_)
   "Get the list of vino sources."
   (inventory-sources vino-inventory-file))
