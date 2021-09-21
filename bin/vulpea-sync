@@ -1,6 +1,35 @@
 #!/usr/bin/env bash
 
-echo "Sync Vulpea files in $VULPEA_DIR"
-cd "$VULPEA_DIR" && {
-  git commit -m "[$(date '+%d/%m/%y %H:%M:%S')] sync"
+set -e
+
+function a_section() {
+  local text=">>> ${*:2}"
+  local length="${#text}"
+  echo
+	echo '┌────────────────────────────────────────────────────────────────────────────┐'
+	echo -ne "│ \033[$1m$text\033[0m"
+	printf "%$((75 - length))s│\n"
+	echo '└────────────────────────────────────────────────────────────────────────────┘'
 }
+
+function section() {
+  a_section "1;32" "$1" "${*:2}"
+}
+
+section "$(date '+%d/%m/%y %H:%M:%S')"
+
+echo "Sync Vulpea files in $VULPEA_DIR as $USER"
+cd "$VULPEA_DIR" && {
+  if git diff-index --quiet --cached HEAD --; then
+    echo "nothing to commit"
+  else
+    git commit -m "[$(date '+%d/%m/%y %H:%M:%S')] sync"
+  fi
+}
+
+echo "fetching commits..."
+git fetch origin
+echo "rebasing..."
+git rebase origin/master
+echo "pushing..."
+git push origin master
