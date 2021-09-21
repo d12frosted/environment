@@ -8,6 +8,7 @@
 
 let
   fullName       = "Boris Buliga";
+  user           = builtins.getEnv "USER";
   home           = builtins.getEnv "HOME";
   xdg_configHome = "${home}/.config";
 in {
@@ -265,6 +266,26 @@ yabai -m rule --add app="^System Preferences$" manage=off
 yabai -m rule --add app="^Cryptomator$" manage=off
 yabai -m rule --add app="^Emacs$" title!='^$' manage=on
       '';
+    };
+  };
+
+  launchd.user.agents.vulpea-sync = {
+    command = "${xdg_configHome}/bin/vulpea-sync";
+    environment = {
+      VULPEA_DIR = "${home}/Dropbox/vulpea";
+    };
+    path = [
+      pkgs.bash
+      pkgs.git
+      pkgs.git-lfs
+      pkgs.coreutils
+      pkgs.openssh
+    ];
+    serviceConfig = {
+      StartInterval = 60;
+      StandardErrorPath = "/Users/d12frosted/vulpea-sync.log";
+      StandardOutPath = "/Users/d12frosted/vulpea-sync.log";
+      RunAtLoad = true;
     };
   };
 
