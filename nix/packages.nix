@@ -9,6 +9,7 @@ in [
   fontconfig
   gcc
   git
+  git-filter-repo
   git-lfs
   gnugrep
   gnumake
