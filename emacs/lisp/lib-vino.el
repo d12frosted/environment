@@ -185,9 +185,10 @@ BUTTON should be a proper button with following properties:
          (notes (vulpea-db-query
                  (lambda (note)
                    (let ((tags (vulpea-note-tags note))
-                         (vs (seq-map (lambda (network)
-                                        (vulpea-note-meta-get note network))
-                                      '("delectable" "vivino"))))
+                         (vs (seq-map
+                              (lambda (network)
+                                (vulpea-note-meta-get note network))
+                              '("delectable" "vivino"))))
                      (and
                       (seq-contains-p tags "wine")
                       (seq-contains-p tags "rating")
@@ -209,9 +210,11 @@ BUTTON should be a proper button with following properties:
         (seq-do
          (lambda (note)
            (let* ((rating (vino-db-get-rating (vulpea-note-id note)))
-                  (delectable (vulpea-note-meta-get note "delectable"))
-                  (delectable (or (null delectable)
-                                  (not (string-equal delectable "true"))))
+                  (delectable
+                   (vulpea-note-meta-get note "delectable"))
+                  (delectable
+                   (or (null delectable)
+                       (not (string-equal delectable "true"))))
                   (vivino (vulpea-note-meta-get note "vivino"))
                   (vivino (or (null vivino)
                               (not (string-equal vivino "true")))))
@@ -243,16 +246,17 @@ BUTTON should be a proper button with following properties:
               " / "
               (format "%03.1f" (/ (vino-rating-total rating) 2))
               " / "
-              (format "%i" (let* ((s5 (/ (vino-rating-total rating) 2))
-                                  (a (pcase (floor s5)
-                                       (`5 100)
-                                       (`4 90)
-                                       (`3 80)
-                                       (`2 70)
-                                       (`1 60)
-                                       (`0 50)))
-                                  (b (* 10 (- s5 (floor s5)))))
-                                 (round (+ a b))))
+              (format "%i"
+                      (let* ((s5 (/ (vino-rating-total rating) 2))
+                             (a (pcase (floor s5)
+                                  (`5 100)
+                                  (`4 90)
+                                  (`3 80)
+                                  (`2 70)
+                                  (`1 60)
+                                  (`0 50)))
+                             (b (* 10 (- s5 (floor s5)))))
+                        (round (+ a b))))
               "\n\n")
              (insert
               (vulpea-utils-with-note note
