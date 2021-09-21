@@ -125,6 +125,46 @@
     (display-buffer buffer)))
 
 ;;;###autoload
+(defun vino-latest-ratings-display ()
+  "Display buffer with latest ratings."
+  (interactive)
+  (let* ((name "*vino ratings*")
+         (buffer (buffer-generate name 'unique))
+         (limit 100)
+         (ratings-raw (vino-db-query
+                       [:select [id wine date version values]
+                        :from ratings
+                        :order-by date :desc
+                        :limit $s1]
+                       limit))
+         (ratings (emacsql-with-transaction (vino-db)
+                    (seq-map
+                     (lambda (row)
+                       (cons (vulpea-db-get-by-id (nth 0 row))
+                             (make-vino-rating
+                              :wine (vulpea-db-get-by-id (nth 1 row))
+                              :date (nth 2 row)
+                              :version (nth 3 row)
+                              :values (nth 4 row))))
+                     ratings-raw))))
+    (with-current-buffer buffer
+      (seq-do
+       (lambda (kvp)
+         (insert
+          "["
+          (vino-rating-date (cdr kvp))
+          "] ("
+          (format "%05.2f" (vino-rating-total (cdr kvp)))
+          ") "
+          (vulpea-utils-link-make-string (car kvp))
+          "\n"))
+       ratings)
+      (org-mode)
+      (read-only-mode)
+      (goto-char (point-min)))
+    (switch-to-buffer buffer)))
+
+;;;###autoload
 (defun vino-sources (_)
   "Get the list of vino sources."
   (inventory-sources vino-inventory-file))
