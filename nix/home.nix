@@ -82,6 +82,7 @@ in {
         key = "F9EBF09436BCB50F";
         signByDefault = true;
       };
+      lfs.enable = true;
     };
 
     gpg = {
