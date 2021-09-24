@@ -312,7 +312,10 @@ Whatever that means."
               (vulpea-utils-link-make-string note)
               " - missing "
               (string-join
-               (seq-filter (lambda (p) (null (vulpea-note-meta-get note p))) props)
+               (seq-filter
+                (lambda (p)
+                  (null (vulpea-note-meta-get note p)))
+                props)
                ", ")
               "\n")))
          notes)
