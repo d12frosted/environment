@@ -182,22 +182,19 @@ BUTTON should be a proper button with following properties:
 (defun vino-display-network-candidates ()
   "Display ratings for posting on various networks."
   (interactive)
-  (let* ((name "*delectable*")
+  (let* ((networks '("delectable" "vivino"))
+         (network (completing-read "Network: " networks))
+         (name (concat "*" network "*"))
          (buffer (buffer-generate name 'unique))
          (notes (vulpea-db-query
                  (lambda (note)
                    (let ((tags (vulpea-note-tags note))
-                         (vs (seq-map
-                              (lambda (network)
-                                (vulpea-note-meta-get note network))
-                              '("delectable" "vivino"))))
+                         (v (vulpea-note-meta-get note network)))
                      (and
                       (seq-contains-p tags "wine")
                       (seq-contains-p tags "rating")
-                      (seq-some (lambda (v)
-                                  (or (null v)
-                                      (not (string-equal v "true"))))
-                                vs))))))
+                      (or (null v)
+                          (not (string-equal v "true"))))))))
          (notes (seq-sort-by (lambda (note)
                                (vulpea-note-meta-get note "date"))
                              #'string>
