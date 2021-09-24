@@ -276,6 +276,52 @@ BUTTON should be a proper button with following properties:
     (switch-to-buffer buffer)))
 
 ;;;###autoload
+(defun vino-display-incomplete-ratings ()
+  "Display a buffer listing incomplete rating notes.
+
+Whatever that means."
+  (interactive)
+  (let* ((name "*vino-incomplete*")
+         (buffer (buffer-generate name 'unique))
+         (props '("convive" "location"))
+         (limit 100)
+         (notes (vulpea-db-query
+                 (lambda (note)
+                   (let ((tags (vulpea-note-tags note))
+                         (vs (seq-map (lambda (p)
+                                        (vulpea-note-meta-get note p))
+                                      props)))
+                     (and
+                      (seq-contains-p tags "wine")
+                      (seq-contains-p tags "rating")
+                      (seq-some #'null vs))))))
+         (notes (seq-sort-by (lambda (note)
+                               (vulpea-note-meta-get note "date"))
+                             #'string>
+                             notes))
+         (notes (seq-take notes limit)))
+    (emacsql-with-transaction (vino-db)
+      (with-current-buffer buffer
+        (seq-do
+         (lambda (note)
+           (let ((rating (vino-db-get-rating (vulpea-note-id note))))
+             (insert
+              "["
+              (vino-rating-date rating)
+              "] "
+              (vulpea-utils-link-make-string note)
+              " - missing "
+              (string-join
+               (seq-filter (lambda (p) (null (vulpea-note-meta-get note p))) props)
+               ", ")
+              "\n")))
+         notes)
+        (org-mode)
+        (read-only-mode)
+        (goto-char (point-min))))
+    (switch-to-buffer buffer)))
+
+;;;###autoload
 (defun vino-sources (_)
   "Get the list of vino sources."
   (inventory-sources vino-inventory-file))
