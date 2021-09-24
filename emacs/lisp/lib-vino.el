@@ -174,7 +174,9 @@ BUTTON should be a proper button with following properties:
 - network - string"
   (let ((note (button-get button 'note))
         (network (button-get button 'network)))
-    (vulpea-meta-set note network "true" 'append)))
+    (vulpea-meta-set note network "true" 'append)
+    (vulpea-utils-with-note note
+      (save-buffer))))
 
 ;;;###autoload
 (defun vino-display-network-candidates ()
