@@ -453,7 +453,7 @@ items. POS can be an integer or the symbol `:point'."
   (when-let*
       ((file (buffer-file-name (buffer-base-buffer)))
        (id (vulpea-db-get-id-by-file file))
-       (tags (vulpea-buffer-prop-get-list "filetags"))
+       (tags (vulpea-buffer-tags-get))
        (old-status (litnotes-status-from-tag
                     (seq-find #'litnotes-status-tag-p tags)))
        (status (or status (litnotes-status-read old-status)))
