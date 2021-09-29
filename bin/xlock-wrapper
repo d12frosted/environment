@@ -4,4 +4,9 @@
 switch_kbd_layout --layout us
 
 # actually lock the screen
-physlock
+# xset s activate
+
+export XSECURELOCK_AUTH_CURSOR_BLINK=0
+export XSECURELOCK_PASSWORD_PROMPT=disco
+export XSECURELOCK_SHOW_HOSTNAME=0
+xsecurelock
