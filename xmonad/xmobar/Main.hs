@@ -58,7 +58,7 @@ config env =
             " ",
             Icon.static "\x2328" <> " %kbd%",
             " ",
-            Icon.static "\xf1eb" <> " %wlan0wi%",
+            Icon.static "\xf1eb" <> " %wlp0s20f3wi%",
             " ",
             "%battery%",
             " ",
@@ -143,7 +143,7 @@ config env =
           Run $ Kbd [],
           Run $
             Wireless
-              "wlan0"
+              "wlp0s20f3"
               [ "--template",
                 "<ssid>"
               ]
