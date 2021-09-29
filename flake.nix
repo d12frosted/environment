@@ -53,5 +53,16 @@
           }
         ];
       };
+
+      homeConfigurations.borysb = home-manager.lib.homeManagerConfiguration {
+        configuration = { pkgs, lib, config, ... }: {
+          imports = [ ./nix/home.nix ];
+          nixpkgs.config.allowUnfree = true;
+          nixpkgs.overlays = overlays;
+        };
+        system = "x86_64-linux";
+        homeDirectory = "/home/borysb";
+        username = "borysb";
+      };
     };
 }
