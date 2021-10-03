@@ -194,7 +194,8 @@ BUTTON should be a proper button with following properties:
                       (seq-contains-p tags "wine")
                       (seq-contains-p tags "rating")
                       (or (null v)
-                          (not (string-equal v "true"))))))))
+                          (string-equal v "false")))))))
+         (total (seq-length notes))
          (notes (seq-sort-by (lambda (note)
                                (vulpea-note-meta-get note "date"))
                              #'string>
@@ -213,10 +214,10 @@ BUTTON should be a proper button with following properties:
                    (vulpea-note-meta-get note "delectable"))
                   (delectable
                    (or (null delectable)
-                       (not (string-equal delectable "true"))))
+                       (string-equal delectable "false")))
                   (vivino (vulpea-note-meta-get note "vivino"))
                   (vivino (or (null vivino)
-                              (not (string-equal vivino "true")))))
+                              (string-equal vivino "false"))))
              (insert
               (propertize
                (vulpea-note-title (vino-rating-wine rating))
