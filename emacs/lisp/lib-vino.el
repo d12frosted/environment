@@ -207,6 +207,11 @@ BUTTON should be a proper button with following properties:
                              notes)))
     (emacsql-with-transaction (vino-db)
       (with-current-buffer buffer
+        (insert "Total      "
+                (number-to-string total) "\n"
+                "Displaying "
+                (number-to-string (seq-length notes)) "\n"
+                "\n")
         (seq-do
          (lambda (note)
            (let* ((rating (vino-db-get-rating (vulpea-note-id note)))
