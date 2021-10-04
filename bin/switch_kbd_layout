@@ -50,7 +50,7 @@ if [[ -z "$target_layout" ]]; then
           ;;
         esac
       else
-        target_layout=ua-custom
+        target_layout=ua
       fi
       ;;
     *)
