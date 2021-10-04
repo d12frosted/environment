@@ -1,0 +1,23 @@
+[Default Applications]
+x-scheme-handler/http=userapp-Firefox-UBGX90.desktop
+x-scheme-handler/https=userapp-Firefox-UBGX90.desktop
+x-scheme-handler/chrome=userapp-Firefox-UBGX90.desktop
+text/html=userapp-Firefox-UBGX90.desktop
+application/x-extension-htm=userapp-Firefox-UBGX90.desktop
+application/x-extension-html=userapp-Firefox-UBGX90.desktop
+application/x-extension-shtml=userapp-Firefox-UBGX90.desktop
+application/xhtml+xml=userapp-Firefox-UBGX90.desktop
+application/x-extension-xhtml=userapp-Firefox-UBGX90.desktop
+application/x-extension-xht=userapp-Firefox-UBGX90.desktop
+
+[Added Associations]
+x-scheme-handler/http=userapp-Firefox-UBGX90.desktop;
+x-scheme-handler/https=userapp-Firefox-UBGX90.desktop;
+x-scheme-handler/chrome=userapp-Firefox-UBGX90.desktop;
+text/html=userapp-Firefox-UBGX90.desktop;
+application/x-extension-htm=userapp-Firefox-UBGX90.desktop;
+application/x-extension-html=userapp-Firefox-UBGX90.desktop;
+application/x-extension-shtml=userapp-Firefox-UBGX90.desktop;
+application/xhtml+xml=userapp-Firefox-UBGX90.desktop;
+application/x-extension-xhtml=userapp-Firefox-UBGX90.desktop;
+application/x-extension-xht=userapp-Firefox-UBGX90.desktop;
