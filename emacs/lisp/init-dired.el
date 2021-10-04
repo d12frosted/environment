@@ -55,7 +55,7 @@
 (add-hook 'dired-after-readin-hook #'dired-sort-directories-first)
 
 (defun dired-sort-directories-first ()
-  "List directories first in dired buffers."
+  "List directories first in Dired buffers."
   (save-excursion
     (let (buffer-read-only)
       (forward-line 2) ;; beyond dir. header
