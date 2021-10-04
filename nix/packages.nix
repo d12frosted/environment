@@ -56,6 +56,8 @@ in [
   tree
   xdg-utils
   zip
+  pinta
+  krita
 ] ++ [
   # all things editor
   (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
