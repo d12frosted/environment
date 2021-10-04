@@ -255,4 +255,21 @@ end
       ];
     };
   };
+  # Setup Dropbox
+  systemd.user.services.dropbox = {
+    Unit.description = "Dropbox";
+    Install.WantedBy = [
+      # "graphical-session.target"
+      "default.target"
+    ];
+    Service = {
+      ExecStart = "${pkgs.dropbox.out}/bin/dropbox";
+      ExecReload = "${pkgs.coreutils.out}/bin/kill -HUP $MAINPID";
+      KillMode = "control-group"; # upstream recommends process
+      Restart = "on-failure";
+      PrivateTmp = true;
+      ProtectSystem = "full";
+      Nice = 10;
+    };
+  };
 }
