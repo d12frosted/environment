@@ -222,7 +222,8 @@ BUTTON should be a proper button with following properties:
                        (string-equal delectable "false")))
                   (vivino (vulpea-note-meta-get note "vivino"))
                   (vivino (or (null vivino)
-                              (string-equal vivino "false"))))
+                              (string-equal vivino "false")))
+                  (pos))
              (insert
               (propertize
                (vulpea-note-title (vino-rating-wine rating))
@@ -263,6 +264,7 @@ BUTTON should be a proper button with following properties:
                              (b (* 10 (- s5 (floor s5)))))
                         (round (+ a b))))
               "\n\n")
+             (setq pos (point))
              (insert
               (vulpea-utils-with-note note
                 (let* ((meta (vulpea-buffer-meta))
@@ -270,8 +272,8 @@ BUTTON should be a proper button with following properties:
                   (buffer-substring-no-properties
                    (org-element-property :end pl)
                    (point-max)))))
+             (unfill-region pos (point))
              (delete-char -1)
-             (call-interactively #'unfill-paragraph)
              (insert
               "\n\n"
               "Tasted on " (vino-rating-date rating) "\n"
