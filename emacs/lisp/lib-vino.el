@@ -248,7 +248,9 @@ BUTTON should be a proper button with following properties:
              (insert "\n")
              (insert "Go to "
                      (org-link-make-string
-                      (concat "id:" (vulpea-note-id (vino-rating-wine rating)))
+                      (concat
+                       "id:" (vulpea-note-id
+                              (vino-rating-wine rating)))
                       "Wine")
                      " | "
                      (org-link-make-string
