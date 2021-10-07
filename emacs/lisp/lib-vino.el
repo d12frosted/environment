@@ -335,5 +335,20 @@ Whatever that means."
   "Get the list of vino sources."
   (inventory-sources vino-inventory-file))
 
+;;;###autoload
+(defun vino-select-location ()
+  "Select a location."
+  (vulpea-select "Location"))
+
+;;;###autoload
+(defun vino-select-convive ()
+  "Select a convive."
+  (vulpea-select
+   "Convive"
+   :filter-fn (lambda (note)
+                (seq-contains-p
+                 (vulpea-note-tags note)
+                 "people"))))
+
 (provide 'lib-vino)
 ;;; lib-vino.el ends here
