@@ -245,8 +245,17 @@ BUTTON should be a proper button with following properties:
                 'note note
                 'network "delectable"
                 'action #'vino-rating-mark-as-posted-action))
+             (insert "\n")
+             (insert "Go to "
+                     (org-link-make-string
+                      (concat "id:" (vulpea-note-id (vino-rating-wine rating)))
+                      "Wine")
+                     " | "
+                     (org-link-make-string
+                      (concat "id:" (vulpea-note-id note))
+                      "Rating")
+                     "\n\n")
              (insert
-              "\n\n"
               "Total: "
               (format "%05.2f" (vino-rating-total rating))
               " / "
