@@ -207,6 +207,7 @@ BUTTON should be a proper button with following properties:
                              notes)))
     (emacsql-with-transaction (vino-db)
       (with-current-buffer buffer
+        (org-mode)
         (insert "Total      "
                 (number-to-string total) "\n"
                 "Displaying "
@@ -225,9 +226,8 @@ BUTTON should be a proper button with following properties:
                               (string-equal vivino "false")))
                   (pos))
              (insert
-              (propertize
-               (vulpea-note-title (vino-rating-wine rating))
-               'face 'outline-1)
+              "* "
+              (vulpea-note-title (vino-rating-wine rating))
               "\n\n")
              (when (or vivino delectable)
                (insert "Mark on "))
