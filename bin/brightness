@@ -14,8 +14,8 @@ Actions:
   level                 Show current level of brightness
   add AMMOUNT           Increase brigtness by AMMOUNT
   rem AMMOUNT           Decrease brigtness by AMMOUNT
-  inc                   Increase brigtness by 2%
-  dec                   Decrease brigtness by 2%
+  inc                   Increase brigtness by 5%
+  dec                   Decrease brigtness by 5%
 "
 }
 
@@ -23,38 +23,33 @@ Actions:
 
 file=/sys/class/backlight/intel_backlight/brightness
 max_file=/sys/class/backlight/intel_backlight/max_brightness
+level=$(cat $file)
+max_level=$(cat $max_file)
 
 case $ACTION in
   help)
     print_usage
     ;;
   level)
-    cat $file
+    echo "$level / $max_level"
     ;;
   add)
-    level=$(cat $file)
-    max_level=$(cat $max_file)
     new_level=$((level + AMMOUNT))
     new_level=$((new_level > max_level ? max_level : new_level))
     echo "$new_level" > $file
     ;;
   rem)
-    level=$(cat $file)
     new_level=$((level - AMMOUNT))
     new_level=$((new_level > 0 ? new_level : 0))
     echo "$new_level" > $file
     ;;
   inc)
-    level=$(cat $file)
-    max_level=$(cat $max_file)
-    new_level=$((level + max_level / 100))
+    new_level=$((level + 5 * max_level / 100))
     new_level=$((new_level > max_level ? max_level : new_level))
     echo "$new_level" > $file
     ;;
   dec)
-    level=$(cat $file)
-    max_level=$(cat $max_file)
-    new_level=$((level - max_level / 100))
+    new_level=$((level - 5 * max_level / 100))
     new_level=$((new_level > 0 ? new_level : 0))
     echo "$new_level" > $file
     ;;
