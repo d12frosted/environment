@@ -165,16 +165,18 @@
     (switch-to-buffer buffer)))
 
 ;;;###autoload
-(defun vino-rating-mark-as-posted-action (button)
-  "Mark rating note as posted in some network.
+(defun vino-rating-mark-network-action (button)
+  "Mark rating note with some status in some network.
 
 BUTTON should be a proper button with following properties:
 
 - note - a `vulpea-note' object
-- network - string"
+- network - string
+- status - string"
   (let ((note (button-get button 'note))
-        (network (button-get button 'network)))
-    (vulpea-meta-set note network "true" 'append)
+        (network (button-get button 'network))
+        (status (button-get button 'status)))
+    (vulpea-meta-set note network status 'append)
     (vulpea-utils-with-note note
       (save-buffer))))
 
@@ -217,38 +219,12 @@ BUTTON should be a proper button with following properties:
         (seq-do
          (lambda (note)
            (let* ((rating (vino-db-get-rating (vulpea-note-id note)))
-                  (delectable
-                   (vulpea-note-meta-get note "delectable"))
-                  (delectable
-                   (or (null delectable)
-                       (string-equal delectable "false")))
-                  (vivino (vulpea-note-meta-get note "vivino"))
-                  (vivino (or (null vivino)
-                              (string-equal vivino "false")))
                   (pos))
              (insert
               "* "
               (vulpea-note-title (vino-rating-wine rating))
               "\n\n")
-             (when (or vivino delectable)
-               (insert "Mark on "))
-             (when vivino
-               (insert-text-button
-                "Vivino"
-                'note note
-                'network "vivino"
-                'action #'vino-rating-mark-as-posted-action))
-             (when (and vivino delectable)
-               (insert " | "))
-             (when delectable
-               (insert-text-button
-                "Delectable"
-                'note note
-                'network "delectable"
-                'action #'vino-rating-mark-as-posted-action))
-             (insert "\n")
-             (insert "Go to "
-                     (org-link-make-string
+             (insert (org-link-make-string
                       (concat
                        "id:" (vulpea-note-id
                               (vino-rating-wine rating)))
@@ -258,6 +234,31 @@ BUTTON should be a proper button with following properties:
                       (concat "id:" (vulpea-note-id note))
                       "Rating")
                      "\n\n")
+             (seq-do
+              (lambda (network)
+                (let ((value (vulpea-note-meta-get note network)))
+                  (when (or (null value)
+                            (string-equal value "false"))
+                    (insert
+                     (string-pad
+                      (concat (capitalize network) ":")
+                      (+ 2 (seq-max (seq-map #'length networks)))))
+                    (insert-text-button
+                     "post"
+                     'note note
+                     'network network
+                     'status "true"
+                     'action #'vino-rating-mark-network-action)
+                    (insert " / ")
+                    (insert-text-button
+                     "skip"
+                     'note note
+                     'network network
+                     'status "skip"
+                     'action #'vino-rating-mark-network-action)
+                    (insert "\n"))))
+              networks)
+             (insert "\n")
              (insert
               "Total: "
               (format "%05.2f" (vino-rating-total rating))
