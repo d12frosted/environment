@@ -208,10 +208,11 @@ BUTTON should be a proper button with following properties:
     (emacsql-with-transaction (vino-db)
       (with-current-buffer buffer
         (org-mode)
-        (insert "Total      "
-                (number-to-string total) "\n"
-                "Displaying "
-                (number-to-string (seq-length notes)) "\n"
+        (insert "Showing "
+                (number-to-string (seq-length notes))
+                " ratings out of "
+                (number-to-string total)
+                "\n"
                 "\n")
         (seq-do
          (lambda (note)
