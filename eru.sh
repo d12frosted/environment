@@ -397,7 +397,9 @@ linux_guard && {
 
 theme_guard "Emacs" "setup Eldev" && {
   eldev_bin=$HOME/.local/bin/eldev
-  curl -fsSL https://raw.github.com/doublep/eldev/master/bin/eldev > "$eldev_bin"
+  if [ ! -f "$eldev_bin" ]; then
+    curl -fsSL https://raw.github.com/doublep/eldev/master/bin/eldev > "$eldev_bin"
+  fi
   chmod a+x "$eldev_bin"
 }
 
