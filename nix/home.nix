@@ -28,6 +28,7 @@ in {
       XDG_CONFIG_HOME       = config.xdg.configHome;
       XDG_DATA_HOME         = config.xdg.dataHome;
       BUDGET_DIR            = "${home}/Dropbox/budget";
+      VULPEA_DIR            = "${home}/Dropbox/vulpea";
       QT_XCB_GL_INTEGRATION = "none";
     };
     sessionPath = [];
