@@ -188,15 +188,13 @@ BUTTON should be a proper button with following properties:
          (network (completing-read "Network: " networks))
          (name (concat "*" network "*"))
          (buffer (buffer-generate name 'unique))
-         (notes (vulpea-db-query
+         (notes (vulpea-db-query-by-tags-every '("wine" "rating")))
+         (notes (seq-filter
                  (lambda (note)
-                   (let ((tags (vulpea-note-tags note))
-                         (v (vulpea-note-meta-get note network)))
-                     (and
-                      (seq-contains-p tags "wine")
-                      (seq-contains-p tags "rating")
-                      (or (null v)
-                          (string-equal v "false")))))))
+                   (let ((v (vulpea-note-meta-get note network)))
+                     (or (null v)
+                         (string-equal v "false"))))
+                 notes))
          (total (seq-length notes))
          (notes (seq-sort-by (lambda (note)
                                (vulpea-note-meta-get note "date"))
