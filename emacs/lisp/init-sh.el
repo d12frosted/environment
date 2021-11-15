@@ -1,11 +1,9 @@
 ;;; init-sh.el --- Shell support -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2015-2021
+;; Copyright (c) 2015-2021, Boris Buliga <boris@d12frosted.io>
 ;;
-;; Author:  <d12frosted@borysb-arch>
-;; Maintainer:  <d12frosted@borysb-arch>
-;; Version: 0.1
-;; Package-Requires: ((emacs "27.2"))
+;; Author: Boris Buliga <boris@d12frosted.io>
+;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Created: 16 Feb 2021
 ;;

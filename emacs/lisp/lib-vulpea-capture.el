@@ -1,11 +1,9 @@
 ;;; lib-vulpea-capture.el --- Capturing tasks and notes -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2015-2021 Boris Buliga
+;; Copyright (c) 2015-2021, Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
-;; Version: 0.1
-;; Package-Requires: ((emacs "27.2"))
 ;;
 ;; Created: 11 Feb 2021
 ;;

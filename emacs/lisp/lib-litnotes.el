@@ -1,11 +1,9 @@
 ;;; lib-litnotes.el --- Utilities for working with litnotes -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2015-2021 Boris Buliga
+;; Copyright (c) 2015-2021, Boris Buliga <boris@d12frosted.io>
 ;;
-;; Author: Boris Buliga <d12frosted@d12frosted.io>
-;; Maintainer: Boris Buliga <d12frosted@d12frosted.io>
-;; Version: 0.1
-;; Package-Requires: ((emacs "27.2"))
+;; Author: Boris Buliga <boris@d12frosted.io>
+;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Created: 27 May 2021
 ;;

@@ -1,11 +1,9 @@
 ;;; lib-compat.el --- Compatibility utilities -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2015-2021
+;; Copyright (c) 2015-2021, Boris Buliga <boris@d12frosted.io>
 ;;
-;; Author:  <d12frosted@borysb-arch>
-;; Maintainer:  <d12frosted@borysb-arch>
-;; Version: 0.1
-;; Package-Requires: ((emacs "27.2"))
+;; Author: Boris Buliga <boris@d12frosted.io>
+;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Created: 16 Feb 2021
 ;;
@@ -36,26 +34,6 @@
 ;; This module defines missing bits.
 ;;
 ;;; Code:
-
-(when (> emacs-major-version 28)
-  (error "Redundant compat function: dlet"))
-
-;;;###autoload
-(defmacro dlet (binders &rest body)
-  "Like `let*' but using dynamic scoping.
-
-Dynamically bind the BINDERS and evaluate the BODY."
-  (declare (indent 1) (debug let))
-  ;; (defvar FOO) only affects the current scope, but in order for
-  ;; this not to affect code after the `let*' we need to create a new
-  ;; scope, which is what the surrounding `let' is for.
-  ;; FIXME: (let () ...) currently doesn't actually create a new
-  ;; scope, which is why we use (let (_) ...).
-  `(let (_)
-     ,@(mapcar (lambda (binder)
-                 `(defvar ,(if (consp binder) (car binder) binder)))
-               binders)
-     (let* ,binders ,@body)))
 
 ;;;###autoload
 (defun cl--plist-remove (plist member)

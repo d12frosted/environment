@@ -1,11 +1,9 @@
 ;;; lib-vulpea-agenda.el --- Utilities for building agenda -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2015-2021 Boris Buliga
+;; Copyright (c) 2015-2021, Boris Buliga <boris@d12frosted.io>
 ;;
-;; Author: Boris Buliga <d12frosted@d12frosted.local>
-;; Maintainer: Boris Buliga <d12frosted@d12frosted.local>
-;; Version: 0.1
-;; Package-Requires: ((emacs "27.2"))
+;; Author: Boris Buliga <boris@d12frosted.io>
+;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Created: 12 Feb 2021
 ;;
@@ -283,7 +281,7 @@ Callers of this function already widen the buffer view."
         (forward-line 1)
         (while (and (not has-subtask)
                     (< (point) subtree-end)
-                    (re-search-forward "^\*+ " subtree-end t))
+                    (re-search-forward "^\\*+ " subtree-end t))
           (when (member (org-get-todo-state) org-todo-keywords-1)
             (setq has-subtask t))))
       (and is-a-task (not has-subtask)))))
