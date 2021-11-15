@@ -26,6 +26,7 @@ in [
   ncdu
   openssh
   openssl
+  pandoc
   python39Packages.pygments
   ripgrep
   rsync
