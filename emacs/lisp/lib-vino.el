@@ -291,6 +291,7 @@ BUTTON should be a proper button with following properties:
               "\n")))
          notes)
         (read-only-mode)
+        (visual-line-mode)
         (goto-char (point-min))))
     (switch-to-buffer buffer)))
 
