@@ -184,6 +184,8 @@ if test "$TERM" = linux
   set -g hydro_symbol_prompt ">"
 end
 
+set -x GHCUP_USE_XDG_DIRS 1
+
 # done configurations
 set -g __done_notification_command 'notify send -t "$title" -m "$message"'
 set -g __done_enabled 1
