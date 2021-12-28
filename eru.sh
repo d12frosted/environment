@@ -322,6 +322,14 @@ theme_guard "system" "make Eru more approachable" && {
   "$XDG_CONFIG_HOME/bin/safe_link" "$XDG_CONFIG_HOME/eru.sh" "$HOME/.local/bin/eru"
 }
 
+theme_guard "system" "Fix gnupg" && {
+  # make sure that I am the owner
+  chown -R "$(whoami)" ~/.gnupg/
+  # correct permissions
+  find ~/.gnupg -type f -exec chmod 600 {} \;
+  find ~/.gnupg -type d -exec chmod 700 {} \;
+}
+
 export GHCUP_USE_XDG_DIRS=1
 theme_guard "haskell" "ensure ghcup installation" && {
   check ghcup || {
