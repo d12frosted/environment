@@ -283,27 +283,8 @@ theme_guard "system" "ensure nix installation" && {
     echo "Nothing to do"
   else
     section "install nix"
-    macos_guard && {
-      # TODO: remove once nix 2.4 lands
-      sh <(curl https://abathur-nix-install-tests.cachix.org/serve/yihf8zbs0jwph2rs9qfh80dnilijxdi2/install) --tarball-url-prefix https://abathur-nix-install-tests.cachix.org/serve
-      # sh <(curl -L https://nixos.org/nix/install) --daemon
-    }
-    linux_guard && {
-      sh <(curl -L https://nixos.org/nix/install) --daemon
-      # TODO: remove once nix 2.4 lands
-      nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
-      nix-channel --update
-      nix-env -iA unstable.nixUnstable
-    }
+    sh <(curl -L https://nixos.org/nix/install) --daemon
   fi
-  # TODO: remove once nix 2.4 lands
-  nixos_guard && {
-    if [ -z "$(nix-channel --list)" ]; then
-      nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
-      nix-channel --update
-      nix-env -iA unstable.nixUnstable
-    fi
-  }
 }
 
 upgrade_guard && {
