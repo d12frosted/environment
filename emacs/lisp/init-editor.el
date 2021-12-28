@@ -102,6 +102,13 @@
 (setq make-backup-files nil)
 
 
+;; Long lines
+
+(use-package visual-fill-column
+  :hook ((visual-line-mode . visual-fill-column-mode)))
+
+(use-package adaptive-wrap
+  :defer t)
 
 (use-package unfill
   :commands (unfill-toggle)

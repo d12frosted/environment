@@ -82,7 +82,8 @@
 
 
 (use-package org
-  :hook ((org-mode . auto-fill-mode)
+  :hook ((org-mode . visual-line-mode)
+         (org-mode . adaptive-wrap-prefix-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
   :commands (org-check-agenda-file
@@ -104,8 +105,7 @@
    org-image-actual-width '(512)
    org-imenu-depth 1
    org-pretty-entities nil
-   org-startup-folded t
-   org-startup-indented t)
+   org-startup-folded t)
 
   ;; do not allow invisible edits (...)
   (setq org-catch-invisible-edits 'error)
@@ -196,14 +196,6 @@
    org-refile-use-outline-path t
    org-refile-allow-creating-parent-nodes nil
    org-refile-target-verify-function #'vulpea-refile-verify-target))
-
-
-
-(use-package org-indent
-  :straight nil
-  :defer t
-  :diminish org-indent-mode
-  :hook ((org-mode . org-indent-mode)))
 
 
 
