@@ -364,7 +364,6 @@
               :html-scale 1.0
               :matchers '("begin" "$1" "$" "$$" "\\(" "\\[")))
   (setq org-latex-listings 'minted)
-  (setq org-latex-inputenc-alist '(("utf8" . "utf8x")))
   (setq org-latex-pdf-process
         (seq-map
          (lambda (_)
@@ -382,6 +381,8 @@
   (add-to-list
    'org-beamer-environments-extra
    '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}")))
+
+
 
 (use-package ob-plantuml
   :straight nil
