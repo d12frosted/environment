@@ -66,12 +66,9 @@ Affects the following commands:
 (defun vulpea-agenda-person ()
   "Show main `org-agenda' view."
   (interactive)
-  (let* ((person (vulpea-select
+  (let* ((person (vulpea-select-from
                   "Person"
-                  :filter-fn
-                  (lambda (note)
-                    (seq-contains-p (vulpea-note-tags note)
-                                    "people"))))
+                  (vulpea-db-query-by-tags-some '("people"))))
          (node (org-roam-node-from-id (vulpea-note-id person)))
          (names (cons (org-roam-node-title node)
                       (org-roam-node-aliases node)))

@@ -133,12 +133,9 @@ It is relative to `vulpea-directory', unless it is absolute.")
 
 (defun vulpea-capture-meeting-template ()
   "Return a template for a meeting capture."
-  (let ((person (vulpea-select
+  (let ((person (vulpea-select-from
                  "Person"
-                 :filter-fn
-                 (lambda (note)
-                   (let ((tags (vulpea-note-tags note)))
-                     (seq-contains-p tags "people"))))))
+                 (vulpea-db-query-by-tags-every '("people")))))
     (org-capture-put :meeting-person person)
     (if (vulpea-note-id person)
         "* MEETING [%<%Y-%m-%d %a>] :REFILE:MEETING:\n%U\n\n%?"
@@ -165,12 +162,9 @@ Authors can be created on the fly. See
        (people (fun-collect-while
                 (lambda ()
                   (let ((person
-                         (vulpea-select
+                         (vulpea-select-from
                           "Person"
-                          :filter-fn
-                          (lambda (note)
-                            (let ((tags (vulpea-note-tags note)))
-                              (seq-contains-p tags "people"))))))
+                          (vulpea-db-query-by-tags-every '("people")))))
                     (if (vulpea-note-id person)
                         person
                       (vulpea-create
