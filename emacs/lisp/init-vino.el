@@ -154,7 +154,10 @@
                             :name "convive"
                             :read-fn #'vino-select-convive
                             :mode 'multiple
-                            :type 'note))))
+                            :type 'note))
+   bg-ledger-file (expand-file-name "barberry-garden.journal"
+                                         vulpea-directory)
+   bg-currency "UAH"))
 
 (provide 'init-vino)
 ;;; init-vino.el ends here
