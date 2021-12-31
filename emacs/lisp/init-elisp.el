@@ -48,8 +48,8 @@
 (use-package flycheck-eldev
   :after flycheck)
 
-(use-package form-feed
-  :hook ((emacs-lisp-mode . form-feed-mode)))
+(use-package page-break-lines
+  :hook ((emacs-lisp-mode . page-break-lines-mode)))
 
 (use-package emacsql
   :defer t
