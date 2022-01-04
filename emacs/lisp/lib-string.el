@@ -93,5 +93,64 @@ buffer."
    "\\)")
   "UUID regexp.")
 
+(defun string-from (value)
+  "Convert VALUE to string."
+  (cond
+   ((stringp value) value)
+   ((numberp value) (number-to-string value))
+   ((symbolp value) (symbol-name value))
+   (t (user-error
+       "Unsupported type of \"%s\"" value))))
+
+(cl-defun string-table (&key data
+                             pad-type
+                             pad-str
+                             sep
+                             row-start
+                             row-end)
+  "Format DATA as a table.
+
+DATA is list of lists. Each column is aligned by padding with
+PAD-STR either on left or right depending on value of PAD-TYPE.
+
+Each row begins with ROW-START and ends with ROW-END. Each value
+in row is separated by SEP."
+  (let* ((widths (seq-reduce
+                  (lambda (r v)
+                    (seq-map-indexed
+                     (lambda (a i)
+                       (max
+                        (length (string-from a))
+                        (or (nth i r)
+                            0)))
+                     v))
+                  data
+                  nil))
+         (pad-fn (pcase (or pad-type 'left)
+                   (`left #'s-pad-left)
+                   (`right #'s-pad-right)))
+         (pad-str (or pad-str " "))
+         (row-start (or row-start ""))
+         (row-end (or row-end ""))
+         (sep (or sep " ")))
+    (seq-reduce
+     (lambda (r v)
+       (concat
+        r
+        row-start
+        (string-join
+         (seq-map-indexed
+          (lambda (a i)
+            (funcall pad-fn
+                     (nth i widths)
+                     pad-str
+                     (string-from a)))
+          v)
+         sep)
+        row-end
+        "\n"))
+     data
+     "")))
+
 (provide 'lib-string)
 ;;; lib-string.el ends here
