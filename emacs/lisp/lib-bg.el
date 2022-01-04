@@ -135,26 +135,6 @@ Transaction is recorded into `bg-ledger-file'."
   amount
   total)
 
-(defun bg-balance-data-max-convive-length (data)
-  "Calculate the length of the longest convive name in DATA."
-  (seq-max
-   (seq-map
-    #'length
-    (seq-map #'vulpea-note-title
-             (bg-balance-data-convives data)))))
-
-(defun bg-balance-data-max-balance-length (data)
-  "Calculate the length of the longest balance amount in DATA."
-  (seq-max
-   (cons (+ 1
-            (length (number-to-string
-                     (bg-balance-data-total data)))
-            (length bg-currency))
-         (seq-map
-          #'length
-          (seq-map #'cdr
-                   (bg-balance-data-balances data))))))
-
 (defun bg-balance-data-read ()
   "Read balance data from `bg-ledger-file'."
   (let* ((prefix "balance:")
@@ -215,64 +195,46 @@ Transaction is recorded into `bg-ledger-file'."
   "Display Barberry Garden balance."
   (interactive)
   (let* ((data (bg-balance-data-read))
-         (name-max-length (+ 2 (bg-balance-data-max-convive-length data)))
-         (balance-max-length (+ 1
-                                (seq-max
-                                 (seq-map
-                                  #'length
-                                  (seq-map
-                                   #'number-to-string
-                                   (cons
-                                    (bg-balance-data-total data)
-                                    (seq-map #'cdr (bg-balance-data-balances data))))))
-                                (length bg-currency)))
          (name "*Barberry Garden Balance*")
          (buffer (buffer-generate name 'unique)))
     (with-current-buffer buffer
       (insert
-       (bg-balance--format-row
-        :item (propertize "Total" 'face 'bold)
-        :item-width name-max-length
-        :value (bg-balance-data-total data)
-        :value-width balance-max-length)
-       "\n\n")
-      (seq-each
-       (lambda (acc)
-         (insert
-          (bg-balance--format-row
-           :item (concat "- " (vulpea-note-title acc))
-           :item-width name-max-length
-           :value (or (assoc-default (vulpea-note-id acc)
-                                     (bg-balance-data-balances data))
-                      0)
-           :value-width balance-max-length)
-          "\n"))
-       (bg-balance-data-convives data))
-      (insert "\n"
-              (propertize "Latest transactions" 'face 'bold)
-              "\n\n")
-      (seq-each
-       (lambda (p)
-         (let* ((lp (concat
-                     "- "
-                     (propertize
-                      (bg-posting-date p)
-                      'face 'shadow)
-                     ": "
-                     (if (vulpea-note-p (bg-posting-account p))
-                         (vulpea-note-title (bg-posting-account p))
-                       (bg-posting-description p))))
-                (rp (concat
-                     (bg-balance--format-amount (bg-posting-amount p))
-                     " -> "
-                     (bg-balance--format-amount (bg-posting-total p))))
-                (len 60))
-           (insert lp
-                   " "
-                   (s-pad-left (- len (length lp)) " " rp)
-                   "\n")))
-       (seq-reverse
-        (bg-balance-data-postings data)))
+       (propertize "Balance" 'face 'bold)
+       "\n\n"
+       (string-table
+        :data
+        (cons
+         (list "Total"
+               (bg-balance--format-amount (bg-balance-data-total data)))
+         (seq-map
+          (lambda (acc)
+            (list
+             (vulpea-note-title acc)
+             (bg-balance--format-amount
+              (or (assoc-default (vulpea-note-id acc)
+                                 (bg-balance-data-balances data))
+                  0))))
+          (bg-balance-data-convives data)))
+        :row-start "- "
+        :sep "  ")
+       "\n"
+       (propertize "Latest transactions" 'face 'bold)
+       "\n\n"
+       (string-table
+        :data (seq-map
+               (lambda (p)
+                 (list
+                  (propertize (bg-posting-date p) 'face 'shadow)
+                  (if (vulpea-note-p (bg-posting-account p))
+                      (vulpea-note-title (bg-posting-account p))
+                    (bg-posting-description p))
+                  (bg-balance--format-amount (bg-posting-amount p))
+                  "->"
+                  (bg-balance--format-amount (bg-posting-total p))))
+               (seq-reverse
+                (bg-balance-data-postings data)))
+        :row-start "- "
+        :sep "  "))
       (read-only-mode))
     (switch-to-buffer buffer)))
 
@@ -282,18 +244,6 @@ Transaction is recorded into `bg-ledger-file'."
     (if (>= amount 0)
         (propertize value 'face 'success)
       (propertize value 'face 'error))))
-
-(cl-defun bg-balance--format-row (&key item
-                                       item-width
-                                       value
-                                       value-width)
-  "Format ITEM balance represented as VALUE.
-
-ITEM-WIDTH and VALUE-WIDTH are used to pad ITEM on the right and
-VALUE on the left respectively."
-  (concat
-   (s-pad-right (+ item-width 2) " " (concat item ": "))
-   (s-pad-left value-width " " (bg-balance--format-amount value))))
 
 
 
