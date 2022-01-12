@@ -213,7 +213,9 @@ Transaction is recorded into `bg-ledger-file'."
              (bg-balance--format-amount
               (or (assoc-default (vulpea-note-id acc)
                                  (bg-balance-data-balances data))
-                  0))))
+                  0)
+              :positive-face 'warning
+              :zero-face 'success)))
           (bg-balance-data-convives data)))
         :row-start "- "
         :sep "  ")
@@ -238,12 +240,23 @@ Transaction is recorded into `bg-ledger-file'."
       (read-only-mode))
     (switch-to-buffer buffer)))
 
-(defun bg-balance--format-amount (amount)
-  "Format balance represented as AMOUNT."
-  (let* ((value (concat (number-to-string amount) " " bg-currency)))
-    (if (>= amount 0)
-        (propertize value 'face 'success)
-      (propertize value 'face 'error))))
+(cl-defun bg-balance--format-amount (amount
+                                     &key
+                                     positive-face
+                                     zero-face
+                                     negative-face)
+  "Format balance represented as AMOUNT.
+
+Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
+  (let* ((value (concat (number-to-string amount) " " bg-currency))
+         (face (cond
+                ((> amount 0)
+                 (or positive-face 'success))
+                ((< amount 0)
+                 (or negative-face 'error))
+                (t
+                 (or zero-face 'warning)))))
+    (propertize value 'face face)))
 
 
 
