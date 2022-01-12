@@ -234,7 +234,10 @@ Transaction is recorded into `bg-ledger-file'."
                   "->"
                   (bg-balance--format-amount (bg-posting-total p))))
                (seq-reverse
-                (bg-balance-data-postings data)))
+                (seq-remove
+                 (lambda (p)
+                   (string-equal "charge" (bg-posting-description p)))
+                 (bg-balance-data-postings data))))
         :row-start "- "
         :sep "  "))
       (read-only-mode))
