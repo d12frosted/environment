@@ -43,6 +43,9 @@
 (defvar bg-currency nil
   "Currency used in Barberry Garden.")
 
+(defvar bg-balance-buffer-name "*Barberry Garden Balance*"
+  "Name of balance buffer.")
+
 
 
 (cl-defun bg-record-txn (&key date comment account-to account-from amount)
@@ -87,7 +90,8 @@ Transaction is recorded into `bg-ledger-file'."
      :comment "deposit"
      :account-to (concat "balance:" (vulpea-note-id convive))
      :account-from (concat "convive:" (vulpea-note-id convive))
-     :amount amount)))
+     :amount amount)
+    (bg-balance-buffer-refresh-maybe)))
 
 ;;;###autoload
 (defun bg-balance-charge ()
@@ -190,14 +194,21 @@ Transaction is recorded into `bg-ledger-file'."
      :balances balances
      :postings postings)))
 
-;;;###autoload
-(defun bg-balance-display ()
-  "Display Barberry Garden balance."
-  (interactive)
+(defun bg-balance-buffer-refresh-maybe ()
+  "Refresh balance buffer if it exists."
+  (when-let ((buffer (get-buffer bg-balance-buffer-name)))
+    (bg-balance-buffer-create)))
+
+(defun bg-balance-buffer-create ()
+  "Create balance buffer and fill it with relevant information.
+
+Return generated buffer."
   (let* ((data (bg-balance-data-read))
-         (name "*Barberry Garden Balance*")
-         (buffer (buffer-generate name 'unique)))
+         (buffer (or (get-buffer bg-balance-buffer-name)
+                     (generate-new-buffer bg-balance-buffer-name))))
     (with-current-buffer buffer
+      (read-only-mode -1)
+      (erase-buffer)
       (insert
        (propertize "Balance" 'face 'bold)
        "\n\n"
@@ -240,7 +251,14 @@ Transaction is recorded into `bg-ledger-file'."
                  (bg-balance-data-postings data))))
         :row-start "- "
         :sep "  "))
-      (read-only-mode))
+      (read-only-mode 1))
+    buffer))
+
+;;;###autoload
+(defun bg-balance-display ()
+  "Display Barberry Garden balance."
+  (interactive)
+  (let ((buffer (bg-balance-buffer-create)))
     (switch-to-buffer buffer)))
 
 (cl-defun bg-balance--format-amount (amount
