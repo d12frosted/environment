@@ -57,8 +57,7 @@ Empty list means no id assignment is needed.")
 
 Targets are defined by `vulpea-id-auto-targets'."
   (when (and vulpea-id-auto-targets
-             (or (eq major-mode 'org-mode)
-                 (eq major-mode 'org-journal-mode))
+             (derived-mode-p 'org-mode)
              (eq buffer-read-only nil))
     (save-excursion
       (widen)
