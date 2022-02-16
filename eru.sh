@@ -387,9 +387,10 @@ linux_guard && {
 theme_guard "Emacs" "setup Eldev" && {
   eldev_bin=$HOME/.local/bin/eldev
   if [ ! -f "$eldev_bin" ]; then
-    curl -fsSL https://raw.github.com/doublep/eldev/master/bin/eldev > "$eldev_bin"
+    curl -fsSL https://raw.github.com/doublep/eldev/0.10.3/bin/eldev > "$eldev_bin"
   fi
   chmod a+x "$eldev_bin"
+  eldev --version
 }
 
 install_guard && {
