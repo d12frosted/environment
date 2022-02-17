@@ -45,20 +45,26 @@ in [
   youtube-dl
   qutebrowser
 ] ++ lib.optionals stdenv.isLinux [
-  traceroute
+  chrony
+  dbeaver
   dropbox-cli
   emacsGit
+  entr
   feh
   firefox
   flameshot
+  graphviz
+  jd-gui
+  krita
   pcmanfm
+  pinta
+  scala
   scrot
   slack
+  traceroute
   tree
   xdg-utils
   zip
-  pinta
-  krita
 ] ++ [
   # all things editor
   (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
