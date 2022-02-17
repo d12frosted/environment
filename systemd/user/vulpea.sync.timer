@@ -1,9 +1,0 @@
-[Unit]
-Description=Sync Vulpea files
-
-[Timer]
-OnCalendar=*-*-* *:0,10,20,30,40,50:0
-Persistent=true
-
-[Install]
-WantedBy=timers.target
