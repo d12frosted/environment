@@ -98,6 +98,26 @@ is not present."
       (forward-line))))
 
 ;;;###autoload
+(defun buffer-lines-transform (buffer-or-name fn)
+  "Call FN on each line of BUFFER-OR-NAME.
+
+Line is replaced with result of calling FN.
+
+Each line is a string with properties. Trailing newline character
+is not present."
+  (declare (indent 1))
+  (with-current-buffer buffer-or-name
+    (goto-char (point-min))
+    (while (not (eobp))
+      (let* ((pos0 (line-beginning-position))
+             (pos1 (line-end-position))
+             (line (buffer-substring pos0 pos1))
+             (result (funcall fn line)))
+        (kill-region pos0 pos1)
+        (insert result))
+      (forward-line))))
+
+;;;###autoload
 (defun buffer-lines-each-t (buffer-or-name fn)
   "Call FN on each line of BUFFER-OR-NAME and replace it by result.
 
