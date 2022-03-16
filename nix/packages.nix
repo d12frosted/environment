@@ -47,6 +47,7 @@ in [
 ] ++ lib.optionals stdenv.isLinux [
   chrony
   dbeaver
+  docker
   dropbox-cli
   emacsGit
   entr
@@ -54,8 +55,11 @@ in [
   firefox
   flameshot
   graphviz
+  htop
+  inxi
   jd-gui
   krita
+  mysql80
   pcmanfm
   pinta
   scala
