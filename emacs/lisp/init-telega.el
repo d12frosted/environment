@@ -46,6 +46,7 @@
              :files (:defaults "contrib" "etc" "server" "Makefile"))
   :defer t
   :hook ((telega-chat-mode . ui-reset-line-spacing)
+         (telega-webpage-mode . ui-reset-line-spacing)
          (telega-chat-mode . editor-disable-electric-pair))
   :general
   (leader-def
