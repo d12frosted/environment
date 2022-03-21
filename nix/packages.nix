@@ -3,6 +3,7 @@
 with pkgs;
 let exe = haskell.lib.justStaticExecutables;
 in [
+  brave
   coreutils
   ffmpeg
   fish
@@ -28,6 +29,7 @@ in [
   openssl
   pandoc
   python39Packages.pygments
+  ranger
   ripgrep
   rsync
   sqlite
