@@ -173,7 +173,10 @@
   (defun package-lint--check-eval-after-load ()
     "Do nothing.")
   (defun package-lint--check-autoloads-on-private-functions (&rest _)
-    "Do nothing."))
+    "Do nothing.")
+
+  (defun package-lint--check-emacs-version (_)
+    "Do nothing"))
 
 ;; Teach linter how to properly indent emacsql vectors.
 (eldev-add-extra-dependencies 'lint 'emacsql)
