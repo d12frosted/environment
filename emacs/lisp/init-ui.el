@@ -106,11 +106,16 @@
   :init
   (setq-default
    modus-themes-diffs 'desaturated
-   modus-themes-headings '((t . section))
+   modus-themes-headings '((1 . (background overline))
+                           (2 . (background overline))
+                           (3 . (background overline))
+                           (t . (monochrome)))
    modus-themes-bold-constructs t
-   modus-themes-syntax 'faint
-   modus-themes-prompts 'subtle
-   modus-themes-completions 'opionated)
+   modus-themes-syntax '(faint)
+   modus-themes-prompts nil
+   modus-themes-completions '((matches . (semibold background intense))
+                              (selection . (accented intense))
+                              (popup . (accented))))
   (load-theme 'modus-operandi t))
 
 (use-package flycheck-color-mode-line
