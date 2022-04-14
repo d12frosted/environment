@@ -115,7 +115,12 @@ PAD-STR either on left or right depending on value of PAD-TYPE.
 
 Each row begins with ROW-START and ends with ROW-END. Each value
 in row is separated by SEP."
-  (let* ((widths (seq-reduce
+  (let* ((n (seq-reduce
+             (lambda (r v)
+               (min r (seq-length v)))
+             data
+             (seq-length (car data))))
+         (widths (seq-reduce
                   (lambda (r v)
                     (seq-map-indexed
                      (lambda (a i)
@@ -126,9 +131,16 @@ in row is separated by SEP."
                      v))
                   data
                   nil))
-         (pad-fn (pcase (or pad-type 'left)
-                   (`left #'s-pad-left)
-                   (`right #'s-pad-right)))
+         (pad-fns (seq-map
+                   (lambda (i)
+                     (pcase (or (and pad-type
+                                     (listp pad-type)
+                                     (nth i pad-type))
+                                pad-type
+                                'left)
+                       (`left #'s-pad-left)
+                       (`right #'s-pad-right)))
+                   (-iota n)))
          (pad-str (or pad-str " "))
          (row-start (or row-start ""))
          (row-end (or row-end ""))
@@ -141,11 +153,11 @@ in row is separated by SEP."
         (string-join
          (seq-map-indexed
           (lambda (a i)
-            (funcall pad-fn
+            (funcall (nth i pad-fns)
                      (nth i widths)
                      pad-str
                      (string-from a)))
-          v)
+          (seq-take v n))
          sep)
         row-end
         "\n"))
