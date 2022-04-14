@@ -204,8 +204,7 @@ Transaction is recorded into `bg-ledger-file'."
 
 Return generated buffer."
   (let* ((data (bg-balance-data-read))
-         (buffer (or (get-buffer bg-balance-buffer-name)
-                     (generate-new-buffer bg-balance-buffer-name))))
+         (buffer (buffer-generate bg-balance-buffer-name 'unique)))
     (with-current-buffer buffer
       (read-only-mode -1)
       (erase-buffer)
