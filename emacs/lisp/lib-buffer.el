@@ -148,5 +148,39 @@ See ‘get-buffer-create’ for the meaning of INHIBIT-BUFFER-HOOKS."
       (kill-buffer buffer)))
   (generate-new-buffer name inhibit-buffer-hooks))
 
+;;;###autoload
+(defun buffer-display-result-with (name &rest lines)
+  "Generate and switch to a buffer with NAME and fill it with LINES."
+  (declare (indent 1))
+  (let ((buffer (apply #'buffer-generate-result-with name lines)))
+    (switch-to-buffer buffer)))
+
+;;;###autoload
+(defun buffer-generate-result-with (name &rest lines)
+  "Generate a unique buffer with NAME and fill it with LINES.
+
+Return generated buffer."
+  (declare (indent 1))
+  (let ((buffer (buffer-generate name 'unique)))
+    (with-current-buffer buffer
+      (insert
+       (string-join lines "\n"))
+      (result-present-mode))
+    buffer))
+
+;;;###autoload
+(define-minor-mode result-present-mode
+  "Local minor mode for presenting results.
+
+Basically, a `read-only-mode' with some goodies."
+  :global nil
+  :init-value nil
+  (let ((enabled result-present-mode))
+    (cond
+     (enabled
+      (read-only-mode +1))
+     (t
+      (read-only-mode -1)))))
+
 (provide 'lib-buffer)
 ;;; lib-buffer.el ends here

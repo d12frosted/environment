@@ -203,15 +203,11 @@ Transaction is recorded into `bg-ledger-file'."
   "Create balance buffer and fill it with relevant information.
 
 Return generated buffer."
-  (let* ((data (bg-balance-data-read))
-         (buffer (buffer-generate bg-balance-buffer-name 'unique)))
-    (with-current-buffer buffer
-      (read-only-mode -1)
-      (erase-buffer)
-      (insert
-       (propertize "Balance" 'face 'bold)
-       "\n\n"
-       (string-table
+  (let ((data (bg-balance-data-read)))
+    (buffer-generate-result-with bg-balance-buffer-name
+      (propertize "Balance" 'face 'bold)
+      ""
+      (string-table
         :data
         (cons
          (list "Total"
@@ -229,9 +225,8 @@ Return generated buffer."
           (bg-balance-data-convives data)))
         :row-start "- "
         :sep "  ")
-       "\n"
        (propertize "Latest transactions" 'face 'bold)
-       "\n\n"
+       ""
        (string-table
         :data (seq-map
                (lambda (p)
@@ -249,9 +244,7 @@ Return generated buffer."
                    (string-equal "charge" (bg-posting-description p)))
                  (bg-balance-data-postings data))))
         :row-start "- "
-        :sep "  "))
-      (read-only-mode 1))
-    buffer))
+        :sep "  "))))
 
 ;;;###autoload
 (defun bg-balance-display ()
