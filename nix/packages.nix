@@ -3,7 +3,6 @@
 with pkgs;
 let exe = haskell.lib.justStaticExecutables;
 in [
-  brave
   coreutils
   ffmpeg
   fish
@@ -42,10 +41,9 @@ in [
   pinentry_mac
   skhd
   terminal-notifier
-  xquartz
+  # xquartz
   yabai
   youtube-dl
-  qutebrowser
 ] ++ lib.optionals stdenv.isLinux [
   chrony
   dbeaver
@@ -64,6 +62,7 @@ in [
   mysql80
   pcmanfm
   pinta
+  qutebrowser
   scala
   scrot
   slack
