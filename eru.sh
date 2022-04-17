@@ -40,7 +40,6 @@ set -e
 
 KERNEL_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
 KERNEL_RELEASE=$(uname -r | tr '[:upper:]' '[:lower:]')
-NODENAME=$(uname --nodename)
 OS_NAME="unknown"
 OS_VERSION="unknown"
 case $KERNEL_NAME in
@@ -54,6 +53,7 @@ case $KERNEL_NAME in
         OS_NAME="arch"
         ;;
     esac
+    NODENAME=$(uname --nodename)
     case $NODENAME in
       nixos)
         OS_NAME="nixos"
