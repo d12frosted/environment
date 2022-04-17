@@ -51,15 +51,15 @@ yabai -m rule --add app="^Emacs$" title!='^$' manage=on
 #
 
 alt - j : yabai -m query --spaces \
-  | jq -re ".[] | select(.visible == 1).index" \
+  | jq -re '.[] | select(."is-visible").index' \
   | xargs -I{} yabai -m query --windows --space {} \
-  | jq -sre 'add | map(select(.split != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | reverse | nth(index(map(select(.focused == 1))) - 1).id' \
+  | jq -sre 'add | map(select(."split-type" != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | reverse | nth(index(map(select(."has-focus"))) - 1).id' \
   | xargs -I{} yabai -m window --focus {}
 
 alt - k : yabai -m query --spaces \
-  | jq -re ".[] | select(.visible == 1).index" \
+  | jq -re '.[] | select(."is-visible").index' \
   | xargs -I{} yabai -m query --windows --space {} \
-  | jq -sre 'add | map(select(.split != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | nth(index(map(select(.focused == 1))) - 1).id' \
+  | jq -sre 'add | map(select(."split-type" != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | nth(index(map(select(."has-focus"))) - 1).id' \
   | xargs -I{} yabai -m window --focus {}
 
 alt - space : yabai -m window --toggle zoom-fullscreen
