@@ -9,15 +9,16 @@
 sudo yabai --load-sa
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 
-# layout
+# config
 yabai -m config layout bsp
-
-# visual
 yabai -m config top_padding    8
 yabai -m config bottom_padding 8
 yabai -m config left_padding   8
 yabai -m config right_padding  8
 yabai -m config window_gap     8
+yabai -m config auto_balance off
+yabai -m config split_ratio 0.5
+yabai -m config window_shadow off
 
 # setup spaces
 function setup_space {
