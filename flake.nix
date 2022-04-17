@@ -28,7 +28,7 @@
       ];
     in {
       darwinConfigurations.d12frosted = darwin.lib.darwinSystem {
-        system = "x86_64-darwin";
+        system = "aarch64-darwin"; # "x86_64-darwin";
         modules = [
           ./nix/darwin.nix
           home-manager.darwinModules.home-manager
