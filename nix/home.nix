@@ -38,6 +38,10 @@ in {
     ];
   };
 
+  imports = [
+    ./yabai.nix
+  ];
+
   home.file.".xsession".text = ''
     export PATH=/nix/var/nix/profiles/default/bin:$PATH
     export PATH=/run/current-system/sw/bin:$PATH

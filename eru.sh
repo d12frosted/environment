@@ -272,6 +272,7 @@ trap unlock INT TERM EXIT
 # Actual bootstrap
 #
 
+export PATH=/opt/homebrew/bin:$PATH
 export PATH=/nix/var/nix/profiles/default/bin:$PATH
 export PATH=/run/current-system/sw/bin:$PATH
 export PATH=$HOME/.nix-profile/bin:$PATH
@@ -284,6 +285,17 @@ theme_guard "system" "ensure nix installation" && {
   else
     section "install nix"
     sh <(curl -L https://nixos.org/nix/install) --daemon
+  fi
+}
+
+theme_guard "system" "ensure brew installation" && {
+  if check brew; then
+    echo "Found brew executable at $(which brew)"
+    echo "Nothing to do"
+  else
+    section "install brew"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
   fi
 }
 
@@ -315,6 +327,13 @@ theme_guard "system" "build nix environment" && {
         ./#homeConfigurations.borysb.activationPackage
       ./result/activate switch
     }
+  }
+}
+
+macos_guard && {
+  theme_guard "system" "ensure yabai installation" && {
+    echo "$(whoami) ALL = (root) NOPASSWD: $(which yabai) --load-sa" | sudo tee /private/etc/sudoers.d/yabai
+    brew services restart yabai
   }
 }
 
