@@ -57,7 +57,14 @@ experimental-features = nix-command flakes
 
   home-manager = {
     useGlobalPkgs = true;
-    users.d12frosted = import <hm-config>;
+    users.d12frosted = lib.mkMerge [
+      (import ./home.nix)
+      {
+        imports = [
+          ./darwin/yabai.nix
+        ];
+      }
+    ];
   };
 
   system = {

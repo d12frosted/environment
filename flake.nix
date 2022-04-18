@@ -39,7 +39,11 @@
 
       homeConfigurations.borysb = home-manager.lib.homeManagerConfiguration {
         configuration = { pkgs, lib, config, ... }: {
-          imports = [ ./nix/home.nix ];
+          imports = [
+            ./nix/home.nix
+            ./nix/linux/xsession.nix
+            ./nix/linux/services.nix
+          ];
           nixpkgs.config.allowUnfree = true;
           nixpkgs.overlays = overlays;
         };

@@ -309,13 +309,10 @@ upgrade_guard && {
 theme_guard "system" "build nix environment" && {
   cd "$XDG_CONFIG_HOME" && {
     macos_guard && {
-      nix build \
-        --experimental-features "nix-command flakes" --impure \
-        -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
+      nix build --impure \
         ./#darwinConfigurations.${fellow}.system
       result/sw/bin/darwin-rebuild switch \
         --impure \
-        -I hm-config="$XDG_CONFIG_HOME/nix/home.nix" \
         --flake ./#${fellow}
     }
     nixos_guard && {

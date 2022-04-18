@@ -37,11 +37,10 @@ in [
   unzip
   wget
 ] ++ lib.optionals stdenv.isDarwin [
+  # xquartz
   pinentry_mac
   skhd
   terminal-notifier
-  # xquartz
-  yabai
   youtube-dl
 ] ++ lib.optionals stdenv.isLinux [
   chrony

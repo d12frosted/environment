@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ config, lib, pkgs, ... }:
 
 # References:
 #
@@ -37,45 +37,6 @@ in {
       "caps:ctrl_modifier"
     ];
   };
-
-  imports = [
-    ./yabai.nix
-  ];
-
-  home.file.".xsession".text = ''
-    export PATH=/nix/var/nix/profiles/default/bin:$PATH
-    export PATH=/run/current-system/sw/bin:$PATH
-    export PATH=$HOME/.nix-profile/bin:$PATH
-    export PATH=/run/wrappers/bin:$PATH
-    export PATH=$HOME/.local/bin:$PATH
-    export PATH=$HOME/.config/bin:$PATH
-
-    export XDG_CONFIG_HOME=${config.xdg.configHome}
-
-    userresources=$XDG_CONFIG_HOME/xorg/xresources
-    usermodmap=$XDG_CONFIG_HOME/xorg/xmodmap
-
-    if [ -f "$userresources" ]; then
-      xrdb -merge "$userresources"
-    fi
-
-    if [ -f "$usermodmap" ]; then
-      xmodmap "$usermodmap"
-    fi
-
-    # I need this so much outside of Emacs.
-    ${pkgs.xorg.xset}/bin/xset r rate 180 26
-
-    # Make sure that Caps doesn't miss its purpose
-    setxkbmap -option caps:ctrl_modifier
-
-    # I rarely see my wallpapers. But when I do, I am happy.
-    fehbg &
-
-    # Because every X needs some algebra to tame it.
-    dbus-launch d12-xmonad --replace
-  '';
-  home.file.".xsession".executable = true;
 
   xdg.enable = true;
 
@@ -168,7 +129,7 @@ in {
             owner = "jorgebucaran";
             repo = "hydro";
             rev = "a5877e9ef76b3e915c06143630bffc5ddeaba2a1";
-              sha256 = "nJ8nQqaTWlISWXx5a0WeUA4+GL7Fe25658UIqKa389E=";
+            sha256 = "nJ8nQqaTWlISWXx5a0WeUA4+GL7Fe25658UIqKa389E=";
           };
         }
         {
@@ -270,33 +231,6 @@ end
           WINIT_X11_SCALE_FACTOR = "1.0";
         };
       };
-    };
-  };
-
-  services = {
-    gpg-agent = {
-      enable = true;
-      enableSshSupport = true;
-      sshKeys = [
-        "${home}/.ssh/id_rsa"
-      ];
-    };
-  };
-  # Setup Dropbox
-  systemd.user.services.dropbox = {
-    Unit.description = "Dropbox";
-    Install.WantedBy = [
-      # "graphical-session.target"
-      "default.target"
-    ];
-    Service = {
-      ExecStart = "${pkgs.dropbox.out}/bin/dropbox";
-      ExecReload = "${pkgs.coreutils.out}/bin/kill -HUP $MAINPID";
-      KillMode = "control-group"; # upstream recommends process
-      Restart = "on-failure";
-      PrivateTmp = true;
-      ProtectSystem = "full";
-      Nice = 10;
     };
   };
 }

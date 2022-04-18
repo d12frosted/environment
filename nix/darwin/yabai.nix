@@ -62,6 +62,9 @@ alt - k : yabai -m query --spaces \
   | jq -sre 'add | map(select(."split-type" != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | nth(index(map(select(."has-focus"))) - 1).id' \
   | xargs -I{} yabai -m window --focus {}
 
+# shif̋t + alt - j : yabai -m window --resize left:-20:0
+# shift + alt - k : yabai -m window --resize right:-20:0
+
 alt - space : yabai -m window --toggle zoom-fullscreen
 
 ################################################################################
