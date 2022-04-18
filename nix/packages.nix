@@ -19,9 +19,11 @@ in [
   hledger
   home-manager
   hpack
+  imagemagick
   jq
   killall
   kubectl
+  libicns
   libwebp
   ncdu
   openssh
@@ -43,8 +45,8 @@ in [
   terminal-notifier
   youtube-dl
 ] ++ lib.optionals stdenv.isLinux [
+  brave
   chrony
-  dbeaver
   docker
   dropbox-cli
   emacsGit
@@ -85,6 +87,7 @@ in [
   nodePackages.pnpm
   nodePackages.typescript
   nodePackages.typescript-language-server
+  nodePackages.webpack
   nodejs
   yarn
 ] ++ [
