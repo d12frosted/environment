@@ -288,15 +288,17 @@ theme_guard "system" "ensure nix installation" && {
   fi
 }
 
-theme_guard "system" "ensure brew installation" && {
-  if check brew; then
-    echo "Found brew executable at $(which brew)"
-    echo "Nothing to do"
-  else
-    section "install brew"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+macos_guard && {
+  theme_guard "system" "ensure brew installation" && {
+    if check brew; then
+      echo "Found brew executable at $(which brew)"
+      echo "Nothing to do"
+    else
+      section "install brew"
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-  fi
+    fi
+  }
 }
 
 upgrade_guard && {
