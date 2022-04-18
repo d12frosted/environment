@@ -37,7 +37,6 @@ in [
   unzip
   wget
 ] ++ lib.optionals stdenv.isDarwin [
-  (emacs.override { nativeComp = false; })
   pinentry_mac
   skhd
   terminal-notifier

@@ -10,7 +10,7 @@ let
   home         = config.home.homeDirectory;
   tmpdir       = "/tmp";
   emacs-server = "${tmpdir}/emacs-emacs/server";
-  emacsclient  = "${pkgs.emacs}/bin/emacsclient -s ${emacs-server}";
+  emacsclient  = "emacsclient -s ${emacs-server}";
 in {
   home = {
     # These are packages that should always be present in the user
@@ -199,6 +199,7 @@ set -g __done_min_cmd_duration 8000
 # see https://github.com/LnL7/nix-darwin/issues/122
 set -gp PATH /nix/var/nix/profiles/default/bin
 set -gp PATH /run/current-system/sw/bin
+set -gp PATH /opt/homebrew/bin
 set -gp PATH $HOME/.nix-profile/bin
 set -gp PATH /run/wrappers/bin
 set -gp PATH $HOME/.local/bin

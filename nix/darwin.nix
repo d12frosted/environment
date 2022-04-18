@@ -163,6 +163,7 @@ experimental-features = nix-command flakes
     extraConfig = ''
 brew "yabai", restart_service: true
 brew "skhd", restart_service: true
+brew "emacs-plus@29", args: ["with-dragon-icon"], link: true
     '';
     taps = [
       "d12frosted/emacs-plus"
