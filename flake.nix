@@ -37,20 +37,6 @@
         ];
       };
 
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./nix/nixos.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.d12frosted = import ./nix/home.nix;
-            nixpkgs.overlays = overlays;
-          }
-        ];
-      };
-
       homeConfigurations.borysb = home-manager.lib.homeManagerConfiguration {
         configuration = { pkgs, lib, config, ... }: {
           imports = [ ./nix/home.nix ];
