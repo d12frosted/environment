@@ -20,26 +20,6 @@
         "type": "github"
       }
     },
-    "emacs": {
-      "inputs": {
-        "emacs-src": "emacs-src",
-        "emacs-vterm-src": "emacs-vterm-src",
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1650160427,
-        "narHash": "sha256-lgQDtukV6fx7mtSccuS9iXNyzsMRHEhW/38DpFDYP/c=",
-        "owner": "cmacrae",
-        "repo": "emacs",
-        "rev": "6a5f9c40e8c90d3b6e893cae9bfebfb52dfc5cc3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "cmacrae",
-        "repo": "emacs",
-        "type": "github"
-      }
-    },
     "emacs-overlay": {
       "locked": {
         "lastModified": 1650165842,
@@ -52,38 +32,6 @@
       "original": {
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "type": "github"
-      }
-    },
-    "emacs-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1650146002,
-        "narHash": "sha256-0gEmdmV2Wv5f0qFBayIlH87uH2zDkY3V8RZdU8/sRCE=",
-        "owner": "emacs-mirror",
-        "repo": "emacs",
-        "rev": "3145449ddbfe333f69c8588d249f6733fdeb2f28",
-        "type": "github"
-      },
-      "original": {
-        "owner": "emacs-mirror",
-        "repo": "emacs",
-        "type": "github"
-      }
-    },
-    "emacs-vterm-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1650102376,
-        "narHash": "sha256-UQU9A1DBXlaTnl+yxmm+b0uU8NqqSZXt8Vnz6wmfrlU=",
-        "owner": "akermu",
-        "repo": "emacs-libvterm",
-        "rev": "17f80c2259512db55003d78c894c308aaa2283e2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "akermu",
-        "repo": "emacs-libvterm",
         "type": "github"
       }
     },
@@ -123,29 +71,12 @@
         "type": "github"
       }
     },
-    "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1650109093,
-        "narHash": "sha256-tqlnKrAdJktRLXTou9le0oTqrYBAFpGscV5RADdpArU=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "faad370edcb37162401be50d45526f52bb16a713",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "darwin": "darwin",
-        "emacs": "emacs",
         "emacs-overlay": "emacs-overlay",
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs"
       }
     }
   },

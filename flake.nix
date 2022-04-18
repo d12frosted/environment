@@ -12,7 +12,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     darwin.url = "github:lnl7/nix-darwin";
     home-manager.url = "github:nix-community/home-manager";
-    emacs.url = "github:cmacrae/emacs";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
 
     # Follows
@@ -20,7 +19,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, emacs, emacs-overlay }:
+  outputs = { self, nixpkgs, darwin, home-manager, emacs-overlay }:
     let
       overlays = [
         emacs-overlay.overlay
@@ -33,9 +32,7 @@
           ./nix/darwin.nix
           home-manager.darwinModules.home-manager
           {
-            nixpkgs.overlays = [
-              emacs.overlay
-            ] ++ overlays;
+            nixpkgs.overlays = overlays;
           }
         ];
       };
