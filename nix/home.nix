@@ -160,13 +160,24 @@ set -g __done_min_cmd_duration 8000
 # see https://github.com/LnL7/nix-darwin/issues/122
 set -gp PATH /nix/var/nix/profiles/default/bin
 set -gp PATH /run/current-system/sw/bin
-set -gp PATH /opt/homebrew/bin
+if test $KERNEL_NAME darwin
+  set -gp PATH /opt/homebrew/sbin
+  set -gp PATH /opt/homebrew/bin
+end
 set -gp PATH $HOME/.nix-profile/bin
 set -gp PATH /run/wrappers/bin
 set -gp PATH $HOME/.local/bin
 set -gp PATH ${config.xdg.configHome}/bin
 
 set -gp NIX_PATH nixpkgs=$HOME/.nix-defexpr/channels_root/nixpkgs
+
+if test $KERNEL_NAME darwin
+  set -gx HOMEBREW_PREFIX /opt/homebrew
+  set -gx HOMEBREW_CELLAR /opt/homebrew/Cellar
+  set -gx HOMEBREW_REPOSITORY /opt/homebrew
+  set -gp MANPATH /opt/homebrew/share/man
+  set -gp INFOPATH /opt/homebrew/share/info
+end
 '';
       interactiveShellInit = ''
 set fish_greeting "
