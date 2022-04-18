@@ -157,6 +157,8 @@ experimental-features = nix-command flakes
     brews = [
     ];
     casks = [
+      "spotify"
+      "telegram"
     ];
     extraConfig = ''
 brew "yabai", restart_service: true
