@@ -52,6 +52,10 @@
             (lambda () (setq gc-cons-threshold
                              normal-gc-cons-threshold))))
 
+;; trying to be polite
+(setq-default user-full-name "Boris Buliga"
+              user-mail-address "boris@d12frosted.io")
+
 ;; bootstrap
 (require 'config-path)
 (require 'init-elpa)
