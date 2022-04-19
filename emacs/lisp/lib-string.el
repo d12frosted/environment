@@ -34,7 +34,10 @@
 ;;; Code:
 
 (require 'init-elpa)
+(require 'init-vulpea)
+
 (require 's)
+(require 'button)
 
 ;;;###autoload
 (defun string-match-1 (regexp val)
@@ -99,6 +102,7 @@ buffer."
    ((stringp value) value)
    ((numberp value) (number-to-string value))
    ((symbolp value) (symbol-name value))
+   ((vulpea-note-p value) (vulpea-buttonize value))
    (t (user-error
        "Unsupported type of \"%s\"" value))))
 

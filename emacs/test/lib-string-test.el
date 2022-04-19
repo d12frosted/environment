@@ -34,7 +34,47 @@
 ;;; Code:
 
 (require 'buttercup)
+(require 'vulpea)
 (require 'lib-string)
+
+(describe "string-from"
+  (it "should support strings"
+    (expect
+     (string-from "some string")
+     :to-equal
+     "some string"))
+
+  (it "should support integers"
+    (expect
+     (string-from 42)
+     :to-equal
+     "42"))
+
+  (it "should support floats"
+    (expect
+     (string-from 121.9831000000001)
+     :to-equal
+     "121.9831000000001"))
+
+  (it "should support symbols starting with '"
+    (expect
+     (string-from 'red)
+     :to-equal
+     "red"))
+
+  (it "should support symbols starting with :"
+    (expect
+     (string-from :yellow)
+     :to-equal
+     ":yellow"))
+
+  (it "should support vulpea notes"
+    (expect
+     (string-from (make-vulpea-note
+                   :id (org-id-new)
+                   :title "some note"))
+     :to-equal
+     "some note")))
 
 (describe "string-table"
   (it "should have sane defaults"
