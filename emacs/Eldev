@@ -6,7 +6,8 @@
     (let ((files (seq-filter
                   (lambda (file)
                     (and (string-suffix-p ".el" file)
-                         (not (string-match ".*#.*" file))))
+                         (not (string-match ".*#.*" file))
+                         (not (string-prefix-p "flycheck_" file))))
                   (directory-files private-dir nil "^\\([^.]\\|\\.[^.]\\|\\.\\..\\)"))))
       (mapc
        (lambda (file)
