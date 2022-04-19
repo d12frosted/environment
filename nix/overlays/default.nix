@@ -1,7 +1,7 @@
 self: super: {
   # TODO: Switch back to src build when SkyLight issue is fixed
   yabai = super.yabai.overrideAttrs (
-    o: rec {
+    _: rec {
       version = "3.3.8";
       src = builtins.fetchTarball {
         url = "https://github.com/koekeishiya/yabai/releases/download/v${version}/yabai-v${version}.tar.gz";
@@ -16,5 +16,17 @@ self: super: {
       '';
     }
   );
+
   base16-shell = self.callPackage ../pkgs/base16-shell.nix {};
+
+  jetbrains = super.jetbrains // {
+    idea-ultimate = super.jetbrains.idea-ultimate.overrideAttrs (
+      _: rec {
+        version = "2021.3";
+        src = super.fetchurl {
+          url = "https://download.jetbrains.com/idea/ideaIU-${version}-no-jbr.tar.gz";
+          sha256 = "0riwww75aizprb01c1sccprbr00ky5wgy5cxxjxqgm8v72rfnihb"; /* updated by script */
+        };
+      });
+  };
 }
