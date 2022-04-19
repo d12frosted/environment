@@ -103,6 +103,11 @@ buffer."
        "Unsupported type of \"%s\"" value))))
 
 (cl-defun string-table (&key data
+                             header
+                             header-sep
+                             header-sep-start
+                             header-sep-conj
+                             header-sep-end
                              pad-type
                              pad-str
                              sep
@@ -110,16 +115,21 @@ buffer."
                              row-end)
   "Format DATA as a table.
 
+HEADER is optional. When present HEADER-SEP, HEADER-SEP-START,
+HEADER-SEP-CONJ, HEADER-SEP-END control line between header and
+data.
+
 DATA is list of lists. Each column is aligned by padding with
 PAD-STR either on left or right depending on value of PAD-TYPE.
 
 Each row begins with ROW-START and ends with ROW-END. Each value
 in row is separated by SEP."
-  (let* ((n (seq-reduce
+  (let* ((all (if header (cons header data) data))
+         (n (seq-reduce
              (lambda (r v)
                (min r (seq-length v)))
-             data
-             (seq-length (car data))))
+             all
+             (seq-length (car all))))
          (widths (seq-reduce
                   (lambda (r v)
                     (seq-map-indexed
@@ -129,7 +139,7 @@ in row is separated by SEP."
                         (or (nth i r)
                             0)))
                      v))
-                  data
+                  all
                   nil))
          (pad-fns (seq-map
                    (lambda (i)
@@ -145,24 +155,69 @@ in row is separated by SEP."
          (row-start (or row-start ""))
          (row-end (or row-end ""))
          (sep (or sep " ")))
-    (seq-reduce
-     (lambda (r v)
-       (concat
-        r
-        row-start
-        (string-join
-         (seq-map-indexed
-          (lambda (a i)
-            (funcall (nth i pad-fns)
-                     (nth i widths)
-                     pad-str
-                     (string-from a)))
-          (seq-take v n))
-         sep)
-        row-end
-        "\n"))
-     data
-     "")))
+    (concat
+     ;; header
+     (when header
+       (string-table--format-line header
+         :sep sep
+         :pad-fns pad-fns
+         :pad-str pad-str
+         :widths widths
+         :row-start row-start
+         :row-end row-end))
+     (when header "\n")
+     (when (and header header-sep)
+       (string-table--format-line (-repeat n "")
+         :sep (or header-sep-conj sep)
+         :pad-fns pad-fns
+         :pad-str header-sep
+         :widths widths
+         :row-start (or header-sep-start row-start)
+         :row-end (or header-sep-end row-end)))
+     (when (and header header-sep) "\n")
+     ;; data
+     (mapconcat
+      (lambda (v)
+        (string-table--format-line (seq-take v n)
+          :sep sep
+          :pad-fns pad-fns
+          :pad-str pad-str
+          :widths widths
+          :row-start row-start
+          :row-end row-end))
+      data
+      "\n")
+     ;; trailing newline
+     "\n")))
+
+(cl-defun string-table--format-line (values
+                                     &key
+                                     sep
+                                     pad-fns
+                                     pad-str
+                                     widths
+                                     row-start
+                                     row-end)
+  "Format lines consisting of VALUES.
+
+Line begins with optional ROW-START and ends with optional
+ROW-END.
+
+Each value is padded with PAD-STR using PAD-FNS to achieve cell
+WIDTHS. Each value is separated by SEP."
+  (declare (indent 1))
+  (concat
+   row-start
+   (string-join
+    (seq-map-indexed
+     (lambda (a i)
+       (funcall (nth i pad-fns)
+                (nth i widths)
+                pad-str
+                (string-from a)))
+     values)
+    sep)
+   row-end))
 
 (provide 'lib-string)
 ;;; lib-string.el ends here

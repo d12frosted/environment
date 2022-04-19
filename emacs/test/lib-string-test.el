@@ -67,6 +67,47 @@
         "")
       "\n")))
 
+  (describe "header"
+    (it "should support header"
+      (expect
+       (string-table
+        :header '("who" "mental age" "eye")
+        :data '(("name" 12 :brown)
+                ("short name" 192 :yellow)
+                ("abnormally long name" 8 :red)))
+       :to-equal
+       (string-join
+        '("                 who mental age     eye"
+          "                name         12  :brown"
+          "          short name        192 :yellow"
+          "abnormally long name          8    :red"
+          "")
+        "\n")))
+
+    (it "should support separation"
+      (expect
+       (string-table
+        :header '("who" "mental age" "eye")
+        :header-sep "-"
+        :header-sep-start "|-"
+        :header-sep-conj "-+-"
+        :header-sep-end "-|"
+        :row-start "| "
+        :row-end " |"
+        :sep " | "
+        :data '(("name" 12 :brown)
+                ("short name" 192 :yellow)
+                ("abnormally long name" 8 :red)))
+       :to-equal
+       (string-join
+        '("|                  who | mental age |     eye |"
+          "|----------------------+------------+---------|"
+          "|                 name |         12 |  :brown |"
+          "|           short name |        192 | :yellow |"
+          "| abnormally long name |          8 |    :red |"
+          "")
+        "\n"))))
+
   (describe "padding"
     (it "should support left padding"
       (expect
