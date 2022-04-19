@@ -97,7 +97,7 @@ in {
       serverAliveInterval = 60;
 
       hashKnownHosts = true;
-      userKnownHostsFile = "${config.xdg.configHome}/ssh/known_hosts";
+      userKnownHostsFile = "${home}/.ssh/known_hosts";
 
       matchBlocks = {
         keychain = {
