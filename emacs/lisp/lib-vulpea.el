@@ -306,6 +306,32 @@ via `vulpea-agenda-files-update'.")
 
 
 ;;;###autoload
+(defun vulpea-visit (note-or-id &optional other-window)
+  "Visit NOTE-OR-ID.
+
+If OTHER-WINDOW, visit the NOTE in another window."
+  (let ((id (if (vulpea-note-p note-or-id)
+                (vulpea-note-id note-or-id)
+              note-or-id)))
+    (org-roam-node-visit
+     (org-roam-node-from-id id)
+     (or current-prefix-arg
+         other-window))))
+
+;;;###autoload
+(defun vulpea-buttonize (note &optional title-fn)
+  "Create a link to `vulpea' NOTE.
+
+Title is calculated based on TITLE-FN (takes note as a single
+parameter), defaulting to `vulpea-note-title'."
+  (buttonize (funcall (or title-fn #'vulpea-note-title)
+                      note)
+             #'vulpea-visit
+             (vulpea-note-id note)))
+
+
+
+;;;###autoload
 (defun vulpea-activate-link (start end path _brackets)
   "Activate a link between START and END for PATH."
   (let ((visible-start (or (match-beginning 3)
