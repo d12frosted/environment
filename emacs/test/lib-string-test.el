@@ -87,8 +87,7 @@
      (string-join
       '("                name  12  :brown"
         "          short name 192 :yellow"
-        "abnormally long name   8    :red"
-        "")
+        "abnormally long name   8    :red")
       "\n")))
 
   (it "should cut off extra items in the row"
@@ -103,8 +102,7 @@
       '("                name  12"
         "          short name 192"
         "abnormally long name   8"
-        "              answer  42"
-        "")
+        "              answer  42")
       "\n")))
 
   (describe "header"
@@ -120,8 +118,7 @@
         '("                 who mental age     eye"
           "                name         12  :brown"
           "          short name        192 :yellow"
-          "abnormally long name          8    :red"
-          "")
+          "abnormally long name          8    :red")
         "\n")))
 
     (it "should support separation"
@@ -144,8 +141,7 @@
           "|----------------------+------------+---------|"
           "|                 name |         12 |  :brown |"
           "|           short name |        192 | :yellow |"
-          "| abnormally long name |          8 |    :red |"
-          "")
+          "| abnormally long name |          8 |    :red |")
         "\n"))))
 
   (describe "padding"
@@ -160,8 +156,7 @@
        (string-join
         '("                name  12  :brown"
           "          short name 192 :yellow"
-          "abnormally long name   8    :red"
-          "")
+          "abnormally long name   8    :red")
         "\n")))
 
     (it "should support right padding"
@@ -175,8 +170,7 @@
        (string-join
         '("name                 12  :brown "
           "short name           192 :yellow"
-          "abnormally long name 8   :red   "
-          "")
+          "abnormally long name 8   :red   ")
         "\n")))
 
     (it "should support varying padding type"
@@ -190,8 +184,7 @@
        (string-join
         '("name                  12 :brown "
           "short name           192 :yellow"
-          "abnormally long name   8 :red   "
-          "")
+          "abnormally long name   8 :red   ")
         "\n"))))
 
   (describe "separation"
@@ -206,8 +199,7 @@
        (string-join
         '("                name |  12 |  :brown"
           "          short name | 192 | :yellow"
-          "abnormally long name |   8 |    :red"
-          "")
+          "abnormally long name |   8 |    :red")
         "\n")))))
 
 (provide 'lib-string-test)

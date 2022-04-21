@@ -190,9 +190,7 @@ in row is separated by SEP."
           :row-start row-start
           :row-end row-end))
       data
-      "\n")
-     ;; trailing newline
-     "\n")))
+      "\n"))))
 
 (cl-defun string-table--format-line (values
                                      &key
