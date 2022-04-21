@@ -200,6 +200,22 @@
         '("                name |  12 |  :brown"
           "          short name | 192 | :yellow"
           "abnormally long name |   8 |    :red")
+        "\n"))))
+
+  (describe "column with"
+    (it "should support truncation"
+      (expect
+       (string-table
+        :data '(("name" 12 :brown)
+                ("short name" 192 :yellow)
+                ("abnormally long name" 8 :red))
+        :width '(5 full full)
+        :sep " | ")
+       :to-equal
+       (string-join
+        '(" name |  12 |  :brown"
+          "sh... | 192 | :yellow"
+          "ab... |   8 |    :red")
         "\n")))))
 
 (provide 'lib-string-test)

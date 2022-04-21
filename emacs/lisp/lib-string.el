@@ -116,7 +116,8 @@ buffer."
                              pad-str
                              sep
                              row-start
-                             row-end)
+                             row-end
+                             width)
   "Format DATA as a table.
 
 HEADER is optional. When present HEADER-SEP, HEADER-SEP-START,
@@ -125,6 +126,10 @@ data.
 
 DATA is list of lists. Each column is aligned by padding with
 PAD-STR either on left or right depending on value of PAD-TYPE.
+
+The width of columns is controlled by WIDTH. If it's nil, each
+column takes full width. If it's a list, each element must be
+either 'full or integer enabling truncation.
 
 Each row begins with ROW-START and ends with ROW-END. Each value
 in row is separated by SEP."
@@ -139,7 +144,12 @@ in row is separated by SEP."
                     (seq-map-indexed
                      (lambda (a i)
                        (max
-                        (length (string-from a))
+                        (pcase (or (and width
+                                        (listp width)
+                                        (nth i width))
+                                   'full)
+                          (`full (length (string-from a)))
+                          (n n))
                         (or (nth i r)
                             0)))
                      v))
@@ -213,10 +223,12 @@ WIDTHS. Each value is separated by SEP."
    (string-join
     (seq-map-indexed
      (lambda (a i)
-       (funcall (nth i pad-fns)
-                (nth i widths)
-                pad-str
-                (string-from a)))
+       (s-truncate
+        (nth i widths)
+        (funcall (nth i pad-fns)
+                 (nth i widths)
+                 pad-str
+                 (string-from a))))
      values)
     sep)
    row-end))
