@@ -51,7 +51,7 @@ setup_space 3 web
 setup_space 4 chat
 setup_space 5 media
 setup_space 6 other
-yabai -m space --focus 1
+yabai -m space --focus "$current_space"
 
 # floating apps and windows
 yabai -m rule --add app="^System Preferences$" manage=off
