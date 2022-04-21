@@ -1,9 +1,13 @@
-{ config, pkgs, lib, ... }: {
+{ config, pkgs, lib, ... }: let
+  jq = "${pkgs.jq}/bin/jq";
+in {
   home.file.yabai = {
     executable = true;
     target = ".config/yabai/yabairc";
     text = ''
 #!/usr/bin/env sh
+
+echo "> yabairc"
 
 # load scripting additions
 sudo yabai --load-sa
@@ -21,12 +25,26 @@ yabai -m config split_ratio 0.5
 yabai -m config window_shadow off
 
 # setup spaces
+current_space=$(yabai -m query --spaces | ${jq} '.[] | select(."has-focus") | .index')
+echo "currently focusing $current_space"
 function setup_space {
   local idx="$1"
   local name="$2"
-  yabai -m space --focus "$idx" || yabai -m space --create
+  echo "setup space $idx : $name"
+  if [ "$current_space" != "$idx" ]; then
+     echo "not focused, so focus or create"
+     yabai -m space --focus "$idx" || {
+       echo "can't focus, so create"
+       yabai -m space --create
+     }
+  fi
   yabai -m space "$idx" --label "$name"
 }
+for idx in $(yabai -m query --spaces | ${jq} '.[].index | select(. > 6)'); do
+  echo "destroying space $idx"
+  yabai -m space --focus "$idx"
+  yabai -m space --destroy
+done
 setup_space 1 main
 setup_space 2 code
 setup_space 3 web
@@ -39,6 +57,8 @@ yabai -m space --focus 1
 yabai -m rule --add app="^System Preferences$" manage=off
 yabai -m rule --add app="^Cryptomator$" manage=off
 yabai -m rule --add app="^Emacs$" title!='^$' manage=on
+
+echo "< yabairc"
       '';
   };
 
@@ -51,15 +71,15 @@ yabai -m rule --add app="^Emacs$" title!='^$' manage=on
 #
 
 alt - j : yabai -m query --spaces \
-  | jq -re '.[] | select(."is-visible").index' \
+  | ${jq} -re '.[] | select(."is-visible").index' \
   | xargs -I{} yabai -m query --windows --space {} \
-  | jq -sre 'add | map(select(."split-type" != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | reverse | nth(index(map(select(."has-focus"))) - 1).id' \
+  | ${jq} -sre 'add | map(select(."split-type" != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | reverse | nth(index(map(select(."has-focus"))) - 1).id' \
   | xargs -I{} yabai -m window --focus {}
 
 alt - k : yabai -m query --spaces \
-  | jq -re '.[] | select(."is-visible").index' \
+  | ${jq} -re '.[] | select(."is-visible").index' \
   | xargs -I{} yabai -m query --windows --space {} \
-  | jq -sre 'add | map(select(."split-type" != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | nth(index(map(select(."has-focus"))) - 1).id' \
+  | ${jq} -sre 'add | map(select(."split-type" != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | nth(index(map(select(."has-focus"))) - 1).id' \
   | xargs -I{} yabai -m window --focus {}
 
 # shif̋t + alt - j : yabai -m window --resize left:-20:0
