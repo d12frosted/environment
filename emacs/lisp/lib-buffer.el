@@ -153,7 +153,8 @@ See ‘get-buffer-create’ for the meaning of INHIBIT-BUFFER-HOOKS."
   "Generate and switch to a buffer with NAME and fill it with LINES."
   (declare (indent 1))
   (let ((buffer (apply #'buffer-generate-result-with name lines)))
-    (switch-to-buffer buffer)))
+    (switch-to-buffer buffer)
+    (goto-char (point-min))))
 
 ;;;###autoload
 (defun buffer-generate-result-with (name &rest lines)
