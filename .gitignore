@@ -1,9 +1,15 @@
 # nix managed
+alacritty/alacritty.yml
+fish/conf.d/
+fish/config.fish
 git
 gnupg
+skhd/skhdrc
 ssh
-fish/config.fish
-fish/conf.d/
+yabai/yabairc
+
+# nix-darwin result
+result
 
 # haskell
 # https://github.com/commercialhaskell/stack/blob/master/.gitignore
