@@ -121,5 +121,15 @@ Search is bounded by LIMIT."
 
 
 
+(use-package eshell
+  :straight nil
+  :defer t
+  :init
+  (setq-default
+   eshell-history-file-name (expand-file-name "eshell/history"
+                                              path-cache-dir)))
+
+
+
 (provide 'init-sh)
 ;;; init-sh.el ends here
