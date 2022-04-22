@@ -82,7 +82,10 @@ Affects the following commands:
 ;;;###autoload
 (defun vulpea-agenda-files-update (&rest _)
   "Update the value of `org-agenda-files'."
-  (setq org-agenda-files (vulpea-project-files)))
+  (setq org-agenda-files (seq-map
+                          #'vulpea-note-path
+                          (vulpea-db-query-by-tags-some '("project"
+                                                          "people")))))
 
 
 ;; Commands
