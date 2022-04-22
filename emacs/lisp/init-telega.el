@@ -52,7 +52,8 @@
   (leader-def
     "t" '(:keymap telega-prefix-map))
   :init
-  (when elpa-bootstrap-p
+  (when (and elpa-bootstrap-p
+             env-sys-linux-p)
     (require 'telega-server)
     (require 'lib-nix)
     (let ((exec-path (cons telega-directory exec-path))
