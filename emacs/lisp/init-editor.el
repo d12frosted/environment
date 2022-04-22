@@ -102,6 +102,14 @@
 (setq make-backup-files nil)
 
 
+;; auto-save files
+
+(setq-default
+ auto-save-list-file-prefix (expand-file-name
+                             "auto-save-list/.saves-"
+                             path-cache-dir))
+
+
 ;; Long lines
 
 (use-package visual-fill-column
