@@ -162,6 +162,7 @@ experimental-features = nix-command flakes
     autoUpdate = true;
     cleanup = "zap"; # removes manually install brews and casks
     brews = [
+      "llvm"
     ];
     casks = [
       "spotify"
