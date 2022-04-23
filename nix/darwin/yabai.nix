@@ -7,8 +7,6 @@ in {
     text = ''
 #!/usr/bin/env sh
 
-echo "> yabairc"
-
 # load scripting additions
 sudo yabai --load-sa
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
@@ -27,18 +25,8 @@ yabai -m config window_shadow off
 #
 # setup spaces
 #
-original_space_idx=$(yabai -m query --spaces | ${jq} '.[] | select(."has-focus") | .index')
-echo "currently focusing space $original_space_idx"
-
-for idx in $(yabai -m query --spaces | ${jq} '.[].index | select(. > 6)' | sort -nr); do
-  echo "focusing space $idx to destroy it"
-  current_space_idx=$(yabai -m query --spaces | ${jq} '.[] | select(."has-focus") | .index')
-  if [ "$current_space_idx" != "$idx" ]; then
-    yabai -m space --focus "$idx"
-    # this sleep helps to avoid invalid removals of original_space_idx
-    sleep 0.001
-  fi
-  yabai -m space --destroy
+for _ in $(yabai -m query --spaces | jq '.[].index | select(. > 6)'); do
+  yabai -m space --destroy 7
 done
 
 function setup_space {
@@ -47,34 +35,33 @@ function setup_space {
   local space=
   echo "setup space $idx : $name"
 
-  space=$(yabai -m query --spaces | ${jq} ".[] | select(.index == $idx)")
+  space=$(yabai -m query --spaces --space "$idx")
   if [ -z "$space" ]; then
-    echo "space does not exist, so create"
     yabai -m space --create
   fi
 
   yabai -m space "$idx" --label "$name"
 }
 
-setup_space 1 main
+setup_space 1 emacs
 setup_space 2 code
 setup_space 3 web
-setup_space 4 chat
+setup_space 4 social
 setup_space 5 media
 setup_space 6 other
-
-current_space_idx=$(yabai -m query --spaces | ${jq} '.[] | select(."has-focus") | .index')
-if [ "$current_space_idx" != "$original_space_idx" ]; then
-  echo "focused space was changed, so restoring the focus"
-  yabai -m space --focus "$original_space_idx"
-fi
 
 # floating apps and windows
 yabai -m rule --add app="^System Preferences$" manage=off
 yabai -m rule --add app="^Cryptomator$" manage=off
 yabai -m rule --add app="^Emacs$" title!='^$' manage=on
 
-echo "< yabairc"
+# move some apps automatically to specific spaces
+yabai -m rule --add app="^Safari$" space=3
+yabai -m rule --add app="^Firefox$" space=3
+yabai -m rule --add app="^Telegram$" space=4
+yabai -m rule --add app="^Music$" space=5
+yabai -m rule --add app="^Spotify$" space=5
+yabai -m rule --add app="^Transmission$" space=6
       '';
   };
 
