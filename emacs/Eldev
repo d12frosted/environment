@@ -28,9 +28,10 @@
 
 ;; Be explicit about main file.
 (setf eldev-project-main-file "init.el"
-      eldev-main-fileset '("init.el"
-                           "early-init.el"
-                           "lisp/*.el"))
+      eldev-main-fileset '(:and ("init.el"
+                                 "early-init.el"
+                                 "lisp/*.el")
+                                (:not ("**/flycheck_*.el"))))
 
 
 
