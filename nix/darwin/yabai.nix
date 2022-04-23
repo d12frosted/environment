@@ -24,34 +24,50 @@ yabai -m config auto_balance off
 yabai -m config split_ratio 0.5
 yabai -m config window_shadow off
 
+#
 # setup spaces
-current_space=$(yabai -m query --spaces | ${jq} '.[] | select(."has-focus") | .index')
-echo "currently focusing $current_space"
+#
+original_space_idx=$(yabai -m query --spaces | ${jq} '.[] | select(."has-focus") | .index')
+echo "currently focusing space $original_space_idx"
+
+for idx in $(yabai -m query --spaces | ${jq} '.[].index | select(. > 6)' | sort -nr); do
+  echo "focusing space $idx to destroy it"
+  current_space_idx=$(yabai -m query --spaces | ${jq} '.[] | select(."has-focus") | .index')
+  if [ "$current_space_idx" != "$idx" ]; then
+    yabai -m space --focus "$idx"
+    # this sleep helps to avoid invalid removals of original_space_idx
+    sleep 0.001
+  fi
+  yabai -m space --destroy
+done
+
 function setup_space {
   local idx="$1"
   local name="$2"
+  local space=
   echo "setup space $idx : $name"
-  if [ "$current_space" != "$idx" ]; then
-     echo "not focused, so focus or create"
-     yabai -m space --focus "$idx" || {
-       echo "can't focus, so create"
-       yabai -m space --create
-     }
+
+  space=$(yabai -m query --spaces | ${jq} ".[] | select(.index == $idx)")
+  if [ -z "$space" ]; then
+    echo "space does not exist, so create"
+    yabai -m space --create
   fi
+
   yabai -m space "$idx" --label "$name"
 }
-for idx in $(yabai -m query --spaces | ${jq} '.[].index | select(. > 6)'); do
-  echo "destroying space $idx"
-  yabai -m space --focus "$idx"
-  yabai -m space --destroy
-done
+
 setup_space 1 main
 setup_space 2 code
 setup_space 3 web
 setup_space 4 chat
 setup_space 5 media
 setup_space 6 other
-yabai -m space --focus "$current_space"
+
+current_space_idx=$(yabai -m query --spaces | ${jq} '.[] | select(."has-focus") | .index')
+if [ "$current_space_idx" != "$original_space_idx" ]; then
+  echo "focused space was changed, so restoring the focus"
+  yabai -m space --focus "$original_space_idx"
+fi
 
 # floating apps and windows
 yabai -m rule --add app="^System Preferences$" manage=off
