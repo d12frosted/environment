@@ -163,6 +163,7 @@ set -gp PATH /run/current-system/sw/bin
 if test $KERNEL_NAME darwin
   set -gp PATH /opt/homebrew/sbin
   set -gp PATH /opt/homebrew/bin
+  set -gp PATH /opt/homebrew/opt/llvm/bin
 end
 set -gp PATH $HOME/.nix-profile/bin
 set -gp PATH /run/wrappers/bin
@@ -177,6 +178,8 @@ if test $KERNEL_NAME darwin
   set -gx HOMEBREW_REPOSITORY /opt/homebrew
   set -gp MANPATH /opt/homebrew/share/man
   set -gp INFOPATH /opt/homebrew/share/info
+  set -gx LDFLAGS "-L/opt/homebrew/opt/llvm/lib"
+  set -gx CPPFLAGS "-I/opt/homebrew/opt/llvm/include"
 end
 '';
       interactiveShellInit = ''
