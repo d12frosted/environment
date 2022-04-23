@@ -165,8 +165,11 @@ experimental-features = nix-command flakes
       "llvm"
     ];
     casks = [
+      "protonvpn"
       "spotify"
       "telegram"
+      "transmission"
+      "vlc"
     ];
     extraConfig = ''
 brew "yabai", restart_service: true
