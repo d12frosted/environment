@@ -126,7 +126,14 @@
 
 (use-package all-the-icons
   :defer t
-  :commands (all-the-icons-material))
+  :commands (all-the-icons-material)
+  :init
+  (when elpa-bootstrap-p
+    (let ((file (expand-file-name "all-the-icons-ready"
+                                  path-cache-dir)))
+      (unless (file-exists-p file)
+        (all-the-icons-install-fonts t)
+        (shell-command-to-string (format "echo '' > %s" file))))))
 
 (use-package minions
   :init
