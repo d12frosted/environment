@@ -170,6 +170,7 @@ experimental-features = nix-command flakes
       "telegram"
       "transmission"
       "vlc"
+      "firefox"
     ];
     extraConfig = ''
 brew "yabai", restart_service: true
