@@ -1,3 +1,6 @@
 *.elc
 .eldev
 *-autoloads.el
+lib-private-*.el
+init-private-*.el
+config-private-*.el

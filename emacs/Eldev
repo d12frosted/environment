@@ -14,17 +14,7 @@
          (shell-command-to-string
           (format
            "safe_link %s%s %s/lisp/%s" private-dir file eldev-project-dir file)))
-       files)
-      (with-current-buffer (find-file-noselect (expand-file-name ".gitignore" eldev-project-dir))
-        (mapc
-         (lambda (file)
-           (let ((path (concat "lisp/" file)))
-             (goto-char (point-min))
-             (unless (search-forward path nil t)
-               (goto-char (point-max))
-               (insert path "\n"))))
-         files)
-        (save-buffer)))))
+       files))))
 
 ;; Be explicit about main file.
 (setf eldev-project-main-file "init.el"
@@ -157,8 +147,10 @@
   (defun package-lint--package-prefix-cleanup (prefix)
     "Cleanup PREFIX."
     (replace-regexp-in-string
-     "\\(init\\|lib\\|config\\|compat\\)-?" ""
-     prefix))
+     "\\(private\\)-?" ""
+     (replace-regexp-in-string
+      "\\(init\\|lib\\|config\\|compat\\)-?" ""
+      prefix)))
 
   (defun package-lint--get-package-prefix-wrapper (f &rest args)
     "Call F with ARGS and cleanup it's result."
