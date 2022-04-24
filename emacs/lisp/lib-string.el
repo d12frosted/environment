@@ -96,6 +96,24 @@ buffer."
    "\\)")
   "UUID regexp.")
 
+ (defun string-group-number (num &optional size char)
+   "Format NUM as string grouped to SIZE with CHAR."
+   ;; Based on code for `math-group-float' in calc-ext.el
+   (let* ((size (or size 3))
+          (char (or char " "))
+          (str (if (stringp num)
+                   num
+                 (number-to-string num)))
+          ;; omitting any trailing non-digit chars
+          ;; NOTE: Calc supports BASE up to 36 (26 letters and 10 digits ;)
+          (pt (or (string-match "[^0-9a-zA-Z]" str) (length str))))
+     (while (> pt size)
+       (setq str (concat (substring str 0 (- pt size))
+                         char
+                         (substring str (- pt size)))
+             pt (- pt size)))
+     str))
+
 (defun string-from (value)
   "Convert VALUE to string."
   (cond
