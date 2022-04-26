@@ -123,15 +123,14 @@ wines in Ukraine cost 100+ UAH.
 
 This formula is a subject for constant change."
   (when-let ((price (car-safe (vino-stats-price entry))))
-    (calc-to-number
-     (calcFunc-div
-      (calcFunc-mul
-       (calcFunc-fact
-        (calcFunc-div
-         (calc-from-number (float (vino-rating-total rating)))
-         2))
-       100)
-      (calc-from-number price)))))
+    (math-div
+     (math-mul
+      (calcFunc-fact
+       (math-div
+        (calc-from-number (float (vino-rating-total rating)))
+        2))
+      100)
+     price)))
 
 (defun vino-stats-price (entry)
   "Calculate price of vino ENTRY.
@@ -154,8 +153,7 @@ will be revisited once `vino' enforces price as part of rating."
                                  (nth 1 parts))))
                        (vino-entry-price entry)))))
     (cons
-     (calc-to-number
-      (calcFunc-rms (apply #'calcFunc-vec (seq-map #'car prices))))
+     (math-float (calcFunc-rms (apply #'calcFunc-vec (seq-map #'car prices))))
      vino-stats-price-currency)))
 
 
@@ -227,19 +225,19 @@ RATINGS can be related to different entries."
          (prices (seq-filter #'identity prices))
          ;; we actually need values
          (prices (seq-map #'car prices))
-         (pricesv (apply #'calcFunc-vec (seq-map #'calc-from-number prices)))
-         (price-avg (when prices (calc-to-number (calcFunc-vmean pricesv))))
-         (price-rms (when prices (calc-to-number (calcFunc-rms pricesv))))
-         (price-min (when prices (seq-min prices)))
-         (price-max (when prices (seq-max prices)))
-         (price-total (when prices (-sum prices)))
+         (prices (apply #'calcFunc-vec prices))
+         (price-avg (when prices (calcFunc-vmean prices)))
+         (price-rms (when prices (calcFunc-rms prices)))
+         (price-min (when prices (calcFunc-vmin prices)))
+         (price-max (when prices (calcFunc-vmax prices)))
+         (price-total (when prices (calcFunc-vsum prices)))
          (totals (seq-map #'vino-rating-total ratings))
-         (totalsv (apply #'calcFunc-vec (seq-map #'calc-from-number totals)))
-         (totals-avg (calc-to-number (calcFunc-vmean totalsv)))
-         (totals-rms (calc-to-number (calcFunc-rms totalsv)))
-         (totals-sdev (calc-to-number (calcFunc-vpvar totalsv)))
-         (totals-min (seq-min totals))
-         (totals-max (seq-max totals))
+         (totals (apply #'calcFunc-vec (seq-map #'calc-from-number totals)))
+         (totals-avg (calcFunc-vmean totals))
+         (totals-rms (calcFunc-rms totals))
+         (totals-sdev (calcFunc-vpvar totals))
+         (totals-min (calcFunc-vmin totals))
+         (totals-max (calcFunc-vmax totals))
          (qprs (seq-map
                 (lambda (rating)
                   (let ((entry (gethash (vulpea-note-id (vino-rating-wine rating)) entries-tbl)))
@@ -247,9 +245,9 @@ RATINGS can be related to different entries."
                 ratings))
          ;; they can be nil
          (qprs (seq-filter #'identity qprs))
-         (qprsv (apply #'calcFunc-vec (seq-map #'calc-from-number qprs)))
-         (qpr-avg (when qprs (calc-to-number (calcFunc-vmean qprsv))))
-         (qpr-rms (when qprs (calc-to-number (calcFunc-rms qprsv)))))
+         (qprs (apply #'calcFunc-vec qprs))
+         (qpr-avg (when qprs (calcFunc-vmean qprs)))
+         (qpr-rms (when qprs (calcFunc-rms qprs))))
     (make-vino-stats
      :ratings ratings
      :price-avg price-avg
@@ -301,11 +299,11 @@ are lists of ratings."
               (vino-stats-format-price (vino-stats-price-avg stats))
               (vino-stats-format-price (vino-stats-price-min stats))
               (vino-stats-format-price (vino-stats-price-max stats))
-              (format "%.2f" (vino-stats-rating-rms stats))
-              (format "%.4f" (vino-stats-rating-sdev stats))
-              (format "%.2f" (vino-stats-rating-min stats))
-              (format "%.2f" (vino-stats-rating-max stats))
-              (format "%.4f" (vino-stats-qpr-rms stats)))))
+              (format "%.2f" (calc-to-number (vino-stats-rating-rms stats)))
+              (format "%.4f" (calc-to-number (vino-stats-rating-sdev stats)))
+              (format "%.2f" (calc-to-number (vino-stats-rating-min stats)))
+              (format "%.2f" (calc-to-number (vino-stats-rating-max stats)))
+              (format "%.4f" (calc-to-number (vino-stats-qpr-rms stats))))))
     (hash-table-keys ratings-tbl))))
 
 
@@ -313,29 +311,39 @@ are lists of ratings."
 
 (defun vino-stats-format-price (price)
   "Format PRICE value."
-  (let ((value (if (listp price)
-                   (car price)
-                 price))
-        (currency (if (listp price)
-                      (cdr price)
-                    vino-stats-price-currency)))
+  (let ((value (cond
+                ((null price) nil)
+                ((math-numberp price) (math-float price))
+                ((listp price) (car price))))
+        (currency (cond
+                   ((math-numberp price) vino-stats-price-currency)
+                   ((listp price) (cdr price)))))
     (when value
-      (let* ((a (floor value))
-             (b (format "%.2f" (- value a))))
-        (format "%s.%s %s" (string-group-number a) (s-right 2 b) currency)))))
+      (let* ((parts (math-float-parts value t))
+             (a (car parts))
+             (b (car (math-float-parts
+                      (math-mul (nth 1 parts) 100) nil))))
+        (format "%s.%0.2i %s"
+                (let ((calc-group-char " "))
+                  (math-group-float (math-format-number a)))
+                b
+                currency)))))
 
 
 ;; interactive functions
 
 ;;;###autoload
-(defun vino-stats ()
-  "Display stats for an interactively selected time frame."
+(defun vino-stats (&optional frame)
+  "Display stats for an interactively selected time FRAME."
   (interactive)
   (when-let*
-      ((frame (completing-read
-               "Time frame: " vino-stats-time-frames
-               nil 'require-match))
-       (frame (intern frame))
+      ((frame (or
+               frame
+               (intern
+                frame
+                (completing-read
+                 "Time frame: " vino-stats-time-frames
+                 nil 'require-match))))
        (range (vino-stats--time-frame-range frame))
        (ratings (seq-map
                  #'car-safe
@@ -427,13 +435,13 @@ are lists of ratings."
              (list "Price avg" (vino-stats-format-price (vino-stats-price-avg ratings-stat)))
              (list "Price min" (vino-stats-format-price (vino-stats-price-min ratings-stat)))
              (list "Price max" (vino-stats-format-price (vino-stats-price-max ratings-stat)))
-             (list "Rating avg" (format "%.4f" (vino-stats-rating-avg ratings-stat)))
-             (list "Rating rms" (format "%.4f" (vino-stats-rating-rms ratings-stat)))
-             (list "Rating sdev" (format "%.4f" (vino-stats-rating-sdev ratings-stat)))
-             (list "Rating min" (format "%.4f" (vino-stats-rating-min ratings-stat)))
-             (list "Rating max" (format "%.4f" (vino-stats-rating-max ratings-stat)))
-             (list "QPR avg" (format "%.4f" (vino-stats-qpr-avg ratings-stat)))
-             (list "QPR rms" (format "%.4f" (vino-stats-qpr-rms ratings-stat)))))
+             (list "Rating avg" (format "%.4f" (calc-to-number (vino-stats-rating-avg ratings-stat))))
+             (list "Rating rms" (format "%.4f" (calc-to-number (vino-stats-rating-rms ratings-stat))))
+             (list "Rating sdev" (format "%.4f" (calc-to-number (vino-stats-rating-sdev ratings-stat))))
+             (list "Rating min" (format "%.4f" (calc-to-number (vino-stats-rating-min ratings-stat))))
+             (list "Rating max" (format "%.4f" (calc-to-number (vino-stats-rating-max ratings-stat))))
+             (list "QPR avg" (format "%.4f" (calc-to-number (vino-stats-qpr-avg ratings-stat))))
+             (list "QPR rms" (format "%.4f" (calc-to-number (vino-stats-qpr-rms ratings-stat))))))
       ""
 
       (propertize "Country stats" 'face 'bold)
@@ -522,7 +530,7 @@ are lists of ratings."
                    (vino-stats-format-price (vino-stats-price entry))
                    (format "%.2f" (vino-rating-total rating))
                    (when-let ((qpr (vino-stats-rating-qpr rating entry)))
-                     (format "%.4f" qpr)))))
+                     (format "%.4f" (calc-to-number qpr))))))
               ratings)))))
 
 
