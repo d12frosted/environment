@@ -205,7 +205,7 @@ Make all the links to this alias point to newly created note."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
     (org-with-point-at 1
-      (org-hide-drawer-toggle 'off))
+      (org-fold-hide-drawer-toggle 'off))
     (setq-local tab-width 1)
     (vulpea-ensure-filetag)))
 
