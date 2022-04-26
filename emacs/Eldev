@@ -49,7 +49,10 @@
    load-prefer-newer t)
   (eldev--inject-loading-roots 'bootstrap)
   (require 'config-path)
-  (load (expand-file-name "init.el" path-emacs-dir)))
+  (load (expand-file-name "init.el" path-emacs-dir))
+  (unless (file-exists-p (expand-file-name "versions/default.el"
+                                           path-emacs-dir))
+    (straight-freeze-versions)))
 
 ;; We want to run this before any build command. This is also needed
 ;; for `flyspell-eldev` to be aware of packages installed via
@@ -67,7 +70,8 @@
   (straight-thaw-versions)
   (delete-file (concat path-packages-dir "straight/build-cache.el"))
   (delete-directory (concat path-packages-dir "straight/build") 'recursive)
-  (straight-check-all))
+  (straight-check-all)
+  (straight-freeze-versions))
 
 (add-hook 'eldev-upgrade-hook #'elpa-upgrade)
 
