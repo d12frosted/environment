@@ -45,7 +45,7 @@
 
 (defun calc-to-number (number)
   "Convert NUMBER from Calc format."
-  (read (math-format-value number)))
+  (read (math-format-number number)))
 
 (provide 'lib-calc)
 ;;; lib-calc.el ends here
