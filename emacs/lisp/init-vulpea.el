@@ -167,6 +167,19 @@
 
 
 
+(use-package org-persist
+  :straight nil
+  :defer t
+  :commands (org-persist-gc
+             org-persist-write-all)
+  :config
+  ;; disable caching upon killing emacs as it takes enormous amount of
+  ;; time and instead run it from eru along with db sync
+  (remove-hook 'kill-emacs-hook #'org-persist-write-all)
+  (remove-hook 'kill-emacs-hook #'org-persist-gc))
+
+
+
 (use-package org-clock
   :straight nil
   :defer t

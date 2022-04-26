@@ -250,7 +250,9 @@ Make all the links to this alias point to newly created note."
   (when (file-directory-p vulpea-directory)
     (org-roam-db-sync)
     (vino-db-sync)
-    (org-roam-update-org-id-locations)))
+    (org-roam-update-org-id-locations)
+    (org-persist-gc)
+    (org-persist-write-all)))
 
 
 
