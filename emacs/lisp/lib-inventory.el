@@ -73,6 +73,18 @@
   (abs (inventory-balance file id "amt:<0")))
 
 ;;;###autoload
+(defun inventory-total-consumed (file start-date end-date)
+  "Get total amount of consumed items in FILE in specified period.
+
+Period is defined by START-DATE and END-DATE."
+  (let* ((cmd (format "hledger -f %s balance activity:consume -b %s -e %s"
+                      file start-date end-date))
+         (res (shell-command-to-string cmd))
+         (lines (split-string res "\n")))
+    (string-to-number
+     (car (seq-drop-while #'string-empty-p (reverse lines))))))
+
+;;;###autoload
 (defun inventory-add (file id amount source &optional date)
   "Add AMOUNT of ID to inventory in FILE from SOURCE.
 

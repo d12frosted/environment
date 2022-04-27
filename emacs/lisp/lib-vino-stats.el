@@ -74,36 +74,72 @@ All other currencies are ignored.")
   "List of supported time frames.")
 
 (defun vino-stats--time-frame-range (frame)
-  "Convert time FRAME into range of dates."
+  "Convert time FRAME into range of dates.
+
+Result is a property list (:start-excl :start-incl :end-incl)."
   (let* ((now (current-time))
          (day (* 60 60 24))
          (fmt "%Y-%m-%d"))
     (pcase frame
-      (`this-year (list
-                   (let ((diff (string-to-number (format-time-string "%j" now))))
-                     (format-time-string fmt (time-subtract now (* day diff))))
-                   (format-time-string fmt now)))
-      (`this-month (list
-                    (let ((diff (string-to-number (format-time-string "%e" now))))
-                      (format-time-string fmt (time-subtract now (* day diff))))
-                    (format-time-string fmt now)))
-      (`this-week (list
-                   (let ((diff (string-to-number (format-time-string "%u" now))))
-                     (format-time-string fmt (time-subtract now (* day diff))))
-                   (format-time-string fmt now)))
+      (`this-year (let ((diff (string-to-number (format-time-string "%j" now))))
+                    (list
+                     :start-excl
+                     (format-time-string fmt (time-subtract now (* day diff)))
+                     :start-incl
+                     (format-time-string fmt (time-subtract now (* day (- diff 1))))
+                     :end-incl
+                     (format-time-string fmt now))))
+      (`this-month (let ((diff (string-to-number (format-time-string "%e" now))))
+                     (list
+                      :start-excl
+                      (format-time-string fmt (time-subtract now (* day diff)))
+                      :start-incl
+                      (format-time-string fmt (time-subtract now (* day (- diff 1))))
+                      :end-incl
+                      (format-time-string fmt now))))
+      (`this-week (let ((diff (string-to-number (format-time-string "%u" now))))
+                    (list
+                     :start-excl
+                     (format-time-string fmt (time-subtract now (* day diff)))
+                     :start-incl
+                     (format-time-string fmt (time-subtract now (* day (- diff 1))))
+                     :end-incl
+                     (format-time-string fmt now))))
       (`365-days (list
+                  :start-excl
                   (format-time-string fmt (time-subtract now (* day 365)))
+                  :start-incl
+                  (format-time-string fmt (time-subtract now (* day 364)))
+                  :end-incl
                   (format-time-string fmt now)))
       (`30-days (list
+                 :start-excl
                  (format-time-string fmt (time-subtract now (* day 30)))
+                 :start-incl
+                 (format-time-string fmt (time-subtract now (* day 29)))
+                 :end-incl
                  (format-time-string fmt now)))
       (`7-days (list
+                :start-excl
                 (format-time-string fmt (time-subtract now (* day 7)))
+                :start-incl
+                (format-time-string fmt (time-subtract now (* day 6)))
+                :end-incl
                 (format-time-string fmt now)))
       (`today (list
+               :start-excl
+               (format-time-string fmt (time-subtract now day))
+               :start-incl
                (format-time-string fmt now)
+               :end-incl
                (format-time-string fmt now)))
-      (`eternity (list "0000-00-00" "9999-99-99"))
+      (`eternity (list
+                  :start-excl
+                  "0000-00-00"
+                  :start-incl
+                  "0000-00-01"
+                  :end-excl
+                  "9999-99-99"))
       (_ (user-error "Unexpected time frame '%s'" frame)))))
 
 
@@ -349,8 +385,8 @@ are lists of ratings."
                    :where (and (> date $s1)
                                (<= date $s2))
                    :order-by [(asc date)]]
-                  (nth 0 range)
-                  (nth 1 range))))
+                  (plist-get range :start-excl)
+                  (plist-get range :end-incl))))
        (size (seq-length ratings))
        (ratings-tbl (let ((tbl (make-hash-table
                                 :test 'equal
@@ -412,8 +448,8 @@ are lists of ratings."
                         (vino-stats--grouped-ratings-data tbl entries-tbl)))))
     (buffer-display-result-with "*vino-stats*"
       (format "Stats for period from %s to %s"
-              (propertize (nth 0 range) 'face 'bold)
-              (propertize (nth 1 range) 'face 'bold))
+              (propertize (plist-get range :start-excl) 'face 'bold)
+              (propertize (plist-get range :end-incl) 'face 'bold))
       ""
 
       (propertize "General stats" 'face 'bold)
@@ -422,7 +458,11 @@ are lists of ratings."
        :sep " : "
        :pad-type '(right left)
        :data
-       (list (list "Wines" (seq-length (hash-table-keys entries-tbl)))
+       (list (list "Wines consumed" (inventory-total-consumed
+                                     vino-inventory-file
+                                     (plist-get range :start-incl)
+                                     (plist-get range :end-incl)))
+             (list "Wine entries" (seq-length (hash-table-keys entries-tbl)))
              (list "Ratings" (seq-length (hash-table-keys ratings-tbl)))
              (list "Countries" (seq-length countries-stat))
              (list "Vintage youngest" (seq-max (seq-remove (lambda (x) (= 0 x)) (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
