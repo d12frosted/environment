@@ -200,7 +200,6 @@ it mast contain a 'country' meta (see `vulpea-meta') linking to
   "Various stats based on RATINGS."
   ratings
   price-avg
-  price-rms                             ; not very useful
   price-min
   price-max
   price-total
@@ -227,7 +226,6 @@ RATINGS can be related to different entries."
          (prices (seq-map #'car prices))
          (prices (apply #'calcFunc-vec prices))
          (price-avg (when prices (calcFunc-vmean prices)))
-         (price-rms (when prices (calcFunc-rms prices)))
          (price-min (when prices (calcFunc-vmin prices)))
          (price-max (when prices (calcFunc-vmax prices)))
          (price-total (when prices (calcFunc-vsum prices)))
@@ -251,7 +249,6 @@ RATINGS can be related to different entries."
     (make-vino-stats
      :ratings ratings
      :price-avg price-avg
-     :price-rms price-rms
      :price-min price-min
      :price-max price-max
      :price-total price-total
