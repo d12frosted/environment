@@ -1,6 +1,6 @@
 ;;; lib-calc.el --- Calc utilities -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2022 Boris Buliga
+;; Copyright (c) 2015-2022 Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>

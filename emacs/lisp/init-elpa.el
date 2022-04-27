@@ -1,6 +1,6 @@
 ;;; init-elpa.el --- Initialize ELPA -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2015-2021, Boris Buliga <boris@d12frosted.io>
+;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
