@@ -74,72 +74,36 @@ All other currencies are ignored.")
   "List of supported time frames.")
 
 (defun vino-stats--time-frame-range (frame)
-  "Convert time FRAME into range of dates.
-
-Result is a property list (:start-excl :start-incl :end-incl)."
+  "Convert time FRAME into range of dates."
   (let* ((now (current-time))
          (day (* 60 60 24))
          (fmt "%Y-%m-%d"))
     (pcase frame
       (`this-year (let ((diff (string-to-number (format-time-string "%j" now))))
                     (list
-                     :start-excl
-                     (format-time-string fmt (time-subtract now (* day diff)))
-                     :start-incl
                      (format-time-string fmt (time-subtract now (* day (- diff 1))))
-                     :end-incl
                      (format-time-string fmt now))))
       (`this-month (let ((diff (string-to-number (format-time-string "%e" now))))
                      (list
-                      :start-excl
-                      (format-time-string fmt (time-subtract now (* day diff)))
-                      :start-incl
                       (format-time-string fmt (time-subtract now (* day (- diff 1))))
-                      :end-incl
                       (format-time-string fmt now))))
       (`this-week (let ((diff (string-to-number (format-time-string "%u" now))))
                     (list
-                     :start-excl
-                     (format-time-string fmt (time-subtract now (* day diff)))
-                     :start-incl
                      (format-time-string fmt (time-subtract now (* day (- diff 1))))
-                     :end-incl
                      (format-time-string fmt now))))
       (`365-days (list
-                  :start-excl
-                  (format-time-string fmt (time-subtract now (* day 365)))
-                  :start-incl
                   (format-time-string fmt (time-subtract now (* day 364)))
-                  :end-incl
                   (format-time-string fmt now)))
       (`30-days (list
-                 :start-excl
-                 (format-time-string fmt (time-subtract now (* day 30)))
-                 :start-incl
                  (format-time-string fmt (time-subtract now (* day 29)))
-                 :end-incl
                  (format-time-string fmt now)))
       (`7-days (list
-                :start-excl
-                (format-time-string fmt (time-subtract now (* day 7)))
-                :start-incl
                 (format-time-string fmt (time-subtract now (* day 6)))
-                :end-incl
                 (format-time-string fmt now)))
       (`today (list
-               :start-excl
                (format-time-string fmt (time-subtract now day))
-               :start-incl
-               (format-time-string fmt now)
                :end-incl
                (format-time-string fmt now)))
-      (`eternity (list
-                  :start-excl
-                  "0000-00-00"
-                  :start-incl
-                  "0000-00-01"
-                  :end-excl
-                  "9999-99-99"))
       (_ (user-error "Unexpected time frame '%s'" frame)))))
 
 
@@ -382,11 +346,11 @@ are lists of ratings."
                  (vino-db-query
                   [:select [id]
                    :from ratings
-                   :where (and (> date $s1)
+                   :where (and (>= date $s1)
                                (<= date $s2))
                    :order-by [(asc date)]]
-                  (plist-get range :start-excl)
-                  (plist-get range :end-incl))))
+                  (nth 0 range)
+                  (nth 1 range))))
        (size (seq-length ratings))
        (ratings-tbl (let ((tbl (make-hash-table
                                 :test 'equal
@@ -448,8 +412,8 @@ are lists of ratings."
                         (vino-stats--grouped-ratings-data tbl entries-tbl)))))
     (buffer-display-result-with "*vino-stats*"
       (format "Stats for period from %s to %s"
-              (propertize (plist-get range :start-excl) 'face 'bold)
-              (propertize (plist-get range :end-incl) 'face 'bold))
+              (propertize (nth 0 range) 'face 'bold)
+              (propertize (nth 1 range) 'face 'bold))
       ""
 
       (propertize "General stats" 'face 'bold)
@@ -460,8 +424,8 @@ are lists of ratings."
        :data
        (list (list "Wines consumed" (inventory-total-consumed
                                      vino-inventory-file
-                                     (plist-get range :start-incl)
-                                     (plist-get range :end-incl)))
+                                     (nth 0 range)
+                                     (nth 1 range)))
              (list "Wine entries" (seq-length (hash-table-keys entries-tbl)))
              (list "Ratings" (seq-length (hash-table-keys ratings-tbl)))
              (list "Countries" (seq-length countries-stat))
