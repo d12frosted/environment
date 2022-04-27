@@ -340,7 +340,6 @@ are lists of ratings."
       ((frame (or
                frame
                (intern
-                frame
                 (completing-read
                  "Time frame: " vino-stats-time-frames
                  nil 'require-match))))
