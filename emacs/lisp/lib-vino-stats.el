@@ -340,7 +340,21 @@ are lists of ratings."
                 (completing-read
                  "Time frame: " vino-stats-time-frames
                  nil 'require-match))))
-       (range (vino-stats--time-frame-range frame))
+       (date-min (caar
+                  (vino-db-query
+                   [:select [date]
+                    :from ratings
+                    :order-by [(asc date)]
+                    :limit 1])))
+       (date-max (caar
+                  (vino-db-query
+                   [:select [date]
+                    :from ratings
+                    :order-by [(desc date)]
+                    :limit 1])))
+       (range (if (eq 'eternity frame)
+                  (list date-min date-max)
+                (vino-stats--time-frame-range frame)))
        (ratings (seq-map
                  #'car-safe
                  (vino-db-query
