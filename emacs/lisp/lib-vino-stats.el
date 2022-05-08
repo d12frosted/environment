@@ -77,33 +77,34 @@ All other currencies are ignored.")
   "Convert time FRAME into range of dates."
   (let* ((now (current-time))
          (day (* 60 60 24))
-         (fmt "%Y-%m-%d"))
+         (fmt "%Y-%m-%d")
+         (tomorrow (time-add now day)))
     (pcase frame
       (`this-year (let ((diff (string-to-number (format-time-string "%j" now))))
                     (list
                      (format-time-string fmt (time-subtract now (* day (- diff 1))))
-                     (format-time-string fmt now))))
+                     (format-time-string fmt tomorrow))))
       (`this-month (let ((diff (string-to-number (format-time-string "%e" now))))
                      (list
                       (format-time-string fmt (time-subtract now (* day (- diff 1))))
-                      (format-time-string fmt now))))
+                      (format-time-string fmt tomorrow))))
       (`this-week (let ((diff (string-to-number (format-time-string "%u" now))))
                     (list
                      (format-time-string fmt (time-subtract now (* day (- diff 1))))
-                     (format-time-string fmt now))))
+                     (format-time-string fmt tomorrow))))
       (`365-days (list
                   (format-time-string fmt (time-subtract now (* day 364)))
-                  (format-time-string fmt now)))
+                  (format-time-string fmt tomorrow)))
       (`30-days (list
                  (format-time-string fmt (time-subtract now (* day 29)))
-                 (format-time-string fmt now)))
+                 (format-time-string fmt tomorrow)))
       (`7-days (list
                 (format-time-string fmt (time-subtract now (* day 6)))
-                (format-time-string fmt now)))
+                (format-time-string fmt tomorrow)))
       (`today (list
                (format-time-string fmt (time-subtract now day))
                :end-incl
-               (format-time-string fmt now)))
+               (format-time-string fmt tomorrow)))
       (_ (user-error "Unexpected time frame '%s'" frame)))))
 
 
