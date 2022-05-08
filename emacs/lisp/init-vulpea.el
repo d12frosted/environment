@@ -108,7 +108,7 @@
    org-startup-folded t)
 
   ;; do not allow invisible edits (...)
-  (setq org-fold-catch-invisible-edits 'smart)
+  (setq-default org-fold-catch-invisible-edits 'smart)
 
   ;; formatting for properties
   (setq org-property-format "%-24s %s")
