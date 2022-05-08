@@ -45,6 +45,18 @@
  search-default-mode #'char-fold-to-regexp
  replace-char-fold t)
 
+;; buffer encoding
+(prefer-coding-system       'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-language-environment   'utf-8)
+
+;; this battle is simple
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq-default tab-always-indent t)
+
 
 
 ;; electric everything (but there must be a way to disable it)
@@ -61,11 +73,7 @@
 
 ;; Whitespaces
 
-(setq-default
- indent-tabs-mode nil
- tab-width 2
- require-final-newline t
- tab-always-indent t)
+(setq-default require-final-newline t)
 
 (defun editor-show-trailing-whitespace ()
   "Enable display of trailing whitespace in this buffer."

@@ -35,113 +35,85 @@
 
 (require 'init-env)
 
-;; be quiet at startup; don't load or display anything unnecessary
-(setq-default
- inhibit-startup-message t
- inhibit-startup-screen t
- inhibit-startup-echo-area-message user-login-name
- inhibit-default-init t
- initial-major-mode 'fundamental-mode
- initial-scratch-message nil
- use-file-dialog nil
- use-dialog-box nil)
+;; no startup  screen
+(setq inhibit-startup-screen t)
 
-;; disable cursort blinking
+;; no startup message
+(setq inhibit-startup-message t)
+(setq inhibit-startup-echo-area-message t)
+
+;; initial buffer
+(setq initial-buffer-choice nil)
+
+;; no frame title
+(setq frame-title-format nil)
+
+;; no file dialog
+(setq use-file-dialog nil)
+
+;; no dialog box
+(setq use-dialog-box nil)
+
+;; no popup windows
+(setq pop-up-windows nil)
+
+;; no empty line indicators
+(setq indicate-empty-lines nil)
+
+;; no cursor in inactive windows
+(setq cursor-in-non-selected-windows nil)
+
+(setq initial-scratch-message nil)
+(setq inhibit-default-init t)
+
+;; start easy with little dependencies to load
+(setq initial-major-mode 'fundamental-mode)
+
+;; yet keep `text-mode' as default major mode
+(setq default-major-mode 'text-mode)
+
+;; maximum font lock
+(setq font-lock-maximum-decoration t)
+
+;; no confirmation for visiting non-existent files
+(setq confirm-nonexistent-file-or-buffer nil)
+
+;; completion style, see
+;; gnu.org/software/emacs/manual/html_node/emacs/Completion-Styles.html
+(setq completion-styles '(basic substring))
+
+;; disable cursort blinking, cause it drives me nuts
 (blink-cursor-mode -1)
-
-;; play around with frame title (which I rarely see)
-(setq frame-title-format
-      '("%b@"
-        (:eval (or (file-remote-p default-directory 'host)
-                   system-name))
-        " — Emacs"))
-
-;; for some reason only this removes the clutter with xmonad
-(use-package scroll-bar
-  :straight nil
-  :commands (scroll-bar-mode)
-  :init
-  (scroll-bar-mode -1))
 
 ;; y/n instead of yes/no
 (fset #'yes-or-no-p #'y-or-n-p)
 
-;; mode line
-(column-number-mode)
-(size-indication-mode)
+;; no beeping and no blinking please
+(setq ring-bell-function #'ignore)
+(setq visible-bell nil)
 
-(setq-default
- ;; no beeping and no blinking please
- ring-bell-function #'ignore
- visible-bell nil
+;; make sure that trash is not drawn
+(setq indicate-buffer-boundaries nil)
+(setq indicate-empty-lines nil)
 
- ;; make sure that trash is not drawed
- indicate-buffer-boundaries nil
- indicate-empty-lines nil
+;; don't resize emacs in steps, it looks weird and plays bad with
+;; window manager.
+(setq window-resize-pixelwise t)
+(setq frame-resize-pixelwise t)
 
- ;; don't resize emacs in steps, it looks weird and plays bad with
- ;; window manager.
- window-resize-pixelwise t
- frame-resize-pixelwise t
-
- ;; disable bidirectional text for tiny performance boost
- bidi-display-reordering nil
-
- ;; hide curosrs in other windoes
- cursor-in-non-selected-windows nil)
-
-(when env-graphic-p
-  (setq-default line-spacing 1)
-  (cond
-   (env-sys-mac-p
-    (add-to-list 'default-frame-alist
-                 '(font . "Source Code Pro:weight=medium")))))
-
-(defun ui-reset-line-spacing ()
-  "Locally reset `line-spacing'."
-  (setq-local line-spacing nil))
-
-(use-package modus-themes
-  :if env-graphic-p
-  :init
-  (setq-default
-   modus-themes-diffs 'desaturated
-   modus-themes-headings '((1 . (background overline))
-                           (2 . (background overline))
-                           (3 . (background overline))
-                           (t . (monochrome)))
-   modus-themes-bold-constructs t
-   modus-themes-syntax '(faint)
-   modus-themes-prompts nil
-   modus-themes-completions '((matches . (semibold background intense))
-                              (selection . (accented intense))
-                              (popup . (accented))))
-  (load-theme 'modus-operandi t))
-
-(use-package flycheck-color-mode-line
-  :after flycheck
-  :hook (flycheck-mode . flycheck-color-mode-line-mode)
-  :init
-  (setq-default flycheck-color-mode-line-show-running nil))
-
-(use-package all-the-icons
-  :defer t
-  :commands (all-the-icons-material)
-  :init
-  (when elpa-bootstrap-p
-    (let ((file (expand-file-name "all-the-icons-ready"
-                                  path-cache-dir)))
-      (unless (file-exists-p file)
-        (all-the-icons-install-fonts t)
-        (shell-command-to-string (format "echo '' > %s" file))))))
+;; disable bidirectional text for tiny performance boost
+(setq bidi-display-reordering nil)
 
 (use-package minions
   :init
   (minions-mode 1))
 
-(use-package mode-line-debug
-  :commands (mode-line-debug-mode)
-  :init (mode-line-debug-mode 1))
+;; Size of temporary buffers
+(temp-buffer-resize-mode)
+(setq temp-buffer-max-height 8)
+
+;; Minimum window height
+(setq window-min-height 1)
 
 ;; Install it from sources, because ELPA version has invalid
 ;; signature.
@@ -163,6 +135,74 @@
              :repo "publicimageltd/lister"
              :branch "archive-version-0.7.2")
   :defer t)
+
+
+
+(use-package all-the-icons
+  :defer t
+  :commands (all-the-icons-material)
+  :init
+  (when elpa-bootstrap-p
+    (let ((file (expand-file-name "all-the-icons-ready"
+                                  path-cache-dir)))
+      (unless (file-exists-p file)
+        (all-the-icons-install-fonts t)
+        (shell-command-to-string (format "echo '' > %s" file))))))
+
+(use-package nano
+  :straight (:type git :host github :repo "rougier/nano-emacs")
+  :defer t
+  :init
+  (require 'nano-layout)
+  (require 'nano-theme-light)
+
+  (require 'nano-colors)
+  (require 'nano-faces)
+
+  (nano-faces)
+  (require 'nano-theme)
+  (nano-theme--basics)
+  (nano-theme--font-lock)
+  (nano-theme--mode-line)
+  (nano-theme--minibuffer)
+  (nano-theme--buttons)
+  (nano-theme--info)
+  (nano-theme--bookmark)
+  (nano-theme--speedbar)
+  (nano-theme--message)
+  (nano-theme--outline)
+  (nano-theme--customize)
+  (nano-theme--package)
+  (nano-theme--flyspell)
+  (nano-theme--ido)
+  (nano-theme--diff)
+  (nano-theme--term)
+  (nano-theme--calendar)
+  (nano-theme--agenda)
+  (nano-theme--org)
+  (nano-theme--mu4e)
+  (nano-theme--elfeed)
+  (nano-theme--rst)
+  (nano-theme--markdown)
+  (nano-theme--hl-line)
+  (nano-theme--company)
+
+  ;; (require 'nano-defaults)
+  (require 'nano-modeline)
+  (require 'nano-help)
+
+  ;; custom faces
+  (with-eval-after-load 'org
+    (set-face 'org-done 'nano-face-faded)))
+
+(use-package nano-modeline
+  :straight (:type git :host github :repo "rougier/nano-modeline"))
+
+;; when theme is right, this thing is good
+(global-hl-line-mode)
+
+;; no scroll bars, please!
+(when (fboundp 'scroll-bar-mode) (set-scroll-bar-mode nil))
 
 
 

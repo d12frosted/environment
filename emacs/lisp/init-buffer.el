@@ -36,6 +36,17 @@
 (require 'config-path)
 (require 'init-kbd)
 
+;; unique buffer names
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'reverse
+      uniquify-separator " • "
+      uniquify-after-kill-buffer-p t
+      uniquify-ignore-buffers-re "^\\*")
+
+;; size of temporary buffers
+(temp-buffer-resize-mode)
+(setq temp-buffer-max-height 8)
+
 
 
 (defvar buffer-fallback-name "*scratch*"
