@@ -42,6 +42,11 @@ else
   echo "link $s -> $t"
 fi
 
+if [[ "$s" != /* ]]; then
+  s=$(realpath --relative-to="$d" "$s")
+  echo "source is relative, so changing it to $s"
+fi
+
 if [[ "$owner" = "root" ]]; then
   sudo ln -s "$s" "$t"
 else
