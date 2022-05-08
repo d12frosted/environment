@@ -293,6 +293,7 @@ are lists of ratings."
              (stats (vino-stats-from-ratings ratings entries-tbl)))
         (list key
               (seq-length ratings)
+              (vino-stats-format-price (vino-stats-price-total stats))
               (vino-stats-format-price (vino-stats-price-avg stats))
               (vino-stats-format-price (vino-stats-price-min stats))
               (vino-stats-format-price (vino-stats-price-max stats))
@@ -460,7 +461,7 @@ are lists of ratings."
 
       (propertize "Country stats" 'face 'bold)
       (string-table
-       :header '("country" "count" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
+       :header '("country" "count" "p total" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
        :header-sep "-"
        :header-sep-start "|-"
        :header-sep-conj "-+-"
@@ -473,7 +474,7 @@ are lists of ratings."
 
       (propertize "Vintage stats" 'face 'bold)
       (string-table
-       :header '("country" "count" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
+       :header '("country" "count" "p total" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
        :header-sep "-"
        :header-sep-start "|-"
        :header-sep-conj "-+-"
@@ -491,7 +492,7 @@ are lists of ratings."
 
       (propertize "Colour stats" 'face 'bold)
       (string-table
-       :header '("country" "count" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
+       :header '("country" "count" "p total" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
        :header-sep "-"
        :header-sep-start "|-"
        :header-sep-conj "-+-"
@@ -504,7 +505,7 @@ are lists of ratings."
 
       (propertize "Carbonation stats" 'face 'bold)
       (string-table
-       :header '("country" "count" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
+       :header '("country" "count" "p total" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
        :header-sep "-"
        :header-sep-start "|-"
        :header-sep-conj "-+-"
