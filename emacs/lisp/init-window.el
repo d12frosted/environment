@@ -35,9 +35,12 @@
 
 (require 'init-kbd)
 
-;; Prefer vertical splits by default
-(setq split-height-threshold nil
-      split-width-threshold 160)
+;; prefer vertical splits by default
+(setq split-height-threshold nil)
+(setq split-width-threshold 160)
+
+;; minimum window height
+(setq window-min-height 1)
 
 (use-package ace-window
   :defer t
