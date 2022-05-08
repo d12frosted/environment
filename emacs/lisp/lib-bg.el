@@ -267,7 +267,7 @@ Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
                 ((> amount 0)
                  (or positive-face 'success))
                 ((< amount 0)
-                 (or negative-face 'error))
+                 (or negative-face 'warning))
                 (t
                  (or zero-face 'warning)))))
     (propertize value 'face face)))
