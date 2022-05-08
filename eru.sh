@@ -327,6 +327,22 @@ theme_guard "system" "build nix environment" && {
       ./result/activate switch
     }
   }
+
+  # cleanup if needed
+  LAST_NIX_CLEANUP_FILE="${XDG_CACHE_HOME}/eru/last_nix_cleanup"
+  if [ ! -f "$LAST_NIX_CLEANUP_FILE" ]; then
+    date '+%F' > "$LAST_NIX_CLEANUP_FILE"
+  fi
+  LAST_NIX_CLEANUP=$(date -d "$(cat "$LAST_NIX_CLEANUP_FILE")" '+%s')
+  TODAY=$(date '+%s')
+  DIFF_SECONDS=$(( "$TODAY" - "$LAST_NIX_CLEANUP" ))
+  DIFF_DAYS=$(( "$DIFF_SECONDS" / 86400 ))
+  CLEANUP_NIX_AFTER_DAYS=10
+  if [ "$DIFF_DAYS" -ge "$CLEANUP_NIX_AFTER_DAYS" ]; then
+     section "cleanup old nix generations"
+     nix-collect-garbage -d
+     date '+%F' > "$LAST_NIX_CLEANUP_FILE"
+  fi
 }
 
 macos_guard && {
