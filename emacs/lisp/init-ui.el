@@ -225,8 +225,12 @@
 ;; when theme is right, this thing is good
 (global-hl-line-mode)
 
-;; no scroll bars, please!
-(when (fboundp 'scroll-bar-mode) (set-scroll-bar-mode nil))
+;; no clutter, please!
+(if (fboundp 'scroll-bar-mode) (set-scroll-bar-mode nil))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (display-graphic-p)
+    (menu-bar-mode t)
+  (menu-bar-mode -1))
 
 
 
