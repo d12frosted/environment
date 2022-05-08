@@ -54,9 +54,6 @@
 ;; no dialog box
 (setq use-dialog-box nil)
 
-;; no popup windows
-(setq pop-up-windows nil)
-
 ;; no empty line indicators
 (setq indicate-empty-lines nil)
 
