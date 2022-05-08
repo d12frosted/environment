@@ -442,7 +442,7 @@ are lists of ratings."
                                      vino-inventory-file
                                      (nth 0 range)
                                      (nth 1 range)))
-             (list "Wine entries" (seq-length (hash-table-keys entries-tbl)))
+             (list "Wines rated" (seq-length (hash-table-keys entries-tbl)))
              (list "Ratings" (seq-length (hash-table-keys ratings-tbl)))
              (list "Countries" (seq-length countries-stat))
              (list "Vintage youngest" (seq-max (seq-remove (lambda (x) (= 0 x)) (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
