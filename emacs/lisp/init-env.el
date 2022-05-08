@@ -41,14 +41,5 @@
 (defconst env-sys-linux-p (eq system-type 'gnu/linux))
 (defconst env-sys-name (system-name))
 
-(use-package exec-path-from-shell
-  :if (and env-sys-mac-p env-graphic-p)
-  :commands (exec-path-from-shell-initialize)
-  :init
-  (setq-default
-   exec-path-from-shell-shell-name (executable-find "fish")
-   exec-path-from-shell-debug nil)
-  (exec-path-from-shell-initialize))
-
 (provide 'init-env)
 ;;; init-env.el ends here
