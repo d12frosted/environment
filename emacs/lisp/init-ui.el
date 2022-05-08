@@ -35,6 +35,10 @@
 
 (require 'init-env)
 
+(defconst ui-font-family-monospaced "Source Code Pro")
+(defconst ui-font-family-proportional "Source Code Pro")
+(defconst ui-font-size 14)
+
 ;; no startup  screen
 (setq inhibit-startup-screen t)
 
@@ -150,6 +154,10 @@
   :straight (:type git :host github :repo "rougier/nano-emacs")
   :defer t
   :init
+  (setq nano-font-family-monospaced ui-font-family-monospaced)
+  (setq nano-font-family-proportional ui-font-family-proportional)
+  (setq nano-font-size ui-font-size)
+
   (require 'nano-layout)
   (require 'nano-theme-light)
 
