@@ -163,7 +163,10 @@
 
   ;; open files in the same window
   (add-to-list 'org-link-frame-setup '(file . find-file))
-  (setq org-indirect-buffer-display 'current-window))
+  (setq org-indirect-buffer-display 'current-window)
+
+  ;; Use RET to open org-mode links, including those in quick-help.org
+  (setq org-return-follows-link t))
 
 
 
