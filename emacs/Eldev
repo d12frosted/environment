@@ -192,9 +192,8 @@
 
 ;; compatibility for `nano-layout'
 
-(defun scroll-bar-mode-wrapper (f &optional arg)
-  (when (display-graphic-p)
-    (funcall f arg)))
-(advice-add 'scroll-bar-mode :around #'scroll-bar-mode-wrapper)
+(when (getenv "CI")
+  (defun scroll-bar-mode (&rest args)
+    "Do nothing."))
 
 
