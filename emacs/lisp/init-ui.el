@@ -198,7 +198,26 @@
 
   ;; custom faces
   (with-eval-after-load 'org
-    (set-face 'org-done 'nano-face-faded)))
+    (set-face 'org-done 'nano-face-faded)
+    (set-face 'org-verbatim 'nano-face-strong)
+    (set-face-attribute 'org-level-1 nil
+                        :overline nano-color-subtle
+                        :family ui-font-family-proportional
+                        :height (* 10 (floor (* 1.2 ui-font-size))))
+    (set-face-attribute 'org-level-2 nil
+                        :overline nano-color-subtle
+                        :family ui-font-family-proportional
+                        :height (* 10 (floor (* 1.1 ui-font-size))))
+    (set-face-attribute 'org-level-3 nil
+                        :family ui-font-family-proportional
+                        :height (* 10 (floor (* 1.1 ui-font-size))))
+    (set-face-attribute 'org-document-info nil
+                        :inherit 'nano-face-subtle)
+    (set-face-attribute 'org-document-title nil
+                        :foreground nano-color-foreground
+                        :family ui-font-family-proportional
+                        :height (* 10 (floor (* 1.1 ui-font-size)))
+                        :weight 'medium)))
 
 (use-package nano-modeline
   :straight (:type git :host github :repo "rougier/nano-modeline"))
