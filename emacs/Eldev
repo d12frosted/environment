@@ -189,3 +189,12 @@
             (call-interactively #'emacsql-fix-vector-indentation)))
 
 
+
+;; compatibility for `nano-layout'
+
+(defun scroll-bar-mode-wrapper (f &optional arg)
+  (when (display-graphic-p)
+    (funcall f arg)))
+(advice-add 'scroll-bar-mode :around #'scroll-bar-mode-wrapper)
+
+
