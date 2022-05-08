@@ -226,14 +226,15 @@
 (global-hl-line-mode)
 
 ;; no clutter, please!
-(when env-graphic-p
-  (when (fboundp 'scroll-bar-mode)
-    (set-scroll-bar-mode nil))
-  (when (fboundp 'tool-bar-mode)
-    (tool-bar-mode -1))
-  (if (display-graphic-p)
-      (menu-bar-mode t)
-    (menu-bar-mode -1)))
+(when (fboundp 'scroll-bar-mode)
+  (set-scroll-bar-mode nil))
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
+
+;; but menu bar is ok
+(if env-graphic-p
+    (menu-bar-mode t)
+  (menu-bar-mode -1))
 
 
 
