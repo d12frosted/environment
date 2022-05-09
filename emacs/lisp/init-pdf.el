@@ -55,13 +55,13 @@
              pdf-tools-install)
   :init
   (setq-default pdf-view-display-size 'fit-page)
-  (when elpa-bootstrap-p
+  (when (and elpa-bootstrap-p (not (getenv "CI")))
     (require 'pdf-tools)
     (require 'lib-nix)
     (unless (file-exists-p pdf-info-epdfinfo-program)
       (let ((default-directory
-              (expand-file-name "build/server/"
-                                pdf-tools-directory)))
+             (expand-file-name "build/server/"
+                               pdf-tools-directory)))
         (nix-shell-command
          :message-intro "building pdf-tools..."
          :message-error "Failed to build pdf-tools"
