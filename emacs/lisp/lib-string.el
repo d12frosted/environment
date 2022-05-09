@@ -124,18 +124,19 @@ buffer."
    (t (user-error
        "Unsupported type of \"%s\"" value))))
 
-(cl-defun string-table (&key data
-                             header
-                             header-sep
-                             header-sep-start
-                             header-sep-conj
-                             header-sep-end
-                             pad-type
-                             pad-str
-                             sep
-                             row-start
-                             row-end
-                             width)
+(cl-defun string-table (&key
+                        data
+                        header
+                        header-sep
+                        header-sep-start
+                        header-sep-conj
+                        header-sep-end
+                        pad-type
+                        pad-str
+                        sep
+                        row-start
+                        row-end
+                        width)
   "Format DATA as a table.
 
 HEADER is optional. When present HEADER-SEP, HEADER-SEP-START,
