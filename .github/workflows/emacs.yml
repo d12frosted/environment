@@ -17,6 +17,10 @@ jobs:
         emacs_version:
           - snapshot
     steps:
+      - uses: cachix/install-nix-action@v17
+        with:
+          nix_path: nixpkgs=channel:nixpkgs-unstable
+
       - uses: purcell/setup-emacs@master
         with:
           version: ${{ matrix.emacs_version }}
