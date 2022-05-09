@@ -47,7 +47,7 @@
 
 
 (defface litnotes-group-title-face
-  '((t (:inherit org-roam-header-line)))
+  '((t (:inherit org-level-1)))
   "Face for displaying group title."
   :group 'litnotes)
 
@@ -57,12 +57,12 @@
   :group 'litnotes)
 
 (defface litnotes-entry-title-face
-  '((t (:inherit org-document-title)))
+  '((t (:inherit org-verbatim)))
   "Face for displaying entry title."
   :group 'litnotes)
 
 (defface litnotes-entry-authors-face
-  '((t (:inherit font-lock-comment-face)))
+  '((t (:inherit org-link)))
   "Face for displaying entry authors."
   :group 'litnotes)
 
@@ -76,28 +76,19 @@
   (< (seq-position litnotes-status-values a)
      (seq-position litnotes-status-values b)))
 
-(defun litnotes-status-display (status &rest icon-args)
-  "Display STATUS.
-
-ICON-ARGS are properties that are passed to `all-the-icons'
-functions. You may use it to pass :height and :v-adjust."
-  (let ((icon-fn (pcase status
-                   (`"ongoing" #'all-the-icons-faicon)
-                   (`"new" #'all-the-icons-faicon)
-                   (`"done" #'all-the-icons-faicon)
-                   (`"dropped" #'all-the-icons-faicon)))
-        (icon-name (pcase status
-                     (`"ongoing" "spinner")
-                     (`"new" "inbox")
-                     (`"done" "check")
-                     (`"dropped" "times"))))
-    (if (featurep 'all-the-icons)
-        (concat
-         (apply icon-fn icon-name icon-args)
-         ;; this way we align everything horizontally
-         "\t"
-         status)
-      "")))
+(defun litnotes-status-icon (status)
+  "Return STATUS icon."
+  (let ((style (svg-lib-style-compute-default 'litnotes-group-title-face)))
+    (svg-lib-icon
+     (pcase status
+       (`"ongoing" "arrow-repeat")
+       (`"new" "inbox")
+       (`"done" "check")
+       (`"dropped" "trash"))
+     style
+     :scale 1
+     :collection "bootstrap"
+     :stroke 0)))
 
 (defconst litnotes-status-tag-prefix "status/"
   "Prefix of the status tag.")
@@ -134,29 +125,20 @@ functions. You may use it to pass :height and :v-adjust."
   (< (seq-position litnotes-content-types a)
      (seq-position litnotes-content-types b)))
 
-(defun litnotes-content-display (content &rest icon-args)
-  "Display CONTENT.
-
-ICON-ARGS are properties that are passed to `all-the-icons'
-functions. You may use it to pass :height and :v-adjust."
-  (let ((icon-fn (pcase content
-                   (`"book" #'all-the-icons-material)
-                   (`"article" #'all-the-icons-material)
-                   (`"video" #'all-the-icons-material)
-                   (`"game" #'all-the-icons-material)
-                   (`"course" #'all-the-icons-material)))
-        (icon-name (pcase content
-                     (`"book" "local_library")
-                     (`"article" "insert_drive_file")
-                     (`"video" "videocam")
-                     (`"game" "videogame_asset")
-                     (`"course" "school"))))
-    (if (featurep 'all-the-icons)
-        (concat
-         (apply icon-fn icon-name icon-args)
-         ;; this way we align everything horizontally
-         "\t")
-      "")))
+(cl-defun litnotes-content-icon (content &key face scale)
+  "Return CONTENT icon with FACE and SCALE."
+  (let ((style (svg-lib-style-compute-default face)))
+    (svg-lib-icon
+     (pcase content
+       (`"book" "book")
+       (`"article" "journal-text")
+       (`"video" "film")
+       (`"course" "archive")
+       (`"game" "controller"))
+     style
+     :scale (or scale 0.75)
+     :collection "bootstrap"
+     :stroke 0)))
 
 (defconst litnotes-content-tag-prefix "content/"
   "Prefix of the content tag.")
@@ -201,8 +183,13 @@ functions. You may use it to pass :height and :v-adjust."
 
 (defun litnotes-entry-compare (a b)
   "Compare entries A and B by title."
-  (string< (litnotes-entry-title a)
-           (litnotes-entry-title b)))
+  (let ((author-a (car-safe (seq-map #'vulpea-note-title (litnotes-entry-authors a))))
+        (author-b (car-safe (seq-map #'vulpea-note-title (litnotes-entry-authors b)))))
+    (cond
+     ((string< author-a author-b) t)
+     ((string= author-a author-b) (string< (litnotes-entry-title a)
+                                           (litnotes-entry-title b)))
+     (t nil))))
 
 (defun litnotes-entry-visit (entry &optional other-window)
   "Visit a litnote ENTRY possible in OTHER-WINDOW."
@@ -226,6 +213,12 @@ functions. You may use it to pass :height and :v-adjust."
 
 
 
+(setq font-lock-ignore '((litnotes-mode litnotes-group-title-face)))
+(setq-local svg-tag-tags
+            '(("status/[a-zA-Z]+" .
+               ((lambda (status)
+                  (litnotes-status-icon (litnotes-status-from-tag status)))))))
+
 (defvar-local litnotes-buffer-data nil
   "Associative list of all litnotes grouped by status.")
 
@@ -233,7 +226,22 @@ functions. You may use it to pass :height and :v-adjust."
 (define-derived-mode litnotes-mode
   lister-mode "litnotes"
   "Major mode for browsing litnotes."
-  (lister-setup (current-buffer) #'litnotes-buffer-mapper))
+  (setq-local svg-tag-tags
+              '(("status/[a-zA-Z]+" .
+                 ((lambda (status)
+                    (litnotes-status-icon (litnotes-status-from-tag status)))))
+                ("content/[a-zA-Z]+" .
+                 ((lambda (content)
+                    (litnotes-content-icon (litnotes-content-from-tag content)))))))
+  (svg-tag-mode-on)
+
+  (lister-setup (current-buffer) #'litnotes-buffer-mapper)
+  (setq litnotes-buffer-data (litnotes-buffer-data))
+  (lister-highlight-mode 1)
+  (lister-insert-sequence
+   (current-buffer) (point) litnotes-status-values)
+  (lister-goto (current-buffer) :first)
+  (litnotes-buffer-expand-sublist (current-buffer) (point)))
 
 (defconst litnotes-mode-map
   (let ((map (make-sparse-keymap)))
@@ -253,14 +261,7 @@ functions. You may use it to pass :height and :v-adjust."
   (let* ((name "*litnotes*")
          (buffer (buffer-generate name 'unique)))
     (with-current-buffer buffer
-      (litnotes-mode)
-      (setq litnotes-buffer-data (litnotes-buffer-data))
-      (setq-local tab-width 4)
-      (lister-highlight-mode 1)
-      (lister-insert-sequence
-       buffer (point) litnotes-status-values)
-      (lister-goto buffer :first)
-      (litnotes-buffer-expand-sublist buffer (point)))
+      (litnotes-mode))
     (switch-to-buffer buffer)))
 
 (defun litnotes-buffer-data ()
@@ -275,35 +276,41 @@ functions. You may use it to pass :height and :v-adjust."
 
 (defun litnotes-buffer-mapper (data)
   "DATA mapper for `litnotes-mode'."
-  (if (stringp data)
-      (concat
-       (propertize
-        (litnotes-status-display data)
-        'face 'litnotes-group-title-face)
-       " "
-       (propertize
-        (concat "("
-                (number-to-string
-                 (length (cdr (assoc data litnotes-buffer-data))))
-                ")")
-        'face 'litnotes-group-counter-face))
-    (concat
-     (litnotes-content-display
-      (litnotes-entry-content data))
-     (propertize
-      (litnotes-entry-title data)
-      'face 'litnotes-entry-title-face)
-     (when (litnotes-entry-authors data)
+  (propertize
+   (if (stringp data)
        (concat
-        " by "
-        (string-join
-         (seq-map
-          (lambda (note)
-            (propertize
-             (vulpea-note-title note)
-             'face 'litnotes-entry-authors-face))
-          (litnotes-entry-authors data))
-         ", "))))))
+        (propertize
+         (concat
+          ;; will be replaced with icon
+          (litnotes-status-to-tag data)
+          " "
+          data
+          " ")
+         'face 'litnotes-group-title-face)
+        (propertize
+         (concat "("
+                 (number-to-string
+                  (length (cdr (assoc data litnotes-buffer-data))))
+                 ")")
+         'face 'litnotes-group-counter-face))
+     (concat
+      (litnotes-content-to-tag (litnotes-entry-content data))
+      " "
+      (propertize
+       (litnotes-entry-title data)
+       'face 'litnotes-entry-title-face)
+      (when (litnotes-entry-authors data)
+        (concat
+         " by "
+         (string-join
+          (seq-map
+           (lambda (note)
+             (propertize
+              (vulpea-note-title note)
+              'face 'litnotes-entry-authors-face))
+           (litnotes-entry-authors data))
+          ", ")))))
+   'font-lock-ignore t))
 
 (defun litnotes-buffer-groups-refresh (buffer)
   "Refresh groups in litnotes BUFFER."
