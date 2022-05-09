@@ -126,6 +126,10 @@
 
 
 
+(use-package font-lock+)
+
+
+
 (use-package bui
   :defer t)
 
