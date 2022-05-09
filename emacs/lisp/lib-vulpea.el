@@ -44,6 +44,8 @@
 (require 'org-roam)
 (require 'org-roam-db)
 (require 'org-roam-dailies)
+(require 'svg-lib)
+(require 'svg-tag-mode)
 
 
 
@@ -218,6 +220,52 @@ Make all the links to this alias point to newly created note."
 
 
 
+(defconst vulpea-svg-tag-face 'org-link)
+(defconst vulpea-svg-tag-style
+  (svg-lib-style-compute-default vulpea-svg-tag-face))
+
+;;;###autoload
+(defun vulpea-setup-svg-tags ()
+  "Do something useful."
+  (setq-local
+   svg-tag-tags
+   '(("\\(\\[\\)\\[id:\\([0-9a-zA-Z\\-]+\\)\\]\\[.+\\]\\]" .
+      ((lambda (tag)
+         (when-let ((id (match-string 2))
+                    (note (vulpea-db-get-by-id id))
+                    (tags (vulpea-note-tags note)))
+           (cond
+            ((seq-contains-p tags litnotes-tag)
+             (litnotes-content-icon
+              (litnotes-entry-content
+               (litnotes-entry note))
+              :face vulpea-svg-tag-face))
+
+            (t (when-let ((data
+                           (cond
+                            ((seq-contains-p tags "people")
+                             '("bootstrap" "person"))
+                            ((seq-contains-p tags "grape")
+                             '("fa-solid" "grapes"))
+                            ((seq-contains-p tags "cellar")
+                             '("fa-solid" "wine-glass"))
+                            ((seq-contains-p tags "appellation")
+                             '("fa-solid" "location-arrow"))
+                            ((seq-contains-p tags "region")
+                             '("fa-solid" "location-arrow"))
+                            ((seq-contains-p tags "places")
+                             '("fa-solid" "location-arrow"))
+                            ((seq-contains-p tags "producer")
+                             '("bootstrap" "person"))
+
+                            ((seq-contains-p tags "aroma")))))
+                 (svg-lib-icon (nth 1 data) vulpea-svg-tag-style
+                               :collection (nth 0 data)
+                               :stroke 0))))))))))
+  (svg-tag-mode))
+
+
+
 ;;;###autoload
 (defun vulpea-dailies-today ()
   "Find a daily note for today."
@@ -317,49 +365,6 @@ parameter), defaulting to `vulpea-note-title'."
                       note)
              #'vulpea-visit
              (vulpea-note-id note)))
-
-
-
-;;;###autoload
-(defun vulpea-activate-link (start end path _brackets)
-  "Activate a link between START and END for PATH."
-  (let ((visible-start (or (match-beginning 3)
-                           (match-beginning 2)))
-        (visible-end (or (match-end 3) (match-end 2))))
-    (when-let* ((uuid-p (string-match-p string-uuid-regexp path))
-                (note (vulpea-db-get-by-id path))
-                (tags (vulpea-note-tags note))
-                (icon (cond
-                       ((seq-contains-p tags litnotes-tag)
-                        (litnotes-content-display
-                         (litnotes-entry-content
-                          (litnotes-entry note))
-                         :height 0.8 :v-adjust 0.04))
-                       ((seq-contains-p tags "people")
-                        (concat
-                         (all-the-icons-material
-                          "person" :height 0.8 :v-adjust 0.04)
-                         "\t"))
-                       ((seq-contains-p tags "grape")
-                        (concat "🍇" "\t"))
-                       ((seq-contains-p tags "cellar")
-                        (concat "🍷" "\t"))
-                       ((seq-contains-p tags "aroma")
-                        (concat
-                         (all-the-icons-material
-                          "local_florist" :height 0.8 :v-adjust 0.04)
-                         "\t"))))
-                (desc (buffer-substring visible-start visible-end))
-                (desc (concat icon desc))
-                (desc (s-truncate (- end start) desc))
-                (l (length desc))
-                (hidden `(invisible
-                          ,(or (org-link-get-parameter "id" :display)
-                               'org-link))))
-      (remove-text-properties start visible-start hidden)
-      (remove-text-properties visible-end end hidden)
-      (add-text-properties (+ start l) end hidden)
-      (put-text-property start end 'display desc))))
 
 
 

@@ -139,6 +139,26 @@
 
 
 
+(use-package svg-lib
+  :defer t
+  :init
+  (setq-default
+   svg-lib-icons-dir (expand-file-name "svg-lib/" path-etc-dir))
+  (setq-default
+   svg-lib-icon-collections
+   (list
+    (cons "bootstrap" "https://icons.getbootstrap.com/assets/icons/%s.svg")
+    (cons "simple" "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/%s.svg")
+    (cons "octicons" "https://raw.githubusercontent.com/primer/octicons/master/icons/%s-24.svg")
+    (cons "fa-solid" (concat
+                      "file://"
+                      (expand-file-name
+                       "~/Dropbox/resources/icons/fontawesome/svgs/solid/%s.svg"))))))
+
+(use-package svg-tag-mode
+  :straight (:type git :host github :repo "rougier/svg-tag-mode")
+  :commands (svg-tag-mode))
+
 (use-package all-the-icons
   :defer t
   :commands (all-the-icons-material)

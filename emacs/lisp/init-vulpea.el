@@ -85,7 +85,8 @@
   :hook ((org-mode . visual-line-mode)
          (org-mode . adaptive-wrap-prefix-mode)
          ;; oh, how much I hate it in Org mode buffers
-         (org-mode . editor-disable-electric-indent))
+         (org-mode . editor-disable-electric-indent)
+         (org-mode . vulpea-setup-svg-tags))
   :commands (org-check-agenda-file
              org-link-set-parameters)
   :init
@@ -224,8 +225,6 @@
   (setq org-id-uuid-program
         "uuidgen | tr \"[:upper:]\" \"[:lower:]\"")
   :config
-  (org-link-set-parameters
-   "id" :activate-func #'vulpea-activate-link)
   (setq
    org-id-track-globally t
    org-id-extra-files
