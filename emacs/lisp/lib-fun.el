@@ -91,5 +91,21 @@ ARGS are passed to FN."
 
 Useful for temporarily disabling a function.")
 
+(defun fun-remove-keyword-params (seq)
+  "Remove keyword parameters from arguments SEQ.
+
+Useful for cases, when you want to combine &rest and &key
+arguments in `cl-defun'. For example:
+
+  (cl-defun foo (&rest rest
+                 &key key1 key2
+                 &allow-other-keys)
+    (fun-remove-keyword-params rest))"
+  (if (null seq) nil
+    (let ((head (car seq))
+          (tail (cdr seq)))
+      (if (keywordp head) (fun-remove-keyword-params (cdr tail))
+        (cons head (fun-remove-keyword-params tail))))))
+
 (provide 'lib-fun)
 ;;; lib-fun.el ends here
