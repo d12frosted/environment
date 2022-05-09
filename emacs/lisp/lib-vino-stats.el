@@ -359,7 +359,7 @@ are lists of ratings."
                 (`custom (list
                           (org-read-date nil nil nil "From (inclusive)")
                           (org-read-date nil nil nil "To (exclusive)")))
-                (t (vino-stats--time-frame-range frame))))
+                (_ (vino-stats--time-frame-range frame))))
        (ratings (seq-map
                  #'car-safe
                  (vino-db-query
