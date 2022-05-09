@@ -38,6 +38,7 @@
 (require 'init-kbd)
 
 (use-package telega
+  :disabled
   :straight (telega
              :type git
              :host github
