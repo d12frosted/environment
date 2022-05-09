@@ -151,7 +151,7 @@
         (shell-command-to-string (format "echo '' > %s" file))))))
 
 (use-package nano
-  :straight (:type git :host github :repo "rougier/nano-emacs")
+  :straight (:type git :host github :repo "d12frosted/nano-emacs" :branch "fix-non-gui-usage")
   :defer t
   :init
   (setq nano-font-family-monospaced ui-font-family-monospaced)
@@ -227,7 +227,7 @@
 
 ;; no clutter, please!
 (when (fboundp 'scroll-bar-mode)
-  (set-scroll-bar-mode nil))
+  (scroll-bar-mode -1))
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode -1))
 

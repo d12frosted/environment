@@ -189,11 +189,3 @@
             (call-interactively #'emacsql-fix-vector-indentation)))
 
 
-
-;; compatibility for `nano-layout'
-
-(when (getenv "CI")
-  (defun scroll-bar-mode (&rest args)
-    "Do nothing."))
-
-
