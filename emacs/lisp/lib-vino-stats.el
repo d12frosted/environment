@@ -336,13 +336,7 @@ are lists of ratings."
   "Display stats for an interactively selected time FRAME."
   (interactive)
   (when-let*
-      ((frame (or
-               frame
-               (intern
-                (completing-read
-                 "Time frame: " vino-stats-time-frames
-                 nil 'require-match))))
-       (date-min (caar
+      ((date-min (caar
                   (vino-db-query
                    [:select [date]
                     :from ratings
@@ -354,9 +348,18 @@ are lists of ratings."
                     :from ratings
                     :order-by [(desc date)]
                     :limit 1])))
-       (range (if (eq 'eternity frame)
-                  (list date-min date-max)
-                (vino-stats--time-frame-range frame)))
+       (frame (or
+               frame
+               (intern
+                (completing-read
+                 "Time frame: " (cons 'custom vino-stats-time-frames)
+                 nil 'require-match))))
+       (range (pcase frame
+                (`eternity (list date-min date-max))
+                (`custom (list
+                          (org-read-date nil nil nil "From (inclusive)")
+                          (org-read-date nil nil nil "To (exclusive)")))
+                (t (vino-stats--time-frame-range frame))))
        (ratings (seq-map
                  #'car-safe
                  (vino-db-query
