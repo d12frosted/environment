@@ -363,7 +363,7 @@ are lists of ratings."
                   [:select [id]
                    :from ratings
                    :where (and (>= date $s1)
-                               (<= date $s2))
+                               (< date $s2))
                    :order-by [(asc date)]]
                   (nth 0 range)
                   (nth 1 range))))
