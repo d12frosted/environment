@@ -116,14 +116,6 @@
 ;; Minimum window height
 (setq window-min-height 1)
 
-;; Install it from sources, because ELPA version has invalid
-;; signature.
-(use-package spinner
-  :straight (spinner
-             :type git
-             :host github
-             :repo "Malabarba/spinner.el"))
-
 
 
 (use-package font-lock+)

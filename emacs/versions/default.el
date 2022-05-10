@@ -86,7 +86,7 @@
  ("rg.el" . "444a8ccfea0b38452a0bc4c390a8ee01cfe30017")
  ("s.el" . "08661efb075d1c6b4fa812184c1e5e90c08795a9")
  ("selectrum" . "7da932eeb89f1aa8060a73ddd040f95bbb127343")
- ("spinner.el" . "bca794fa6f6b007292cdac9b0a850a3711986db5")
+ ("spinner" . "34905eae12a236753fa88abc831eff1e41e8576e")
  ("straight.el" . "4517e118ee43f849f708025dbb2cf4f281793121")
  ("svg-lib" . "5ff87b7f9a85e728360a63d8e4ae7aaa7eccf7d3")
  ("svg-tag-mode" . "07640c97a1dcc305010a384fffdaa7788c342da7")
