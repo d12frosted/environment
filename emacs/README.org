@@ -125,6 +125,47 @@ More functionality to come:
 
 This is a playground for building more complex solution to support something like [[https://github.com/d12frosted/vino][vino]].
 
+** =vino=
+
+The [[https://github.com/d12frosted/vino][vino]] library is far from having all the features I want it to have, but =v0.3= is mature and rich enough to use it to keep record on wines. Things that are either not well designed (from user perspective) or are too tied to my personal usage find their place here, in my personal configurations.
+
+There are several interesting functions.
+
+** Inventory
+
+#+begin_html
+<p align="center">
+  <img src="images/vino-inventory.png" width="50%"/>
+</p>
+#+end_html
+
+There is an [[https://github.com/d12frosted/vino/#configuration][option]] to tell =vino= library how to calculate availability of =vino-entry=. There is no solution out of box (yet), but =vino-availability-fn= (together with =add= and =sub=) allow to easily implement inventory solution on your own. And for that I am using [[https://hledger.org][hledger]]. You can grab the code from =lib-invetory.el= file, nothing overly fancy there.
+
+Now, having =vino=, =vulpea= and =lib-invetory= it's fairly easy to implement a function that displays wines in my cellar - =vino-balance-display=, you can find it in =lib-vino.el=.
+
+** =vino-stats=
+
+#+begin_html
+<p align="center">
+  <img src="images/vino-stats.png" width="100%"/>
+</p>
+#+end_html
+
+I am not statistical expert, but I love to see numbers related to wine consumption. It's amazing to see a bigger picture after I put so much effort into writing down most wines I taste. The 'bigger picture' is calculated on some period (custom or predefined) and includes (but not limited to):
+
+- General stats like wines consumption, rating data, price data and QPR data;
+- Per country stats;
+- Per vintage stats;
+- Per colour stats;
+- Per carbonation stats;
+- List of all ratings in the given period.
+
+My plan is to provide functionality to export all this data (probably) with images and graphs.
+
+I am using part of this library to generate reports on wine tastings I organise in Kyiv. You can find some stuff on my [[https://www.dropbox.com/sh/k91o9gwjvxwamoy/AAA-z_sM04W2zOACS6Ul0UnIa?dl=0][Dropbox]] (mostly in English, but some documents are in Ukrainian). Hopefully soon my Barberry Garden will get its own site.
+
+Checkout =vino-stats.el= module for implementation.
+
 * How to run
 
 ** Requirements
