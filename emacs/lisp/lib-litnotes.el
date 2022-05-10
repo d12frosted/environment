@@ -213,12 +213,6 @@
 
 
 
-(setq font-lock-ignore '((litnotes-mode litnotes-group-title-face)))
-(setq-local svg-tag-tags
-            '(("status/[a-zA-Z]+" .
-               ((lambda (status)
-                  (litnotes-status-icon (litnotes-status-from-tag status)))))))
-
 (defvar-local litnotes-buffer-data nil
   "Associative list of all litnotes grouped by status.")
 
