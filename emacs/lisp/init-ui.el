@@ -37,7 +37,7 @@
 
 (defconst ui-font-family-monospaced "Source Code Pro")
 (defconst ui-font-family-proportional "Source Code Pro")
-(defconst ui-font-size 14)
+(defconst ui-font-size (if env-sys-mac-p 14 12))
 
 ;; no startup  screen
 (setq inhibit-startup-screen t)
@@ -255,8 +255,8 @@
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode -1))
 
-;; but menu bar is ok
-(if env-graphic-p
+;; but menu bar is ok on macos
+(if (and env-graphic-p env-sys-mac-p)
     (menu-bar-mode t)
   (menu-bar-mode -1))
 
