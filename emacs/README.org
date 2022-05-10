@@ -173,7 +173,7 @@ Checkout =vino-stats.el= module for implementation.
 All requirements are installed by =eru=. But the full (and dramatically huge)
 list of dependencies is here:
 
-- Emacs 27 or higher - installed by =eru install system=.
+- Emacs 29 or higher - installed by =eru install system=.
 - [[https://github.com/doublep/eldev][Eldev]] - installed by =eru install emacs=.
 
 ** Install Emacs
@@ -184,7 +184,7 @@ prefer (and highly recommend) using [[https://nixos.org/][nix]] or [[https://www
 
 #+BEGIN_SRC
 $ brew tap d12frosted/emacs-plus
-$ brew install emacs-plus --HEAD
+$ brew install emacs-plus@29
 #+END_SRC
 
 You are free™ to use whatever Emacs variant you wish to use, though I don't give
