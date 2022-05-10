@@ -206,10 +206,7 @@
    #'litnotes-entry
    (seq-remove
     #'vulpea-note-primary-title
-    (vulpea-db-query
-     (lambda (x)
-       (seq-contains-p (vulpea-note-tags x)
-                       litnotes-tag))))))
+    (vulpea-db-query-by-tags-some (list litnotes-tag)))))
 
 
 
