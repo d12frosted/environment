@@ -42,6 +42,8 @@
 ;; Bootstrap flow. Basically set `elpa-bootstrap-p' to `t' and load
 ;; init.el, which forces `init-elpa' to install all dependencies.
 
+(defvar elpa-freeze nil)
+
 (defun elpa-bootstrap ()
   "Bootstrap personal configurations."
   (setq-default
@@ -50,14 +52,35 @@
   (eldev--inject-loading-roots 'bootstrap)
   (require 'config-path)
   (load (expand-file-name "init.el" path-emacs-dir))
-  (unless (file-exists-p (expand-file-name "versions/default.el"
-                                           path-emacs-dir))
+  (when elpa-freeze
+    ;; straight.el doesn't checkout specified branch (only default
+    ;; one) during cloning, meaning that during freeze process, when
+    ;; it tries to `straight-vc-git--ensure-head-at-branch', it fails
+    ;; because specified branch is not present.
+    ;;
+    ;; It seems that it happens only with straight.el for now.
+    ;;
+    ;; Not sure how to overcome this, except for making sure that
+    ;; branches exist before freezing versions.
+    ;;
+    ;; Can be used for all packages except for straight:
+    ;; (straight-recipes-retrieve 'straight)
+
+    (let ((straight--process-log nil))
+      (let ((straight--default-directory (straight--repos-dir "straight.el")))
+        (straight--process-run "git" "branch" "develop" "origin/develop")))
+
+    ;; now do your freezing stuff
     (straight-freeze-versions)))
 
 ;; We want to run this before any build command. This is also needed
 ;; for `flyspell-eldev` to be aware of packages installed via
 ;; straight.el.
 (add-hook 'eldev-build-system-hook #'elpa-bootstrap)
+
+;; freeze only during build command, ideally `eldev-build-system-hook'
+;; should provide current command as argument
+(add-hook 'eldev-build-hook (lambda () (setq elpa-freeze t)))
 
 
 ;; Upgrade flow. Hooks into Eldev upgrade flow.
