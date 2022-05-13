@@ -70,9 +70,20 @@ tasks. The only exception is headings tagged as REFILE."
       (org-element-parse-buffer 'headline)
       'headline
     (lambda (h)
-      (or (eq 'todo (org-element-property :todo-type h))
-          (seq-contains-p (org-element-property :tags h)
-                          "REFILE")))
+      (let ((todo-type (org-element-property :todo-type h)))
+        (or
+         ;; any headline with some todo keyword
+         (eq 'todo todo-type)
+         ;; any headline with REFILE tag
+         (seq-contains-p (org-element-property :tags h) "REFILE")
+         ;; any non-todo headline with an active timestamp
+         (and
+          (null todo-type)
+          (save-excursion
+            (goto-char (org-element-property :contents-begin h))
+            (re-search-forward org-ts-regexp
+                               (org-element-property :contents-end h)
+                               'noerror))))))
     nil 'first-match))
 
 

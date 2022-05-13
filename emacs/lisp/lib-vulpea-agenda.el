@@ -84,8 +84,7 @@ Affects the following commands:
   "Update the value of `org-agenda-files'."
   (setq org-agenda-files (seq-map
                           #'vulpea-note-path
-                          (vulpea-db-query-by-tags-some '("project"
-                                                          "people")))))
+                          (vulpea-db-query-by-tags-some '("project")))))
 
 
 ;; Commands
