@@ -124,6 +124,33 @@ buffer."
    (t (user-error
        "Unsupported type of \"%s\"" value))))
 
+(cl-defun string-from-number (num
+                              &key
+                              min-length
+                              padding
+                              padding-num)
+  "Return the decimal representation of NUM as string.
+
+When MIN-LENGTH is specified, the result is padded on the left
+with PADDING, which can be either 'zero or 'soace (default).
+
+Padding also happens when PADDING-NUM is specified, in that case
+ MIN-LENGTH equals to the length of decimal representation of
+ PADDING-NUM as string.
+
+This function might be considered an overkill, but it's used in
+ short-lived scripts so often that I am tired of writing this
+ kind of formatting every time."
+  (if (or min-length padding-num)
+      (let ((l (number-to-string
+                (or min-length
+                    (length (number-to-string padding-num))))))
+        (format (if (eq padding 'zero)
+                    (concat "%." l "d")
+                  (concat "%" l ".d"))
+                num))
+    (number-to-string num)))
+
 (cl-defun string-table (&key
                         data
                         header
