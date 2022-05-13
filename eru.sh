@@ -377,6 +377,14 @@ theme_guard "haskell" "ensure ghcup installation" && {
   }
 }
 
+theme_guard "haskell" "ensure stack installation" && {
+  check stack || {
+    ghcup install stack
+    stack config set install-ghc false --global
+    stack config set system-ghc  true  --global
+  }
+}
+
 theme_guard "haskell" "ensure HLS installation" && {
   check haskell-language-server-wrapper || {
     ghcup install hls
