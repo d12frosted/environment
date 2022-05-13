@@ -235,7 +235,8 @@
                         :height (* 10 (floor (* 1.1 ui-font-size)))
                         :weight 'medium))
   (with-eval-after-load 'markdown-mode
-    (set-face 'markdown-inline-code-face 'nano-face-strong)))
+    (set-face 'markdown-inline-code-face 'nano-face-strong)
+    (set-face 'markdown-pre-face 'hl-line)))
 
 (use-package nano-modeline
   :straight (:type git :host github :repo "rougier/nano-modeline"))
