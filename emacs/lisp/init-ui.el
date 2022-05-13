@@ -233,7 +233,9 @@
                         :foreground nano-color-foreground
                         :family ui-font-family-proportional
                         :height (* 10 (floor (* 1.1 ui-font-size)))
-                        :weight 'medium)))
+                        :weight 'medium))
+  (with-eval-after-load 'markdown-mode
+    (set-face 'markdown-inline-code-face 'nano-face-strong)))
 
 (use-package nano-modeline
   :straight (:type git :host github :repo "rougier/nano-modeline"))
