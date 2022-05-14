@@ -78,12 +78,20 @@ tasks. The only exception is headings tagged as REFILE."
          (seq-contains-p (org-element-property :tags h) "REFILE")
          ;; any non-todo headline with an active timestamp
          (and
-          (null todo-type)
+          (not (eq 'done todo-type))
           (save-excursion
             (goto-char (org-element-property :contents-begin h))
-            (re-search-forward org-ts-regexp
-                               (org-element-property :contents-end h)
-                               'noerror))))))
+            (let ((end (save-excursion
+                         ;; we must look for active timestamps only
+                         ;; before then next heading, even if it's
+                         ;; child, but org-element-property
+                         ;; :contents-end includes all children
+                         (or
+                          (re-search-forward org-element-headline-re
+                                             (org-element-property :contents-end h)
+                                             ':noerror)
+                          (org-element-property :contents-end h)))))
+              (re-search-forward org-ts-regexp end 'noerror)))))))
     nil 'first-match))
 
 
