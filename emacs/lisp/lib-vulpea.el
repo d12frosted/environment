@@ -303,6 +303,68 @@ Make all the links to this alias point to newly created note."
 
 
 
+(cl-defun vulpea-db-process-notes (&key
+                                   filter-fn
+                                   process-fn
+                                   quiet)
+  "Process `vulpea-note's.
+
+Mostly used for simple migrations.
+
+This function has the following features and properties.
+
+- It tries to avoid performance degradation even when 10k+ notes
+  are being processed.
+
+- Each (id . file) pair is processed only once, meaning that
+  PROCESS-FN is not called multiple times on the same node.
+  Despite this, keep your PROCESS-FN idempotent.
+
+- Point is placed at the beginning of note. Meaning that for
+  file-level notes the point is at the beginning of buffer; and
+  for heading-level notes the point is at the beginning of
+  heading.
+
+- Progress is printed on the go unless QUIET is non-nil.
+
+Notes are selected by using FILTER-FN which takes `vulpea-note'
+as its only argument and returns non-nil if the note needs to be
+selected.
+
+PROCESS-FN is called with `vulpea-note' as it's argument. Result
+is ignored. Any buffer modification is saved."
+  (let* ((notes (seq-filter
+                 (lambda (n) (null (vulpea-note-primary-title n)))
+                 (vulpea-db-query filter-fn)))
+         (count (seq-length notes)))
+    (unless quiet
+      (pcase count
+        (`0 (message "No notes to process"))
+        (`1 (message "Processing 1 note"))
+        (_ (message "Processing %d note" count))))
+    (seq-map-indexed
+     (lambda (n i)
+       (let ((level (vulpea-note-level n))
+             (file-name (file-name-nondirectory (vulpea-note-path n)) ))
+         (unless quiet
+           (message
+            (s-truncate
+             80
+             (format
+              "[%s/%d] Processing %s"
+              (string-from-number (+ i 1) :padding-num count)
+              count
+              (if (= 0 level)
+                  file-name
+                (concat file-name "#" (vulpea-note-title n))))))))
+       (cl-letf (((symbol-function 'message) (lambda (&rest _))))
+         (vulpea-visit n))
+       (when process-fn
+         (funcall process-fn n))
+       (save-buffer)
+       (kill-buffer))
+     notes)))
+
 ;;;###autoload
 (defun vulpea-db-build ()
   "Update notes database."
