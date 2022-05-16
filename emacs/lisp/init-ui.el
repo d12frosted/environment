@@ -175,7 +175,8 @@
 
   ;; Nerd font for glyph icons
   (let ((roboto-nerd (font-spec :name "RobotoMono Nerd Font Mono")))
-    (if (find-font roboto-nerd)
+    (if (and (find-font roboto-nerd)
+             (fboundp 'set-fontset-font))
         (set-fontset-font t '(#xe000 . #xffdd) roboto-nerd)
       (message "Roboto Mono Nerd font has not been found on your system")))
 
