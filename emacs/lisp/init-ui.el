@@ -203,8 +203,12 @@
                         :weight 'medium)
     (ui-set-face 'org-date-selected 'nano-popout-i))
   (with-eval-after-load 'markdown-mode
-    ;; (ui-set-face 'markdown-inline-code-face 'nano-face-strong)
-    (ui-set-face 'markdown-pre-face 'hl-line)))
+    (ui-set-face 'markdown-pre-face 'hl-line))
+  (with-eval-after-load 'magit
+    (set-face-attribute 'magit-diff-lines-heading nil
+                        :background (face-background 'nano-popout-i))
+    (set-face-attribute 'magit-diff-lines-boundary nil
+                        :background (face-background 'nano-popout-i))))
 
 (use-package svg-lib
   :defer t
