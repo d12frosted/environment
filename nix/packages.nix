@@ -97,6 +97,7 @@ in [
   font-awesome_4
   fontconfig
   liberation_ttf
+  nerdfonts
   noto-fonts
   noto-fonts-cjk
   noto-fonts-emoji
