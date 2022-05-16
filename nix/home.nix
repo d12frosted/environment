@@ -170,13 +170,22 @@ set -gp PATH /run/wrappers/bin
 set -gp PATH $HOME/.local/bin
 set -gp PATH ${config.xdg.configHome}/bin
 
+set -gp MANPATH /nix/var/nix/profiles/default/share/man
+set -gp MANPATH /run/current-system/sw/share/man
+set -gp MANPATH /usr/local/share/man
+set -gp MANPATH /usr/share/man
+if test $KERNEL_NAME darwin
+  set -gp MANPATH /opt/homebrew/share/man
+end
+set -gp MANPATH $HOME/.nix-profile/share/man
+set -gp MANPATH $HOME/.local/share/man
+
 set -gp NIX_PATH nixpkgs=$HOME/.nix-defexpr/channels_root/nixpkgs
 
 if test $KERNEL_NAME darwin
   set -gx HOMEBREW_PREFIX /opt/homebrew
   set -gx HOMEBREW_CELLAR /opt/homebrew/Cellar
   set -gx HOMEBREW_REPOSITORY /opt/homebrew
-  set -gp MANPATH /opt/homebrew/share/man
   set -gp INFOPATH /opt/homebrew/share/info
   set -gx LDFLAGS "-L/opt/homebrew/opt/llvm/lib"
   set -gx CPPFLAGS "-I/opt/homebrew/opt/llvm/include"
