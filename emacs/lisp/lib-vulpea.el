@@ -265,7 +265,7 @@ Make all the links to this alias point to newly created note."
                             ((seq-contains-p tags "people")
                              '("bootstrap" "person"))
                             ((seq-contains-p tags "grape")
-                             '("fa-solid" "grapes"))
+                             '("custom" "grapes"))
                             ((seq-contains-p tags "cellar")
                              '("fa-solid" "wine-glass"))
                             ((seq-contains-p tags "appellation")

@@ -218,13 +218,30 @@
   (setq-default
    svg-lib-icon-collections
    (list
-    (cons "bootstrap" "https://icons.getbootstrap.com/assets/icons/%s.svg")
-    (cons "simple" "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/%s.svg")
-    (cons "octicons" "https://raw.githubusercontent.com/primer/octicons/master/icons/%s-24.svg")
+    (cons "custom" (concat
+                       "file://"
+                       (expand-file-name
+                        "~/Dropbox/resources/icons/custom/%s.svg")))
+    (cons "bootstrap" (concat
+                       "file://"
+                       (expand-file-name
+                        "icons/bootstrap/%s.svg"
+                        path-cache-dir)))
+    (cons "fa-brands" (concat
+                       "file://"
+                       (expand-file-name
+                        "icons/fontawesome/svgs/brands/%s.svg"
+                        path-cache-dir)))
+    (cons "fa-regular" (concat
+                        "file://"
+                        (expand-file-name
+                         "icons/fontawesome/svgs/regular/%s.svg"
+                         path-cache-dir)))
     (cons "fa-solid" (concat
                       "file://"
                       (expand-file-name
-                       "~/Dropbox/resources/icons/fontawesome/svgs/solid/%s.svg"))))))
+                       "icons/fontawesome/svgs/solid/%s.svg"
+                       path-cache-dir))))))
 
 (use-package svg-tag-mode
   :straight (:type git :host github :repo "rougier/svg-tag-mode")

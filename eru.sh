@@ -436,6 +436,35 @@ theme_guard "Emacs" "setup Eldev" && {
 }
 
 install_guard && {
+  theme_guard "Emacs" "download icons" && {
+    icons_dir="$XDG_CONFIG_CACHE/emacs/cache/icons"
+    mkdir -p "$icons_dir"
+
+    if [ ! -d "${icons_dir}/fontawesome" ]; then
+      log "Downloading fontawesome SVGs"
+      fa_version="6.1.1"
+      fa_dir="fontawesome-free-${fa_version}-desktop"
+      fa_zip="${fa_dir}.zip"
+      fa_url="https://use.fontawesome.com/releases/v${fa_version}/${fa_zip}"
+      curl -L "$fa_url" -o "${icons_dir}/${fa_zip}"
+      unzip "${icons_dir}/${fa_zip}" -d "${icons_dir}"
+      mv "${icons_dir}/${fa_dir}" "${icons_dir}/fontawesome"
+    fi
+
+    if [ ! -d "${icons_dir}/bootstrap" ]; then
+      log "Downloading bootstrap SVGs"
+      twbs_version="1.8.2"
+      twbs_dir="bootstrap-icons-${twbs_version}"
+      twbs_zip="${twbs_dir}.zip"
+      twbs_url="https://github.com/twbs/icons/releases/download/v${twbs_version}/${twbs_zip}"
+      curl -L "$twbs_url" -o "${icons_dir}/${twbs_zip}"
+      unzip "${icons_dir}/${twbs_zip}" -d "${icons_dir}"
+      mv "${icons_dir}/${twbs_dir}" "${icons_dir}/bootstrap"
+    fi
+  }
+
+  exit 0
+
   theme_guard "Emacs" "setup Emacs configurations" && {
     mkdir -p "$XDG_CACHE_HOME/emacs/etc"
     cd "$XDG_CONFIG_HOME/emacs" && {
