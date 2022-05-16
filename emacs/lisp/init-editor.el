@@ -137,7 +137,9 @@
   :straight (ukrainian-input-method
              :type git
              :host github
-             :repo "d12frosted/emacs-ukrainian-input-method"))
+             :repo "d12frosted/emacs-ukrainian-input-method")
+  :init
+  (setq-default default-input-method "ukrainian"))
 
 
 
