@@ -201,7 +201,8 @@
                         :foreground nano-light-foreground
                         :family ui-font-family-mono
                         :height (* 10 (floor (* 1.2 ui-font-size)))
-                        :weight 'medium))
+                        :weight 'medium)
+    (ui-set-face 'org-date-selected 'nano-strong))
   (with-eval-after-load 'markdown-mode
     ;; (ui-set-face 'markdown-inline-code-face 'nano-face-strong)
     (ui-set-face 'markdown-pre-face 'hl-line)))
