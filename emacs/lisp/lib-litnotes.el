@@ -37,7 +37,6 @@
 (require 'vulpea)
 (require 'lister)
 (require 'lister-highlight)
-(require 'all-the-icons)
 
 
 

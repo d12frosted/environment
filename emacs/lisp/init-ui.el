@@ -159,7 +159,6 @@
                       :family ui-font-family-serif
                       :height (* 10 ui-font-size))
 
-
   (setq nano-fonts-use t)
 
   ;; Vertical window divider
@@ -227,17 +226,6 @@
   :straight (:type git :host github :repo "rougier/svg-tag-mode")
   :commands (svg-tag-mode
              svg-tag-mode-on))
-
-(use-package all-the-icons
-  :defer t
-  :commands (all-the-icons-material)
-  :init
-  (when elpa-bootstrap-p
-    (let ((file (expand-file-name "all-the-icons-ready"
-                                  path-cache-dir)))
-      (unless (file-exists-p file)
-        (all-the-icons-install-fonts t)
-        (shell-command-to-string (format "echo '' > %s" file))))))
 
 ;; when theme is right, this thing is good
 (global-hl-line-mode)

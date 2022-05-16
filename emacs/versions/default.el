@@ -2,7 +2,6 @@
  ("ace-link" . "e1b1c91b280d85fce2194fea861a9ae29e8b03dd")
  ("ace-window" . "0577c426a9833ab107bab46c60d1885c611b2fb9")
  ("adaptive-wrap" . "0d5b4a07de76d87dd64333a566a8a0a845f2b9f0")
- ("all-the-icons.el" . "65c496d3d1d1298345beb9845840067bffb2ffd8")
  ("avy" . "ba5f035be33693d1a136a5cbeedb24327f551a92")
  ("bui.el" . "f3a137628e112a91910fd33c0cff0948fa58d470")
  ("cfrs" . "f3a21f237b2a54e6b9f8a420a9da42b4f0a63121")
