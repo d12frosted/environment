@@ -40,6 +40,9 @@
 (add-to-list 'default-frame-alist '(undecorated . t))
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 (add-to-list 'default-frame-alist '(horizontal-scroll-bars . nil))
+(add-to-list 'default-frame-alist '(internal-border-width . 24))
+;; (add-to-list 'default-frame-alist '(left-fringe . 0))
+;; (add-to-list 'default-frame-alist '(right-fringe . 0))
 
 (provide 'early-init)
 ;;; early-init.el ends here

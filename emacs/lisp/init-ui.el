@@ -35,8 +35,9 @@
 
 (require 'init-env)
 
-(defconst ui-font-family-monospaced "Source Code Pro")
-(defconst ui-font-family-proportional "Source Code Pro")
+(defconst ui-font-family-mono "Source Code Pro")
+(defconst ui-font-family-sans "Source Sans Pro")
+(defconst ui-font-family-serif "Source Serif Pro")
 (defconst ui-font-size (if env-sys-mac-p 14 12))
 
 ;; no startup  screen
@@ -135,6 +136,79 @@
 
 
 
+;; When we set a face, we take care of removing any previous settings
+(defun ui-set-face (face style)
+  "Reset FACE and make it inherit STYLE."
+  (set-face-attribute face nil
+                      :foreground 'unspecified :background 'unspecified
+                      :family     'unspecified :slant      'unspecified
+                      :weight     'unspecified :height     'unspecified
+                      :underline  'unspecified :overline   'unspecified
+                      :box        'unspecified :inherit    style))
+
+(use-package nano-theme
+  :straight (:type git :host github :repo "rougier/nano-theme")
+  :config
+  (set-face-attribute 'nano-mono nil
+                      :family ui-font-family-mono
+                      :height (* 10 ui-font-size))
+  (set-face-attribute 'nano-sans nil
+                      :family ui-font-family-sans
+                      :height (* 10 ui-font-size))
+  (set-face-attribute 'nano-serif nil
+                      :family ui-font-family-serif
+                      :height (* 10 ui-font-size))
+
+
+  (setq nano-fonts-use t)
+
+  ;; Vertical window divider
+  (setq window-divider-default-right-width 24)
+  (setq window-divider-default-places 'right-only)
+  (window-divider-mode 1)
+
+  ;; Nicer glyphs for continuation and wrap
+  (set-display-table-slot standard-display-table
+                          'truncation (make-glyph-code ?… 'nano-faded))
+  (set-display-table-slot standard-display-table
+                          'wrap (make-glyph-code ?- 'nano-faded))
+
+  ;; Nerd font for glyph icons
+  (let ((roboto-nerd (font-spec :name "RobotoMono Nerd Font Mono")))
+    (if (find-font roboto-nerd)
+        (set-fontset-font t '(#xe000 . #xffdd) roboto-nerd)
+      (message "Roboto Mono Nerd font has not been found on your system")))
+
+  (load-theme 'nano-light t)
+
+  ;; custom faces
+  (with-eval-after-load 'org
+    ;; (set-face 'org-done 'nano-face-faded)
+    ;; (set-face-underline 'org-verbatim nil)
+    (set-face-attribute 'org-level-1 nil
+                        :overline nano-light-subtle
+                        :family ui-font-family-mono
+                        :height (* 10 (floor (* 1.2 ui-font-size))))
+    (set-face-attribute 'org-level-2 nil
+                        :overline nano-light-subtle
+                        :family ui-font-family-mono
+                        :height (* 10 (floor (* 1.1 ui-font-size))))
+    (set-face-attribute 'org-level-3 nil
+                        :family ui-font-family-mono
+                        :height (* 10 (floor (* 1.1 ui-font-size))))
+    (set-face-attribute 'org-document-title nil
+                        :foreground nano-light-foreground
+                        :family ui-font-family-mono
+                        :height (* 10 (floor (* 1.2 ui-font-size)))
+                        :weight 'medium))
+  (with-eval-after-load 'markdown-mode
+    ;; (ui-set-face 'markdown-inline-code-face 'nano-face-strong)
+    (ui-set-face 'markdown-pre-face 'hl-line)))
+(use-package nano-modeline
+  :straight (:type git :host github :repo "rougier/nano-modeline")
+  :config
+  (nano-modeline-mode))
+
 (use-package svg-lib
   :defer t
   :init
@@ -153,7 +227,8 @@
 
 (use-package svg-tag-mode
   :straight (:type git :host github :repo "rougier/svg-tag-mode")
-  :commands (svg-tag-mode))
+  :commands (svg-tag-mode
+             svg-tag-mode-on))
 
 (use-package all-the-icons
   :defer t
@@ -165,81 +240,6 @@
       (unless (file-exists-p file)
         (all-the-icons-install-fonts t)
         (shell-command-to-string (format "echo '' > %s" file))))))
-
-(use-package nano
-  :straight (:type git :host github :repo "d12frosted/nano-emacs" :branch "fix-non-gui-usage")
-  :defer t
-  :init
-  (setq nano-font-family-monospaced ui-font-family-monospaced)
-  (setq nano-font-family-proportional ui-font-family-proportional)
-  (setq nano-font-size ui-font-size)
-
-  (require 'nano-layout)
-  (require 'nano-theme-light)
-
-  (require 'nano-colors)
-  (require 'nano-faces)
-
-  (nano-faces)
-  (require 'nano-theme)
-  (nano-theme--basics)
-  (nano-theme--font-lock)
-  (nano-theme--mode-line)
-  (nano-theme--minibuffer)
-  (nano-theme--buttons)
-  (nano-theme--info)
-  (nano-theme--bookmark)
-  (nano-theme--speedbar)
-  (nano-theme--message)
-  (nano-theme--outline)
-  (nano-theme--customize)
-  (nano-theme--package)
-  (nano-theme--flyspell)
-  (nano-theme--ido)
-  (nano-theme--diff)
-  (nano-theme--term)
-  (nano-theme--calendar)
-  (nano-theme--agenda)
-  (nano-theme--org)
-  (nano-theme--mu4e)
-  (nano-theme--elfeed)
-  (nano-theme--rst)
-  (nano-theme--markdown)
-  (nano-theme--hl-line)
-  (nano-theme--company)
-
-  ;; (require 'nano-defaults)
-  (require 'nano-modeline)
-  (require 'nano-help)
-
-  ;; custom faces
-  (with-eval-after-load 'org
-    (set-face 'org-done 'nano-face-faded)
-    (set-face 'org-verbatim 'nano-face-strong)
-    (set-face-attribute 'org-level-1 nil
-                        :overline nano-color-subtle
-                        :family ui-font-family-proportional
-                        :height (* 10 (floor (* 1.2 ui-font-size))))
-    (set-face-attribute 'org-level-2 nil
-                        :overline nano-color-subtle
-                        :family ui-font-family-proportional
-                        :height (* 10 (floor (* 1.1 ui-font-size))))
-    (set-face-attribute 'org-level-3 nil
-                        :family ui-font-family-proportional
-                        :height (* 10 (floor (* 1.1 ui-font-size))))
-    (set-face-attribute 'org-document-info nil
-                        :inherit 'nano-face-subtle)
-    (set-face-attribute 'org-document-title nil
-                        :foreground nano-color-foreground
-                        :family ui-font-family-proportional
-                        :height (* 10 (floor (* 1.1 ui-font-size)))
-                        :weight 'medium))
-  (with-eval-after-load 'markdown-mode
-    (set-face 'markdown-inline-code-face 'nano-face-strong)
-    (set-face 'markdown-pre-face 'hl-line)))
-
-(use-package nano-modeline
-  :straight (:type git :host github :repo "rougier/nano-modeline"))
 
 ;; when theme is right, this thing is good
 (global-hl-line-mode)
