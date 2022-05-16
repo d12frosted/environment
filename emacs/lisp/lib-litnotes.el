@@ -51,17 +51,17 @@
   :group 'litnotes)
 
 (defface litnotes-group-counter-face
-  '((t (:inherit font-lock-comment-face)))
+  '((t (:inherit nano-faded)))
   "Face for displaying group counter."
   :group 'litnotes)
 
 (defface litnotes-entry-title-face
-  '((t (:inherit org-verbatim)))
+  '((t (:inherit nano-strong)))
   "Face for displaying entry title."
   :group 'litnotes)
 
 (defface litnotes-entry-authors-face
-  '((t (:inherit org-link)))
+  '((t (:inherit nano-salient)))
   "Face for displaying entry authors."
   :group 'litnotes)
 
