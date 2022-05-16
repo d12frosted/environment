@@ -207,34 +207,6 @@
     ;; (ui-set-face 'markdown-inline-code-face 'nano-face-strong)
     (ui-set-face 'markdown-pre-face 'hl-line)))
 
-(defun ui-modeline-default-mode ()
-  "Default mode to evaluate.
-
-Used when no match could be found in `nano-modeline-mode-formats'."
-  (let* ((buffer-name (format-mode-line "%b"))
-         (mode-name (nano-modeline-mode-name))
-         (branch (nano-modeline-vc-branch))
-         (position (format-mode-line "%l:%c"))
-         (secondary (string-join
-                     (seq-filter
-                      #'identity
-                      (list
-                       current-input-method-title
-                       position))
-                     " ")))
-    (nano-modeline-render nil ;; (upcase  mode-name)
-                          buffer-name
-                          (if branch (concat "(" branch ")") "")
-                          secondary)))
-
-(use-package nano-modeline
-  :straight (:type git :host github :repo "rougier/nano-modeline")
-  :config
-  ;; unfortunately they use `nano-modeline-default-mode' directly
-  ;; instead of using `nano-modeline-default-mode-format'.
-  (defalias 'nano-modeline-default-mode #'ui-modeline-default-mode)
-  (nano-modeline-mode))
-
 (use-package svg-lib
   :defer t
   :init
