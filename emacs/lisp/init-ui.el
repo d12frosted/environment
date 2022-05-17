@@ -209,6 +209,8 @@
                       :weight 'normal)
 
   ;; custom faces
+  (set-face-attribute 'region nil
+                      :background (face-background 'nano-subtle-i))
   (with-eval-after-load 'org
     ;; (set-face 'org-done 'nano-face-faded)
     ;; (set-face-underline 'org-verbatim nil)
