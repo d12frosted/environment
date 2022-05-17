@@ -233,6 +233,40 @@
   (with-eval-after-load 'dired
     (ui-set-face 'dired-directory 'nano-strong)))
 
+(defun ui-display-faces ()
+  "Display core faces in a separate buffer."
+  (interactive)
+  (let ((faces '(nano-mono
+                 nano-mono-alt
+                 nano-sans
+                 nano-serif
+                 nano-italic
+                 nano-critical
+                 nano-critical-i
+                 nano-popout
+                 nano-popout-i
+                 nano-strong
+                 nano-strong-i
+                 nano-salient
+                 nano-salient-i
+                 nano-faded
+                 nano-faded-i
+                 nano-subtle
+                 nano-subtle-i
+                 nano-default
+                 nano-default-i)))
+    (buffer-display-result-with "*core-faces*"
+      (string-table
+       :data
+       (seq-map
+        (lambda (face)
+          (list
+           face
+           (propertize
+            "The quick brown fox jumps over the lazy dog"
+            'face face)))
+        faces)))))
+
 (use-package svg-lib
   :defer t
   :init
