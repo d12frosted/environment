@@ -43,6 +43,10 @@
 ;; - avoid unnecessary conversions between calc and regular number
 ;;   format
 ;;
+;; - calculate consumed and rated count in stats per country/vintage/colour/...
+;;
+;; - calculate stats per region
+;;
 ;;; Code:
 
 (require 'lib-buffer)
