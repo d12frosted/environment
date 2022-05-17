@@ -449,5 +449,34 @@ parameter), defaulting to `vulpea-note-title'."
 
 
 
+;;;###autoload
+(defun vulpea-review-random ()
+  "Visit random `vulpea-note' for review."
+  (interactive)
+  (if-let ((notes (seq-sort-by
+                   (lambda (note)
+                     (or (vulpea-note-meta-get note "last review")
+                         "[1972-01-01]"))
+                   #'org-time<
+                   (vulpea-db-query
+                    (lambda (note)
+                      ;; include only file-level notes
+                      (= 0 (vulpea-note-level note)))))))
+      (vulpea-visit (nth (random (min 10 (seq-length notes)))
+                         notes))
+    (message "No notes no review.")))
+
+;;;###autoload
+(defun vulpea-review-complete ()
+  "Mark currently visiting `vulpea-note' as reviewed."
+  (interactive)
+  (vulpea-buffer-meta-set
+   "last review"
+   (format-time-string
+    (org-time-stamp-format 'long 'inactive))
+   'append))
+
+
+
 (provide 'lib-vulpea)
 ;;; lib-vulpea.el ends here
