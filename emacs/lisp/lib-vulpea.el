@@ -248,39 +248,52 @@ Make all the links to this alias point to newly created note."
   "Do something useful."
   (setq-local
    svg-tag-tags
-   '(("\\(\\[\\)\\[id:\\([0-9a-zA-Z\\-]+\\)\\]\\[.+\\]\\]" .
-      ((lambda (tag)
-         (when-let ((id (match-string 2))
+   (list
+    (cons
+     ;; This trick allows to leave description of the link and yet to
+     ;; append an icon before description; works good when
+     ;; `org-toggle-link-display' is enabled.
+     ;;
+     ;; Ideally we should use `svg-lib-concat', but it doesn't
+     ;; calculate the high properly.
+     ;;
+     ;; (svg-lib--image (svg-lib-concat ICON TAG))
+     (concat "\\(" (s-left 2 org-link-bracket-re) "\\)"
+             (s-right (- (length org-link-bracket-re) 2) org-link-bracket-re))
+     (list
+      (lambda (_)
+        (when-let* ((link (match-string 2))
+                    (id (string-remove-prefix "id:" link))
                     (note (vulpea-db-get-by-id id))
                     (tags (vulpea-note-tags note)))
-           (cond
-            ((seq-contains-p tags litnotes-tag)
-             (litnotes-content-icon
-              (litnotes-entry-content
-               (litnotes-entry note))
-              :face vulpea-svg-tag-face))
+          (cond
+           ((seq-contains-p tags litnotes-tag)
+            (litnotes-content-icon
+             (litnotes-entry-content
+              (litnotes-entry note))
+             :face vulpea-svg-tag-face))
 
-            (t (when-let ((data
-                           (cond
-                            ((seq-contains-p tags "people")
-                             '("bootstrap" "person"))
-                            ((seq-contains-p tags "grape")
-                             '("custom" "grapes"))
-                            ((seq-contains-p tags "cellar")
-                             '("fa-solid" "wine-glass"))
-                            ((seq-contains-p tags "appellation")
-                             '("fa-solid" "location-arrow"))
-                            ((seq-contains-p tags "region")
-                             '("fa-solid" "location-arrow"))
-                            ((seq-contains-p tags "places")
-                             '("fa-solid" "location-arrow"))
-                            ((seq-contains-p tags "producer")
-                             '("bootstrap" "person"))
+           (t (when-let ((data
+                          (cond
+                           ((seq-contains-p tags "people")
+                            '("bootstrap" "person"))
+                           ((seq-contains-p tags "grape")
+                            '("custom" "grapes"))
+                           ((seq-contains-p tags "cellar")
+                            '("fa-solid" "wine-glass"))
+                           ((seq-contains-p tags "appellation")
+                            '("fa-solid" "location-arrow"))
+                           ((seq-contains-p tags "region")
+                            '("fa-solid" "location-arrow"))
+                           ((seq-contains-p tags "places")
+                            '("fa-solid" "location-arrow"))
+                           ((seq-contains-p tags "producer")
+                            '("bootstrap" "person"))
 
-                            ((seq-contains-p tags "aroma")))))
-                 (svg-lib-icon (nth 1 data) vulpea-svg-tag-style
-                               :collection (nth 0 data)
-                               :stroke 0))))))))))
+                           ((seq-contains-p tags "aroma")))))
+                (svg-lib-icon (nth 1 data) vulpea-svg-tag-style
+                              :collection (nth 0 data)
+                              :stroke 0))))))))))
   (svg-tag-mode))
 
 
