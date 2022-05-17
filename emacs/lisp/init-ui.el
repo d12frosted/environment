@@ -237,7 +237,9 @@
     (set-face-attribute 'magit-diff-lines-boundary nil
                         :background (face-background 'nano-popout-i)))
   (with-eval-after-load 'dired
-    (ui-set-face 'dired-directory 'nano-strong)))
+    (ui-set-face 'dired-directory 'nano-strong))
+  (with-eval-after-load 'selectrum
+    (ui-set-face 'selectrum-current-candidate 'nano-subtle)))
 
 (defun ui-display-faces ()
   "Display core faces in a separate buffer."
