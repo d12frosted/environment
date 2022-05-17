@@ -463,8 +463,6 @@ install_guard && {
     fi
   }
 
-  exit 0
-
   theme_guard "Emacs" "setup Emacs configurations" && {
     mkdir -p "$XDG_CACHE_HOME/emacs/etc"
     cd "$XDG_CONFIG_HOME/emacs" && {
