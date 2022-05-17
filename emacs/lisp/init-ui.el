@@ -149,6 +149,7 @@
 (use-package nano-theme
   :straight (:type git :host github :repo "rougier/nano-theme")
   :config
+  ;; use custom fonts instead of Roboto Mono;
   (set-face-attribute 'nano-mono nil
                       :family ui-font-family-mono
                       :height (* 10 ui-font-size))
@@ -176,10 +177,30 @@
   (let ((roboto-nerd (font-spec :name "RobotoMono Nerd Font Mono")))
     (if (and (find-font roboto-nerd)
              (fboundp 'set-fontset-font))
-        (set-fontset-font t '(#xe000 . #xffdd) roboto-nerd)
+        (set-fontset-font t '(57344 . 65501) roboto-nerd)
       (message "Roboto Mono Nerd font has not been found on your system")))
 
   (load-theme 'nano-light t)
+
+  ;; add more weight to help my broken eyes
+  (set-face-attribute 'nano-mono nil :weight 'semi-light)
+  (set-face-attribute 'nano-sans nil :weight 'semi-light)
+  (set-face-attribute 'nano-serif nil :weight 'semi-light)
+  (set-face-attribute 'nano-strong nil :weight 'semi-bold)
+  (set-face-attribute 'nano-strong-i nil :weight 'semi-bold)
+
+  ;; fix readbility of `nano-subtle-i' face which is barely visible
+  ;; for me
+  (setq-default nano-light-subtle "#B0C4DE")
+  (setq-default nano-light-subtle-i "#FFFFF0")
+  (set-face-attribute 'nano-subtle nil
+                      :foreground 'unspecified
+                      :background nano-light-subtle-i
+                      :weight 'normal)
+  (set-face-attribute 'nano-subtle-i nil
+                      :foreground nano-light-subtle
+                      :background 'unspecified
+                      :weight 'normal)
 
   ;; custom faces
   (with-eval-after-load 'org
@@ -208,7 +229,9 @@
     (set-face-attribute 'magit-diff-lines-heading nil
                         :background (face-background 'nano-popout-i))
     (set-face-attribute 'magit-diff-lines-boundary nil
-                        :background (face-background 'nano-popout-i))))
+                        :background (face-background 'nano-popout-i)))
+  (with-eval-after-load 'dired
+    (ui-set-face 'dired-directory 'nano-strong)))
 
 (use-package svg-lib
   :defer t
