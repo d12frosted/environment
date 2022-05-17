@@ -149,7 +149,7 @@
 (use-package nano-theme
   :straight (:type git :host github :repo "rougier/nano-theme")
   :config
-  ;; use custom fonts instead of Roboto Mono;
+  ;; use custom fonts and align size;
   (set-face-attribute 'nano-mono nil
                       :family ui-font-family-mono
                       :height (* 10 ui-font-size))
@@ -158,6 +158,12 @@
                       :height (* 10 ui-font-size))
   (set-face-attribute 'nano-serif nil
                       :family ui-font-family-serif
+                      :height (* 10 ui-font-size))
+  (set-face-attribute 'nano-italic nil
+                      :family ui-font-family-mono
+                      :height (* 10 ui-font-size))
+  (set-face-attribute 'nano-mono-alt nil
+                      :family "Fira Code"
                       :height (* 10 ui-font-size))
 
   (setq nano-fonts-use t)
