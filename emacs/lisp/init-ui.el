@@ -200,12 +200,12 @@
   (setq-default nano-light-subtle "#B0C4DE")
   (setq-default nano-light-subtle-i "#FFFFF0")
   (set-face-attribute 'nano-subtle nil
-                      :foreground 'unspecified
-                      :background nano-light-subtle-i
-                      :weight 'normal)
-  (set-face-attribute 'nano-subtle-i nil
                       :foreground nano-light-subtle
                       :background 'unspecified
+                      :weight 'normal)
+  (set-face-attribute 'nano-subtle-i nil
+                      :foreground 'unspecified
+                      :background nano-light-subtle-i
                       :weight 'normal)
 
   ;; custom faces
@@ -239,7 +239,7 @@
   (with-eval-after-load 'dired
     (ui-set-face 'dired-directory 'nano-strong))
   (with-eval-after-load 'selectrum
-    (ui-set-face 'selectrum-current-candidate 'nano-subtle)))
+    (ui-set-face 'selectrum-current-candidate 'nano-subtle-i)))
 
 (defun ui-display-faces ()
   "Display core faces in a separate buffer."
