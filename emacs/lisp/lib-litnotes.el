@@ -56,7 +56,7 @@
   :group 'litnotes)
 
 (defface litnotes-entry-title-face
-  '((t (:inherit nano-strong)))
+  '((t (:inherit nano-default)))
   "Face for displaying entry title."
   :group 'litnotes)
 
