@@ -158,27 +158,28 @@ set -g __done_allow_nongraphical 1
 set -g __done_min_cmd_duration 8000
 
 # see https://github.com/LnL7/nix-darwin/issues/122
-set -gp PATH /nix/var/nix/profiles/default/bin
-set -gp PATH /run/current-system/sw/bin
+set -ga PATH ${config.xdg.configHome}/bin
+set -ga PATH $HOME/.local/bin
+set -ga PATH /run/wrappers/bin
+set -ga PATH $HOME/.nix-profile/bin
 if test $KERNEL_NAME darwin
-  set -gp PATH /opt/homebrew/sbin
-  set -gp PATH /opt/homebrew/bin
-  set -gp PATH /opt/homebrew/opt/llvm/bin
+  set -ga PATH /opt/homebrew/opt/llvm/bin
+  set -ga PATH /opt/homebrew/bin
+  set -ga PATH /opt/homebrew/sbin
 end
-set -gp PATH $HOME/.nix-profile/bin
-set -gp PATH /run/wrappers/bin
-set -gp PATH $HOME/.local/bin
-set -gp PATH ${config.xdg.configHome}/bin
+set -ga PATH /run/current-system/sw/bin
+set -ga PATH /nix/var/nix/profiles/default/bin
+macos_set_env prepend PATH /etc/paths '/etc/paths.d'
 
-set -gp MANPATH /nix/var/nix/profiles/default/share/man
-set -gp MANPATH /run/current-system/sw/share/man
-set -gp MANPATH /usr/local/share/man
-set -gp MANPATH /usr/share/man
+
+set -ga MANPATH $HOME/.local/share/man
+set -ga MANPATH $HOME/.nix-profile/share/man
 if test $KERNEL_NAME darwin
-  set -gp MANPATH /opt/homebrew/share/man
+  set -ga MANPATH /opt/homebrew/share/man
 end
-set -gp MANPATH $HOME/.nix-profile/share/man
-set -gp MANPATH $HOME/.local/share/man
+set -ga MANPATH /run/current-system/sw/share/man
+set -ga MANPATH /nix/var/nix/profiles/default/share/man
+macos_set_env append MANPATH /etc/manpaths '/etc/manpaths.d'
 
 set -gp NIX_PATH nixpkgs=$HOME/.nix-defexpr/channels_root/nixpkgs
 
