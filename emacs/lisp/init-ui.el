@@ -276,9 +276,9 @@
    svg-lib-icon-collections
    (list
     (cons "custom" (concat
-                       "file://"
-                       (expand-file-name
-                        "~/Dropbox/resources/icons/custom/%s.svg")))
+                    "file://"
+                    (expand-file-name
+                     "~/Dropbox/resources/icons/custom/%s.svg")))
     (cons "bootstrap" (concat
                        "file://"
                        (expand-file-name
