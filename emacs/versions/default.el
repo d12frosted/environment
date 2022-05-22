@@ -66,7 +66,6 @@
  ("minions" . "b0427eea174adb494efc9fa212c22021861d3f76")
  ("move-text" . "bfc255110ad05732a43cf25d6a0e3b4a6710b58c")
  ("mwim.el" . "b4f3edb4c0fb8f8b71cecbf8095c2c25a8ffbf85")
- ("nano-theme" . "d0c89de2e40231fc54ed3cf34bb12b2ebc3daf9b")
  ("nix-mode" . "66206cab276c0f4d1c84e77ba2a67ed6a46b2d9c")
  ("org" . "407104459b86a40e03f5f1f323d28ad935721ef3")
  ("org-cliplink" . "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
