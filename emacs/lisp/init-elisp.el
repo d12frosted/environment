@@ -62,6 +62,8 @@
 ;; and face specs; this snipped fixes indent level calculation; I
 ;; haven't dig too much into this solution, but at least it fixed my
 ;; problem.
+;;
+;; https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned
 (advice-add #'calculate-lisp-indent :override #'elisp-calculate-lisp-indent)
 (defun elisp-calculate-lisp-indent (&optional parse-start)
   "Add better indentation for quoted and backquoted lists.
