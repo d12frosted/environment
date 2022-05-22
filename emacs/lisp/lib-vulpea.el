@@ -263,7 +263,8 @@ Make all the links to this alias point to newly created note."
      (list
       (lambda (_)
         (when-let* ((link (match-string 2))
-                    (id (string-remove-prefix "id:" link))
+                    (id (when (string-prefix-p "id:" link)
+                          (string-remove-prefix "id:" link)))
                     (note (vulpea-db-get-by-id id))
                     (tags (vulpea-note-tags note)))
           (cond
