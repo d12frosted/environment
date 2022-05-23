@@ -305,8 +305,8 @@ Make all the links to this alias point to newly created note."
                       '("fa-solid" "location-arrow"))
                      ((seq-contains-p tags "producer")
                       '("bootstrap" "person"))
-
-                     ((seq-contains-p tags "aroma")))))
+                     ((seq-contains-p tags "aroma")
+                      '("bootstrap" "flower3")))))
           (svg-concat
            (svg-lib-icon
             (nth 1 data) vulpea-svg-tag-style
