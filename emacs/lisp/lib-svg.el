@@ -1,15 +1,13 @@
 ;;; lib-svg.el --- SVG libary   -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2022 Boris Buliga
+;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
-;; Version: 0.1
-;; Package-Requires: ((emacs "27.1"))
 ;;
 ;; Created: 22 May 2022
 ;;
-;; URL: https://github.com/d12frosted/
+;; URL: https://github.com/d12frosted/environment/tree/master/emacs
 ;;
 ;; License: GPLv3
 ;;
