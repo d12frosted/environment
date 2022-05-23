@@ -38,6 +38,7 @@
 (require 'config-vulpea)
 (require 'lib-directory)
 (require 'lib-litnotes)
+(require 'lib-svg)
 
 (require 'vulpea)
 (require 'vino)
