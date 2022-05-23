@@ -513,7 +513,8 @@
    `(org-level-1                  ((t (:overline ,barberry-theme-color-subtle
                                        :height ,height-plus
                                        :inherit barberry-theme-face-strong))))
-   '(org-level-2                  ((t (:inherit barberry-theme-face-strong))))
+   `(org-level-2                  ((t (:overline ,barberry-theme-color-subtle
+                                       :inherit barberry-theme-face-strong))))
    '(org-level-3                  ((t (:inherit barberry-theme-face-strong))))
    '(org-level-4                  ((t (:inherit barberry-theme-face-strong))))
    '(org-level-5                  ((t (:inherit barberry-theme-face-strong))))
@@ -539,9 +540,11 @@
    '(org-tag-group                ((t (:inherit barberry-theme-face-faded))))
    '(org-target                   ((t (:inherit barberry-theme-face-faded))))
    '(org-time-grid                ((t (:inherit barberry-theme-face-faded))))
-   '(org-todo                     ((t (:inherit barberry-theme-face-salient))))
+   '(org-todo                     ((t (:weight medium
+                                       :inherit barberry-theme-face-salient))))
    '(org-upcoming-deadline        ((t (:inherit barberry-theme-face-popout))))
-   '(org-verbatim                 ((t (:inherit barberry-theme-face-popout))))
+   `(org-verbatim                 ((t (:background ,barberry-theme-color-highlight
+                                       :inherit barberry-theme-face-default))))
    '(org-verse                    ((t (:inherit barberry-theme-face-faded))))
    '(org-warning                  ((t (:inherit barberry-theme-face-popout))))
 
