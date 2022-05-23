@@ -281,10 +281,13 @@ Make all the links to this alias point to newly created note."
   (let ((tags (vulpea-note-tags note)))
     (cond
      ((seq-contains-p tags litnotes-tag)
-      (litnotes-content-icon
+      (svg-concat
+       (litnotes-content-icon
        (litnotes-entry-content
         (litnotes-entry note))
-       :face 'vulpea-svg-tag-face))
+       :face 'vulpea-svg-tag-face)
+       (svg-lib-tag
+        (vulpea-note-title note) vulpea-svg-tag-style)))
 
      (t (when-let ((data
                     (cond
