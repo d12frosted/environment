@@ -36,7 +36,7 @@
 (require 'init-env)
 (require 'barberry-theme)
 
-(let ((font-size 12))
+(let ((font-size (if env-sys-mac-p 12 11)))
   (setq-default barberry-theme-font-mono-size font-size
                 barberry-theme-font-sans-size font-size
                 barberry-theme-font-serif-size font-size))
