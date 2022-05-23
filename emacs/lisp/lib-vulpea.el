@@ -239,9 +239,23 @@ Make all the links to this alias point to newly created note."
 
 
 
-(defconst vulpea-svg-tag-face 'org-link)
-(defconst vulpea-svg-tag-style
-  (svg-lib-style-compute-default vulpea-svg-tag-face))
+(defface vulpea-svg-tag-face `((t (:foreground ,(face-foreground 'org-link nil 'inherit))))
+  "Faces used for svg tags in vulpea buffers."
+  :group 'faces)
+
+(defvar vulpea-svg-tag-style
+  (let ((style (svg-lib-style-compute-default 'vulpea-svg-tag-face)))
+    ;; Requires modifications to `svg-lib', which doesn't support
+    ;; transparent backgrounds. One of the reasons is the way strokes
+    ;; are drawn - instead of using stroke attribute, this library
+    ;; actually draws two rectangles with fill attributes.
+    ;;
+    ;; (plist-put style :background nil)
+    (plist-put style :padding 1)
+    (plist-put style :stroke 0)
+    (plist-put style :scale 0.8)
+    (plist-put style :height 1.0)
+    (plist-put style :font-size 12)))
 
 ;;;###autoload
 (defun vulpea-setup-svg-tags ()
@@ -250,52 +264,51 @@ Make all the links to this alias point to newly created note."
    svg-tag-tags
    (list
     (cons
-     ;; This trick allows to leave description of the link and yet to
-     ;; append an icon before description; works good when
-     ;; `org-toggle-link-display' is enabled.
-     ;;
-     ;; Ideally we should use `svg-lib-concat', but it doesn't
-     ;; calculate the high properly.
-     ;;
-     ;; (svg-lib--image (svg-lib-concat ICON TAG))
-     (concat "\\(" (s-left 2 org-link-bracket-re) "\\)"
-             (s-right (- (length org-link-bracket-re) 2) org-link-bracket-re))
+     (concat "\\(" org-link-bracket-re "\\)")
      (list
       (lambda (_)
-        (when-let* ((link (match-string 2))
-                    (id (when (string-prefix-p "id:" link)
-                          (string-remove-prefix "id:" link)))
-                    (note (vulpea-db-get-by-id id))
-                    (tags (vulpea-note-tags note)))
+        (when-let ((link (match-string 2)))
           (cond
-           ((seq-contains-p tags litnotes-tag)
-            (litnotes-content-icon
-             (litnotes-entry-content
-              (litnotes-entry note))
-             :face vulpea-svg-tag-face))
-
-           (t (when-let ((data
-                          (cond
-                           ((seq-contains-p tags "people")
-                            '("bootstrap" "person"))
-                           ((seq-contains-p tags "grape")
-                            '("custom" "grapes"))
-                           ((seq-contains-p tags "cellar")
-                            '("fa-solid" "wine-glass"))
-                           ((seq-contains-p tags "appellation")
-                            '("fa-solid" "location-arrow"))
-                           ((seq-contains-p tags "region")
-                            '("fa-solid" "location-arrow"))
-                           ((seq-contains-p tags "places")
-                            '("fa-solid" "location-arrow"))
-                           ((seq-contains-p tags "producer")
-                            '("bootstrap" "person"))
-
-                           ((seq-contains-p tags "aroma")))))
-                (svg-lib-icon (nth 1 data) vulpea-svg-tag-style
-                              :collection (nth 0 data)
-                              :stroke 0))))))))))
+           ((string-prefix-p "id:" link)
+            (when-let* ((id (string-remove-prefix "id:" link))
+                        (note (vulpea-db-get-by-id id)))
+              (vulpea-note-to-svg note))))))))))
   (svg-tag-mode))
+
+(defun vulpea-note-to-svg (note)
+  "Return SVG representation of the NOTE."
+  (let ((tags (vulpea-note-tags note)))
+    (cond
+     ((seq-contains-p tags litnotes-tag)
+      (litnotes-content-icon
+       (litnotes-entry-content
+        (litnotes-entry note))
+       :face 'vulpea-svg-tag-face))
+
+     (t (when-let ((data
+                    (cond
+                     ((seq-contains-p tags "people")
+                      '("bootstrap" "person"))
+                     ((seq-contains-p tags "grape")
+                      '("custom" "grapes"))
+                     ((seq-contains-p tags "cellar")
+                      '("fa-solid" "wine-glass"))
+                     ((seq-contains-p tags "appellation")
+                      '("fa-solid" "location-arrow"))
+                     ((seq-contains-p tags "region")
+                      '("fa-solid" "location-arrow"))
+                     ((seq-contains-p tags "places")
+                      '("fa-solid" "location-arrow"))
+                     ((seq-contains-p tags "producer")
+                      '("bootstrap" "person"))
+
+                     ((seq-contains-p tags "aroma")))))
+          (svg-concat
+           (svg-lib-icon
+            (nth 1 data) vulpea-svg-tag-style
+            :collection (nth 0 data))
+           (svg-lib-tag
+            (vulpea-note-title note) vulpea-svg-tag-style)))))))
 
 
 
