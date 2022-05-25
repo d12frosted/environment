@@ -592,9 +592,19 @@
    '(markdown-table-face              ((t (:inherit barberry-theme-face-default))))
    '(markdown-url-face                ((t (:inherit barberry-theme-face-salient))))
 
+   ;; lsp-ui
+   `(lsp-ui-doc-background ((t (:background ,barberry-theme-color-background))))
+
+   ;; child frame (used by ls-ui-doc)
+   `(child-frame-border ((t (:background ,barberry-theme-color-subtle))))
+
    ;; flyspell
    `(flyspell-duplicate ((t (:underline (:style wave :color ,barberry-theme-color-salient)))))
    `(flyspell-incorrect ((t (:underline (:style wave :color ,barberry-theme-color-critical)))))))
+
+(with-eval-after-load 'lsp-ui-doc
+  ;; ideally it should use `child-frame-border', but it does not
+  (setq-default lsp-ui-doc-border barberry-theme-color-subtle))
 
 ;;;###autoload
 (when (and (boundp 'custom-theme-load-path)
