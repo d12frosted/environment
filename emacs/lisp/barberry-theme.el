@@ -421,7 +421,7 @@
    '(custom-variable-obsolete ((t (:inherit barberry-theme-face-faded))))
 
    ;; company
-   '(company-tooltip                      ((t (:inherit barberry-theme-face-subtle))))
+   '(company-tooltip                      ((t (:inherit barberry-theme-face-faded))))
    '(company-tooltip-mouse                ((t (:inherit barberry-theme-face-faded-i))))
    '(company-tooltip-selection            ((t (:inherit barberry-theme-face-salient-i))))
 
@@ -572,7 +572,8 @@
    '(markdown-html-entity-face        ((t (:inherit barberry-theme-face-default))))
    '(markdown-html-tag-delimiter-face ((t (:inherit barberry-theme-face-default))))
    '(markdown-html-tag-name-face      ((t (:inherit barberry-theme-face-default))))
-   '(markdown-inline-code-face        ((t (:inherit barberry-theme-face-popout))))
+   `(markdown-inline-code-face        ((t (:background ,barberry-theme-color-highlight
+                                           :inherit barberry-theme-face-default))))
    '(markdown-italic-face             ((t (:inherit barberry-theme-face-faded))))
    '(markdown-language-info-face      ((t (:inherit barberry-theme-face-default))))
    '(markdown-language-keyword-face   ((t (:inherit barberry-theme-face-default))))
@@ -591,6 +592,18 @@
    '(markdown-strike-through-face     ((t (:inherit barberry-theme-face-faded))))
    '(markdown-table-face              ((t (:inherit barberry-theme-face-default))))
    '(markdown-url-face                ((t (:inherit barberry-theme-face-salient))))
+
+   ;; popup
+   '(popup-face                       ((t (:inherit highlight))))
+   '(popup-isearch-match              ((t (:inherit barberry-theme-face-popout))))
+   '(popup-menu-face                  ((t (:inherit barberry-theme-face-subtle))))
+   '(popup-menu-mouse-face            ((t (:inherit barberry-theme-face-faded-i))))
+   '(popup-menu-selection-face        ((t (:inherit barberry-theme-face-salient-i))))
+   '(popup-menu-summary-face          ((t (:inherit barberry-theme-face-faded))))
+   '(popup-scroll-bar-background-face ((t (:inherit barberry-theme-face-subtle))))
+   '(popup-scroll-bar-foreground-face ((t (:inherit barberry-theme-face-subtle))))
+   '(popup-summary-face               ((t (:inherit barberry-theme-face-faded))))
+   '(popup-tip-face                   ((t (:inherit barberry-theme-face-popout-i))))
 
    ;; lsp-ui
    `(lsp-ui-doc-background ((t (:background ,barberry-theme-color-background))))
