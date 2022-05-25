@@ -51,17 +51,17 @@
   :group 'litnotes)
 
 (defface litnotes-group-counter-face
-  '((t (:inherit nano-faded)))
+  '((t (:inherit barberry-theme-face-faded)))
   "Face for displaying group counter."
   :group 'litnotes)
 
 (defface litnotes-entry-title-face
-  '((t (:inherit nano-default)))
+  '((t (:inherit barberry-theme-face-default)))
   "Face for displaying entry title."
   :group 'litnotes)
 
 (defface litnotes-entry-authors-face
-  '((t (:inherit nano-salient)))
+  '((t (:inherit barberry-theme-face-salient)))
   "Face for displaying entry authors."
   :group 'litnotes)
 
