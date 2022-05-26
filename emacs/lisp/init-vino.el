@@ -90,15 +90,15 @@
                         "aggressive ethanol"
                         "massive brett attack"
                         "VA, especially nail polish removal")))
-            (while ans
-              (setq ans (completing-read "Any taints? " opts))
-              (setq opts (delete ans opts))
-              (if (string-equal ans "no taints")
-                  (setq ans nil)
-                (setq res (max 0 (- res 1))))
-              (when (equal res 0)
-                (setq ans nil)))
-            (cons res total))))
+           (while ans
+            (setq ans (completing-read "Any taints? " opts))
+            (setq opts (delete ans opts))
+            (if (string-equal ans "no taints")
+                (setq ans nil)
+              (setq res (max 0 (- res 1))))
+            (when (equal res 0)
+             (setq ans nil)))
+           (cons res total))))
 
        ("AROMA_INTENSITY" .
         (("aroma can be perceived without putting nose into glass"
