@@ -67,17 +67,21 @@
   :hook ((before-save . vulpea-pre-save-hook)
          (org-roam-db-autosync-mode . vulpea-db-autosync-enable))
   :init
-  (add-to-list 'window-buffer-change-functions
-               #'vulpea-setup-buffer)
-  (add-hook 'vulpea-insert-handle-functions
-            #'vulpea-insert-handle)
   (setq-default
    vulpea-find-default-filter
    (lambda (note)
      (= (vulpea-note-level note) 0))
    vulpea-insert-default-filter
    (lambda (note)
-     (= (vulpea-note-level note) 0))))
+     (= (vulpea-note-level note) 0)))
+  :config
+  (add-hook 'vulpea-insert-handle-functions
+            #'vulpea-insert-handle)
+
+  ;; This must be configured in config hook to avoid unnecessary load
+  ;; of `vulpea' stuff.
+  (add-to-list 'window-buffer-change-functions
+               #'vulpea-setup-buffer))
 
 
 

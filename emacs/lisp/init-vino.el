@@ -41,6 +41,7 @@
              :host github
              :repo "d12frosted/vino")
   :defer t
+  :commands (vino-setup)
   :general
   (leader-def
     "v" '(nil :which-key "vino...")
@@ -55,8 +56,9 @@
     "va" '(vino-entry-acquire :which-key "acquire vino")
     "vc" '(vino-entry-consume :which-key "consume vino")
     "vr" '(vino-entry-rate :which-key "rate vino"))
-  :hook ((after-init . vino-setup))
   :init
+  (with-eval-after-load 'org-roam
+    (vino-setup))
   (setq-default
    vino-db-location (expand-file-name "vino.db" path-cache-dir)
    vino-db-gc-threshold most-positive-fixnum
