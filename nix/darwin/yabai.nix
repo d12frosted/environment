@@ -59,6 +59,7 @@ yabai -m rule --add app="^Emacs$" title!='^$' manage=on
 yabai -m rule --add app="^Safari$" space=3
 yabai -m rule --add app="^Firefox$" space=3
 yabai -m rule --add app="^Telegram$" space=4
+yabai -m rule --add app="^Messages$" space=4
 yabai -m rule --add app="^Music$" space=5
 yabai -m rule --add app="^Spotify$" space=5
 yabai -m rule --add app="^Transmission$" space=6
