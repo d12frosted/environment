@@ -240,23 +240,22 @@ Make all the links to this alias point to newly created note."
 
 
 
-(defface vulpea-svg-tag-face `((t (:foreground ,(face-foreground 'org-link nil 'inherit))))
+(defface vulpea-svg-tag-face `((t (:foreground ,(face-foreground 'org-link nil t)
+                                   :inherit default)))
   "Faces used for svg tags in vulpea buffers."
   :group 'faces)
 
 (defvar vulpea-svg-tag-style
-  (let ((style (svg-lib-style-compute-default 'vulpea-svg-tag-face)))
-    ;; Requires modifications to `svg-lib', which doesn't support
-    ;; transparent backgrounds. One of the reasons is the way strokes
-    ;; are drawn - instead of using stroke attribute, this library
-    ;; actually draws two rectangles with fill attributes.
-    ;;
-    ;; (plist-put style :background nil)
-    (plist-put style :padding 1)
-    (plist-put style :stroke 0)
-    (plist-put style :scale 0.8)
-    (plist-put style :height 1.0)
-    (plist-put style :font-size 12)))
+  (svg-style-concat
+   (svg-style-from-face 'vulpea-svg-tag-face)
+   '(:padding 0
+     :margin 0
+     :stroke 0
+     :background unspecified
+     :height 1
+     :scale 0.75
+     :radius 0
+     :alignment 0.5)))
 
 ;;;###autoload
 (defun vulpea-setup-svg-tags ()
@@ -282,12 +281,8 @@ Make all the links to this alias point to newly created note."
     (cond
      ((seq-contains-p tags litnotes-tag)
       (svg-concat
-       (litnotes-content-icon
-       (litnotes-entry-content
-        (litnotes-entry note))
-       :face 'vulpea-svg-tag-face)
-       (svg-lib-tag
-        (vulpea-note-title note) vulpea-svg-tag-style)))
+       (litnotes-content-icon (litnotes-entry-content (litnotes-entry note)) vulpea-svg-tag-style)
+       (svg-tag (vulpea-note-title note) vulpea-svg-tag-style)))
 
      (t (when-let ((data
                     (cond
@@ -308,11 +303,8 @@ Make all the links to this alias point to newly created note."
                      ((seq-contains-p tags "aroma")
                       '("bootstrap" "flower3")))))
           (svg-concat
-           (svg-lib-icon
-            (nth 1 data) vulpea-svg-tag-style
-            :collection (nth 0 data))
-           (svg-lib-tag
-            (vulpea-note-title note) vulpea-svg-tag-style)))))))
+           (svg-icon (nth 0 data) (nth 1 data) vulpea-svg-tag-style)
+           (svg-tag (vulpea-note-title note) vulpea-svg-tag-style)))))))
 
 
 
