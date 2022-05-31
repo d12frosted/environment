@@ -245,18 +245,6 @@ Make all the links to this alias point to newly created note."
   "Faces used for svg tags in vulpea buffers."
   :group 'faces)
 
-(defvar vulpea-svg-tag-style
-  (svg-style-concat
-   (svg-style-from-face 'vulpea-svg-tag-face)
-   '(:padding 0
-     :margin 0
-     :stroke 0
-     :background unspecified
-     :height 1
-     :scale 0.75
-     :radius 0
-     :alignment 0.5)))
-
 ;;;###autoload
 (defun vulpea-setup-svg-tags ()
   "Do something useful."
@@ -277,12 +265,20 @@ Make all the links to this alias point to newly created note."
 
 (defun vulpea-note-to-svg (note)
   "Return SVG representation of the NOTE."
-  (let ((tags (vulpea-note-tags note)))
+  (let ((tags (vulpea-note-tags note))
+        (scale 0.8)
+        (padding 2))
     (cond
      ((seq-contains-p tags litnotes-tag)
       (svg-concat
-       (litnotes-content-icon (litnotes-entry-content (litnotes-entry note)) vulpea-svg-tag-style)
-       (svg-tag (vulpea-note-title note) vulpea-svg-tag-style)))
+       (litnotes-content-icon
+        (litnotes-entry-content (litnotes-entry note))
+        :face 'vulpea-svg-tag-face
+        :scale scale)
+       (svg-label
+        (vulpea-note-title note)
+        :face 'vulpea-svg-tag-face
+        :padding padding)))
 
      (t (when-let ((data
                     (cond
@@ -303,8 +299,12 @@ Make all the links to this alias point to newly created note."
                      ((seq-contains-p tags "aroma")
                       '("bootstrap" "flower3")))))
           (svg-concat
-           (svg-icon (nth 0 data) (nth 1 data) vulpea-svg-tag-style)
-           (svg-tag (vulpea-note-title note) vulpea-svg-tag-style)))))))
+           (svg-icon (nth 0 data) (nth 1 data)
+                     :face 'vulpea-svg-tag-face
+                     :scale scale)
+           (svg-label (vulpea-note-title note)
+                      :face 'vulpea-svg-tag-face
+                      :padding padding)))))))
 
 
 

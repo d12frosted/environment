@@ -104,122 +104,65 @@
 ;;
 ;;; Code:
 
-(defun svg-style-from-face (face)
-  "Compute the style according to FACE."
-  (let* ((font-family (face-attribute face :family nil t))
-         (font-weight (face-attribute face :weight nil t))
+
+;; Emacs <-> SVG
+
+(defun svg-convert-color (color)
+  "Convert Emacs COLOR to SVG compatible color."
+  (if (equal color 'unspecified)
+      "none"
+    (svg-lib-convert-color color)))
+
+(defun svg-convert-weight (weight)
+  "Convert Emacs face WEIGHT to SVG compatible weight."
+  (let ((weights
+         '((thin       . 100)
+           (ultralight . 200)
+           (light      . 300)
+           (regular    . 400)
+           (medium     . 500)
+           (semibold   . 600)
+           (bold       . 700)
+           (extrabold  . 800)
+           (black      . 900))))
+    (or (cdr (assoc weight weights)) weight)))
+
+
+;; Widgets
+
+(cl-defun svg-icon (collection icon &key face padding scale)
+  "Create an SVG image for ICON from COLLECTION.
+
+FACE is used for styling. When omitted, `default' is used.
+
+PADDING adds extra space before and after the icon.
+
+SCALE is fractional scale of the icon."
+  (let* ((face (or face 'default))
+         (font-family (face-attribute face :family nil t))
          (font-size (face-attribute face :height nil t))
-         (foreground (face-attribute face :foreground nil t))
-         (background (face-attribute face :background nil t)))
-    `(:background ,background
-      :foreground ,foreground
-      :font-family ,font-family
-      :font-size ,(if (numberp font-size) (/ font-size 10) font-size)
-      :font-weight ,font-weight)))
+         (font-size (if (numberp font-size) (/ font-size 10) font-size))
+         (foreground (svg-convert-color (face-attribute face :foreground nil t)))
+         (font-info (font-info (format "%s-%d" font-family font-size)))
 
-(defun svg-style-concat (&rest styles)
-  "Concatenate STYLES using `svg-style-add'."
-  (seq-reduce #'svg-style-add styles nil))
-
-(defun svg-style-add (style-a style-b)
-  "Add STYLE-A and STYLE-B.
-
-Operation is right associative."
-  (let ((props '(:background
-                 :foreground
-                 :padding
-                 :margin
-                 :stroke
-                 :radius
-                 :alignment
-                 :height
-                 :scale
-                 :font-family
-                 :font-size
-                 :font-weight)))
-    (cl-flet ((plus (p) (or (plist-get style-b p)
-                            (plist-get style-a p))))
-      (seq-reduce (lambda (l p)
-                    (plist-put l p (plus p)))
-                  props
-                  nil))))
-
-(defvar svg-style-default
-  (svg-style-concat
-   (svg-style-from-face 'default)
-   '(;; In characters (tag and icons) or pixels (progress)
-     :padding 0
-     ;; In characters
-     :margin 0
-     ;; In pixels
-     :stroke 1
-     ;; In pixels
-     :radius 3
-     ;; Horizontal alignment (in fraction of margin)
-     :alignment 0.5
-     ;; Ratio of text line height
-     :height 0.90
-     ;; Icon scaling
-     :scale 0.75)))
-
-(defun svg-style-bake (style)
-  "Bake STYLE values into SVG supported values."
-  (let ((style (seq-copy style)))
-    ;; convert Emacs colors to SVG colors
-    (when-let ((color (plist-get style :foreground)))
-      (plist-put style :foreground (if (equal color 'unspecified)
-                                       "none"
-                                     (svg-lib-convert-color color))))
-    (when-let ((color (plist-get style :background)))
-      (plist-put style :background (if (equal color 'unspecified)
-                                       "none"
-                                     (svg-lib-convert-color color))))
-
-    ;; convert Emacs font weights to SVG font weights
-    ;;
-    ;; TODO: not sure if the names are right, I've stolen this code
-    ;; from svg-lib
-    (let ((weights
-           '((thin       . 100)
-             (ultralight . 200)
-             (light      . 300)
-             (regular    . 400)
-             (medium     . 500)
-             (semibold   . 600)
-             (bold       . 700)
-             (extrabold  . 800)
-             (black      . 900))))
-      (plist-put style :font-weight
-                 (or (cdr (assoc (plist-get style :font-weight) weights))
-                     (plist-get style :font-weight))))
-    style))
-
-(defun svg-icon (collection icon style)
-  "Create an SVG image for ICON from COLLECTION using STYLE."
-  (let* ((style (svg-style-bake style))
          (root (svg-lib--icon-get-data collection icon))
-         (foreground (plist-get style :foreground))
-         (background (plist-get style :background))
-         (stroke (plist-get style :stroke))
-         (height (plist-get style :height))
-         (radius (plist-get style :radius))
-         (scale (plist-get style :scale))
-         (margin (plist-get style :margin))
-         (padding (plist-get style :padding))
 
-         (txt-char-width (window-font-width))
-         (txt-char-height (window-font-height))
+         (padding (or padding 0))
+
+         (text-char-width (aref font-info 11))
+
+         (text-char-height (let ((height (aref font-info 3)))
+                             (if line-spacing
+                                 (+ height line-spacing)
+                               height)))
 
          ;; we say that any icon has width of 2 characters
-         (width 2)
+         (label-length 2)
 
-         ;; we ignore stroke in height calculations as we want icon to
-         ;; be perfectly aligned with text around when inserted
-         (box-width (+ (* 2 (or stroke 0))
-                       (* (+ width padding) txt-char-width)))
-         (box-height (* height txt-char-height))
+         (box-width (* label-length  text-char-width))
+         (box-height text-char-height)
 
-         (svg-width (+ box-width (* margin txt-char-width)))
+         (svg-width (+ box-width padding padding))
          (svg-height box-height)
 
          ;; Read original viewbox
@@ -229,7 +172,8 @@ Operation is right associative."
          (icon-y (nth 1 viewbox))
          (icon-width (nth 2 viewbox))
          (icon-height (nth 3 viewbox))
-         (scale (* scale (/ (float box-height) (float icon-height))))
+         (scale (* (or scale 1)
+                   (/ (float box-height) (float icon-height))))
          (icon-transform
           (format "translate(%f,%f) scale(%f) translate(%f,%f)"
                   (- icon-x)
@@ -239,43 +183,33 @@ Operation is right associative."
                   (- (/ svg-height 2 scale) (/ icon-height 2))))
 
          (svg (svg-create svg-width svg-height)))
-
-    (when (and stroke (> stroke 0))
-      (svg-rectangle svg stroke stroke
-                     (- svg-width (* 2 stroke))
-                     (- svg-height (* 2 stroke))
-                     :fill (or background "none")
-                     :stroke foreground
-                     :stroke-width stroke
-                     :rx radius))
-
     (dolist (item (xml-get-children (car root) 'path))
       (let* ((attrs (xml-node-attributes item))
-             (path (cdr (assoc 'd attrs)))
-             ;; (fill (or (cdr (assoc 'fill attrs)) foreground))
-             )
+             (path (cdr (assoc 'd attrs))))
         (svg-node svg 'path :d path
                   :fill foreground
                   :transform icon-transform)))
     (svg-lib--image svg :ascent 'center)))
 
-(defun svg-tag (label style)
-  "Create an SVG image for LABEL using STYLE."
-  (let* ((style (svg-style-bake style))
+(cl-defun svg-label (label &key face padding alignment)
+  "Create an SVG image for LABEL.
 
-         (foreground (plist-get style :foreground))
-         (background (plist-get style :background))
+FACE is used for styling. When omitted, `default' is used.
 
-         (alignment (plist-get style :alignment))
-         (stroke (plist-get style :stroke))
-         (height (plist-get style :height))
-         (radius (plist-get style :radius))
-         (padding (plist-get style :padding))
-         (font-size (plist-get style :font-size))
-         (font-family (plist-get style :font-family))
-         (font-weight (plist-get style :font-weight))
+PADDING adds extra space before and after the label.
 
+ALIGNMENT is horizontal alignment (in fraction of margin). Defaults to 0.5."
+  (let* ((face (or face 'default))
+         (font-family (face-attribute face :family nil t))
+         (font-weight (svg-convert-weight (face-attribute face :weight nil t)))
+         (font-size (face-attribute face :height nil t))
+         (font-size (if (numberp font-size) (/ font-size 10) font-size))
+         (foreground (svg-convert-color (face-attribute face :foreground nil t)))
          (font-info (font-info (format "%s-%d" font-family font-size)))
+
+         (padding (or padding 0))
+         (alignment (or alignment 0.5))
+
          (font-size (aref font-info 2))
          (ascent (aref font-info 8))
 
@@ -285,48 +219,70 @@ Operation is right associative."
                                  (+ height line-spacing)
                                height)))
 
-         (tag-width (* (length label) text-char-width))
-         (tag-height (* text-char-height height))
+         ;; It seems that text in rendered SVG is a little bit thicker
+         ;; than text in Emacs. This means that the text of the
+         ;; rendered SVG is longer than regular text. I could not find
+         ;; a way to overcome this, so had to adjust for this
+         ;; difference.
+         ;;
+         ;; It brings one important yet obvious conclusion -
+         ;; `svg-label' should not be used for regular text.
+         (length-adj (* text-char-width
+                        (floor (* (sqrt (length label)) 2 1.1)
+                               text-char-width)))
 
-         ;; I don't know how to properly calculate that. It seems that
-         ;; this value is not linear to length of the text. So doing
-         ;; my best guess.
-         (spacing-adj (* text-char-width
-                         (ceiling (* (sqrt (length label)) 2)
-                                  text-char-width)))
+         (label-width (+ length-adj (* (length label) text-char-width)))
+         (label-height text-char-height)
 
-         (svg-width (+ (* 2 (or stroke 0))
-                       (* 2 padding text-char-width)
-                       spacing-adj
-                       tag-width))
-         (svg-height tag-height)
+         (svg-width (+ label-width padding padding))
+         (svg-height label-height)
 
-         (tag-x (+ (* (- svg-width tag-width (* 0.5 spacing-adj)) alignment)
-                   (or stroke 0)))
-         (tag-y (- ascent (or stroke 0)))
+         (label-x (* (- svg-width label-width) alignment))
+         (label-y ascent)
 
          (svg (svg-create svg-width svg-height)))
-
-    (when (and stroke (> stroke 0))
-      (svg-rectangle svg stroke stroke
-                     (- svg-width (* 2 stroke))
-                     (- svg-height (* 2 stroke))
-                     :fill (or background "none")
-                     :stroke foreground
-                     :stroke-width stroke
-                     :rx radius))
-
     (svg-text svg label
               :font-family font-family
               :font-weight font-weight
               :font-size font-size
               :fill foreground
-              :textLength tag-width
-              :x tag-x
-              :y tag-y)
+              :x label-x
+              :y label-y)
     (svg-lib--image svg :ascent 'center)))
 
-(defun svg-concat (svg-image-1 svg-image-2)
+
+;; Combinators
+
+(cl-defun svg-border (svg-image &key width color radius)
+  "Create a border of WIDTH and COLOR around SVG-IMAGE."
+  (let* ((svg (car (with-temp-buffer
+ 	                   (insert (plist-get (cdr svg-image) :data))
+ 	                   (xml-parse-region (point-min) (point-max)))))
+         (attrs (xml-node-attributes svg))
+         (svg-width (string-to-number (cdr (assq 'width attrs))))
+         (svg-height (string-to-number (cdr (assq 'height attrs))))
+         (children (xml-node-children svg))
+         (svg (svg-create svg-width svg-height)))
+    (svg-rectangle svg width width
+                   (- svg-width (* 2 width))
+                   (- svg-height (* 2 width))
+                   :stroke (svg-convert-color color)
+                   :fill "none"
+                   :stroke-width width
+                   :rx radius)
+    (dolist (child children)
+      (dom-append-child svg child))
+    (svg-lib--image svg :ascent 'center)))
+
+(defun svg-concat (svg-image &rest svg-images)
+  "Concatenate SVG-IMAGE and SVG-IMAGES using `svg-append'.
+
+Keep in mind that for practical reasons there is no neutral
+element for `svg-append', so you need to provide at least one
+image."
+  (seq-reduce #'svg-append svg-images svg-image))
+
+(defun svg-append (svg-image-1 svg-image-2)
   "Concatenate SVG-IMAGE-1 and SVG-IMAGE-2 images horizontally.
 
 Resulting type is the same as its arguments.
@@ -366,6 +322,8 @@ consistent with it's input type and kind of forms monoid."
     (dom-set-attribute svg-2 'x width-1)
     (dom-append-child svg svg-2)
     (svg-lib--image svg :ascent 'center)))
+
+
 
 (provide 'lib-svg)
 ;;; lib-svg.el ends here

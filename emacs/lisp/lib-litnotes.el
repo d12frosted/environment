@@ -38,6 +38,8 @@
 (require 'lister)
 (require 'lister-highlight)
 
+(require 'lib-svg)
+
 
 
 (defconst litnotes-tag "litnotes"
@@ -75,27 +77,17 @@
   (< (seq-position litnotes-status-values a)
      (seq-position litnotes-status-values b)))
 
-(defun litnotes-status-icon (status &optional style)
-  "Return STATUS icon with STYLE."
-  (let ((style (or style
-                   (svg-style-concat
-                    (svg-style-from-face 'litnotes-group-title-face)
-                    '(:padding 0
-                      :margin 0
-                      :stroke 0
-                      :background unspecified
-                      :height 1
-                      :scale 1
-                      :radius 0
-                      :alignment 0.5)))))
-    (svg-icon
-     "bootstrap"
-     (pcase status
-       (`"ongoing" "arrow-repeat")
-       (`"new" "inbox")
-       (`"done" "check")
-       (`"dropped" "trash"))
-     style)))
+(cl-defun litnotes-status-icon (status &key face scale)
+  "Return STATUS icon with FACE and SCALE."
+  (svg-icon
+   "bootstrap"
+   (pcase status
+     (`"ongoing" "arrow-repeat")
+     (`"new" "inbox")
+     (`"done" "check")
+     (`"dropped" "trash"))
+   :face (or face 'litnotes-group-title-face)
+   :scale (or scale 0.9)))
 
 (defconst litnotes-status-tag-prefix "status/"
   "Prefix of the status tag.")
@@ -132,28 +124,18 @@
   (< (seq-position litnotes-content-types a)
      (seq-position litnotes-content-types b)))
 
-(cl-defun litnotes-content-icon (content &key style)
-  "Return CONTENT icon with STYLE."
-  (let ((style (or style
-                   (svg-style-concat
-                    (svg-style-from-face 'litnotes-group-title-face)
-                    '(:padding 0
-                      :margin 0
-                      :stroke 0
-                      :background unspecified
-                      :height 1
-                      :scale 0.75
-                      :radius 0
-                      :alignment 0.5)))))
-    (svg-icon
-     "bootstrap"
-     (pcase content
-       (`"book" "book")
-       (`"article" "journal-text")
-       (`"video" "film")
-       (`"course" "archive")
-       (`"game" "controller"))
-     style)))
+(cl-defun litnotes-content-icon (content &key face scale)
+  "Return CONTENT icon with FACE and SCALE."
+  (svg-icon
+   "bootstrap"
+   (pcase content
+     (`"book" "book")
+     (`"article" "journal-text")
+     (`"video" "film")
+     (`"course" "archive")
+     (`"game" "controller"))
+   :face (or face 'default)
+   :scale (or scale 0.75)))
 
 (defconst litnotes-content-tag-prefix "content/"
   "Prefix of the content tag.")
