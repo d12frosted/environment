@@ -217,3 +217,10 @@
             (call-interactively #'emacsql-fix-vector-indentation)))
 
 
+;; CI compat
+
+(when (getenv "CI")
+  (defun font-info (name &optional frame)
+    "Do nothing."))
+
+
