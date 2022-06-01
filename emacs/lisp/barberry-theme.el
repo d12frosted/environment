@@ -163,12 +163,12 @@
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-faded "#90A4AE" ;; Blue Grey / L300
+(defcustom barberry-theme-color-faded "#ADADAD"
   "Color used for information of low importance."
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-faded-i "#90A4AE" ;; Blue Grey / L300
+(defcustom barberry-theme-color-faded-i "#E7ECEE"
   "Inverse version of `barberry-theme-color-faded'."
   :group 'barberry-theme-colors
   :type 'color)
@@ -178,7 +178,7 @@
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-salient-i "#7880B5"
+(defcustom barberry-theme-color-salient-i "#E2E5F3"
   "Inverse version of `barberry-theme-color-salient'."
   :group 'barberry-theme-colors
   :type 'color)
@@ -213,12 +213,12 @@
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-successful "#829B6F"
+(defcustom barberry-theme-color-successful "#74AC48"
   "Color used for information that indicates success."
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-successful-i "#E0E6DB"
+(defcustom barberry-theme-color-successful-i "#E9F7DF"
   "Inverse version of `barberry-theme-color-successful'."
   :group 'barberry-theme-colors
   :type 'color)
@@ -228,17 +228,17 @@
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-highlight-successful "#EAEEE7"
+(defcustom barberry-theme-color-highlight-successful "#E9F7DF"
   "Color used to highlight successful part of the screen."
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-highlight-salient "#F2F3F8"
+(defcustom barberry-theme-color-highlight-salient "#F7FCE3"
   "Color used to highlight important part of the screen."
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-highlight-critical "#F6E3DF"
+(defcustom barberry-theme-color-highlight-critical "#EFC6BE"
   "Color used to highlight critical part of the screen."
   :group 'barberry-theme-colors
   :type 'color)
@@ -352,7 +352,6 @@
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-salient-i nil
-                    :foreground barberry-theme-color-background
                     :background barberry-theme-color-salient-i
                     :inherit 'barberry-theme-face-default)
 
@@ -406,7 +405,7 @@
    '(bold              ((t (:inherit barberry-theme-face-strong))))
    '(italic            ((t (:inherit barberry-theme-face-faded))))
    '(bold-italic       ((t (:inherit barberry-theme-face-strong))))
-   `(region            ((t (:background ,barberry-theme-color-highlight-successful))))
+   `(region            ((t (:background ,barberry-theme-color-highlight-salient))))
    '(fringe            ((t (:inherit (barberry-theme-face-faded)))))
    '(hl-line           ((t (:inherit highlight))))
    '(link              ((t (:inherit barberry-theme-face-salient))))
@@ -689,7 +688,10 @@
 
    ;; flyspell
    `(flyspell-duplicate ((t (:underline (:style wave :color ,barberry-theme-color-salient)))))
-   `(flyspell-incorrect ((t (:underline (:style wave :color ,barberry-theme-color-critical)))))))
+   `(flyspell-incorrect ((t (:underline (:style wave :color ,barberry-theme-color-critical)))))
+
+   ;; page-break-lines
+   '(page-break-lines ((t (:inherit barberry-theme-face-subtle))))))
 
 (with-eval-after-load 'lsp-ui-doc
   ;; ideally it should use `child-frame-border', but it does not
