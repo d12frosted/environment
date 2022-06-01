@@ -153,13 +153,13 @@
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-highlight "#F5F5F5"
-  "Color used to highlight part of the screen."
+(defcustom barberry-theme-color-subtle "#ECEFF1" ;; Blue Grey / L50
+  "Color used to suggest a physical area on the screen."
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-subtle "#ECEFF1" ;; Blue Grey / L50
-  "Color used to suggest a physical area on the screen."
+(defcustom barberry-theme-color-subtle-i "#ECEFF1" ;; Blue Grey / L50
+  "Inverse version of `barberry-theme-color-subtle'."
   :group 'barberry-theme-colors
   :type 'color)
 
@@ -168,8 +168,18 @@
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-salient "#673AB7" ;; Deep Purple / L500
+(defcustom barberry-theme-color-faded-i "#90A4AE" ;; Blue Grey / L300
+  "Inverse version of `barberry-theme-color-faded'."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-salient "#7880B5"
   "Color used for information of big importance."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-salient-i "#7880B5"
+  "Inverse version of `barberry-theme-color-salient'."
   :group 'barberry-theme-colors
   :type 'color)
 
@@ -178,13 +188,58 @@
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-popout "#FFAB91" ;; Deep Orange / L200
+(defcustom barberry-theme-color-strong-i "#263238"
+  "Inverse version of `barberry-theme-color-strong'."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-popout "#FDA521"
   "Color used for information that needs attention."
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-critical "#FF6F00" ;; Amber / L900
+(defcustom barberry-theme-color-popout-i "#FED18C" ;; Deep Champagne
+  "Inverse version of `barberry-theme-color-popout'."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-critical "#C8553D"
   "Color used for information that requires immediate action."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-critical-i "#C8553D"
+  "Inverse version of `barberry-theme-color-critical'."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-successful "#829B6F"
+  "Color used for information that indicates success."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-successful-i "#E0E6DB"
+  "Inverse version of `barberry-theme-color-successful'."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-highlight-default "#F5F5F5"
+  "Color used to highlight part of the screen."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-highlight-successful "#EAEEE7"
+  "Color used to highlight successful part of the screen."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-highlight-salient "#F2F3F8"
+  "Color used to highlight important part of the screen."
+  :group 'barberry-theme-colors
+  :type 'color)
+
+(defcustom barberry-theme-color-highlight-critical "#F6E3DF"
+  "Color used to highlight critical part of the screen."
   :group 'barberry-theme-colors
   :type 'color)
 
@@ -241,6 +296,12 @@
 (defface barberry-theme-face-critical-i nil
   "Inverse version of `barberry-theme-face-critical'.")
 
+(defface barberry-theme-face-successful nil
+  "Face used for information that indicates success.")
+
+(defface barberry-theme-face-successful-i nil
+  "Inverse version of `barberry-theme-face-successful'.")
+
 
 
 (deftheme barberry
@@ -275,7 +336,7 @@
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-subtle-i nil
-                    :background barberry-theme-color-subtle
+                    :background barberry-theme-color-subtle-i
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-faded nil
@@ -283,7 +344,7 @@
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-faded-i nil
-                    :background barberry-theme-color-faded
+                    :background barberry-theme-color-faded-i
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-salient nil
@@ -292,7 +353,7 @@
 
 (set-face-attribute 'barberry-theme-face-salient-i nil
                     :foreground barberry-theme-color-background
-                    :background barberry-theme-color-salient
+                    :background barberry-theme-color-salient-i
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-strong nil
@@ -302,7 +363,7 @@
 
 (set-face-attribute 'barberry-theme-face-strong-i nil
                     :foreground barberry-theme-color-background
-                    :background barberry-theme-color-strong
+                    :background barberry-theme-color-strong-i
                     :weight 'medium
                     :inherit 'barberry-theme-face-default)
 
@@ -311,7 +372,7 @@
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-popout-i nil
-                    :background barberry-theme-color-popout
+                    :background barberry-theme-color-popout-i
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-critical nil
@@ -319,7 +380,17 @@
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-critical-i nil
-                    :background barberry-theme-color-critical
+                    :foreground barberry-theme-color-background
+                    :background barberry-theme-color-critical-i
+                    :inherit 'barberry-theme-face-default)
+
+(set-face-attribute 'barberry-theme-face-successful nil
+                    :foreground barberry-theme-color-successful
+                    :inherit 'barberry-theme-face-default)
+
+(set-face-attribute 'barberry-theme-face-successful-i nil
+                    :foreground barberry-theme-color-foreground
+                    :background barberry-theme-color-successful-i
                     :inherit 'barberry-theme-face-default)
 
 (let* ((height (face-attribute 'barberry-theme-face-default :height nil t))
@@ -331,18 +402,18 @@
                             :weight ,barberry-theme-font-mono-weight
                             :inherit barberry-theme-face-default))))
    '(cursor            ((t (:inherit barberry-theme-face-default-i))))
-   `(highlight         ((t (:background ,barberry-theme-color-highlight))))
+   `(highlight         ((t (:background ,barberry-theme-color-highlight-default))))
    '(bold              ((t (:inherit barberry-theme-face-strong))))
    '(italic            ((t (:inherit barberry-theme-face-faded))))
    '(bold-italic       ((t (:inherit barberry-theme-face-strong))))
-   `(region            ((t (:background ,barberry-theme-color-subtle))))
+   `(region            ((t (:background ,barberry-theme-color-highlight-successful))))
    '(fringe            ((t (:inherit (barberry-theme-face-faded)))))
    '(hl-line           ((t (:inherit highlight))))
    '(link              ((t (:inherit barberry-theme-face-salient))))
    '(fixed-pitch       ((t (:inherit default))))
    '(fixed-pitch-serif ((t (:inherit default))))
    '(shadow            ((t (:inherit barberry-theme-face-faded))))
-   '(success           ((t (:inherit barberry-theme-face-salient))))
+   '(success           ((t (:inherit barberry-theme-face-successful))))
    '(warning           ((t (:inherit barberry-theme-face-popout))))
    '(error             ((t (:inherit barberry-theme-face-critical))))
    '(match             ((t (:inherit barberry-theme-face-popout))))
@@ -541,9 +612,9 @@
    '(org-target                   ((t (:inherit barberry-theme-face-faded))))
    '(org-time-grid                ((t (:inherit barberry-theme-face-faded))))
    '(org-todo                     ((t (:weight medium
-                                       :inherit barberry-theme-face-salient))))
+                                       :inherit barberry-theme-face-critical))))
    '(org-upcoming-deadline        ((t (:inherit barberry-theme-face-popout))))
-   `(org-verbatim                 ((t (:background ,barberry-theme-color-highlight
+   `(org-verbatim                 ((t (:background ,barberry-theme-color-highlight-default
                                        :inherit barberry-theme-face-default))))
    '(org-verse                    ((t (:inherit barberry-theme-face-faded))))
    '(org-warning                  ((t (:inherit barberry-theme-face-popout))))
@@ -572,7 +643,7 @@
    '(markdown-html-entity-face        ((t (:inherit barberry-theme-face-default))))
    '(markdown-html-tag-delimiter-face ((t (:inherit barberry-theme-face-default))))
    '(markdown-html-tag-name-face      ((t (:inherit barberry-theme-face-default))))
-   `(markdown-inline-code-face        ((t (:background ,barberry-theme-color-highlight
+   `(markdown-inline-code-face        ((t (:background ,barberry-theme-color-highlight-default
                                            :inherit barberry-theme-face-default))))
    '(markdown-italic-face             ((t (:inherit barberry-theme-face-faded))))
    '(markdown-language-info-face      ((t (:inherit barberry-theme-face-default))))
@@ -604,6 +675,11 @@
    '(popup-scroll-bar-foreground-face ((t (:inherit barberry-theme-face-subtle))))
    '(popup-summary-face               ((t (:inherit barberry-theme-face-faded))))
    '(popup-tip-face                   ((t (:inherit barberry-theme-face-popout-i))))
+
+   ;; diff-hl-mode
+   `(diff-hl-change ((t (:background ,barberry-theme-color-highlight-salient))))
+   `(diff-hl-insert ((t (:background ,barberry-theme-color-highlight-successful))))
+   `(diff-hl-delete ((t (:background ,barberry-theme-color-highlight-critical))))
 
    ;; lsp-ui
    `(lsp-ui-doc-background ((t (:background ,barberry-theme-color-background))))

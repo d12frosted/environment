@@ -164,6 +164,8 @@
                  barberry-theme-face-popout-i
                  barberry-theme-face-critical
                  barberry-theme-face-critical-i
+                 barberry-theme-face-successful
+                 barberry-theme-face-successful-i
 
                  cursor
                  highlight
