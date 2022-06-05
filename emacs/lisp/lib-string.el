@@ -269,12 +269,16 @@ WIDTHS. Each value is separated by SEP."
    (string-join
     (seq-map-indexed
      (lambda (a i)
-       (s-truncate
-        (nth i widths)
-        (funcall (nth i pad-fns)
-                 (nth i widths)
-                 pad-str
-                 (string-from a))))
+       (let* ((width-max (nth i widths))
+              (str (string-from a)))
+         (s-truncate
+          width-max
+          (funcall (nth i pad-fns)
+                   width-max
+                   pad-str
+                   str)
+          (propertize "..."
+                      'help-echo str))))
      values)
     sep)
    row-end))
