@@ -553,8 +553,8 @@ are lists of ratings."
 
       (propertize "Ratings" 'face 'bold)
       (string-table
-       :width '(full full 20 24 full full full full)
-       :header '("date" "country" "producer" "name" "year" "price" "rate" "QPR")
+       :width '(full full 20 24 full 24 full full full full full full)
+       :header '("date" "country" "producer" "name" "year" "grapes" "color" "carbonation" "sweetness" "price" "rate" "QPR")
        :header-sep "-"
        :header-sep-start "|-"
        :header-sep-conj "-+-"
@@ -562,26 +562,31 @@ are lists of ratings."
        :row-start "| "
        :row-end " |"
        :sep " | "
-       :pad-type '(left right right right left left left left)
-       :data (seq-map
-              (lambda (id)
-                (let* ((rating (gethash id ratings-tbl))
-                       (entry (gethash (vulpea-note-id (vino-rating-wine rating)) entries-tbl)))
-                  (list
-                   (vino-rating-date rating)
-                   (gethash (vulpea-note-id
-                             (or (vino-entry-region entry)
-                                 (vino-entry-appellation entry)))
-                            country-tbl)
-                   (vino-entry-producer entry)
-                   (vulpea-buttonize (vino-rating-wine rating)
-                                     (lambda (_) (vino-entry-name entry)))
-                   (or (vino-entry-vintage entry) "NV")
-                   (vino-stats-format-price (vino-stats-price entry))
-                   (format "%.2f" (vino-rating-total rating))
-                   (when-let ((qpr (vino-stats-rating-qpr rating entry)))
-                     (format "%.4f" (calc-to-number qpr))))))
-              ratings)))))
+       :pad-type '(left right right right left right left left left left left left)
+       :data
+       (seq-map
+        (lambda (id)
+          (let* ((rating (gethash id ratings-tbl))
+                 (entry (gethash (vulpea-note-id (vino-rating-wine rating)) entries-tbl)))
+            (list
+             (vino-rating-date rating)
+             (gethash (vulpea-note-id
+                       (or (vino-entry-region entry)
+                           (vino-entry-appellation entry)))
+                      country-tbl)
+             (vino-entry-producer entry)
+             (vulpea-buttonize (vino-rating-wine rating)
+                               (lambda (_) (vino-entry-name entry)))
+             (or (vino-entry-vintage entry) "NV")
+             (or (mapconcat #'vulpea-buttonize (vino-entry-grapes entry) ", ") "NA")
+             (or (vino-entry-colour entry) "NA")
+             (or (vino-entry-carbonation entry) "NA")
+             (or (vino-entry-sweetness entry) "NA")
+             (vino-stats-format-price (vino-stats-price entry))
+             (format "%.2f" (vino-rating-total rating))
+             (when-let ((qpr (vino-stats-rating-qpr rating entry)))
+               (format "%.4f" (calc-to-number qpr))))))
+        ratings)))))
 
 
 
