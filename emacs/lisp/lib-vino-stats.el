@@ -272,18 +272,22 @@ RATINGS can be related to different entries."
   "Group RATINGS-TBL by key produced by TO-KEY.
 
 TO-KEY is a function accepting two arguments - rating id and
-rating struct. Result must be of type string.
+rating struct. Result must be of type string or list of strings.
 
 Return hash table where keys are produced by TO-KEY and values
 are lists of ratings."
   (let ((tbl (make-hash-table :test 'equal)))
     (maphash
      (lambda (id rating)
-       (let* ((key (funcall to-key id rating)))
-         (puthash
-          key
-          (cons rating (gethash key tbl))
-          tbl)))
+       (let* ((keys (funcall to-key id rating))
+              (keys (if (listp keys) keys (list keys))))
+         (seq-each
+          (lambda (key)
+            (puthash
+             key
+             (cons rating (gethash key tbl))
+             tbl))
+          keys)))
      ratings-tbl)
     tbl))
 
@@ -432,7 +436,16 @@ are lists of ratings."
                        (seq-sort-by
                         (lambda (x) (nth 0 x))
                         #'>
-                        (vino-stats--grouped-ratings-data tbl entries-tbl)))))
+                        (vino-stats--grouped-ratings-data tbl entries-tbl))))
+       (grapes-stat (let ((tbl (vino-stats-group-ratings-by
+                                ratings-tbl
+                                (lambda (_ rating)
+                                  (seq-map
+                                   #'vulpea-note-title
+                                   (vino-entry-grapes
+                                    (gethash (vulpea-note-id (vino-rating-wine rating))
+                                             entries-tbl)))))))
+                      (vino-stats--grouped-ratings-data tbl entries-tbl))))
     (buffer-display-result-with "*vino-stats*"
       (format "Stats for period from %s to %s"
               (propertize (nth 0 range) 'face 'bold)
@@ -452,6 +465,7 @@ are lists of ratings."
              (list "Wines rated" (seq-length (hash-table-keys entries-tbl)))
              (list "Ratings" (seq-length (hash-table-keys ratings-tbl)))
              (list "Countries" (seq-length countries-stat))
+             (list "Grapes" (seq-length grapes-stat))
              (list "Vintage youngest" (seq-max (seq-remove (lambda (x) (= 0 x)) (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
              (list "Vintage oldest" (seq-min (seq-remove (lambda (x) (= 0 x)) (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
              (list "Price total" (vino-stats-format-price (vino-stats-price-total ratings-stat)))
@@ -496,6 +510,19 @@ are lists of ratings."
                     (cons "NV" (cdr x))
                   x))
               vintage-stat))
+      ""
+
+      (propertize "Grape stats" 'face 'bold)
+      (string-table
+       :header '("grape" "count" "p total" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
+       :header-sep "-"
+       :header-sep-start "|-"
+       :header-sep-conj "-+-"
+       :header-sep-end "-|"
+       :row-start "| "
+       :row-end " |"
+       :sep " | "
+       :data grapes-stat)
       ""
 
       (propertize "Colour stats" 'face 'bold)
