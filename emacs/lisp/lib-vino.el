@@ -119,7 +119,6 @@
               "* ("
               (format "%i" bottles) " bottles)")
       (org-mode)
-      (setq-default fill-column 120)
       (read-only-mode))
     (display-buffer buffer)))
 

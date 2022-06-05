@@ -121,7 +121,7 @@
 (setq window-min-height 1)
 
 ;; Vertical window divider
-(setq window-divider-default-right-width 24)
+(setq window-divider-default-right-width 18)
 (setq window-divider-default-places 'right-only)
 (window-divider-mode 1)
 
