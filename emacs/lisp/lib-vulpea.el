@@ -372,7 +372,7 @@ is ignored. Any buffer modification is saved."
       (pcase count
         (`0 (message "No notes to process"))
         (`1 (message "Processing 1 note"))
-        (_ (message "Processing %d note" count))))
+        (_ (message "Processing %d notes" count))))
     (seq-map-indexed
      (lambda (n i)
        (let ((level (vulpea-note-level n))
