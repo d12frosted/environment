@@ -39,6 +39,10 @@
 (require 's)
 (require 'button)
 
+(defun string-non-empty-p (str)
+  "Return non-nil when STR is non-empty."
+  (not (string-empty-p str)))
+
 ;;;###autoload
 (defun string-match-1 (regexp val)
   "Get the first group from REGEXP match of the VAL.
