@@ -176,9 +176,15 @@ experimental-features = nix-command flakes
       # social
       "telegram"
 
-      # other
+      # network
       "protonvpn"
       "transmission"
+
+      # system tweaks
+      "raycast"
+      "karabiner-elements"
+
+      # other
     ];
     extraConfig = ''
 brew "yabai", restart_service: true
