@@ -226,7 +226,9 @@
 (use-package svg-tag-mode
   :straight (:type git :host github :repo "rougier/svg-tag-mode")
   :commands (svg-tag-mode
-             svg-tag-mode-on))
+             svg-tag-mode-on)
+  :init
+  (advice-add #'svg-tag-mode-on :around #'fun-silent))
 
 ;; when theme is right, this thing is good
 (global-hl-line-mode)

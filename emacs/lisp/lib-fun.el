@@ -107,5 +107,12 @@ arguments in `cl-defun'. For example:
       (if (keywordp head) (fun-remove-keyword-params (cdr tail))
         (cons head (fun-remove-keyword-params tail))))))
 
+(defun fun-silent (fn &rest args)
+  "Wrapper for FN suppressing any messages.
+
+ARGS are passed as is to FN."
+  (cl-letf (((symbol-function 'message) (lambda (&rest _))))
+    (apply fn args)))
+
 (provide 'lib-fun)
 ;;; lib-fun.el ends here
