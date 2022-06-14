@@ -54,7 +54,7 @@ In a nutshell, it's just a value of $HOME.")
   "The path to personal autoloads file.")
 
 (defconst path-emacs-private-dir
-  (concat path-home-dir "Dropbox/apps/Emacs/")
+  (concat path-home-dir "Dropbox/emacs/")
   "The root directory for private configurations.")
 
 (defconst path-local-dir
