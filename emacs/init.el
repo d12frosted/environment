@@ -56,6 +56,9 @@
 (setq-default user-full-name "Boris Buliga"
               user-mail-address "boris@d12frosted.io")
 
+;; sometimes I just want new things
+(setq-default load-prefer-newer t)
+
 ;; bootstrap
 (require 'config-path)
 (require 'init-elpa)
