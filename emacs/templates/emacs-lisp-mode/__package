@@ -2,7 +2,7 @@
 # --
 ;;; `(file-name-nondirectory buffer-file-name)`${1: --- ${2:description}} -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) `(format-time-string "%Y")` `user-full-name`
+;; Copyright (c) `(format-time-string "%Y")`, `user-full-name` <`user-mail-address`>
 ;;
 ;; Author: `user-full-name` <`user-mail-address`>
 ;; Maintainer: `user-full-name` <`user-mail-address`>
