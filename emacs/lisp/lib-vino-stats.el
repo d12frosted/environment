@@ -7,7 +7,7 @@
 ;;
 ;; Created: 18 Apr 2022
 ;;
-;; URL: https://github.com/d12frosted/
+;; URL: https://github.com/d12frosted/environment/tree/master/emacs
 ;;
 ;; License: GPLv3
 ;;
@@ -496,7 +496,7 @@ are lists of ratings."
 
       (propertize "Vintage stats" 'face 'bold)
       (string-table
-       :header '("country" "count" "p total" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
+       :header '("vintage" "count" "p total" "p avg" "p min" "p max" "r rms" "r sdev" "r min" "r max" "qpr")
        :header-sep "-"
        :header-sep-start "|-"
        :header-sep-conj "-+-"
