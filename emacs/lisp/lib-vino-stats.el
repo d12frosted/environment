@@ -50,9 +50,9 @@
 ;;; Code:
 
 (require 'lib-buffer)
-(require 'lib-calc)
 (require 'lib-string)
 (require 'lib-vulpea)
+(require 'lib-calc)
 
 (require 'vino)
 
@@ -314,27 +314,147 @@ are lists of ratings."
     (hash-table-keys ratings-tbl))))
 
 
-;; formatting
+;; data set
 
-(defun vino-stats-format-price (price)
-  "Format PRICE value."
-  (let ((value (cond
-                ((null price) nil)
-                ((math-numberp price) (math-float price))
-                ((listp price) (car price))))
-        (currency (cond
-                   ((math-numberp price) vino-stats-price-currency)
-                   ((listp price) (cdr price)))))
-    (when value
-      (let* ((parts (math-float-parts value t))
-             (a (car parts))
-             (b (car (math-float-parts
-                      (math-mul (nth 1 parts) 100) nil))))
-        (format "%s.%0.2i %s"
-                (let ((calc-group-char " "))
-                  (math-group-float (math-format-number a)))
-                b
-                currency)))))
+(defun vino-stats-data-set-for (range)
+  "Read data set for RANGE.
+
+RANGE is a list of two dates in format YYYY-MM-DD: [from, to).
+
+Result is a plist (:range :size :ratings-tbl :entries-tbl :countries-tbl)"
+  (when-let*
+      ((ratings (seq-map
+                 #'car-safe
+                 (vino-db-query
+                  [:select [id]
+                   :from ratings
+                   :where (and (>= date $s1)
+                               (< date $s2))
+                   :order-by [(asc date)]]
+                  (nth 0 range)
+                  (nth 1 range))))
+       (size (seq-length ratings))
+       (ratings-tbl (let ((tbl (make-hash-table
+                                :test 'equal
+                                :size size)))
+                      (emacsql-with-transaction (vino-db)
+                        (seq-each
+                         (lambda (id)
+                           (puthash id (vino-db-get-rating id) tbl))
+                         ratings))
+                      tbl))
+       (entries-tbl (let ((tbl (make-hash-table
+                                :test 'equal
+                                :size size)))
+                      (emacsql-with-transaction (vino-db)
+                        (maphash
+                         (lambda (_ rating)
+                           (let ((id (vulpea-note-id (vino-rating-wine rating))))
+                             (puthash id (vino-db-get-entry id) tbl)))
+                         ratings-tbl))
+                      tbl))
+       (countries-tbl (vino-stats-country-tbl)))
+    (list :range range
+          :size size
+          :ratings-tbl ratings-tbl
+          :entries-tbl entries-tbl
+          :countries-tbl countries-tbl)))
+
+(defun vino-stats-from-data-set (data)
+  "Calculate rating stats from DATA set."
+  (vino-stats-from-ratings
+   (hash-table-values (plist-get data :ratings-tbl))
+   (plist-get data :entries-tbl)))
+
+(defun vino-stats-from-data-set-by-country (data)
+  "Calculate ratings stats from DATA set grouped by country."
+  (let* ((ratings-tbl (plist-get data :ratings-tbl))
+         (entries-tbl (plist-get data :entries-tbl))
+         (countries-tbl (plist-get data :countries-tbl))
+         (tbl (vino-stats-group-ratings-by
+               ratings-tbl
+               (lambda (_ rating)
+                 (let* ((entry (gethash (vulpea-note-id (vino-rating-wine rating))
+                                        entries-tbl))
+                        (country (gethash (vulpea-note-id
+                                           (or (vino-entry-region entry)
+                                               (vino-entry-appellation entry)))
+                                          countries-tbl)))
+                   (vulpea-note-title country))))))
+    (vino-stats--grouped-ratings-data tbl entries-tbl)))
+
+(defun vino-stats-from-data-set-by-colour (data)
+  "Calculate ratings stats from DATA set grouped by colour."
+  (let* ((ratings-tbl (plist-get data :ratings-tbl))
+         (entries-tbl (plist-get data :entries-tbl))
+         (tbl (vino-stats-group-ratings-by
+               ratings-tbl
+               (lambda (_ rating)
+                 (vino-entry-colour
+                  (gethash (vulpea-note-id (vino-rating-wine rating))
+                           entries-tbl))))))
+    (vino-stats--grouped-ratings-data tbl entries-tbl)))
+
+(defun vino-stats-from-data-set-by-carbonation (data)
+  "Calculate ratings stats from DATA set grouped by carbonation."
+  (let* ((ratings-tbl (plist-get data :ratings-tbl))
+         (entries-tbl (plist-get data :entries-tbl))
+         (tbl (vino-stats-group-ratings-by
+               ratings-tbl
+               (lambda (_ rating)
+                 (vino-entry-carbonation
+                  (gethash (vulpea-note-id (vino-rating-wine rating))
+                           entries-tbl))))))
+    (vino-stats--grouped-ratings-data tbl entries-tbl)))
+
+(defun vino-stats-from-data-set-by-vintage (data)
+  "Calculate ratings stats from DATA set grouped by vintage."
+  (let* ((ratings-tbl (plist-get data :ratings-tbl))
+         (entries-tbl (plist-get data :entries-tbl))
+         (tbl (vino-stats-group-ratings-by
+               ratings-tbl
+               (lambda (_ rating)
+                 (or
+                  (vino-entry-vintage
+                   (gethash (vulpea-note-id (vino-rating-wine rating))
+                            entries-tbl))
+                  0)))))
+    (-map
+     (lambda (row)
+       (if (= 0 (car row))
+           (cons "NV" (cdr row))
+         row))
+     (seq-sort-by
+      (lambda (x) (nth 0 x))
+      #'>
+      (vino-stats--grouped-ratings-data tbl entries-tbl)))))
+
+(defun vino-stats-from-data-set-by-grape (data)
+  "Calculate ratings stats from DATA set grouped by grape."
+  (let* ((ratings-tbl (plist-get data :ratings-tbl))
+         (entries-tbl (plist-get data :entries-tbl))
+         (tbl (vino-stats-group-ratings-by
+               ratings-tbl
+               (lambda (_ rating)
+                 (seq-map
+                  #'vulpea-note-title
+                  (vino-entry-grapes
+                   (gethash (vulpea-note-id (vino-rating-wine rating))
+                            entries-tbl)))))))
+    (vino-stats--grouped-ratings-data tbl entries-tbl)))
+
+(defun vino-stats-from-data-set-by-key (data key)
+  "Calculate ratings stats from DATA set grouped by KEY.
+
+KEY is one of: country, colour, carbonation, vintage, grape."
+  (let* ((stat-fn (pcase key
+                    (`country #'vino-stats-from-data-set-by-country)
+                    (`colour #'vino-stats-from-data-set-by-colour)
+                    (`carbonation #'vino-stats-from-data-set-by-carbonation)
+                    (`vintage #'vino-stats-from-data-set-by-vintage)
+                    (`grape #'vino-stats-from-data-set-by-grape)
+                    (_ (user-error "Unsupported grouping")))))
+    (funcall stat-fn data)))
 
 
 ;; interactive functions
@@ -368,84 +488,16 @@ are lists of ratings."
                           (org-read-date nil nil nil "From (inclusive)")
                           (org-read-date nil nil nil "To (exclusive)")))
                 (_ (vino-stats--time-frame-range frame))))
-       (ratings (seq-map
-                 #'car-safe
-                 (vino-db-query
-                  [:select [id]
-                   :from ratings
-                   :where (and (>= date $s1)
-                               (< date $s2))
-                   :order-by [(asc date)]]
-                  (nth 0 range)
-                  (nth 1 range))))
-       (size (seq-length ratings))
-       (ratings-tbl (let ((tbl (make-hash-table
-                                :test 'equal
-                                :size size)))
-                      (emacsql-with-transaction (vino-db)
-                        (seq-each
-                         (lambda (id)
-                           (puthash id (vino-db-get-rating id) tbl))
-                         ratings))
-                      tbl))
-       (entries-tbl (let ((tbl (make-hash-table
-                                :test 'equal
-                                :size size)))
-                      (emacsql-with-transaction (vino-db)
-                        (maphash
-                         (lambda (_ rating)
-                           (let ((id (vulpea-note-id (vino-rating-wine rating))))
-                             (puthash id (vino-db-get-entry id) tbl)))
-                         ratings-tbl))
-                      tbl))
-       (ratings-stat (vino-stats-from-ratings (hash-table-values ratings-tbl) entries-tbl))
-       (country-tbl (vino-stats-country-tbl))
-       (countries-stat (let ((tbl (vino-stats-group-ratings-by
-                                   ratings-tbl
-                                   (lambda (_ rating)
-                                     (let* ((entry (gethash (vulpea-note-id (vino-rating-wine rating))
-                                                            entries-tbl))
-                                            (country (gethash (vulpea-note-id
-                                                               (or (vino-entry-region entry)
-                                                                   (vino-entry-appellation entry)))
-                                                              country-tbl)))
-                                       (vulpea-note-title country))))))
-                         (vino-stats--grouped-ratings-data tbl entries-tbl)))
-       (colours-stat (let ((tbl (vino-stats-group-ratings-by
-                                 ratings-tbl
-                                 (lambda (_ rating)
-                                   (vino-entry-colour
-                                    (gethash (vulpea-note-id (vino-rating-wine rating))
-                                             entries-tbl))))))
-                       (vino-stats--grouped-ratings-data tbl entries-tbl)))
-       (carbonation-stat (let ((tbl (vino-stats-group-ratings-by
-                                     ratings-tbl
-                                     (lambda (_ rating)
-                                       (vino-entry-carbonation
-                                        (gethash (vulpea-note-id (vino-rating-wine rating))
-                                                 entries-tbl))))))
-                           (vino-stats--grouped-ratings-data tbl entries-tbl)))
-       (vintage-stat (let ((tbl (vino-stats-group-ratings-by
-                                 ratings-tbl
-                                 (lambda (_ rating)
-                                   (or
-                                    (vino-entry-vintage
-                                     (gethash (vulpea-note-id (vino-rating-wine rating))
-                                              entries-tbl))
-                                    0)))))
-                       (seq-sort-by
-                        (lambda (x) (nth 0 x))
-                        #'>
-                        (vino-stats--grouped-ratings-data tbl entries-tbl))))
-       (grapes-stat (let ((tbl (vino-stats-group-ratings-by
-                                ratings-tbl
-                                (lambda (_ rating)
-                                  (seq-map
-                                   #'vulpea-note-title
-                                   (vino-entry-grapes
-                                    (gethash (vulpea-note-id (vino-rating-wine rating))
-                                             entries-tbl)))))))
-                      (vino-stats--grouped-ratings-data tbl entries-tbl))))
+       (data (vino-stats-data-set-for range))
+       (ratings-tbl (plist-get data :ratings-tbl))
+       (entries-tbl (plist-get data :entries-tbl))
+       (countries-tbl (plist-get data :countries-tbl))
+       (ratings-stat (vino-stats-from-data-set data))
+       (countries-stat (vino-stats-from-data-set-by-country data))
+       (colours-stat (vino-stats-from-data-set-by-colour data))
+       (carbonation-stat (vino-stats-from-data-set-by-carbonation data))
+       (vintage-stat (vino-stats-from-data-set-by-vintage data))
+       (grapes-stat (vino-stats-from-data-set-by-grape data)))
     (buffer-display-result-with "*vino-stats*"
       (format "Stats for period from %s to %s"
               (propertize (nth 0 range) 'face 'bold)
@@ -573,7 +625,7 @@ are lists of ratings."
              (gethash (vulpea-note-id
                        (or (vino-entry-region entry)
                            (vino-entry-appellation entry)))
-                      country-tbl)
+                      countries-tbl)
              (vino-entry-producer entry)
              (vulpea-buttonize (vino-rating-wine rating)
                                (lambda (_) (vino-entry-name entry)))
@@ -586,7 +638,124 @@ are lists of ratings."
              (format "%.2f" (vino-rating-total rating))
              (when-let ((qpr (vino-stats-rating-qpr rating entry)))
                (format "%.4f" (calc-to-number qpr))))))
-        ratings)))))
+        (hash-table-keys ratings-tbl))))))
+
+
+;; tables for org-mode evaluation
+
+(cl-defun vino-stats-ratings-tbl-for (&key range columns)
+  "Return an org-table object of ratings for RANGE.
+
+COLUMNS control which columns to return. Unless specified, all data is returned."
+  (let* ((columns (or columns '("date"
+                                "country"
+                                "producer"
+                                "name"
+                                "vintage"
+                                "grapes"
+                                "color"
+                                "carbonation"
+                                "sweetness"
+                                "price"
+                                "rate"
+                                "QPR")))
+         (data (vino-stats-data-set-for range))
+         (ratings-tbl (plist-get data :ratings-tbl))
+         (entries-tbl (plist-get data :entries-tbl))
+         (countries-tbl (plist-get data :countries-tbl)))
+    (-concat
+     (list columns 'hline)
+     (-map
+      (lambda (id)
+        (let* ((rating (gethash id ratings-tbl))
+               (entry (gethash (vulpea-note-id (vino-rating-wine rating)) entries-tbl)))
+          (-concat
+           (when (-contains-p columns "date")
+             (list (vino-rating-date rating)))
+           (when (-contains-p columns "country")
+             (list (vulpea-utils-link-make-string
+                    (gethash
+                     (vulpea-note-id
+                      (or (vino-entry-region entry)
+                          (vino-entry-appellation entry)))
+                     countries-tbl))))
+           (when (-contains-p columns "producer")
+             (list (vulpea-utils-link-make-string (vino-entry-producer entry))))
+           (when (-contains-p columns "name")
+             (list (vulpea-utils-link-make-string (vino-rating-wine rating))))
+           (when (-contains-p columns "vintage")
+             (list (or (vino-entry-vintage entry) "NV")))
+           (when (-contains-p columns "grapes")
+             (list (or (mapconcat #'vulpea-utils-link-make-string (vino-entry-grapes entry) ", ") "NA")))
+           (when (-contains-p columns "colour")
+             (list (or (vino-entry-colour entry) "NA")))
+           (when (-contains-p columns "carbonation")
+             (list (or (vino-entry-carbonation entry) "NA")))
+           (when (-contains-p columns "sweetness")
+             (list (or (vino-entry-sweetness entry) "NA")))
+           (when (-contains-p columns "price")
+             (list (vino-stats-format-price (vino-stats-price entry))))
+           (when (-contains-p columns "rate")
+             (list (format "%.2f" (vino-rating-total rating))))
+           (when (-contains-p columns "QPR")
+             (when-let ((qpr (vino-stats-rating-qpr rating entry)))
+               (list (format "%.4f" (calc-to-number qpr))))))))
+      (hash-table-keys ratings-tbl)))))
+
+(cl-defun vino-stats-grouped-data-tbl-for (key &key range columns)
+  "Return an org-table object of grouped data for RANGE.
+
+Grouping is controlled by KEY, which must be supported by
+`vino-stats-from-data-set-by'.
+
+COLUMNS control which columns to return. Unless specified, all data is returned."
+  (declare (indent 1))
+  (let* ((all-columns (list
+                       (symbol-name key)
+                       "count"
+                       "p total"
+                       "p avg"
+                       "p min"
+                       "p max"
+                       "r rms"
+                       "r sdev"
+                       "r min"
+                       "r max"
+                       "qpr"))
+         (columns (or columns all-columns))
+         (data (vino-stats-data-set-for range))
+         (stats (cons all-columns (vino-stats-from-data-set-by-key data key)))
+         (stats-transposed (brb-trans stats)))
+    (-concat
+     (list columns 'hline)
+     (brb-trans
+      (-map
+       (lambda (key)
+         (cdr (--find (string-equal key (car it)) stats-transposed)))
+       columns)))))
+
+
+;; formatting
+
+(defun vino-stats-format-price (price)
+  "Format PRICE value."
+  (let ((value (cond
+                ((null price) nil)
+                ((math-numberp price) (math-float price))
+                ((listp price) (car price))))
+        (currency (cond
+                   ((math-numberp price) vino-stats-price-currency)
+                   ((listp price) (cdr price)))))
+    (when value
+      (let* ((parts (math-float-parts value t))
+             (a (car parts))
+             (b (car (math-float-parts
+                      (math-mul (nth 1 parts) 100) nil))))
+        (format "%s.%0.2i %s"
+                (let ((calc-group-char " "))
+                  (math-group-float (math-format-number a)))
+                b
+                currency)))))
 
 
 
