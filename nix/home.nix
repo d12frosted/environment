@@ -29,6 +29,7 @@ in {
       XDG_DATA_HOME         = config.xdg.dataHome;
       BUDGET_DIR            = "${home}/Dropbox/budget";
       VULPEA_DIR            = "${home}/Dropbox/vulpea";
+      GHCUP_USE_XDG_DIRS    = "1";
       QT_XCB_GL_INTEGRATION = "none";
     };
     sessionPath = [];
@@ -148,8 +149,6 @@ set -g hydro_symbol_prompt "λ"
 if test "$TERM" = linux
   set -g hydro_symbol_prompt ">"
 end
-
-set -x GHCUP_USE_XDG_DIRS 1
 
 # done configurations
 set -g __done_notification_command 'notify send -t "$title" -m "$message"'
