@@ -86,5 +86,11 @@ Use this for files that change often, like cache files.")
                     path-local-dir)
   "Where packages are stored.")
 
+(defconst path-projects-dir
+  (file-name-as-directory
+   (or (getenv "PROJECTS_HOME")
+       (concat path-home-dir "Developer")))
+  "The root directory for projects.")
+
 (provide 'config-path)
 ;;; config-path.el ends here
