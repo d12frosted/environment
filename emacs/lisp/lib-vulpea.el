@@ -75,11 +75,12 @@ tasks. The only exception is headings tagged as REFILE."
         (or
          ;; any headline with some todo keyword
          (eq 'todo todo-type)
-         ;; any headline with REFILE tag
+         ;; any headline with REFILE tag (no inheritance)
          (seq-contains-p (org-element-property :tags h) "REFILE")
          ;; any non-todo headline with an active timestamp
          (and
           (not (eq 'done todo-type))
+          (org-element-property :contents-begin h)
           (save-excursion
             (goto-char (org-element-property :contents-begin h))
             (let ((end (save-excursion
