@@ -493,7 +493,7 @@
    ;; company
    '(company-tooltip                      ((t (:inherit barberry-theme-face-faded))))
    '(company-tooltip-mouse                ((t (:inherit barberry-theme-face-faded-i))))
-   '(company-tooltip-selection            ((t (:inherit barberry-theme-face-salient-i))))
+   `(company-tooltip-selection            ((t (:background ,barberry-theme-color-highlight-default))))
 
    '(company-scrollbar-fg                 ((t (:inherit barberry-theme-face-default-i))))
    '(company-scrollbar-bg                 ((t (:inherit barberry-theme-face-faded-i))))
@@ -503,8 +503,8 @@
 
    '(company-tooltip-common               ((t (:inherit barberry-theme-face-strong))))
    '(company-tooltip-common-selection     ((t (:inherit barberry-theme-face-salient-i))))
-   '(company-tooltip-annotation           ((t (:inherit barberry-theme-face-default))))
-   '(company-tooltip-annotation-selection ((t (:inherit barberry-theme-face-subtle))))
+   '(company-tooltip-annotation           ((t (:inherit barberry-theme-face-faded))))
+   '(company-tooltip-annotation-selection ((t (:inherit barberry-theme-face-faded))))
 
    ;; info
    '(info-node        ((t (:inherit barberry-theme-face-strong))))
