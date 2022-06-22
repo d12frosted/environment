@@ -502,5 +502,21 @@ parameter), defaulting to `vulpea-note-title'."
 
 
 
+(cl-defmethod vulpea-note-tagged-all-p (note &rest tags)
+  "Return non-nil if NOTE is tagged by all of the TAGS."
+  (let ((note-tags (vulpea-note-tags note)))
+    (--all-p (-contains-p note-tags it) tags)))
+
+(cl-defmethod vulpea-note-tagged-any-p (note &rest tags)
+  "Return non-nil if NOTE is tagged by any of the TAGS."
+  (let ((note-tags (vulpea-note-tags note)))
+    (--any-p (-contains-p note-tags it) tags)))
+
+(let ((r (-> (vulpea-db-get-by-id "bc8aa837-3348-45e6-8468-85510966527a")
+             (vulpea-note-tagged-all-p "people" "wix"))))
+  (message "r = %s" r))
+
+
+
 (provide 'lib-vulpea)
 ;;; lib-vulpea.el ends here
