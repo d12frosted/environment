@@ -518,8 +518,8 @@ KEY is one of: country, colour, carbonation, vintage, grape."
              (list "Ratings" (seq-length (hash-table-keys ratings-tbl)))
              (list "Countries" (seq-length countries-stat))
              (list "Grapes" (seq-length grapes-stat))
-             (list "Vintage youngest" (seq-max (seq-remove (lambda (x) (= 0 x)) (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
-             (list "Vintage oldest" (seq-min (seq-remove (lambda (x) (= 0 x)) (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
+             (list "Vintage youngest" (seq-max (seq-remove #'stringp (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
+             (list "Vintage oldest" (seq-min (seq-remove #'stringp (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
              (list "Price total" (vino-stats-format-price (vino-stats-price-total ratings-stat)))
              (list "Price avg" (vino-stats-format-price (vino-stats-price-avg ratings-stat)))
              (list "Price min" (vino-stats-format-price (vino-stats-price-min ratings-stat)))
@@ -556,12 +556,7 @@ KEY is one of: country, colour, carbonation, vintage, grape."
        :row-start "| "
        :row-end " |"
        :sep " | "
-       :data (seq-map
-              (lambda (x)
-                (if (= 0 (nth 0 x))
-                    (cons "NV" (cdr x))
-                  x))
-              vintage-stat))
+       :data vintage-stat)
       ""
 
       (propertize "Grape stats" 'face 'bold)
