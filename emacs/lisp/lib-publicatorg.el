@@ -595,7 +595,12 @@ The output width is limited to 80 characters."
 OBJ can be either a note, a file or a Lisp object."
   (cond
    ((vulpea-note-p obj)
-    (vulpea-utils-note-hash obj))
+    (caar
+     (org-roam-db-query
+      [:select hash
+       :from files
+       :where (= file $s1)]
+      (vulpea-note-path obj))))
 
    ((and
      (stringp obj)
