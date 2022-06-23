@@ -29,10 +29,6 @@
 ;;
 ;;; Commentary:
 ;;
-;; TODO:
-;;
-;; - cleanup of affected files
-;;
 ;;; Code:
 
 (require 'vulpea)
@@ -114,14 +110,16 @@ RULES is a list of rules describing how to build INPUT to ROOT."
   match
   dependencies
   target
-  publish)
+  publish
+  clean)
 
 (cl-defun porg-rule (&key
                      name
                      match
                      dependencies
                      target
-                     publish)
+                     publish
+                     clean)
   "Define a rule with NAME.
 
 NAME is a string, it must be unique in the scope of a single project.
@@ -139,13 +137,17 @@ PUBLISH is a function the defines how publishing happens. It can
 be a simple file copy, or something sophisticated. It takes 3
 arguments: piece (values computed by `porg-build-input') of a
 single matched note, whole input (as calculated by
-`porg-build-input') and cache."
+`porg-build-input') and cache.
+
+CLEAN is a function that defines how cleaning happens. It takes
+3 arguments: id, cache and project root."
   (make-porg-rule
    :name name
    :match match
    :dependencies dependencies
    :target target
-   :publish publish))
+   :publish publish
+   :clean clean))
 
 
 
@@ -187,7 +189,7 @@ based on FILTER), target file, input (as calculated by
 ;; (usually `vulpea-note-id'), and the rest is cache value of the
 ;; cached element, which is defined as a property list:
 ;;
-;;   (:hash :update :deps=(:id :hash))
+;;   (:hash :rule :target-hash :target-rel :update :deps=(:id :hash))
 ;;
 ;; When loaded from file into memory, cache is a hash table, where key
 ;; is id of the cached element and value is is the same property list.
@@ -251,12 +253,27 @@ element and value its hash."
              (notes (-map (-rpartial #'plist-get :note) (hash-table-values input)))
              (plan (porg-build-plan project input cache))
              (build-size (seq-length (plist-get plan :build)))
+             (delete-size (seq-length (plist-get plan :delete)))
              (batch-rules (-filter #'porg-batch-rule-p
                                    (porg-project-rules project))))
 
         (porg-log-s "cleanup")
         (unless (plist-get plan :delete)
           (porg-log "Nothing to delete, everything is used."))
+        (--each-indexed (plist-get plan :delete)
+          (let* ((cached (gethash it cache))
+                 (rule-name (plist-get cached :rule))
+                 (rule (->> (porg-project-rules project)
+                            (-filter #'porg-rule-p)
+                            (--find (string-equal rule-name (porg-rule-name it))))))
+            (porg-log
+             "[%s/%s] cleaning %s using %s rule from %s"
+             (string-from-number (+ 1 it-index) :padding-num delete-size)
+             delete-size
+             it
+             rule-name
+             (plist-get cached :target-rel))
+            (funcall (porg-rule-clean rule) it cache (porg-project-root project))))
 
         (porg-log-s "build")
         (unless (plist-get plan :build)
@@ -294,11 +311,15 @@ element and value its hash."
                         cache)
         (--each (-filter #'porg-rule-p (porg-project-rules project))
           (porg-cache-put (concat "rule:" (porg-rule-name it)) :hash (porg-sha1sum it) cache))
+        (--each (plist-get plan :delete)
+          (remhash it cache))
         (--each (plist-get plan :build)
           (let* ((piece (gethash it input))
                  (target-hash (porg-sha1sum (plist-get piece :target))))
             (porg-cache-put it :hash (plist-get piece :hash) cache)
+            (porg-cache-put it :rule (porg-rule-name (plist-get piece :rule)) cache)
             (porg-cache-put it :target-hash target-hash cache)
+            (porg-cache-put it :target-rel (plist-get piece :target-rel) cache)
             (porg-cache-put it :update
                             (if (string-equal target-hash (plist-get piece :target-hash))
                                 (or (porg-cache-get it :update cache)
@@ -330,7 +351,7 @@ property list with the following keys:
 - :target-rel - same as :target, but relative to project root
 - :target-hash - hash of :target if it already exists
 - :deps - list of dependencies, each element is a property
-  list (:id :object :hash)
+  list (:id :object :target-rel :hash)
 
 Throws a user error if any of the input has no matching rule."
   (let* ((describe (porg-project-describe project))
@@ -423,17 +444,18 @@ Result is a property list (:build :delete)."
                                  (not (string-equal (plist-get a :hash)
                                                     (plist-get a-cached :hash))))))
                          (plist-get piece :deps)))))
-                   (hash-table-keys input)))))
-    (when project-updated
-      (porg-log "Project definition has changed, so invalidating cache..."))
+                   (hash-table-keys input))))
+         (delete (--remove
+                  (or (gethash it input)
+                      (s-prefix-p "rule:" it)
+                      (s-prefix-p "project:" it))
+                  (hash-table-keys cache))))
     (porg-log "Found %s notes to build." (seq-length build))
-    (porg-log "Found %s notes to delete." 0)
+    (porg-log "Found %s items to delete." (seq-length delete))
 
     (list
      :build build
-     ;; TODO: in order to understand what exactly to delete, we also
-     ;; need to cache target files.
-     :delete nil)))
+     :delete delete)))
 
 
 
@@ -463,23 +485,23 @@ FILTER-FN controls how attachments get copied, it's a function that
 takes attachment name and returns non-nil if attachment should be
 copied. When FILTER-FN is not provided, all attachments are copied.
 
-COPY-FN defaults to `copy-file'."
+COPY-FN defaults to `copy-file'.
+
+Return list of copied files."
   (vulpea-utils-with-note note
-    (seq-each
-     (lambda (link)
-       (let ((type (org-ml-get-property :type link))
-             (path (org-ml-get-property :path link)))
-         (when (and (string-equal type "attachment")
-                    (or (not filter-fn) (funcall filter-fn path)))
-           (let ((dest (if (functionp dest-fn) (funcall dest-fn path) dest-fn)))
-             (mkdir dest 'parents)
-             (goto-char (org-ml-get-property :begin link))
-             (funcall (or copy-fn #'copy-file)
-                      (org-attach-expand path)
-                      (expand-file-name path dest)
-                      'replace)))))
-     (seq-reverse
-      (org-element-map (org-element-parse-buffer) 'link #'identity)))))
+    (->>
+     (seq-reverse (org-element-map (org-element-parse-buffer) 'link #'identity))
+     (--filter
+      (and (string-equal (org-ml-get-property :type it) "attachment")
+           (or (not filter-fn) (funcall filter-fn (org-ml-get-property :path it)))))
+     (--map
+      (let* ((path (org-ml-get-property :path it))
+             (dest (if (functionp dest-fn) (funcall dest-fn path) dest-fn))
+             (newname (expand-file-name path dest)))
+        (mkdir dest 'parents)
+        (goto-char (org-ml-get-property :begin it))
+        (or (funcall (or copy-fn #'copy-file) (org-attach-expand path) newname 'replace)
+            newname))))))
 
 (cl-defun porg-clean-noexport-headings (file)
   "Remove headings tagged as noexport from FILE."
