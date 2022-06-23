@@ -63,6 +63,8 @@ string.
 The CDR is a plist. See `file-templates-set' for more
 information.")
 
+(advice-add #'yas-reload-all :around #'fun-silent)
+
 (use-package yasnippet
   :diminish yas-minor-mode
   :commands (yas-minor-mode-on

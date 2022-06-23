@@ -37,7 +37,11 @@
 (require 'init-kbd)
 (require 'init-selection)
 
+(advice-add #'flyspell-mode :around #'fun-silent)
+(advice-add #'flyspell-prog-mode :around #'fun-silent)
+
 (use-package ispell
+  :defer t
   :config
   (setq ispell-dictionary "english"
         ispell-program-name (executable-find "aspell"))
