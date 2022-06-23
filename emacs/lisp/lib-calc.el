@@ -37,6 +37,7 @@
 ;;; Code:
 
 (require 'calc)
+(require 'calc-stat)
 
 (defun calc-from-number (number)
   "Convert NUMBER to Calc format."
