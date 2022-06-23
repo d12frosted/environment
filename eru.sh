@@ -386,7 +386,7 @@ theme_guard "haskell" "ensure stack installation" && {
 }
 
 theme_guard "haskell" "ensure HLS installation" && {
-  check haskell-language-server-wrapper || {
+  check $HOME/.local/bin/haskell-language-server-wrapper || {
     ghcup install hls
   }
 }
