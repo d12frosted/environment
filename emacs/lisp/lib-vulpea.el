@@ -262,7 +262,8 @@ Make all the links to this alias point to newly created note."
             (when-let* ((id (string-remove-prefix "id:" link))
                         (note (vulpea-db-get-by-id id)))
               (vulpea-note-to-svg note))))))))))
-  (svg-tag-mode))
+  (when env-graphic-p
+    (svg-tag-mode)))
 
 (defun vulpea-note-to-svg (note)
   "Return SVG representation of the NOTE."
