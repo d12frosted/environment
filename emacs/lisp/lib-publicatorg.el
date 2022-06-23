@@ -247,7 +247,7 @@ element and value its hash."
       (let* ((cache-file (expand-file-name (porg-project-cache-file project)))
              (cache (porg-cache-load cache-file))
              (describe (porg-project-describe project))
-             (input (porg-build-input project))
+             (input (porg-build-input project cache))
              (notes (-map (-rpartial #'plist-get :note) (hash-table-values input)))
              (plan (porg-build-plan project input cache))
              (build-size (seq-length (plist-get plan :build)))
@@ -295,9 +295,16 @@ element and value its hash."
         (--each (-filter #'porg-rule-p (porg-project-rules project))
           (porg-cache-put (concat "rule:" (porg-rule-name it)) :hash (porg-sha1sum it) cache))
         (--each (plist-get plan :build)
-          (let ((piece (gethash it input)))
+          (let* ((piece (gethash it input))
+                 (target-hash (porg-sha1sum (plist-get piece :target))))
             (porg-cache-put it :hash (plist-get piece :hash) cache)
-            (porg-cache-put it :update (format-time-string "%F") cache)
+            (porg-cache-put it :target-hash target-hash cache)
+            (porg-cache-put it :update
+                            (if (string-equal target-hash (plist-get piece :target-hash))
+                                (or (porg-cache-get it :update cache)
+                                    (format-time-string "%F"))
+                              (format-time-string "%F"))
+                            cache)
             (porg-cache-put it :deps
                             (-map
                              (lambda (dep)
@@ -310,11 +317,22 @@ element and value its hash."
         (porg-log "The work is done! Enjoy your published vulpea notes!")
         (porg-log "        ٩(^ᴗ^)۶")))))
 
-(defun porg-build-input (project)
-  "Calculate input data for the PROJECT.
+(defun porg-build-input (project cache)
+  "Calculate input data for the PROJECT with CACHE.
 
 Result is a table, where key is note id and the value is a
-property list (:note :hash :rule :target :deps=(:id :object :hash))."
+property list with the following keys:
+
+- :note - a `vulpea-note'
+- :hash - hash of the :note
+- :rule - matched rule
+- :target - absolute path to output of :note built with :rule
+- :target-rel - same as :target, but relative to project root
+- :target-hash - hash of :target if it already exists
+- :deps - list of dependencies, each element is a property
+  list (:id :object :hash)
+
+Throws a user error if any of the input has no matching rule."
   (let* ((describe (porg-project-describe project))
          (input (porg-project-input project))
          (input (if (functionp input) (funcall input) input))
@@ -336,6 +354,10 @@ property list (:note :hash :rule :target :deps=(:id :object :hash))."
                    :rule rule
                    :target target
                    :target-rel (when target (s-chop-prefix default-directory target))
+                   :target-hash (when (and target (file-exists-p target))
+                                  (or
+                                   (porg-cache-get (vulpea-note-id it) :target-hash cache)
+                                   (porg-sha1sum target)))
                    :deps (when-let* ((deps-fn (porg-rule-dependencies rule))
                                      (deps (funcall deps-fn it)))
                            (--map
@@ -578,8 +600,9 @@ OBJ can be either a note, a file or a Lisp object."
    ((and
      (stringp obj)
      (file-exists-p obj))
-    (shell-command-to-string
-     (format "sha1sum '%s' | cut -d ' ' -f 1 -" obj)))
+    (s-trim
+     (shell-command-to-string
+      (format "sha1sum '%s' | cut -d ' ' -f 1 -" obj))))
 
    (t (with-temp-buffer
         (let ((print-level nil)
