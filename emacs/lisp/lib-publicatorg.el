@@ -32,8 +32,6 @@
 ;; TODO:
 ;;
 ;; - cleanup of affected files
-;; - do not rebuild rule if it was not changed (e.g. invalidate on
-;;   rule change and not project change)
 ;;
 ;;; Code:
 
@@ -55,13 +53,14 @@
   describe
   rules)
 
-(cl-defmethod porg-project-hash (project)
-  "Calculate hash of the PROJECT."
-  (with-temp-buffer
-    (let ((print-level nil)
-	        (print-length nil))
-	    (print project (current-buffer))
-      (secure-hash 'sha1 (current-buffer)))))
+(cl-defmethod porg-project-hash (project &optional ignore-rules)
+  "Calculate hash of the PROJECT.
+
+When IGNORE-RULES is non-nil, rules do not depend on resulting hash."
+  (let ((project (copy-porg-project project)))
+    (when ignore-rules
+      (setf (porg-project-rules project) nil))
+    (porg-sha1sum project)))
 
 (cl-defmethod porg-project-resolve (project note)
   "Resolve rule for NOTE from PROJECT."
@@ -291,8 +290,10 @@ element and value its hash."
 
         (porg-log-s "cache build files")
         (porg-cache-put (concat "project:" name)
-                        :hash (porg-project-hash project)
+                        :hash (porg-project-hash project 'ignore-rules)
                         cache)
+        (--each (-filter #'porg-rule-p (porg-project-rules project))
+          (porg-cache-put (concat "rule:" (porg-rule-name it)) :hash (porg-sha1sum it) cache))
         (--each (plist-get plan :build)
           (let ((piece (gethash it input)))
             (porg-cache-put it :hash (plist-get piece :hash) cache)
@@ -360,7 +361,7 @@ property list (:note :hash :rule :target :deps=(:id :object :hash))."
   "Calculate build plan of INPUT for PROJECT with CACHE.
 
 Result is a property list (:build :delete)."
-  (let* ((project-hash (porg-project-hash project))
+  (let* ((project-hash (porg-project-hash project 'ignore-rules))
          (project-updated (not (string-equal
                                 project-hash
                                 (porg-cache-get
@@ -370,9 +371,16 @@ Result is a property list (:build :delete)."
                     (hash-table-keys input)
                   (-filter
                    (lambda (id)
-                     (let ((piece (gethash id input))
-                           (deps-cached (porg-cache-get id :deps cache)))
+                     (let* ((piece (gethash id input))
+                            (rule (plist-get piece :rule))
+                            (deps-cached (porg-cache-get id :deps cache)))
                        (or
+                        ;; rule building it changed
+                        (not (string-equal
+                              (porg-sha1sum rule)
+                              (porg-cache-get
+                               (concat "rule:" (porg-rule-name rule))
+                               :hash cache)))
                         ;; note itself is changed
                         (not (string-equal
                               (plist-get piece :hash)
@@ -562,16 +570,22 @@ The output width is limited to 80 characters."
 (defun porg-sha1sum (obj)
   "Calculate SHA1 sum of OBJ.
 
-OBJ can be either a note or a file."
+OBJ can be either a note, a file or a Lisp object."
   (cond
    ((vulpea-note-p obj)
     (vulpea-utils-note-hash obj))
 
-   ((file-exists-p obj)
+   ((and
+     (stringp obj)
+     (file-exists-p obj))
     (shell-command-to-string
      (format "sha1sum '%s' | cut -d ' ' -f 1 -" obj)))
 
-   (t (user-error "Unsupported sha1sum object: %s" obj))))
+   (t (with-temp-buffer
+        (let ((print-level nil)
+	            (print-length nil))
+	        (print obj (current-buffer))
+          (secure-hash 'sha1 (current-buffer)))))))
 
 
 
