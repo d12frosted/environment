@@ -111,8 +111,13 @@ arguments in `cl-defun'. For example:
   "Wrapper for FN suppressing any messages.
 
 ARGS are passed as is to FN."
-  (cl-letf (((symbol-function 'message) (lambda (&rest _))))
+  (cl-letf (((symbol-function 'message) #'format))
     (apply fn args)))
+
+(defmacro silenzio (&rest body)
+  "Evaluate BODY like in Vatican. Silently."
+  `(cl-letf (((symbol-function 'message) #'format))
+    ,@body))
 
 (provide 'lib-fun)
 ;;; lib-fun.el ends here
