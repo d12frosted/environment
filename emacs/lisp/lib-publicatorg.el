@@ -348,25 +348,29 @@ Throws a user error if any of the input has no matching rule."
                           (funcall target-fn it))))
             (puthash
              (vulpea-note-id it)
-             (list :note it
-                   ;; TODO: this can be taken from DB instead of calculating
-                   :hash (porg-sha1sum it)
-                   :rule rule
-                   :target target
-                   :target-rel (when target (s-chop-prefix default-directory target))
-                   :target-hash (when (and target (file-exists-p target))
-                                  (or
-                                   (porg-cache-get (vulpea-note-id it) :target-hash cache)
-                                   (porg-sha1sum target)))
-                   :deps (when-let* ((deps-fn (porg-rule-dependencies rule))
-                                     (deps (funcall deps-fn it)))
-                           (--map
-                            (list :id (if (vulpea-note-p it)
-                                          (vulpea-note-id it)
-                                        it)
-                                  :object it
-                                  :hash (porg-sha1sum it))
-                            deps)))
+             (list
+              :note it
+              :hash (porg-sha1sum it)
+              :rule rule
+              :target target
+              :target-rel (when target (s-chop-prefix default-directory target))
+              :target-hash (when (and target (file-exists-p target))
+                             (or
+                              (porg-cache-get (vulpea-note-id it) :target-hash cache)
+                              (porg-sha1sum target)))
+              :deps (when-let* ((deps-fn (porg-rule-dependencies rule))
+                                (deps (funcall deps-fn it)))
+                      (--map
+                       (list
+                        :id (cond
+                             ((vulpea-note-p it) (vulpea-note-id it))
+                             ((and (stringp it)
+                                   (file-exists-p it))
+                              (file-name-nondirectory it))
+                             (t it))
+                        :object it
+                        :hash (porg-sha1sum it))
+                       deps)))
              tbl))
         (setf without-rule (cons it without-rule))))
 
