@@ -415,7 +415,8 @@
 
 
 
-(use-package org-ml)
+(use-package org-ml
+  :defer t)
 
 
 

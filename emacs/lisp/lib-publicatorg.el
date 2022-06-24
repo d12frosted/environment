@@ -31,6 +31,7 @@
 ;;
 ;;; Code:
 
+(require 'org-ml)
 (require 'vulpea)
 (require 'lib-fun)
 (require 'lib-vulpea)
