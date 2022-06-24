@@ -90,6 +90,7 @@ It is relative to `vulpea-directory', unless it is absolute.")
   (interactive)
   (org-capture nil "t"))
 
+;;;###autoload
 (defun vulpea-capture-meeting ()
   "Capture a meeting."
   (interactive)
@@ -183,6 +184,7 @@ Authors can be created on the fly. See
     (litnotes-status-set "new")
     (save-buffer)))
 
+;;;###autoload
 (defun vulpea-capture-journal ()
   "Capture a journal entry.
 
