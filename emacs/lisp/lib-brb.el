@@ -180,7 +180,7 @@ Otherwise only those specified in the list."
          (columns (or columns '("total" "amean" "rms" "sdev" "favourite" "outcast" "price" "QPR"))))
     (-concat
      (list (cons "" columns)
-      'hline)
+           'hline)
      (-map
       (lambda (i)
         (-filter
