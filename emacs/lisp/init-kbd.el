@@ -33,11 +33,7 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-(require 'init-env)
-
-(use-package general
-  :commands (general-define-key))
+(use-package general)
 
 (general-create-definer leader-def
   :states nil

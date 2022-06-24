@@ -33,8 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-
 (use-package nix-mode
   :mode "\\.nix\\'")
 

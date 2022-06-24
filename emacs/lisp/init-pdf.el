@@ -45,9 +45,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-(require 'init-env)
-
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . auto-revert-mode)

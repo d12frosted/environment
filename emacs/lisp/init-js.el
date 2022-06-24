@@ -35,9 +35,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-(require 'init-ide)
-
 (use-package js
   :straight nil
   :defer t

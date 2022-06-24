@@ -34,10 +34,22 @@
 ;;; Code:
 
 (require 'lib-hook)
+(require 'lib-vcs)
 (require 'config-path)
-(require 'init-elpa)
 
 (setq-default vc-follow-symlinks t)
+
+(leader-def
+  "g" '(nil :which-key "git...")
+  "gS" '(magit-stage-file :which-key "stage file")
+  "gU" '(magit-unstage-file :which-key "unstage file")
+  "g[" '(git-gutter:previous-hunk :which-key "previous hunk")
+  "g]" '(git-gutter:next-hunk :which-key "next hunk")
+  "gd" '(magit-dispatch :which-key "dispatch")
+  "gf" '(magit-find-file :which-key "find-file")
+  "gg" '(magit-status :which-key "status")
+  "gi" '(magit-init :which-key "initialize repo")
+  "gt" '(git-timemachine-toggle :which-key "time machine"))
 
 ;; (remove-hook 'find-file-hook #'vc-refrqesh-state)
 ;; (hook-with-delay 'find-file-hook 1 #'vc-refresh-state)
@@ -56,8 +68,8 @@
   :config
   ;; properly kill leftover magit buffers on quit
   (define-key magit-status-mode-map
-    [remap magit-mode-bury-buffer]
-    #'vcs-quit)
+              [remap magit-mode-bury-buffer]
+              #'vcs-quit)
 
   (setq magit-revision-show-gravatars
         '("^Author:     " . "^Commit:     ")

@@ -33,8 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-
 (require 'config-vulpea)
 (require 'lib-directory)
 (require 'lib-litnotes)

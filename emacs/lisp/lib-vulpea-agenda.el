@@ -33,9 +33,7 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
 (require 'lib-vulpea)
-(require 'lib-compat)
 
 (require 'org)
 (require 'org-habit)

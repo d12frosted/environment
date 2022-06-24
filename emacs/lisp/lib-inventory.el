@@ -33,7 +33,6 @@
 ;;
 ;;; Code:
 
-;;;###autoload
 (defun inventory-balance (file id &optional query)
   "Get balance of ID in FILE using QUERY."
   (let* ((cmd (format "hledger -f %s balance %s '%s'" file id query))
@@ -42,7 +41,6 @@
     (string-to-number
      (car (seq-drop-while #'string-empty-p (reverse lines))))))
 
-;;;###autoload
 (defun inventory-balance-list (file)
   "Get balance of all entries in FILE."
   (let* ((cmd (concat "hledger -f '"
@@ -62,17 +60,14 @@
      lines
      nil)))
 
-;;;###autoload
 (defun inventory-total-in (file id)
   "Get total income for ID in FILE."
   (inventory-balance file id "amt:>0"))
 
-;;;###autoload
 (defun inventory-total-out (file id)
   "Get total outcome for ID in FILE."
   (abs (inventory-balance file id "amt:<0")))
 
-;;;###autoload
 (defun inventory-total-consumed (file start-date end-date)
   "Get total amount of consumed items in FILE in specified period.
 
@@ -84,7 +79,6 @@ Period is defined by START-DATE and END-DATE."
     (string-to-number
      (car (seq-drop-while #'string-empty-p (reverse lines))))))
 
-;;;###autoload
 (defun inventory-add (file id amount source &optional date)
   "Add AMOUNT of ID to inventory in FILE from SOURCE.
 
@@ -98,7 +92,6 @@ When DATE is omitted, `current-time' is used."
     source
     file)))
 
-;;;###autoload
 (defun inventory-sub (file id amount action &optional date)
   "Subtract amount of ID from inventory in FILE as result of ACTION.
 
@@ -112,7 +105,6 @@ When DATE is omitted, `current-time' is used."
     id
     file)))
 
-;;;###autoload
 (defun inventory-sources (file)
   "Get the list of sources in FILE."
   (let* ((cmd (concat "hledger -f '" file "' accounts"))

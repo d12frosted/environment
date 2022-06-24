@@ -33,7 +33,6 @@
 ;;
 ;;; Code:
 
-;;;###autoload
 (cl-defun nix-shell-command (&key
                              deps
                              command

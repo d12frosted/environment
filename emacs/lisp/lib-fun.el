@@ -33,7 +33,6 @@
 ;;
 ;;; Code:
 
-;;;###autoload
 (defun fun-unquote (exp)
   "Return EXP unquoted."
   (declare (pure t) (side-effect-free t))
@@ -41,7 +40,6 @@
     (setq exp (cadr exp)))
   exp)
 
-;;;###autoload
 (defun fun-collect-while (fn filter &rest args)
   "Repeat FN and collect it's results until `C-g` is used.
 
@@ -66,7 +64,6 @@ ARGS are passed to FN."
     (setq quit-flag nil)
     (seq-reverse result)))
 
-;;;###autoload
 (defun fun-repeat-while (fn filter &rest args)
   "Repeat FN and return the first unfiltered result.
 
@@ -85,7 +82,6 @@ ARGS are passed to FN."
     (when (null continue)
       value)))
 
-;;;###autoload
 (defun fun-noop (&rest _)
   "Do nothing.
 

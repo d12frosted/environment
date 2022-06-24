@@ -35,7 +35,6 @@
 ;;; Code:
 
 (require 'config-path)
-(require 'init-kbd)
 
 (defvar selection-system 'consult
   "Selection system to use: ivy, selectrum or consult.")

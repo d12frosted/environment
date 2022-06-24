@@ -35,9 +35,6 @@
 ;;; Code:
 
 (require 'config-path)
-(require 'init-elpa)
-(require 'init-env)
-(require 'init-selection)
 (require 'config-vulpea)
 
 

@@ -34,9 +34,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-(require 'init-kbd)
-
 (use-package telega
   :disabled
   :straight (telega

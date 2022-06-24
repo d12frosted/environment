@@ -35,8 +35,6 @@
 
 (require 'lib-eval)
 (require 'config-path)
-(require 'init-vcs)
-(require 'init-kbd)
 (require 'project)
 
 (setq project-list-file (expand-file-name "projects" path-etc-dir))

@@ -35,8 +35,6 @@
 ;;; Code:
 
 (require 'config-path)
-(require 'init-ui)
-(require 'init-selection)
 
 (use-package company
   :defer 2

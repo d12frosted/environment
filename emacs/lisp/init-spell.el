@@ -33,10 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-(require 'init-kbd)
-(require 'init-selection)
-
 (advice-add #'flyspell-mode :around #'fun-silent)
 (advice-add #'flyspell-prog-mode :around #'fun-silent)
 

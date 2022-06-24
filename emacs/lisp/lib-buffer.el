@@ -35,7 +35,6 @@
 ;;
 ;;; Code:
 
-;;;###autoload
 (defun buffer-content (buffer-or-name)
   "Return content of BUFFER-OR-NAME.
 
@@ -47,7 +46,6 @@ Resulting string is full of properties. Consider using
     (buffer-substring (point-min)
                       (point-max))))
 
-;;;###autoload
 (defun buffer-lines (buffer-or-name)
   "Return lines of BUFFER-OR-NAME.
 
@@ -55,7 +53,6 @@ Each line is a string with properties. Trailing newline character
 is not present."
   (buffer-lines-map buffer-or-name #'identity))
 
-;;;###autoload
 (defun buffer-lines-map (buffer-or-name fn)
   "Call FN on each line of BUFFER-OR-NAME and return resulting list.
 
@@ -79,7 +76,6 @@ is not present."
         (forward-line))
       (reverse result))))
 
-;;;###autoload
 (defun buffer-lines-each (buffer-or-name fn)
   "Call FN on each line of BUFFER-OR-NAME.
 
@@ -97,7 +93,6 @@ is not present."
                    (line-end-position)))
       (forward-line))))
 
-;;;###autoload
 (defun buffer-lines-transform (buffer-or-name fn)
   "Call FN on each line of BUFFER-OR-NAME.
 
@@ -117,7 +112,6 @@ is not present."
         (insert result))
       (forward-line))))
 
-;;;###autoload
 (defun buffer-lines-each-t (buffer-or-name fn)
   "Call FN on each line of BUFFER-OR-NAME and replace it by result.
 
@@ -134,7 +128,6 @@ is not present."
         (replace-region-contents l0 l1 (lambda () (funcall fn s)))
         (forward-line)))))
 
-;;;###autoload
 (defun buffer-generate (name &optional unique inhibit-buffer-hooks)
   "Create and return a buffer with a name based on NAME.
 
@@ -169,7 +162,6 @@ Return generated buffer."
       (result-present-mode))
     buffer))
 
-;;;###autoload
 (define-minor-mode result-present-mode
   "Local minor mode for presenting results.
 

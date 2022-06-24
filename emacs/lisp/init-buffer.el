@@ -34,7 +34,6 @@
 ;;; Code:
 
 (require 'config-path)
-(require 'init-kbd)
 
 ;; unique buffer names
 (require 'uniquify)

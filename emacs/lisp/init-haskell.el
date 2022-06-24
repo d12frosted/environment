@@ -33,10 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-(require 'init-ide)
-(require 'init-file-templates)
-
 (defconst haskell-backend 'lsp-ui
   "Backend for Haskell IDE: eglot, lsp-ui, dante.")
 

@@ -33,8 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-kbd)
-
 ;; prefer vertical splits by default
 (setq split-height-threshold nil)
 (setq split-width-threshold 160)

@@ -33,8 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-project)
-
 (defvar file-templates-dir
   (expand-file-name "templates/" path-emacs-dir)
   "The path to yasnippet folders.")

@@ -31,8 +31,6 @@
 ;;
 ;;; Code:
 
-(require 'init-env)
-
 (use-package restclient
   :defer t)
 

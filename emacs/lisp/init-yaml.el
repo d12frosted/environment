@@ -33,8 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-ide)
-
 (use-package yaml-mode
   :defer t
   :hook

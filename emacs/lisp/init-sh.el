@@ -33,8 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-
 
 
 (defvar sh-builtin-keywords

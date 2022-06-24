@@ -33,8 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-(require 'init-kbd)
 (require 'lib-vcs)
 (require 'lib-string)
 
