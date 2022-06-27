@@ -52,6 +52,7 @@
 (require 'lib-buffer)
 (require 'lib-string)
 (require 'lib-vulpea)
+(require 'lib-inventory)
 (require 'lib-brb)
 (require 'lib-calc)
 

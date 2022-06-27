@@ -35,6 +35,7 @@
 ;;; Code:
 
 (require 'lib-inventory)
+(require 'lib-buffer)
 (require 'vino)
 
 (defvar vino-inventory-file nil
