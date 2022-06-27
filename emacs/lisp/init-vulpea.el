@@ -339,7 +339,10 @@
                              "org-roam-test.db"
                            "org-roam.db")
                          path-cache-dir)
-   org-roam-completion-everywhere t)
+   org-roam-completion-everywhere t
+   ;; remove this atrocity from save-hook, it eats too much CPU on
+   ;; buffers with lots of links and serves me zero purpose.
+   org-roam-link-auto-replace nil)
   :config
   ;; For some reason org-roam is loaded on init and twice! Suspect it
   ;; is related to the fact that I am loading it from different
