@@ -17,6 +17,8 @@ in {
     # environment, though perhaps not the machine environment.
     packages = pkgs.callPackage ./packages.nix {};
 
+    stateVersion = "22.11";
+
     sessionVariables = {
       ASPELL_CONF           = "dict-dir ${home}/.nix-profile/lib/aspell";
       BASE16_HOME           = "${pkgs.base16-shell}";
