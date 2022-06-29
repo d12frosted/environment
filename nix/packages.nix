@@ -29,7 +29,7 @@ in [
   openssh
   openssl
   pandoc
-  python39Packages.pygments
+  python310Packages.pygments
   ranger
   ripgrep
   rsync
@@ -92,15 +92,9 @@ in [
   yarn
 ] ++ [
   # fonts
-  fira-code
-  fira-mono
   font-awesome_4
   fontconfig
-  liberation_ttf
-  noto-fonts
-  noto-fonts-cjk
-  noto-fonts-emoji
-  roboto-mono
+  # liberation_ttf
   source-code-pro
   source-sans-pro
   source-serif-pro
