@@ -110,6 +110,7 @@ RULES is a list of rules describing how to build INPUT to ROOT."
   name
   match
   dependencies
+  soft-dependencies
   target
   publish
   clean)
@@ -118,6 +119,7 @@ RULES is a list of rules describing how to build INPUT to ROOT."
                      name
                      match
                      dependencies
+                     soft-dependencies
                      target
                      publish
                      clean)
@@ -128,8 +130,16 @@ NAME is a string, it must be unique in the scope of a single project.
 MATCH is a predicate on `vulpea-note' that controls which notes
 are built using PUBLISH.
 
-DEPENDENCIES is a function that returns a list of dependencies.
-When dependency change, matched is considered as modified.
+DEPENDENCIES and SOFT-DEPENDENCIES are functions that return a
+list of dependencies. When dependency change, matched is
+considered as modified. Hard dependency is strictly required for
+rule to succeed. Use SOFT-DEPENDENCIES when you simply want to
+make sure that this rule needs to run again whenever soft
+dependency change. Use DEPENDENCIES when you want compilation to
+fail if dependency is missing.
+
+Difference between hard and soft dependencies is that hard
+dependencies declare what notes are required to build this rule.
 
 TARGET is a function that takes single matched note and returns
 relative location of the output of PUBLISH function.
@@ -146,6 +156,7 @@ CLEAN is a function that defines how cleaning happens. It takes
    :name name
    :match match
    :dependencies dependencies
+   :soft-dependencies soft-dependencies
    :target target
    :publish publish
    :clean clean))
@@ -359,6 +370,10 @@ Throws a user error if any of the input has no matching rule."
          (input (porg-project-input project))
          (input (if (functionp input) (funcall input) input))
          (size (seq-length input))
+         (input-tbl (let ((tbl (make-hash-table :test 'equal :size size)))
+                      (--each input
+                        (puthash (vulpea-note-id it) it tbl))
+                      tbl))
          (without-rule nil)
          (tbl (make-hash-table :test 'equal :size size)))
 
@@ -380,8 +395,20 @@ Throws a user error if any of the input has no matching rule."
                              (or
                               (porg-cache-get (vulpea-note-id it) :target-hash cache)
                               (porg-sha1sum target)))
-              :deps (when-let* ((deps-fn (porg-rule-dependencies rule))
-                                (deps (funcall deps-fn it)))
+              :deps (let* ((hard-deps-fn (porg-rule-dependencies rule))
+                           (hard-deps (when hard-deps-fn (funcall hard-deps-fn it)))
+                           (soft-deps-fn (porg-rule-soft-dependencies rule))
+                           (soft-deps (when soft-deps-fn (funcall soft-deps-fn it)))
+                           (-compare-fn (lambda (a b)
+                                          (string-equal (vulpea-note-id a)
+                                                        (vulpea-note-id b))))
+                           (deps (-distinct (-concat hard-deps soft-deps))))
+                      (-each hard-deps
+                        (lambda (dep)
+                          (unless (gethash (vulpea-note-id dep) input-tbl)
+                            (user-error "Missing hard dependency of '%s': '%s'"
+                                        (vulpea-note-title it)
+                                        (vulpea-note-title dep)))))
                       (--map
                        (list
                         :id (cond
