@@ -61,8 +61,6 @@ string.
 The CDR is a plist. See `file-templates-set' for more
 information.")
 
-(advice-add #'yas-reload-all :around #'fun-silent)
-
 (use-package yasnippet
   :diminish yas-minor-mode
   :commands (yas-minor-mode-on
@@ -83,10 +81,11 @@ information.")
          (snippet-mode . yas-minor-mode-on))
   :init
   (add-hook 'find-file-hook #'file-templates-check)
+  (advice-add #'yas-reload-all :around #'fun-silent)
+  (setq-default yas-snippet-dirs '(file-templates-dir))
   :config
   (setq yas-prompt-functions (delq #'yas-dropdown-prompt
-                                   yas-prompt-functions)
-        yas-snippet-dirs '(file-templates-dir))
+                                   yas-prompt-functions))
   ;; Ensure file templates in `file-templates-dir' are visible
   (yas-reload-all))
 
