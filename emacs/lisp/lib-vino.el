@@ -58,6 +58,7 @@
   "Subtrack AMOUNT of `vino-entry' with ID by ACTION on DATE."
   (inventory-sub vino-inventory-file id amount action date))
 
+;;;###autoload
 (defun vino-entry-find-file-available ()
   "Select and visit available `vino-entry'."
   (interactive)
