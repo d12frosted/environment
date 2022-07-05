@@ -426,37 +426,38 @@ Throws a user error if any of the input has no matching rule."
     (porg-log "Found %s notes to resolve." size)
 
     (--each input
+      (porg-debug "%s outputs:" (porg-describe it))
       (if-let ((rule (porg-project-resolve-rule project it)))
           (--each (when-let ((outputs-fn (porg-rule-outputs rule)))
                     (funcall outputs-fn it))
+            (porg-debug "- %s" (porg-describe it))
             (if-let ((compiler (porg-project-resolve-compiler project it)))
                 (let* ((target-rel (porg-rule-output-file it))
                        (target-abs (when target-rel
                                      (expand-file-name target-rel (porg-project-root project)))))
-                  (progn
-                    (puthash
-                     (porg-rule-output-id it)
-                     (porg-item-create
-                      :id (porg-rule-output-id it)
-                      :type (porg-rule-output-type it)
-                      :item (porg-rule-output-item it)
-                      :hash (funcall (or (porg-compiler-hash compiler)
-                                         #'porg-sha1sum)
-                                     it)
-                      :rule rule
-                      :compiler compiler
-                      :target-abs target-abs
-                      :target-rel target-rel
-                      :target-hash (when (and target-abs (file-exists-p target-abs))
-                                     (or
-                                      (porg-cache-query cache (porg-rule-output-id it)
-                                                        #'porg-cache-item-hash)
-                                      (porg-sha1sum target-abs)))
-                      :hard-deps (--map (if (vulpea-note-p it) (vulpea-note-id it) it)
-                                        (porg-rule-output-hard-deps it))
-                      :soft-deps (--map (if (vulpea-note-p it) (vulpea-note-id it) it)
-                                        (porg-rule-output-soft-deps it)))
-                     tbl)))
+                  (puthash
+                   (porg-rule-output-id it)
+                   (porg-item-create
+                    :id (porg-rule-output-id it)
+                    :type (porg-rule-output-type it)
+                    :item (porg-rule-output-item it)
+                    :hash (funcall (or (porg-compiler-hash compiler)
+                                       #'porg-sha1sum)
+                                   it)
+                    :rule rule
+                    :compiler compiler
+                    :target-abs target-abs
+                    :target-rel target-rel
+                    :target-hash (when (and target-abs (file-exists-p target-abs))
+                                   (or
+                                    (porg-cache-query cache (porg-rule-output-id it)
+                                                      #'porg-cache-item-hash)
+                                    (porg-sha1sum target-abs)))
+                    :hard-deps (--map (if (vulpea-note-p it) (vulpea-note-id it) it)
+                                      (porg-rule-output-hard-deps it))
+                    :soft-deps (--map (if (vulpea-note-p it) (vulpea-note-id it) it)
+                                      (porg-rule-output-soft-deps it)))
+                   tbl))
               (setf without-compiler (cons it without-compiler))))
         (setf without-rule (cons it without-rule))))
 
