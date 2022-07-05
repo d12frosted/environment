@@ -177,7 +177,7 @@ In addition, SOFT-DEPS are concatenated with list all linked notes."
                  (--filter (string-equal "id" (car it)))
                  (--map (cdr it))))))
 
-(cl-defun porg-attachments-output (note  &key dir filter)
+(cl-defun porg-attachments-output (note &key dir file-mod filter owner)
   "Make an list of attachments output for NOTE.
 
 DIR can be either a string or a function that takes
@@ -185,9 +185,13 @@ attachment name and returns a string. For example, this can be
 used to copy attachments to different destinations based on their
 type.
 
+FILE-MOD allows to modify output file name.
+
 FILTER controls which attachments get copied, it's a function that
 takes attachment name and returns non-nil if attachment should be
-copied. When FILTER-FN is not provided, all attachments are copied."
+copied. When FILTER-FN is not provided, all attachments are copied.
+
+OWNER allows to steal attachments of one NOTE to another OWNER."
   (vulpea-utils-with-note note
     (->>
      (seq-reverse (org-element-map (org-element-parse-buffer) 'link #'identity))
@@ -197,10 +201,11 @@ copied. When FILTER-FN is not provided, all attachments are copied."
      (--map
       (let* ((path (org-ml-get-property :path it))
              (dir (if (functionp dir) (funcall dir path) dir))
-             (newname (expand-file-name path dir)))
+             (newname (concat (file-name-as-directory dir) path))
+             (newname (if file-mod (funcall file-mod newname) newname)))
         (goto-char (org-ml-get-property :begin it))
         (porg-rule-output
-         :id (concat (vulpea-note-id note) ":" path)
+         :id (concat (vulpea-note-id (or owner note)) ":" path)
          :type "attachment"
          :item (org-attach-expand path)
          :file newname))))))
