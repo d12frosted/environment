@@ -40,26 +40,49 @@
 
 (defvar porg--projects nil)
 
+(cl-defgeneric porg-describe (thing)
+  "Describe THING.")
+
 
 
-(cl-defstruct porg-project
-  name
-  root
-  cache-file
-  input
-  describe
-  rules)
+(cl-defstruct (porg-project (:constructor porg-project-create)
+                            (:copier porg-project-copy))
+  (name nil :read-only t :type string)
+  (root nil :read-only t :type string)
+  (cache-file  nil :read-only t :type string)
+  (input nil :read-only t :type function)
+  (describe #'porg-describe :read-only t :type function)
+  (rules nil :type list)
+  (compilers nil :type list))
+
+(cl-defun porg-define (&rest args)
+  "Smart constructor for `porg-project'.
+
+ARGS are used to construct project."
+  (let* ((project (apply #'porg-project-create args))
+         (name (porg-project-name project)))
+    (setf (porg-project-compilers project)
+          (cons
+           (porg-compiler
+            :name "$$void$$"
+            :match (-rpartial #'porg-rule-output-that :type "$$void$$"))
+           (porg-project-compilers project)))
+    (if-let ((val (assoc name porg--projects)))
+        (setf (cdr val) project)
+      (setf porg--projects (cons (cons name project) porg--projects)))
+    project))
 
 (cl-defmethod porg-project-hash (project &optional ignore-rules)
   "Calculate hash of the PROJECT.
 
 When IGNORE-RULES is non-nil, rules do not depend on resulting hash."
-  (let ((project (copy-porg-project project)))
+  (let ((project (porg-project-copy project)))
     (when ignore-rules
-      (setf (porg-project-rules project) nil))
+      (setf (porg-project-rules project) nil)
+      (setf (porg-project-compilers project) nil))
     (porg-sha1sum project)))
 
-(cl-defmethod porg-project-resolve (project note)
+(cl-defmethod porg-project-resolve-rule ((project porg-project) note)
   "Resolve rule for NOTE from PROJECT."
   (-find
    (lambda (rule)
@@ -67,113 +90,137 @@ When IGNORE-RULES is non-nil, rules do not depend on resulting hash."
        (funcall match note)))
    (-filter #'porg-rule-p (porg-project-rules project))))
 
-(cl-defun porg-define (&rest
-                       rules
-                       &key
-                       name
-                       root
-                       cache-file
-                       input
-                       describe
-                       &allow-other-keys)
-  "Define a project and register it in the build system.
-
-NAME is a string, it must be unique for all calls to
-`porg-defined', otherwise one project will override another.
-
-ROOT is a directory where the project is built to.
-
-CACHE-FILE is a path to cache file relative to ROOT.
-
-INPUT is a list of notes to build. It can be a function that
-returns the list of notes to build.
-
-DESCRIBE is a function that takes a note and returns it's
-description. Defaults to `vulpea-note-title'.
-
-RULES is a list of rules describing how to build INPUT to ROOT."
-  (let* ((rules (fun-remove-keyword-params rules))
-         (project (make-porg-project
-                   :name name
-                   :root root
-                   :cache-file cache-file
-                   :input input
-                   :describe (or describe #'vulpea-note-title)
-                   :rules rules)))
-    (if-let ((val (assoc name porg--projects)))
-        (setf (cdr val) project)
-      (setf porg--projects (cons (cons name project) porg--projects)))))
+(cl-defmethod porg-project-resolve-compiler ((project porg-project) output)
+  "Resolve compiler for OUTPUT from PROJECT."
+  (-find
+   (lambda (compiler)
+     (when-let ((match (porg-compiler-match compiler)))
+       (funcall match output)))
+   (-filter #'porg-compiler-p (porg-project-compilers project))))
 
 
 
-(cl-defstruct porg-rule
-  name
-  match
-  dependencies
-  soft-dependencies
-  target
-  publish
-  clean)
+(cl-defstruct (porg-compiler (:constructor porg-compiler)
+                             (:copier nil))
+  "Define a compiler for `porg-rule-output'.
 
-(cl-defun porg-rule (&key
-                     name
-                     match
-                     dependencies
-                     soft-dependencies
-                     target
-                     publish
-                     clean)
-  "Define a rule with NAME.
+MATCH is a predicate on `porg-rule-output' that control which
+items are build using this rule."
+  (name nil :read-only t :type string)
+  (match nil :read-only t :type function)
+  (build nil :read-only t :type function)
+  (clean nil :read-only t :type function)
+  (hash nil :read-only t :type function))
+
+(cl-defstruct (porg-rule (:constructor porg-rule)
+                         (:copier nil))
+  "Define a rule.
 
 NAME is a string, it must be unique in the scope of a single project.
 
 MATCH is a predicate on `vulpea-note' that controls which notes
-are built using PUBLISH.
+are built using this rule.
 
-DEPENDENCIES and SOFT-DEPENDENCIES are functions that return a
-list of dependencies. When dependency change, matched is
-considered as modified. Hard dependency is strictly required for
-rule to succeed. Use SOFT-DEPENDENCIES when you simply want to
-make sure that this rule needs to run again whenever soft
-dependency change. Use DEPENDENCIES when you want compilation to
-fail if dependency is missing.
-
-Difference between hard and soft dependencies is that hard
-dependencies declare what notes are required to build this rule.
-
-TARGET is a function that takes single matched note and returns
-relative location of the output of PUBLISH function.
-
-PUBLISH is a function the defines how publishing happens. It can
-be a simple file copy, or something sophisticated. It takes 3
-arguments: piece (values computed by `porg-build-input') of a
-single matched note, whole input (as calculated by
-`porg-build-input') and cache.
-
-CLEAN is a function that defines how cleaning happens. It takes
-3 arguments: id, cache and project root."
-  (make-porg-rule
-   :name name
-   :match match
-   :dependencies dependencies
-   :soft-dependencies soft-dependencies
-   :target target
-   :publish publish
-   :clean clean))
+OUTPUTS is a function that takes single matched note and returns
+list of `porg-rule-output'."
+  (name nil :read-only t :type string)
+  (match nil :read-only t :type function)
+  (outputs nil :read-only t :type function))
 
 
 
-(cl-defstruct porg-batch-rule
-  name
-  filter
-  target
-  publish)
+(cl-defstruct (porg-rule-output (:constructor porg-rule-output)
+                                (:copier nil))
+  "Define a `porg-rule' output.
 
-(cl-defun porg-batch-rule (&key
-                           name
-                           filter
-                           target
-                           publish)
+ID is a string identifier of the output item.
+
+TYPE is a string representing type of the ITEM. Publicatorg uses
+the TYPE to find suitable compiler. For example, TYPE can be
+note, attachment, etc.
+
+ITEM is an object that needs to be built.
+
+FILE is the relative location of the output.
+
+HARD-DEPS and SOFT-DEPS are lists of dependencies. When
+dependency change, matched is considered as modified. Hard
+dependency is strictly required for rule to succeed. Use
+SOFT-DEPS when you simply want to make sure that this rule needs
+to run again whenever soft dependency change. Use HARD-DEPS when
+you want compilation to fail if dependency is missing.
+
+Difference between hard and soft dependencies is that hard
+dependencies declare what notes are required to build this rule."
+  (id nil :read-only t :type string)
+  (type nil :read-only t :type string)
+  (item nil :read-only t)
+  (file nil :read-only t :type string)
+  (hard-deps nil :read-only t :type function)
+  (soft-deps nil :read-only t :type function))
+
+(cl-defun porg-note-output (note &key file soft-deps hard-deps)
+  "Make an output for NOTE.
+
+See `porg-rule-output' for explanation of FILE, SOFT-DEPS, and HARD-DEPS.
+
+In addition, SOFT-DEPS are concatenated with list all linked notes."
+  (porg-rule-output
+   :id (vulpea-note-id note)
+   :type "note"
+   :item note
+   :file file
+   :hard-deps hard-deps
+   :soft-deps
+   (-concat soft-deps
+            (->> (vulpea-note-links note)
+                 (--filter (string-equal "id" (car it)))
+                 (--map (cdr it))))))
+
+(cl-defun porg-attachments-output (note  &key dir filter)
+  "Make an list of attachments output for NOTE.
+
+DIR can be either a string or a function that takes
+attachment name and returns a string. For example, this can be
+used to copy attachments to different destinations based on their
+type.
+
+FILTER controls which attachments get copied, it's a function that
+takes attachment name and returns non-nil if attachment should be
+copied. When FILTER-FN is not provided, all attachments are copied."
+  (vulpea-utils-with-note note
+    (->>
+     (seq-reverse (org-element-map (org-element-parse-buffer) 'link #'identity))
+     (--filter
+      (and (string-equal (org-ml-get-property :type it) "attachment")
+           (or (not filter) (funcall filter (org-ml-get-property :path it)))))
+     (--map
+      (let* ((path (org-ml-get-property :path it))
+             (dir (if (functionp dir) (funcall dir path) dir))
+             (newname (expand-file-name path dir)))
+        (goto-char (org-ml-get-property :begin it))
+        (porg-rule-output
+         :id (concat (vulpea-note-id note) ":" path)
+         :type "attachment"
+         :item (org-attach-expand path)
+         :file newname))))))
+
+(cl-defun porg-void-output (note)
+  "Make a void output for NOTE."
+  (porg-rule-output
+   :id (vulpea-note-id note)
+   :type "$$void$$"
+   :item note))
+
+(cl-defmethod porg-rule-output-that ((output porg-rule-output) &key type predicate)
+  "Check that OUTPUT has TYPE and satisfies PREDICATE (optional)."
+  (and (string-equal (porg-rule-output-type output) type)
+       (or (not predicate) (funcall predicate (porg-rule-output-item output)))))
+
+
+
+(cl-defstruct (porg-batch-rule (:constructor porg-batch-rule)
+                               (:copier nil))
   "Define a batch rule with NAME.
 
 NAME is a string, it must be unique in the scope of a single project.
@@ -188,23 +235,23 @@ PUBLISH is a function the defines how publishing happens. It
 takes 4 arguments: notes (that were filtered from project input
 based on FILTER), target file, input (as calculated by
 `porg-build-input') and cache."
-  (make-porg-batch-rule
-   :name name
-   :filter filter
-   :target target
-   :publish publish))
+  name
+  filter
+  target
+  publish)
 
 
 
-;; Build cache is stored in `porg-project-cache-file'. In persisted
-;; state it's a list, where first element is id of the cached element
-;; (usually `vulpea-note-id'), and the rest is cache value of the
-;; cached element, which is defined as a property list:
-;;
-;;   (:hash :rule :target-hash :target-rel :update :deps=(:id :hash))
-;;
-;; When loaded from file into memory, cache is a hash table, where key
-;; is id of the cached element and value is is the same property list.
+(cl-defstruct (porg-cache-item (:constructor porg-cache-item-create))
+  (hash nil :type string)
+  (output nil :type string)
+  (rule nil :type string)
+  (compiler nil :type string))
+
+(cl-defun porg-cache-query (cache id access)
+  "Query CACHE for ID by ACCESS."
+  (when-let ((o (gethash id cache)))
+    (funcall access o)))
 
 (cl-defun porg-cache-load (file)
   "Load build cache from FILE.
@@ -212,41 +259,21 @@ based on FILTER), target file, input (as calculated by
 Return a hash table, where key is some string id of the build
 element and value its hash."
   (if (file-exists-p file)
-      (let* ((xs
-              (with-temp-buffer
-                (condition-case nil
-	                  (progn
-	                    (insert-file-contents file)
-                      (read (current-buffer)))
-	                (error
-	                 (message "Could not read cache from %s" file)))))
-             (cache (make-hash-table :test 'equal :size (seq-length xs))))
-        (--each xs
-          (puthash (nth 0 it) (cadr it) cache))
-        cache)
+      (with-temp-buffer
+        (condition-case nil
+	          (progn
+	            (insert-file-contents file)
+              (read (current-buffer)))
+	        (error
+	         (message "Could not read cache from %s" file))))
     (make-hash-table :test 'equal)))
 
 (cl-defun porg-cache-write (file cache)
   "Write build CACHE to FILE."
   (with-temp-file file
-    (let ((xs (--map
-               (list it (gethash it cache))
-               (hash-table-keys cache)))
-          (print-level nil)
+    (let ((print-level nil)
 	        (print-length nil))
-	    (print xs (current-buffer)))))
-
-(cl-defun porg-cache-put (key prop value cache)
-  "Put a PROP VALUE pair to plist with KEY in CACHE."
-  (puthash
-   key
-   (plist-put (gethash key cache) prop value)
-   cache)
-  cache)
-
-(cl-defun porg-cache-get (key prop cache)
-  "Get a value by PROP from plist with KEY from CACHE."
-  (plist-get (gethash key cache) prop))
+	    (print cache (current-buffer)))))
 
 
 
@@ -255,15 +282,14 @@ element and value its hash."
   "Export project with NAME."
   (let ((project (assoc-default name porg--projects)))
     (unless project
-      (user-error "Could not find project with named %s" name))
+      (user-error "Could not find project named '%s'" name))
     (porg-log-s "calculating build plan")
     (let ((default-directory (porg-project-root project)))
       (let* ((cache-file (expand-file-name (porg-project-cache-file project)))
              (cache (porg-cache-load cache-file))
              (describe (porg-project-describe project))
-             (input (porg-build-input project cache))
-             (notes (-map (-rpartial #'plist-get :note) (hash-table-values input)))
-             (plan (porg-build-plan project input cache))
+             (items (porg-build-input project cache))
+             (plan (porg-build-plan project items cache))
              (build-size (seq-length (plist-get plan :build)))
              (delete-size (seq-length (plist-get plan :delete)))
              (batch-rules (-filter #'porg-batch-rule-p
@@ -274,211 +300,261 @@ element and value its hash."
           (porg-log "Nothing to delete, everything is used."))
         (--each-indexed (plist-get plan :delete)
           (let* ((cached (gethash it cache))
-                 (rule-name (plist-get cached :rule))
-                 (rule (->> (porg-project-rules project)
-                            (-filter #'porg-rule-p)
-                            (--find (string-equal rule-name (porg-rule-name it))))))
+                 (compiler-name (porg-cache-item-compiler cached))
+                 (compiler (--find (string-equal compiler-name (porg-compiler-name it))
+                                   (porg-project-compilers project))))
             (porg-log
              "[%s/%s] cleaning %s using %s rule from %s"
              (string-from-number (+ 1 it-index) :padding-num delete-size)
              delete-size
              it
-             rule-name
-             (plist-get cached :target-rel))
-            (funcall (porg-rule-clean rule) it cache (porg-project-root project))))
+             compiler-name
+             (porg-cache-item-output cached))
+            (funcall (porg-compiler-clean compiler) cached (porg-project-root project))))
 
         (porg-log-s "build")
         (unless (plist-get plan :build)
           (porg-log "Nothing to build, everything is up to date."))
         (--each-indexed (plist-get plan :build)
-          (let* ((piece (gethash it input))
-                 (publish (porg-rule-publish (plist-get piece :rule))))
+          (let ((item (gethash it items)))
             (porg-log
              "[%s/%s] building %s"
              (string-from-number (+ 1 it-index) :padding-num build-size)
              build-size
-             (funcall describe piece))
-            (when publish
-              (funcall publish piece input cache))))
+             (funcall describe item))
+            (when-let ((build (porg-compiler-build (porg-item-compiler item))))
+              (funcall build item items cache))))
 
         (porg-log-s "run batch actions")
         (unless batch-rules
-          (porg-log "No batch rules to run"))
+          (porg-log "No batch actions to run"))
         (--each-indexed batch-rules
           (let* ((filter (porg-batch-rule-filter it))
-                 (notes (if filter (funcall #'-filter filter notes) notes))
+                 (items-selected (hash-table-values items))
+                 (items-selected (if filter (funcall #'-filter filter items-selected) items-selected))
+                 (size (seq-length items-selected))
+                 (items-selected (let ((tbl (make-hash-table :test 'equal :size size)))
+                                   (--each items-selected (puthash (porg-item-id it) it tbl))
+                                   tbl))
                  (target (porg-batch-rule-target it))
-                 (target (if (functionp target) (funcall target notes) target)))
+                 (target (if (functionp target) (funcall target items) target)))
             (porg-log
-             "[%s/%s] running %s batch rule on the set of %s notes"
+             "[%s/%s] running %s batch action on the set of %s notes"
              (string-from-number (+ 1 it-index) :padding-num (seq-length batch-rules))
              (seq-length batch-rules)
              (porg-batch-rule-name it)
-             (seq-length notes))
-            (funcall (porg-batch-rule-publish it) notes target input cache)))
+             size)
+            (funcall (porg-batch-rule-publish it) target items-selected items cache)))
 
         (porg-log-s "cache build files")
-        (porg-cache-put (concat "project:" name)
-                        :hash (porg-project-hash project 'ignore-rules)
-                        cache)
+        (puthash (concat "project:" name)
+                 (porg-cache-item-create :hash (porg-project-hash project 'ignore-rules))
+                 cache)
         (--each (-filter #'porg-rule-p (porg-project-rules project))
-          (porg-cache-put (concat "rule:" (porg-rule-name it)) :hash (porg-sha1sum it) cache))
+          (puthash (concat "rule:" (porg-rule-name it))
+                   (porg-cache-item-create :hash (porg-sha1sum it))
+                   cache))
+        (--each (porg-project-compilers project)
+          (puthash (concat "compiler:" (porg-compiler-name it))
+                   (porg-cache-item-create :hash (porg-sha1sum it))
+                   cache))
         (--each (plist-get plan :delete)
           (remhash it cache))
         (--each (plist-get plan :build)
-          (let* ((piece (gethash it input))
-                 (target-hash (porg-sha1sum (plist-get piece :target))))
-            (porg-cache-put it :hash (plist-get piece :hash) cache)
-            (porg-cache-put it :rule (porg-rule-name (plist-get piece :rule)) cache)
-            (porg-cache-put it :target-hash target-hash cache)
-            (porg-cache-put it :target-rel (plist-get piece :target-rel) cache)
-            (porg-cache-put it :update
-                            (if (string-equal target-hash (plist-get piece :target-hash))
-                                (or (porg-cache-get it :update cache)
-                                    (format-time-string "%F"))
-                              (format-time-string "%F"))
-                            cache)
-            (porg-cache-put it :deps
-                            (-map
-                             (lambda (dep)
-                               (list
-                                :id (plist-get dep :id)
-                                :hash (plist-get dep :hash)))
-                             (plist-get piece :deps))
-                            cache)))
+          (let* ((item (gethash it items)))
+            (puthash (porg-item-id item)
+                     (porg-cache-item-create
+                      :hash (porg-item-hash item)
+                      :output (porg-item-target-rel item)
+                      :rule (porg-rule-name (porg-item-rule item))
+                      :compiler (porg-compiler-name (porg-item-compiler item)))
+                     cache)))
         (porg-cache-write cache-file cache)
+
         (porg-log "The work is done! Enjoy your published vulpea notes!")
         (porg-log "        ٩(^ᴗ^)۶")))))
+
+
+
+(cl-defstruct (porg-item (:constructor porg-item-create)
+                         (:copier nil))
+  id
+  type
+  item
+  hash
+  rule
+  compiler
+  target-abs
+  target-rel
+  target-hash
+  soft-deps
+  hard-deps)
+
+(cl-defmethod porg-item-deps ((item porg-item))
+  "Return dependencies of ITEM."
+  (let ((hard-deps (porg-item-hard-deps item))
+        (soft-deps (porg-item-soft-deps item))
+        (-compare-fn #'string-equal))
+    (-distinct (-concat hard-deps soft-deps))))
+
+(cl-defmethod porg-item-that ((item porg-item) &key type predicate)
+  "Check that ITEM has TYPE and satisfies PREDICATE (optional)."
+  (and (string-equal (porg-item-type item) type)
+       (or (not predicate) (funcall predicate (porg-item-item item)))))
+
+
 
 (defun porg-build-input (project cache)
   "Calculate input data for the PROJECT with CACHE.
 
-Result is a table, where key is note id and the value is a
-property list with the following keys:
-
-- :note - a `vulpea-note'
-- :hash - hash of the :note
-- :rule - matched rule
-- :target - absolute path to output of :note built with :rule
-- :target-rel - same as :target, but relative to project root
-- :target-hash - hash of :target if it already exists
-- :deps - list of dependencies, each element is a property
-  list (:id :object :target-rel :hash)
+Result is a table, where key is note id and the value is `porg-item'.
 
 Throws a user error if any of the input has no matching rule."
   (let* ((describe (porg-project-describe project))
          (input (porg-project-input project))
          (input (if (functionp input) (funcall input) input))
          (size (seq-length input))
-         (input-tbl (let ((tbl (make-hash-table :test 'equal :size size)))
-                      (--each input
-                        (puthash (vulpea-note-id it) it tbl))
-                      tbl))
          (without-rule nil)
+         (without-compiler nil)
          (tbl (make-hash-table :test 'equal :size size)))
 
     (porg-log "Found %s notes to resolve." size)
 
     (--each input
-      (if-let ((rule (porg-project-resolve project it)))
-          (let ((target (when-let ((target-fn (porg-rule-target rule)))
-                          (funcall target-fn it))))
-            (puthash
-             (vulpea-note-id it)
-             (list
-              :note it
-              :hash (porg-sha1sum it)
-              :rule rule
-              :target target
-              :target-rel (when target (s-chop-prefix default-directory target))
-              :target-hash (when (and target (file-exists-p target))
-                             (or
-                              (porg-cache-get (vulpea-note-id it) :target-hash cache)
-                              (porg-sha1sum target)))
-              :deps (let* ((hard-deps-fn (porg-rule-dependencies rule))
-                           (hard-deps (when hard-deps-fn (funcall hard-deps-fn it)))
-                           (soft-deps-fn (porg-rule-soft-dependencies rule))
-                           (soft-deps (when soft-deps-fn (funcall soft-deps-fn it)))
-                           (-compare-fn (lambda (a b)
-                                          (string-equal (vulpea-note-id a)
-                                                        (vulpea-note-id b))))
-                           (deps (-distinct (-concat hard-deps soft-deps))))
-                      (-each hard-deps
-                        (lambda (dep)
-                          (unless (gethash (vulpea-note-id dep) input-tbl)
-                            (user-error "Missing hard dependency of '%s': '%s'"
-                                        (vulpea-note-title it)
-                                        (vulpea-note-title dep)))))
-                      (--map
-                       (list
-                        :id (cond
-                             ((vulpea-note-p it) (vulpea-note-id it))
-                             ((and (stringp it)
-                                   (file-exists-p it))
-                              (file-name-nondirectory it))
-                             (t it))
-                        :object it
-                        :hash (porg-sha1sum it))
-                       deps)))
-             tbl))
+      (if-let ((rule (porg-project-resolve-rule project it)))
+          (--each (when-let ((outputs-fn (porg-rule-outputs rule)))
+                    (funcall outputs-fn it))
+            (if-let ((compiler (porg-project-resolve-compiler project it)))
+                (let* ((target-rel (porg-rule-output-file it))
+                       (target-abs (when target-rel
+                                     (expand-file-name target-rel (porg-project-root project)))))
+                  (progn
+                    (puthash
+                     (porg-rule-output-id it)
+                     (porg-item-create
+                      :id (porg-rule-output-id it)
+                      :type (porg-rule-output-type it)
+                      :item (porg-rule-output-item it)
+                      :hash (funcall (or (porg-compiler-hash compiler)
+                                         #'porg-sha1sum)
+                                     it)
+                      :rule rule
+                      :compiler compiler
+                      :target-abs target-abs
+                      :target-rel target-rel
+                      :target-hash (when (and target-abs (file-exists-p target-abs))
+                                     (or
+                                      (porg-cache-query cache (porg-rule-output-id it)
+                                                        #'porg-cache-item-hash)
+                                      (porg-sha1sum target-abs)))
+                      :hard-deps (--map (if (vulpea-note-p it) (vulpea-note-id it) it)
+                                        (porg-rule-output-hard-deps it))
+                      :soft-deps (--map (if (vulpea-note-p it) (vulpea-note-id it) it)
+                                        (porg-rule-output-soft-deps it)))
+                     tbl)))
+              (setf without-compiler (cons it without-compiler))))
         (setf without-rule (cons it without-rule))))
 
-    ;; quit if not all input can be handled by this project rules
+    (message "Found %s items to resolve" (seq-length (hash-table-keys tbl)))
+
+    ;; quit if not all input can be handled by this project rules or compilers
     (when without-rule
       (porg-log "Could not find rule for %s notes:" (seq-length without-rule))
       (--each without-rule
         (porg-log "- %s" (funcall describe it)))
       (user-error "Not all input notes have matching rules, see above"))
+    (when without-compiler
+      (porg-log "Could not find compiler for %s items:" (seq-length without-compiler))
+      (--each without-compiler
+        (porg-log "- %s" (funcall describe it)))
+      (user-error "Not all items have matching compilers, see above"))
+
+    (when-let ((missing (--filter
+                         (--remove (gethash it tbl) (porg-item-hard-deps it))
+                         (hash-table-values tbl))))
+      (porg-log "Could not find dependencies for %s items:" (seq-length missing))
+      (-each missing
+        (lambda (item)
+          (--each (--filter (gethash it tbl) (porg-item-hard-deps item))
+            (porg-log "Missing hard dependency of '%s': '%s'" (porg-item-id item) it))))
+      (user-error "Missing some hard dependencies, see above"))
 
     tbl))
 
-(defun porg-build-plan (project input cache)
-  "Calculate build plan of INPUT for PROJECT with CACHE.
+
 
-Result is a property list (:build :delete)."
+(defun porg-build-plan (project items cache)
+  "Calculate build plan of ITEMS for PROJECT with CACHE.
+
+Result is a property list (:compile :delete)."
   (let* ((project-hash (porg-project-hash project 'ignore-rules))
          (project-updated (not (string-equal
                                 project-hash
-                                (porg-cache-get
-                                 (concat "project:" (porg-project-name project))
-                                 :hash cache))))
-         (build (if project-updated
-                    (hash-table-keys input)
-                  (-filter
-                   (lambda (id)
-                     (let* ((piece (gethash id input))
-                            (rule (plist-get piece :rule))
-                            (deps-cached (porg-cache-get id :deps cache)))
-                       (or
-                        ;; rule building it changed
-                        (not (string-equal
-                              (porg-sha1sum rule)
-                              (porg-cache-get
-                               (concat "rule:" (porg-rule-name rule))
-                               :hash cache)))
-                        ;; note itself is changed
-                        (not (string-equal
-                              (plist-get piece :hash)
-                              (porg-cache-get id :hash cache)))
-                        ;; one of the deps is changed
-                        (-any-p
-                         (lambda (a)
-                           (let ((a-cached (-find
-                                            (lambda (x)
-                                              (string-equal (plist-get a :id)
-                                                            (plist-get x :id)))
-                                            deps-cached)))
-                             (or (null a-cached)
-                                 (not (string-equal (plist-get a :hash)
-                                                    (plist-get a-cached :hash))))))
-                         (plist-get piece :deps)))))
-                   (hash-table-keys input))))
+                                (porg-cache-query
+                                 cache (concat "project:" (porg-project-name project))
+                                 #'porg-cache-item-hash))))
+         (build
+          (if project-updated
+              (hash-table-keys items)
+            (-filter
+             (lambda (id)
+               (let* ((item (gethash id items))
+                      (rule (porg-item-rule item))
+                      (compiler (porg-item-compiler item)))
+                 (or
+                  ;; rule changed
+                  (let ((res (not
+                              (string-equal
+                               (porg-sha1sum rule)
+                               (porg-cache-query
+                                cache (concat "rule:" (porg-rule-name rule))
+                                #'porg-cache-item-hash)))))
+                    (when res (porg-debug "%s: rule %s changed"
+                                          (porg-describe item)
+                                          (porg-rule-name rule)))
+                    res)
+                  ;; compiler changed
+                  (let ((res (not
+                              (string-equal
+                               (porg-sha1sum compiler)
+                               (porg-cache-query
+                                cache (concat "compiler:" (porg-compiler-name compiler))
+                                #'porg-cache-item-hash)))))
+                    (when res (porg-debug "%s: compiler %s changed"
+                                          (porg-describe item)
+                                          (porg-compiler-name compiler)))
+                    res)
+                  ;; item itself is changed
+                  (let ((res (not
+                              (string-equal
+                               (porg-item-hash item)
+                               (porg-cache-query cache id #'porg-cache-item-hash)))))
+                    (when res (porg-debug "%s: content changed" (porg-describe item)))
+                    res)
+
+                  ;; one of the deps is changed
+                  (-any-p
+                   (lambda (a-id)
+                     (let ((a (gethash a-id items)))
+                       ;; soft deps can be missing
+                       (let ((res (and (not (null a))
+                                       (not (string-equal (porg-item-hash a)
+                                                          (porg-cache-query cache a-id #'porg-cache-item-hash))))))
+                         (when res
+                           (porg-debug "%s: dependency %s changed"
+                                       (porg-describe item)
+                                       (if a (porg-describe a) a-id)))
+                         res)))
+                   (porg-item-deps item)))))
+             (hash-table-keys items))))
          (delete (--remove
-                  (or (gethash it input)
+                  (or (gethash it items)
+                      (s-prefix-p "project:" it)
                       (s-prefix-p "rule:" it)
-                      (s-prefix-p "project:" it))
+                      (s-prefix-p "compiler:" it))
                   (hash-table-keys cache))))
-    (porg-log "Found %s notes to build." (seq-length build))
+
+    (porg-log "Found %s items to compile." (seq-length build))
     (porg-log "Found %s items to delete." (seq-length delete))
 
     (list
@@ -488,48 +564,6 @@ Result is a property list (:build :delete)."
 
 
 ;; Publish utilities. Use these functions in your rule definition.
-
-(cl-defun porg-copy-note (note file &key copy-fn)
-  "Copy NOTE to FILE using COPY-FN.
-
-Unless COPY-FN is specified, file is simply copied. But you can
-control how file is being copied by passing a function that takes
-two arguments (note and destination path), which does the copying."
-  (let ((dir (file-name-directory file)))
-    (mkdir dir 'parents)
-    (if copy-fn
-        (fun-silent copy-fn note file)
-      (copy-file (vulpea-note-path note) file 'replace))))
-
-(cl-defun porg-copy-attachments (note &key dest-fn filter-fn copy-fn)
-  "Copy attachments of NOTE to some destination.
-
-DEST-FN can be either a string or a function that takes
-attachment name and returns a string. For example, this can be
-used to copy attachments to different destinations based on their
-type.
-
-FILTER-FN controls how attachments get copied, it's a function that
-takes attachment name and returns non-nil if attachment should be
-copied. When FILTER-FN is not provided, all attachments are copied.
-
-COPY-FN defaults to `copy-file'.
-
-Return list of copied files."
-  (vulpea-utils-with-note note
-    (->>
-     (seq-reverse (org-element-map (org-element-parse-buffer) 'link #'identity))
-     (--filter
-      (and (string-equal (org-ml-get-property :type it) "attachment")
-           (or (not filter-fn) (funcall filter-fn (org-ml-get-property :path it)))))
-     (--map
-      (let* ((path (org-ml-get-property :path it))
-             (dest (if (functionp dest-fn) (funcall dest-fn path) dest-fn))
-             (newname (expand-file-name path dest)))
-        (mkdir dest 'parents)
-        (goto-char (org-ml-get-property :begin it))
-        (or (funcall (or copy-fn #'copy-file) (org-attach-expand path) newname 'replace)
-            newname))))))
 
 (cl-defun porg-clean-noexport-headings (file)
   "Remove headings tagged as noexport from FILE."
@@ -580,6 +614,8 @@ All other links are transformed to plain text."
 
 ;; Logging utilities
 
+(defvar porg-log-level 'info)
+
 (defun porg-log-s (format-string &rest args)
   "Log FORMAT-STRING with ARGS as section.
 
@@ -591,6 +627,13 @@ The output width is limited to 80 characters."
 
 The output width is limited to 80 characters."
   (message (s-truncate 80 (apply #'format format-string args))))
+
+(defun porg-debug (format-string &rest args)
+  "Debug log FORMAT-STRING with ARGS.
+
+Noops depending on `porg-log-level'."
+  (when (equal porg-log-level 'debug)
+    (message (apply #'format format-string args))))
 
 (defun porg-section (str)
   "Convert STR into nice section."
@@ -655,6 +698,9 @@ OBJ can be either a note, a file or a Lisp object."
        :from files
        :where (= file $s1)]
       (vulpea-note-path obj))))
+
+   ((porg-rule-output-p obj)
+    (porg-sha1sum (porg-rule-output-item obj)))
 
    ((and
      (stringp obj)
