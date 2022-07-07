@@ -91,7 +91,7 @@ Transaction is recorded into `bg-ledger-file'."
      :account-to (concat "balance:" (vulpea-note-id convive))
      :account-from (concat "convive:" (vulpea-note-id convive))
      :amount amount)
-    (bg-balance-buffer-refresh-maybe)))
+    (bg-balance-buffer-create)))
 
 ;;;###autoload
 (defun bg-balance-charge ()
@@ -122,7 +122,8 @@ Transaction is recorded into `bg-ledger-file'."
      :comment comment
      :account-to "expenses"
      :account-from "balance:assets"
-     :amount amount)))
+     :amount amount)
+    (bg-balance-buffer-create)))
 
 
 
@@ -194,58 +195,63 @@ Transaction is recorded into `bg-ledger-file'."
      :balances balances
      :postings postings)))
 
-(defun bg-balance-buffer-refresh-maybe ()
-  "Refresh balance buffer if it exists."
-  (when-let ((buffer (get-buffer bg-balance-buffer-name)))
-    (bg-balance-buffer-create)))
-
 (defun bg-balance-buffer-create ()
-  "Create balance buffer and fill it with relevant information.
+  "Create balance BUFFER and fill it with relevant information.
 
 Return generated buffer."
-  (let ((data (bg-balance-data-read)))
-    (buffer-generate-result-with bg-balance-buffer-name
-      (propertize "Balance" 'face 'bold)
-      ""
-      (string-table
-       :data
-       (cons
-        (list "Total"
-              (bg-balance--format-amount (bg-balance-data-total data)))
-        (seq-map
-         (lambda (acc)
-           (list
-            (vulpea-note-title acc)
-            (bg-balance--format-amount
-             (or (assoc-default (vulpea-note-id acc)
-                                (bg-balance-data-balances data))
-                 0)
-             :positive-face 'warning
-             :zero-face 'success)))
-         (bg-balance-data-convives data)))
-       :row-start "- "
-       :sep "  ")
-      ""
-      (propertize "Latest transactions" 'face 'bold)
-      ""
-      (string-table
-       :data (seq-map
-              (lambda (p)
-                (list
-                 (propertize (bg-posting-date p) 'face 'shadow)
-                 (if (vulpea-note-p (bg-posting-account p))
-                     (vulpea-note-title (bg-posting-account p))
-                   (bg-posting-description p))
-                 (bg-balance--format-amount (bg-posting-amount p))
-                 "->"
-                 (bg-balance--format-amount (bg-posting-total p))))
-              (seq-reverse
-               (seq-remove
-                (lambda (p)
-                  (string-equal "charge" (bg-posting-description p)))
-                (bg-balance-data-postings data))))
-       :row-start "- "
-       :sep "  "))))
+  (let ((data (bg-balance-data-read))
+        (buffer (or (get-buffer bg-balance-buffer-name)
+                    (buffer-generate bg-balance-buffer-name 'unique))))
+    (with-current-buffer buffer
+      (result-present-mode -1)
+      (save-excursion
+        (delete-region (point-min) (point-max))
+        (insert
+         (string-join
+          (list (propertize "Balance" 'face 'bold)
+                ""
+                (string-table
+                 :data
+                 (cons
+                  (list "Total"
+                        (bg-balance--format-amount (bg-balance-data-total data)))
+                  (seq-map
+                   (lambda (acc)
+                     (list
+                      (vulpea-note-title acc)
+                      (bg-balance--format-amount
+                       (or (assoc-default (vulpea-note-id acc)
+                                          (bg-balance-data-balances data))
+                           0)
+                       :positive-face 'warning
+                       :zero-face 'success)))
+                   (bg-balance-data-convives data)))
+                 :row-start "- "
+                 :sep "  ")
+                ""
+                (propertize "Latest transactions" 'face 'bold)
+                ""
+                (string-table
+                 :data (seq-map
+                        (lambda (p)
+                          (list
+                           (propertize (bg-posting-date p) 'face 'shadow)
+                           (if (vulpea-note-p (bg-posting-account p))
+                               (vulpea-note-title (bg-posting-account p))
+                             (bg-posting-description p))
+                           (bg-balance--format-amount (bg-posting-amount p))
+                           "->"
+                           (bg-balance--format-amount (bg-posting-total p))))
+                        (seq-reverse
+                         (seq-remove
+                          (lambda (p)
+                            (string-equal "charge" (bg-posting-description p)))
+                          (bg-balance-data-postings data))))
+                 :row-start "- "
+                 :sep "  "))
+          "\n")))
+      (result-present-mode +1))
+    buffer))
 
 ;;;###autoload
 (defun bg-balance-display ()
