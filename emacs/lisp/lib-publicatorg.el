@@ -290,6 +290,7 @@ element and value its hash."
       (user-error "Could not find project named '%s'" name))
     (porg-log-s "calculating build plan")
     (let ((default-directory (porg-project-root project)))
+      (porg-log "loading cache")
       (let* ((cache-file (expand-file-name (porg-project-cache-file project)))
              (cache (porg-cache-load cache-file))
              (describe (porg-project-describe project))
@@ -415,6 +416,7 @@ element and value its hash."
 Result is a table, where key is note id and the value is `porg-item'.
 
 Throws a user error if any of the input has no matching rule."
+  (porg-log "querying notes to build")
   (let* ((describe (porg-project-describe project))
          (input (porg-project-input project))
          (input (if (functionp input) (funcall input) input))
@@ -423,7 +425,7 @@ Throws a user error if any of the input has no matching rule."
          (without-compiler nil)
          (tbl (make-hash-table :test 'equal :size size)))
 
-    (porg-log "Found %s notes to resolve." size)
+    (porg-log "found %s notes to resolve." size)
 
     (--each input
       (porg-debug "%s outputs:" (porg-describe it))
