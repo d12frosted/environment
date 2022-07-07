@@ -79,12 +79,23 @@ Transaction is recorded into `bg-ledger-file'."
 (defun bg-balance-deposit ()
   "Deposit an amount for convive."
   (interactive)
-  (let ((convive (vulpea-select-from
-                  "People"
-                  (vulpea-db-query-by-tags-some '("people"))
-                  :require-match t))
-        (amount (read-number "Amount: "))
-        (date (org-read-date nil t)))
+  (let* ((name (seq-find
+                (lambda (str)
+                  (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
+                       (not (s-suffix-p bg-currency str))))
+                (s-split
+                 "  "
+                 (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                 t)))
+         (convive (vulpea-select-from
+                   "People"
+                   (vulpea-db-query-by-tags-some '("people"))
+                   :require-match t
+                   :initial-prompt name))
+         (data (bg-balance-data-read))
+         (balance (assoc-default (vulpea-note-id convive) (bg-balance-data-balances data)))
+         (amount (read-number "Amount: " (when balance (* -1 balance))))
+         (date (org-read-date nil t)))
     (bg-record-txn
      :date date
      :comment "deposit"
@@ -97,12 +108,21 @@ Transaction is recorded into `bg-ledger-file'."
 (defun bg-balance-charge ()
   "Charge an amount from convive."
   (interactive)
-  (let ((convive (vulpea-select-from
-                  "People"
-                  (vulpea-db-query-by-tags-some '("people"))
-                  :require-match t))
-        (amount (read-number "Amount: "))
-        (date (org-read-date nil t)))
+  (let* ((name (seq-find
+                (lambda (str)
+                  (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
+                       (not (s-suffix-p bg-currency str))))
+                (s-split
+                 "  "
+                 (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                 t)))
+         (convive (vulpea-select-from
+                   "People"
+                   (vulpea-db-query-by-tags-some '("people"))
+                   :require-match t
+                   :initial-prompt name))
+         (amount (read-number "Amount: "))
+         (date (org-read-date nil t)))
     (bg-record-txn
      :date date
      :comment "charge"
