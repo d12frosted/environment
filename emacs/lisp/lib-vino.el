@@ -182,7 +182,7 @@ BUTTON should be a proper button with following properties:
 (defun vino-display-network-candidates ()
   "Display ratings for posting on various networks."
   (interactive)
-  (let* ((networks '("vivino"))
+  (let* ((networks '("vivino" "delectable"))
          (network (if (= 1 (seq-length networks))
                       (car networks)
                     (completing-read "Network: " networks)))
