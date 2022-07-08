@@ -65,6 +65,10 @@
    vino-availability-fn #'vino-availability-get
    vino-availability-add-fn #'vino-availability-add
    vino-availability-sub-fn #'vino-availability-sub
+   vino-entry-template '(:file-name "wine/cellar/${id}.org"
+                         :head "#+filetags: :barberry/public:wine:cellar:")
+   vino-rating-template '(:file-name "wine/rating/${id}.org"
+                          :head "#+filetags: :barberry/public:wine:rating:")
    vino-sources-fn #'vino-sources
    vino-rating-props
    '((1 . (("SCORE" . 3)))
