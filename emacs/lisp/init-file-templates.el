@@ -80,9 +80,9 @@ information.")
          (conf-mode . yas-minor-mode-on)
          (snippet-mode . yas-minor-mode-on))
   :init
-  (add-hook 'find-file-hook #'file-templates-check)
   (advice-add #'yas-reload-all :around #'fun-silent)
   (setq-default yas-snippet-dirs '(file-templates-dir))
+  (add-hook 'find-file-hook #'file-templates-check)
   :config
   (setq yas-prompt-functions (delq #'yas-dropdown-prompt
                                    yas-prompt-functions))
