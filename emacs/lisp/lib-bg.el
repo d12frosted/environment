@@ -34,6 +34,7 @@
 ;;; Code:
 
 (require 'vulpea)
+(require 'lib-buffer)
 
 
 
