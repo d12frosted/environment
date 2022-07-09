@@ -35,6 +35,27 @@
 
 (use-package general)
 
+(cl-defmacro general-create-definer (name &rest defaults &key wrapping
+                                          &allow-other-keys)
+  "A helper macro to create wrappers for `general-def'.
+This can be used to create key definers that will use a certain keymap, evil
+state, prefix key, etc. by default. NAME is the wrapper name and DEFAULTS are
+the default arguments. WRAPPING can also be optionally specified to use a
+different definer than `general-def'. It should not be quoted."
+  (declare (indent defun))
+  (let ((defaults (cl-loop for (key val) on defaults by 'cddr
+                           unless (eq key :wrapping)
+                           collect key
+                           and collect val))
+        (definer (or wrapping 'general-def)))
+    `(defmacro ,name (&rest args)
+      ,(let ((print-quoted t))
+        (format "A wrapper for `%s'." definer))
+      (declare (indent defun))
+      ;; can still override keywords afterwards (first keyword takes precedence)
+      `(,',definer
+        ,@args ,@',defaults))))
+
 (general-create-definer leader-def
   :states nil
   :keymaps 'override
