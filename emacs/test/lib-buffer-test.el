@@ -36,6 +36,7 @@
 ;;; Code:
 
 (require 'buttercup)
+(require 'lib-buffer)
 
 (describe "buffer-content"
   (it "returns an empty string in empty buffer"
