@@ -63,7 +63,7 @@
 
 (defvar vcs-url-known-github-users '("d12frosted"
                                      "org-roam")
-  "List of 'known' GitHub users.")
+  "List of known GitHub users.")
 
 
 
