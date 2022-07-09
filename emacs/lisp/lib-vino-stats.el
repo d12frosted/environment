@@ -173,8 +173,8 @@ Keys are ids of regions and appellations. Values are countries
 represented as `vulpea-note'.
 
 In order for region/appellation to be part of specific country,
-it mast contain a 'country' meta (see `vulpea-meta') linking to
-`vulpea-note' tagged as 'places'."
+it mast contain a country meta (see `vulpea-meta') linking to
+`vulpea-note' tagged as places."
   (let* ((places (vulpea-db-query-by-tags-every '("places")))
          (places-tbl (let ((tbl (make-hash-table
                                  :test 'equal

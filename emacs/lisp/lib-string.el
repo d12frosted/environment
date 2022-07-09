@@ -131,13 +131,13 @@ buffer."
   "Return the decimal representation of NUM as string.
 
 When MIN-LENGTH is specified, the result is padded on the left
-with PADDING, which can be either 'zero or 'soace (default).
+with PADDING, which can be either \\='zero or \\='space (default).
 
 Padding also happens when PADDING-NUM is specified, in that case
  MIN-LENGTH equals to the length of decimal representation of
  PADDING-NUM as string.
 
-This function might be considered an overkill, but it's used in
+This function might be considered an overkill, but it\\='s used in
  short-lived scripts so often that I am tired of writing this
  kind of formatting every time."
   (if (or min-length padding-num)
@@ -172,9 +172,9 @@ data.
 DATA is list of lists. Each column is aligned by padding with
 PAD-STR either on left or right depending on value of PAD-TYPE.
 
-The width of columns is controlled by WIDTH. If it's nil, each
-column takes full width. If it's a list, each element must be
-either 'full or integer enabling truncation.
+The width of columns is controlled by WIDTH. If it\\='s nil, each
+column takes full width. If it\\='s a list, each element must be
+either \\='full or integer enabling truncation.
 
 Each row begins with ROW-START and ends with ROW-END. Each value
 in row is separated by SEP."

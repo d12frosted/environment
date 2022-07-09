@@ -245,7 +245,7 @@ tasks."
 (defun vulpea-agenda-project-p ()
   "Return non-nil if the heading at point is a project.
 
-Basically, it's any item with some todo keyword and tagged as
+Basically, it\\='s any item with some todo keyword and tagged as
 PROJECT."
   (let* ((comps (org-heading-components))
          (todo (nth 2 comps))
@@ -322,7 +322,7 @@ longer than LEN.
 Usage example:
 
   (setq org-agenda-prefix-format
-        '((agenda . \" %(vulpea-agenda-category) %?-12t %12s\")))
+        \\='((agenda . \" %(vulpea-agenda-category) %?-12t %12s\")))
 
 Refer to `org-agenda-prefix-format' for more information."
   (let* ((file-name (when buffer-file-name
