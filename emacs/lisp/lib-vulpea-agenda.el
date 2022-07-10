@@ -72,7 +72,7 @@ Affects the following commands:
                       (org-roam-node-aliases node)))
          (tags (seq-map #'vulpea--title-to-tag names))
          (query (string-join tags "|")))
-    (dlet ((org-agenda-overriding-arguments (list t query)))
+    (let ((org-agenda-overriding-arguments (list t query)))
       (org-agenda nil "M"))))
 
 
