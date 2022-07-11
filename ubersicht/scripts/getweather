@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-api_key=$(cat "$HOME/Dropbox/Apps/forecast/api-key.txt")
-curl -sS "https://api.forecast.io/forecast/$api_key/$1?units=auto&exclude=minutely,hourly,alerts,flags"
