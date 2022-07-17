@@ -420,5 +420,10 @@
 
 
 
+(use-package org-cliplink
+  :defer t)
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
