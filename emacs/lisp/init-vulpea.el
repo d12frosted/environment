@@ -118,11 +118,12 @@
   (setq
    org-todo-keywords
    '((sequence "TODO(t)" "|" "DONE(d!)")
-     (sequence "WAITING(w@/!)"
-               "HOLD(h@/!)"
-               "|"
-               "CANCELLED(c@/!)"
-               "MEETING"))
+     (sequence
+      "WAITING(w@/!)"
+      "HOLD(h@/!)"
+      "|"
+      "CANCELLED(c@/!)"
+      "MEETING"))
 
    ;; use fast todo selection
    org-use-fast-todo-selection t
