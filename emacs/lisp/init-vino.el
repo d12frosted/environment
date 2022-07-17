@@ -66,11 +66,11 @@
    vino-availability-add-fn #'vino-availability-add
    vino-availability-sub-fn #'vino-availability-sub
    vino-producer-template '(:file-name "wine/producer/%<%Y%m%d%H%M%S>-${slug}.org"
-                            :head "#+filetags: :barberry/public:wine:producer:")
+                            :tags ("barberry/public"))
    vino-entry-template '(:file-name "wine/cellar/${id}.org"
-                         :head "#+filetags: :barberry/public:wine:cellar:")
+                         :tags ("barberry/public"))
    vino-rating-template '(:file-name "wine/rating/${id}.org"
-                          :head "#+filetags: :barberry/public:wine:rating:")
+                          :tags ("barberry/public"))
    vino-sources-fn #'vino-sources
    vino-rating-props
    '((1 . (("SCORE" . 3)))
