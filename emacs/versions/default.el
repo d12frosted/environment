@@ -100,7 +100,7 @@
  ("use-package" . "a7422fb8ab1baee19adb2717b5b47b9c3812a84c")
  ("vino" . "26232defe0ba50710e167854db5aaab3301056fe")
  ("visual-fill-column" . "cf3e2bc632b68d54145c79beede85d3458a337de")
- ("vulpea" . "3433fc602449ca338a4631e52843e01f8db043c4")
+ ("vulpea" . "8070a599583f0126a089f386e35df62451e51a91")
  ("with-editor" . "54d1e816ac0f3203f0065ea9e6a551b9d103dad4")
  ("ws-butler" . "572a10c11b6cb88293de48acbb59a059d36f9ba5")
  ("xref" . "a1a368105cb6abd26b465f379e10d4955f0bee3c")
