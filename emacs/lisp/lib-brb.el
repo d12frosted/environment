@@ -80,6 +80,19 @@ Position is 1-based, while index is 0-based."
 Position is 1-based, while index is 0-based."
   (brb-position-by row (-partial #'string-equal str)))
 
+(defun brb-positions-by (row pred)
+  "Find all positions in ROW satisfying PRED.
+
+Position is 1-based, while index is 0-based."
+  (when-let ((idxs (-find-indices pred row)))
+    (-map #'1+ idxs)))
+
+(defun brb-positions-of (row str)
+  "Find all positions of STR in ROW .
+
+Position is 1-based, while index is 0-based."
+  (brb-positions-by row (-partial #'string-equal str)))
+
 
 
 (cl-defun brb-format-float (v &key style prec)
@@ -122,8 +135,8 @@ TBL represents raw scores."
   (let* ((wines (-drop 2 (car tbl)))
          (people (->> tbl (-map 'car) (-remove 'string-empty-p)))
          (ratings (brb-vcleanup (brb-select-rows "rating" tbl) #'identity))
-         (favourites (-map (-rpartial #'brb-position-of "favourite") (brb-select-rows "extremum" tbl)))
-         (outcasts (-map (-rpartial #'brb-position-of "outcast") (brb-select-rows "extremum" tbl))))
+         (favourites (-map (-rpartial #'brb-positions-of "favourite") (brb-select-rows "extremum" tbl)))
+         (outcasts (-map (-rpartial #'brb-positions-of "outcast") (brb-select-rows "extremum" tbl))))
     (-concat
      (list
       (cons " " wines)
@@ -136,8 +149,8 @@ TBL represents raw scores."
                      (brb-format-float r
                        :style
                        (cond
-                        ((= (1+ ri) (or (nth i favourites) -1)) 'bold)
-                        ((= (1+ ri) (or (nth i outcasts) -1)) 'del)
+                        ((-contains-p (nth i favourites) (1+ ri)) 'bold)
+                        ((-contains-p (nth i outcasts) (1+ ri)) 'del)
                         (t 'normal))))
                    rs))))
       people))))
@@ -158,14 +171,14 @@ Otherwise only those specified in the list."
          (rmss (brb-vapply (lambda (&rest vecs) (calcFunc-rms (apply #'calcFunc-vec vecs))) ratings))
          (sdevs (brb-vapply #'calcFunc-vpvar ratings))
          (favourites (-filter #'identity
-                              (-map (-rpartial #'brb-position-of "favourite")
+                              (-map (-rpartial #'brb-positions-of "favourite")
                                     (brb-select-rows "extremum" tbl))))
          (outcasts (-filter #'identity
-                            (-map (-rpartial #'brb-position-of "outcast")
+                            (-map (-rpartial #'brb-positions-of "outcast")
                                   (brb-select-rows "extremum" tbl))))
-         (favourited (-map (lambda (i) (-count (-partial #'= i) favourites))
+         (favourited (-map (lambda (i) (-count (-rpartial #'-contains-p i) favourites))
                            (-iota wines 1)))
-         (outcasted (-map (lambda (i) (-count (-partial #'= i) outcasts))
+         (outcasted (-map (lambda (i) (-count (-rpartial #'-contains-p i) outcasts))
                           (-iota wines 1)))
 
          (qprs (-map (lambda (i)
