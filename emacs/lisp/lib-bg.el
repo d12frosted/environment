@@ -129,7 +129,8 @@ Transaction is recorded into `bg-ledger-file'."
      :comment "charge"
      :account-to "balance:assets"
      :account-from (concat "balance:" (vulpea-note-id convive))
-     :amount amount)))
+     :amount amount)
+    (bg-balance-buffer-create)))
 
 ;;;###autoload
 (defun bg-balance-spend ()
