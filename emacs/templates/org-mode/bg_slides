@@ -1,0 +1,60 @@
+# -*- mode: snippet -*-             
+#name : Barberry Garden Slides - structure
+# --
+`(bg-slides-template-title-full)`
+#+date: `(bg-slides-template-date)`
+#+author: `user-full-name`
+#+startup: beamer
+#+latex_class: beamer
+#+latex_class_options: [presentation,aspectratio=169,8pt]
+#+latex_header: \usepackage{soul}
+#+latex_header: \usepackage{mathtools}
+#+latex_header: \usepackage{emoji}
+#+latex_header: \usepackage[utf8]{inputenc}
+#+latex_header: \usemintedstyle{tango}
+#+latex_header: \setminted{mathescape=true}
+#+latex_header: \setbeamertemplate{itemize items}[circle]
+#+latex_header: \setbeamertemplate{enumerate items}[default]
+#+latex_header: \setbeamertemplate{caption}{\raggedright\insertcaption\par}
+#+latex_header: \setlength{\parskip}{\baselineskip}%
+#+latex_header: \setlength{\parindent}{0pt}%
+#+latex_header: \setbeamertemplate{navigation symbols}{}%remove navigation symbols
+#+latex_header: \newcommand{\hlyellow}[1]{\colorbox{yellow!50}{$\displaystyle#1$}}
+#+latex_header: \newcommand{\hlfancy}[2]{\sethlcolor{#1}\hl{#2}}
+#+options: H:1 toc:nil num:t
+#+exclude_tags: noexport
+
+#+begin_export latex
+\newcommand{\mathcolorbox}[2]{%
+  \begingroup
+  \setlength{\fboxsep}{2pt}%
+  \colorbox{#1}{$\displaystyle #2$}%
+  \endgroup
+}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+#+end_export
+
+* Your role
+
+- drink wine
+- enjoy the evening
+- rate each tasted wine on a scale from 1 to 5
+- optionally guess it to gain points
+- person with the highest points wins a present
+
+$0
+
+* That's all folks
+
+Thank you very much for participation! It's time to take taxi :)

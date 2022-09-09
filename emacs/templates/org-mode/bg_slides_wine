@@ -1,0 +1,26 @@
+# -*- mode: snippet -*-
+#name : Barberry Garden Slides - wine                                      
+# --
+* Wine #`(+ 1 (bg-slides-wine-cur-idx))`
+
+This slide exists only to make sure that I do not spoil the wine name. After
+all, it's a blind tasting, right?
+
+* Wine #`(+ 1 (bg-slides-wine-cur-idx))` - `(bg-slides-template-wine-name)`
+
+** Wine                                                           :B_column:
+:PROPERTIES:
+:BEAMER_env:             column
+:BEAMER_col:             0.50
+:END:
+
+`(bg-slides-template-wine-info)`
+
+** Image                                                          :B_column:
+:PROPERTIES:
+:BEAMER_env:             column
+:BEAMER_col:             0.50
+:END:
+
+#+ATTR_LATEX: :height 6.0cm
+`(bg-slides-template-wine-image)`
