@@ -123,6 +123,94 @@
     (display-buffer buffer)))
 
 ;;;###autoload
+(defun vino-balance-review ()
+  "Review available bottles."
+  (interactive)
+  (let* ((name "*vino inventory review*")
+         (buffer (buffer-generate name 'unique))
+         (confirmed (make-hash-table :test 'equal)))
+    (with-current-buffer buffer
+      (vino-balance-review-refresh buffer confirmed))
+    (switch-to-buffer buffer)))
+
+(defun vino-balance-review-refresh (buffer confirmed)
+  "Refresh review data in BUFFER.
+
+CONFIRMED is a hashtable with amount of confirmed bottles."
+  (let ((cp 0)
+        (balances (->> (inventory-balance-list vino-inventory-file)
+                       (--map (-update-at 0 #'vulpea-db-get-by-id it))
+                       (seq-sort-by
+                        (-compose #'vulpea-note-title #'car)
+                        #'string<))))
+    (with-current-buffer buffer
+      (read-only-mode -1)
+      (setf cp (point))
+      (delete-region (point-min) (point-max))
+      (seq-do
+       (lambda (kvp)
+         (let* ((c (or (gethash (vulpea-note-id (car kvp)) confirmed) 0))
+                (b (cdr kvp))
+                (vs (concat
+                     (format "%05.2f" c)
+                     "/"
+                     (format "%05.2f" b))))
+           (insert
+            (buttonize
+             "[1]"
+             (lambda (&rest _)
+               (puthash (vulpea-note-id (car kvp))
+                        (+ 1 (or (gethash (vulpea-note-id (car kvp)) confirmed) 0))
+                        confirmed)
+               (vino-balance-review-refresh buffer confirmed)))
+            " "
+            (buttonize
+             "[all]"
+             (lambda (&rest _)
+               (puthash (vulpea-note-id (car kvp))
+                        (cdr kvp)
+                        confirmed)
+               (vino-balance-review-refresh buffer confirmed)))
+            " "
+            (propertize
+             (cond
+              ((< c b) (propertize vs 'face 'error))
+              ((> c b) (propertize vs 'face 'warning))
+              (t (propertize vs 'face 'success)))
+             'font-lock-ignore t)
+            " "
+            (string-from (car kvp))
+            "\n")))
+       balances)
+      (insert
+       "\n"
+       "---"
+       "\n"
+       (buttonize
+        "[refresh]"
+        (lambda (&rest _)
+          (vino-balance-review-refresh buffer confirmed)))
+       " "
+       (buttonize
+        "[reset]"
+        (lambda (&rest _)
+          (vino-balance-review-refresh buffer (make-hash-table :test 'equal))))
+       " "
+       "total: *"
+       (format "%05.2f" (--reduce-from
+                         (+ acc (cdr it))
+                         0
+                         balances))
+       "* ("
+       (format "%i" (--reduce-from
+                     (+ acc (max 1 (cdr it)))
+                     0
+                     balances))
+       " bottles)")
+      (goto-char cp)
+      (read-only-mode +1))))
+
+;;;###autoload
 (defun vino-latest-ratings-display ()
   "Display buffer with latest ratings."
   (interactive)
