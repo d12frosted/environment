@@ -41,7 +41,7 @@
 
 (require 'org-id)
 
-(defvar vulpea-id-auto-targets '(file headings)
+(defvar vulpea-id-auto-targets nil
   "Targets for automatic ID assignment.
 
 Each element of this list can be one of the following:
