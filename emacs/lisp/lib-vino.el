@@ -452,5 +452,19 @@ Whatever that means."
                  (vulpea-note-tags note)
                  "people"))))
 
+;;;###autoload
+(defun vino-list-entries-without-image ()
+  "List vino entries without primary image."
+  (interactive)
+  (let ((buffer (buffer-generate "*wines without images*" 'unique)))
+    (with-current-buffer buffer
+      (--each
+          (->> (vulpea-db-query-by-tags-every '("wine" "cellar" "barberry/public"))
+               (--remove (vulpea-note-meta-get-list it "images"))
+               (-map #'vulpea-buttonize))
+        (insert "- " it "\n"))
+      (read-only-mode +1))
+    (switch-to-buffer buffer)))
+
 (provide 'lib-vino)
 ;;; lib-vino.el ends here
