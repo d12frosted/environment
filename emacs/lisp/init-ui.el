@@ -248,7 +248,9 @@
 
 (use-package fancy-compilation
   :straight (:type git :host nil :repo "https://codeberg.org/ideasman42/emacs-fancy-compilation.git")
-  :commands (fancy-compilation-mode))
+  :commands (fancy-compilation-mode)
+  :init
+  (setf fancy-compilation-override-colors nil))
 
 (with-eval-after-load 'compile
   (fancy-compilation-mode))
