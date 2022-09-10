@@ -183,6 +183,7 @@ experimental-features = nix-command flakes
       # system tweaks
       "raycast"
       "karabiner-elements"
+      "flameshot"
 
       # other
     ];
