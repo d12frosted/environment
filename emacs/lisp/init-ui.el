@@ -246,5 +246,14 @@
 
 
 
+(use-package fancy-compilation
+  :straight (:type git :host nil :repo "https://codeberg.org/ideasman42/emacs-fancy-compilation.git")
+  :commands (fancy-compilation-mode))
+
+(with-eval-after-load 'compile
+  (fancy-compilation-mode))
+
+
+
 (provide 'init-ui)
 ;;; init-ui.el ends here
