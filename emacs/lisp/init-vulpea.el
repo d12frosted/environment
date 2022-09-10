@@ -82,6 +82,11 @@
 
 
 
+(use-package emacsql-sqlite-builtin
+  :defer t)
+
+
+
 (use-package org
   :hook ((org-mode . visual-line-mode)
          (org-mode . adaptive-wrap-prefix-mode)
@@ -334,6 +339,7 @@
    org-roam-directory vulpea-directory
    org-roam-dailies-directory (expand-file-name
                                "journal/" org-roam-directory)
+   org-roam-database-connector 'sqlite-builtin
    org-roam-db-location (expand-file-name
                          (if vulpea-test-mode
                              "org-roam-test.db"
