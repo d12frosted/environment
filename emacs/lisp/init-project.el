@@ -82,7 +82,8 @@
   "p!" '(project-shell-command :which-key "Run cmd in project root")
   "p/" '(project-find-regexp :which-key "Grep the project")
   "pf" '(project-find-file :which-key "Find file in project")
-  "pp" '(project-switch :which-key "Switch project"))
+  "pp" '(project-switch :which-key "Switch project")
+  "pc" '(project-compile :which-key "Compile project"))
 
 (provide 'init-project)
 ;;; init-project.el ends here
