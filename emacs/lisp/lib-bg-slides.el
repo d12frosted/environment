@@ -140,13 +140,7 @@
         (name "Barberry Garden Slides - wine"))
     (setf bg-slides--wine wine)
     (goto-char (bg-slides-wine-next-pos))
-    (cl-letf (((symbol-function 'dummy-prompt)
-               (lambda (_prompt choices &optional display-fn)
-                 (or (cl-find name choices :key display-fn :test #'string=)
-                     (throw 'notfound nil)))))
-      (dlet ((yas-prompt-functions '(dummy-prompt)))
-        (catch 'notfound
-          (yas-insert-snippet t))))))
+    (file-template-insert-by-name name)))
 
 
 

@@ -89,6 +89,16 @@ information.")
   ;; Ensure file templates in `file-templates-dir' are visible
   (yas-reload-all))
 
+(defun file-template-insert-by-name (name)
+  "Insert template by NAME."
+  (cl-letf (((symbol-function 'dummy-prompt)
+             (lambda (_prompt choices &optional display-fn)
+               (or (cl-find name choices :key display-fn :test #'string=)
+                   (throw 'notfound nil)))))
+    (dlet ((yas-prompt-functions '(dummy-prompt)))
+      (catch 'notfound
+        (yas-insert-snippet t)))))
+
 (defun file-templates-check ()
   "Check the current buffer for file template expansion.
 
