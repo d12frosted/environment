@@ -231,7 +231,7 @@ RATINGS can be related to different entries."
          (prices (seq-filter #'identity prices))
          ;; we actually need values
          (prices (seq-map #'car prices))
-         (prices (apply #'calcFunc-vec prices))
+         (prices (when prices (apply #'calcFunc-vec prices)))
          (price-avg (when prices (calcFunc-vmean prices)))
          (price-min (when prices (calcFunc-vmin prices)))
          (price-max (when prices (calcFunc-vmax prices)))
@@ -250,7 +250,7 @@ RATINGS can be related to different entries."
                 ratings))
          ;; they can be nil
          (qprs (seq-filter #'identity qprs))
-         (qprs (apply #'calcFunc-vec qprs))
+         (qprs (when qprs (apply #'calcFunc-vec qprs)))
          (qpr-avg (when qprs (calcFunc-vmean qprs)))
          (qpr-rms (when qprs (calcFunc-rms qprs))))
     (make-vino-stats
@@ -312,7 +312,9 @@ are lists of ratings."
               (format "%.4f" (calc-to-number (vino-stats-rating-sdev stats)))
               (format "%.2f" (calc-to-number (vino-stats-rating-min stats)))
               (format "%.2f" (calc-to-number (vino-stats-rating-max stats)))
-              (format "%.4f" (calc-to-number (vino-stats-qpr-rms stats))))))
+              (if-let ((qpr (vino-stats-qpr-rms stats)))
+                  (format "%.4f" (calc-to-number qpr))
+                "NA"))))
     (hash-table-keys ratings-tbl))))
 
 
@@ -633,8 +635,9 @@ KEY is one of: country, colour, carbonation, vintage, grape."
              (or (vino-entry-sweetness entry) "NA")
              (vino-stats-format-price (vino-stats-price entry))
              (format "%.2f" (vino-rating-total rating))
-             (when-let ((qpr (vino-stats-rating-qpr rating entry)))
-               (format "%.4f" (calc-to-number qpr))))))
+             (if-let ((qpr (vino-stats-rating-qpr rating entry)))
+                 (format "%.4f" (calc-to-number qpr))
+               "NA"))))
         (hash-table-keys ratings-tbl))))))
 
 
@@ -736,23 +739,25 @@ COLUMNS control which columns to return. Unless specified, all data is returned.
 
 (defun vino-stats-format-price (price)
   "Format PRICE value."
-  (let ((value (cond
-                ((null price) nil)
-                ((math-numberp price) (math-float price))
-                ((listp price) (car price))))
-        (currency (cond
-                   ((math-numberp price) vino-stats-price-currency)
-                   ((listp price) (cdr price)))))
-    (when value
-      (let* ((parts (math-float-parts value t))
-             (a (car parts))
-             (b (car (math-float-parts
-                      (math-mul (nth 1 parts) 100) nil))))
-        (format "%s.%0.2i %s"
-                (let ((calc-group-char " "))
-                  (math-group-float (math-format-number a)))
-                b
-                currency)))))
+  (if price
+      (let ((value (cond
+                    ((null price) nil)
+                    ((math-numberp price) (math-float price))
+                    ((listp price) (car price))))
+            (currency (cond
+                       ((math-numberp price) vino-stats-price-currency)
+                       ((listp price) (cdr price)))))
+        (when value
+          (let* ((parts (math-float-parts value t))
+                 (a (car parts))
+                 (b (car (math-float-parts
+                          (math-mul (nth 1 parts) 100) nil))))
+            (format "%s.%0.2i %s"
+                    (let ((calc-group-char " "))
+                      (math-group-float (math-format-number a)))
+                    b
+                    currency))))
+    "NA"))
 
 
 
