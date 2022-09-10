@@ -29,17 +29,30 @@
 ;;
 ;;; Commentary:
 ;;
+;; It's a piece of atrocity that helps me. DO NOT REUSE THIS CODE!
+;;
 ;;; Code:
+
+(defvar bg-slides-dir (expand-file-name "talks-private/" path-projects-dir))
 
 
 
+(defvar bg-slides--title)
+(defvar bg-slides--subtitle)
+(defvar bg-slides--date)
+
 (defun bg-slides-template-title-full ()
   "Return an event title and (optionally) subtitle for slides template."
-  (let ((title (let (s)
-                 (while (or (not s) (string-empty-p s))
-                   (setf s (read-string "Title: ")))
-                 s))
-        (subtitle (read-string "Subtitle: ")))
+  (let ((title (or bg-slides--title
+                   (let (s)
+                     (while (or (not s) (string-empty-p s))
+                       (setf s (read-string "Title: ")))
+                     s)))
+        (subtitle (if bg-slides--title
+                      bg-slides--subtitle
+                    (read-string "Subtitle: "))))
+    (setf bg-slides--title nil)
+    (setf bg-slides--subtitle nil)
     (concat
      "#+title: " title
      (unless (string-empty-p subtitle)
@@ -47,7 +60,8 @@
 
 (defun bg-slides-template-date ()
   "Return an event date for slides template."
-  (let ((date (org-read-date nil t)))
+  (let ((date (or bg-slides--date (org-read-date nil t))))
+    (setf bg-slides--date nil)
     (format-time-string "%B %d, %Y" date)))
 
 
@@ -115,7 +129,9 @@
      "- price :: " (let ((prices (vulpea-note-meta-get-list wine "price")))
                      (if (= 1 (seq-length prices))
                          (car prices)
-                       (completing-read "Price: " prices nil t)))
+                       (completing-read
+                        (concat "Price (" (vulpea-note-title wine) "): ")
+                        prices nil t)))
      "\n"
      "- importer :: Wine Bureau")))
 
@@ -141,6 +157,46 @@
     (setf bg-slides--wine wine)
     (goto-char (bg-slides-wine-next-pos))
     (file-template-insert-by-name name)))
+
+
+
+(defun bg-slides-generate ()
+  "Generate slides file from event note."
+  (interactive)
+  (let* ((event (vulpea-select-from
+                 "Event"
+                 (--filter
+                  (= 0 (vulpea-note-level it))
+                  (vulpea-db-query-by-tags-every '("wine" "event")))))
+         (slug (vulpea-utils-with-note event
+                 (vulpea-buffer-prop-get "slug")))
+         (wines (vulpea-utils-with-note event
+                  (->> (org-element-map (org-element-parse-buffer) 'plain-list
+                         (lambda (item) item)
+                         nil t)
+                       (org-ml-get-children)
+                       (-map #'org-ml-item-get-paragraph)
+                       (-map #'car)
+                       (--map (org-ml-get-property :path it)))))
+         (dir (expand-file-name slug bg-slides-dir))
+         (slides-file (expand-file-name "slides.org" dir))
+         (slides-buffer))
+    (mkdir dir t)
+    (setf slides-buffer (find-file-noselect slides-file))
+    (setf bg-slides--title (vulpea-note-title event))
+    (setf bg-slides--subtitle (vulpea-utils-with-note event
+                                (vulpea-buffer-prop-get "subtitle")))
+    (setf bg-slides--date (org-time-string-to-time
+                           (vulpea-utils-with-note event
+                             (vulpea-buffer-prop-get "date"))))
+    (with-current-buffer slides-buffer
+      (delete-region (point-min) (point-max))
+      (file-template-insert-by-name "Barberry Garden Slides - structure")
+      (--each wines
+        (setf bg-slides--wine (vulpea-db-get-by-id it))
+        (goto-char (bg-slides-wine-next-pos))
+        (file-template-insert-by-name "Barberry Garden Slides - wine")))
+    (display-buffer slides-buffer)))
 
 
 
