@@ -52,7 +52,7 @@
 
 
 
-(defvar bg-slides--wine-h-regexp "\* Wine #\\([0-9]+\\)")
+(defvar bg-slides--wine-h-regexp "\\* Wine #\\([0-9]+\\)")
 
 (defvar-local bg-slides--wine nil)
 
