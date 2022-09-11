@@ -100,45 +100,7 @@
 (defun bg-slides-template-wine-info ()
   "Return wine name for slides template."
   (let ((wine bg-slides--wine))
-    (concat
-     "- producer :: "
-     (vulpea-utils-link-make-string (vulpea-note-meta-get wine "producer" 'note))
-     "\n"
-
-     "- name :: "
-     (org-link-make-string
-      (concat "id:" (vulpea-note-id wine))
-      (vulpea-note-meta-get wine "name"))
-     "\n"
-
-     "- vintage :: " (or (vulpea-note-meta-get wine "vintage") "NV") "\n"
-
-     "- grapes :: " (string-join
-                     (-map #'vulpea-utils-link-make-string
-                           (vulpea-note-meta-get-list wine "grapes" 'note))
-                     ", ")
-     "\n"
-
-     (if-let ((a (vulpea-note-meta-get wine "appellation" 'note)))
-         (concat "- appellation :: "
-                 (vulpea-utils-link-make-string a))
-       "")
-     (if-let ((a (vulpea-note-meta-get wine "region" 'note)))
-         (concat "- region :: "
-                 (vulpea-utils-link-make-string a))
-       "")
-     "\n"
-
-     "- alcohol :: " (vulpea-note-meta-get wine "alcohol") "\n"
-     "- sugar :: " (or (vulpea-note-meta-get wine "sugar") "N/A") "\n"
-     "- price :: " (let ((prices (vulpea-note-meta-get-list wine "price")))
-                     (if (= 1 (seq-length prices))
-                         (car prices)
-                       (completing-read
-                        (concat "Price (" (vulpea-note-title wine) "): ")
-                        prices nil t)))
-     "\n"
-     "- importer :: Wine Bureau")))
+    (bg-wine-info wine 'description 'pick-price)))
 
 (defun bg-slides-template-wine-image ()
   "Copy main image and return it as link for template."
