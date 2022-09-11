@@ -1,4 +1,4 @@
-;;; lib-bg-slides.el --- helpers for Barberry Garden slides  -*- lexical-binding: t; -*-
+;;; lib-bg-slides.el --- Utilities for Barberry Garden related presentations  -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
 ;;
@@ -29,7 +29,12 @@
 ;;
 ;;; Commentary:
 ;;
-;; It's a piece of atrocity that helps me. DO NOT REUSE THIS CODE!
+;; NB! It's a piece of atrocity that helps me. DO NOT REUSE THIS CODE!
+;;
+;; These helpers are here to ease creation of presentations for
+;; Barberry Garden events.
+;;
+;; See https://barberry.io for more information about the project.
 ;;
 ;;; Code:
 
