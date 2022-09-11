@@ -74,6 +74,19 @@ In all cases, except for interactive, only price entries with
              (cons "appellation" (vulpea-utils-link-make-string a)))
            (when-let ((a (vulpea-note-meta-get wine "region" 'note)))
              (cons "region" (vulpea-utils-link-make-string a)))
+           (cons "location"
+                 (let* ((a (or (vulpea-note-meta-get wine "appellation" 'note)
+                              (vulpea-note-meta-get wine "region" 'note)))
+                        (b a)
+                        (res nil)
+                        (go t))
+                   (while go
+                     (setq b (vulpea-note-meta-get b "parent" 'note))
+                     (unless b
+                       (setq go nil
+                             b (vulpea-note-meta-get a "country" 'note)))
+                     (setq res (cons (vulpea-utils-link-make-string b) res)))
+                   (string-join (seq-reverse res) ", ")))
            (cons "alcohol" (vulpea-note-meta-get wine "alcohol"))
            (cons "sugar" (or (vulpea-note-meta-get wine "sugar") "N/A"))
            (cons "price" (let ((prices (vulpea-note-meta-get-list wine "price")))
