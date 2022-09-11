@@ -31,6 +31,8 @@
 ;;
 ;;; Code:
 
+(require 'lib-calc)
+
 (defvar bg-currency "UAH"
   "Default currency.")
 
@@ -108,8 +110,7 @@ In all cases, except for interactive, only price entries with
                                                (calc-to-number)
                                                (floor)
                                                (number-to-string))
-                                          " UAH"))))))
-           )
+                                          " UAH")))))))
           (-filter #'identity)
           (--map (concat "- " (car it) sep (cdr it))))
      "\n")))

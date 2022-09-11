@@ -38,6 +38,8 @@
 ;;
 ;;; Code:
 
+(require 'lib-bg)
+
 
 
 (defun bg-post-insert-wine ()

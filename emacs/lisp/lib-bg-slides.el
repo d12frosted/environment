@@ -38,6 +38,10 @@
 ;;
 ;;; Code:
 
+(require 'lib-bg)
+
+
+
 (defvar bg-slides-dir (expand-file-name "talks-private/" path-projects-dir))
 
 
