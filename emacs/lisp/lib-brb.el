@@ -33,37 +33,7 @@
 
 (require 'dash)
 (require 'lib-calc)
-
-
-
-(defun brb-select-rows (name table)
-  "Select row with NAME from TABLE."
-  (-map
-   (-partial #'-drop 2)
-   (-filter
-    (-compose
-     (-partial #'string-equal name)
-     (-partial #'nth 1))
-    table)))
-
-(defun brb-trans (table)
-  "Transpose TABLE."
-  (let ((n (length (car table))))
-    (-map
-     (lambda (i)
-       (-map (-partial #'nth i) table))
-     (-iota n))))
-
-(defun brb-vapply (fn table)
-  "Apply vertical FN to columns in TABLE."
-  (-map (-compose #'calc-to-number
-                  (-applify fn)
-                  (-partial #'-map #'calc-from-number))
-        (brb-vcleanup (brb-trans table) (-partial #'-filter #'numberp))))
-
-(defun brb-vcleanup (rows fn)
-  "Evaluate vertical FN on ROWS and then cleanup empty results."
-  (-filter #'identity (-map fn rows)))
+(require 'lib-table)
 
 
 
@@ -134,9 +104,9 @@ and if V equals to result, then it's styled using STYLE."
 TBL represents raw scores."
   (let* ((wines (-drop 2 (car tbl)))
          (people (->> tbl (-map 'car) (-remove 'string-empty-p)))
-         (ratings (brb-vcleanup (brb-select-rows "rating" tbl) #'identity))
-         (favourites (-map (-rpartial #'brb-positions-of "favourite") (brb-select-rows "extremum" tbl)))
-         (outcasts (-map (-rpartial #'brb-positions-of "outcast") (brb-select-rows "extremum" tbl))))
+         (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
+         (favourites (-map (-rpartial #'brb-positions-of "favourite") (table-select-rows "extremum" tbl :column 1)))
+         (outcasts (-map (-rpartial #'brb-positions-of "outcast") (table-select-rows "extremum" tbl :column 1))))
     (-concat
      (list
       (cons " " wines)
@@ -163,19 +133,19 @@ TBL represents raw scores.
 When COLUMNS is not specified, all columns are returned.
 Otherwise only those specified in the list."
   (let* ((wines (- (length (car tbl)) 2))
-         (ratings (brb-vcleanup (brb-select-rows "rating" tbl) #'identity))
-         (real-prices (car (brb-select-rows "real price" tbl)))
+         (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
+         (real-prices (car (table-select-rows "real price" tbl :column 1)))
 
-         (totals (brb-vapply #'calcFunc-vsum ratings))
-         (amean (brb-vapply #'calcFunc-vmean ratings))
-         (rmss (brb-vapply (lambda (&rest vecs) (calcFunc-rms (apply #'calcFunc-vec vecs))) ratings))
-         (sdevs (brb-vapply #'calcFunc-vpvar ratings))
+         (totals (table-vreduce-columns #'calcFunc-vsum ratings))
+         (amean (table-vreduce-columns #'calcFunc-vmean ratings))
+         (rmss (table-vreduce-columns (lambda (&rest vecs) (calcFunc-rms (apply #'calcFunc-vec vecs))) ratings))
+         (sdevs (table-vreduce-columns #'calcFunc-vpvar ratings))
          (favourites (-filter #'identity
                               (-map (-rpartial #'brb-positions-of "favourite")
-                                    (brb-select-rows "extremum" tbl))))
+                                    (table-select-rows "extremum" tbl :column 1))))
          (outcasts (-filter #'identity
                             (-map (-rpartial #'brb-positions-of "outcast")
-                                  (brb-select-rows "extremum" tbl))))
+                                  (table-select-rows "extremum" tbl :column 1))))
          (favourited (-map (lambda (i) (-count (-rpartial #'-contains-p i) favourites))
                            (-iota wines 1)))
          (outcasted (-map (lambda (i) (-count (-rpartial #'-contains-p i) outcasts))
