@@ -53,6 +53,7 @@
 (require 'lib-string)
 (require 'lib-vulpea)
 (require 'lib-inventory)
+(require 'lib-table)
 (require 'lib-brb)
 (require 'lib-calc)
 
@@ -725,10 +726,10 @@ COLUMNS control which columns to return. Unless specified, all data is returned.
          (columns (or columns all-columns))
          (data (vino-stats-data-set-for range))
          (stats (cons all-columns (vino-stats-from-data-set-by-key data key)))
-         (stats-transposed (brb-trans stats)))
+         (stats-transposed (table-transpose stats)))
     (-concat
      (list columns 'hline)
-     (brb-trans
+     (table-transpose
       (-map
        (lambda (key)
          (cdr (--find (string-equal key (car it)) stats-transposed)))
