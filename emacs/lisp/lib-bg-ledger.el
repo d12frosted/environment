@@ -129,46 +129,56 @@ Transaction is recorded into `bg-ledger-file'."
     (bg-ledger-buffer-create)))
 
 ;;;###autoload
-(defun bg-ledger-charge ()
-  "Charge an amount from convive."
+(cl-defun bg-ledger-charge (&key convive amount date)
+  "Charge an amount from convive.
+
+CONVIVE, AMOUNT and DATE are optional arguments. Unless
+specified, user is asked to provide them interactively."
   (interactive)
-  (let* ((name (seq-find
-                (lambda (str)
-                  (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
-                       (not (s-suffix-p bg-ledger-currency str))))
-                (s-split
-                 "  "
-                 (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-                 t)))
-         (convive (vulpea-select-from
-                   "People"
-                   (vulpea-db-query-by-tags-some '("people"))
-                   :require-match t
-                   :initial-prompt name))
-         (amount (read-number "Amount: "))
-         (date (org-read-date nil t)))
+  (let* ((name (unless convive
+                 (seq-find
+                  (lambda (str)
+                    (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
+                         (not (s-suffix-p bg-ledger-currency str))))
+                  (s-split
+                   "  "
+                   (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                   t))))
+         (convive (or convive
+                      (vulpea-select-from
+                       "People"
+                       (vulpea-db-query-by-tags-some '("people"))
+                       :require-match t
+                       :initial-prompt name)))
+         (amount (or amount (read-number "Amount: ")))
+         (date (or date (org-read-date nil t))))
     (bg-ledger-record-txn
      :date date
      :comment "charge"
      :account-to "balance:assets"
      :account-from (concat "balance:" (vulpea-note-id convive))
      :amount amount)
-    (bg-ledger-buffer-create)))
+    (when (get-buffer bg-ledger-buffer-name)
+      (bg-ledger-buffer-create))))
 
 ;;;###autoload
-(defun bg-ledger-spend ()
-  "Spend an amount on event."
+(cl-defun bg-ledger-spend (&key amount date comment)
+  "Spend an amount on event.
+
+AMOUNT, DATE and COMMENT are optional arguments. Unless
+specified, user is asked to provide them interactively."
   (interactive)
-  (let ((amount (read-number "Amount: "))
-        (date (org-read-date nil t))
-        (comment (read-string "Comment: ")))
+  (let ((amount (or amount (read-number "Amount: ")))
+        (date (or date (org-read-date nil t)))
+        (comment (or comment (read-string "Comment: "))))
     (bg-ledger-record-txn
      :date date
      :comment comment
      :account-to "expenses"
      :account-from "balance:assets"
      :amount amount)
-    (bg-ledger-buffer-create)))
+    (when (get-buffer bg-ledger-buffer-name)
+      (bg-ledger-buffer-create))))
 
 
 
