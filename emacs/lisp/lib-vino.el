@@ -314,34 +314,31 @@ BUTTON should be a proper button with following properties:
                       (concat
                        "id:" (vulpea-note-id
                               (vino-rating-wine rating)))
-                      "Wine")
+                      "[ Wine ]")
                      " | "
                      (org-link-make-string
                       (concat "id:" (vulpea-note-id note))
-                      "Rating")
+                      "[ Rating ]")
                      "\n\n")
              (seq-do
               (lambda (network)
                 (let ((value (vulpea-note-meta-get note network)))
                   (when (or (null value)
                             (string-equal value "false"))
-                    (insert
-                     (string-pad
-                      (concat (capitalize network) ":")
-                      (+ 2 (seq-max (seq-map #'length networks)))))
                     (insert-text-button
-                     "post"
+                     "[ post ]"
                      'note note
                      'network network
                      'status "true"
                      'action #'vino-rating-mark-network-action)
                     (insert " / ")
                     (insert-text-button
-                     "skip"
+                     "[ skip ]"
                      'note note
                      'network network
                      'status "skip"
                      'action #'vino-rating-mark-network-action)
+                    (insert " " (capitalize network))
                     (insert "\n"))))
               networks)
              (insert "\n")
