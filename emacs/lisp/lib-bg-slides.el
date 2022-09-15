@@ -143,7 +143,9 @@
                  (vulpea-buffer-prop-get "slug")))
          (wines (vulpea-utils-with-note event
                   (->> (org-element-map (org-element-parse-buffer) 'plain-list
-                         (lambda (item) item)
+                         (lambda (it)
+                           (when (equal (org-ml-get-property :type it) 'ordered)
+                             it))
                          nil t)
                        (org-ml-get-children)
                        (-map #'org-ml-item-get-paragraph)
