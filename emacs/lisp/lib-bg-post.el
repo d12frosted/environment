@@ -42,6 +42,7 @@
 
 
 
+;;;###autoload
 (defun bg-post-insert-wine ()
   "Select a wine entry and insert a heading with its information."
   (interactive)
