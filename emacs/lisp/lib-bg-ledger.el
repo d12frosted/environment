@@ -270,17 +270,19 @@ Return generated buffer."
                  (cons
                   (list "Total"
                         (bg-ledger--format-amount (bg-ledger-data-total data)))
-                  (seq-map
-                   (lambda (acc)
-                     (list
-                      (vulpea-note-title acc)
-                      (bg-ledger--format-amount
-                       (or (assoc-default (vulpea-note-id acc)
-                                          (bg-ledger-data-balances data))
-                           0)
-                       :positive-face 'warning
-                       :zero-face 'success)))
-                   (bg-ledger-data-convives data)))
+                  (->> (bg-ledger-data-convives data)
+                       (--sort
+                        (< (or (assoc-default (vulpea-note-id it) (bg-ledger-data-balances data)) 0)
+                           (or (assoc-default (vulpea-note-id other) (bg-ledger-data-balances data)) 0)))
+                       (--map
+                        (list
+                         (vulpea-note-title it)
+                         (bg-ledger--format-amount
+                          (or (assoc-default (vulpea-note-id it)
+                                             (bg-ledger-data-balances data))
+                              0)
+                          :positive-face 'warning
+                          :zero-face 'success)))))
                  :row-start "- "
                  :sep "  ")
                 ""
