@@ -163,7 +163,7 @@
                             :type 'note))
    bg-ledger-file (expand-file-name "barberry-garden.journal"
                                     vulpea-directory)
-   bg-currency "UAH"))
+   bg-ledger-currency "UAH"))
 
 (provide 'init-vino)
 ;;; init-vino.el ends here
