@@ -337,5 +337,38 @@ Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
 
 
 
+(cl-defun bg-ledger-buy-wines-for (&optional convive amount date)
+  "Buy wines for CONVIVE.
+
+Spend AMOUNT on DATE and charge said CONVIVE.
+
+Basically a convenient shortcut for charge + spend."
+  (interactive)
+  (let* ((name (unless convive
+                 (seq-find
+                  (lambda (str)
+                    (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
+                         (not (s-suffix-p bg-ledger-currency str))))
+                  (s-split
+                   "  "
+                   (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+                   t))))
+         (convive (or convive
+                      (vulpea-select-from
+                       "People"
+                       (vulpea-db-query-by-tags-some '("people"))
+                       :require-match t
+                       :initial-prompt name)))
+         (amount (or amount (read-number "Amount: ")))
+         (date (or date (org-read-date nil t))))
+    (bg-ledger-spend :amount amount
+                     :date date
+                     :comment (concat "Wine for " (vulpea-note-title convive)))
+    (bg-ledger-charge :convive convive
+                      :amount amount
+                      :date date)))
+
+
+
 (provide 'lib-bg-ledger)
 ;;; lib-bg-ledger.el ends here
