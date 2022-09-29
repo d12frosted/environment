@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ "$(yabai -m query --spaces | jq -re '.[] | select(."is-visible").type')" == 'bsp' ]; then
+  yabai -m space --layout stack
+else
+  yabai -m space --layout bsp
+fi

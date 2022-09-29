@@ -74,22 +74,13 @@ yabai -m rule --add app="^Transmission$" space=6
 # window manipulation
 #
 
-alt - j : yabai -m query --spaces \
-  | ${jq} -re '.[] | select(."is-visible").index' \
-  | xargs -I{} yabai -m query --windows --space {} \
-  | ${jq} -sre 'add | map(select(."split-type" != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | reverse | nth(index(map(select(."has-focus"))) - 1).id' \
-  | xargs -I{} yabai -m window --focus {}
-
-alt - k : yabai -m query --spaces \
-  | ${jq} -re '.[] | select(."is-visible").index' \
-  | xargs -I{} yabai -m query --windows --space {} \
-  | ${jq} -sre 'add | map(select(."split-type" != "none")) | sort_by(.display, .frame.x, .frame.y, .id) | nth(index(map(select(."has-focus"))) - 1).id' \
-  | xargs -I{} yabai -m window --focus {}
+alt - j : yabai-window-focus prev
+alt - k : yabai-window-focus next
 
 # shif̋t + alt - j : yabai -m window --resize left:-20:0
 # shift + alt - k : yabai -m window --resize right:-20:0
 
-alt - space : yabai -m window --toggle zoom-fullscreen
+alt - space : yabai-layout-toggle
 
 ################################################################################
 #
