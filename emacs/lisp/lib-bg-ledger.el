@@ -274,6 +274,10 @@ Return generated buffer."
                        (--sort
                         (< (or (assoc-default (vulpea-note-id it) (bg-ledger-data-balances data)) 0)
                            (or (assoc-default (vulpea-note-id other) (bg-ledger-data-balances data)) 0)))
+                       (--remove (= 0
+                                    (or (assoc-default (vulpea-note-id it)
+                                                       (bg-ledger-data-balances data))
+                                        0)))
                        (--map
                         (list
                          (vulpea-note-title it)
