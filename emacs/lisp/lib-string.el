@@ -200,6 +200,8 @@ in row is separated by SEP."
                      v))
                   all
                   nil))
+         (pad-str (or pad-str " "))
+         (pad-str-props (text-properties-at 0 pad-str))
          (pad-fns (seq-map
                    (lambda (i)
                      (pcase (or (and pad-type
@@ -207,10 +209,21 @@ in row is separated by SEP."
                                      (nth i pad-type))
                                 pad-type
                                 'left)
-                       (`left #'s-pad-left)
-                       (`right #'s-pad-right)))
+                       (`left (lambda (len padding s)
+                                (let ((extra (max 0 (- len (length s)))))
+                                  (concat
+                                   (apply #'propertize
+                                          (make-string extra (string-to-char padding))
+                                          pad-str-props)
+                                   s))))
+                       (`right (lambda (len padding s)
+                                 (let ((extra (max 0 (- len (length s)))))
+                                   (concat
+                                    s
+                                    (apply #'propertize
+                                           (make-string extra (string-to-char padding))
+                                           pad-str-props)))))))
                    (-iota n)))
-         (pad-str (or pad-str " "))
          (row-start (or row-start ""))
          (row-end (or row-end ""))
          (sep (or sep " ")))
