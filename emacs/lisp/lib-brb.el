@@ -37,6 +37,22 @@
 
 
 
+(defvar brb-currency "UAH")
+
+(defun brb-price-format (amount)
+  "Format AMOUNT as price."
+  (format "%d %s" amount brb-currency))
+
+(defun brb-price-to-number (price)
+  "Convert PRICE to number.
+
+Returns nil if PRICE is of different currency than
+`brb-currency'."
+  (when (s-suffix-p brb-currency price)
+    (string-to-number price)))
+
+
+
 (defun brb-position-by (row pred)
   "Find first position in ROW satisfying PRED.
 
