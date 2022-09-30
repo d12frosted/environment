@@ -605,8 +605,8 @@ KEY is one of: country, colour, carbonation, vintage, grape."
 
       (propertize "Ratings" 'face 'bold)
       (string-table
-       :width '(full full 20 24 full 24 full full full full full full)
-       :header '("date" "country" "producer" "name" "year" "grapes" "color" "carbonation" "sweetness" "price" "rate" "QPR")
+       :width '(full full 20 20 24 full 24 full full full full full full)
+       :header '("date" "country" "appellation" "producer" "name" "year" "grapes" "color" "carbonation" "sweetness" "price" "rate" "QPR")
        :header-sep "-"
        :header-sep-start "|-"
        :header-sep-conj "-+-"
@@ -614,7 +614,7 @@ KEY is one of: country, colour, carbonation, vintage, grape."
        :row-start "| "
        :row-end " |"
        :sep " | "
-       :pad-type '(left right right right left right left left left left left left)
+       :pad-type '(left right right right right left right left left left left left left)
        :data
        (seq-map
         (lambda (id)
@@ -626,6 +626,8 @@ KEY is one of: country, colour, carbonation, vintage, grape."
                        (or (vino-entry-region entry)
                            (vino-entry-appellation entry)))
                       countries-tbl)
+             (or (vino-entry-region entry)
+                 (vino-entry-appellation entry))
              (vino-entry-producer entry)
              (vulpea-buttonize (vino-rating-wine rating)
                                (lambda (_) (vino-entry-name entry)))
@@ -650,6 +652,7 @@ KEY is one of: country, colour, carbonation, vintage, grape."
 COLUMNS control which columns to return. Unless specified, all data is returned."
   (let* ((columns (or columns '("date"
                                 "country"
+                                "appellation"
                                 "producer"
                                 "name"
                                 "vintage"
@@ -680,6 +683,10 @@ COLUMNS control which columns to return. Unless specified, all data is returned.
                       (or (vino-entry-region entry)
                           (vino-entry-appellation entry)))
                      countries-tbl))))
+           (when (-contains-p columns "appellation")
+             (list (vulpea-utils-link-make-string
+                    (or (vino-entry-region entry)
+                        (vino-entry-appellation entry)))))
            (when (-contains-p columns "producer")
              (list (vulpea-utils-link-make-string (vino-entry-producer entry))))
            (when (-contains-p columns "name")
