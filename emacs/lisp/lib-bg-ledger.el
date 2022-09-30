@@ -372,6 +372,21 @@ Basically a convenient shortcut for charge + spend."
                       :amount amount
                       :date date)))
 
+(cl-defun bg-ledger-receive-present (&optional source amount date)
+  "Receive AMOUNT as a present from SOURCE on a DATE."
+  (interactive)
+  (let* ((source (or source
+                     (vulpea-select "Source" :require-match t)))
+         (amount (or amount (read-number "Amount: ")))
+         (date (or date (org-read-date nil t))))
+    (bg-ledger-record-txn
+     :date date
+     :comment "present"
+     :account-to "balance:assets"
+     :account-from (concat "source:" (vulpea-note-id source))
+     :amount amount)
+    (bg-ledger-buffer-create)))
+
 
 
 (provide 'lib-bg-ledger)
