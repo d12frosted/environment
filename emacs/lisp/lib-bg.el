@@ -83,7 +83,8 @@ In all cases, except for interactive, only price entries with
                         (res nil)
                         (go t))
                    (while go
-                     (setq b (vulpea-note-meta-get b "parent" 'note))
+                     (setq b (or (vulpea-note-meta-get b "parent" 'note)
+                                 (vulpea-note-meta-get b "region" 'note)))
                      (unless b
                        (setq go nil
                              b (vulpea-note-meta-get a "country" 'note)))
