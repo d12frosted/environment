@@ -58,7 +58,7 @@ Returns nil if PRICE is of different currency than
 
 Position is 1-based, while index is 0-based."
   (when-let ((idx (-find-index pred row)))
-      (1+ idx)))
+    (1+ idx)))
 
 (defun brb-position-of (row str)
   "Find first position of STR in ROW .
