@@ -129,8 +129,9 @@ ORIG-FN is called with ARGS and retried
   :defer t
   :init
   (setq-default
-   request-storage-directory (expand-file-name "request"
-                                               path-cache-dir)))
+   request-storage-directory (expand-file-name "request" path-cache-dir)))
+(use-package request-deferred
+  :defer t)
 
 
 

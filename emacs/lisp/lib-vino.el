@@ -37,6 +37,8 @@
 (require 'lib-inventory)
 (require 'lib-buffer)
 (require 'vino)
+(require 'request)
+(require 'request-deferred)
 
 (defvar vino-inventory-file nil
   "Path to journal file.")
@@ -462,6 +464,108 @@ Whatever that means."
         (insert "- " it "\n"))
       (read-only-mode +1))
     (switch-to-buffer buffer)))
+
+
+
+(defun vino-grape-fetch-vivc-info (id)
+  "Fetch grape information from VIVC by ID.
+
+Return deferred object associated with grape information
+represented as association list."
+  (deferred:$
+   (request-deferred
+    "https://www.vivc.de/index.php"
+    :params `(("r" . "passport/view") ("id" . ,id))
+    :parser (lambda () (libxml-parse-html-region (point) (point-max))))
+   (deferred:nextc
+    it
+    (lambda (response)
+      (let* ((data (request-response-data response))
+             (info (->> (dom-by-tag (dom-by-id data "^w1$") 'tr)
+                        (--filter
+                         (-contains-p
+                          '("Prime name"
+                            "Color of berry skin"
+                            "Country or region of origin of the variety"
+                            "Prime name of parent 1"
+                            "Prime name of parent 2")
+                          (car (dom-strings (dom-by-tag it 'th)))))
+                        (--map
+                         (cons
+                          (s-trim (car (dom-strings (dom-by-tag it 'th))))
+                          (s-titleized-words (s-trim (car (dom-strings (dom-by-tag it 'td)))))))))
+             (synonyms (->> (dom-by-tag (dom-by-id data "^w7$") 'td)
+                            (--map (s-titleized-words (s-trim (car (dom-strings it))))))))
+        (append info `(("synonyms" . ,synonyms)
+                       ("url" . ,(concat "https://www.vivc.de/index.php?r=passport%2Fview&id=" id)))))))))
+
+(defun vino-grape-update-vivc-info ()
+  "Update information about grape from VIVC."
+  (interactive)
+  (let* ((tags '("wine" "grape"))
+         (vivc-id-prop "vivc-id")
+         (grape (when (eq major-mode 'org-mode)
+                  (let* ((id (save-excursion
+                               (goto-char (point-min))
+                               (org-id-get)))
+                         (note (vulpea-db-get-by-id id)))
+                    (when (--every-p (-contains-p (vulpea-note-tags note) it) tags)
+                      note))))
+         (grape (vulpea-select-from
+                 "Grape" (vulpea-db-query-by-tags-every tags)
+                 :require-match t
+                 :initial-prompt (when grape (vulpea-note-title grape))))
+         (vivc-id (vulpea-note-meta-get grape vivc-id-prop)))
+    (unless vivc-id
+      (when (y-or-n-p "VIVC ID is not set, would you like to search database?")
+        (browse-url
+         (concat
+          "https://www.vivc.de/index.php?"
+          "r=cultivarname%2Findex&"
+          "CultivarnameSearch%5Bcultivarnames%5D="
+          "&CultivarnameSearch%5Bcultivarnames%5D=cultivarn&"
+          "CultivarnameSearch%5Btext%5D=" (vulpea-note-title grape))))
+      (setq vivc-id (read-string "VIVC ID: "))
+      (vulpea-meta-set grape vivc-id-prop vivc-id))
+    (deferred:$
+     (vino-grape-fetch-vivc-info vivc-id)
+     (deferred:nextc
+      it
+      (lambda (info)
+        (let* ((primary-name (assoc-default "Primary name" info))
+               (color (assoc-default "Color of berry skin" info))
+               (origin (assoc-default "Country or region of origin of the variety" info))
+               (origin (or (--find (string-equal (s-downcase (vulpea-note-title it)) (s-downcase origin))
+                                   (vulpea-db-query-by-tags-every '("places")))
+                           (user-error "Could not find place '%s'" origin)))
+               (grapes (--remove
+                        (string-equal (vulpea-note-id it)
+                                      (vulpea-note-id grape))
+                        (vulpea-db-query-by-tags-every '("wine" "grape"))))
+               (parent1 (assoc-default "Prime name of parent 1" info nil "NA"))
+               (parent1 (or (--find (string-equal (s-downcase (vulpea-note-title it)) (s-downcase parent1)) grapes)
+                            (if (string-empty-p parent1) "NA" parent1)))
+               (parent2 (assoc-default "Prime name of parent 2" info nil "NA"))
+               (parent2 (or (--find (string-equal (s-downcase (vulpea-note-title it)) (s-downcase parent2)) grapes)
+                            (if (string-empty-p parent2) "NA" parent2)))
+               (synonyms (assoc-default "synonyms" info))
+               (url (assoc-default "url" info))
+               (resources (vulpea-note-meta-get-list grape "resources")))
+          (unless (--any-p (s-contains-p url it) resources)
+            (vulpea-meta-set grape "resources" (cons (format "[[%s][vivc.de]]" url) resources)))
+          (vulpea-meta-set grape "origin" origin 'append)
+          (vulpea-meta-set grape "parent 1" parent1 'append)
+          (vulpea-meta-set grape "parent 2" parent2 'append)
+          (vulpea-meta-set grape "colour of skin" (s-downcase color) 'append)
+          (--each synonyms
+            (when-let ((other (--filter (-intersection (cons (vulpea-note-title it)
+                                                             (vulpea-note-aliases it))
+                                                       (cons primary-name
+                                                             synonyms))
+                                        grapes)))
+              (--each other
+                (message "- %s" (vulpea-note-title it)))
+              (user-error "Found duplicate, see messages buffer for more information")))))))))
 
 (provide 'lib-vino)
 ;;; lib-vino.el ends here
