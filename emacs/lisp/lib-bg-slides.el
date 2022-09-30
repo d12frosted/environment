@@ -39,6 +39,7 @@
 ;;; Code:
 
 (require 'lib-bg)
+(require 'lib-brb-event)
 
 
 
@@ -134,23 +135,10 @@
 (defun bg-slides-generate ()
   "Generate slides file from event note."
   (interactive)
-  (let* ((event (vulpea-select-from
-                 "Event"
-                 (--filter
-                  (= 0 (vulpea-note-level it))
-                  (vulpea-db-query-by-tags-every '("wine" "event")))))
+  (let* ((event (brb-event-select))
          (slug (vulpea-utils-with-note event
                  (vulpea-buffer-prop-get "slug")))
-         (wines (vulpea-utils-with-note event
-                  (->> (org-element-map (org-element-parse-buffer) 'plain-list
-                         (lambda (it)
-                           (when (equal (org-ml-get-property :type it) 'ordered)
-                             it))
-                         nil t)
-                       (org-ml-get-children)
-                       (-map #'org-ml-item-get-paragraph)
-                       (-map #'car)
-                       (--map (org-ml-get-property :path it)))))
+         (wines (brb-event-wines event))
          (dir (expand-file-name slug bg-slides-dir))
          (slides-file (expand-file-name "slides.org" dir))
          (slides-buffer))
