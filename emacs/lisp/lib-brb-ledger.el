@@ -320,14 +320,14 @@ Return generated buffer."
     (switch-to-buffer buffer)))
 
 (cl-defun brb-ledger--format-amount (amount
-                                    &key
-                                    positive-face
-                                    zero-face
-                                    negative-face)
+                                     &key
+                                     positive-face
+                                     zero-face
+                                     negative-face)
   "Format balance represented as AMOUNT.
 
 Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
-  (let* ((value (concat (number-to-string amount) " " brb-currency))
+  (let* ((value (brb-price-format amount))
          (face (cond
                 ((> amount 0)
                  (or positive-face 'success))
