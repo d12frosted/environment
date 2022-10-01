@@ -350,7 +350,11 @@ Result is a number in `brb-currency'."
                       brb-ledger-file
                       id
                       (if end-date
-                          (concat " -e" end-date)
+                          (concat
+                           " -e"
+                           (if (stringp end-date)
+                               end-date
+                             (format-time-string "%Y-%m-%d" end-date)))
                         "")))
          (res (s-lines (s-trim (shell-command-to-string cmd)))))
     (string-to-number (-last-item res))))
