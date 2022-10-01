@@ -43,6 +43,10 @@
   :general
   (leader-def
     "v" '(nil :which-key "vino...")
+    "vl" '(nil :which-key "ledger...")
+    "vlo" '(brb-ledger-display :which "display")
+    "vld" '(brb-ledger-display :which "deposit")
+    "vls" '(brb-ledger-display :which "spend")
     "vv" '(vino-entry-find-file :which-key "find vino")
     "vf" '(nil :which-key "find...")
     "vfa" '(vino-entry-find-file-available
