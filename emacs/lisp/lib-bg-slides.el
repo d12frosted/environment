@@ -38,7 +38,7 @@
 ;;
 ;;; Code:
 
-(require 'lib-bg)
+(require 'lib-brb)
 (require 'lib-brb-event)
 
 
@@ -105,7 +105,7 @@
 (defun bg-slides-template-wine-info ()
   "Return wine name for slides template."
   (let ((wine bg-slides--wine))
-    (bg-wine-info wine 'description 'pick-price)))
+    (brb-wine-info wine 'description 'pick-price)))
 
 (defun bg-slides-template-wine-image ()
   "Copy main image and return it as link for template."

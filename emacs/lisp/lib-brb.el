@@ -53,6 +53,88 @@ Returns nil if PRICE is of different currency than
 
 
 
+(defun brb-wine-info (wine list-mode &optional price-mode)
+  "Return info about WINE note.
+
+Used for slides and blog posts.
+
+LIST-MODE is either description or regular.
+
+When WINE entry has multiple price records, only one price is
+returned, but the value depends on PRICE-MODE:
+
+- max-price returns the highest;
+- min-price returns the smallest;
+- avg-price returns the average;
+- pick-price interactively asks user to select.
+
+In all cases, except for interactive, only price entries with
+`brb-currency' are taken into consideration."
+  (let ((sep (pcase list-mode
+               (`description " :: ")
+               (_ ": "))))
+    (string-join
+     (->> (list
+           (cons "producer"
+                 (vulpea-utils-link-make-string
+                  (vulpea-note-meta-get wine "producer" 'note)))
+           (cons "name"
+                 (org-link-make-string
+                  (concat "id:" (vulpea-note-id wine))
+                  (vulpea-note-meta-get wine "name")))
+           (cons "vintage"
+                 (or (vulpea-note-meta-get wine "vintage") "NV"))
+           (cons "grapes"
+                 (string-join
+                  (-map #'vulpea-utils-link-make-string
+                        (vulpea-note-meta-get-list wine "grapes" 'note))
+                  ", "))
+           (when-let ((a (vulpea-note-meta-get wine "appellation" 'note)))
+             (cons "appellation" (vulpea-utils-link-make-string a)))
+           (when-let ((a (vulpea-note-meta-get wine "region" 'note)))
+             (cons "region" (vulpea-utils-link-make-string a)))
+           (cons "location"
+                 (let* ((a (or (vulpea-note-meta-get wine "appellation" 'note)
+                               (vulpea-note-meta-get wine "region" 'note)))
+                        (b a)
+                        (res nil)
+                        (go t))
+                   (while go
+                     (setq b (or (vulpea-note-meta-get b "parent" 'note)
+                                 (vulpea-note-meta-get b "region" 'note)))
+                     (unless b
+                       (setq go nil
+                             b (vulpea-note-meta-get a "country" 'note)))
+                     (setq res (cons (vulpea-utils-link-make-string b) res)))
+                   (string-join (seq-reverse res) ", ")))
+           (cons "alcohol" (vulpea-note-meta-get wine "alcohol"))
+           (cons "sugar" (or (vulpea-note-meta-get wine "sugar") "N/A"))
+           (cons "price" (let ((prices (vulpea-note-meta-get-list wine "price")))
+                           (if (= 1 (seq-length prices))
+                               (car prices)
+                             (pcase price-mode
+                               (`pick-price (completing-read
+                                             (concat "Price (" (vulpea-note-title wine) "): ")
+                                             prices nil t))
+                               (_ (concat (->> prices
+                                               (--filter (s-suffix-p brb-currency it))
+                                               (-map #'string-to-number)
+                                               (apply #'calcFunc-vec)
+                                               (funcall
+                                                (pcase price-mode
+                                                  (`max-price #'calcFunc-vmax)
+                                                  (`min-price #'calcFunc-vmin)
+                                                  (`avg-price #'calcFunc-vmean)))
+                                               (calc-to-number)
+                                               (floor)
+                                               (number-to-string))
+                                          " UAH")))))))
+          (-filter #'identity)
+          (--map (concat "- " (car it) sep (cdr it))))
+     "\n")))
+
+
+
 (defun brb-position-by (row pred)
   "Find first position in ROW satisfying PRED.
 

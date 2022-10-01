@@ -1,4 +1,4 @@
-;;; lib-bg-ledger.el --- Barberry Garden Ledger -*- lexical-binding: t; -*-
+;;; lib-brb-ledger.el --- Barberry Garden Ledger -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
 ;;
@@ -36,17 +36,17 @@
 ;; A set of helpers to maintain Barberry Garden ledger. There are 4
 ;; interesting interactive functions.
 ;;
-;; - `bg-ledger-display' - display ledger. Includes total balance,
+;; - `brb-ledger-display' - display ledger. Includes total balance,
 ;;   balance for each participant and list of transactions. Many other
 ;;   interactive functions work in a DWIM fashion when used in this
 ;;   buffer.
 ;;
-;; - `bg-ledger-spend' - spend some amount. Modifies total balance.
+;; - `brb-ledger-spend' - spend some amount. Modifies total balance.
 ;;
-;; - `bg-ledger-charge' - charge a person for some amount. Modifies
+;; - `brb-ledger-charge' - charge a person for some amount. Modifies
 ;;   balance of specific participant (subtract). Useful to track who paid what.
 ;;
-;; - `bg-ledger-deposit' - deposit some amount for a person. Modifies
+;; - `brb-ledger-deposit' - deposit some amount for a person. Modifies
 ;;   balance of specific participant AND total balance.
 ;;
 ;; P.S. Person, participant and convive are used as synonyms in this
@@ -61,18 +61,18 @@
 
 
 
-(defvar bg-ledger-file nil
+(defvar brb-ledger-file nil
   "Path to Barberry Garden ledger file.")
 
-(defvar bg-ledger-currency nil
+(defvar brb-ledger-currency nil
   "Currency used in Barberry Garden.")
 
-(defvar bg-ledger-buffer-name "*Barberry Garden Balance*"
+(defvar brb-ledger-buffer-name "*Barberry Garden Balance*"
   "Name of balance buffer.")
 
 
 
-(cl-defun bg-ledger-record-txn (&key date comment account-to account-from amount)
+(cl-defun brb-ledger-record-txn (&key date comment account-to account-from amount)
   "Record transaction.
 
 DATE (can be nil) is a time object as returned by `current-time'.
@@ -83,9 +83,9 @@ ACCOUNT-TO is account that receives AMOUNT.
 
 ACCOUNT-FROM is account that spends AMOUNT.
 
-AMOUNT is number in `bg-ledger-currency'.
+AMOUNT is number in `brb-ledger-currency'.
 
-Transaction is recorded into `bg-ledger-file'."
+Transaction is recorded into `brb-ledger-file'."
   (shell-command-to-string
    (format
     "echo '\n%s%s\n    %s  %s %s\n    %s' >> '%s'"
@@ -95,18 +95,18 @@ Transaction is recorded into `bg-ledger-file'."
       "")
     account-to
     amount
-    bg-ledger-currency
+    brb-ledger-currency
     account-from
-    bg-ledger-file)))
+    brb-ledger-file)))
 
 ;;;###autoload
-(defun bg-ledger-deposit ()
+(defun brb-ledger-deposit ()
   "Deposit an amount for convive."
   (interactive)
   (let* ((name (seq-find
                 (lambda (str)
                   (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
-                       (not (s-suffix-p bg-ledger-currency str))))
+                       (not (s-suffix-p brb-ledger-currency str))))
                 (s-split
                  "  "
                  (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
@@ -116,20 +116,20 @@ Transaction is recorded into `bg-ledger-file'."
                    (vulpea-db-query-by-tags-some '("people"))
                    :require-match t
                    :initial-prompt name))
-         (data (bg-ledger-data-read))
-         (balance (assoc-default (vulpea-note-id convive) (bg-ledger-data-balances data)))
+         (data (brb-ledger-data-read))
+         (balance (assoc-default (vulpea-note-id convive) (brb-ledger-data-balances data)))
          (amount (read-number "Amount: " (when balance (* -1 balance))))
          (date (org-read-date nil t)))
-    (bg-ledger-record-txn
+    (brb-ledger-record-txn
      :date date
      :comment "deposit"
      :account-to (concat "balance:" (vulpea-note-id convive))
      :account-from (concat "convive:" (vulpea-note-id convive))
      :amount amount)
-    (bg-ledger-buffer-create)))
+    (brb-ledger-buffer-create)))
 
 ;;;###autoload
-(cl-defun bg-ledger-charge (&key convive amount date)
+(cl-defun brb-ledger-charge (&key convive amount date)
   "Charge an amount from convive.
 
 CONVIVE, AMOUNT and DATE are optional arguments. Unless
@@ -139,7 +139,7 @@ specified, user is asked to provide them interactively."
                  (seq-find
                   (lambda (str)
                     (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
-                         (not (s-suffix-p bg-ledger-currency str))))
+                         (not (s-suffix-p brb-ledger-currency str))))
                   (s-split
                    "  "
                    (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
@@ -152,17 +152,17 @@ specified, user is asked to provide them interactively."
                        :initial-prompt name)))
          (amount (or amount (read-number "Amount: ")))
          (date (or date (org-read-date nil t))))
-    (bg-ledger-record-txn
+    (brb-ledger-record-txn
      :date date
      :comment "charge"
      :account-to "balance:assets"
      :account-from (concat "balance:" (vulpea-note-id convive))
      :amount amount)
-    (when (get-buffer bg-ledger-buffer-name)
-      (bg-ledger-buffer-create))))
+    (when (get-buffer brb-ledger-buffer-name)
+      (brb-ledger-buffer-create))))
 
 ;;;###autoload
-(cl-defun bg-ledger-spend (&key amount date comment)
+(cl-defun brb-ledger-spend (&key amount date comment)
   "Spend an amount on event.
 
 AMOUNT, DATE and COMMENT are optional arguments. Unless
@@ -171,36 +171,36 @@ specified, user is asked to provide them interactively."
   (let ((amount (or amount (read-number "Amount: ")))
         (date (or date (org-read-date nil t)))
         (comment (or comment (read-string "Comment: "))))
-    (bg-ledger-record-txn
+    (brb-ledger-record-txn
      :date date
      :comment comment
      :account-to "expenses"
      :account-from "balance:assets"
      :amount amount)
-    (when (get-buffer bg-ledger-buffer-name)
-      (bg-ledger-buffer-create))))
+    (when (get-buffer brb-ledger-buffer-name)
+      (brb-ledger-buffer-create))))
 
 
 
-(cl-defstruct bg-ledger-data
+(cl-defstruct brb-ledger-data
   total
   convives
   balances
   postings)
 
-(cl-defstruct bg-ledger-posting
+(cl-defstruct brb-ledger-posting
   date
   description
   account
   amount
   total)
 
-(defun bg-ledger-data-read ()
-  "Read balance data from `bg-ledger-file'."
+(defun brb-ledger-data-read ()
+  "Read balance data from `brb-ledger-file'."
   (let* ((prefix "balance:")
          (ignored '("assets"))
 
-         (cmd-bal (format "hledger -f '%s' balance '%s'" bg-ledger-file prefix))
+         (cmd-bal (format "hledger -f '%s' balance '%s'" brb-ledger-file prefix))
          (res-bal (split-string (shell-command-to-string cmd-bal) "\n" t " +"))
          (balances (seq-remove
                     (lambda (kvp)
@@ -214,7 +214,7 @@ specified, user is asked to provide them interactively."
                      (-drop-last 2 res-bal))))
          (total (string-to-number (-last-item res-bal)))
 
-         (cmd-accs (format "hledger -f '%s' accounts '%s'" bg-ledger-file prefix))
+         (cmd-accs (format "hledger -f '%s' accounts '%s'" brb-ledger-file prefix))
          (res-accs (shell-command-to-string cmd-accs))
          (convives (emacsql-with-transaction (org-roam-db)
                      (seq-map
@@ -228,7 +228,7 @@ specified, user is asked to provide them interactively."
                         (split-string res-accs "\n" t))))))
 
          (cmd-register (format "hledger -f '%s' register -O csv -H '%s'"
-                               bg-ledger-file prefix))
+                               brb-ledger-file prefix))
          (res-register (shell-command-to-string cmd-register))
          (postings (seq-map
                     (lambda (line)
@@ -237,26 +237,26 @@ specified, user is asked to provide them interactively."
                              (account (string-remove-prefix prefix (nth 4 parts)))
                              (account (or (vulpea-db-get-by-id account)
                                           account)))
-                        (make-bg-ledger-posting
+                        (make-brb-ledger-posting
                          :date (nth 1 parts)
                          :description (nth 3 parts)
                          :account account
                          :amount (string-to-number (nth 5 parts))
                          :total (string-to-number (nth 6 parts)))))
                     (cdr (split-string res-register "\n" t)))))
-    (make-bg-ledger-data
+    (make-brb-ledger-data
      :total total
      :convives convives
      :balances balances
      :postings postings)))
 
-(defun bg-ledger-buffer-create ()
+(defun brb-ledger-buffer-create ()
   "Create ledger BUFFER and fill it with relevant information.
 
 Return generated buffer."
-  (let ((data (bg-ledger-data-read))
-        (buffer (or (get-buffer bg-ledger-buffer-name)
-                    (buffer-generate bg-ledger-buffer-name 'unique))))
+  (let ((data (brb-ledger-data-read))
+        (buffer (or (get-buffer brb-ledger-buffer-name)
+                    (buffer-generate brb-ledger-buffer-name 'unique))))
     (with-current-buffer buffer
       (result-present-mode -1)
       (save-excursion
@@ -269,21 +269,21 @@ Return generated buffer."
                  :data
                  (cons
                   (list "Total"
-                        (bg-ledger--format-amount (bg-ledger-data-total data)))
-                  (->> (bg-ledger-data-convives data)
+                        (brb-ledger--format-amount (brb-ledger-data-total data)))
+                  (->> (brb-ledger-data-convives data)
                        (--sort
-                        (< (or (assoc-default (vulpea-note-id it) (bg-ledger-data-balances data)) 0)
-                           (or (assoc-default (vulpea-note-id other) (bg-ledger-data-balances data)) 0)))
+                        (< (or (assoc-default (vulpea-note-id it) (brb-ledger-data-balances data)) 0)
+                           (or (assoc-default (vulpea-note-id other) (brb-ledger-data-balances data)) 0)))
                        (--remove (= 0
                                     (or (assoc-default (vulpea-note-id it)
-                                                       (bg-ledger-data-balances data))
+                                                       (brb-ledger-data-balances data))
                                         0)))
                        (--map
                         (list
                          (vulpea-note-title it)
-                         (bg-ledger--format-amount
+                         (brb-ledger--format-amount
                           (or (assoc-default (vulpea-note-id it)
-                                             (bg-ledger-data-balances data))
+                                             (brb-ledger-data-balances data))
                               0)
                           :positive-face 'warning
                           :zero-face 'success)))))
@@ -296,18 +296,18 @@ Return generated buffer."
                  :data (seq-map
                         (lambda (p)
                           (list
-                           (propertize (bg-ledger-posting-date p) 'face 'shadow)
-                           (if (vulpea-note-p (bg-ledger-posting-account p))
-                               (vulpea-note-title (bg-ledger-posting-account p))
-                             (bg-ledger-posting-description p))
-                           (bg-ledger--format-amount (bg-ledger-posting-amount p))
+                           (propertize (brb-ledger-posting-date p) 'face 'shadow)
+                           (if (vulpea-note-p (brb-ledger-posting-account p))
+                               (vulpea-note-title (brb-ledger-posting-account p))
+                             (brb-ledger-posting-description p))
+                           (brb-ledger--format-amount (brb-ledger-posting-amount p))
                            "->"
-                           (bg-ledger--format-amount (bg-ledger-posting-total p))))
+                           (brb-ledger--format-amount (brb-ledger-posting-total p))))
                         (seq-reverse
                          (seq-remove
                           (lambda (p)
-                            (string-equal "charge" (bg-ledger-posting-description p)))
-                          (bg-ledger-data-postings data))))
+                            (string-equal "charge" (brb-ledger-posting-description p)))
+                          (brb-ledger-data-postings data))))
                  :row-start "- "
                  :sep "  "))
           "\n")))
@@ -315,13 +315,13 @@ Return generated buffer."
     buffer))
 
 ;;;###autoload
-(defun bg-ledger-display ()
+(defun brb-ledger-display ()
   "Display Barberry Garden ledger."
   (interactive)
-  (let ((buffer (bg-ledger-buffer-create)))
+  (let ((buffer (brb-ledger-buffer-create)))
     (switch-to-buffer buffer)))
 
-(cl-defun bg-ledger--format-amount (amount
+(cl-defun brb-ledger--format-amount (amount
                                     &key
                                     positive-face
                                     zero-face
@@ -329,7 +329,7 @@ Return generated buffer."
   "Format balance represented as AMOUNT.
 
 Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
-  (let* ((value (concat (number-to-string amount) " " bg-ledger-currency))
+  (let* ((value (concat (number-to-string amount) " " brb-ledger-currency))
          (face (cond
                 ((> amount 0)
                  (or positive-face 'success))
@@ -341,7 +341,7 @@ Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
 
 
 
-(cl-defun bg-ledger-buy-wines-for (&optional convive amount date)
+(cl-defun brb-ledger-buy-wines-for (&optional convive amount date)
   "Buy wines for CONVIVE.
 
 Spend AMOUNT on DATE and charge said CONVIVE.
@@ -352,7 +352,7 @@ Basically a convenient shortcut for charge + spend."
                  (seq-find
                   (lambda (str)
                     (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
-                         (not (s-suffix-p bg-ledger-currency str))))
+                         (not (s-suffix-p brb-ledger-currency str))))
                   (s-split
                    "  "
                    (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
@@ -365,29 +365,29 @@ Basically a convenient shortcut for charge + spend."
                        :initial-prompt name)))
          (amount (or amount (read-number "Amount: ")))
          (date (or date (org-read-date nil t))))
-    (bg-ledger-spend :amount amount
+    (brb-ledger-spend :amount amount
                      :date date
                      :comment (concat "Wine for " (vulpea-note-title convive)))
-    (bg-ledger-charge :convive convive
+    (brb-ledger-charge :convive convive
                       :amount amount
                       :date date)))
 
-(cl-defun bg-ledger-receive-present (&optional source amount date)
+(cl-defun brb-ledger-receive-present (&optional source amount date)
   "Receive AMOUNT as a present from SOURCE on a DATE."
   (interactive)
   (let* ((source (or source
                      (vulpea-select "Source" :require-match t)))
          (amount (or amount (read-number "Amount: ")))
          (date (or date (org-read-date nil t))))
-    (bg-ledger-record-txn
+    (brb-ledger-record-txn
      :date date
      :comment "present"
      :account-to "balance:assets"
      :account-from (concat "source:" (vulpea-note-id source))
      :amount amount)
-    (bg-ledger-buffer-create)))
+    (brb-ledger-buffer-create)))
 
 
 
-(provide 'lib-bg-ledger)
-;;; lib-bg-ledger.el ends here
+(provide 'lib-brb-ledger)
+;;; lib-brb-ledger.el ends here

@@ -38,7 +38,7 @@
 ;;
 ;;; Code:
 
-(require 'lib-bg)
+(require 'lib-brb)
 
 
 
@@ -68,7 +68,7 @@
 
     ;; info
     (insert
-     (bg-wine-info wine 'regular 'pick-price))))
+     (brb-wine-info wine 'regular 'pick-price))))
 
 
 
