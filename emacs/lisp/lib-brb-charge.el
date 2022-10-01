@@ -105,6 +105,7 @@ is a property list (:amount :participants :price)."
 
 
 
+;;;###autoload
 (defun brb-charge ()
   "Start a flow to charge people for event participation."
   (interactive)

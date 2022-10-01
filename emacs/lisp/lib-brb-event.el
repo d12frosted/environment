@@ -32,7 +32,9 @@
 ;;; Code:
 
 (require 'org-ml)
+(require 'vulpea)
 
+;;;###autoload
 (defun brb-event-select ()
   "Interactively select an event note."
   (let* ((tags '("wine" "event"))
@@ -50,6 +52,7 @@
      :require-match t
      :initial-prompt (when event (vulpea-note-title event)))))
 
+;;;###autoload
 (defun brb-event-wines (event)
   "Return list of wines from EVENT."
   (vulpea-utils-with-note event
@@ -70,6 +73,7 @@
                (vulpea-db-query-by-ids)
                (--remove (vulpea-note-primary-title it))))))))
 
+;;;###autoload
 (defun brb-event-participants (event)
   "Return list of participants from EVENT."
   (vulpea-utils-with-note event
