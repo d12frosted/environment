@@ -341,6 +341,24 @@ Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
 
 
 
+(cl-defun brb-ledger-balance-of (convive &optional end-date)
+  "Return balance of a given CONVIVE.
+
+Optionally return the balance before END-DATE (non-inclusive).
+
+Result is a number in `brb-ledger-currency'."
+  (let* ((id (if (vulpea-note-p convive) (vulpea-note-id convive) convive))
+         (cmd (format "hledger -f %s balance balance:%s%s"
+                      brb-ledger-file
+                      id
+                      (if end-date
+                          (concat " -e" end-date)
+                        "")))
+         (res (s-lines (s-trim (shell-command-to-string cmd)))))
+    (string-to-number (-last-item res))))
+
+
+
 (cl-defun brb-ledger-buy-wines-for (&optional convive amount date)
   "Buy wines for CONVIVE.
 
@@ -366,11 +384,11 @@ Basically a convenient shortcut for charge + spend."
          (amount (or amount (read-number "Amount: ")))
          (date (or date (org-read-date nil t))))
     (brb-ledger-spend :amount amount
-                     :date date
-                     :comment (concat "Wine for " (vulpea-note-title convive)))
+                      :date date
+                      :comment (concat "Wine for " (vulpea-note-title convive)))
     (brb-ledger-charge :convive convive
-                      :amount amount
-                      :date date)))
+                       :amount amount
+                       :date date)))
 
 (cl-defun brb-ledger-receive-present (&optional source amount date)
   "Receive AMOUNT as a present from SOURCE on a DATE."
