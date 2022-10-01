@@ -123,6 +123,10 @@ is a property list (:amount :participants :price)."
 (defun brb-charge--buffer-populate (buffer event data)
   "Populate BUFFER with EVENT DATA."
   (let* ((wines (brb-event-wines event))
+         (date (vulpea-utils-with-note event
+                 (vulpea-buffer-prop-get "date")))
+         (date-next (time-add (date-to-time date)
+                              (* 60 60 24)))
          (participants (brb-event-participants event))
          (participants-count (- (seq-length participants) 1))
          (wine-prices (--map
@@ -271,10 +275,11 @@ is a property list (:amount :participants :price)."
                                                 (vulpea-note-id participant))
                                   0
                                 event-price))
+                 (balance (brb-ledger-balance-of participant date-next))
                  (total (--reduce-from
                          (+ acc (* (brb-charge-item-amount it)
                                    (brb-charge-item-price it)))
-                         event-price
+                         (- event-price balance)
                          (hash-table-values personal))))
             (concat
              (propertize (vulpea-buttonize participant) 'face 'org-level-2)
@@ -284,6 +289,10 @@ is a property list (:amount :participants :price)."
              (buttonize "[del]" #'brb-charge--delete-personal-item (vulpea-note-id participant))
              "\n\n"
              "- Event: " (brb-price-format event-price) "\n"
+             (if (> balance 0)
+                 (concat
+                  "- Prepaid: " (brb-price-format (- balance)) "\n")
+               "")
              (mapconcat
               (lambda (it)
                 (let ((item (gethash it personal)))
