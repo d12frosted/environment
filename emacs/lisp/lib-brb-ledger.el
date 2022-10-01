@@ -58,14 +58,12 @@
 
 (require 'vulpea)
 (require 'lib-buffer)
+(require 'lib-brb)
 
 
 
 (defvar brb-ledger-file nil
   "Path to Barberry Garden ledger file.")
-
-(defvar brb-ledger-currency nil
-  "Currency used in Barberry Garden.")
 
 (defvar brb-ledger-buffer-name "*Barberry Garden Balance*"
   "Name of balance buffer.")
@@ -83,7 +81,7 @@ ACCOUNT-TO is account that receives AMOUNT.
 
 ACCOUNT-FROM is account that spends AMOUNT.
 
-AMOUNT is number in `brb-ledger-currency'.
+AMOUNT is number in `brb-currency'.
 
 Transaction is recorded into `brb-ledger-file'."
   (shell-command-to-string
@@ -95,7 +93,7 @@ Transaction is recorded into `brb-ledger-file'."
       "")
     account-to
     amount
-    brb-ledger-currency
+    brb-currency
     account-from
     brb-ledger-file)))
 
@@ -106,7 +104,7 @@ Transaction is recorded into `brb-ledger-file'."
   (let* ((name (seq-find
                 (lambda (str)
                   (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
-                       (not (s-suffix-p brb-ledger-currency str))))
+                       (not (s-suffix-p brb-currency str))))
                 (s-split
                  "  "
                  (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
@@ -139,7 +137,7 @@ specified, user is asked to provide them interactively."
                  (seq-find
                   (lambda (str)
                     (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
-                         (not (s-suffix-p brb-ledger-currency str))))
+                         (not (s-suffix-p brb-currency str))))
                   (s-split
                    "  "
                    (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
@@ -329,7 +327,7 @@ Return generated buffer."
   "Format balance represented as AMOUNT.
 
 Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
-  (let* ((value (concat (number-to-string amount) " " brb-ledger-currency))
+  (let* ((value (concat (number-to-string amount) " " brb-currency))
          (face (cond
                 ((> amount 0)
                  (or positive-face 'success))
@@ -346,7 +344,7 @@ Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
 
 Optionally return the balance before END-DATE (non-inclusive).
 
-Result is a number in `brb-ledger-currency'."
+Result is a number in `brb-currency'."
   (let* ((id (if (vulpea-note-p convive) (vulpea-note-id convive) convive))
          (cmd (format "hledger -f %s balance balance:%s%s"
                       brb-ledger-file
@@ -370,7 +368,7 @@ Basically a convenient shortcut for charge + spend."
                  (seq-find
                   (lambda (str)
                     (and (not (s-matches-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" str))
-                         (not (s-suffix-p brb-ledger-currency str))))
+                         (not (s-suffix-p brb-currency str))))
                   (s-split
                    "  "
                    (s-chop-prefix "- " (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
