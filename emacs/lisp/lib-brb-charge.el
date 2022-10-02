@@ -121,28 +121,102 @@ is a property list (:amount :participants :price)."
 
 
 
+(defun brb-charge-event-cost-wines (event data)
+  "Calculate wine costs of the EVENT based on DATA."
+  (let* ((wines (brb-event-wines event))
+         (wine-prices (--map
+                       (gethash (vulpea-note-id it) (brb-charge-data-wines data))
+                       wines)))
+    (--reduce-from (+ acc (or it 0)) 0 wine-prices)))
+
+(defun brb-charge-event-cost-shared (data)
+  "Calculate shared costs based on DATA."
+  (--reduce-from
+   (+ acc (* (brb-charge-item-amount it) (brb-charge-item-price it)))
+   0
+   (hash-table-values (brb-charge-data-shared-items data))))
+
+(defun brb-charge-event-cost (event data)
+  "Calculate EVENT cost based on DATA.
+
+Personal (aka deliveries) items are not calculated towards total
+cost. Only shared stuff.
+
+Result is a property list: (:total :wines :shared)."
+  (let* ((wines-total (brb-charge-event-cost-wines event data))
+         (shared-total (brb-charge-event-cost-shared data)))
+    (list
+     :total (+ wines-total shared-total)
+     :wines wines-total
+     :shared shared-total)))
+
+(defun brb-charge-event-price-rec (event data)
+  "Calculate recommended EVENT price based on DATA."
+  (let* ((total (plist-get (brb-charge-event-cost event data) :total))
+         (participants (brb-charge-event-participants event)))
+    (ceiling (/ total (float (seq-length participants))))))
+
+(defun brb-charge-event-price (event data)
+  "Calculate EVENT price based on DATA.
+
+Result is a property list: (:actual :recommended)."
+  (let ((rec (brb-charge-event-price-rec event data)))
+    (list
+     :actual (or (brb-charge-data-event-price data) rec)
+     :recommended rec)))
+
+(defun brb-charge-event-participants (event)
+  "Return list of EVENT participants excluding narrator."
+  (--remove
+   (string-equal brb-charge--narrator-id
+                 (vulpea-note-id it))
+   (brb-event-participants event)))
+
+(defun brb-charge-statement (event data participant)
+  "Return PARTICIPANT charge statement for the EVENT with DATA."
+  (let* ((date (vulpea-utils-with-note event
+                 (vulpea-buffer-prop-get "date")))
+         (id (vulpea-note-id participant))
+         (balance (brb-ledger-balance-of id date))
+         (event-price (if (string-equal brb-charge--narrator-id id)
+                          0
+                        (plist-get (brb-charge-event-price event data)
+                                   :actual)))
+         (personal (or (gethash id (brb-charge-data-personal-items data))
+                       (make-hash-table :test 'equal)))
+         (total (--reduce-from
+                 (+ acc (* (brb-charge-item-amount it)
+                           (brb-charge-item-price it)))
+                 (- event-price balance)
+                 (hash-table-values personal))))
+    (list
+     :balance balance
+     :event event-price
+     :total total
+     :personal (append
+                (--map
+                 (let ((item (gethash it personal)))
+                   (list (format "%s (x%.1f)" it (brb-charge-item-amount item))
+                         (* (brb-charge-item-amount item)
+                            (brb-charge-item-price item))))
+                 (hash-table-keys personal))))))
+
+
+
 (defun brb-charge--buffer-populate (buffer event data)
   "Populate BUFFER with EVENT DATA."
   (let* ((wines (brb-event-wines event))
          (date (vulpea-utils-with-note event
                  (vulpea-buffer-prop-get "date")))
-         (date-next (time-add (date-to-time date)
-                              (* 60 60 24)))
-         (participants (brb-event-participants event))
-         (participants-count (- (seq-length participants) 1))
-         (wine-prices (--map
-                       (gethash (vulpea-note-id it) (brb-charge-data-wines data))
-                       wines))
-         (wines-total (--reduce-from (+ acc (or it 0)) 0 wine-prices))
-         (shared-total (--reduce-from
-                        (+ acc (* (brb-charge-item-amount it) (brb-charge-item-price it)))
-                        0
-                        (hash-table-values (brb-charge-data-shared-items data))))
-         (total (+ wines-total shared-total))
-         (event-price-rec (ceiling (/ total (float participants-count))))
-         (event-price (or
-                       (brb-charge-data-event-price data)
-                       event-price-rec)))
+         (participants (brb-charge-event-participants event))
+         (participants-count (seq-length participants))
+         (costs (brb-charge-event-cost event data))
+         (wines-total (plist-get costs :wines))
+         (shared-total (plist-get costs :shared))
+         (total (plist-get costs :total))
+         (event-price (brb-charge-event-price event data))
+         (event-price-rec (plist-get event-price :recommended))
+         (event-price (plist-get event-price :actual)))
     (with-current-buffer buffer
       (read-only-mode -1)
       (erase-buffer)
@@ -174,7 +248,7 @@ is a property list (:amount :participants :price)."
                (--map-indexed
                 (list
                  it
-                 (if-let ((price (nth it-index wine-prices)))
+                 (if-let ((price (gethash (vulpea-note-id it) (brb-charge-data-wines data))))
                      (brb-price-format price)
                    "_______")
                  (buttonize "[set]" #'brb-charge--set-wine-price (vulpea-note-id it)))
@@ -269,44 +343,25 @@ is a property list (:amount :participants :price)."
        "\n\n"
        (mapconcat
         (lambda (participant)
-          (let* ((personal (or (gethash (vulpea-note-id participant)
-                                        (brb-charge-data-personal-items data))
-                               (make-hash-table :test 'equal)))
-                 (event-price (if (string-equal "bc8aa837-3348-45e6-8468-85510966527a"
-                                                (vulpea-note-id participant))
-                                  0
-                                event-price))
-                 (balance (brb-ledger-balance-of participant date-next))
-                 (total (--reduce-from
-                         (+ acc (* (brb-charge-item-amount it)
-                                   (brb-charge-item-price it)))
-                         (- event-price balance)
-                         (hash-table-values personal))))
+          (let* ((statement (brb-charge-statement event data participant)))
             (concat
              (propertize (vulpea-buttonize participant) 'face 'org-level-2)
              "\n\n"
              (buttonize "[add]" #'brb-charge--add-personal-item (vulpea-note-id participant))
              " "
              (buttonize "[del]" #'brb-charge--delete-personal-item (vulpea-note-id participant))
+             " "
+             (buttonize "[statement]" #'brb-charge--statement-display (vulpea-note-id participant))
              "\n\n"
-             "- Event: " (brb-price-format event-price) "\n"
-             (if (> balance 0)
-                 (concat
-                  "- Prepaid: " (brb-price-format (- balance)) "\n")
-               "")
+             "- Balance: " (brb-price-format (plist-get statement :balance)) "\n"
+             "- Event: " (brb-price-format (plist-get statement :event)) "\n"
              (mapconcat
               (lambda (it)
-                (let ((item (gethash it personal)))
-                  (format "- %s (x%.1f): %s\n"
-                          it
-                          (brb-charge-item-amount item)
-                          (brb-price-format
-                           (* (brb-charge-item-amount item)
-                              (brb-charge-item-price item))))))
-              (hash-table-keys personal))
-             "- Total: " (brb-price-format total)
+                (format "- %s: %s\n" (nth 0 it) (brb-price-format (nth 1 it))))
+              (plist-get statement :personal))
+             "- Total: " (brb-price-format (plist-get statement :total))
              "\n")))
-        participants
+        (append participants (list (vulpea-db-get-by-id brb-charge--narrator-id)))
         "\n")
        "\n"
        "\n")
@@ -415,6 +470,42 @@ is a property list (:amount :participants :price)."
         (puthash id personal (brb-charge-data-personal-items brb-charge--data))
         (brb-charge--commit))
     (user-error "No personal items")))
+
+(defun brb-charge--statement-display (id)
+  "Prepare and display a statement for participant with ID."
+  (let* ((narrator (vulpea-db-get-by-id brb-charge--narrator-id))
+         (participant (vulpea-db-get-by-id id))
+         (statement (brb-charge-statement brb-charge--event brb-charge--data participant))
+         (buffer (get-buffer-create (format "*statement for %s*" (vulpea-note-title participant)))))
+    (with-current-buffer buffer
+      (erase-buffer)
+      (insert
+       "👋 Thank you for participating in " (vulpea-note-title brb-charge--event) "!\n\n"
+       "📋 You can find more information about tasted wines and winners on Barberry Garden - "
+       (format "https://barberry.io/posts/%s-%s.html"
+               (vulpea-utils-with-note brb-charge--event
+                 (format-time-string "%Y-%m-%d" (date-to-time (vulpea-buffer-prop-get "date"))))
+               (vulpea-utils-with-note brb-charge--event
+                 (vulpea-buffer-prop-get "slug")))
+       ".\n\n"
+       "🧾 This is your receipt:\n\n"
+       "- Balance: " (brb-price-format (plist-get statement :balance)) "\n"
+       "- Event: " (brb-price-format (plist-get statement :event)) "\n"
+       (mapconcat
+        (lambda (it)
+          (format "- %s: %s\n" (nth 0 it) (brb-price-format (nth 1 it))))
+        (plist-get statement :personal))
+       "- Total: " (brb-price-format (plist-get statement :total))
+       "\n\n"
+       (if (> (plist-get statement :total) 0)
+           (concat
+            "mono:   " (vulpea-note-meta-get narrator "cc mono") "\n"
+            "ukrsib: " (vulpea-note-meta-get narrator "cc ukrsib") "\n"
+            "web:    " (vulpea-note-meta-get narrator "send mono") "\n"
+            "\n")
+         "")
+       "🥂 Cheers! See you next time!"))
+    (pop-to-buffer buffer)))
 
 
 
