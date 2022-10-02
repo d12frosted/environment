@@ -152,8 +152,8 @@ is a property list (:amount :participants :price)."
    0
    (hash-table-values (brb-charge-data-shared-items data))))
 
-(defun brb-charge-event-cost (event data)
-  "Calculate EVENT cost based on DATA.
+(defun brb-charge-event-cost (data)
+  "Calculate event cost based on DATA.
 
 Personal (aka deliveries) items are not calculated towards total
 cost. Only shared stuff.
@@ -166,27 +166,27 @@ Result is a property list: (:total :wines :shared)."
      :wines wines-total
      :shared shared-total)))
 
-(defun brb-charge-event-price-rec (event data participants)
-  "Calculate recommended EVENT price based on DATA.
+(defun brb-charge-event-price-rec (data participants)
+  "Calculate recommended event price based on DATA.
 
 Basically, it's cost divided by amount of PARTICIPANTS."
-  (let* ((total (plist-get (brb-charge-event-cost event data) :total)))
+  (let* ((total (plist-get (brb-charge-event-cost data) :total)))
     (ceiling (/ total (float (seq-length participants))))))
 
-(defun brb-charge-event-price-actual (event data participants)
-  "Calculate actual EVENT price based on DATA.
+(defun brb-charge-event-price-actual (data participants)
+  "Calculate actual event price based on DATA.
 
 PARTICIPANTS should be passed for performance considerations."
   (or (brb-charge-data-event-price data)
-      (brb-charge-event-price-rec event data participants)))
+      (brb-charge-event-price-rec data participants)))
 
-(defun brb-charge-event-price (event data participants)
-  "Calculate EVENT price based on DATA.
+(defun brb-charge-event-price (data participants)
+  "Calculate event price based on DATA.
 
 PARTICIPANTS should be passed for performance considerations.
 
 Result is a property list: (:actual :recommended)."
-  (let ((rec (brb-charge-event-price-rec event data participants)))
+  (let ((rec (brb-charge-event-price-rec data participants)))
     (list
      :actual (or (brb-charge-data-event-price data) rec)
      :recommended rec)))
@@ -198,16 +198,15 @@ Result is a property list: (:actual :recommended)."
                  (vulpea-note-id it))
    (brb-event-participants event)))
 
-(defun brb-charge-statement (event data participant participants)
-  "Return PARTICIPANT charge statement for the EVENT with DATA.
-
-PARTICIPANTS should be passed for performance considerations."
-  (let* ((date brb-charge--event-date)
+(defun brb-charge-statement (participant)
+  "Return PARTICIPANT charge statement."
+  (let* ((participants brb-charge--event-participants)
+         (data brb-charge--data)
          (id (vulpea-note-id participant))
          (balance (or (gethash id brb-charge--balances) 0))
          (event-price (if (string-equal brb-charge--narrator-id id)
                           0
-                        (brb-charge-event-price-actual event data participants)))
+                        (brb-charge-event-price-actual data participants)))
          (personal (or (gethash id (brb-charge-data-personal-items data))
                        (make-hash-table :test 'equal)))
          (total (--reduce-from
@@ -234,14 +233,13 @@ PARTICIPANTS should be passed for performance considerations."
   (let* ((event brb-charge--event)
          (data brb-charge--data)
          (wines brb-charge--event-wines)
-         (date brb-charge--event-date)
          (participants brb-charge--event-participants)
          (participants-count (seq-length participants))
-         (costs (brb-charge-event-cost event data))
+         (costs (brb-charge-event-cost data))
          (wines-total (plist-get costs :wines))
          (shared-total (plist-get costs :shared))
          (total (plist-get costs :total))
-         (event-price (brb-charge-event-price event data participants))
+         (event-price (brb-charge-event-price data participants))
          (event-price-rec (plist-get event-price :recommended))
          (event-price (plist-get event-price :actual)))
     (with-current-buffer buffer
@@ -370,7 +368,7 @@ PARTICIPANTS should be passed for performance considerations."
        "\n\n"
        (mapconcat
         (lambda (participant)
-          (let* ((statement (brb-charge-statement event data participant participants)))
+          (let* ((statement (brb-charge-statement participant)))
             (concat
              (propertize (vulpea-buttonize participant) 'face 'org-level-2)
              "\n\n"
@@ -499,11 +497,7 @@ PARTICIPANTS should be passed for performance considerations."
   "Prepare and display a statement for participant with ID."
   (let* ((narrator brb-charge--narrator)
          (participant (vulpea-db-get-by-id id))
-         (statement (brb-charge-statement
-                     brb-charge--event
-                     brb-charge--data
-                     participant
-                     brb-charge--event-participants))
+         (statement (brb-charge-statement participant))
          (buffer (get-buffer-create (format "*statement for %s*" (vulpea-note-title participant)))))
     (with-current-buffer buffer
       (erase-buffer)
