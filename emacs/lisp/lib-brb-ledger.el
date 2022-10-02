@@ -339,25 +339,37 @@ Uses POSITIVE-FACE, ZERO-FACE and NEGATIVE-FACE for prettifying."
 
 
 
-(cl-defun brb-ledger-balance-of (convive &optional end-date)
+(cl-defun brb-ledger-balance-of (convive &optional date)
   "Return balance of a given CONVIVE.
 
-Optionally return the balance before END-DATE (non-inclusive).
+Optionally return the balance on DATE (inclusive).
 
 Result is a number in `brb-currency'."
   (let* ((id (if (vulpea-note-p convive) (vulpea-note-id convive) convive))
-         (cmd (format "hledger -f %s balance balance:%s%s"
-                      brb-ledger-file
-                      id
-                      (if end-date
-                          (concat
-                           " -e"
-                           (if (stringp end-date)
-                               end-date
-                             (format-time-string "%Y-%m-%d" end-date)))
-                        "")))
-         (res (s-lines (s-trim (shell-command-to-string cmd)))))
-    (string-to-number (-last-item res))))
+         (cmds (if date
+                   (let* ((time0 (if (stringp date) (date-to-time date) date))
+                          (time1 (time-add time0 (* 60 60 24))))
+                     (list
+                      (format "hledger -f %s balance balance:%s -e %s"
+                              brb-ledger-file
+                              id
+                              (format-time-string "%Y-%m-%d" time0))
+                      (format "hledger -f %s balance balance:%s -b %s -e %s 'not:desc:charge'"
+                              brb-ledger-file
+                              id
+                              (format-time-string "%Y-%m-%d" time0)
+                              (format-time-string "%Y-%m-%d" time1))))
+                 (list
+                  (format "hledger -f %s balance balance:%s" brb-ledger-file id)))))
+    (->> cmds
+         (--map
+          (->> it
+               (shell-command-to-string)
+               (s-trim)
+               (s-lines)
+               (-last-item)
+               (string-to-number)))
+         (--reduce-from (+ acc it) 0))))
 
 
 
