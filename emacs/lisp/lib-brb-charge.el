@@ -38,10 +38,15 @@
 
 
 
-(defvar brb-charge--narrator-id "bc8aa837-3348-45e6-8468-85510966527a")
 (defvar brb-charge--buffer-name "*Barberry Garden Charge*")
+(defvar brb-charge--narrator-id "bc8aa837-3348-45e6-8468-85510966527a")
+(defvar brb-charge--narrator nil)
 (defvar brb-charge--buffer nil)
 (defvar brb-charge--event nil)
+(defvar brb-charge--event-date nil)
+(defvar brb-charge--event-wines nil)
+(defvar brb-charge--event-participants nil)
+(defvar brb-charge--balances nil)
 (defvar brb-charge--data nil)
 
 
@@ -112,22 +117,33 @@ is a property list (:amount :participants :price)."
   (interactive)
   (let* ((buffer (get-buffer-create brb-charge--buffer-name))
          (event (brb-event-select))
-         (data (brb-charge-data-read event)))
+         (data (brb-charge-data-read event))
+         (date (vulpea-utils-with-note event
+                 (vulpea-buffer-prop-get "date")))
+         (participants (brb-charge-event-participants event)))
     (setf brb-charge--buffer buffer)
+    (setf brb-charge--narrator (vulpea-db-get-by-id brb-charge--narrator-id))
     (setf brb-charge--event event)
+    (setf brb-charge--event-date date)
+    (setf brb-charge--event-wines (brb-event-wines event))
+    (setf brb-charge--event-participants participants)
+    (setf brb-charge--balances (let ((tbl (make-hash-table :test 'equal)))
+                                 (--each participants
+                                   (let ((id (vulpea-note-id it)))
+                                     (puthash id (brb-ledger-balance-of id date) tbl)))
+                                 tbl))
     (setf brb-charge--data data)
-    (brb-charge--buffer-populate buffer event data)
+    (brb-charge--buffer-populate buffer)
     (pop-to-buffer buffer)))
 
 
 
-(defun brb-charge-event-cost-wines (event data)
-  "Calculate wine costs of the EVENT based on DATA."
-  (let* ((wines (brb-event-wines event))
-         (wine-prices (--map
-                       (gethash (vulpea-note-id it) (brb-charge-data-wines data))
-                       wines)))
-    (--reduce-from (+ acc (or it 0)) 0 wine-prices)))
+(defun brb-charge-event-cost-wines (data)
+  "Calculate cost of wines based on DATA."
+  (--reduce-from
+   (+ acc (or it 0))
+   0
+   (hash-table-values (brb-charge-data-wines data))))
 
 (defun brb-charge-event-cost-shared (data)
   "Calculate shared costs based on DATA."
@@ -143,24 +159,34 @@ Personal (aka deliveries) items are not calculated towards total
 cost. Only shared stuff.
 
 Result is a property list: (:total :wines :shared)."
-  (let* ((wines-total (brb-charge-event-cost-wines event data))
+  (let* ((wines-total (brb-charge-event-cost-wines data))
          (shared-total (brb-charge-event-cost-shared data)))
     (list
      :total (+ wines-total shared-total)
      :wines wines-total
      :shared shared-total)))
 
-(defun brb-charge-event-price-rec (event data)
-  "Calculate recommended EVENT price based on DATA."
-  (let* ((total (plist-get (brb-charge-event-cost event data) :total))
-         (participants (brb-charge-event-participants event)))
+(defun brb-charge-event-price-rec (event data participants)
+  "Calculate recommended EVENT price based on DATA.
+
+Basically, it's cost divided by amount of PARTICIPANTS."
+  (let* ((total (plist-get (brb-charge-event-cost event data) :total)))
     (ceiling (/ total (float (seq-length participants))))))
 
-(defun brb-charge-event-price (event data)
+(defun brb-charge-event-price-actual (event data participants)
+  "Calculate actual EVENT price based on DATA.
+
+PARTICIPANTS should be passed for performance considerations."
+  (or (brb-charge-data-event-price data)
+      (brb-charge-event-price-rec event data participants)))
+
+(defun brb-charge-event-price (event data participants)
   "Calculate EVENT price based on DATA.
 
+PARTICIPANTS should be passed for performance considerations.
+
 Result is a property list: (:actual :recommended)."
-  (let ((rec (brb-charge-event-price-rec event data)))
+  (let ((rec (brb-charge-event-price-rec event data participants)))
     (list
      :actual (or (brb-charge-data-event-price data) rec)
      :recommended rec)))
@@ -172,16 +198,16 @@ Result is a property list: (:actual :recommended)."
                  (vulpea-note-id it))
    (brb-event-participants event)))
 
-(defun brb-charge-statement (event data participant)
-  "Return PARTICIPANT charge statement for the EVENT with DATA."
-  (let* ((date (vulpea-utils-with-note event
-                 (vulpea-buffer-prop-get "date")))
+(defun brb-charge-statement (event data participant participants)
+  "Return PARTICIPANT charge statement for the EVENT with DATA.
+
+PARTICIPANTS should be passed for performance considerations."
+  (let* ((date brb-charge--event-date)
          (id (vulpea-note-id participant))
-         (balance (brb-ledger-balance-of id date))
+         (balance (or (gethash id brb-charge--balances) 0))
          (event-price (if (string-equal brb-charge--narrator-id id)
                           0
-                        (plist-get (brb-charge-event-price event data)
-                                   :actual)))
+                        (brb-charge-event-price-actual event data participants)))
          (personal (or (gethash id (brb-charge-data-personal-items data))
                        (make-hash-table :test 'equal)))
          (total (--reduce-from
@@ -203,18 +229,19 @@ Result is a property list: (:actual :recommended)."
 
 
 
-(defun brb-charge--buffer-populate (buffer event data)
-  "Populate BUFFER with EVENT DATA."
-  (let* ((wines (brb-event-wines event))
-         (date (vulpea-utils-with-note event
-                 (vulpea-buffer-prop-get "date")))
-         (participants (brb-charge-event-participants event))
+(defun brb-charge--buffer-populate (buffer)
+  "Populate charge BUFFER."
+  (let* ((event brb-charge--event)
+         (data brb-charge--data)
+         (wines brb-charge--event-wines)
+         (date brb-charge--event-date)
+         (participants brb-charge--event-participants)
          (participants-count (seq-length participants))
          (costs (brb-charge-event-cost event data))
          (wines-total (plist-get costs :wines))
          (shared-total (plist-get costs :shared))
          (total (plist-get costs :total))
-         (event-price (brb-charge-event-price event data))
+         (event-price (brb-charge-event-price event data participants))
          (event-price-rec (plist-get event-price :recommended))
          (event-price (plist-get event-price :actual)))
     (with-current-buffer buffer
@@ -343,7 +370,7 @@ Result is a property list: (:actual :recommended)."
        "\n\n"
        (mapconcat
         (lambda (participant)
-          (let* ((statement (brb-charge-statement event data participant)))
+          (let* ((statement (brb-charge-statement event data participant participants)))
             (concat
              (propertize (vulpea-buttonize participant) 'face 'org-level-2)
              "\n\n"
@@ -361,7 +388,7 @@ Result is a property list: (:actual :recommended)."
               (plist-get statement :personal))
              "- Total: " (brb-price-format (plist-get statement :total))
              "\n")))
-        (append participants (list (vulpea-db-get-by-id brb-charge--narrator-id)))
+        (append participants (list brb-charge--narrator))
         "\n")
        "\n"
        "\n")
@@ -372,10 +399,7 @@ Result is a property list: (:actual :recommended)."
   "Commit data modifications and refresh buffer."
   (brb-charge-data-write brb-charge--event brb-charge--data)
   (let ((pos (point)))
-    (brb-charge--buffer-populate
-     brb-charge--buffer
-     brb-charge--event
-     brb-charge--data)
+    (brb-charge--buffer-populate brb-charge--buffer)
     (with-current-buffer brb-charge--buffer
       (goto-char pos))))
 
@@ -428,7 +452,7 @@ Result is a property list: (:actual :recommended)."
 
 (defun brb-charge--add-delivery-item (&rest _)
   "Add delivery item ."
-  (let* ((participants (brb-event-participants brb-charge--event))
+  (let* ((participants brb-charge--event-participants)
          (participant (vulpea-select-from "Participant" participants))
          (id (vulpea-note-id participant))
          (deliveries (brb-charge-data-deliveries brb-charge--data))
@@ -473,9 +497,13 @@ Result is a property list: (:actual :recommended)."
 
 (defun brb-charge--statement-display (id)
   "Prepare and display a statement for participant with ID."
-  (let* ((narrator (vulpea-db-get-by-id brb-charge--narrator-id))
+  (let* ((narrator brb-charge--narrator)
          (participant (vulpea-db-get-by-id id))
-         (statement (brb-charge-statement brb-charge--event brb-charge--data participant))
+         (statement (brb-charge-statement
+                     brb-charge--event
+                     brb-charge--data
+                     participant
+                     brb-charge--event-participants))
          (buffer (get-buffer-create (format "*statement for %s*" (vulpea-note-title participant)))))
     (with-current-buffer buffer
       (erase-buffer)
