@@ -228,6 +228,11 @@
   :group 'barberry-theme-colors
   :type 'color)
 
+(defcustom barberry-theme-color-highlight-faded "#FAFAFA"
+  "Color used to highlight less important part of the screen."
+  :group 'barberry-theme-colors
+  :type 'color)
+
 (defcustom barberry-theme-color-highlight-successful "#E9F7DF"
   "Color used to highlight successful part of the screen."
   :group 'barberry-theme-colors
@@ -621,15 +626,18 @@
    ;; markdown
    '(markdown-blockquote-face         ((t (:inherit barberry-theme-face-default))))
    '(markdown-bold-face               ((t (:inherit barberry-theme-face-strong))))
-   '(markdown-code-face               ((t (:inherit barberry-theme-face-default))))
+   '(markdown-code-face               ((t (:extend t :inherit highlight))))
    '(markdown-comment-face            ((t (:inherit barberry-theme-face-faded))))
    '(markdown-footnote-marker-face    ((t (:inherit barberry-theme-face-default))))
    '(markdown-footnote-text-face      ((t (:inherit barberry-theme-face-default))))
    '(markdown-gfm-checkbox-face       ((t (:inherit barberry-theme-face-default))))
    '(markdown-header-delimiter-face   ((t (:inherit barberry-theme-face-faded))))
    '(markdown-header-face             ((t (:inherit barberry-theme-face-strong))))
-   '(markdown-header-face-1           ((t (:inherit barberry-theme-face-strong))))
-   '(markdown-header-face-2           ((t (:inherit barberry-theme-face-strong))))
+   `(markdown-header-face-1           ((t (:overline ,barberry-theme-color-subtle
+                                           :height ,height-plus
+                                           :inherit barberry-theme-face-strong))))
+   `(markdown-header-face-2           ((t (:overline ,barberry-theme-color-subtle
+                                           :inherit barberry-theme-face-strong))))
    '(markdown-header-face-3           ((t (:inherit barberry-theme-face-strong))))
    '(markdown-header-face-4           ((t (:inherit barberry-theme-face-strong))))
    '(markdown-header-face-5           ((t (:inherit barberry-theme-face-strong))))
@@ -642,11 +650,11 @@
    '(markdown-html-entity-face        ((t (:inherit barberry-theme-face-default))))
    '(markdown-html-tag-delimiter-face ((t (:inherit barberry-theme-face-default))))
    '(markdown-html-tag-name-face      ((t (:inherit barberry-theme-face-default))))
-   `(markdown-inline-code-face        ((t (:background ,barberry-theme-color-highlight-default
-                                           :inherit barberry-theme-face-default))))
+   '(markdown-inline-code-face        ((t (:weight medium
+                                           :inherit barberry-theme-face-subtle-i))))
    '(markdown-italic-face             ((t (:inherit barberry-theme-face-faded))))
    '(markdown-language-info-face      ((t (:inherit barberry-theme-face-default))))
-   '(markdown-language-keyword-face   ((t (:inherit barberry-theme-face-default))))
+   '(markdown-language-keyword-face   ((t (:inherit barberry-theme-face-faded))))
    '(markdown-line-break-face         ((t (:inherit barberry-theme-face-default))))
    '(markdown-link-face               ((t (:inherit barberry-theme-face-salient))))
    '(markdown-link-title-face         ((t (:inherit barberry-theme-face-default))))
@@ -657,8 +665,10 @@
    '(markdown-metadata-value-face     ((t (:inherit barberry-theme-face-faded))))
    '(markdown-missing-link-face       ((t (:inherit barberry-theme-face-default))))
    '(markdown-plain-url-face          ((t (:inherit barberry-theme-face-default))))
-   '(markdown-pre-face                ((t (:inherit highlight))))
-   '(markdown-reference-face          ((t (:inherit barberry-theme-face-salient))))
+   `(markdown-pre-face                ((t (:extend t
+                                           :background ,barberry-theme-color-highlight-faded
+                                           :inherit highlight))))
+   '(markdown-reference-face          ((t (:inherit barberry-theme-face-faded))))
    '(markdown-strike-through-face     ((t (:inherit barberry-theme-face-faded))))
    '(markdown-table-face              ((t (:inherit barberry-theme-face-default))))
    '(markdown-url-face                ((t (:inherit barberry-theme-face-salient))))
