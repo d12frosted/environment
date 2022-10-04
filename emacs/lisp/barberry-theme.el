@@ -478,7 +478,7 @@
    '(font-lock-keyword-face       ((t (:inherit barberry-theme-face-salient))))
 
    ;; custom edit
-   '(widget-field             ((t (:inherit barberry-theme-face-subtle))))
+   '(widget-field             ((t (:inherit barberry-theme-face-faded-i))))
    '(widget-button            ((t (:inherit barberry-theme-face-strong))))
    '(widget-single-line-field ((t (:inherit barberry-theme-face-subtle))))
    '(custom-group-subtitle    ((t (:inherit barberry-theme-face-strong))))
