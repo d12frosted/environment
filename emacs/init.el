@@ -102,6 +102,7 @@
 (require 'init-json)
 (require 'init-yaml)
 (require 'init-js)
+(require 'init-markdown)
 (require 'init-nix)
 
 ;; unfortunately
