@@ -158,7 +158,7 @@
   :group 'barberry-theme-colors
   :type 'color)
 
-(defcustom barberry-theme-color-subtle-i "#ECEFF1" ;; Blue Grey / L50
+(defcustom barberry-theme-color-subtle-i "#FAFAFA" ;; Blue Grey / L50
   "Inverse version of `barberry-theme-color-subtle'."
   :group 'barberry-theme-colors
   :type 'color)
