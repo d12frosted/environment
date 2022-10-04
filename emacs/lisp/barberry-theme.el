@@ -480,6 +480,7 @@
    ;; custom edit
    '(widget-field             ((t (:inherit barberry-theme-face-faded-i))))
    '(widget-button            ((t (:inherit barberry-theme-face-strong))))
+   '(widget-inactive          ((t (:inherit shadow))))
    '(widget-single-line-field ((t (:inherit barberry-theme-face-subtle))))
    '(custom-group-subtitle    ((t (:inherit barberry-theme-face-strong))))
    '(custom-group-tag         ((t (:inherit barberry-theme-face-strong))))
@@ -495,6 +496,12 @@
    '(custom-state             ((t (:inherit barberry-theme-face-salient))))
    '(custom-link              ((t (:inherit barberry-theme-face-salient))))
    '(custom-variable-obsolete ((t (:inherit barberry-theme-face-faded))))
+   `(custom-button            ((t (:weight medium
+                                   :foreground ,barberry-theme-color-salient
+                                   :box (:line-width (2 . 2)
+                                         :color ,barberry-theme-color-subtle
+                                         :style flat)
+                                   :inherit barberry-theme-face-default))))
 
    ;; company
    '(company-tooltip                      ((t (:inherit barberry-theme-face-faded))))
