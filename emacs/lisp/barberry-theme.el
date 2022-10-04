@@ -354,6 +354,7 @@
 
 (set-face-attribute 'barberry-theme-face-salient nil
                     :foreground barberry-theme-color-salient
+                    :weight 'medium
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-salient-i nil
