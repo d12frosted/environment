@@ -285,6 +285,7 @@ Return generated buffer."
                               0)
                           :positive-face 'warning
                           :zero-face 'success)))))
+                 :pad-type '(right left)
                  :row-start "- "
                  :sep "  ")
                 ""
@@ -306,6 +307,7 @@ Return generated buffer."
                           (lambda (p)
                             (string-equal "charge" (brb-ledger-posting-description p)))
                           (brb-ledger-data-postings data))))
+                 :pad-type '(left right left left left)
                  :row-start "- "
                  :sep "  "))
           "\n")))
