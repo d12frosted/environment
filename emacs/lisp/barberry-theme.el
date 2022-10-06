@@ -462,13 +462,20 @@
    '(nobreak-hyphen               ((t (:inherit barberry-theme-face-popout))))
    '(nobreak-space                ((t (:inherit barberry-theme-face-popout))))
    '(help-argument-name           ((t (:inherit barberry-theme-face-faded))))
+   `(help-key-binding             ((t (:foreground ,barberry-theme-color-foreground
+                                       :background ,barberry-theme-color-highlight-salient
+                                       :inherit fixed-pitch))))
+   `(header-line                  ((t (:foreground ,barberry-theme-color-foreground
+                                       :background ,barberry-theme-color-highlight-default
+                                       :box nil
+                                       :inherit mode-line))))
    '(tabulated-list-fake-header   ((t (:inherit barberry-theme-face-strong))))
    '(tool-bar                     ((t (:inherit barberry-theme-face-faded-i))))
 
    ;; font lock
    '(font-lock-comment-face       ((t (:inherit barberry-theme-face-faded))))
    '(font-lock-doc-face           ((t (:inherit barberry-theme-face-faded))))
-   '(font-lock-string-face        ((t (:inherit barberry-theme-face-faded-i))))
+   '(font-lock-string-face        ((t (:inherit barberry-theme-face-default))))
    '(font-lock-constant-face      ((t (:inherit barberry-theme-face-salient))))
    '(font-lock-warning-face       ((t (:inherit barberry-theme-face-popout))))
    '(font-lock-function-name-face ((t (:inherit barberry-theme-face-salient))))
@@ -524,15 +531,22 @@
    '(info-menu-header ((t (:inherit barberry-theme-face-strong))))
    '(info-header-node ((t (:inherit barberry-theme-face-default))))
    '(info-index-match ((t (:inherit barberry-theme-face-salient))))
-   '(Info-quoted      ((t (:inherit barberry-theme-face-faded))))
-   '(info-title-1     ((t (:inherit barberry-theme-face-strong))))
-   '(info-title-2     ((t (:inherit barberry-theme-face-strong))))
+   `(info-title-1     ((t (:overline ,barberry-theme-color-subtle
+                           :height ,height-plus
+                           :inherit barberry-theme-face-strong))))
+   `(info-title-2     ((t (:overline ,barberry-theme-color-subtle
+                           :inherit barberry-theme-face-strong))))
    '(info-title-3     ((t (:inherit barberry-theme-face-strong))))
    '(info-title-4     ((t (:inherit barberry-theme-face-strong))))
+   '(Info-quoted      ((t (:inherit barberry-theme-face-faded))))
+   '(info-menu-star   ((t (:inherit barberry-theme-face-critical))))
 
    ;; outline
-   '(outline-1 ((t (:inherit barberry-theme-face-strong))))
-   '(outline-2 ((t (:inherit barberry-theme-face-strong))))
+   `(outline-1 ((t (:overline ,barberry-theme-color-subtle
+                    :height ,height-plus
+                    :inherit barberry-theme-face-strong))))
+   `(outline-2 ((t (:overline ,barberry-theme-color-subtle
+                    :inherit barberry-theme-face-strong))))
    '(outline-3 ((t (:inherit barberry-theme-face-strong))))
    '(outline-4 ((t (:inherit barberry-theme-face-strong))))
    '(outline-5 ((t (:inherit barberry-theme-face-strong))))
@@ -709,7 +723,9 @@
    `(flyspell-incorrect ((t (:underline (:style wave :color ,barberry-theme-color-critical)))))
 
    ;; page-break-lines
-   '(page-break-lines ((t (:inherit barberry-theme-face-subtle))))))
+   '(page-break-lines ((t (:inherit barberry-theme-face-subtle))))
+
+   `(restclient-header-value-face ((t (:inherit font-lock-string-face))))))
 
 (with-eval-after-load 'lsp-ui-doc
   ;; ideally it should use `child-frame-border', but it does not
