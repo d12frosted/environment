@@ -499,6 +499,7 @@ represented as association list."
         (append info `(("synonyms" . ,synonyms)
                        ("url" . ,(concat "https://www.vivc.de/index.php?r=passport%2Fview&id=" id)))))))))
 
+;;;###autoload
 (defun vino-grape-update-vivc-info ()
   "Update information about grape from VIVC."
   (interactive)
