@@ -56,7 +56,18 @@
   :hook ((emacs-lisp-mode . emacsql-fix-vector-indentation)))
 
 (use-package buttercup
-  :defer t)
+  :defer t
+  :config
+  (when (version<= "29" emacs-version)
+    (defun buttercup-format-spec (format specification)
+      "Return a string based on FORMAT and SPECIFICATION.
+
+This is a wrapper around `format-spec', which see. This also adds
+a call to `save-match-data', as `format-spec' modifies that."
+      (save-match-data
+        (format-spec format (--map
+                             (cons (car it) (lambda () (cdr it)))
+                             specification))))))
 
 ;; default indentation is not perfect when it comes to property lists
 ;; and face specs; this snipped fixes indent level calculation; I
