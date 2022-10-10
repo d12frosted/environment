@@ -1,4 +1,4 @@
-;;; lib-bg-post.el --- Utilities for Barberry Garden related articles -*- lexical-binding: t; -*-
+;;; lib-brb-post.el --- Utilities for Barberry Garden related articles -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
 ;;
@@ -43,7 +43,7 @@
 
 
 ;;;###autoload
-(defun bg-post-insert-wine ()
+(defun brb-post-insert-wine ()
   "Select a wine entry and insert a heading with its information."
   (interactive)
   (let* ((wine (vulpea-select-from "Wine" (vulpea-db-query-by-tags-every '("wine" "cellar"))
@@ -72,5 +72,5 @@
 
 
 
-(provide 'lib-bg-post)
-;;; lib-bg-post.el ends here
+(provide 'lib-brb-post)
+;;; lib-brb-post.el ends here
