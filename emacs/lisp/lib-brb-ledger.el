@@ -267,15 +267,20 @@ Return generated buffer."
                  :data
                  (cons
                   (list "Total"
-                        (brb-ledger--format-amount (brb-ledger-data-total data)))
+                        (brb-ledger--format-amount (brb-ledger-data-total data))
+                        (let* ((total (brb-ledger-data-total data))
+                               (uncleared (--reduce-from
+                                           (+ acc
+                                              (or (assoc-default (vulpea-note-id it) (brb-ledger-data-balances data)) 0))
+                                           0
+                                           (brb-ledger-data-convives data)))
+                               (cleared (- total uncleared)))
+                          (concat "(" (brb-ledger--format-amount cleared) ")")))
                   (->> (brb-ledger-data-convives data)
                        (--sort
                         (< (or (assoc-default (vulpea-note-id it) (brb-ledger-data-balances data)) 0)
                            (or (assoc-default (vulpea-note-id other) (brb-ledger-data-balances data)) 0)))
-                       (--remove (= 0
-                                    (or (assoc-default (vulpea-note-id it)
-                                                       (brb-ledger-data-balances data))
-                                        0)))
+                       (--remove (= 0 (or (assoc-default (vulpea-note-id it) (brb-ledger-data-balances data)) 0)))
                        (--map
                         (list
                          (vulpea-note-title it)
@@ -284,8 +289,9 @@ Return generated buffer."
                                              (brb-ledger-data-balances data))
                               0)
                           :positive-face 'warning
-                          :zero-face 'success)))))
-                 :pad-type '(right left)
+                          :zero-face 'success)
+                         ""))))
+                 :pad-type '(right left left)
                  :row-start "- "
                  :sep "  ")
                 ""
