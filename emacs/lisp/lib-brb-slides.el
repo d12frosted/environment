@@ -1,4 +1,4 @@
-;;; lib-bg-slides.el --- Utilities for Barberry Garden related presentations  -*- lexical-binding: t; -*-
+;;; lib-brb-slides.el --- Utilities for Barberry Garden related presentations  -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
 ;;
@@ -43,52 +43,52 @@
 
 
 
-(defvar bg-slides-dir (expand-file-name "talks-private/" path-projects-dir))
+(defvar brb-slides-dir (expand-file-name "talks-private/" path-projects-dir))
 
 
 
-(defvar bg-slides--title)
-(defvar bg-slides--subtitle)
-(defvar bg-slides--date)
+(defvar brb-slides--title)
+(defvar brb-slides--subtitle)
+(defvar brb-slides--date)
 
-(defun bg-slides-template-title-full ()
+(defun brb-slides-template-title-full ()
   "Return an event title and (optionally) subtitle for slides template."
-  (let ((title (or bg-slides--title
+  (let ((title (or brb-slides--title
                    (let (s)
                      (while (or (not s) (string-empty-p s))
                        (setf s (read-string "Title: ")))
                      s)))
-        (subtitle (if bg-slides--title
-                      bg-slides--subtitle
+        (subtitle (if brb-slides--title
+                      brb-slides--subtitle
                     (read-string "Subtitle: "))))
-    (setf bg-slides--title nil)
-    (setf bg-slides--subtitle nil)
+    (setf brb-slides--title nil)
+    (setf brb-slides--subtitle nil)
     (concat
      "#+title: " title
      (unless (string-empty-p subtitle)
        (concat "\n#+subtitle: " subtitle)))))
 
-(defun bg-slides-template-date ()
+(defun brb-slides-template-date ()
   "Return an event date for slides template."
-  (let ((date (or bg-slides--date (org-read-date nil t))))
-    (setf bg-slides--date nil)
+  (let ((date (or brb-slides--date (org-read-date nil t))))
+    (setf brb-slides--date nil)
     (format-time-string "%B %d, %Y" date)))
 
 
 
-(defvar bg-slides--wine-h-regexp "\\* Wine #\\([0-9]+\\)")
+(defvar brb-slides--wine-h-regexp "\\* Wine #\\([0-9]+\\)")
 
-(defvar-local bg-slides--wine nil)
+(defvar-local brb-slides--wine nil)
 
-(defun bg-slides-wine-cur-idx ()
+(defun brb-slides-wine-cur-idx ()
   "Resolve current wine index (1-based)."
   (save-excursion
     (goto-char (point-max))
-    (if (re-search-backward bg-slides--wine-h-regexp nil t)
+    (if (re-search-backward brb-slides--wine-h-regexp nil t)
         (string-to-number (match-string 1))
       0)))
 
-(defun bg-slides-wine-next-pos ()
+(defun brb-slides-wine-next-pos ()
   "Resolve next wine position in buffer."
   (save-excursion
     (save-restriction
@@ -97,19 +97,19 @@
       (org-previous-visible-heading 1)
       (point))))
 
-(defun bg-slides-template-wine-name ()
+(defun brb-slides-template-wine-name ()
   "Return wine name for slides template."
-  (let ((wine bg-slides--wine))
+  (let ((wine brb-slides--wine))
     (vulpea-note-title wine)))
 
-(defun bg-slides-template-wine-info ()
+(defun brb-slides-template-wine-info ()
   "Return wine name for slides template."
-  (let ((wine bg-slides--wine))
+  (let ((wine brb-slides--wine))
     (brb-wine-info wine 'description 'pick-price)))
 
-(defun bg-slides-template-wine-image ()
+(defun brb-slides-template-wine-image ()
   "Copy main image and return it as link for template."
-  (let* ((wine bg-slides--wine)
+  (let* ((wine brb-slides--wine)
          (image (vulpea-note-meta-get wine "images" 'link))
          (image (string-remove-prefix "attachment:" image))
          (source (expand-file-name image (org-attach-dir-from-id (vulpea-note-id wine))))
@@ -120,46 +120,46 @@
                            source target))
     (format "file:images/%s\n" image)))
 
-(defun bg-slides-insert-wine ()
+(defun brb-slides-insert-wine ()
   "Select and insert a wine into slides."
   (interactive)
   (let ((wine (vulpea-select-from "Wine" (vulpea-db-query-by-tags-every '("wine" "cellar"))
                                   :require-match t))
         (name "Barberry Garden Slides - wine"))
-    (setf bg-slides--wine wine)
-    (goto-char (bg-slides-wine-next-pos))
+    (setf brb-slides--wine wine)
+    (goto-char (brb-slides-wine-next-pos))
     (file-template-insert-by-name name)))
 
 
 
-(defun bg-slides-generate ()
+(defun brb-slides-generate ()
   "Generate slides file from event note."
   (interactive)
   (let* ((event (brb-event-select))
          (slug (vulpea-utils-with-note event
                  (vulpea-buffer-prop-get "slug")))
          (wines (brb-event-wines event))
-         (dir (expand-file-name slug bg-slides-dir))
+         (dir (expand-file-name slug brb-slides-dir))
          (slides-file (expand-file-name "slides.org" dir))
          (slides-buffer))
     (mkdir dir t)
     (setf slides-buffer (find-file-noselect slides-file))
-    (setf bg-slides--title (vulpea-note-title event))
-    (setf bg-slides--subtitle (vulpea-utils-with-note event
+    (setf brb-slides--title (vulpea-note-title event))
+    (setf brb-slides--subtitle (vulpea-utils-with-note event
                                 (vulpea-buffer-prop-get "subtitle")))
-    (setf bg-slides--date (org-time-string-to-time
+    (setf brb-slides--date (org-time-string-to-time
                            (vulpea-utils-with-note event
                              (vulpea-buffer-prop-get "date"))))
     (with-current-buffer slides-buffer
       (delete-region (point-min) (point-max))
       (file-template-insert-by-name "Barberry Garden Slides - structure")
       (--each wines
-        (setf bg-slides--wine (vulpea-db-get-by-id it))
-        (goto-char (bg-slides-wine-next-pos))
+        (setf brb-slides--wine (vulpea-db-get-by-id it))
+        (goto-char (brb-slides-wine-next-pos))
         (file-template-insert-by-name "Barberry Garden Slides - wine")))
     (display-buffer slides-buffer)))
 
 
 
-(provide 'lib-bg-slides)
-;;; lib-bg-slides.el ends here
+(provide 'lib-brb-slides)
+;;; lib-brb-slides.el ends here
