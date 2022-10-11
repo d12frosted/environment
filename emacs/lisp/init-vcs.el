@@ -78,6 +78,12 @@
         ;; show word-granularity on selected hunk
         magit-diff-refine-hunk t))
 
+(use-package closql
+  :defer t)
+
+(use-package ghub
+  :defer t)
+
 (use-package forge
   :commands forge-create-pullreq forge-create-issue
   :init

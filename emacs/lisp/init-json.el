@@ -33,6 +33,9 @@
 ;;
 ;;; Code:
 
+(use-package json-snatcher
+  :defer t)
+
 (use-package json-mode
   :defer t)
 
