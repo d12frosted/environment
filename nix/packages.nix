@@ -95,6 +95,7 @@ in [
   font-awesome_4
   fontconfig
   # liberation_ttf
+  mplus-outline-fonts.githubRelease
   source-code-pro
   source-sans-pro
   source-serif-pro
