@@ -722,8 +722,9 @@
    `(flyspell-duplicate ((t (:underline (:style wave :color ,barberry-theme-color-salient)))))
    `(flyspell-incorrect ((t (:underline (:style wave :color ,barberry-theme-color-critical)))))
 
-   ;; page-break-lines
+   ;; page-break
    '(page-break-lines ((t (:inherit barberry-theme-face-subtle))))
+   `(form-feed-line ((t (:strike-through ,barberry-theme-color-subtle))))
 
    `(restclient-header-value-face ((t (:inherit font-lock-string-face))))))
 

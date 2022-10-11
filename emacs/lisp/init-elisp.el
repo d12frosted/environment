@@ -49,7 +49,11 @@
   :after flycheck)
 
 (use-package page-break-lines
+  :disabled
   :hook ((emacs-lisp-mode . page-break-lines-mode)))
+
+(use-package form-feed
+  :hook ((emacs-lisp-mode . form-feed-mode)))
 
 (use-package emacsql
   :defer t
