@@ -417,6 +417,7 @@
    '(link              ((t (:inherit barberry-theme-face-salient))))
    '(fixed-pitch       ((t (:inherit default))))
    '(fixed-pitch-serif ((t (:inherit default))))
+   '(variable-pitch    ((t (:inherit barberry-theme-face-sans))))
    '(shadow            ((t (:inherit barberry-theme-face-faded))))
    '(success           ((t (:inherit barberry-theme-face-successful))))
    '(warning           ((t (:inherit barberry-theme-face-popout))))
