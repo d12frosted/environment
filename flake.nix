@@ -37,19 +37,25 @@
         ];
       };
 
-      homeConfigurations.borysb = home-manager.lib.homeManagerConfiguration {
-        configuration = { pkgs, lib, config, ... }: {
-          imports = [
+      homeConfigurations.borysb =
+        let system = "x86_64-linux";
+            pkgs = nixpkgs.legacyPackages.${system};
+        in home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
             ./nix/home.nix
             ./nix/linux/xsession.nix
             ./nix/linux/services.nix
+            {
+              nixpkgs.config.allowUnfreePredicate = (pkg: true);
+              nixpkgs.overlays = overlays;
+              home = {
+                username = "borysb";
+                homeDirectory = "/home/borysb";
+              };
+            }
           ];
-          nixpkgs.config.allowUnfree = true;
-          nixpkgs.overlays = overlays;
         };
-        system = "x86_64-linux";
-        homeDirectory = "/home/borysb";
-        username = "borysb";
-      };
+
     };
 }
