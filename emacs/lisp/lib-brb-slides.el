@@ -132,6 +132,7 @@
 
 
 
+;;;###autoload
 (defun brb-slides-generate ()
   "Generate slides file from event note."
   (interactive)
@@ -146,15 +147,15 @@
     (setf slides-buffer (find-file-noselect slides-file))
     (setf brb-slides--title (vulpea-note-title event))
     (setf brb-slides--subtitle (vulpea-utils-with-note event
-                                (vulpea-buffer-prop-get "subtitle")))
+                                 (vulpea-buffer-prop-get "subtitle")))
     (setf brb-slides--date (org-time-string-to-time
-                           (vulpea-utils-with-note event
-                             (vulpea-buffer-prop-get "date"))))
+                            (vulpea-utils-with-note event
+                              (vulpea-buffer-prop-get "date"))))
     (with-current-buffer slides-buffer
       (delete-region (point-min) (point-max))
       (file-template-insert-by-name "Barberry Garden Slides - structure")
       (--each wines
-        (setf brb-slides--wine (vulpea-db-get-by-id it))
+        (setf brb-slides--wine it)
         (goto-char (brb-slides-wine-next-pos))
         (file-template-insert-by-name "Barberry Garden Slides - wine")))
     (display-buffer slides-buffer)))
