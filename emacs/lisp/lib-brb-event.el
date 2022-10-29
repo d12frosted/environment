@@ -70,8 +70,7 @@
                (-map #'org-ml-item-get-paragraph)
                (-map #'car)
                (--map (org-ml-get-property :path it))
-               (vulpea-db-query-by-ids)
-               (--remove (vulpea-note-primary-title it))))))))
+               (-map #'vulpea-db-get-by-id)))))))
 
 ;;;###autoload
 (defun brb-event-participants (event)
