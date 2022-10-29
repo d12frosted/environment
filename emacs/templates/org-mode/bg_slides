@@ -1,8 +1,8 @@
 # -*- mode: snippet -*-             
 #name : Barberry Garden Slides - structure
 # --
-`(bg-slides-template-title-full)`
-#+date: `(bg-slides-template-date)`
+`(brb-slides-template-title-full)`
+#+date: `(brb-slides-template-date)`
 #+author: `user-full-name`
 #+startup: beamer
 #+latex_class: beamer
