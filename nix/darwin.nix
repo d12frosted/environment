@@ -20,24 +20,27 @@ in {
     extraOptions = ''
 experimental-features = nix-command flakes
     '';
-    maxJobs = "auto";
-    buildCores = 0;
-    trustedUsers = [ "root" "d12frosted" ];
 
-    binaryCaches = [
-      "https://cachix.org/api/v1/cache/emacs"
-      "https://cachix.org/api/v1/cache/nix-community"
-      "https://cachix.org/api/v1/cache/deploy-rs"
-      "https://hydra.iohk.io"
-    ];
+    configureBuildUsers = true;
+    settings = {
+      max-jobs = "auto";
+      cores = 0;
 
-    binaryCachePublicKeys = [
-      "emacs.cachix.org-1:b1SMJNLY/mZF6GxQE+eDBeps7WnkT0Po55TAyzwOxTY="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-    ];
+      trusted-users = [ "root" "d12frosted" ];
 
-    trustedBinaryCaches = config.nix.binaryCaches;
+      trusted-public-keys = [
+        "emacs.cachix.org-1:b1SMJNLY/mZF6GxQE+eDBeps7WnkT0Po55TAyzwOxTY="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+      ];
+
+      trusted-substituters = [
+        "https://cachix.org/api/v1/cache/emacs"
+        "https://cachix.org/api/v1/cache/nix-community"
+        "https://cachix.org/api/v1/cache/deploy-rs"
+        "https://hydra.iohk.io"
+      ];
+    };
   };
 
   nixpkgs = {
@@ -86,7 +89,7 @@ experimental-features = nix-command flakes
         _HIHideMenuBar = false;
         "com.apple.keyboard.fnState" = true;
         "com.apple.mouse.tapBehavior" = 1;
-        "com.apple.sound.beep.volume" = "0.0";
+        "com.apple.sound.beep.volume" = 0.0;
         "com.apple.sound.beep.feedback" = 0;
       };
 
@@ -122,9 +125,6 @@ experimental-features = nix-command flakes
      shell = pkgs.fish;
      home = "/Users/d12frosted";
     };
-    nix = {
-      configureBuildUsers = true;
-    };
   };
 
   programs.fish.enable = true;
@@ -159,10 +159,25 @@ experimental-features = nix-command flakes
 
   homebrew = {
     enable = true;
-    autoUpdate = true;
-    cleanup = "zap"; # removes manually install brews and casks
+    onActivation.autoUpdate = true;
+    onActivation.cleanup = "uninstall"; # removes manually install brews and casks
     brews = [
       "llvm"
+      {
+        name = "emacs-plus@29";
+        args = ["with-dragon-icon"];
+        link = true;
+      }
+      {
+        name = "yabai";
+        args = [];
+        restart_service = true;
+      }
+      {
+        name = "skhd";
+        args = [];
+        restart_service = true;
+      }
     ];
     casks = [
       # multimedia
@@ -186,12 +201,8 @@ experimental-features = nix-command flakes
       "flameshot"
 
       # other
+      "appcleaner"
     ];
-    extraConfig = ''
-brew "yabai", restart_service: true
-brew "skhd", restart_service: true
-brew "emacs-plus@29", args: ["with-dragon-icon"], link: true
-    '';
     taps = [
       "d12frosted/emacs-plus"
       "homebrew/bundle"
