@@ -376,6 +376,8 @@ Result is a property list: (:actual :recommended)."
              " "
              (buttonize "[del]" #'brb-charge--delete-personal-item (vulpea-note-id participant))
              " "
+             (buttonize "[charge]" #'brb-charge--statement-charge (vulpea-note-id participant))
+             " "
              (buttonize "[statement]" #'brb-charge--statement-display (vulpea-note-id participant))
              "\n\n"
              "- Balance: " (brb-price-format (plist-get statement :balance)) "\n"
@@ -528,6 +530,18 @@ Result is a property list: (:actual :recommended)."
          "")
        "🥂 Cheers! See you next time!"))
     (pop-to-buffer buffer)))
+
+(defun brb-charge--statement-charge (id)
+  "Charge participant with ID."
+  (let* ((participant (vulpea-db-get-by-id id))
+         (statement (brb-charge-statement participant))
+         (price (+ (plist-get statement :balance)
+                   (plist-get statement :total)))
+         (date (vulpea-utils-with-note brb-charge--event
+                 (date-to-time (vulpea-buffer-prop-get "date")))))
+    (brb-ledger-charge :convive participant
+                       :amount price
+                       :date date)))
 
 
 
