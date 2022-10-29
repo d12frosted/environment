@@ -3,14 +3,14 @@
 direction="$1"
 
 case $direction in
-  next)
+  prev)
     yabai -m query --spaces \
       | jq -re '.[] | select(."is-visible").index' \
       | xargs -I{} yabai -m query --windows --space {} \
       | jq -sre 'add | map(select(."is-hidden" == false) | select(."is-minimized" == false)) | sort_by(.display, .frame.x, .frame.y, ."stack-index", .id) | reverse | nth(index(map(select(."has-focus"))) - 1).id' \
       | xargs -I{} yabai -m window --focus {}
     ;;
-  prev)
+  next)
     yabai -m query --spaces \
       | jq -re '.[] | select(."is-visible").index' \
       | xargs -I{} yabai -m query --windows --space {} \
