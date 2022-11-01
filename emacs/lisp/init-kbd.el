@@ -56,7 +56,7 @@ ARGS are arguments, right?"
     "o" '(nil :which-key "open...")
     "v" '(nil :which-key "vino...")))
 
-(elpaca bind-key (require 'bind-key))
+(elpa-require bind-key)
 
 (elpa-use-package which-key
   :diminish which-key-mode
