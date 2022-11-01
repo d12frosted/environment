@@ -243,6 +243,11 @@
 
 
 
+(elpa-use-package rainbow-mode
+  :defer t)
+
+
+
 (elpa-use-package (fancy-compilation
                    :host codeberg
                    :repo "ideasman42/emacs-fancy-compilation")
