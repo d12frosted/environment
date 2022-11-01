@@ -35,13 +35,13 @@
 ;;
 ;;; Code:
 
-(use-package js
-  :straight nil
+(elpa-use-package js
+  :ensure nil
   :defer t
   :init
   (setq js-indent-level 2))
 
-(use-package typescript-mode
+(elpa-use-package typescript-mode
   :defer t
   :hook ((typescript-mode . lsp))
   :init

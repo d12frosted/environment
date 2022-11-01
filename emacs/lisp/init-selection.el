@@ -39,7 +39,7 @@
 (defvar selection-system 'consult
   "Selection system to use: ivy, selectrum or consult.")
 
-(use-package counsel
+(elpa-use-package counsel
   :if (eq selection-system 'ivy)
   :diminish ivy-mode counsel-mode
   :commands (counsel-find-file
@@ -69,7 +69,7 @@
           (counsel-describe-function . "^+?")
           (counsel-describe-variable . "^+?"))))
 
-(use-package ivy-prescient
+(elpa-use-package ivy-prescient
   :if (eq selection-system 'ivy)
   :hook (ivy-mode . ivy-prescient-mode)
   :defines (ivy-prescient-retain-classic-highlighting
@@ -82,7 +82,7 @@
                counsel-recentf counsel-buffer-or-recentf)
         ivy-prescient-retain-classic-highlighting t))
 
-(use-package ivy-rich
+(elpa-use-package ivy-rich
   :disabled
   :if (eq selection-system 'ivy)
   :after ivy
@@ -90,22 +90,23 @@
   :init
   (ivy-rich-mode))
 
-(use-package selectrum
-  :if (or (eq selection-system 'selectrum)
-          (eq selection-system 'consult))
-  :hook ((after-init . selectrum-mode))
-  :commands (selectrum-exhibit))
-
-(use-package selectrum-prescient
+(elpa-use-package selectrum-prescient
   :if (or (eq selection-system 'selectrum)
           (eq selection-system 'consult))
   :hook (selectrum-mode . selectrum-prescient-mode))
 
-(use-package ctrlf
+(elpa-use-package selectrum
+  :if (or (eq selection-system 'selectrum)
+          (eq selection-system 'consult))
+  :init
+  (selectrum-mode)
+  :commands (selectrum-exhibit))
+
+(elpa-use-package ctrlf
   :if (eq selection-system 'selectrum)
   :hook (selectrum-mode . ctrlf-mode))
 
-(use-package prescient
+(elpa-use-package prescient
   :defer t
   :commands (prescient-persist-mode
              prescient--with-group
@@ -121,7 +122,7 @@
                           path-cache-dir))
   (prescient-persist-mode +1))
 
-(use-package consult
+(elpa-use-package consult
   :if (eq selection-system 'consult)
   :bind
   (("M-y" . consult-yank-pop))
@@ -131,17 +132,17 @@
     "pg" '(consult-grep :which-key "Grep the project")
     "ji" '(consult-imenu :which-key "imenu")))
 
-;; (use-package embark
+;; (elpa-use-package embark
 ;;   :bind
 ;;   ("C-M-a" . embark-act))
 
-;; (use-package embark-consult
+;; (elpa-use-package embark-consult
 ;;   :if (eq selection-system 'consult)
 ;;   :after (embark consult)
 ;;   :hook
 ;;   (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package marginalia
+(elpa-use-package marginalia
   :if (eq selection-system 'consult)
   :commands (marginalia-mode
              marginalia-cycle)
@@ -162,7 +163,7 @@
 
 
 
-(use-package transient
+(elpa-use-package transient
   :defer t
   :init
   (setq

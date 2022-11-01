@@ -104,6 +104,10 @@
 ;;
 ;;; Code:
 
+(require 'dom)
+(require 'svg)
+(require 'svg-lib)
+
 
 ;; Emacs <-> SVG
 

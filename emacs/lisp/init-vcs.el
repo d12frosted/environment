@@ -39,22 +39,10 @@
 
 (setq-default vc-follow-symlinks t)
 
-(leader-def
-  "g" '(nil :which-key "git...")
-  "gS" '(magit-stage-file :which-key "stage file")
-  "gU" '(magit-unstage-file :which-key "unstage file")
-  "g[" '(git-gutter:previous-hunk :which-key "previous hunk")
-  "g]" '(git-gutter:next-hunk :which-key "next hunk")
-  "gd" '(magit-dispatch :which-key "dispatch")
-  "gf" '(magit-find-file :which-key "find-file")
-  "gg" '(magit-status :which-key "status")
-  "gi" '(magit-init :which-key "initialize repo")
-  "gt" '(git-timemachine-toggle :which-key "time machine"))
-
 ;; (remove-hook 'find-file-hook #'vc-refrqesh-state)
 ;; (hook-with-delay 'find-file-hook 1 #'vc-refresh-state)
 
-(use-package magit
+(elpa-use-package magit
   :defer t
   :defines (magit-status-mode-map
             magit-revision-show-gravatars
@@ -63,6 +51,18 @@
   :commands (magit-display-buffer-same-window-except-diff-v1
              magit-stage-file
              magit-unstage-file)
+  :general
+  (leader-def
+    "g" '(nil :which-key "git...")
+    "gS" '(magit-stage-file :which-key "stage file")
+    "gU" '(magit-unstage-file :which-key "unstage file")
+    "g[" '(git-gutter:previous-hunk :which-key "previous hunk")
+    "g]" '(git-gutter:next-hunk :which-key "next hunk")
+    "gd" '(magit-dispatch :which-key "dispatch")
+    "gf" '(magit-find-file :which-key "find-file")
+    "gg" '(magit-status :which-key "status")
+    "gi" '(magit-init :which-key "initialize repo")
+    "gt" '(git-timemachine-toggle :which-key "time machine"))
   :init
   (setq-default magit-git-executable (executable-find "git"))
   :config
@@ -78,30 +78,30 @@
         ;; show word-granularity on selected hunk
         magit-diff-refine-hunk t))
 
-(use-package closql
+(elpa-use-package closql
   :defer t)
 
-(use-package ghub
+(elpa-use-package ghub
   :defer t)
 
-(use-package forge
+(elpa-use-package forge
   :commands forge-create-pullreq forge-create-issue
   :init
   (setq-default forge-database-file
                 (expand-file-name "forge/forge-database.sqlite"
                                   path-etc-dir)))
 
-(use-package git-timemachine
+(elpa-use-package git-timemachine
   :defer t)
 
-(use-package ediff-wind
-  :straight nil
+(elpa-use-package ediff-wind
+  :ensure nil
   :defer t
   :init
   (setq ediff-window-setup-function 'ediff-setup-windows-plain
         ediff-split-window-function 'split-window-horizontally))
 
-(use-package diff-hl
+(elpa-use-package diff-hl
   :defer t
   :hook ((prog-mode . turn-on-diff-hl-mode)
          (text-mode . turn-on-diff-hl-mode)

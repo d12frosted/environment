@@ -33,11 +33,7 @@
 ;;
 ;;; Code:
 
-(use-package vino
-  :straight (vino
-             :type git
-             :host github
-             :repo "d12frosted/vino")
+(elpa-use-package (vino :host github :repo "d12frosted/vino")
   :defer t
   :commands (vino-setup)
   :general

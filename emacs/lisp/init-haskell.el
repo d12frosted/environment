@@ -36,7 +36,7 @@
 (defconst haskell-backend 'lsp-ui
   "Backend for Haskell IDE: eglot, lsp-ui, dante.")
 
-(use-package haskell-mode
+(elpa-use-package haskell-mode
   :hook ((haskell-mode . subword-mode))
   :init
   (when (eq haskell-backend 'eglot)
@@ -55,10 +55,10 @@
   (setq haskell-process-show-overlays nil)
   (add-to-list 'completion-ignored-extensions ".hi"))
 
-(use-package ormolu
+(elpa-use-package ormolu
   :hook (haskell-mode . ormolu-format-on-save-mode))
 
-(use-package dante
+(elpa-use-package dante
   :if (eq haskell-backend 'dante)
   :commands (dante-mode
              dante-company)
@@ -69,7 +69,7 @@
     (flycheck-add-next-checker 'haskell-dante
                                '(warning . haskell-hlint))))
 
-(use-package lsp-haskell
+(elpa-use-package lsp-haskell
   :if (eq haskell-backend 'lsp-ui)
   :after haskell-mode
   :hook ((haskell-mode . lsp))

@@ -32,6 +32,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 'vulpea)
 (require 'lib-calc)
 (require 'lib-table)
 

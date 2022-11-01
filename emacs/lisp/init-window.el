@@ -40,7 +40,7 @@
 ;; minimum window height
 (setq window-min-height 1)
 
-(use-package ace-window
+(elpa-use-package ace-window
   :defer t
   :init
   (setq-default aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o)))
@@ -79,23 +79,24 @@ the undo expires."
     (window-configuration-to-register ?_)
     (delete-other-windows)))
 
-(leader-def
-  "C-w" '(ace-window :which-key "Ace window")
-  "M-w" '(ace-window :which-key "Ace window")
+(with-eval-after-load 'general
+  (leader-def
+    "C-w" '(ace-window :which-key "Ace window")
+    "M-w" '(ace-window :which-key "Ace window")
 
-  "w"  '(nil :which-key "window...")
-  "wS" '(window-split-horizontally
-         :which-key "split frame horizontally")
-  "wV" '(window-split-vertically
-         :which-key "split frame vertically")
-  "wk" '(delete-window
-         :which-key "kill window")
-  "wm" '(window-zoom
-         :which-key "kill other windows")
-  "ws" '(window-split-horizontally-and-focus
-         :which-key "split frame horizontally and focus")
-  "wv" '(window-split-vertically-and-focus
-         :which-key "split frame vertically and focus"))
+    "w"  '(nil :which-key "window...")
+    "wS" '(window-split-horizontally
+           :which-key "split frame horizontally")
+    "wV" '(window-split-vertically
+           :which-key "split frame vertically")
+    "wk" '(delete-window
+           :which-key "kill window")
+    "wm" '(window-zoom
+           :which-key "kill other windows")
+    "ws" '(window-split-horizontally-and-focus
+           :which-key "split frame horizontally and focus")
+    "wv" '(window-split-vertically-and-focus
+           :which-key "split frame vertically and focus")))
 
 (provide 'init-window)
 ;;; init-window.el ends here

@@ -33,11 +33,9 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
 (require 'init-vulpea)
 
-(require 's)
-(require 'button)
+(autoload 'vulpea-note-p "vulpea-note")
 
 (defun string-non-empty-p (str)
   "Return non-nil when STR is non-empty."

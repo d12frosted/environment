@@ -34,14 +34,12 @@
 ;;
 ;;; Code:
 
-(use-package telega
+(elpa-use-package (telega
+                     :host github
+                     :repo "zevlg/telega.el"
+                     :branch "releases"
+                     :files (:defaults "contrib" "etc" "server" "Makefile"))
   :disabled
-  :straight (telega
-             :type git
-             :host github
-             :repo "zevlg/telega.el"
-             :branch "releases"
-             :files (:defaults "contrib" "etc" "server" "Makefile"))
   :defer t
   :hook ((telega-chat-mode . ui-reset-line-spacing)
          (telega-webpage-mode . ui-reset-line-spacing)

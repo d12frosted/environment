@@ -41,8 +41,11 @@
     "pkill" "pwd" "rm" "sleep" "sudo" "touch")
   "A list of common commands to be fontified in `sh-mode'.")
 
-(use-package sh-script
-  :straight nil
+(eval-when-compile
+  (require 'sh-script))
+
+(elpa-use-package sh-script
+  :ensure nil
   :commands (sh-shell-process)
   :config
   ;; setup indentation
@@ -62,7 +65,7 @@
      (,(regexp-opt sh-builtin-keywords 'words)
       (0 'font-lock-type-face append)))))
 
-(use-package company-shell
+(elpa-use-package company-shell
   :after sh-script
   :config
   (add-to-list 'company-backends '(company-shell
@@ -112,15 +115,15 @@ Search is bounded by LIMIT."
 
 
 
-(use-package fish-mode
+(elpa-use-package fish-mode
   :defer t
   :init
   (setq-default fish-indent-offset tab-width))
 
 
 
-(use-package eshell
-  :straight nil
+(elpa-use-package eshell
+  :ensure nil
   :defer t
   :init
   (setq-default
