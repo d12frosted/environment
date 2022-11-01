@@ -46,7 +46,7 @@
        path-packages-dir))
 
 
-;; bootstrap Elpaca
+;; bootstrap `elpaca'
 
 (declare-function elpaca-generate-autoloads "elpaca")
 (defvar elpaca-directory (expand-file-name "elpaca/" path-packages-dir))
@@ -74,13 +74,23 @@
        (display-buffer buffer)))))
 (require 'elpaca-autoloads)
 (autoload 'elpaca--queue "elpaca")      ; needed because of byte-compilation of this file
-(add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca (elpaca :host github :repo "progfolio/elpaca"))
 
 (when elpa-bootstrap-p
   (elpaca-generate-autoloads "init" (expand-file-name "lisp/" path-emacs-dir)))
 
 
+
+(defun elpa-block-until-ready ()
+  "Block Emacs until all packages are installed.
+
+Unfortunately, `elpaca' is asynchronous-only, but there are
+flows (like scripts using `init'), where you need to do perform
+some actions *when* environment is ready."
+  (elpaca-process-queues)
+  (unless env-graphic-p
+    (while (cl-find 'incomplete (reverse elpaca--queues) :key #'elpaca-q<-status)
+      (sit-for 0.2))))
 
 (defmacro elpa-require (pkg)
   "Bootstrap PKG and require it."

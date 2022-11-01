@@ -51,10 +51,7 @@
                 load-prefer-newer t)
   (eldev--inject-loading-roots 'bootstrap)
   (require 'config-path)
-  (load (expand-file-name "init.el" path-emacs-dir))
-  (elpaca-process-queues)
-  (while (cl-find 'incomplete (reverse elpaca--queues) :key #'elpaca-q<-status)
-    (sit-for 0.2)))
+  (load (expand-file-name "init.el" path-emacs-dir)))
 
 ;; We want to run this before any build command. This is also needed
 ;; for `flyspell-eldev` to be aware of packages installed by
@@ -92,17 +89,13 @@
 
 
 
+(defun elpa-load-autoloads-file ()
+  (eldev--load-autoloads-file
+   (expand-file-name "lisp/init-autoloads.el" eldev-project-dir)))
+
 ;; Always load autoloads file.
-(add-hook
- 'eldev-build-system-hook
- (lambda ()
-   (eldev--load-autoloads-file
-    (expand-file-name "lisp/init-autoloads.el" eldev-project-dir))))
-(add-hook
- 'eldev-test-hook
- (lambda ()
-   (eldev--load-autoloads-file
-    (expand-file-name "lisp/init-autoloads.el" eldev-project-dir))))
+(add-hook 'eldev-build-system-hook #'elpa-load-autoloads-file)
+(add-hook 'eldev-test-hook #'elpa-load-autoloads-file)
 
 
 ;; Linting configurations.
