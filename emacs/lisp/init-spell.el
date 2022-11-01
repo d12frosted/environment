@@ -62,13 +62,6 @@
         flyspell-lazy-window-idle-seconds 3)
   (flyspell-lazy-mode +1))
 
-(elpa-use-package flyspell-correct-ivy
-  :if (eq selection-system 'ivy)
-  :defer t
-  :commands (flyspell-correct-ivy)
-  :init
-  (setq flyspell-correct-interface #'flyspell-correct-ivy))
-
 (elpa-use-package flyspell-correct
   :defer t
   :general

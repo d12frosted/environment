@@ -527,6 +527,12 @@
    '(company-tooltip-annotation           ((t (:inherit barberry-theme-face-faded))))
    '(company-tooltip-annotation-selection ((t (:inherit barberry-theme-face-faded))))
 
+   ;; orderless
+   `(orderless-match-face-0 ((t (:inherit barberry-theme-face-popout-i))))
+   `(orderless-match-face-1 ((t (:inherit barberry-theme-face-critical-i))))
+   `(orderless-match-face-2 ((t (:inherit barberry-theme-face-salient-i))))
+   `(orderless-match-face-3 ((t (:inherit barberry-theme-face-successful-i))))
+
    ;; info
    '(info-node        ((t (:inherit barberry-theme-face-strong))))
    '(info-menu-header ((t (:inherit barberry-theme-face-strong))))

@@ -111,7 +111,6 @@
   :defines (eglot-server-programs))
 
 (elpa-use-package consult-lsp
-  :if (eq selection-system 'consult)
   :defer t
   :after lsp
   :config

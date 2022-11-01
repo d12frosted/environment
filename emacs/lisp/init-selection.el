@@ -36,114 +36,36 @@
 
 (require 'config-path)
 
-(defvar selection-system 'consult
-  "Selection system to use: ivy, selectrum or consult.")
-
-(elpa-use-package counsel
-  :if (eq selection-system 'ivy)
-  :diminish ivy-mode counsel-mode
-  :commands (counsel-find-file
-             counsel-file-jump)
-  :hook ((after-init . ivy-mode)
-         (ivy-mode . counsel-mode))
-  :general
-  (leader-def
-    "iu" '(counsel-unicode-char :which-key "Unicode character"))
-  :bind
-  (("M-x" . counsel-M-x)
-   ("C-h F" . counsel-faces))
+(elpa-use-package vertico
   :init
-  (setq
-   enable-recursive-minibuffers t
-   ivy-use-selectable-prompt t
-   ivy-use-virtual-buffers t
-   ivy-height 10
-   ivy-count-format "(%d/%d) "
-   ivy-on-del-error-function nil)
-  :config
-  (setq ivy-initial-inputs-alist
-        '((counsel-minor . "^+")
-          (counsel-package . "^+")
-          (counsel-org-capture . "^")
-          (counsel-M-x . "^+?")
-          (counsel-describe-function . "^+?")
-          (counsel-describe-variable . "^+?"))))
+  (vertico-mode))
 
-(elpa-use-package ivy-prescient
-  :if (eq selection-system 'ivy)
-  :hook (ivy-mode . ivy-prescient-mode)
-  :defines (ivy-prescient-retain-classic-highlighting
-            ivy-prescient-sort-commands)
-  :config
-  (setq ivy-prescient-sort-commands
-        '(:not swiper swiper-isearch ivy-switch-buffer
-               counsel-grep counsel-git-grep counsel-ag
-               counsel-rg counsel-imenu counsel-yank-pop
-               counsel-recentf counsel-buffer-or-recentf)
-        ivy-prescient-retain-classic-highlighting t))
-
-(elpa-use-package ivy-rich
-  :disabled
-  :if (eq selection-system 'ivy)
-  :after ivy
-  :commands (ivy-rich-mode)
+(elpa-use-package savehist
+  :ensure nil
   :init
-  (ivy-rich-mode))
+  (savehist-mode))
 
-(elpa-use-package selectrum-prescient
-  :if (or (eq selection-system 'selectrum)
-          (eq selection-system 'consult))
-  :hook (selectrum-mode . selectrum-prescient-mode))
-
-(elpa-use-package selectrum
-  :if (or (eq selection-system 'selectrum)
-          (eq selection-system 'consult))
+(elpa-use-package emacs
+  :ensure nil
   :init
-  (selectrum-mode)
-  :commands (selectrum-exhibit))
+  ;; Do not allow the cursor in the minibuffer prompt
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
-(elpa-use-package ctrlf
-  :if (eq selection-system 'selectrum)
-  :hook (selectrum-mode . ctrlf-mode))
+  ;; Enable recursive minibuffers
+  (setq enable-recursive-minibuffers t))
 
-(elpa-use-package prescient
-  :defer t
-  :commands (prescient-persist-mode
-             prescient--with-group
-             prescient--initials-regexp
-             prescient--fuzzy-regexp
-             prescient-split-query)
-  :defines (prescient-filter-method prescient-save-file)
+(elpa-use-package orderless
   :init
-  (setq prescient-filter-method '(literal regexp initialism))
-  :config
-  (setq prescient-save-file
-        (expand-file-name "prescient-save.el"
-                          path-cache-dir))
-  (prescient-persist-mode +1))
-
-(elpa-use-package consult
-  :if (eq selection-system 'consult)
-  :bind
-  (("M-y" . consult-yank-pop))
-  :general
-  (leader-def
-    "bb" '(consult-buffer :which-key "Switch buffer")
-    "pg" '(consult-grep :which-key "Grep the project")
-    "ji" '(consult-imenu :which-key "imenu")))
-
-;; (elpa-use-package embark
-;;   :bind
-;;   ("C-M-a" . embark-act))
-
-;; (elpa-use-package embark-consult
-;;   :if (eq selection-system 'consult)
-;;   :after (embark consult)
-;;   :hook
-;;   (embark-collect-mode . consult-preview-at-point-mode))
+  ;; Configure a custom style dispatcher (see the Consult wiki)
+  ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+  ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
 
 (elpa-use-package marginalia
-  :if (eq selection-system 'consult)
   :commands (marginalia-mode
              marginalia-cycle)
   :init
