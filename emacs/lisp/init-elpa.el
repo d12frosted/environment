@@ -92,6 +92,7 @@ some actions *when* environment is ready."
     (elpaca-process-queues))
   (unless env-graphic-p
     (while (cl-find 'incomplete (reverse elpaca--queues) :key #'elpaca-q<-status)
+      (message "waiting for installation to complete...")
       (sit-for 0.2))))
 
 (defmacro elpa-require (pkg)
