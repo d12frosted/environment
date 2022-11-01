@@ -34,32 +34,35 @@
 ;;
 ;;; Code:
 
-(use-package lispy
+(elpa-use-package elsa
+  :defer t)
+
+(elpa-use-package lispy
   :diminish
   :defines (lispy-mode-map)
   :hook ((emacs-lisp-mode . lispy-mode))
   :bind (:map lispy-mode-map
               ("C-a" . beginning-of-line)))
 
-(use-package eldoc
-  :straight nil
+(elpa-use-package eldoc
+  :ensure nil
   :diminish eldoc-mode)
 
-(use-package flycheck-eldev
+(elpa-use-package flycheck-eldev
   :after flycheck)
 
-(use-package page-break-lines
+(elpa-use-package page-break-lines
   :disabled
   :hook ((emacs-lisp-mode . page-break-lines-mode)))
 
-(use-package form-feed
+(elpa-use-package form-feed
   :hook ((emacs-lisp-mode . form-feed-mode)))
 
-(use-package emacsql
+(elpa-use-package emacsql
   :defer t
   :hook ((emacs-lisp-mode . emacsql-fix-vector-indentation)))
 
-(use-package buttercup
+(elpa-use-package buttercup
   :defer t
   :config
   (when (version<= "29" emacs-version)

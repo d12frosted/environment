@@ -404,7 +404,15 @@ is ignored. Any buffer modification is saved."
     (vino-db-sync)
     (org-roam-update-org-id-locations)
     (org-persist-gc)
-    (org-persist-write-all)))
+    (org-persist-write-all)
+    ;; (vulpea-db-process-notes
+    ;;  :filter-fn
+    ;;  (lambda (note) (vulpea-note-tagged-all-p note "wine" "cellar"))
+    ;;  :process-fn
+    ;;  (lambda (note)
+    ;;    (vulpea-utils-with-note note
+    ;;      (vino-entry-update-title))))
+    ))
 
 
 

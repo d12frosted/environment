@@ -109,7 +109,7 @@
 ;; disable bidirectional text for tiny performance boost
 (setq bidi-display-reordering nil)
 
-(use-package minions
+(elpa-use-package minions
   :init
   (minions-mode 1))
 
@@ -127,19 +127,17 @@
 
 
 
-(use-package font-lock+)
+(elpa-use-package (font-lock+ :host github :repo "emacsmirror/font-lock-plus"))
 
 
 
-(use-package bui
+(elpa-use-package bui
   :defer t)
 
-(use-package lister
-  :straight (lister
-             :type git
-             :host github
-             :repo "publicimageltd/lister"
-             :branch "archive-version-0.7.2")
+(elpa-use-package (lister
+                   :host github
+                   :repo "publicimageltd/lister"
+                   :branch "archive-version-0.7.2")
   :defer t)
 
 
@@ -190,7 +188,7 @@
             'face face)))
         faces)))))
 
-(use-package svg-lib
+(elpa-use-package (svg-lib :host github :repo "rougier/svg-lib")
   :defer t
   :init
   (setq-default
@@ -223,8 +221,7 @@
                        "icons/fontawesome/svgs/solid/%s.svg"
                        path-cache-dir))))))
 
-(use-package svg-tag-mode
-  :straight (:type git :host github :repo "rougier/svg-tag-mode")
+(elpa-use-package (svg-tag-mode :host github :repo "rougier/svg-tag-mode")
   :commands (svg-tag-mode
              svg-tag-mode-on)
   :init
@@ -246,14 +243,14 @@
 
 
 
-(use-package fancy-compilation
-  :straight (:type git :host nil :repo "https://codeberg.org/ideasman42/emacs-fancy-compilation.git")
+(elpa-use-package (fancy-compilation
+                   :host codeberg
+                   :repo "ideasman42/emacs-fancy-compilation")
   :commands (fancy-compilation-mode)
   :init
-  (setf fancy-compilation-override-colors nil))
-
-(with-eval-after-load 'compile
-  (fancy-compilation-mode))
+  (setf fancy-compilation-override-colors nil)
+  (with-eval-after-load 'compile
+    (fancy-compilation-mode)))
 
 
 

@@ -33,8 +33,6 @@
 ;;
 ;;; Code:
 
-(use-package general)
-
 (defmacro leader-def (&rest args)
   "A wrapper for `general-def'.
 
@@ -46,21 +44,24 @@ ARGS are arguments, right?"
                              :prefix-command 'prefix-command
                              :prefix-map 'prefix-map)))
 
-(leader-def
-  "/" '(nil :which-key "search...")
-  "[" '(nil :which-key "previous...")
-  "a" '(nil :which-key "align...")
-  "g" '(nil :which-key "git...")
-  "i" '(nil :which-key "insert...")
-  "j" '(nil :which-key "jump...")
-  "o" '(nil :which-key "open...")
-  "v" '(nil :which-key "vino..."))
+(elpa-use-package general
+  :init
+  (leader-def
+    "/" '(nil :which-key "search...")
+    "[" '(nil :which-key "previous...")
+    "a" '(nil :which-key "align...")
+    "g" '(nil :which-key "git...")
+    "i" '(nil :which-key "insert...")
+    "j" '(nil :which-key "jump...")
+    "o" '(nil :which-key "open...")
+    "v" '(nil :which-key "vino...")))
 
-(use-package bind-key)
+(elpaca bind-key (require 'bind-key))
 
-(use-package which-key
+(elpa-use-package which-key
   :diminish which-key-mode
-  :hook (after-init . which-key-mode))
+  :init
+  (which-key-mode))
 
 (defvar kbd-escape-hook nil
   "A hook run after \\[keyboard-quit] is pressed.

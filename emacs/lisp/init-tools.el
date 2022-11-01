@@ -31,17 +31,15 @@
 ;;
 ;;; Code:
 
-(use-package restclient
+(elpa-use-package (restclient
+                   :host github
+                   :repo "pashky/restclient.el"
+                   :files ("restclient.el" "restclient-jq.el"))
   :defer t
-  :straight (restclient
-             :type git
-             :host github
-             :repo "pashky/restclient.el"
-             :files ("restclient.el" "restclient-jq.el"))
   :config
   (require 'restclient-jq))
 
-(use-package jq-mode
+(elpa-use-package jq-mode
   :defer t)
 
 (provide 'init-tools)

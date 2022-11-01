@@ -30,6 +30,7 @@
 ;; Eldev commands to locate them.
 (eldev-add-loading-roots 'build "lisp")
 (eldev-add-loading-roots 'bootstrap "lisp")
+(eldev-add-loading-roots 'test "lisp")
 
 
 
@@ -46,36 +47,18 @@
 
 (defun elpa-bootstrap ()
   "Bootstrap personal configurations."
-  (setq-default
-   elpa-bootstrap-p t
-   load-prefer-newer t)
+  (setq-default elpa-bootstrap-p t
+                load-prefer-newer t)
   (eldev--inject-loading-roots 'bootstrap)
   (require 'config-path)
   (load (expand-file-name "init.el" path-emacs-dir))
-  (when elpa-freeze
-    ;; straight.el doesn't checkout specified branch (only default
-    ;; one) during cloning, meaning that during freeze process, when
-    ;; it tries to `straight-vc-git--ensure-head-at-branch', it fails
-    ;; because specified branch is not present.
-    ;;
-    ;; It seems that it happens only with straight.el for now.
-    ;;
-    ;; Not sure how to overcome this, except for making sure that
-    ;; branches exist before freezing versions.
-    ;;
-    ;; Can be used for all packages except for straight:
-    ;; (straight-recipes-retrieve 'straight)
-
-    (let ((straight--process-log nil))
-      (let ((straight--default-directory (straight--repos-dir "straight.el")))
-        (straight--process-run "git" "branch" "develop" "origin/develop")))
-
-    ;; now do your freezing stuff
-    (straight-freeze-versions)))
+  (elpaca-process-queues)
+  (while (cl-find 'incomplete (reverse elpaca--queues) :key #'elpaca-q<-status)
+    (sit-for 0.2)))
 
 ;; We want to run this before any build command. This is also needed
-;; for `flyspell-eldev` to be aware of packages installed via
-;; straight.el.
+;; for `flyspell-eldev` to be aware of packages installed by
+;; elpaca/straight/whatever.
 (add-hook 'eldev-build-system-hook #'elpa-bootstrap)
 
 ;; freeze only during build command, ideally `eldev-build-system-hook'
@@ -92,63 +75,31 @@
 
 (defun elpa-upgrade ()
   "Bootstrap personal configurations."
-  (elpa-bootstrap)
-  (straight-fetch-all)
-  (straight-merge-all)
-  (straight-thaw-versions)
-  (delete-file (concat path-packages-dir "straight/build-cache.el"))
-  (delete-directory (concat path-packages-dir "straight/build") 'recursive)
-  (straight-check-all)
-  (straight-freeze-versions))
+  (elpa-bootstrap))
 
 (add-hook 'eldev-upgrade-hook #'elpa-upgrade)
 
 
 
-;; We want to generate autoloads file. This line simply loads few
-;; helpers.
-(eldev-use-plugin 'autoloads)
+(add-hook 'eldev-test-hook #'elpa-bootstrap)
 
-;; Eldev doesn't traverse extra loading roots, so we have to modify
-;; autoloads plugin a little bit. Basically, this modification
-;; achieves specific goal - generate autoloads from files located in
-;; Lisp directory.
-(eldev-defbuilder eldev-builder-autoloads (sources target)
-  :type           many-to-one
-  :short-name     "AUTOLOADS"
-  :message        target
-  :source-files   (:and "lisp/*.el" (:not ("lisp/*autoloads.el")))
-  :targets        (lambda (_sources) "lisp/init-autoloads.el")
-  :define-cleaner (eldev-cleaner-autoloads
-                   "Delete the generated package autoloads files."
-                   :default t)
-  :collect        (":autoloads")
-  ;; To make sure that `update-directory-autoloads' doesn't grab files it shouldn't,
-  ;; override `directory-files' temporarily.
-  (eldev-advised (#'directory-files
-                  :around
-                  (lambda (original directory &rest arguments)
-                    (let ((files (apply original directory arguments)))
-                      (if (file-equal-p directory eldev-project-dir)
-                          (let (filtered)
-                            (dolist (file files)
-                              (when (eldev-any-p (file-equal-p file it) sources)
-                                (push file filtered)))
-                            (nreverse filtered))
-                        files))))
-    (let ((inhibit-message   t)
-          (make-backup-files nil)
-          (pkg-dir (expand-file-name "lisp/" eldev-project-dir)))
-      (package-generate-autoloads (package-desc-name (eldev-package-descriptor)) pkg-dir)
-      ;; Always load the generated file.  Maybe there are cases when we don't need that,
-      ;; but most of the time we do.
-      (eldev--load-autoloads-file (expand-file-name target eldev-project-dir)))))
+
+
+(defun -vulpea-db-bootstrap ()
+  "Bootstrap `vulpea-db'."
+  (run-hooks 'after-init-hook)
+  (vulpea-db-build))
 
 
 
 ;; Always load autoloads file.
 (add-hook
  'eldev-build-system-hook
+ (lambda ()
+   (eldev--load-autoloads-file
+    (expand-file-name "lisp/init-autoloads.el" eldev-project-dir))))
+(add-hook
+ 'eldev-test-hook
  (lambda ()
    (eldev--load-autoloads-file
     (expand-file-name "lisp/init-autoloads.el" eldev-project-dir))))

@@ -35,7 +35,17 @@
 
 (require 'lib-eval)
 (require 'config-path)
-(require 'project)
+
+(elpa-use-package project
+  :ensure nil
+  :general
+  (leader-def
+    "p" '(nil :which-key "project...")
+    "p!" '(project-shell-command :which-key "Run cmd in project root")
+    "p/" '(project-find-regexp :which-key "Grep the project")
+    "pf" '(project-find-file :which-key "Find file in project")
+    "pp" '(project-switch :which-key "Switch project")
+    "pc" '(project-compile :which-key "Compile project")))
 
 (setq project-list-file (expand-file-name "projects" path-etc-dir))
 
@@ -71,19 +81,11 @@
         (?v "Magit" project-magit)
         (?e "Eshell" project-eshell)))
 
-(use-package rg
+(elpa-use-package rg
   :defer t
   :commands (rg-project)
   :init
   (defalias 'project-find-regexp #'rg-project))
-
-(leader-def
-  "p" '(nil :which-key "project...")
-  "p!" '(project-shell-command :which-key "Run cmd in project root")
-  "p/" '(project-find-regexp :which-key "Grep the project")
-  "pf" '(project-find-file :which-key "Find file in project")
-  "pp" '(project-switch :which-key "Switch project")
-  "pc" '(project-compile :which-key "Compile project"))
 
 (provide 'init-project)
 ;;; init-project.el ends here

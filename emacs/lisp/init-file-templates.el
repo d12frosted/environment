@@ -33,6 +33,8 @@
 ;;
 ;;; Code:
 
+(require 'config-path)
+
 (defvar file-templates-dir
   (expand-file-name "templates/" path-emacs-dir)
   "The path to yasnippet folders.")
@@ -61,7 +63,7 @@ string.
 The CDR is a plist. See `file-templates-set' for more
 information.")
 
-(use-package yasnippet
+(elpa-use-package yasnippet
   :diminish yas-minor-mode
   :commands (yas-minor-mode-on
              yas-expand
@@ -182,12 +184,9 @@ PROJECT, MODE, TRIGGER, IGNORE and _WHEN arguments."
         (setq trigger file-templates-default-trigger))
       (if (functionp trigger)
           (funcall trigger)
-        (require 'yasnippet)
-        (unless yas-minor-mode
-          (yas-minor-mode-on))
-        (when yas-minor-mode
-          (yas-expand-snippet
-           (yas-lookup-snippet trigger mode)))))))
+        (yas-minor-mode-on)
+        (yas-expand-snippet
+         (yas-lookup-snippet trigger mode))))))
 
 (defun file-templates-p (rule)
   "Return non-nil if the RULE apply to the current buffer."

@@ -36,16 +36,16 @@
 
 (require 'config-path)
 
-(use-package company
+(elpa-use-package company
   :defer 2
   :diminish
-  :hook (after-init . global-company-mode)
   :defines (company-backends)
   :commands (company-complete-common
              company-manual-begin
              company-grab-line
              global-company-mode)
   :init
+  (global-company-mode)
   (setq-default
    company-minimum-prefix-length 2
    company-tooltip-limit 14
@@ -58,7 +58,7 @@
    '(company-pseudo-tooltip-frontend
      company-echo-metadata-frontend)))
 
-(use-package company-prescient
+(elpa-use-package company-prescient
   :hook (company-mode . company-prescient-mode)
   :defines (prescient-save-file)
   :commands (prescient-persist-mode)
@@ -67,7 +67,7 @@
                                     "prescient-save.el"))
   (prescient-persist-mode +1))
 
-(use-package flycheck
+(elpa-use-package flycheck
   :defer 1
   :commands (global-flycheck-mode)
   :init
@@ -86,7 +86,7 @@
     (delete dir load-path)
     (add-to-list 'load-path dir)))
 
-(use-package lsp-mode
+(elpa-use-package lsp-mode
   :hook
   (lsp-mode . lsp-lens-mode)
   :init
@@ -95,22 +95,22 @@
    lsp-auto-guess-root nil
    lsp-keep-workspace-alive nil))
 
-(use-package lsp-ui
+(elpa-use-package lsp-ui
   :defer t
   :commands lsp-ui-mode)
 
-(use-package posframe)
+(elpa-use-package posframe)
 
-(use-package dap-mode
+(elpa-use-package dap-mode
   :hook
   (lsp-mode . dap-mode)
   (lsp-mode . dap-ui-mode))
 
-(use-package eglot
+(elpa-use-package eglot
   :defer t
   :defines (eglot-server-programs))
 
-(use-package consult-lsp
+(elpa-use-package consult-lsp
   :if (eq selection-system 'consult)
   :defer t
   :after lsp

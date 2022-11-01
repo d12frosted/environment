@@ -201,17 +201,18 @@ for a file to visit if current buffer is not visiting a file."
 
 
 
-(leader-def
-  "b" '(nil :which-key "buffer...")
-  "bM" '(buffer-switch-to-messages
-         :which-key "switch to messages buffer")
-  "bS" '(buffer-sudo-edit :which-key "sudo edit this file")
-  "bX" '(buffer-switch-to-scratch :which-key "pop scratch buffer")
-  "bb" '(switch-to-buffer :which-key "switch buffer")
-  "bk" '(kill-this-buffer :which-key "kill buffer")
-  "bm" '(buffer-pop-messages :which-key "pop messages buffer")
-  "bs" '(save-buffer :which-key "save buffer")
-  "bx" '(buffer-pop-scratch :which-key "pop scratch buffer"))
+(with-eval-after-load 'general
+  (leader-def
+    "b" '(nil :which-key "buffer...")
+    "bM" '(buffer-switch-to-messages
+           :which-key "switch to messages buffer")
+    "bS" '(buffer-sudo-edit :which-key "sudo edit this file")
+    "bX" '(buffer-switch-to-scratch :which-key "pop scratch buffer")
+    "bb" '(switch-to-buffer :which-key "switch buffer")
+    "bk" '(kill-this-buffer :which-key "kill buffer")
+    "bm" '(buffer-pop-messages :which-key "pop messages buffer")
+    "bs" '(save-buffer :which-key "save buffer")
+    "bx" '(buffer-pop-scratch :which-key "pop scratch buffer")))
 
 
 

@@ -33,10 +33,10 @@
 ;;
 ;;; Code:
 
-(use-package json-snatcher
+(elpa-use-package json-snatcher
   :defer t)
 
-(use-package json-mode
+(elpa-use-package json-mode
   :defer t)
 
 (provide 'init-json)

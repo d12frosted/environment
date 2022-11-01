@@ -33,7 +33,7 @@
 ;;
 ;;; Code:
 
-(use-package yaml-mode
+(elpa-use-package yaml-mode
   :defer t
   :hook
   (yaml-mode . lsp)

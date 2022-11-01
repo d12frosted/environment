@@ -46,97 +46,85 @@
        path-packages-dir))
 
 
-;; bootstrap straight.el
+;; bootstrap Elpaca
 
-(setq-default
- straight-repository-branch "develop"
- straight-check-for-modifications nil
- straight-use-package-by-default t
- straight-base-dir path-packages-dir
- straight-profiles (list
-                    (cons nil
-                          (expand-file-name
-                           "versions/default.el"
-                           path-emacs-dir))))
+(declare-function elpaca-generate-autoloads "elpaca")
+(defvar elpaca-directory (expand-file-name "elpaca/" path-packages-dir))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(when-let ((elpaca-repo (expand-file-name "repos/elpaca/" elpaca-directory))
+           (elpaca-build (expand-file-name "elpaca/" elpaca-builds-directory))
+           (elpaca-target (if (file-exists-p elpaca-build) elpaca-build elpaca-repo))
+           (elpaca-url  "https://www.github.com/progfolio/elpaca.git")
+           ((add-to-list 'load-path elpaca-target))
+           ((not (file-exists-p elpaca-repo)))
+           (buffer (get-buffer-create "*elpaca-bootstrap*")))
+  (condition-case-unless-debug err
+      (progn
+        (unless (zerop (call-process "git" nil buffer t "clone" elpaca-url elpaca-repo))
+          (error "%s" (list (with-current-buffer buffer (buffer-string)))))
+        (byte-recompile-directory elpaca-repo 0 'force)
+        (require 'elpaca)
+        (elpaca-generate-autoloads "elpaca" elpaca-repo)
+        (kill-buffer buffer))
+    ((error)
+     (delete-directory elpaca-directory 'recursive)
+     (with-current-buffer buffer
+       (goto-char (point-max))
+       (insert (format "\n%S" err))
+       (display-buffer buffer)))))
+(require 'elpaca-autoloads)
+(autoload 'elpaca--queue "elpaca")      ; needed because of byte-compilation of this file
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca (elpaca :host github :repo "progfolio/elpaca"))
 
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el"
-                         path-packages-dir))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         (concat "https://raw.githubusercontent.com/"
-                 "raxod502/straight.el/"
-                 "develop/install.el")
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-(defvar elpa-straight-retry-count 3
-  "Amount of retries for `straight' operations.")
-
-(defun elpa-straight-with-retry (orig-fn &rest args)
-  "Wrapper around ORIG-FN supporting retries.
-
-ORIG-FN is called with ARGS and retried
-`elpa-straight-retry-count' times."
-  (let ((n elpa-straight-retry-count)
-        (res nil))
-    (while (> n 0)
-      (condition-case err
-          (progn
-            (setq res (apply orig-fn args)
-                  n 0)
-            res)
-        (error
-         (setq n (- n 1))
-         (unless (> n 0)
-           (signal (car err) (cdr err))))))))
-
-(advice-add #'straight-fetch-package
-            :around
-            #'elpa-straight-with-retry)
-(advice-add #'straight--clone-repository
-            :around
-            #'elpa-straight-with-retry)
-
-
-;; overrides
-
-
-;; use-package
-
-(setq-default
- use-package-enable-imenu-support t)
-(straight-use-package 'use-package)
+(when elpa-bootstrap-p
+  (elpaca-generate-autoloads "init" (expand-file-name "lisp/" path-emacs-dir)))
 
 
 
-(use-package el-patch
-  :straight t)
+(defmacro elpa-require (pkg)
+  "Bootstrap PKG and require it."
+  `(elpaca ,pkg (require ',(elpaca--first pkg))))
+
+(defalias #'elpa-use-package #'elpaca-use-package)
+
+
+;; critical packages
+
+(setq-default use-package-enable-imenu-support t)
+
+(elpa-require use-package)
+(elpa-require s)
+(elpa-require dash)
+
+;; (message "%s" (string-join load-path "\n"))
 
 
 ;; popular packages
 
-(use-package s)
-(use-package dash)
-(use-package async)
-(use-package ts)
-(use-package request
+(elpa-use-package async
+  :defer t)
+
+(elpa-use-package ts
+  :defer t)
+
+(elpa-use-package request
   :defer t
   :init
   (setq-default
    request-storage-directory (expand-file-name "request" path-cache-dir)))
-(use-package request-deferred
+
+(elpa-use-package request-deferred
   :defer t)
 
 
 
 ;; profiler
-(use-package esup :defer t)
+(elpa-use-package esup
+  :defer t
+  :init
+  ;; https://github.com/progfolio/elpaca/issues/23
+  (setq esup-depth 0))
 
 
 

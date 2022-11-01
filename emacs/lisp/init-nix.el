@@ -33,7 +33,7 @@
 ;;
 ;;; Code:
 
-(use-package nix-mode
+(elpa-use-package nix-mode
   :mode "\\.nix\\'")
 
 (provide 'init-nix)

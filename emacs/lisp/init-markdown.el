@@ -31,7 +31,7 @@
 ;;
 ;;; Code:
 
-(use-package markdown-mode
+(elpa-use-package markdown-mode
   :defer t
   :hook ((markdown-mode . markdown-toggle-fontify-code-blocks-natively)))
 

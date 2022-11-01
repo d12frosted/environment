@@ -4,8 +4,8 @@ clean:
 
 .PHONY: bootstrap
 bootstrap:
-	eldev clean autoloads
-	eldev -C --unstable -a -dtT build :autoloads
+	eldev clean
+	eldev -C --unstable -a -dtT build
 
 .PHONY: upgrade
 upgrade:
@@ -27,4 +27,4 @@ test:
 
 .PHONY: vulpea
 vulpea:
-	eldev -C --unstable exec "(progn (run-hooks 'after-init-hook) (vulpea-db-build))"
+	eldev -C --unstable exec "(-vulpea-db-bootstrap)"

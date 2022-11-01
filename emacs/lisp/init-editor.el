@@ -87,11 +87,9 @@
  sentence-end-double-space nil
  word-wrap t)
 
-(use-package ws-butler
-  :straight (ws-butler
-             :type git
-             :host github
-             :repo "hlissner/ws-butler")
+(elpa-use-package (ws-butler
+                   :host github
+                   :repo "hlissner/ws-butler")
   :diminish
   :commands (ws-butler-global-mode)
   :init
@@ -120,30 +118,28 @@
 
 (setq-default fill-column 120)
 
-(use-package visual-fill-column
+(elpa-use-package visual-fill-column
   :hook ((visual-line-mode . visual-fill-column-mode)))
 
-(use-package adaptive-wrap
+(elpa-use-package adaptive-wrap
   :defer t)
 
-(use-package unfill
+(elpa-use-package unfill
   :commands (unfill-toggle)
   :bind
   (("M-q" . #'unfill-toggle)))
 
 
 
-(use-package ukrainian-input-method
-  :straight (ukrainian-input-method
-             :type git
-             :host github
-             :repo "d12frosted/emacs-ukrainian-input-method")
+(elpa-use-package (ukrainian-input-method
+                   :host github
+                   :repo "d12frosted/emacs-ukrainian-input-method")
   :init
   (setq-default default-input-method "ukrainian"))
 
 
 
-(use-package move-text
+(elpa-use-package move-text
   :commands (move-text-up
              move-text-down)
   :bind
@@ -152,11 +148,9 @@
 
 
 
-(use-package fancy-yank
-  :straight (fancy-yank
-             :type git
-             :host github
-             :repo "d12frosted/fancy-yank")
+(elpa-use-package (fancy-yank
+                   :host github
+                   :repo "d12frosted/fancy-yank")
   :commands (fancy-yank)
   :bind
   (("C-S-y" . #'fancy-yank))
@@ -168,14 +162,14 @@
           '(fancy-yank-extract-regex
             (lambda (url owner repo type number &rest args)
               (list url
-                    (vcs-url-format-github-issue
-                     owner repo type number)))
+               (vcs-url-format-github-issue
+                owner repo type number)))
             fancy-yank-format-link))
     (cons vcs-url-github-project-regexp
           '(fancy-yank-extract-regex
             (lambda (url owner repo &rest args)
               (list url
-                    (vcs-url-format-github-project owner repo)))
+               (vcs-url-format-github-project owner repo)))
             fancy-yank-format-link))
     (cons (format "\\(https?://%s/package/\\([-[:alnum:]]+\\).*\\)"
                   "hackage.haskell.org")
@@ -192,12 +186,12 @@
                url
                (or (ignore-errors (url-domain
                                    (url-generic-parse-url url)))
-                   (read-string "Description: "))))
+                (read-string "Description: "))))
             fancy-yank-format-link)))))
 
 
 
-(use-package avy
+(elpa-use-package avy
   :defer t
   :general
   (leader-def
@@ -206,7 +200,7 @@
     "jw" '(avy-goto-word-0 :which-key "Word")
     "jJ" '(avy-goto-char-timer :which-key "Chars")))
 
-(use-package ace-link
+(elpa-use-package ace-link
   :defer t
   :general
   (leader-def
@@ -214,7 +208,7 @@
 
 
 
-(use-package mwim
+(elpa-use-package mwim
   :defer t
   :bind (("C-a" . mwim-beginning)))
 
