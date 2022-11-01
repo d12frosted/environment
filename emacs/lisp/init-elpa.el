@@ -87,7 +87,9 @@
 Unfortunately, `elpaca' is asynchronous-only, but there are
 flows (like scripts using `init'), where you need to do perform
 some actions *when* environment is ready."
-  (elpaca-process-queues)
+  (if env-graphic-p
+      (add-hook 'after-init-hook #'elpaca-process-queues)
+    (elpaca-process-queues))
   (unless env-graphic-p
     (while (cl-find 'incomplete (reverse elpaca--queues) :key #'elpaca-q<-status)
       (sit-for 0.2))))
