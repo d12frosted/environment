@@ -448,7 +448,7 @@
    ;; general
    '(buffer-menu-buffer           ((t (:inherit barberry-theme-face-strong))))
    '(minibuffer-prompt            ((t (:inherit barberry-theme-face-strong))))
-   '(isearch                      ((t (:inherit barberry-theme-face-strong))))
+   '(isearch                      ((t (:inherit barberry-theme-face-popout-i))))
    '(isearch-fail                 ((t (:inherit barberry-theme-face-faded))))
    '(show-paren-match             ((t (:inherit barberry-theme-face-strong))))
    '(show-paren-mismatch          ((t (:inherit barberry-theme-face-critical))))
