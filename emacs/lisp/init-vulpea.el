@@ -83,7 +83,7 @@
 
 
 
-(elpa-use-package org
+(elpa-use-package (org :host sourcehut :repo "bzg/org-mode")
   :hook ((org-mode . visual-line-mode)
          (org-mode . adaptive-wrap-prefix-mode)
          ;; oh, how much I hate it in Org mode buffers
