@@ -84,47 +84,6 @@
        (vulpea-note-title res)))))
 
 ;;;###autoload
-(defun vino-balance-display ()
-  "Display buffer with balances."
-  (interactive)
-  (let* ((name "*vino inventory*")
-         (buffer (buffer-generate name 'unique))
-         (balances (->> (inventory-balance-list vino-inventory-file)
-                        (-map
-                         (-partial #'-update-at 0
-                                   #'vulpea-db-get-by-id))
-                        (seq-sort-by
-                         (-compose #'vulpea-note-title #'car)
-                         #'string<)))
-         (total (--reduce-from
-                 (+ acc (cdr it))
-                 0
-                 balances))
-         (bottles (--reduce-from
-                   (+ acc (max 1 (cdr it)))
-                   0
-                   balances)))
-    (with-current-buffer buffer
-      (seq-do
-       (lambda (kvp)
-         (insert
-          (format "%05.2f" (cdr kvp))
-          "  "
-          (vulpea-utils-link-make-string (car kvp))
-          "\n"))
-       balances)
-      (insert "\n"
-              "---"
-              "\n"
-              "total: *"
-              (format "%05.2f" total)
-              "* ("
-              (format "%i" bottles) " bottles)")
-      (org-mode)
-      (read-only-mode))
-    (display-buffer buffer)))
-
-;;;###autoload
 (defun vino-balance-review ()
   "Review available bottles."
   (interactive)
