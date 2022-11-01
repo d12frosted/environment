@@ -156,7 +156,7 @@ CONFIRMED is a hashtable with amount of confirmed bottles."
         "[reset]"
         (lambda (&rest _)
           (vino-balance-review-refresh buffer (make-hash-table :test 'equal))))
-       " "
+       "\n"
        "total: *"
        (format "%05.2f" (--reduce-from
                          (+ acc (cdr it))
