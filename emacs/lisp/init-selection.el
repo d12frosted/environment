@@ -36,9 +36,14 @@
 
 (require 'config-path)
 
-(elpa-use-package vertico
+(elpa-use-package (vertico :files ("*.el" "extensions/*.el"))
   :init
   (vertico-mode))
+
+(elpa-use-package vertico-repeat
+  :ensure nil
+  :bind ("M-R" . vertico-repeat)
+  :hook ((minibuffer-setup . vertico-repeat-save)))
 
 (elpa-use-package savehist
   :ensure nil
