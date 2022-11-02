@@ -101,6 +101,38 @@ some actions *when* environment is ready."
 
 (defalias #'elpa-use-package #'elpaca-use-package)
 
+(defcustom elpa-package-form-regexp-eval
+  `(concat
+    ,(eval-when-compile
+       (concat "^\\s-*("
+        (regexp-opt '("elpa-use-package" "elpa-require" "require") t)
+        "\\s-+(?\\("))
+    (or
+     (bound-and-true-p lisp-mode-symbol-regexp)
+     "\\(?:\\sw\\|\\s_\\|\\\\.\\)+")
+    "\\)")
+  "Sexp providing regexp for finding elpa-* package forms in user files."
+  :type 'sexp
+  :group 'elpa-use-package)
+
+(defcustom elpa-package-enable-imenu-support t
+  "If non-nil, cause imenu to see `use-package' declarations.
+This is done by adjusting `lisp-imenu-generic-expression' to
+include support for finding `use-package' and `require' forms.
+Must be set before loading use-package."
+  :type 'boolean
+  :set
+  #'(lambda (sym value)
+      (eval-after-load 'lisp-mode
+        (if value
+            `(add-to-list 'lisp-imenu-generic-expression
+                          (list "Packages" ,elpa-package-form-regexp-eval 2))
+          `(setq lisp-imenu-generic-expression
+                 (remove (list "Packages" ,elpa-package-form-regexp-eval 2)
+                         lisp-imenu-generic-expression))))
+      (set-default sym value))
+  :group 'elpa-use-package)
+
 
 ;; critical packages
 
