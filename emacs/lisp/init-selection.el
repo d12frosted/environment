@@ -88,6 +88,15 @@
                   marginalia-annotators-light
                   nil)))
 
+(elpa-use-package consult
+  :bind
+  (("M-y" . consult-yank-pop))
+  :general
+  (leader-def
+    "bb" '(consult-buffer :which-key "Switch buffer")
+    "pg" '(consult-grep :which-key "Grep the project")
+    "ji" '(consult-imenu :which-key "imenu")))
+
 
 
 (elpa-use-package transient
