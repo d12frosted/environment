@@ -39,6 +39,7 @@
 (require 'lister-highlight)
 
 (require 'lib-svg)
+(require 'lib-buffer)
 
 
 
