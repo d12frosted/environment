@@ -454,7 +454,9 @@ represented as association list."
                           (s-trim (car (dom-strings (dom-by-tag it 'th))))
                           (s-titleized-words (s-trim (car (dom-strings (dom-by-tag it 'td)))))))))
              (synonyms (->> (dom-by-tag (dom-by-id data "^w7$") 'td)
-                            (--map (s-titleized-words (s-trim (car (dom-strings it))))))))
+                            (-map #'dom-strings)
+                            (-filter #'identity)
+                            (--map (s-titleized-words (s-trim (car it)))))))
         (append info `(("synonyms" . ,synonyms)
                        ("url" . ,(concat "https://www.vivc.de/index.php?r=passport%2Fview&id=" id)))))))))
 
