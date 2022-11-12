@@ -134,6 +134,7 @@
         :sep " | "
         :data '(("name" 12 :brown)
                 ("short name" 192 :yellow)
+                sep
                 ("abnormally long name" 8 :red)))
        :to-equal
        (string-join
@@ -141,6 +142,7 @@
           "|----------------------+------------+---------|"
           "|                 name |         12 |  :brown |"
           "|           short name |        192 | :yellow |"
+          "|----------------------+------------+---------|"
           "| abnormally long name |          8 |    :red |")
         "\n"))))
 

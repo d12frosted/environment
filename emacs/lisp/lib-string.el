@@ -179,23 +179,24 @@ in row is separated by SEP."
   (let* ((all (if header (cons header data) data))
          (n (seq-reduce
              (lambda (r v)
-               (min r (seq-length v)))
+               (min r (if (eq 'sep v) r (seq-length v))))
              all
              (seq-length (car all))))
          (widths (seq-reduce
                   (lambda (r v)
-                    (seq-map-indexed
-                     (lambda (a i)
-                       (max
-                        (pcase (or (and width
-                                        (listp width)
-                                        (nth i width))
-                                   'full)
-                          (`full (length (string-from a)))
-                          (n n))
-                        (or (nth i r)
-                            0)))
-                     v))
+                    (if (eq 'sep v) r
+                      (seq-map-indexed
+                       (lambda (a i)
+                         (max
+                          (pcase (or (and width
+                                          (listp width)
+                                          (nth i width))
+                                     'full)
+                            (`full (length (string-from a)))
+                            (n n))
+                          (or (nth i r)
+                              0)))
+                       v)))
                   all
                   nil))
          (pad-str (or pad-str " "))
@@ -248,13 +249,21 @@ in row is separated by SEP."
      ;; data
      (mapconcat
       (lambda (v)
-        (string-table--format-line (seq-take v n)
-          :sep sep
-          :pad-fns pad-fns
-          :pad-str pad-str
-          :widths widths
-          :row-start row-start
-          :row-end row-end))
+        (if (and (eq 'sep v) header header-sep)
+            (string-table--format-line (-repeat n "")
+              :sep (or header-sep-conj sep)
+              :pad-fns pad-fns
+              :pad-str header-sep
+              :widths widths
+              :row-start (or header-sep-start row-start)
+              :row-end (or header-sep-end row-end))
+          (string-table--format-line (seq-take v n)
+            :sep sep
+            :pad-fns pad-fns
+            :pad-str pad-str
+            :widths widths
+            :row-start row-start
+            :row-end row-end)))
       data
       "\n"))))
 
