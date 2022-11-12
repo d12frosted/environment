@@ -343,7 +343,7 @@ Result is a property list: (:actual :recommended)."
                   (hash-table-keys deliveries))
                  (list
                   (list (buttonize "[add]" #'brb-charge--add-delivery-item) "" "" "" "")
-                  (list "----" "" "" "" "")
+                  'sep
                   (list (propertize "Total" 'face 'bold)
                         (--reduce-from
                          (+ acc (plist-get it :amount))
