@@ -33,6 +33,13 @@
 
 (require 'config-vulpea)
 
+
+
+(defconst brb-order--buffer-name "*Wine Order*")
+(defvar brb-order--buffer)
+(defvar brb-order--data)
+(defvar brb-order--view 'all)
+
 (cl-defstruct brb-order-item
   id
   sku
@@ -43,10 +50,41 @@
   price
   buyer)
 
-(defconst brb-order--buffer-name "*Wine Order*")
-(defvar brb-order--buffer)
-(defvar brb-order--data)
-(defvar brb-order--view 'all)
+(defun brb-order-item-total (item discounts)
+  "Calculate total for ITEM based on DISCOUNTS."
+  (let ((discount (if (and (string-equal "goodwine" (brb-order-item-source item))
+                           (>= (brb-order-item-price item) 3300))
+                      0.05
+                    (gethash (brb-order-item-source item) discounts))))
+    (ceiling
+     (* (- 1.0 discount)
+        (brb-order-item-amount item)
+        (brb-order-item-price item)))))
+
+
+
+(defconst brb-order-sources '("goodwine"
+                              "sabotage"
+                              "vasyl"))
+
+(defun brb-order--source-discount (source order)
+  "Calculate discount for ORDER from SOURCE."
+  (let ((bottles (--reduce-from (+ acc (brb-order-item-amount it)) 0 order)))
+    (pcase source
+      (`"goodwine" (if (>= bottles 6) 0.14 0.05))
+      (`"sabotage" (cond
+                    ((>= bottles 24) 0.12)
+                    ((>= bottles 6) 0.06)
+                    (t 0)))
+      (_ 0))))
+
+(defun brb-order--discounts (order)
+  "Calculate discount values for ORDER."
+  (let ((by-source (-group-by #'brb-order-item-source brb-order--data))
+        (tbl (make-hash-table :test 'equal)))
+    (--each by-source
+      (puthash (car it) (brb-order--source-discount (car it) (cdr it)) tbl))
+    tbl))
 
 
 
@@ -107,23 +145,6 @@ is not updated."
 (defun brb-order-data-get (id)
   "Get order item with ID."
   (--find (string-equal (brb-order-item-id it) id) brb-order--data))
-
-
-
-(defconst brb-order-sources '("goodwine"
-                              "sabotage"
-                              "vasyl"))
-
-(defun brb-order--source-discount (source order)
-  "Calculate discount for ORDER from SOURCE."
-  (let ((bottles (--reduce-from (+ acc (brb-order-item-amount it)) 0 order)))
-    (pcase source
-      (`"goodwine" (if (>= bottles 6) 0.14 0.05))
-      (`"sabotage" (cond
-                    ((>= bottles 24) 0.12)
-                    ((>= bottles 6) 0.06)
-                    (t 0)))
-      (_ 0))))
 
 
 
@@ -189,11 +210,7 @@ is not updated."
 TITLE is title. Meh.
 
 HIDE is a list of columns to hide."
-  (let* ((by-source (-group-by #'brb-order-item-source brb-order--data))
-         (discounts (let ((tbl (make-hash-table :test 'equal)))
-                      (--each by-source
-                        (puthash (car it) (brb-order--source-discount (car it) (cdr it)) tbl))
-                      tbl))
+  (let* ((discounts (brb-order--discounts items))
          (header '("" "sku" "source" "item" "amount" "price" "total" "buyer"))
          (idxs (->> (seq-length header)
                     (-iota)
@@ -222,9 +239,7 @@ HIDE is a list of columns to hide."
                      #'brb-order--edit-amount (brb-order-item-id it))
           (buttonize (concat "[" (brb-price-format (brb-order-item-price it)) "]")
                      #'brb-order--edit-price (brb-order-item-id it))
-          (brb-price-format (* (- 1.0 (gethash (brb-order-item-source it) discounts))
-                               (brb-order-item-amount it)
-                               (brb-order-item-price it)))
+          (brb-price-format (brb-order-item-total it discounts))
           (vulpea-buttonize (vulpea-db-get-by-id (brb-order-item-buyer it))))
          items))
        (list
@@ -235,10 +250,7 @@ HIDE is a list of columns to hide."
                (--reduce-from (+ acc (brb-order-item-amount it)) 0 items)
                ""
                (brb-price-format
-                (--reduce-from (+ acc (* (- 1.0 (gethash (brb-order-item-source it) discounts))
-                                         (brb-order-item-amount it)
-                                         (brb-order-item-price it)))
-                               0 items))
+                (--reduce-from (+ acc (brb-order-item-total it discounts)) 0 items))
                ""))))
       :header (-select-by-indices idxs header)
       :width (-select-by-indices idxs '(full full full 40 full full full full))
@@ -261,12 +273,8 @@ TO-HEADER-FN formats header.
 
 HIDE is a list of columns to hide."
   (declare (indent 1))
-  (let* ((by-source (-group-by #'brb-order-item-source items))
-         (by-x (-group-by group-by items))
-         (discounts (let ((tbl (make-hash-table :test 'equal)))
-                      (--each by-source
-                        (puthash (car it) (brb-order--source-discount (car it) (cdr it)) tbl))
-                      tbl))
+  (let* ((by-x (-group-by group-by items))
+         (discounts (brb-order--discounts items))
          (header '("" "sku" "source" "item" "amount" "price" "total" "buyer"))
          (idxs (->> (seq-length header)
                     (-iota)
@@ -297,9 +305,7 @@ HIDE is a list of columns to hide."
                         #'brb-order--edit-amount (brb-order-item-id it))
              (buttonize (concat "[" (brb-price-format (brb-order-item-price it)) "]")
                         #'brb-order--edit-price (brb-order-item-id it))
-             (brb-price-format (* (- 1.0 (gethash (brb-order-item-source it) discounts))
-                                  (brb-order-item-amount it)
-                                  (brb-order-item-price it)))
+             (brb-price-format (brb-order-item-total it discounts))
              (vulpea-buttonize (vulpea-db-get-by-id (brb-order-item-buyer it))))
             (cdr it)))
           (list
@@ -310,10 +316,7 @@ HIDE is a list of columns to hide."
                   (--reduce-from (+ acc (brb-order-item-amount it)) 0 (cdr it))
                   ""
                   (brb-price-format
-                   (--reduce-from (+ acc (* (- 1.0 (gethash (brb-order-item-source it) discounts))
-                                            (brb-order-item-amount it)
-                                            (brb-order-item-price it)))
-                                  0 (cdr it)))
+                   (--reduce-from (+ acc (brb-order-item-total it discounts)) 0 (cdr it)))
                   ""))))
          :header (-select-by-indices idxs header)
          :width (-select-by-indices idxs '(full full full 40 full full full full))
@@ -377,10 +380,11 @@ HIDE is a list of columns to hide."
   "Edit price of item with ID."
   (let* ((item (brb-order-data-get id))
          (wine-id (brb-order-item-wine item))
-         (prices (when id (--> wine-id
-                               (vulpea-db-get-by-id it)
-                               (vulpea-note-meta-get-list it "price")
-                               (--filter (s-suffix-p brb-currency it) it))))
+         (prices (when wine-id
+                   (--> wine-id
+                        (vulpea-db-get-by-id it)
+                        (vulpea-note-meta-get-list it "price")
+                        (--filter (s-suffix-p brb-currency it) it))))
          (price (string-to-number (completing-read "Price: " prices))))
     (brb-order-data-update id (lambda (it)
                                 (setf (brb-order-item-price it) price)
@@ -408,14 +412,31 @@ HIDE is a list of columns to hide."
 
 
 
+(defun brb-order--export-items-prepare (items)
+  "Prepare ITEMS for export."
+  (let* ((items (--filter (> (brb-order-item-amount it) 0) items))
+         (items (hash-table-values
+                 (-reduce-from
+                  (lambda (acc it)
+                    (setq it (copy-brb-order-item it))
+                    (when-let ((item (gethash (brb-order-item-name it) acc)))
+                      (setf (brb-order-item-amount it)
+                            (+ (brb-order-item-amount item)
+                               (brb-order-item-amount it))))
+                    (puthash (brb-order-item-name it) it acc)
+                    acc)
+                  (make-hash-table :test 'equal)
+                  items)))
+         (items (--sort (string> (brb-order-item-name it)
+                                 (brb-order-item-name other))
+                        items)))
+    items))
+
 (defun brb-order--export-table (items)
   "Export ITEMS as table."
   (let* ((buffer (get-buffer-create (format "*Wine Order Export*")))
-         (by-source (-group-by #'brb-order-item-source brb-order--data))
-         (discounts (let ((tbl (make-hash-table :test 'equal)))
-                      (--each by-source
-                        (puthash (car it) (brb-order--source-discount (car it) (cdr it)) tbl))
-                      tbl)))
+         (items (brb-order--export-items-prepare items))
+         (discounts (brb-order--discounts items)))
     (with-current-buffer buffer
       (read-only-mode +1)
       (let ((inhibit-read-only t))
@@ -430,9 +451,7 @@ HIDE is a list of columns to hide."
              (brb-order-item-name it)
              (brb-order-item-amount it)
              (brb-price-format (brb-order-item-price it))
-             (brb-price-format (* (- 1.0 (gethash (brb-order-item-source it) discounts))
-                                  (brb-order-item-amount it)
-                                  (brb-order-item-price it))))
+             (brb-price-format (brb-order-item-total it discounts)))
             items)
            (list
             'sep
@@ -441,10 +460,7 @@ HIDE is a list of columns to hide."
              (--reduce-from (+ acc (brb-order-item-amount it)) 0 items)
              ""
              (brb-price-format
-              (--reduce-from (+ acc (* (- 1.0 (gethash (brb-order-item-source it) discounts))
-                                       (brb-order-item-amount it)
-                                       (brb-order-item-price it)))
-                             0 items)))))
+              (--reduce-from (+ acc (brb-order-item-total it discounts)) 0 items)))))
           :header '("sku" "item" "amount" "price" "total")
           :header-sep "-"
           :header-sep-start "|-"
