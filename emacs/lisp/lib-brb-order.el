@@ -218,7 +218,10 @@ HIDE is a list of columns to hide."
     (concat
      (propertize title 'face 'org-level-2)
      "\n\n"
-     "export: " (buttonize "[table]" #'brb-order--export-table items)
+     "export: "
+     (buttonize "[table]" #'brb-order--export-table items)
+     " "
+     (buttonize "[csv]" #'brb-order--export-csv items)
      "\n\n"
      (string-table
       :data
@@ -469,6 +472,38 @@ HIDE is a list of columns to hide."
           :row-start "| "
           :row-end " |"
           :sep " | "))))
+    (pop-to-buffer buffer)))
+
+(defun brb-order--export-csv (items)
+  "Export ITEMS as CSV."
+  (let* ((buffer (get-buffer-create (format "*Wine Order Export*")))
+         (items (brb-order--export-items-prepare items))
+         (discounts (brb-order--discounts items)))
+    (with-current-buffer buffer
+      (read-only-mode +1)
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (insert
+         (string-table
+          :data
+          (append
+           (--map
+            (list
+             (brb-order-item-sku it)
+             (brb-order-item-name it)
+             (brb-order-item-amount it)
+             (brb-price-format (brb-order-item-price it))
+             (brb-price-format (brb-order-item-total it discounts)))
+            items)
+           (list
+            (list
+             "" ""
+             (--reduce-from (+ acc (brb-order-item-amount it)) 0 items)
+             ""
+             (brb-price-format
+              (--reduce-from (+ acc (brb-order-item-total it discounts)) 0 items)))))
+          :header '("sku" "item" "amount" "price" "total")
+          :sep ","))))
     (pop-to-buffer buffer)))
 
 
