@@ -32,10 +32,20 @@
 ;;; Code:
 
 (require 'config-vulpea)
+(require 'lib-brb)
+(require 'tabulated-list)
 
 
 
-(defconst brb-order--buffer-name "*Wine Order*")
+(defvar brb-order-manager-buffer "*wine-order*")
+
+(defvar-local brb-order-search-filter nil "Filter for order searches.")
+(defvar-local brb-order-search--filter-source nil "Filter for order searches (source).")
+(defvar-local brb-order-search--filter-buyer nil "Filter for order searches (buyer).")
+
+(defvar-local brb-order--items nil "List of filtered items.")
+(defvar-local brb-order--discounts nil "Hash map of discounts per source.")
+
 (defvar brb-order--buffer)
 (defvar brb-order--data)
 (defvar brb-order--view 'all)
@@ -80,7 +90,7 @@
 
 (defun brb-order--discounts (order)
   "Calculate discount values for ORDER."
-  (let ((by-source (-group-by #'brb-order-item-source brb-order--data))
+  (let ((by-source (-group-by #'brb-order-item-source order))
         (tbl (make-hash-table :test 'equal)))
     (--each by-source
       (puthash (car it) (brb-order--source-discount (car it) (cdr it)) tbl))
@@ -112,231 +122,146 @@
 	          (print-length nil))
 	      (print data (current-buffer))))))
 
-(defun brb-order-data-update (id fn &optional no-update)
-  "Update item with ID using FN.
+
 
-When NO-UPDATE is non-nil, the data is not written and the buffer
-is not updated."
-  (setf brb-order--data (--map (if (string-equal (brb-order-item-id it) id)
-                                   (funcall fn it)
-                                 it)
-                               brb-order--data))
-  (unless no-update
-    (brb-order-data-write brb-order--data)
-    (brb-order--buffer-populate brb-order--data brb-order--view brb-order--buffer)))
+(defun brb-order--list-printer (id cols)
+  "Propertize entries.
 
-(defun brb-order-data-put (item &optional no-update)
-  "Put ITEM to order data.
-
-When NO-UPDATE is non-nil, the data is not written and the buffer
-is not updated."
-  (brb-order-data-update (brb-order-item-id item) (lambda (_) item) no-update))
-
-(defun brb-order-data-rem (id &optional no-update)
-  "Remove item with ID from order data.
-
-When NO-UPDATE is non-nil, the data is not written and the buffer
-is not updated."
-  (setf brb-order--data (--remove (string-equal (brb-order-item-id it) id) brb-order--data))
-  (unless no-update
-    (brb-order-data-write brb-order--data)
-    (brb-order--buffer-populate brb-order--data brb-order--view brb-order--buffer)))
-
-(defun brb-order-data-get (id)
-  "Get order item with ID."
-  (--find (string-equal (brb-order-item-id it) id) brb-order--data))
+Consult with `tabulated-list-printer' for information about ID
+and COLS."
+  (setf (aref cols 0) (propertize (aref cols 0) 'face 'barberry-theme-face-faded))
+  (setf (aref cols 1) (propertize (aref cols 1) 'face 'barberry-theme-face-faded))
+  (setf (aref cols 2) (propertize (aref cols 2) 'face 'barberry-theme-face-salient))
+  (setf (aref cols 6) (propertize (aref cols 6) 'face 'barberry-theme-face-faded))
+  (tabulated-list-print-entry id cols))
 
 
 
 ;;;###autoload
-(defun brb-order ()
-  "Plan wine order."
+(defun brb-order-manager ()
+  "Display wine order UI."
   (interactive)
-  (let ((buffer (get-buffer-create brb-order--buffer-name))
-        (data (brb-order-data-read))
-        (view 'all))
-    (setf brb-order--buffer buffer)
-    (setf brb-order--data data)
-    (setf brb-order--view view)
-    (brb-order--buffer-populate data view buffer)
-    (pop-to-buffer buffer)))
+  (with-current-buffer (get-buffer-create brb-order-manager-buffer)
+    (brb-order-mode)
+    (let* ((order (brb-order-data-read))
+           (discounts (brb-order--discounts order)))
+      ;; cache order and discounts
+      (setq brb-order--items order
+            brb-order--discounts discounts)
 
-(defun brb-order--buffer-populate (data view buffer)
-  "Populate order BUFFER with DATA using VIEW."
-  (with-current-buffer buffer
-    (read-only-mode +1)
-    (let ((inhibit-read-only t))
-      (erase-buffer)
-      (insert
-       (propertize "Wine Orders" 'face 'org-level-1)
-       "\n\n"
-       "actions: " (buttonize "[add]" #'brb-order--add)
-       "\n"
-       "view:    "
-       (buttonize "[all]" #'brb-order--view-all)
-       " "
-       (buttonize (format "[source:%s]"
-                          (pcase view
-                            (`(source ,x) x)
-                            (_ "_")))
-                  #'brb-order--view-source)
-       " "
-       (buttonize (format "[buyer:%s]"
-                          (pcase view
-                            (`(buyer ,x) (vulpea-note-title (vulpea-db-get-by-id x)))
-                            (_ "_")))
-                  #'brb-order--view-buyer)
-       "\n\n")
-      (insert
-       (pcase brb-order--view
-         (`all (brb-order--format-items
-                :items data
-                :title "Everything"
-                :hide nil))
-         (`(source ,x)
-          (brb-order--format-items
-           :items (--filter (string-equal x (brb-order-item-source it)) data)
-           :title (format "From %s" x)
-           :hide '("source")))
-         (`(buyer ,x)
-          (brb-order--format-items
-           :items (--filter (string-equal x (brb-order-item-buyer it)) data)
-           :title (format "For %s" (vulpea-note-title (vulpea-db-get-by-id x)))
-           :hide '("buyer"))))))))
+      ;; configure columns
+      (setq tabulated-list-format [("SKU" 5 t)
+                                   ("Source" 8 t)
+                                   ("Item" 40 t)
+                                   ("Amount" 10 t . (:right-align t))
+                                   ("Price" 10 t . (:right-align t))
+                                   ("Total" 10 t . (:right-align t))
+                                   ("Buyer" 20 t)])
 
-(cl-defun brb-order--format-items (&key items title hide)
-  "Format order ITEMS.
+      ;; setup custom header, but keep keybindings
+      (setq header-line-format (brb-order--header-line)
+            tabulated-list-use-header-line nil)
+      (tabulated-list-init-header)
 
-TITLE is title. Meh.
+      ;; default sorting
+      (setq tabulated-list-sort-key '("Item"))
 
-HIDE is a list of columns to hide."
-  (let* ((discounts (brb-order--discounts items))
-         (header '("" "sku" "source" "item" "amount" "price" "total" "buyer"))
-         (idxs (->> (seq-length header)
-                    (-iota)
-                    (--remove (-contains-p hide (nth it header))))))
-    (concat
-     (propertize title 'face 'org-level-2)
-     "\n\n"
-     "export: "
-     (buttonize "[table]" #'brb-order--export-table items)
-     " "
-     (buttonize "[csv]" #'brb-order--export-csv items)
-     "\n\n"
-     (string-table
-      :data
-      (append
-       (-select-columns
-        idxs
-        (--map
-         (list
-          (buttonize "[X]" #'brb-order--remove (brb-order-item-id it))
-          (buttonize (concat "[" (or (brb-order-item-sku it) " ") "]")
-                     #'brb-order--edit-sku (brb-order-item-id it))
-          (brb-order-item-source it)
-          (if (brb-order-item-wine it)
-              (vulpea-buttonize (vulpea-db-get-by-id (brb-order-item-wine it))
-                                (lambda (_) (brb-order-item-name it)))
-            (brb-order-item-name it))
-          (buttonize (concat "[" (string-from (brb-order-item-amount it)) "]")
-                     #'brb-order--edit-amount (brb-order-item-id it))
-          (buttonize (concat "[" (brb-price-format (brb-order-item-price it)) "]")
-                     #'brb-order--edit-price (brb-order-item-id it))
-          (brb-price-format (brb-order-item-total it discounts))
-          (vulpea-buttonize (vulpea-db-get-by-id (brb-order-item-buyer it))))
-         items))
-       (list
-        'sep
-        (-select-by-indices
-         idxs
-         (list "" "" "" ""
-               (--reduce-from (+ acc (brb-order-item-amount it)) 0 items)
-               ""
-               (brb-price-format
-                (--reduce-from (+ acc (brb-order-item-total it discounts)) 0 items))
-               ""))))
-      :header (-select-by-indices idxs header)
-      :width (-select-by-indices idxs '(full full full 40 full full full full))
-      :header-sep "-"
-      :header-sep-start "|-"
-      :header-sep-conj "-+-"
-      :header-sep-end "-|"
-      :row-start "| "
-      :row-end " |"
-      :sep " | "))))
+      ;; setup entries
+      (brb-order-search-reset))
 
-(cl-defun brb-order--format-items-by (items
-                                      &key
-                                      group-by
-                                      to-header-fn
-                                      hide)
-  "Format ITEMS grouped by selector defined as GROUP-BY.
-
-TO-HEADER-FN formats header.
-
-HIDE is a list of columns to hide."
-  (declare (indent 1))
-  (let* ((by-x (-group-by group-by items))
-         (discounts (brb-order--discounts items))
-         (header '("" "sku" "source" "item" "amount" "price" "total" "buyer"))
-         (idxs (->> (seq-length header)
-                    (-iota)
-                    (--remove (-contains-p hide (nth it header))))))
-    (mapconcat
-     (lambda (it)
-       (concat
-        (propertize (funcall to-header-fn (car it)) 'face 'org-level-2)
-        "\n\n"
-        "export: " (buttonize "[table]" #'brb-order--export-table (cdr it))
-        "\n\n"
-        (string-table
-         :data
-         (append
-          (-select-columns
-           idxs
-           (--map
-            (list
-             (buttonize "[X]" #'brb-order--remove (brb-order-item-id it))
-             (buttonize (concat "[" (or (brb-order-item-sku it) " ") "]")
-                        #'brb-order--edit-sku (brb-order-item-id it))
-             (brb-order-item-source it)
-             (if (brb-order-item-wine it)
-                 (vulpea-buttonize (vulpea-db-get-by-id (brb-order-item-wine it))
-                                   (lambda (_) (brb-order-item-name it)))
-               (brb-order-item-name it))
-             (buttonize (concat "[" (string-from (brb-order-item-amount it)) "]")
-                        #'brb-order--edit-amount (brb-order-item-id it))
-             (buttonize (concat "[" (brb-price-format (brb-order-item-price it)) "]")
-                        #'brb-order--edit-price (brb-order-item-id it))
-             (brb-price-format (brb-order-item-total it discounts))
-             (vulpea-buttonize (vulpea-db-get-by-id (brb-order-item-buyer it))))
-            (cdr it)))
-          (list
-           'sep
-           (-select-by-indices
-            idxs
-            (list "" "" "" ""
-                  (--reduce-from (+ acc (brb-order-item-amount it)) 0 (cdr it))
-                  ""
-                  (brb-price-format
-                   (--reduce-from (+ acc (brb-order-item-total it discounts)) 0 (cdr it)))
-                  ""))))
-         :header (-select-by-indices idxs header)
-         :width (-select-by-indices idxs '(full full full 40 full full full full))
-         :header-sep "-"
-         :header-sep-start "|-"
-         :header-sep-conj "-+-"
-         :header-sep-end "-|"
-         :row-start "| "
-         :row-end " |"
-         :sep " | ")))
-     by-x
-     "\n\n")))
+    ;; switch to buffer
+    (pop-to-buffer brb-order-manager-buffer
+                   '((display-buffer-reuse-window display-buffer-same-window)))))
 
 
 
-(defun brb-order--add (&rest _)
+(defun brb-order--header-line ()
+  "Set `header-line-format' to reflect query.
+
+If PREFIX is non-nil it is displayed before the rest of the header-line."
+  (let* ((order brb-order--items)
+         (discounts brb-order--discounts))
+    (list
+     (concat
+      "Wine Order"
+      (propertize (format
+                   " (%d matches, %d bottles, %s total, %s discount) "
+                   (length tabulated-list-entries)
+                   (--reduce-from (+ acc (brb-order-item-amount it)) 0 order)
+                   (brb-price-format (--reduce-from (+ acc (brb-order-item-total it discounts)) 0 order))
+                   (brb-price-format (-
+                                      (--reduce-from (+ acc (* (brb-order-item-price it)
+                                                               (brb-order-item-amount it)))
+                                                     0 order)
+                                      (--reduce-from (+ acc (brb-order-item-total it discounts)) 0 order))))
+                  'face '(:weight bold))
+      " "
+      brb-order-search-filter))))
+
+
+
+(defun brb-order-search-by-source (&optional source)
+  "Search by SOURCE."
+  (interactive)
+  (let ((source (or source (completing-read "Source: " brb-order-sources
+                                            nil 'require-match))))
+    (setq brb-order-search--filter-source source)
+    (brb-order-search--apply)))
+
+(defun brb-order-search-by-buyer (&optional buyer)
+  "Search by BUYER."
+  (interactive)
+  (let* ((buyer (if (stringp buyer) (vulpea-db-get-by-id buyer) buyer))
+         (buyer (or buyer (vulpea-select-from "Buyer" (vulpea-db-query-by-tags-every '("people"))
+                                              :require-match t))))
+    (setq brb-order-search--filter-buyer buyer)
+    (brb-order-search--apply)))
+
+(defun brb-order-search-reset ()
+  "Search reset search."
+  (interactive)
+  (setq brb-order-search--filter-source nil
+        brb-order-search--filter-buyer nil)
+  (brb-order-search--apply))
+
+(defun brb-order-search--apply ()
+  "Apply search."
+  (let ((items (brb-order-data-read)))
+    (setq brb-order-search-filter (string-join
+                                   (list
+                                    (when brb-order-search--filter-source
+                                      (concat "#" brb-order-search--filter-source))
+                                    (when brb-order-search--filter-buyer
+                                      (concat "@" (vulpea-note-title brb-order-search--filter-buyer))))
+                                   " ")
+          brb-order--items (--filter
+                            (and (or (not brb-order-search--filter-source)
+                                     (string-equal brb-order-search--filter-source (brb-order-item-source it)))
+                                 (or (not brb-order-search--filter-buyer)
+                                     (string-equal (vulpea-note-id brb-order-search--filter-buyer)
+                                                   (brb-order-item-buyer it))))
+                            items)
+          brb-order--discounts (brb-order--discounts items)
+          tabulated-list-entries (--map
+                                  (list
+                                   (brb-order-item-id it)
+                                   (vector
+                                    (brb-order-item-sku it)
+                                    (brb-order-item-source it)
+                                    (brb-order-item-name it)
+                                    (number-to-string (brb-order-item-amount it))
+                                    (brb-price-format (brb-order-item-price it))
+                                    (brb-price-format (brb-order-item-total it brb-order--discounts))
+                                    (vulpea-note-title (vulpea-db-get-by-id (brb-order-item-buyer it)))))
+                                  brb-order--items)
+          header-line-format (brb-order--header-line)))
+  (tabulated-list-print 'rembember-pos))
+
+
+
+(defun brb-order-add ()
   "Add a wine to order."
+  (interactive)
   (let* ((source (completing-read "Source: " brb-order-sources))
          (wine (vulpea-select-from "Wine" (vulpea-db-query-by-tags-every '("wine" "cellar"))))
          (id (vulpea-note-id wine))
@@ -356,62 +281,67 @@ HIDE is a list of columns to hide."
                 :name name
                 :amount amount
                 :price price
-                :buyer (vulpea-note-id buyer))))
-    (add-to-list 'brb-order--data item 'append)
-    (brb-order-data-write brb-order--data)
-    (brb-order--buffer-populate brb-order--data brb-order--view brb-order--buffer)))
+                :buyer (vulpea-note-id buyer)))
+         (items (brb-order-data-read)))
+    (push item items)
+    (brb-order-data-write items)
+    (brb-order-search--apply)))
 
-(defun brb-order--remove (id)
-  "Remove item with ID from order."
-  (brb-order-data-rem id))
+(defun brb-order-copy ()
+  "Copy item at point."
+  (interactive)
+  (let ((item (copy-brb-order-item (brb-order--item-at-point)))
+        (amount (read-number "Amount: "))
+        (buyer (vulpea-select-from "Buyer" (vulpea-db-query-by-tags-every '("people"))
+                                   :require-match t))
+        (items (brb-order-data-read)))
+    (setf (brb-order-item-id item) (org-id-uuid))
+    (setf (brb-order-item-amount item) amount)
+    (setf (brb-order-item-buyer item) (vulpea-note-id buyer))
+    (push item items)
+    (brb-order-data-write items)
+    (brb-order-search--apply)))
 
-(defun brb-order--edit-sku (id)
-  "Edit SKU of item with ID."
-  (let ((sku (read-string "SKU: ")))
-    (brb-order-data-update id (lambda (it)
-                                (setf (brb-order-item-sku it) sku)
-                                it))))
+(defun brb-order-remove ()
+  "Remove item at point."
+  (interactive)
+  (let ((item (brb-order--item-at-point))
+        (items (brb-order-data-read)))
+    (when (y-or-n-p "Delete item at point? ")
+      (setf items (--remove (string-equal (brb-order-item-id it)
+                                          (brb-order-item-id item))
+                            items))
+      (brb-order-data-write items)
+      (brb-order-search--apply))))
 
-(defun brb-order--edit-amount (id)
-  "Edit amount of item with ID."
-  (let ((amount (read-number "Amount: ")))
-    (brb-order-data-update id (lambda (it)
-                                (setf (brb-order-item-amount it) amount)
-                                it))))
+(defmacro brb-order-defedit (name selector input-fn)
+  "Define an edit command for column with NAME using SELECTOR.
 
-(defun brb-order--edit-price (id)
-  "Edit price of item with ID."
-  (let* ((item (brb-order-data-get id))
-         (wine-id (brb-order-item-wine item))
-         (prices (when wine-id
-                   (--> wine-id
-                        (vulpea-db-get-by-id it)
-                        (vulpea-note-meta-get-list it "price")
-                        (--filter (s-suffix-p brb-currency it) it))))
-         (price (string-to-number (completing-read "Price: " prices))))
-    (brb-order-data-update id (lambda (it)
-                                (setf (brb-order-item-price it) price)
-                                it))))
+New value is taken from calling INPUT-FN."
+  (declare (debug t))
+  `(defun ,(intern (format "brb-order-edit-%s" (s-downcase name))) ()
+    ,(format "Edit %s value of item at point." name)
+    (interactive)
+    (let ((item (brb-order--item-at-point))
+          (value (,(fun-unquote input-fn) ,(concat name ": "))))
+     (setf brb-order--items (--map (if (string-equal
+                                        (brb-order-item-id it)
+                                        (brb-order-item-id item))
+                                       (progn
+                                         (setf (,(fun-unquote selector) it) value)
+                                         it)
+                                     it)
+                             brb-order--items))
+     (brb-order-data-write brb-order--items)
+     (brb-order-search--apply))))
 
 
 
-(defun brb-order--view-all (&rest _)
-  "Set view to all."
-  (setf brb-order--view 'all)
-  (brb-order--buffer-populate brb-order--data brb-order--view brb-order--buffer))
-
-(defun brb-order--view-source (&rest _)
-  "Set view to specific source."
-  (let ((source (completing-read "Source: " brb-order-sources nil t)))
-    (setf brb-order--view (list 'source source))
-    (brb-order--buffer-populate brb-order--data brb-order--view brb-order--buffer)))
-
-(defun brb-order--view-buyer (&rest _)
-  "Set view to specific source."
-  (let ((buyer (vulpea-select-from "Buyer" (vulpea-db-query-by-tags-every '("people"))
-                                   :require-match t)))
-    (setf brb-order--view (list 'buyer (vulpea-note-id buyer)))
-    (brb-order--buffer-populate brb-order--data brb-order--view brb-order--buffer)))
+(defun brb-order--item-at-point ()
+  "Return current item of UI line."
+  (or (when-let ((id (get-text-property (point) 'tabulated-list-id)))
+        (--find (string-equal (brb-order-item-id it) id) brb-order--items))
+      (user-error "No package at point")))
 
 
 
@@ -435,11 +365,12 @@ HIDE is a list of columns to hide."
                         items)))
     items))
 
-(defun brb-order--export-table (items)
-  "Export ITEMS as table."
+(defun brb-order--export-table ()
+  "Export current view as table."
+  (interactive)
   (let* ((buffer (get-buffer-create (format "*Wine Order Export*")))
-         (items (brb-order--export-items-prepare items))
-         (discounts (brb-order--discounts items)))
+         (items (brb-order--export-items-prepare brb-order--items))
+         (discounts brb-order--discounts))
     (with-current-buffer buffer
       (read-only-mode +1)
       (let ((inhibit-read-only t))
@@ -474,11 +405,12 @@ HIDE is a list of columns to hide."
           :sep " | "))))
     (pop-to-buffer buffer)))
 
-(defun brb-order--export-csv (items)
-  "Export ITEMS as CSV."
+(defun brb-order--export-csv ()
+  "Export current view as CSV."
+  (interactive)
   (let* ((buffer (get-buffer-create (format "*Wine Order Export*")))
-         (items (brb-order--export-items-prepare items))
-         (discounts (brb-order--discounts items)))
+         (items (brb-order--export-items-prepare brb-order--items))
+         (discounts brb-order--discounts))
     (with-current-buffer buffer
       (read-only-mode +1)
       (let ((inhibit-read-only t))
@@ -503,8 +435,44 @@ HIDE is a list of columns to hide."
              (brb-price-format
               (--reduce-from (+ acc (brb-order-item-total it discounts)) 0 items)))))
           :header '("sku" "item" "amount" "price" "total")
+          :pad-type 'right
           :sep ","))))
     (pop-to-buffer buffer)))
+
+
+
+(define-derived-mode brb-order-mode tabulated-list-mode "brb-order"
+  "Major mode to manage wine orders."
+  (setq tabulated-list-printer #'brb-order--list-printer))
+
+(defvar brb-order-mode-map
+  (let ((m (make-sparse-keymap)))
+    (define-key m (kbd "fs") #'brb-order-search-by-source)
+    (define-key m (kbd "fb") #'brb-order-search-by-buyer)
+    (define-key m (kbd "fr") #'brb-order-search-reset)
+    (define-key m (kbd "ei") (brb-order-defedit "SKU" #'brb-order-item-sku #'read-string))
+    (define-key m (kbd "es") (brb-order-defedit "Source" #'brb-order-item-source
+                                                (lambda (x)
+                                                  (completing-read
+                                                   x brb-order-sources
+                                                   nil 'require-match))))
+    (define-key m (kbd "en") (brb-order-defedit "Name" #'brb-order-item-name #'read-string))
+    (define-key m (kbd "ea") (brb-order-defedit "Amount" #'brb-order-item-amount #'read-number))
+    (define-key m (kbd "ep") (brb-order-defedit "Price" #'brb-order-item-price #'read-number))
+    (define-key m (kbd "eb") (brb-order-defedit "Buyer" #'brb-order-item-buyer
+                                                (lambda (x)
+                                                  (vulpea-note-id
+                                                   (vulpea-select-from
+                                                    x
+                                                    (vulpea-db-query-by-tags-every '("people"))
+                                                    :require-match t)))))
+    (define-key m (kbd "Et") #'brb-order--export-table)
+    (define-key m (kbd "Ec") #'brb-order--export-csv)
+    (define-key m (kbd "a") #'brb-order-add)
+    (define-key m (kbd "c") #'brb-order-copy)
+    (define-key m (kbd "d") #'brb-order-remove)
+    m)
+  "Keymap for `brb-order-mode'.")
 
 
 
