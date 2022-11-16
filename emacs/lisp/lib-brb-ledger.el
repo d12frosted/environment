@@ -381,10 +381,13 @@ Result is a number in `brb-currency'."
 
 
 
-(cl-defun brb-ledger-buy-wines-for (&optional convive amount date)
+(cl-defun brb-ledger-buy-wines-for (&key convive
+                                         spend-amount
+                                         charge-amount
+                                         date)
   "Buy wines for CONVIVE.
 
-Spend AMOUNT on DATE and charge said CONVIVE.
+Spend SPEND-AMOUNT on DATE and charge CHARGE-AMOUNT said CONVIVE.
 
 Basically a convenient shortcut for charge + spend."
   (interactive)
@@ -403,13 +406,14 @@ Basically a convenient shortcut for charge + spend."
                        (vulpea-db-query-by-tags-some '("people"))
                        :require-match t
                        :initial-prompt name)))
-         (amount (or amount (read-number "Amount: ")))
+         (spend-amount (or spend-amount (read-number "Spend amount: ")))
+         (charge-amount (or charge-amount (read-number "Charge amount: ")))
          (date (or date (org-read-date nil t))))
-    (brb-ledger-spend :amount amount
+    (brb-ledger-spend :amount spend-amount
                       :date date
                       :comment (concat "Wine for " (vulpea-note-title convive)))
     (brb-ledger-charge :convive convive
-                       :amount amount
+                       :amount charge-amount
                        :date date)))
 
 (cl-defun brb-ledger-receive-present (&optional source amount date)
