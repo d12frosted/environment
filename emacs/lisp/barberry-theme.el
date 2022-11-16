@@ -354,22 +354,23 @@
 
 (set-face-attribute 'barberry-theme-face-salient nil
                     :foreground barberry-theme-color-salient
-                    :weight 'medium
+                    :weight 'semi-bold
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-salient-i nil
                     :background barberry-theme-color-salient-i
+                    :weight 'semi-bold
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-strong nil
                     :foreground barberry-theme-color-strong
-                    :weight 'medium
+                    :weight 'bold
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-strong-i nil
                     :foreground barberry-theme-color-background
                     :background barberry-theme-color-strong-i
-                    :weight 'medium
+                    :weight 'bold
                     :inherit 'barberry-theme-face-default)
 
 (set-face-attribute 'barberry-theme-face-popout nil
