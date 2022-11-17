@@ -400,7 +400,7 @@
                     :inherit 'barberry-theme-face-default)
 
 (let* ((height (face-attribute 'barberry-theme-face-default :height nil t))
-       (height-plus (floor (* 1.2 height))))
+       (height-plus (floor (* 1.0 height))))
   (custom-theme-set-faces
    'barberry
    `(default           ((t (:family ,barberry-theme-font-mono-family
