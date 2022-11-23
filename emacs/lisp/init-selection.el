@@ -61,14 +61,61 @@
   ;; Enable recursive minibuffers
   (setq enable-recursive-minibuffers t))
 
+(defvar selection-orderless-dispatch-alist
+    '((?% . char-fold-to-regexp)
+      (?! . orderless-without-literal)
+      (?`. orderless-initialism)
+      (?= . orderless-literal)
+      (?~ . orderless-flex)))
+
+(defun selection-orderless--suffix-regexp ()
+  "."
+  (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
+      (format "[%c-%c]*$"
+              consult--tofu-char
+              (+ consult--tofu-char consult--tofu-range -1))
+    "$"))
+
+(defun selection-orderless-dispatch (word _index _total)
+  "Custom style dispatcher based to use with `orderless' completion.
+
+Based on `selection-orderless-dispatch-alist'.
+
+See `orderless-style-dispatchers' to learn about WORD, _INDEX and
+_TOTAL arguments."
+  (cond
+   ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
+   ((string-suffix-p "$" word)
+    `(orderless-regexp . ,(concat (substring word 0 -1) (selection-orderless--suffix-regexp))))
+   ;; File extensions
+   ((and (or minibuffer-completing-file-name
+             (derived-mode-p 'eshell-mode))
+         (string-match-p "\\`\\.." word))
+    `(orderless-regexp . ,(concat "\\." (substring word 1) (selection-orderless--suffix-regexp))))
+   ;; Ignore single !
+   ((equal "!" word) `(orderless-literal . ""))
+   ;; Prefix and suffix
+   ((if-let (x (assq (aref word 0) selection-orderless-dispatch-alist))
+        (cons (cdr x) (substring word 1))
+      (when-let (x (assq (aref word (1- (length word))) selection-orderless-dispatch-alist))
+        (cons (cdr x) (substring word 0 -1)))))))
+
 (elpa-use-package orderless
-  :init
-  ;; Configure a custom style dispatcher (see the Consult wiki)
-  ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
-  ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+  :functions (orderless-define-completion-style)
+  :config
+  ;; Define orderless style with initialism by default
+  (orderless-define-completion-style selection-orderless-with-initialism
+    (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+        completion-category-overrides
+        '((file (styles partial-completion))
+          (command (styles selection-orderless-with-initialism))
+          (variable (styles selection-orderless-with-initialism))
+          (symbol (styles selection-orderless-with-initialism)))
+        ;; allow escaping space with backslash!
+        orderless-component-separator #'orderless-escapable-split-on-space
+        orderless-style-dispatchers '(selection-orderless-dispatch)))
 
 (elpa-use-package marginalia
   :commands (marginalia-mode
@@ -96,6 +143,11 @@
     "bb" '(consult-buffer :which-key "Switch buffer")
     "pg" '(consult-grep :which-key "Grep the project")
     "ji" '(consult-imenu :which-key "imenu")))
+
+(elpa-use-package embark
+  :bind
+  (("M-." . embark-dwim)
+   ("C-." . embark-act)))
 
 
 
