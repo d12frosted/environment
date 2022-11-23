@@ -330,7 +330,7 @@ Result is a plist (:range :size :ratings-tbl :entries-tbl :countries-tbl)"
   (when-let*
       ((ratings (seq-map
                  #'car-safe
-                 (vino-db-query
+                 (org-roam-db-query
                   [:select [id]
                    :from ratings
                    :where (and (>= date $s1)
@@ -342,7 +342,7 @@ Result is a plist (:range :size :ratings-tbl :entries-tbl :countries-tbl)"
        (ratings-tbl (let ((tbl (make-hash-table
                                 :test 'equal
                                 :size size)))
-                      (emacsql-with-transaction (vino-db)
+                      (emacsql-with-transaction (org-roam-db)
                         (seq-each
                          (lambda (id)
                            (puthash id (vino-db-get-rating id) tbl))
@@ -351,7 +351,7 @@ Result is a plist (:range :size :ratings-tbl :entries-tbl :countries-tbl)"
        (entries-tbl (let ((tbl (make-hash-table
                                 :test 'equal
                                 :size size)))
-                      (emacsql-with-transaction (vino-db)
+                      (emacsql-with-transaction (org-roam-db)
                         (maphash
                          (lambda (_ rating)
                            (let ((id (vulpea-note-id (vino-rating-wine rating))))
@@ -470,13 +470,13 @@ KEY is one of: country, colour, carbonation, vintage, grape."
   (interactive)
   (when-let*
       ((date-min (caar
-                  (vino-db-query
+                  (org-roam-db-query
                    [:select [date]
                     :from ratings
                     :order-by [(asc date)]
                     :limit 1])))
        (date-max (caar
-                  (vino-db-query
+                  (org-roam-db-query
                    [:select [date]
                     :from ratings
                     :order-by [(desc date)]

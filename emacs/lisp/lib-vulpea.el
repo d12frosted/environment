@@ -400,19 +400,11 @@ is ignored. Any buffer modification is saved."
 (defun vulpea-db-build ()
   "Update notes database."
   (when (file-directory-p vulpea-directory)
+    (require 'vino)
     (org-roam-db-sync)
-    (vino-db-sync)
     (org-roam-update-org-id-locations)
     (org-persist-gc)
-    (org-persist-write-all)
-    ;; (vulpea-db-process-notes
-    ;;  :filter-fn
-    ;;  (lambda (note) (vulpea-note-tagged-all-p note "wine" "cellar"))
-    ;;  :process-fn
-    ;;  (lambda (note)
-    ;;    (vulpea-utils-with-note note
-    ;;      (vino-entry-update-title))))
-    ))
+    (org-persist-write-all)))
 
 
 

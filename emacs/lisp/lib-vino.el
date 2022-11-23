@@ -178,13 +178,13 @@ CONFIRMED is a hashtable with amount of confirmed bottles."
   (let* ((name "*vino ratings*")
          (buffer (buffer-generate name 'unique))
          (limit 100)
-         (ratings-raw (vino-db-query
+         (ratings-raw (org-roam-db-query
                        [:select [id wine date version values]
                         :from ratings
                         :order-by date :desc
                         :limit $s1]
                        limit))
-         (ratings (emacsql-with-transaction (vino-db)
+         (ratings (emacsql-with-transaction (org-roam-db)
                     (seq-map
                      (lambda (row)
                        (cons (vulpea-db-get-by-id (nth 0 row))
@@ -254,7 +254,7 @@ BUTTON should be a proper button with following properties:
                                (vulpea-note-meta-get note "date"))
                              #'string<
                              notes)))
-    (emacsql-with-transaction (vino-db)
+    (emacsql-with-transaction (org-roam-db)
       (with-current-buffer buffer
         (org-mode)
         (insert "Showing "
@@ -366,7 +366,7 @@ Whatever that means."
                              #'string>
                              notes))
          (notes (seq-take notes limit)))
-    (emacsql-with-transaction (vino-db)
+    (emacsql-with-transaction (org-roam-db)
       (with-current-buffer buffer
         (seq-do
          (lambda (note)
