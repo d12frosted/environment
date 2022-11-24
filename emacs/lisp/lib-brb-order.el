@@ -75,13 +75,16 @@
 
 (defconst brb-order-sources '("goodwine"
                               "sabotage"
-                              "vasyl"))
+                              "vasyl"
+                              "maksym"
+                              "roots"))
 
 (defun brb-order--source-discount (source order)
   "Calculate discount for ORDER from SOURCE."
   (let ((bottles (--reduce-from (+ acc (brb-order-item-amount it)) 0 order)))
     (pcase source
       (`"goodwine" (if (>= bottles 6) 0.13 0.05))
+      (`"roots" (if (>= bottles 6) 0.10 0.0))
       (`"sabotage" (cond
                     ((>= bottles 24) 0.12)
                     ((>= bottles 6) 0.06)
