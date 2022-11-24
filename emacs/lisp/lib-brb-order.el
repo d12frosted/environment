@@ -326,16 +326,17 @@ New value is taken from calling INPUT-FN."
     ,(format "Edit %s value of item at point." name)
     (interactive)
     (let ((item (brb-order--item-at-point))
-          (value (,(fun-unquote input-fn) ,(concat name ": "))))
-     (setf brb-order--items (--map (if (string-equal
-                                        (brb-order-item-id it)
-                                        (brb-order-item-id item))
-                                       (progn
-                                         (setf (,(fun-unquote selector) it) value)
-                                         it)
-                                     it)
-                             brb-order--items))
-     (brb-order-data-write brb-order--items)
+          (value (,(fun-unquote input-fn) ,(concat name ": ")))
+          (items (brb-order-data-read)))
+     (setf items (--map (if (string-equal
+                             (brb-order-item-id it)
+                             (brb-order-item-id item))
+                            (progn
+                              (setf (,(fun-unquote selector) it) value)
+                              it)
+                          it)
+                  items))
+     (brb-order-data-write items)
      (brb-order-search--apply))))
 
 
