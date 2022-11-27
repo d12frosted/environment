@@ -48,7 +48,9 @@
                       note)))))
     (vulpea-select-from
      "Event"
-     (vulpea-db-query-by-tags-every tags)
+     (--filter
+      (= 0 (vulpea-note-level it))
+      (vulpea-db-query-by-tags-every tags))
      :require-match t
      :initial-prompt (when event (vulpea-note-title event)))))
 
