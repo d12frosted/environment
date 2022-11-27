@@ -40,10 +40,10 @@
   (let* ((tags '("wine" "event"))
          (event (when (and (eq major-mode 'org-mode)
                            (buffer-file-name))
-                  (let* ((id (save-excursion
-                               (goto-char (point-min))
-                               (org-id-get)))
-                         (note (vulpea-db-get-by-id id)))
+                  (when-let* ((id (save-excursion
+                                    (goto-char (point-min))
+                                    (org-id-get)))
+                              (note (vulpea-db-get-by-id id)))
                     (when (--every-p (-contains-p (vulpea-note-tags note) it) tags)
                       note)))))
     (vulpea-select-from
