@@ -164,7 +164,7 @@ experimental-features = nix-command flakes
     brews = [
       "llvm"
       {
-        name = "emacs-plus@29";
+        name = "emacs-plus@30";
         args = ["with-dragon-icon"];
         link = true;
       }
