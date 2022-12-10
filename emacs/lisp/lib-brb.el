@@ -232,6 +232,7 @@ TBL represents raw scores.
 When COLUMNS is not specified, all columns are returned.
 Otherwise only those specified in the list."
   (let* ((wines (- (length (car tbl)) 2))
+         (names (-drop 2 (car tbl)))
          (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
          (real-prices (car (table-select-rows "real price" tbl :column 1)))
 
@@ -268,7 +269,7 @@ Otherwise only those specified in the list."
         (-filter
          #'identity
          (list
-          (1+ i)
+          (nth i names)
           (when (-contains-p columns "total")
             (brb-format-float-in (nth i totals) :floats totals :fn #'-max :style 'bold))
           (when (-contains-p columns "amean")
