@@ -346,17 +346,7 @@
    ;; buffers with lots of links and serves me zero purpose.
    org-roam-link-auto-replace nil)
   :config
-  ;; For some reason org-roam is loaded on init and twice! Suspect it
-  ;; is related to the fact that I am loading it from different
-  ;; branch.
-  ;;
-  ;; So since I need a quick remedy, I noop `org-roam-db-sync' during
-  ;; setup, because I sync data base time to time from terminal via
-  ;; eru.
-  (advice-add #'org-roam-db-sync :around #'fun-noop)
-  (ignore-errors
-    (org-roam-db-autosync-enable))
-  (advice-remove #'org-roam-db-sync #'fun-noop))
+  (org-roam-db-autosync-enable))
 
 
 
