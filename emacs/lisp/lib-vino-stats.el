@@ -388,6 +388,22 @@ Result is a plist (:range :size :ratings-tbl :entries-tbl :countries-tbl)"
                    (vulpea-note-title country))))))
     (vino-stats--grouped-ratings-data tbl entries-tbl)))
 
+(defun vino-stats-from-data-set-by-region (data)
+  "Calculate ratings stats from DATA set grouped by rora.
+
+Hey, rora is region or appellation."
+  (let* ((ratings-tbl (plist-get data :ratings-tbl))
+         (entries-tbl (plist-get data :entries-tbl))
+         (tbl (vino-stats-group-ratings-by
+               ratings-tbl
+               (lambda (_ rating)
+                 (let ((entry (gethash (vulpea-note-id (vino-rating-wine rating))
+                                       entries-tbl)))
+                   (vulpea-note-title
+                    (or (vino-entry-region entry)
+                        (vino-entry-appellation entry))))))))
+    (vino-stats--grouped-ratings-data tbl entries-tbl)))
+
 (defun vino-stats-from-data-set-by-colour (data)
   "Calculate ratings stats from DATA set grouped by colour."
   (let* ((ratings-tbl (plist-get data :ratings-tbl))
@@ -499,6 +515,7 @@ KEY is one of: country, colour, carbonation, vintage, grape."
        (countries-tbl (plist-get data :countries-tbl))
        (ratings-stat (vino-stats-from-data-set data))
        (countries-stat (vino-stats-from-data-set-by-country data))
+       (regions-stat (vino-stats-from-data-set-by-region data))
        (colours-stat (vino-stats-from-data-set-by-colour data))
        (carbonation-stat (vino-stats-from-data-set-by-carbonation data))
        (vintage-stat (vino-stats-from-data-set-by-vintage data))
@@ -522,6 +539,7 @@ KEY is one of: country, colour, carbonation, vintage, grape."
              (list "Wines rated" (seq-length (hash-table-keys entries-tbl)))
              (list "Ratings" (seq-length (hash-table-keys ratings-tbl)))
              (list "Countries" (seq-length countries-stat))
+             (list "Regions" (seq-length regions-stat))
              (list "Grapes" (seq-length grapes-stat))
              (list "Vintage youngest" (seq-max (seq-remove #'stringp (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
              (list "Vintage oldest" (seq-min (seq-remove #'stringp (seq-map (lambda (x) (nth 0 x)) vintage-stat))))
