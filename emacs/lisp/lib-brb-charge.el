@@ -358,6 +358,7 @@ Result is a property list: (:actual :recommended)."
                         "")))
           :header '("meal" "amount" "price" "total" "ordered by")
           :pad-type '(right left left left right)
+          :width '(nil nil nil nil 50)
           :header-sep "-"
           :header-sep-start "|-"
           :header-sep-conj "-+-"
