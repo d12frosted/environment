@@ -501,5 +501,47 @@ parameter), defaulting to `vulpea-note-title'."
 
 
 
+;;;###autoload
+(defun vulpea-db-setup-attachments ()
+  "Setup attachments table in Vulpea DB."
+  (vulpea-db-define-table
+   'attachments 1
+   '([(node-id :not-null)
+      (file :not-null)
+      (hash :not-null)]
+     (:foreign-key
+      [node-id]
+      :references
+      nodes [id]
+      :on-delete
+      :cascade))
+   '((attachments-node-id [node-id])))
+  (add-hook 'vulpea-db-insert-note-functions #'vulpea-db-insert-attachments))
+
+(defun vulpea-db-insert-attachments (note)
+  "Insert attachments of NOTE to database."
+  (when-let ((dir (org-attach-dir)))
+    (org-roam-db-query
+     [:delete :from attachments
+      :where (= node-id $s1)]
+     (vulpea-note-id note))
+    (--each (org-attach-file-list dir)
+      (org-roam-db-query!
+       (lambda (err)
+         (lwarn 'org-roam :warning "%s for attachment '%s' in %s (%s) %s"
+                (error-message-string err)
+                it
+                (vulpea-note-title note) (vulpea-note-id note) (vulpea-note-path note)))
+       [:insert :into attachments
+        :values $v1]
+       (vector (vulpea-note-id note)
+               it
+               (s-trim
+                (shell-command-to-string
+                 (format "sha1sum '%s' | cut -d ' ' -f 1 -"
+                         (expand-file-name it dir)))))))))
+
+
+
 (provide 'lib-vulpea)
 ;;; lib-vulpea.el ends here
