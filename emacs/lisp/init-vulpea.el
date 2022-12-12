@@ -347,7 +347,8 @@
    ;; buffers with lots of links and serves me zero purpose.
    org-roam-link-auto-replace nil)
   :config
-  (org-roam-db-autosync-enable))
+  (unless elpa-bootstrap-p
+    (org-roam-db-autosync-enable)))
 
 
 
