@@ -230,7 +230,7 @@ Result is a property list: (:actual :recommended)."
      :personal (append
                 (--map
                  (let ((item (gethash it personal)))
-                   (list (format "%s (x%.1f)" it (brb-charge-item-amount item))
+                   (list (format "%s (x%.2f)" it (brb-charge-item-amount item))
                          (* (brb-charge-item-amount item)
                             (brb-charge-item-price item))))
                  (hash-table-keys personal))))))
