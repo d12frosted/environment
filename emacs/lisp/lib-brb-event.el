@@ -33,6 +33,9 @@
 
 (require 'org-ml)
 (require 'vulpea)
+(require 'lib-vino-stats)
+
+
 
 ;;;###autoload
 (defun brb-event-select ()
@@ -55,6 +58,23 @@
      :initial-prompt (when event (vulpea-note-title event)))))
 
 ;;;###autoload
+(defun brb-event--from-range (range)
+  "Return list of events in time RANGE."
+  (->> (vulpea-db-query-by-tags-every '("wine" "event"))
+       (--filter (= 0 (vulpea-note-level it)))
+       (--remove (vulpea-note-tagged-any-p it "external"))
+       (--filter (let ((date (vulpea-utils-with-note it
+                               (vulpea-buffer-prop-get "date"))))
+                   (and (org-time>= date (nth 0 range))
+                        (org-time< date (nth 1 range)))))
+       (--sort (org-time< (vulpea-utils-with-note it
+                            (vulpea-buffer-prop-get "date"))
+                          (vulpea-utils-with-note other
+                            (vulpea-buffer-prop-get "date"))))))
+
+
+
+;;;###autoload
 (defun brb-event-wines (event)
   "Return list of wines from EVENT."
   (vulpea-utils-with-note event
@@ -73,6 +93,8 @@
                (-map #'car)
                (--map (org-ml-get-property :path it))
                (-map #'vulpea-db-get-by-id)))))))
+
+
 
 ;;;###autoload
 (defun brb-event-participants (event)
