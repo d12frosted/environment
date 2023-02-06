@@ -139,8 +139,10 @@
   (let* ((event (brb-event-select))
          (slug (vulpea-utils-with-note event
                  (vulpea-buffer-prop-get "slug")))
+         (date (vulpea-utils-with-note event
+                 (org-read-date nil nil (vulpea-buffer-prop-get "date"))))
          (wines (brb-event-wines event))
-         (dir (expand-file-name slug brb-slides-dir))
+         (dir (expand-file-name (concat date "-" slug) brb-slides-dir))
          (slides-file (expand-file-name "slides.org" dir))
          (slides-buffer))
     (mkdir dir t)
