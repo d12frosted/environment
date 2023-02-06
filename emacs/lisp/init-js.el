@@ -35,6 +35,8 @@
 ;;
 ;;; Code:
 
+(require 'init-elpa)
+
 (elpa-use-package js
   :ensure nil
   :defer t
@@ -46,6 +48,12 @@
   :hook ((typescript-mode . lsp))
   :init
   (setq typescript-indent-level 2))
+
+(elpa-use-package css-mode
+  :ensure nil
+  :defer t
+  :init
+  (setq-default css-indent-offset 2))
 
 (provide 'init-js)
 ;;; init-js.el ends here
