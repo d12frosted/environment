@@ -117,15 +117,24 @@ is a property list (:amount :participants :price)."
   (interactive)
   (let* ((buffer (get-buffer-create brb-charge--buffer-name))
          (event (brb-event-select))
+         (wines (brb-event-wines event))
          (data (brb-charge-data-read event))
          (date (vulpea-utils-with-note event
                  (vulpea-buffer-prop-get "date")))
          (participants (brb-charge-event-participants event)))
+    ;; cleanup old wines
+    (setf (brb-charge-data-wines data)
+          (let ((tbl (brb-charge-data-wines data)))
+            (--each (hash-table-keys tbl)
+              (unless (-contains-p (-map #'vulpea-note-id wines) it)
+                (remhash it tbl)))
+            tbl))
+
     (setf brb-charge--buffer buffer)
     (setf brb-charge--narrator (vulpea-db-get-by-id brb-charge--narrator-id))
     (setf brb-charge--event event)
     (setf brb-charge--event-date date)
-    (setf brb-charge--event-wines (brb-event-wines event))
+    (setf brb-charge--event-wines wines)
     (setf brb-charge--event-participants participants)
     (setf brb-charge--balances (let ((tbl (make-hash-table :test 'equal)))
                                  (--each participants
