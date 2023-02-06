@@ -400,7 +400,7 @@
                     :inherit 'barberry-theme-face-default)
 
 (let* ((height (face-attribute 'barberry-theme-face-default :height nil t))
-       (height-plus (floor (* 1.0 height))))
+       (height-plus (floor (* 1.2 height))))
   (custom-theme-set-faces
    'barberry
    `(default           ((t (:family ,barberry-theme-font-mono-family
@@ -604,8 +604,7 @@
    '(org-default                  ((t (:inherit barberry-theme-face-faded))))
    '(org-document-info            ((t (:inherit barberry-theme-face-faded))))
    '(org-document-info-keyword    ((t (:inherit barberry-theme-face-faded))))
-   `(org-document-title           ((t (:height ,height-plus
-                                       :inherit barberry-theme-face-strong))))
+   `(org-document-title           ((t (:inherit barberry-theme-face-strong))))
    '(org-done                     ((t (:inherit barberry-theme-face-faded))))
    '(org-drawer                   ((t (:inherit barberry-theme-face-faded))))
    '(org-ellipsis                 ((t (:inherit barberry-theme-face-faded))))
