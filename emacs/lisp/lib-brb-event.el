@@ -197,28 +197,41 @@
        :row-end " |"
        :sep " | "
        :data
-       (--map
-        (let ((summary (brb-event-score-summary it))
-              (wines (brb-event-wines it)))
-          (list (vulpea-utils-with-note it
-                  (vulpea-buffer-prop-get "date"))
-                it
-                (seq-length (brb-event-participants it))
-                (seq-length wines)
-                (format "%.4f"
-                        (/ (->> summary
-                                (--map (assoc-default "amean" it))
-                                (-sum))
-                           (seq-length wines)))
-                (format "%.4f"
-                        (/ (->> summary
-                                (--map (assoc-default "rms" it))
-                                (-sum))
-                           (seq-length wines)))
-                (->> summary
-                     (--map (assoc-default "price" it))
-                     (-sum))))
-        events))
+       (-concat
+        (--map
+         (let ((summary (brb-event-score-summary it))
+               (wines (brb-event-wines it)))
+           (list (vulpea-utils-with-note it
+                   (vulpea-buffer-prop-get "date"))
+                 it
+                 (seq-length (brb-event-participants it))
+                 (seq-length wines)
+                 (format "%.4f"
+                         (/ (->> summary
+                                 (--map (assoc-default "amean" it))
+                                 (-sum))
+                            (seq-length wines)))
+                 (format "%.4f"
+                         (/ (->> summary
+                                 (--map (assoc-default "rms" it))
+                                 (-sum))
+                            (seq-length wines)))
+                 (->> summary
+                      (--map (assoc-default "price" it))
+                      (-sum))))
+         events)
+        '(sep)
+        `((""
+           ""
+           ,(--reduce-from
+             (+ acc (seq-length (brb-event-participants it)))
+             0 events)
+           ,(--reduce-from
+             (+ acc (seq-length (brb-event-wines it)))
+             0 events)
+           ""
+           ""
+           ""))))
       ""
 
       (propertize (format "Participants (%s)" (seq-length participants)) 'face 'bold)
