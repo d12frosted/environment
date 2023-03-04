@@ -87,9 +87,8 @@
  sentence-end-double-space nil
  word-wrap t)
 
-(elpa-use-package (ws-butler
-                   :host github
-                   :repo "hlissner/ws-butler")
+(use-package ws-butler
+  :elpaca (ws-butler :host github :repo "hlissner/ws-butler")
   :diminish
   :commands (ws-butler-global-mode)
   :init
@@ -118,28 +117,29 @@
 
 (setq-default fill-column 120)
 
-(elpa-use-package visual-fill-column
+(use-package visual-fill-column
   :hook ((visual-line-mode . visual-fill-column-mode)))
 
-(elpa-use-package adaptive-wrap
+(use-package adaptive-wrap
   :defer t)
 
-(elpa-use-package unfill
+(use-package unfill
   :commands (unfill-toggle)
   :bind
   (("M-q" . #'unfill-toggle)))
 
 
 
-(elpa-use-package (ukrainian-input-method
-                   :host github
-                   :repo "d12frosted/emacs-ukrainian-input-method")
+(use-package ukrainian-input-method
+  :elpaca (ukrainian-input-method
+           :host github
+           :repo "d12frosted/emacs-ukrainian-input-method")
   :init
   (setq-default default-input-method "ukrainian"))
 
 
 
-(elpa-use-package move-text
+(use-package move-text
   :commands (move-text-up
              move-text-down)
   :bind
@@ -148,9 +148,10 @@
 
 
 
-(elpa-use-package (fancy-yank
-                   :host github
-                   :repo "d12frosted/fancy-yank")
+(use-package fancy-yank
+  :elpaca (fancy-yank
+           :host github
+           :repo "d12frosted/fancy-yank")
   :commands (fancy-yank)
   :bind
   (("C-S-y" . #'fancy-yank))
@@ -191,7 +192,7 @@
 
 
 
-(elpa-use-package avy
+(use-package avy
   :defer t
   :general
   (leader-def
@@ -200,7 +201,7 @@
     "jw" '(avy-goto-word-0 :which-key "Word")
     "jJ" '(avy-goto-char-timer :which-key "Chars")))
 
-(elpa-use-package ace-link
+(use-package ace-link
   :defer t
   :general
   (leader-def
@@ -208,7 +209,7 @@
 
 
 
-(elpa-use-package mwim
+(use-package mwim
   :defer t
   :bind (("C-a" . mwim-beginning)))
 

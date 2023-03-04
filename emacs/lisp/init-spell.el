@@ -36,8 +36,8 @@
 (advice-add #'flyspell-mode :around #'fun-silent)
 (advice-add #'flyspell-prog-mode :around #'fun-silent)
 
-(elpa-use-package ispell
-  :ensure nil
+(use-package ispell
+  :elpaca nil
   :defer t
   :config
   (setq ispell-dictionary "english"
@@ -45,14 +45,14 @@
   (when (equal (file-name-base ispell-program-name) "aspell")
     (add-to-list 'ispell-extra-args "--sug-mode=ultra")))
 
-(elpa-use-package flyspell
-  :ensure nil
+(use-package flyspell
+  :elpaca nil
   :defer t
   :diminish flyspell-mode
   :hook ((text-mode . flyspell-mode)
          (prog-mode . flyspell-prog-mode)))
 
-(elpa-use-package flyspell-lazy
+(use-package flyspell-lazy
   :after flyspell
   :commands (flyspell-lazy-mode)
   :defines (flyspell-lazy-idle-seconds
@@ -62,14 +62,14 @@
         flyspell-lazy-window-idle-seconds 3)
   (flyspell-lazy-mode +1))
 
-(elpa-use-package flyspell-correct
+(use-package flyspell-correct
   :defer t
   :general
   (leader-def
     "[s" '(flyspell-correct-wrapper
            :which-key "Spelling correction")))
 
-(elpa-use-package langtool
+(use-package langtool
   :defer t
   :init
   (setq langtool-language-tool-server-jar

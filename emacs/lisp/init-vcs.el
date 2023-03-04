@@ -42,7 +42,7 @@
 ;; (remove-hook 'find-file-hook #'vc-refrqesh-state)
 ;; (hook-with-delay 'find-file-hook 1 #'vc-refresh-state)
 
-(elpa-use-package magit
+(use-package magit
   :defer t
   :defines (magit-status-mode-map
             magit-revision-show-gravatars
@@ -78,30 +78,30 @@
         ;; show word-granularity on selected hunk
         magit-diff-refine-hunk t))
 
-(elpa-use-package closql
+(use-package closql
   :defer t)
 
-(elpa-use-package ghub
+(use-package ghub
   :defer t)
 
-(elpa-use-package forge
+(use-package forge
   :commands forge-create-pullreq forge-create-issue
   :init
   (setq-default forge-database-file
                 (expand-file-name "forge/forge-database.sqlite"
                                   path-etc-dir)))
 
-(elpa-use-package git-timemachine
+(use-package git-timemachine
   :defer t)
 
-(elpa-use-package ediff-wind
-  :ensure nil
+(use-package ediff-wind
+  :elpaca nil
   :defer t
   :init
   (setq ediff-window-setup-function 'ediff-setup-windows-plain
         ediff-split-window-function 'split-window-horizontally))
 
-(elpa-use-package diff-hl
+(use-package diff-hl
   :defer t
   :hook ((prog-mode . turn-on-diff-hl-mode)
          (text-mode . turn-on-diff-hl-mode)

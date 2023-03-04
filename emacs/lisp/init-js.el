@@ -37,23 +37,26 @@
 
 (require 'init-elpa)
 
-(elpa-use-package js
-  :ensure nil
+(use-package js
+  :elpaca nil
   :defer t
   :init
   (setq js-indent-level 2))
 
-(elpa-use-package typescript-mode
+(use-package typescript-mode
   :defer t
   :hook ((typescript-mode . lsp))
   :init
   (setq typescript-indent-level 2))
 
-(elpa-use-package css-mode
-  :ensure nil
+(use-package css-mode
+  :elpaca nil
   :defer t
   :init
   (setq-default css-indent-offset 2))
+
+(use-package vue-mode
+  :defer t)
 
 (provide 'init-js)
 ;;; init-js.el ends here

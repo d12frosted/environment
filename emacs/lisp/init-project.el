@@ -33,11 +33,23 @@
 ;;
 ;;; Code:
 
-(require 'lib-eval)
+(require 'init-elpa)
 (require 'config-path)
+(require 'lib-eval)
 
-(elpa-use-package project
-  :ensure nil
+
+
+(defun project-shell-command ()
+  "Invoke `shell-command' in the project's root."
+  (interactive)
+  (if-let* ((project (project-current))
+            (root (project-root project)))
+      (eval-with-default-dir root
+        (call-interactively #'shell-command))
+    (user-error "You are not in project")))
+
+(use-package project
+  :elpaca nil
   :general
   (leader-def
     "p" '(nil :which-key "project...")
@@ -60,15 +72,6 @@
   (cl-defmethod project-root ((project (head transient)))
     (cdr project)))
 
-(defun project-shell-command ()
-  "Invoke `shell-command' in the project's root."
-  (interactive)
-  (if-let* ((project (project-current))
-            (root (project-root project)))
-      (eval-with-default-dir root
-        (call-interactively #'shell-command))
-    (user-error "You are not in project")))
-
 (defun project-magit ()
   "Start `magit-status' in the current project's root directory."
   (interactive)
@@ -81,7 +84,7 @@
         (?v "Magit" project-magit)
         (?e "Eshell" project-eshell)))
 
-(elpa-use-package rg
+(use-package rg
   :defer t
   :commands (rg-project)
   :init

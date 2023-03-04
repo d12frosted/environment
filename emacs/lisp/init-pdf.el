@@ -47,7 +47,7 @@
 
 (require 'lib-nix)
 
-(elpa-use-package pdf-tools
+(use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . auto-revert-mode)
   :commands (pdf-info-close

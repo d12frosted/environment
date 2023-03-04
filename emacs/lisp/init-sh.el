@@ -44,8 +44,8 @@
 (eval-when-compile
   (require 'sh-script))
 
-(elpa-use-package sh-script
-  :ensure nil
+(use-package sh-script
+  :elpaca nil
   :commands (sh-shell-process)
   :config
   ;; setup indentation
@@ -65,7 +65,7 @@
      (,(regexp-opt sh-builtin-keywords 'words)
       (0 'font-lock-type-face append)))))
 
-(elpa-use-package company-shell
+(use-package company-shell
   :after sh-script
   :config
   (add-to-list 'company-backends '(company-shell
@@ -115,15 +115,15 @@ Search is bounded by LIMIT."
 
 
 
-(elpa-use-package fish-mode
+(use-package fish-mode
   :defer t
   :init
   (setq-default fish-indent-offset tab-width))
 
 
 
-(elpa-use-package eshell
-  :ensure nil
+(use-package eshell
+  :elpaca nil
   :defer t
   :init
   (setq-default

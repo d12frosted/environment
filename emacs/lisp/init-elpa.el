@@ -36,6 +36,8 @@
 
 (require 'config-path)
 
+
+
 (defvar elpa-bootstrap-p nil)
 
 
@@ -48,124 +50,79 @@
 
 ;; bootstrap `elpaca'
 
-(declare-function elpaca-generate-autoloads "elpaca")
+(defvar elpaca-installer-version 0.2)
 (defvar elpaca-directory (expand-file-name "elpaca/" path-packages-dir))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(when-let ((elpaca-repo (expand-file-name "repos/elpaca/" elpaca-directory))
-           (elpaca-build (expand-file-name "elpaca/" elpaca-builds-directory))
-           (elpaca-target (if (file-exists-p elpaca-build) elpaca-build elpaca-repo))
-           (elpaca-url  "https://www.github.com/progfolio/elpaca.git")
-           ((add-to-list 'load-path elpaca-target))
-           ((not (file-exists-p elpaca-repo)))
-           (buffer (get-buffer-create "*elpaca-bootstrap*")))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil
+                              :files (:defaults (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(when-let ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+           (build (expand-file-name "elpaca/" elpaca-builds-directory))
+           (order (cdr elpaca-order))
+           ((add-to-list 'load-path (if (file-exists-p build) build repo)))
+           ((not (file-exists-p repo))))
   (condition-case-unless-debug err
-      (progn
-        (unless (zerop (call-process "git" nil buffer t "clone" elpaca-url elpaca-repo))
-          (error "%s" (list (with-current-buffer buffer (buffer-string)))))
-        (byte-recompile-directory elpaca-repo 0 'force)
-        (require 'elpaca)
-        (elpaca-generate-autoloads "elpaca" elpaca-repo)
-        (kill-buffer buffer))
-    ((error)
-     (delete-directory elpaca-directory 'recursive)
-     (with-current-buffer buffer
-       (goto-char (point-max))
-       (insert (format "\n%S" err))
-       (display-buffer buffer)))))
+      (if-let ((buffer (pop-to-buffer-same-window "*elpaca-installer*"))
+               ((zerop (call-process "git" nil buffer t "clone"
+                                     (plist-get order :repo) repo)))
+               (default-directory repo)
+               ((zerop (call-process "git" nil buffer t "checkout"
+                                     (or (plist-get order :ref) "--"))))
+               (emacs (concat invocation-directory invocation-name))
+               ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                     "--eval" "(byte-recompile-directory \".\" 0 'force)"))))
+          (progn (require 'elpaca)
+                 (elpaca-generate-autoloads "elpaca" repo)
+                 (kill-buffer buffer))
+        (error "%s" (with-current-buffer buffer (buffer-string))))
+    ((error) (warn "%s" err) (delete-directory repo 'recursive))))
 (require 'elpaca-autoloads)
 (autoload 'elpaca--queue "elpaca")      ; needed because of byte-compilation of this file
-(elpaca (elpaca :host github :repo "progfolio/elpaca"))
-
-(when elpa-bootstrap-p
-  (elpaca-generate-autoloads "init" (expand-file-name "lisp/" path-emacs-dir)))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
 
 
+;; Install `use-package' support
 
-(defun elpa-block-until-ready ()
-  "Block Emacs until all packages are installed.
+(elpaca use-package)
+(elpaca elpaca-use-package
+  ;; Enable :elpaca use-package keyword.
+  (elpaca-use-package-mode)
+  ;; Assume :elpaca t unless otherwise specified.
+  (setq elpaca-use-package-by-default t))
+(setq-default use-package-enable-imenu-support t)
 
-Unfortunately, `elpaca' is asynchronous-only, but there are
-flows (like scripts using `init'), where you need to do perform
-some actions *when* environment is ready."
-  (if env-graphic-p
-      (add-hook 'after-init-hook #'elpaca-process-queues)
-    (elpaca-process-queues))
-  (unless env-graphic-p
-    (while (cl-find 'incomplete (reverse elpaca--queues) :key #'elpaca-q<-status)
-      (message "waiting for installation to complete...")
-      (sit-for 0.2))))
-
-(defmacro elpa-require (pkg)
-  "Bootstrap PKG and require it."
-  `(elpaca ,pkg (require ',(elpaca--first pkg))))
-
-(defalias #'elpa-use-package #'elpaca-use-package)
-
-(defcustom elpa-package-form-regexp-eval
-  `(concat
-    ,(eval-when-compile
-       (concat "^\\s-*("
-        (regexp-opt '("elpa-use-package" "elpa-require" "require") t)
-        "\\s-+(?\\("))
-    (or
-     (bound-and-true-p lisp-mode-symbol-regexp)
-     "\\(?:\\sw\\|\\s_\\|\\\\.\\)+")
-    "\\)")
-  "Sexp providing regexp for finding elpa-* package forms in user files."
-  :type 'sexp
-  :group 'elpa-use-package)
-
-(defcustom elpa-package-enable-imenu-support t
-  "If non-nil, cause imenu to see `use-package' declarations.
-This is done by adjusting `lisp-imenu-generic-expression' to
-include support for finding `use-package' and `require' forms.
-Must be set before loading use-package."
-  :type 'boolean
-  :set
-  #'(lambda (sym value)
-      (eval-after-load 'lisp-mode
-        (if value
-            `(add-to-list 'lisp-imenu-generic-expression
-                          (list "Packages" ,elpa-package-form-regexp-eval 2))
-          `(setq lisp-imenu-generic-expression
-                 (remove (list "Packages" ,elpa-package-form-regexp-eval 2)
-                         lisp-imenu-generic-expression))))
-      (set-default sym value))
-  :group 'elpa-use-package)
+(elpaca-wait)
 
 
 ;; critical packages
 
-(setq-default use-package-enable-imenu-support t)
+(use-package s)
+(use-package dash)
 
-(elpa-require use-package)
-(elpa-require s)
-(elpa-require dash)
-
-;; (message "%s" (string-join load-path "\n"))
+(elpaca-wait)
 
 
-;; popular packages
+;; 'common' packages
 
-(elpa-use-package async
+(use-package async
   :defer t)
 
-(elpa-use-package ts
+(use-package ts
   :defer t)
 
-(elpa-use-package request
+(use-package request
   :defer t
   :init
   (setq-default
    request-storage-directory (expand-file-name "request" path-cache-dir)))
 
-(elpa-use-package request-deferred
+(use-package request-deferred
   :defer t)
 
-
-
-;; profiler
-(elpa-use-package esup
+(use-package esup
   :defer t
   :init
   ;; https://github.com/progfolio/elpaca/issues/23

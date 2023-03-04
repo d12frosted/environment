@@ -39,7 +39,8 @@
 
 
 
-(elpa-use-package (vulpea :host github :repo "d12frosted/vulpea")
+(use-package vulpea
+  :elpaca (vulpea :host github :repo "d12frosted/vulpea")
   :defer t
   :general
   (leader-def
@@ -79,12 +80,8 @@
 
 
 
-(elpa-use-package emacsql-sqlite-builtin
-  :defer t)
-
-
-
-(elpa-use-package (org :host sourcehut :repo "bzg/org-mode")
+(use-package org
+  :elpaca (org :host sourcehut :repo "bzg/org-mode")
   :hook ((org-mode . visual-line-mode)
          (org-mode . adaptive-wrap-prefix-mode)
          ;; oh, how much I hate it in Org mode buffers
@@ -174,8 +171,8 @@
 
 
 
-(elpa-use-package org-persist
-  :ensure nil
+(use-package org-persist
+  :elpaca nil
   :defer t
   :commands (org-persist-gc
              org-persist-write-all)
@@ -187,8 +184,8 @@
 
 
 
-(elpa-use-package org-clock
-  :ensure nil
+(use-package org-clock
+  :elpaca nil
   :defer t
   :commands (org-clock-save)
   :init
@@ -205,8 +202,8 @@
 
 
 
-(elpa-use-package org-refile
-  :ensure nil
+(use-package org-refile
+  :elpaca nil
   :defer t
   :init
   (setq
@@ -219,8 +216,8 @@
 
 
 
-(elpa-use-package org-id
-  :ensure nil
+(use-package org-id
+  :elpaca nil
   :defer t
   :hook ((before-save . vulpea-id-auto-assign)
          (org-capture-prepare-finalize . org-id-get-create))
@@ -239,8 +236,8 @@
 
 
 
-(elpa-use-package org-capture
-  :ensure nil
+(use-package org-capture
+  :elpaca nil
   :defer t
   :general
   (leader-def
@@ -258,8 +255,8 @@
 
 
 
-(elpa-use-package org-attach
-  :ensure nil
+(use-package org-attach
+  :elpaca nil
   :defer t
   :config
   (setq-default
@@ -270,9 +267,9 @@
 
 
 
-(elpa-use-package org-archive
-  :ensure nil
-  :defer t
+(use-package org-archive
+  :elpaca nil
+  :after org
   :init
   (setq-default
    org-archive-location
@@ -282,8 +279,8 @@
 
 
 
-(elpa-use-package org-agenda
-  :ensure nil
+(use-package org-agenda
+  :elpaca nil
   :defer t
   :general
   (leader-def
@@ -326,7 +323,7 @@
 
 
 
-(elpa-use-package org-roam
+(use-package org-roam
   :defer t
   :commands (org-roam-db-autosync-enable
              org-roam-db-sync)
@@ -352,7 +349,7 @@
 
 
 
-(elpa-use-package org-download
+(use-package org-download
   :defer t
   :hook ((org-mode . org-download-enable))
   :init
@@ -360,8 +357,8 @@
 
 
 
-(elpa-use-package ox-latex
-  :ensure nil
+(use-package ox-latex
+  :elpaca nil
   :defer t
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
@@ -387,8 +384,8 @@
                         " "))
          '(1 2 3))))
 
-(elpa-use-package ox-beamer
-  :ensure nil
+(use-package ox-beamer
+  :elpaca nil
   :defer t
   :config
   (add-to-list
@@ -397,24 +394,24 @@
 
 
 
-(elpa-use-package ob-plantuml
-  :ensure nil
+(use-package ob-plantuml
+  :elpaca nil
   :defer t
   :defines (org-plantuml-jar-path))
 
 
 
-(elpa-use-package toc-org
+(use-package toc-org
   :hook (org-mode . toc-org-mode))
 
 
 
-(elpa-use-package org-ml
+(use-package org-ml
   :defer t)
 
 
 
-(elpa-use-package org-cliplink
+(use-package org-cliplink
   :defer t)
 
 
