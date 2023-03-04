@@ -34,24 +34,28 @@
 ;;
 ;;; Code:
 
+(require 'init-elpa)
 (require 'config-path)
 
-(elpa-use-package (vertico :files ("*.el" "extensions/*.el"))
+
+
+(use-package vertico
+  :elpaca (vertico :files ("*.el" "extensions/*.el"))
   :init
   (vertico-mode))
 
-(elpa-use-package vertico-repeat
-  :ensure nil
+(use-package vertico-repeat
+  :elpaca nil
   :bind ("M-R" . vertico-repeat)
   :hook ((minibuffer-setup . vertico-repeat-save)))
 
-(elpa-use-package savehist
-  :ensure nil
+(use-package savehist
+  :elpaca nil
   :init
   (savehist-mode))
 
-(elpa-use-package emacs
-  :ensure nil
+(use-package emacs
+  :elpaca nil
   :init
   ;; Do not allow the cursor in the minibuffer prompt
   (setq minibuffer-prompt-properties
@@ -100,7 +104,7 @@ _TOTAL arguments."
       (when-let (x (assq (aref word (1- (length word))) selection-orderless-dispatch-alist))
         (cons (cdr x) (substring word 0 -1)))))))
 
-(elpa-use-package orderless
+(use-package orderless
   :functions (orderless-define-completion-style)
   :config
   ;; Define orderless style with initialism by default
@@ -117,7 +121,7 @@ _TOTAL arguments."
         orderless-component-separator #'orderless-escapable-split-on-space
         orderless-style-dispatchers '(selection-orderless-dispatch)))
 
-(elpa-use-package marginalia
+(use-package marginalia
   :commands (marginalia-mode
              marginalia-cycle)
   :init
@@ -135,7 +139,7 @@ _TOTAL arguments."
                   marginalia-annotators-light
                   nil)))
 
-(elpa-use-package consult
+(use-package consult
   :bind
   (("M-y" . consult-yank-pop))
   :general
@@ -144,14 +148,17 @@ _TOTAL arguments."
     "pg" '(consult-grep :which-key "Grep the project")
     "ji" '(consult-imenu :which-key "imenu")))
 
-(elpa-use-package embark
-  :bind
-  (("M-." . embark-dwim)
-   ("C-." . embark-act)))
+;; (use-package embark
+;;   :bind
+;;   (("M-." . embark-dwim)
+;;    ("C-." . embark-act)))
+
+;; (use-package embark-conuslt
+;;   :defer t)
 
 
 
-(elpa-use-package transient
+(use-package transient
   :defer t
   :init
   (setq

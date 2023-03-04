@@ -40,7 +40,7 @@
 ;; minimum window height
 (setq window-min-height 1)
 
-(elpa-use-package ace-window
+(use-package ace-window
   :defer t
   :init
   (setq-default aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o)))

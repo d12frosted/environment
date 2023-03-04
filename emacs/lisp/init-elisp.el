@@ -34,35 +34,40 @@
 ;;
 ;;; Code:
 
-(elpa-use-package elsa
-  :defer t)
+(require 'init-elpa)
 
-(elpa-use-package lispy
+
+
+(use-package elsa
+  :defer t
+  :disabled)
+
+(use-package lispy
   :diminish
   :defines (lispy-mode-map)
   :hook ((emacs-lisp-mode . lispy-mode))
   :bind (:map lispy-mode-map
               ("C-a" . beginning-of-line)))
 
-(elpa-use-package eldoc
-  :ensure nil
+(use-package eldoc
+  :elpaca nil
   :diminish eldoc-mode)
 
-(elpa-use-package flycheck-eldev
+(use-package flycheck-eldev
   :after flycheck)
 
-(elpa-use-package page-break-lines
+(use-package page-break-lines
   :disabled
   :hook ((emacs-lisp-mode . page-break-lines-mode)))
 
-(elpa-use-package form-feed
+(use-package form-feed
   :hook ((emacs-lisp-mode . form-feed-mode)))
 
-(elpa-use-package emacsql
-  :defer t
-  :hook ((emacs-lisp-mode . emacsql-fix-vector-indentation)))
+;; (use-package emacsql
+;;   :defer t
+;;   :hook ((emacs-lisp-mode . emacsql-fix-vector-indentation)))
 
-(elpa-use-package buttercup
+(use-package buttercup
   :defer t
   :config
   (when (version<= "29" emacs-version)
@@ -75,6 +80,8 @@ a call to `save-match-data', as `format-spec' modifies that."
         (format-spec format (--map
                              (cons (car it) (lambda () (cdr it)))
                              specification))))))
+
+
 
 ;; default indentation is not perfect when it comes to property lists
 ;; and face specs; this snipped fixes indent level calculation; I

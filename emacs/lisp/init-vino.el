@@ -33,8 +33,9 @@
 ;;
 ;;; Code:
 
-(elpa-use-package (vino :host github :repo "d12frosted/vino"
-                        :branch "feature/switch-to-vulpea-db")
+(use-package vino
+  :elpaca (vino :host github
+                :repo "d12frosted/vino")
   :defer t
   :commands (vino-setup)
   :general

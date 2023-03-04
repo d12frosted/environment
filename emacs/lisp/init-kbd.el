@@ -44,7 +44,7 @@ ARGS are arguments, right?"
                              :prefix-command 'prefix-command
                              :prefix-map 'prefix-map)))
 
-(elpa-use-package general
+(use-package general
   :init
   (leader-def
     "/" '(nil :which-key "search...")
@@ -56,12 +56,12 @@ ARGS are arguments, right?"
     "o" '(nil :which-key "open...")
     "v" '(nil :which-key "vino...")))
 
-(elpa-require bind-key)
-
-(elpa-use-package which-key
+(use-package which-key
   :diminish which-key-mode
   :init
   (which-key-mode))
+
+(elpaca-wait)
 
 (defvar kbd-escape-hook nil
   "A hook run after \\[keyboard-quit] is pressed.

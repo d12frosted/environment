@@ -51,21 +51,13 @@
                 load-prefer-newer t)
   (eldev--inject-loading-roots 'bootstrap)
   (require 'config-path)
-  (load (expand-file-name "init.el" path-emacs-dir)))
+  (load (expand-file-name "init.el" path-emacs-dir))
+  (elpaca-wait))
 
 ;; We want to run this before any build command. This is also needed
 ;; for `flyspell-eldev` to be aware of packages installed by
 ;; elpaca/straight/whatever.
 (add-hook 'eldev-build-system-hook #'elpa-bootstrap)
-
-;; freeze only during build command, ideally `eldev-build-system-hook'
-;; should provide current command as argument
-(add-hook 'eldev-build-hook
-          (lambda ()
-            ;; do not run freeze procedure on CI as
-            ;; we ignore these changes anyways
-            (unless (getenv "CI")
-              (setq elpa-freeze t))))
 
 
 ;; Upgrade flow. Hooks into Eldev upgrade flow.

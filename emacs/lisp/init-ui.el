@@ -109,7 +109,7 @@
 ;; disable bidirectional text for tiny performance boost
 (setq bidi-display-reordering nil)
 
-(elpa-use-package minions
+(use-package minions
   :init
   (minions-mode 1))
 
@@ -127,17 +127,21 @@
 
 
 
-(elpa-use-package (font-lock+ :host github :repo "emacsmirror/font-lock-plus"))
+(use-package font-lock+
+  :elpaca (font-lock+ :host github :repo "emacsmirror/font-lock-plus"))
+
+(elpaca-wait)
 
 
 
-(elpa-use-package bui
+(use-package bui
   :defer t)
 
-(elpa-use-package (lister
-                   :host github
-                   :repo "publicimageltd/lister"
-                   :branch "archive-version-0.7.2")
+(use-package lister
+  :elpaca (lister
+           :host github
+           :repo "publicimageltd/lister"
+           :branch "archive-version-0.7.2")
   :defer t)
 
 
@@ -188,7 +192,8 @@
             'face face)))
         faces)))))
 
-(elpa-use-package (svg-lib :host github :repo "rougier/svg-lib")
+(use-package svg-lib
+  :elpaca (svg-lib :host github :repo "rougier/svg-lib")
   :defer t
   :init
   (setq-default
@@ -221,7 +226,8 @@
                        "icons/fontawesome/svgs/solid/%s.svg"
                        path-cache-dir))))))
 
-(elpa-use-package (svg-tag-mode :host github :repo "rougier/svg-tag-mode")
+(use-package svg-tag-mode
+  :elpaca (svg-tag-mode :host github :repo "rougier/svg-tag-mode")
   :commands (svg-tag-mode
              svg-tag-mode-on)
   :init
@@ -243,14 +249,15 @@
 
 
 
-(elpa-use-package rainbow-mode
+(use-package rainbow-mode
   :defer t)
 
 
 
-(elpa-use-package (fancy-compilation
-                   :host codeberg
-                   :repo "ideasman42/emacs-fancy-compilation")
+(use-package fancy-compilation
+  :elpaca (fancy-compilation
+           :host codeberg
+           :repo "ideasman42/emacs-fancy-compilation")
   :commands (fancy-compilation-mode)
   :init
   (setf fancy-compilation-override-colors nil)

@@ -33,8 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'init-elpa)
-
 (defconst env-graphic-p (display-graphic-p))
 (defconst env-rootp (string-equal "root" (getenv "USER")))
 (defconst env-sys-mac-p (eq system-type 'darwin))
