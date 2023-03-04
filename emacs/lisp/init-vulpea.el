@@ -173,7 +173,7 @@
 
 (use-package org-persist
   :elpaca nil
-  :defer t
+  :after org
   :commands (org-persist-gc
              org-persist-write-all)
   :config
@@ -186,7 +186,7 @@
 
 (use-package org-clock
   :elpaca nil
-  :defer t
+  :after org
   :commands (org-clock-save)
   :init
   (setq
@@ -204,7 +204,7 @@
 
 (use-package org-refile
   :elpaca nil
-  :defer t
+  :after org
   :init
   (setq
    org-outline-path-complete-in-steps nil
@@ -218,7 +218,7 @@
 
 (use-package org-id
   :elpaca nil
-  :defer t
+  :after org
   :hook ((before-save . vulpea-id-auto-assign)
          (org-capture-prepare-finalize . org-id-get-create))
   :init
@@ -238,7 +238,7 @@
 
 (use-package org-capture
   :elpaca nil
-  :defer t
+  :after org
   :general
   (leader-def
     "c" '(nil :which-key "capture...")
@@ -257,7 +257,7 @@
 
 (use-package org-attach
   :elpaca nil
-  :defer t
+  :after org
   :config
   (setq-default
    org-attach-id-dir (expand-file-name ".data/" vulpea-directory)
@@ -281,7 +281,7 @@
 
 (use-package org-agenda
   :elpaca nil
-  :defer t
+  :after org
   :general
   (leader-def
     "oA" '(org-agenda :which-key "agenda dispatch")
@@ -359,7 +359,7 @@
 
 (use-package ox-latex
   :elpaca nil
-  :defer t
+  :after org
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-packages-alist '("" "color"))
@@ -386,7 +386,7 @@
 
 (use-package ox-beamer
   :elpaca nil
-  :defer t
+  :after org
   :config
   (add-to-list
    'org-beamer-environments-extra
