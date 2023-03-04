@@ -101,6 +101,8 @@
 
 (use-package s)
 (use-package dash)
+(use-package emacsql)
+(use-package emacsql-sqlite-builtin)
 
 (elpaca-wait)
 
