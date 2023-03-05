@@ -247,6 +247,40 @@
        (--map (format "- %s" (string-from it)) wines)
        "\n")
       ""
+      
+      (string-table
+       :header '("date" "event" "producer" "wine" "vintage" "amean" "rms" "sdev" "price" "qpr")
+       :header-sep "-"
+       :header-sep-start "|-"
+       :header-sep-conj "-+-"
+       :header-sep-end "-|"
+       :row-start "| "
+       :row-end " |"
+       :sep " | "
+       :pad-type '(right right right right left left left left left left)
+       :width '(full 20 20 20 full full full full full full)
+       :data
+       (->> events
+            (--map
+             (let ((summary (brb-event-score-summary it))
+                   (event it))
+               (->> (brb-event-wines it)
+                    (--map-indexed (list
+                                    (vulpea-utils-with-note event
+                                      (vulpea-buffer-prop-get "date"))
+                                    event
+                                    (vulpea-note-meta-get it "producer" 'note)
+                                    (vulpea-note-meta-get it "name")
+                                    (or (vulpea-note-meta-get it "vintage") "NV")
+                                    (assoc-default "amean" (nth it-index summary))
+                                    (assoc-default "rms" (nth it-index summary))
+                                    (assoc-default "sdev" (nth it-index summary))
+                                    (assoc-default "price" (nth it-index summary))
+                                    (assoc-default "QPR" (nth it-index summary)))))))
+            (-flatten-n 1)
+            (--sort (> (nth 6 it)
+                       (nth 6 other)))))
+      ""
 
       (propertize (format "Grapes (%s)" (seq-length grapes)) 'face 'bold)
       ""
