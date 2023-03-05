@@ -62,9 +62,9 @@
 
 (defun brb-order-item-total (item discounts)
   "Calculate total for ITEM based on DISCOUNTS."
-  (let ((discount (if (and (string-equal "goodwine" (brb-order-item-source item))
+  (let ((discount (if (and (seq-contains-p '("goodwine" "vasyl") (brb-order-item-source item))
                            (>= (brb-order-item-price item) 3300))
-                      0.05
+                      0.07
                     (gethash (brb-order-item-source item) discounts))))
     (ceiling
      (* (- 1.0 discount)
@@ -83,7 +83,8 @@
   "Calculate discount for ORDER from SOURCE."
   (let ((bottles (--reduce-from (+ acc (brb-order-item-amount it)) 0 order)))
     (pcase source
-      (`"goodwine" (if (>= bottles 6) 0.12 0.05))
+      (`"goodwine" (if (>= bottles 6) 0.14 0.07))
+      (`"vasyl" 0.14)
       (`"roots" (if (>= bottles 6) 0.10 0.0))
       (`"sabotage" (cond
                     ((>= bottles 24) 0.12)
