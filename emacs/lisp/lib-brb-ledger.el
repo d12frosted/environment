@@ -216,7 +216,10 @@ specified, user is asked to provide them interactively."
          (res-accs (shell-command-to-string cmd-accs))
          (convives (emacsql-with-transaction (org-roam-db)
                      (seq-map
-                      #'vulpea-db-get-by-id
+                      (lambda (id)
+                        (if-let ((convive (vulpea-db-get-by-id id)))
+                            convive
+                          (user-error "Could not find convive with id %s" id)))
                       (seq-remove
                        (lambda (x)
                          (seq-contains-p ignored x))
