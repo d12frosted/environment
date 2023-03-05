@@ -33,9 +33,7 @@
 ;;
 ;;; Code:
 
-(require 'init-vulpea)
-
-(autoload 'vulpea-note-p "vulpea-note")
+(require 'vulpea)
 
 (defun string-non-empty-p (str)
   "Return non-nil when STR is non-empty."
@@ -74,10 +72,12 @@ buffer."
   "Remove SUFFIX regexp if it is at the end of S."
   (s-chop-suffix (car (s-match suffix s)) s))
 
+;;;###autoload
 (defvar string-http-url-regexp
   "\\(https?://.*\\)"
   "HTTP(s) URL regexp.")
 
+;;;###autoload
 (defvar string-uuid-regexp
   (concat
    "\\("
@@ -93,24 +93,26 @@ buffer."
    "\\)")
   "UUID regexp.")
 
- (defun string-group-number (num &optional size char)
-   "Format NUM as string grouped to SIZE with CHAR."
-   ;; Based on code for `math-group-float' in calc-ext.el
-   (let* ((size (or size 3))
-          (char (or char " "))
-          (str (if (stringp num)
-                   num
-                 (number-to-string num)))
-          ;; omitting any trailing non-digit chars
-          ;; NOTE: Calc supports BASE up to 36 (26 letters and 10 digits ;)
-          (pt (or (string-match "[^0-9a-zA-Z]" str) (length str))))
-     (while (> pt size)
-       (setq str (concat (substring str 0 (- pt size))
-                         char
-                         (substring str (- pt size)))
-             pt (- pt size)))
-     str))
+;;;###autoload
+(defun string-group-number (num &optional size char)
+  "Format NUM as string grouped to SIZE with CHAR."
+  ;; Based on code for `math-group-float' in calc-ext.el
+  (let* ((size (or size 3))
+         (char (or char " "))
+         (str (if (stringp num)
+                  num
+                (number-to-string num)))
+         ;; omitting any trailing non-digit chars
+         ;; NOTE: Calc supports BASE up to 36 (26 letters and 10 digits ;)
+         (pt (or (string-match "[^0-9a-zA-Z]" str) (length str))))
+    (while (> pt size)
+      (setq str (concat (substring str 0 (- pt size))
+                        char
+                        (substring str (- pt size)))
+            pt (- pt size)))
+    str))
 
+;;;###autoload
 (defun string-from (value)
   "Convert VALUE to string."
   (cond
@@ -121,6 +123,7 @@ buffer."
    (t (user-error
        "Unsupported type of \"%s\"" value))))
 
+;;;###autoload
 (cl-defun string-from-number (num
                               &key
                               min-length
@@ -148,6 +151,7 @@ This function might be considered an overkill, but it\\='s used in
                 num))
     (number-to-string num)))
 
+;;;###autoload
 (cl-defun string-table (&key
                         data
                         header

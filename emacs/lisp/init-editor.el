@@ -33,9 +33,6 @@
 ;;
 ;;; Code:
 
-(require 'lib-vcs)
-(require 'lib-string)
-
 
 
 ;; easier to search
@@ -155,8 +152,9 @@
   :commands (fancy-yank)
   :bind
   (("C-S-y" . #'fancy-yank))
-  :init
-  (setq-default
+  :config
+  (require 'lib-string)
+  (setq
    fancy-yank-rules
    (list
     (cons vcs-url-github-issue-regexp
