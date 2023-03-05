@@ -120,5 +120,9 @@
 (when (file-exists-p custom-file)
   (load custom-file nil 'nomessage))
 
+;; Wait for all packages to initialize in non-interactive mode.
+(when noninteractive
+  (elpaca-wait))
+
 (provide 'init)
 ;;; init.el ends here
