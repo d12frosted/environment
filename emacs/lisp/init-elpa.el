@@ -83,6 +83,9 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
+(when elpa-bootstrap-p
+  (elpaca-generate-autoloads "init" (expand-file-name "lisp/" path-emacs-dir)))
+
 
 ;; Install `use-package' support
 
