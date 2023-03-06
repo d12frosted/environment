@@ -153,7 +153,6 @@
   :bind
   (("C-S-y" . #'fancy-yank))
   :config
-  (require 'lib-string)
   (setq
    fancy-yank-rules
    (list

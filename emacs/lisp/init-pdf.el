@@ -45,8 +45,6 @@
 ;;
 ;;; Code:
 
-(require 'lib-nix)
-
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . auto-revert-mode)
@@ -56,6 +54,7 @@
   (setq-default pdf-view-display-size 'fit-page)
   (when (and elpa-bootstrap-p (not (getenv "CI")))
     (require 'pdf-tools)
+    (require 'lib-nix)
     (unless (file-exists-p pdf-info-epdfinfo-program)
       (let ((default-directory
              (expand-file-name "server/" pdf-tools-directory)))
