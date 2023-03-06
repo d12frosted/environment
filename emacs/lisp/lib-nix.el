@@ -42,7 +42,7 @@
 
 If result is non-zero, error is printed in messages buffer.
 
-Basically, executes nix-shell -p DEPS --command 'COMMAND'"
+Basically, executes nix-shell -p DEPS --command COMMAND."
   (message message-intro)
   (let* ((error-buffer (generate-new-buffer "*nix-shell-error*"))
          (cmd (format
