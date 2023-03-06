@@ -313,6 +313,9 @@
    ;; show agenda in current window
    org-agenda-window-setup 'current-window
 
+   ;; these tags have no value in agenda buffer
+   org-agenda-hide-tags-regexp "REFILE\\|FOCUS\\|MEETING"
+
    org-agenda-custom-commands
    `((" " "Agenda"
       (,vulpea-agenda-cmd-refile
