@@ -34,6 +34,11 @@
 (require 'org-ml)
 (require 'vulpea)
 (require 'lib-vino-stats)
+(require 'lib-brb-ledger)
+
+
+
+(defvar brb-event-narrator-id "bc8aa837-3348-45e6-8468-85510966527a")
 
 
 
@@ -93,6 +98,28 @@
                (-map #'car)
                (--map (org-ml-get-property :path it))
                (-map #'vulpea-db-get-by-id)))))))
+
+(defun brb-event-wines--prices (event)
+  "Return prices of wines from EVENT.
+
+Result is a properly list (:public :real), where each value is a
+list of prices (from the first to the last wine)."
+  (vulpea-utils-with-note event
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "#\\+name: data")
+      (re-search-forward "^|")
+      (goto-char (line-beginning-position))
+      (let* ((raw (->> (org-table-to-lisp)
+                       (--remove (eq 'hline it))
+                       (-map #'cdr)
+                       (--map (--map (substring-no-properties it) it))
+                       (--filter (seq-contains-p '("price" "price real") (car it)))))
+             (public (--find (string-equal "price" (car it)) raw))
+             (real (--find (string-equal "price real" (car it)) raw)))
+        (list
+         :public (->> public (cdr) (-map #'string-to-number))
+         :real (->> real (cdr) (-map #'string-to-number)))))))
 
 
 
