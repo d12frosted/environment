@@ -47,7 +47,7 @@
          (data (brb-event-plan--data-read event))
          (buffer (buffer-generate (format "*%s*" (vulpea-note-title event)) 'unique)))
     (brb-event-plan--propagate buffer event data (make-hash-table :test 'equal))
-    (display-buffer buffer)))
+    (pop-to-buffer buffer)))
 
 
 
