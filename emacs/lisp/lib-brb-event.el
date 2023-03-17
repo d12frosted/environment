@@ -36,6 +36,8 @@
 (require 'lib-vino-stats)
 (require 'lib-brb-ledger)
 
+(autoload 'brb-event-plan--data-read "lib-brb-event-plan")
+
 
 
 (defvar brb-event-narrator-id "bc8aa837-3348-45e6-8468-85510966527a")
@@ -205,7 +207,25 @@ list of prices (from the first to the last wine)."
                                               (vulpea-note-meta-get it "appellation" 'note))
                                           "country" 'note))
                                   (-flatten)))
-              (countries (-distinct countries-all)))
+              (countries (-distinct countries-all))
+              (gains (--map
+                      (let* ((charge-narrator (vulpea-note-meta-get it "charge narrator" 'symbol))
+                             (data (brb-event-plan--data-read it))
+                             (participants-all (brb-event-participants it))
+                             (participants (--remove (and (not charge-narrator)
+                                                          (string-equal (vulpea-note-id it) brb-event-narrator-id))
+                                                     participants-all))
+                             (wines-total (-sum (plist-get (brb-event-wines--prices it) :real)))
+                             (shared-total (->> (plist-get data :shared)
+                                                (--map (ceiling
+                                                        (* (plist-get it :amount)
+                                                           (plist-get it :price))))
+                                                (-sum)))
+                             (price (vulpea-note-meta-get it "price" 'number))
+                             (gain (- (* price (seq-length participants))
+                                      shared-total wines-total)))
+                        gain)
+                      events)))
     (buffer-display-result-with "*brb-stats*"
       (format "Stats for period from %s to %s"
               (propertize (nth 0 range) 'face 'bold)
@@ -215,7 +235,7 @@ list of prices (from the first to the last wine)."
       (propertize (format "Events (%s)" (seq-length events)) 'face 'bold)
       ""
       (string-table
-       :header '("date" "event" "participants" "wines" "amean" "rms" "price")
+       :header '("date" "event" "convives" "wines" "amean" "rms" "price" "gain")
        :header-sep "-"
        :header-sep-start "|-"
        :header-sep-conj "-+-"
@@ -225,9 +245,9 @@ list of prices (from the first to the last wine)."
        :sep " | "
        :data
        (-concat
-        (--map
-         (let ((summary (brb-event-score-summary it))
-               (wines (brb-event-wines it)))
+        (--map-indexed
+         (let* ((summary (brb-event-score-summary it))
+                (wines (brb-event-wines it)))
            (list (vulpea-utils-with-note it
                    (vulpea-buffer-prop-get "date"))
                  it
@@ -245,7 +265,8 @@ list of prices (from the first to the last wine)."
                             (seq-length wines)))
                  (->> summary
                       (--map (assoc-default "price" it))
-                      (-sum))))
+                      (-sum))
+                 (nth it-index gains)))
          events)
         '(sep)
         `((""
@@ -258,7 +279,8 @@ list of prices (from the first to the last wine)."
              0 events)
            ""
            ""
-           ""))))
+           ""
+           ,(-sum gains)))))
       ""
 
       (propertize (format "Participants (%s)" (seq-length participants)) 'face 'bold)
@@ -274,7 +296,7 @@ list of prices (from the first to the last wine)."
        (--map (format "- %s" (string-from it)) wines)
        "\n")
       ""
-      
+
       (string-table
        :header '("date" "event" "producer" "wine" "vintage" "amean" "rms" "sdev" "price" "qpr")
        :header-sep "-"
