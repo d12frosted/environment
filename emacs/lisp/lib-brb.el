@@ -234,7 +234,7 @@ Otherwise only those specified in the list."
   (let* ((wines (- (length (car tbl)) 2))
          (names (-drop 2 (car tbl)))
          (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
-         (real-prices (car (table-select-rows "real price" tbl :column 1)))
+         (prices (car (table-select-rows "price" tbl :column 1)))
 
          (totals (table-vreduce-columns #'calcFunc-vsum ratings))
          (amean (table-vreduce-columns #'calcFunc-vmean ratings))
@@ -256,9 +256,9 @@ Otherwise only those specified in the list."
                         (*
                          100
                          (calc-to-number (calcFunc-fact (calc-from-number (nth i amean)))))
-                        (if (= 0 (nth i real-prices))
+                        (if (= 0 (nth i prices))
                             1
-                          (nth i real-prices))))
+                          (nth i prices))))
                      (-iota wines)))
          (columns (or columns '("total" "amean" "rms" "sdev" "favourite" "outcast" "price" "QPR"))))
     (-concat
@@ -283,7 +283,7 @@ Otherwise only those specified in the list."
           (when (-contains-p columns "outcast")
             (brb-format-float-in (nth i outcasted) :floats outcasted :fn #'-max :style 'del))
           (when (-contains-p columns "price")
-            (brb-format-float-in (nth i real-prices)))
+            (brb-format-float-in (nth i prices)))
           (when (-contains-p columns "QPR")
             (brb-format-float-in (nth i qprs) :floats qprs :fn #'-max :style 'bold :prec 4)))))
       (-iota wines)))))
