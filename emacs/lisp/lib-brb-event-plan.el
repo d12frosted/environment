@@ -119,7 +119,7 @@ is balance."
                     (brb-event-plan--propagate
                      buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances)))
        " "
-       (buttonize "[TG Report]" nil)
+       (buttonize "[TG Report]" #'brb-event-plan-display-tg-report event)
        " "
        (buttonize "[Record spendings]" nil)
        "\n\n")
@@ -468,6 +468,24 @@ The BUFFER is updated. DATA and BALANCES are required for that."
       (let ((print-level nil)
 	          (print-length nil))
 	      (print data (current-buffer))))))
+
+
+
+(defun brb-event-plan-display-tg-report (event)
+  "Display TG report for EVENT."
+  (let ((buffer (get-buffer-create (format "*%s TG report*" (vulpea-note-title event))))
+        (summary (brb-event-score-summary event)))
+    (with-current-buffer buffer
+      (erase-buffer)
+      (insert
+       (->> (brb-event-wines event)
+            (--map-indexed
+             (format "☆ %.2f - [%s](https://barberry.io/wines/%s.html)"
+                     (assoc-default "rms" (nth it-index summary))
+                     (vulpea-note-title it)
+                     (vulpea-note-id it)))
+            (s-join "\n"))))
+    (pop-to-buffer buffer)))
 
 
 
