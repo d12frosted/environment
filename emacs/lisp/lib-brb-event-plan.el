@@ -121,7 +121,8 @@ is balance."
        " "
        (buttonize "[TG Report]" #'brb-event-plan-display-tg-report event)
        " "
-       (buttonize "[Record spendings]" nil)
+       (buttonize "[Record spendings]"
+                  (lambda (&rest _) (error "Not implemented")))
        "\n\n")
 
       (insert
@@ -383,7 +384,8 @@ is balance."
 
       (insert
        (propertize "5. Personal" 'face 'org-level-1) "\n\n"
-       (buttonize "[Charge everyone]" nil)
+       (buttonize "[Charge everyone]"
+                  (lambda (&rest _) (error "Not implemented")))
        "\n\n")
       (--each-indexed participants
         ;; '(:personal ((:item "item 1"
