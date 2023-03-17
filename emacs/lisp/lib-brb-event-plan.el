@@ -409,7 +409,12 @@ is balance."
           (insert
            (propertize (format "4.%0d. %s" (1+ it-index) (vulpea-note-title it)) 'face 'org-level-2)
            "\n\n"
-           (buttonize "[Charge]" nil)
+           (buttonize "[Charge]"
+                      (lambda (&rest _)
+                        (brb-ledger-charge
+                         :convive it
+                         :amount (+ balance total)
+                         :date (date-to-time date))))
            " "
            (buttonize "[Statement]"
                       (lambda (&rest _)
