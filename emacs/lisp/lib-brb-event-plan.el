@@ -386,13 +386,6 @@ is balance."
        (buttonize "[Charge everyone]" nil)
        "\n\n")
       (--each-indexed participants
-        (insert
-         (propertize (format "4.%0d. %s" (1+ it-index) (vulpea-note-title it)) 'face 'org-level-2)
-         "\n\n"
-         (buttonize "[Charge]" nil)
-         " "
-         (buttonize "[Statement]" nil)
-         "\n\n")
         ;; '(:personal ((:item "item 1"
         ;;               :price 100
         ;;               :orders (:participant "id-1" :amount 1)
@@ -414,18 +407,16 @@ is balance."
                                        (-sum)))
                          balance)))
           (insert
-           "- Balance: " (brb-price-format balance) "\n"
-           "- Event: " (brb-price-format price) "\n"
-           (mapconcat
-            (lambda (it)
-              (format "- %s (x%.2f): %s\n"
-                      (plist-get it :item)
-                      (plist-get it :amount)
-                      (brb-price-format
-                       (ceiling (* (plist-get it :amount)
-                                   (plist-get it :price))))))
-            personal)
-           "- Total: " (brb-price-format total)
+           (propertize (format "4.%0d. %s" (1+ it-index) (vulpea-note-title it)) 'face 'org-level-2)
+           "\n\n"
+           (buttonize "[Charge]" nil)
+           " "
+           (buttonize "[Statement]"
+                      (lambda (&rest _)
+                        (brb-event-plan-display-statement
+                         event it price balance personal total)))
+           "\n\n"
+           (brb-event-plan--receipt price balance personal total)
            "\n\n")))
       (ws-butler-clean-region (point-min) (point-max))
       (goto-char point)
@@ -485,6 +476,56 @@ The BUFFER is updated. DATA and BALANCES are required for that."
                      (vulpea-note-title it)
                      (vulpea-note-id it)))
             (s-join "\n"))))
+    (pop-to-buffer buffer)))
+
+
+
+(defun brb-event-plan--receipt (price balance personal total)
+  "Prepare receipt for event participation.
+
+Summarise PRICE, BALANCE, PERSONAL spendings and TOTAL amount to pay."
+  (concat
+   "- Balance: " (brb-price-format balance) "\n"
+   "- Event: " (brb-price-format price) "\n"
+   (mapconcat
+    (lambda (it)
+      (format "- %s (x%.2f): %s\n"
+              (plist-get it :item)
+              (plist-get it :amount)
+              (brb-price-format
+               (ceiling (* (plist-get it :amount)
+                           (plist-get it :price))))))
+    personal)
+   "- Total: " (brb-price-format total)))
+
+(defun brb-event-plan-display-statement (event participant price balance personal total)
+  "Prepare and display a statement for PARTICIPANT of EVENT.
+
+The statement summarises BALANCE, EVENT PRICE and PERSONAL spendings as TOTAL."
+  (let* ((narrator (vulpea-db-get-by-id brb-event-narrator-id))
+         (buffer (get-buffer-create (format "*statement for %s*" (vulpea-note-title participant)))))
+    (with-current-buffer buffer
+      (erase-buffer)
+      (insert
+       "👋 Thank you for participating in " (vulpea-note-title event) "!\n\n"
+       "📋 You can find more information about tasted wines and winners on Barberry Garden - "
+       (format "https://barberry.io/posts/%s-%s.html"
+               (vulpea-utils-with-note event
+                 (format-time-string "%Y-%m-%d" (date-to-time (vulpea-buffer-prop-get "date"))))
+               (vulpea-utils-with-note event
+                 (vulpea-buffer-prop-get "slug")))
+       ".\n\n"
+       "🧾 This is your receipt:\n\n"
+       (brb-event-plan--receipt price balance personal total)
+       "\n\n"
+       (if (> total 0)
+           (concat
+            "mono:   " (vulpea-note-meta-get narrator "cc mono") "\n"
+            "ukrsib: " (vulpea-note-meta-get narrator "cc ukrsib") "\n"
+            "web:    " (vulpea-note-meta-get narrator "send mono") "\n"
+            "\n")
+         "")
+       "🥂 Cheers! See you next time!"))
     (pop-to-buffer buffer)))
 
 
