@@ -236,6 +236,8 @@ list of prices (from the first to the last wine)."
       ""
       (string-table
        :header '("date" "event" "convives" "wines" "amean" "rms" "price" "gain")
+       :pad-type '(right right left left left left left left)
+       :width '(nil 32 nil nil nil nil nil nil)
        :header-sep "-"
        :header-sep-start "|-"
        :header-sep-conj "-+-"
