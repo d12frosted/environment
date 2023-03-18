@@ -301,7 +301,8 @@ is balance."
         (concat "4.2. Delivery "
                 (buttonize "[+]"
                            (lambda (&rest _)
-                             (let* ((participant (vulpea-select-from "Person" participants-all :require-match t))
+                             (let* ((data (or data '(personal nil)))
+                                    (participant (vulpea-select-from "Person" participants-all :require-match t))
                                     (id (vulpea-note-id participant))
                                     (personal (plist-get data :personal))
                                     (name (completing-read "Item: " (->> personal (--map (plist-get it :item)))))
