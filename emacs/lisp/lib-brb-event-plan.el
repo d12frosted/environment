@@ -122,7 +122,24 @@ is balance."
        (buttonize "[TG Report]" #'brb-event-plan-display-tg-report event)
        " "
        (buttonize "[Record spendings]"
-                  (lambda (&rest _) (error "Not implemented")))
+                  (lambda (&rest _)
+                    (brb-ledger-spend
+                     :amount wine-prices-total-real
+                     :date (date-to-time date)
+                     :comment (format "%s: wines" (vulpea-note-title event)))
+                    (brb-ledger-spend
+                     :amount shared-total
+                     :date (date-to-time date)
+                     :comment (format "%s: shared" (vulpea-note-title event)))
+                    (brb-ledger-spend
+                     :amount (->> (plist-get data :personal)
+                                  (--map (ceiling (* (->> (plist-get it :orders)
+                                                          (--map (plist-get it :amount))
+                                                          (-sum))
+                                                     (plist-get it :price))))
+                                  (-sum))
+                     :date (date-to-time date)
+                     :comment (format "%s: delivery" (vulpea-note-title event)))))
        "\n\n")
 
       (insert
