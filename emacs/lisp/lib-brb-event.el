@@ -182,9 +182,10 @@ list of prices (from the first to the last wine)."
                                  (org-read-date nil nil nil "To (exclusive)")))
                        (_ (vino-stats--time-frame-range frame))))
               (events (brb-event--from-range range))
-              (participants (->> events
+              (participants-all (->> events
                                  (--map (brb-event-participants it))
-                                 (-reduce-from #'-union nil)))
+                                 (-flatten)))
+              (participants (-distinct participants-all))
               (wines-all (->> events
                               (--map (brb-event-wines it))
                               (-flatten)))
@@ -287,9 +288,25 @@ list of prices (from the first to the last wine)."
 
       (propertize (format "Participants (%s)" (seq-length participants)) 'face 'bold)
       ""
-      (string-join
-       (--map (format "- %s" (string-from it)) participants)
-       "\n")
+      (string-table
+       :header '("participant" "count")
+       :header-sep "-"
+       :header-sep-start "|-"
+       :header-sep-conj "-+-"
+       :header-sep-end "-|"
+       :row-start "| "
+       :row-end " |"
+       :sep " | "
+       :data
+       (->> participants
+            (--map
+             (list it (-count (lambda (other)
+                                (string-equal
+                                 (vulpea-note-id it)
+                                 (vulpea-note-id other)))
+                              participants-all)))
+            (--sort (> (nth 1 it)
+                       (nth 1 other)))))
       ""
 
       (propertize (format "Wines (%s)" (seq-length wines)) 'face 'bold)
