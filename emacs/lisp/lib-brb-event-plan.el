@@ -33,6 +33,7 @@
 
 (require 'org-ml)
 (require 'vulpea)
+(require 'lib-plist)
 (require 'lib-vino-stats)
 (require 'lib-brb-event)
 (require 'lib-brb-ledger)
@@ -79,13 +80,13 @@ is balance."
   (let* ((wines (brb-event-wines event))
          (date (vulpea-utils-with-note event
                  (vulpea-buffer-prop-get "date")))
-         (charge-narrator (vulpea-note-meta-get event "charge narrator" 'symbol))
+         (charge-narrator (plist-get data :charge-narrator))
          (participants-all (brb-event-participants event))
          (participants (--remove (and (not charge-narrator)
                                       (string-equal (vulpea-note-id it) brb-event-narrator-id))
                                  participants-all))
-         (planned-participants (or (vulpea-note-meta-get event "planned participants" 'number) 0))
-         (planned-spending-shared (or (vulpea-note-meta-get event "planned shared spending" 'number) 0))
+         (planned-participants (or (plist-get data :planned-participants) 0))
+         (planned-spending-shared (or (plist-get data :planned-shared-spending) 0))
          (price (or (vulpea-note-meta-get event "price" 'number) 0))
          (wine-prices (brb-event-wines--prices event))
          (wine-prices-total-public (-sum (plist-get wine-prices :public)))
@@ -157,15 +158,20 @@ is balance."
                (gain-public (- debit total-public))
                (gain-real (- debit total-real)))
           `(("Planned participants:"
-             ,(brb-event-plan--buttonize-meta buffer event data balances
-               "planned participants" planned-participants 'number)
+             ,(plist-buttonize-prop data :planned-participants 0
+               (lambda (data)
+                 (brb-event-plan--data-write event data)
+                 (brb-event-plan--propagate buffer event data balances)))
              "")
             ("Price:" ,(brb-event-plan--buttonize-meta buffer event data balances
                         "price" (brb-price-format price) 'number)
              "")
             ("Spending (shared):"
-             ,(brb-event-plan--buttonize-meta buffer event data balances
-               "planned shared spending" (brb-price-format planned-spending-shared) 'number)
+             ,(plist-buttonize-prop data :planned-shared-spending 0
+               (lambda (data)
+                 (brb-event-plan--data-write event data)
+                 (brb-event-plan--propagate buffer event data balances))
+               #'brb-price-format)
              "")
             ("Spending (wines):" ,(brb-price-format wine-prices-total-public) ,(brb-price-format wine-prices-total-real))
             ("Spending (total):" ,(brb-price-format total-public) ,(brb-price-format total-real))
@@ -318,7 +324,7 @@ is balance."
         (concat "4.2. Delivery "
                 (buttonize "[+]"
                            (lambda (&rest _)
-                             (let* ((data (or data '(personal nil)))
+                             (let* ((data (or data '(:personal nil)))
                                     (participant (vulpea-select-from "Person" participants-all :require-match t))
                                     (id (vulpea-note-id participant))
                                     (personal (plist-get data :personal))
