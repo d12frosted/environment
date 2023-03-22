@@ -473,6 +473,38 @@ parameter), defaulting to `vulpea-note-title'."
 
 
 ;;;###autoload
+(cl-defun vulpea-meta-buttonize (note prop type callback
+                                      &key default to-string)
+  "Make a button for meta PROP of the NOTE.
+
+Returns a button string with the value of PROP. When clicked,
+user is prompted to input a new value that is set and saved in
+the NOTE. Afterwards the CALLBACK is called with updated NOTE.
+
+TYPE dictates how the value is parsed (see
+`vulpea-note-meta-get').
+
+When the value of PROP is nil, DEFAULT is used as a value.
+
+TO-STRING controls how the value is formatted for button.
+Defaults to `string-from'."
+  (buttonize
+   (funcall (or to-string #'string-from)
+            (or (vulpea-note-meta-get note prop type) default))
+   (lambda (&rest _)
+     (let* ((prompt (s-capitalize prop))
+            (value (pcase type
+                     (`number (read-number (concat prompt ": ")))
+                     (`note (vulpea-select prompt :require-match t))
+                     (_ (read-string (concat prompt ": "))))))
+       (vulpea-utils-with-note note
+         (vulpea-buffer-meta-set prop value 'append)
+         (save-buffer))
+       (funcall callback (vulpea-db-get-by-id (vulpea-note-id note)))))))
+
+
+
+;;;###autoload
 (defun vulpea-review-random ()
   "Visit random `vulpea-note' for review."
   (interactive)
