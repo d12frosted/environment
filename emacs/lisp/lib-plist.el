@@ -33,11 +33,11 @@
 ;;
 ;;; Code:
 
-(defun plist-delete (plist property)
-  "Delete PROPERTY from PLIST."
+(defun plist-delete (plist prop)
+  "Delete PROP from PLIST."
   (let (p)
     (while plist
-      (if (not (eq property (car plist)))
+      (if (not (eq prop (car plist)))
           (setq p (plist-put p (car plist) (nth 1 plist))))
       (setq plist (cddr plist)))
     p))
