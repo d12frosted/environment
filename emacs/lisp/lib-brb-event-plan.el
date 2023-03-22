@@ -49,24 +49,6 @@
          (buffer (buffer-generate (format "*%s*" (vulpea-note-title event)) 'unique)))
     (brb-event-plan--propagate buffer event data (make-hash-table :test 'equal))
     (pop-to-buffer buffer)))
-
-
-
-(defmacro brb-event-plan--buttonize-meta (buffer event data balances prop value type)
-  "Buttonize VALUE as a metadata.
-
-Returns a button string with `brb-event-plan--meta-set' as a
-delayed callback. The value is prompted interactively based on
-TYPE. BUFFER, EVENT DATA, BALANCES and PROP are passed to
-`brb-event-plan--meta-set'."
-  `(buttonize (string-from ,value)
-    (lambda (&rest _)
-      (brb-event-plan--meta-set
-       ,buffer ,event ,data ,balances ,prop
-       (pcase ,type
-        (`number (read-number (concat (s-capitalize ,prop) ": ")))
-        (`string (read-string (concat (s-capitalize ,prop) ": "))))))))
-
 
 
 (defun brb-event-plan--propagate (buffer event data balances)
@@ -163,8 +145,10 @@ is balance."
                  (brb-event-plan--data-write event data)
                  (brb-event-plan--propagate buffer event data balances)))
              "")
-            ("Price:" ,(brb-event-plan--buttonize-meta buffer event data balances
-                        "price" (brb-price-format price) 'number)
+            ("Price:" ,(vulpea-meta-buttonize event "price" 'number
+                        (lambda (event) (brb-event-plan--propagate buffer event data balances))
+                        :default 0
+                        :to-string #'brb-price-format)
              "")
             ("Spending (shared):"
              ,(plist-buttonize-prop data :planned-shared-spending 0
@@ -217,8 +201,10 @@ is balance."
                (debit (* participants-len price))
                (gain (- debit total)))
           `(("Participants:" ,(number-to-string (seq-length participants)))
-            ("Price:" ,(brb-event-plan--buttonize-meta buffer event data balances
-                        "price" (brb-price-format price) 'number))
+            ("Price:" ,(vulpea-meta-buttonize event "price" 'number
+                        (lambda (event) (brb-event-plan--propagate buffer event data balances))
+                        :default 0
+                        :to-string #'brb-price-format))
             ("Spending (shared):" ,(brb-price-format shared-total))
             ("Spending (wines):" ,(brb-price-format wine-prices-total-real))
             ("Spending (total):" ,(brb-price-format total))
@@ -453,17 +439,6 @@ is balance."
       (goto-char point)
       (ignore-errors
         (recenter)))))
-
-
-
-(defun brb-event-plan--meta-set (buffer event data balances prop value)
-  "Set PROP to VALUE in EVENT.
-
-The BUFFER is updated. DATA and BALANCES are required for that."
-  (vulpea-utils-with-note event
-    (vulpea-buffer-meta-set prop value 'append)
-    (save-buffer))
-  (brb-event-plan--propagate buffer (vulpea-db-get-by-id (vulpea-note-id event)) data balances))
 
 
 
