@@ -33,6 +33,8 @@
 ;;
 ;;; Code:
 
+(require 'lib-string)
+
 (defun plist-delete (plist prop)
   "Delete PROP from PLIST."
   (let (p)
@@ -41,6 +43,33 @@
           (setq p (plist-put p (car plist) (nth 1 plist))))
       (setq plist (cddr plist)))
     p))
+
+(defmacro plist-buttonize-prop (plist prop default callback &optional to-string)
+  "Make a button out of PROP from PLIST.
+
+The result is a button string. The extracted value (or DEFAULT)
+is displayed using TO-STRING or `string-from'. The action prompts
+a new value.
+
+CALLBACK is called with updated plist."
+  (let* ((plist-var (gensym))
+         (prompt (concat
+                  (s-capitalize
+                   (s-replace "-" " " (s-chop-prefix ":" (symbol-name prop))))
+                  ": "))
+         (to-string (or to-string `(quote string-from))))
+    `(let* ((,plist-var ,(if (and (listp plist) (not (eq (car plist) 'quote)))
+                             `(quote ,plist)
+                           plist))
+            (value (or (plist-get ,plist-var ,prop) ,default))
+            (read-fn (pcase (type-of value)
+                      (`integer #'read-number)
+                      (_ #'read-string))))
+      (buttonize (funcall ,to-string value)
+       (lambda (&rest _)
+         (let* ((value (funcall read-fn ,prompt))
+                (,plist-var (plist-put ,plist-var ,prop value)))
+          (funcall ,callback ,plist-var)))))))
 
 (provide 'lib-plist)
 ;;; lib-plist.el ends here
