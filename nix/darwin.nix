@@ -202,6 +202,7 @@ experimental-features = nix-command flakes
 
       # other
       "appcleaner"
+      "warp"
     ];
     taps = [
       "d12frosted/emacs-plus"
