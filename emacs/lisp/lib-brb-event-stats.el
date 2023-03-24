@@ -80,24 +80,7 @@
                                           "country" 'note))
                                   (-flatten)))
               (countries (-distinct countries-all))
-              (gains (--map
-                      (let* ((charge-narrator (vulpea-note-meta-get it "charge narrator" 'symbol))
-                             (data (brb-event-plan--data-read it))
-                             (participants-all (brb-event-participants it))
-                             (participants (--remove (and (not charge-narrator)
-                                                          (string-equal (vulpea-note-id it) brb-event-narrator-id))
-                                                     participants-all))
-                             (wines-total (-sum (plist-get (brb-event-wines--prices it) :real)))
-                             (shared-total (->> (plist-get data :shared)
-                                                (--map (ceiling
-                                                        (* (plist-get it :amount)
-                                                           (plist-get it :price))))
-                                                (-sum)))
-                             (price (vulpea-note-meta-get it "price" 'number))
-                             (gain (- (* price (seq-length participants))
-                                      shared-total wines-total)))
-                        gain)
-                      events)))
+              (gains (--map (plist-get (brb-event-plan-invoice it) :balance) events)))
     (buffer-display-result-with "*brb-stats*"
       (format "Stats for period from %s to %s"
               (propertize (nth 0 range) 'face 'bold)

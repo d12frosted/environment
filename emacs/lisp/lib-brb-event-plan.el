@@ -49,6 +49,7 @@
          (buffer (buffer-generate (format "*%s*" (vulpea-note-title event)) 'unique)))
     (brb-event-plan--propagate buffer event data (make-hash-table :test 'equal))
     (pop-to-buffer buffer)))
+
 
 
 (defun brb-event-plan--propagate (buffer event data balances)
@@ -71,13 +72,10 @@ is balance."
          (planned-spending-shared (or (plist-get data :planned-shared-spending) 0))
          (price (or (vulpea-note-meta-get event "price" 'number) 0))
          (wine-prices (brb-event-wines--prices event))
-         (wine-prices-total-public (-sum (plist-get wine-prices :public)))
-         (wine-prices-total-real (-sum (plist-get wine-prices :real)))
-         (shared-total (->> (plist-get data :shared)
-                            (--map (ceiling
-                                    (* (plist-get it :amount)
-                                       (plist-get it :price))))
-                            (-sum)))
+         (invoice (brb-event-plan--invoice event data participants wine-prices))
+
+         (wines-total-public (-sum (plist-get wine-prices :public)))
+
          (balances (or balances (make-hash-table :test 'equal)))
          (point))
     (--each participants
@@ -107,20 +105,15 @@ is balance."
        (buttonize "[Record spendings]"
                   (lambda (&rest _)
                     (brb-ledger-spend
-                     :amount wine-prices-total-real
+                     :amount (plist-get invoice :wines-total)
                      :date (date-to-time date)
                      :comment (format "%s: wines" (vulpea-note-title event)))
                     (brb-ledger-spend
-                     :amount shared-total
+                     :amount (plist-get invoice :shared-total)
                      :date (date-to-time date)
                      :comment (format "%s: shared" (vulpea-note-title event)))
                     (brb-ledger-spend
-                     :amount (->> (plist-get data :personal)
-                                  (--map (ceiling (* (->> (plist-get it :orders)
-                                                          (--map (plist-get it :amount))
-                                                          (-sum))
-                                                     (plist-get it :price))))
-                                  (-sum))
+                     :amount (plist-get invoice :personal-total)
                      :date (date-to-time date)
                      :comment (format "%s: delivery" (vulpea-note-title event)))))
        "\n\n")
@@ -132,8 +125,8 @@ is balance."
         :pad-type '(right left left)
         :sep "  "
         :data
-        (let* ((total-public (+ wine-prices-total-public planned-spending-shared))
-               (total-real (+ wine-prices-total-real planned-spending-shared))
+        (let* ((total-public (+ wines-total-public planned-spending-shared))
+               (total-real (+ (plist-get invoice :wines-total) planned-spending-shared))
                (price-public (ceiling (if (> planned-participants 0) (/ total-public planned-participants) 0)))
                (price-real (ceiling (if (> planned-participants 0) (/ total-real planned-participants) 0)))
                (debit (* planned-participants price))
@@ -157,7 +150,9 @@ is balance."
                  (brb-event-plan--propagate buffer event data balances))
                #'brb-price-format)
              "")
-            ("Spending (wines):" ,(brb-price-format wine-prices-total-public) ,(brb-price-format wine-prices-total-real))
+            ("Spending (wines):"
+             ,(brb-price-format wines-total-public)
+             ,(brb-price-format (plist-get invoice :wines-total)))
             ("Spending (total):" ,(brb-price-format total-public) ,(brb-price-format total-real))
             ("Price recommended (0%):" ,(brb-price-format price-public) ,(brb-price-format price-real))
             ("Price recommended (10%):"
@@ -196,19 +191,16 @@ is balance."
         :pad-type '(right left left)
         :sep "  "
         :data
-        (let* ((total (+ wine-prices-total-real shared-total))
-               (participants-len (seq-length participants))
-               (debit (* participants-len price))
-               (gain (- debit total)))
-          `(("Participants:" ,(number-to-string (seq-length participants)))
-            ("Price:" ,(vulpea-meta-buttonize event "price" 'number
-                        (lambda (event) (brb-event-plan--propagate buffer event data balances))
-                        :default 0
-                        :to-string #'brb-price-format))
-            ("Spending (shared):" ,(brb-price-format shared-total))
-            ("Spending (wines):" ,(brb-price-format wine-prices-total-real))
-            ("Spending (total):" ,(brb-price-format total))
-            ("Gain:" ,(propertize (brb-price-format gain) 'face (if (>= gain 0) 'success 'error))))))
+        `(("Participants:" ,(number-to-string (seq-length participants)))
+          ("Price:" ,(vulpea-meta-buttonize event "price" 'number
+                      (lambda (event) (brb-event-plan--propagate buffer event data balances))
+                      :default 0
+                      :to-string #'brb-price-format))
+          ("Spending (shared):" ,(brb-price-format (plist-get invoice :shared-total)))
+          ("Spending (wines):" ,(brb-price-format (plist-get invoice :wines-total)))
+          ("Spending (total):" ,(brb-price-format (plist-get invoice :credit)))
+          ("Gain:" ,(let ((gain (plist-get invoice :balance)))
+                     (propertize (brb-price-format gain) 'face (if (>= gain 0) 'success 'error))))))
        "\n\n")
 
       (insert
@@ -242,8 +234,8 @@ is balance."
                          ""
                          ,(seq-length wines)
                          ""
-                         ,(brb-price-format wine-prices-total-public)
-                         ,(brb-price-format wine-prices-total-real))))))
+                         ,(brb-price-format wines-total-public)
+                         ,(brb-price-format (plist-get invoice :wines-total)))))))
        "\n\n")
 
       (insert (propertize "4. Spending" 'face 'org-level-1) "\n\n")
@@ -298,7 +290,7 @@ is balance."
              (-concat
               it
               '(sep)
-              `(("" "" "" "" ,(brb-price-format shared-total))))))
+              `(("" "" "" "" ,(brb-price-format (plist-get invoice :shared-total)))))))
        "\n\n")
 
       ;; '(:personal ((:item "item 1"
@@ -402,22 +394,8 @@ is balance."
         ;;               :price 100
         ;;               :orders (:participant "id-1" :amount 1)
         ;;                       (:participant "id-2" :amount 2))))
-        (let* ((id (vulpea-note-id it))
-               (balance (or (gethash id balances) 0))
-               (personal (->> (plist-get data :personal)
-                              (--filter (-any-p (lambda (order) (string-equal id (plist-get order :participant)))
-                                                (plist-get it :orders)))
-                              (--map (list :item (plist-get it :item)
-                                           :price (plist-get it :price)
-                                           :amount (plist-get
-                                                    (--find (string-equal id (plist-get it :participant))
-                                                            (plist-get it :orders))
-                                                    :amount)))))
-               (total (- (+ price (->> personal
-                                       (--map (ceiling (* (plist-get it :amount)
-                                                          (plist-get it :price))))
-                                       (-sum)))
-                         balance)))
+        (let* ((balance (or (gethash (vulpea-note-id it) balances) 0))
+               (invoice-personal (brb-event-plan--personal-invoice it balance data price)))
           (insert
            (propertize (format "4.%0d. %s" (1+ it-index) (vulpea-note-title it)) 'face 'org-level-2)
            "\n\n"
@@ -425,20 +403,61 @@ is balance."
                       (lambda (&rest _)
                         (brb-ledger-charge
                          :convive it
-                         :amount (+ balance total)
+                         :amount (plist-get invoice-personal :charge)
                          :date (date-to-time date))))
            " "
            (buttonize "[Statement]"
                       (lambda (&rest _)
-                        (brb-event-plan-display-statement
-                         event it price balance personal total)))
+                        (brb-event-plan-display-statement event it invoice-personal)))
            "\n\n"
-           (brb-event-plan--receipt price balance personal total)
+           (brb-event-plan--personal-invoice-to-string invoice-personal)
            "\n\n")))
       (ws-butler-clean-region (point-min) (point-max))
       (goto-char point)
       (ignore-errors
         (recenter)))))
+
+
+
+(defun brb-event-plan-invoice (event)
+  "Prepare EVENT invoice."
+  (let ((charge-narrator (vulpea-note-meta-get event "charge narrator" 'symbol)))
+    (brb-event-plan--invoice
+     event (brb-event-plan--data-read event)
+     (--remove (and (not charge-narrator)
+                    (string-equal (vulpea-note-id it) brb-event-narrator-id))
+               (brb-event-participants event))
+     (brb-event-wines--prices event))))
+
+(defun brb-event-plan--invoice (event data participants wine-prices)
+  "Prepare EVENT invoice.
+
+Invoice calculations are based on plan DATA, PARTICIPANTS and
+WINE-PRICES."
+  (let* ((price (or (vulpea-note-meta-get event "price" 'number) 0))
+         (shared-total (->> (plist-get data :shared)
+                            (--map (ceiling
+                                    (* (plist-get it :amount)
+                                       (plist-get it :price))))
+                            (-sum)))
+         (wines-total (-sum (plist-get wine-prices :real)))
+         (personal-total (->> (plist-get data :personal)
+                              (--map (ceiling (* (->> (plist-get it :orders)
+                                                      (--map (plist-get it :amount))
+                                                      (-sum))
+                                                 (plist-get it :price))))
+                              (-sum)))
+         (participants-len (seq-length participants))
+         (debit (* participants-len price))
+         (credit (+ wines-total shared-total))
+         (balance (- debit credit)))
+    (list
+     :shared-total shared-total
+     :wines-total wines-total
+     :personal-total personal-total
+     :debit debit
+     :credit credit
+     :balance balance)))
 
 
 
@@ -486,13 +505,37 @@ is balance."
 
 
 
-(defun brb-event-plan--receipt (price balance personal total)
-  "Prepare receipt for event participation.
+(defun brb-event-plan--personal-invoice (participant balance data price)
+  "Prepare invoice for PARTICIPANT.
 
-Summarise PRICE, BALANCE, PERSONAL spendings and TOTAL amount to pay."
+Invoice is based on event PRICE, event DATA and current BALANCE."
+  (let* ((id (vulpea-note-id participant))
+         (order (->> (plist-get data :personal)
+                     (--filter (-any-p (lambda (order) (string-equal id (plist-get order :participant)))
+                                       (plist-get it :orders)))
+                     (--map (list :item (plist-get it :item)
+                                  :price (plist-get it :price)
+                                  :amount (plist-get
+                                           (--find (string-equal id (plist-get it :participant))
+                                                   (plist-get it :orders))
+                                           :amount)))))
+         (total (- (+ price (->> order
+                                 (--map (ceiling (* (plist-get it :amount)
+                                                    (plist-get it :price))))
+                                 (-sum)))
+                   balance)))
+    (list
+     :price price
+     :balance balance
+     :order order
+     :total total
+     :charge (+ balance total))))
+
+(defun brb-event-plan--personal-invoice-to-string (invoice)
+  "Format personal INVOICE."
   (concat
-   "- Balance: " (brb-price-format balance) "\n"
-   "- Event: " (brb-price-format price) "\n"
+   "- Balance: " (brb-price-format (plist-get invoice :balance)) "\n"
+   "- Event: " (brb-price-format (plist-get invoice :price)) "\n"
    (mapconcat
     (lambda (it)
       (format "- %s (x%.2f): %s\n"
@@ -501,13 +544,11 @@ Summarise PRICE, BALANCE, PERSONAL spendings and TOTAL amount to pay."
               (brb-price-format
                (ceiling (* (plist-get it :amount)
                            (plist-get it :price))))))
-    personal)
-   "- Total: " (brb-price-format total)))
+    (plist-get invoice :order))
+   "- Total: " (brb-price-format (plist-get invoice :total))))
 
-(defun brb-event-plan-display-statement (event participant price balance personal total)
-  "Prepare and display a statement for PARTICIPANT of EVENT.
-
-The statement summarises BALANCE, EVENT PRICE and PERSONAL spendings as TOTAL."
+(defun brb-event-plan-display-statement (event participant invoice)
+  "Display an INVOICE for PARTICIPANT of EVENT."
   (let* ((narrator (vulpea-db-get-by-id brb-event-narrator-id))
          (buffer (get-buffer-create (format "*statement for %s*" (vulpea-note-title participant)))))
     (with-current-buffer buffer
@@ -522,9 +563,9 @@ The statement summarises BALANCE, EVENT PRICE and PERSONAL spendings as TOTAL."
                  (vulpea-buffer-prop-get "slug")))
        ".\n\n"
        "🧾 This is your receipt:\n\n"
-       (brb-event-plan--receipt price balance personal total)
+       (brb-event-plan--personal-invoice-to-string invoice)
        "\n\n"
-       (if (> total 0)
+       (if (> (plist-get invoice :total) 0)
            (concat
             "mono:   " (vulpea-note-meta-get narrator "cc mono") "\n"
             "ukrsib: " (vulpea-note-meta-get narrator "cc ukrsib") "\n"
