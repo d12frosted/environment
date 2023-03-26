@@ -33,6 +33,11 @@
 ;;
 ;;; Code:
 
+;; it might sound strange, but we need to properly install `magit'
+;; before we can install `nix-mode' because the former properly
+;; handles `magit-section' package, which is dependency of the latter
+(require 'init-vcs)
+
 (use-package nix-mode
   :mode "\\.nix\\'")
 
