@@ -112,7 +112,7 @@
        env-sys-mac-p)
   (add-hook 'after-init-hook
             (lambda ()
-              (shell-command-to-string "yabai-relaunch"))))
+              (async-shell-command "yabai-relaunch"))))
 
 ;; I don't use `customize' interface, but .dir-locals.el put 'safe'
 ;; variables into `custom-file'. And to be honest, I hate to allow
