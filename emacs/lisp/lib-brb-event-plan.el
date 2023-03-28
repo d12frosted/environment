@@ -177,14 +177,12 @@ is balance."
         :sep "    "
         :data
         `(("Charge narrator:"
-           ,(buttonize
-             (if charge-narrator "[on]" "[off]")
-             (lambda (&rest _)
-               (vulpea-utils-with-note event
-                (vulpea-buffer-meta-set "charge narrator" (not charge-narrator) 'append)
-                (save-buffer))
-               (brb-event-plan--propagate
-                buffer (vulpea-db-get-by-id (vulpea-note-id event)) data balances))))))
+           ,(plist-buttonize-prop data :charge-narrator nil
+             (lambda (data)
+               (brb-event-plan--data-write event data)
+               (brb-event-plan--propagate buffer event data balances))
+             (lambda (v) (if v "[on]" "[off]"))
+             (lambda (_) (not charge-narrator))))))
        "\n\n"
        (string-table
         :row-start "- "

@@ -44,12 +44,13 @@
       (setq plist (cddr plist)))
     p))
 
-(defmacro plist-buttonize-prop (plist prop default callback &optional to-string)
+(defmacro plist-buttonize-prop (plist prop default callback
+                                      &optional to-string read-fn)
   "Make a button out of PROP from PLIST.
 
 The result is a button string. The extracted value (or DEFAULT)
 is displayed using TO-STRING or `string-from'. The action prompts
-a new value.
+a new value unless READ-FN is specified.
 
 CALLBACK is called with updated plist."
   (let* ((plist-var (gensym))
@@ -57,14 +58,16 @@ CALLBACK is called with updated plist."
                   (s-capitalize
                    (s-replace "-" " " (s-chop-prefix ":" (symbol-name prop))))
                   ": "))
-         (to-string (or to-string `(quote string-from))))
+         (to-string (or to-string `(quote string-from)))
+         (read-fn (or read-fn `(quote read-fn))))
     `(let* ((,plist-var ,(if (and (listp plist) (not (eq (car plist) 'quote)))
                              `(quote ,plist)
                            plist))
             (value (or (plist-get ,plist-var ,prop) ,default))
-            (read-fn (pcase (type-of value)
-                      (`integer #'read-number)
-                      (_ #'read-string))))
+            (read-fn (or ,read-fn
+                      (pcase (type-of value)
+                       (`integer #'read-number)
+                       (_ #'read-string)))))
       (buttonize (funcall ,to-string value)
        (lambda (&rest _)
          (let* ((value (funcall read-fn ,prompt))
