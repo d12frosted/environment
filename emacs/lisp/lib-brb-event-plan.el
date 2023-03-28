@@ -107,15 +107,18 @@ is balance."
                     (brb-ledger-spend
                      :amount (plist-get invoice :wines-total)
                      :date (date-to-time date)
-                     :comment (format "%s: wines" (vulpea-note-title event)))
+                     :comment (format "%s: wines" (vulpea-note-title event))
+                     :code (concat (vulpea-note-id event) ":wines"))
                     (brb-ledger-spend
                      :amount (plist-get invoice :shared-total)
                      :date (date-to-time date)
-                     :comment (format "%s: shared" (vulpea-note-title event)))
+                     :comment (format "%s: shared" (vulpea-note-title event))
+                     :code (concat (vulpea-note-id event) ":shared"))
                     (brb-ledger-spend
                      :amount (plist-get invoice :personal-total)
                      :date (date-to-time date)
-                     :comment (format "%s: delivery" (vulpea-note-title event)))))
+                     :comment (format "%s: delivery" (vulpea-note-title event))
+                     :code (concat (vulpea-note-id event) ":delivery"))))
        "\n\n")
 
       (insert
@@ -401,6 +404,7 @@ is balance."
                       (lambda (&rest _)
                         (brb-ledger-charge
                          :convive it
+                         :code (concat (vulpea-note-id event) ":" (vulpea-note-id it))
                          :amount (plist-get invoice-personal :charge)
                          :date (date-to-time date))))
            " "
