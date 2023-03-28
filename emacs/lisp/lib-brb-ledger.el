@@ -70,10 +70,13 @@
 
 
 
-(cl-defun brb-ledger-record-txn (&key date comment account-to account-from amount)
+(cl-defun brb-ledger-record-txn (&key date code comment account-to account-from amount)
   "Record transaction.
 
 DATE (can be nil) is a time object as returned by `current-time'.
+
+CODE (can be nil) is idempotency key. When non-nil, any
+transaction sharing provided CODE is replaced.
 
 COMMENT (can be nil) is a transaction description.
 
@@ -84,10 +87,23 @@ ACCOUNT-FROM is account that spends AMOUNT.
 AMOUNT is number in `brb-currency'.
 
 Transaction is recorded into `brb-ledger-file'."
+  (when code
+    (with-current-buffer (find-file-noselect brb-ledger-file t)
+      (revert-buffer t t t)
+      (save-excursion
+        (goto-char (point-min))
+        (while (search-forward (concat "(" code ")") nil 'noerror)
+          (forward-line -1)
+          (--dotimes 4
+            (delete-region (line-beginning-position) (1+ (line-end-position))))))
+      (save-buffer)))
   (shell-command-to-string
    (format
-    "echo '\n%s%s\n    %s  %s %s\n    %s' >> '%s'"
+    "echo '\n%s%s%s\n    %s  %s %s\n    %s' >> '%s'"
     (format-time-string "%Y/%m/%d" date)
+    (if code
+        (concat " (" code ")")
+      "")
     (if comment
         (concat " " comment)
       "")
@@ -127,11 +143,14 @@ Transaction is recorded into `brb-ledger-file'."
     (brb-ledger-buffer-create)))
 
 ;;;###autoload
-(cl-defun brb-ledger-charge (&key convive amount date)
+(cl-defun brb-ledger-charge (&key convive amount date code)
   "Charge an amount from convive.
 
 CONVIVE, AMOUNT and DATE are optional arguments. Unless
-specified, user is asked to provide them interactively."
+specified, user is asked to provide them interactively.
+
+CODE can be passed only in non-interactive usage. See
+`brb-ledger-record-txn' to learn about this argument."
   (interactive)
   (let* ((name (unless convive
                  (seq-find
@@ -152,6 +171,7 @@ specified, user is asked to provide them interactively."
          (date (or date (org-read-date nil t))))
     (brb-ledger-record-txn
      :date date
+     :code code
      :comment "charge"
      :account-to "balance:assets"
      :account-from (concat "balance:" (vulpea-note-id convive))
@@ -160,17 +180,21 @@ specified, user is asked to provide them interactively."
       (brb-ledger-buffer-create))))
 
 ;;;###autoload
-(cl-defun brb-ledger-spend (&key amount date comment)
+(cl-defun brb-ledger-spend (&key amount date comment code)
   "Spend an amount on event.
 
 AMOUNT, DATE and COMMENT are optional arguments. Unless
-specified, user is asked to provide them interactively."
+specified, user is asked to provide them interactively.
+
+CODE can be passed only in non-interactive usage. See
+`brb-ledger-record-txn' to learn about this argument."
   (interactive)
   (let ((amount (or amount (read-number "Amount: ")))
         (date (or date (org-read-date nil t)))
         (comment (or comment (read-string "Comment: "))))
     (brb-ledger-record-txn
      :date date
+     :code code
      :comment comment
      :account-to "expenses"
      :account-from "balance:assets"
