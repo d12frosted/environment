@@ -33,6 +33,7 @@
 
 (require 'vulpea)
 (require 'lib-vino-stats)
+(require 'lib-hash-table)
 (require 'lib-brb-ledger)
 (require 'lib-brb-event)
 (require 'lib-brb-event-plan)
@@ -53,10 +54,15 @@
                                  (org-read-date nil nil nil "To (exclusive)")))
                        (_ (vino-stats--time-frame-range frame))))
               (events (brb-event--from-range range))
+              (events-summary (hash-table-from events
+                                :key-fn #'vulpea-note-id
+                                :value-fn (lambda (event _) (brb-event-score-summary event))))
+
               (participants-all (->> events
                                      (--map (brb-event-participants it))
                                      (-flatten)))
               (participants (-distinct participants-all))
+
               (wines-all (->> events
                               (--map (brb-event-wines it))
                               (-flatten)))
@@ -68,8 +74,8 @@
               (grapes (-distinct grapes-all))
 
               (producers-all (->> wines-all
-                               (--map (vulpea-note-meta-get it "producer" 'note))
-                               (-flatten)))
+                                  (--map (vulpea-note-meta-get it "producer" 'note))
+                                  (-flatten)))
               (producers (-distinct producers-all))
 
               (roas-all (->> wines-all
@@ -108,7 +114,7 @@
        :data
        (-concat
         (--map-indexed
-         (let* ((summary (brb-event-score-summary it))
+         (let* ((summary (gethash (vulpea-note-id it) events-summary))
                 (wines (brb-event-wines it)))
            (list (vulpea-utils-with-note it
                    (org-read-date nil nil (vulpea-buffer-prop-get "date")))
@@ -183,7 +189,7 @@
        :data
        (->> events
             (--map
-             (let ((summary (brb-event-score-summary it))
+             (let ((summary (gethash (vulpea-note-id it) events-summary))
                    (event it))
                (->> (brb-event-wines it)
                     (--map-indexed (list
