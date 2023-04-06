@@ -67,6 +67,11 @@
                                (-flatten)))
               (grapes (-distinct grapes-all))
 
+              (producers-all (->> wines-all
+                               (--map (vulpea-note-meta-get it "producer" 'note))
+                               (-flatten)))
+              (producers (-distinct producers-all))
+
               (roas-all (->> wines-all
                              (--map (or (vulpea-note-meta-get it "region" 'note)
                                         (vulpea-note-meta-get it "appellation" 'note)))
@@ -196,6 +201,29 @@
             (-flatten-n 1)
             (--sort (string> (nth 5 it)
                              (nth 5 other)))))
+      ""
+
+      (propertize (format "Producers (%s)" (seq-length producers)) 'face 'bold)
+      ""
+      (string-table
+       :header '("producer" "count")
+       :header-sep "-"
+       :header-sep-start "|-"
+       :header-sep-conj "-+-"
+       :header-sep-end "-|"
+       :row-start "| "
+       :row-end " |"
+       :sep " | "
+       :data
+       (->> producers
+            (--map
+             (list it (-count (lambda (other)
+                                (string-equal
+                                 (vulpea-note-id it)
+                                 (vulpea-note-id other)))
+                              producers-all)))
+            (--sort (> (nth 1 it)
+                       (nth 1 other)))))
       ""
 
       (propertize (format "Grapes (%s)" (seq-length grapes)) 'face 'bold)
