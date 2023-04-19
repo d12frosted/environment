@@ -122,10 +122,11 @@
                  (seq-length (brb-event-participants it))
                  (seq-length wines)
                  (format "%.4f"
-                         (/ (->> summary
-                                 (--map (assoc-default "rms" it))
-                                 (-sum))
-                            (seq-length wines)))
+                         (->> summary
+                              (--map (calc-from-number (assoc-default "rms" it)))
+                              (apply #'calcFunc-vec)
+                              (calcFunc-rms)
+                              (calc-to-number)))
                  (->> summary
                       (--map (assoc-default "price" it))
                       (-sum))
