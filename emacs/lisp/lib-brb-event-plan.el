@@ -210,6 +210,7 @@ is balance."
        (string-table
         :header '("country" "producer" "name" "vintage" "public P" "real P")
         :pad-type '(right right right left left left)
+        :width '(nil nil 32 nil nil nil nil)
         :header-sep "-"
         :header-sep-start "|-"
         :header-sep-conj "-+-"
