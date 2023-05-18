@@ -97,21 +97,22 @@ Transaction is recorded into `brb-ledger-file'."
           (--dotimes 4
             (delete-region (line-beginning-position) (1+ (line-end-position))))))
       (save-buffer)))
-  (shell-command-to-string
-   (format
-    "echo '\n%s%s%s\n    %s  %s %s\n    %s' >> '%s'"
-    (format-time-string "%Y/%m/%d" date)
-    (if code
-        (concat " (" code ")")
-      "")
-    (if comment
-        (concat " " comment)
-      "")
-    account-to
-    amount
-    brb-currency
-    account-from
-    brb-ledger-file)))
+  (let* ((cmd (format
+               "echo '\n%s%s%s\n    %s  %s %s\n    %s' >> '%s'"
+               (format-time-string "%Y/%m/%d" date)
+               (if code
+                   (concat " (" (s-replace "'" "\\'" code) ")")
+                 "")
+               (if comment
+                   (concat " " (s-replace "'" "\\'" comment))
+                 "")
+               account-to
+               amount
+               brb-currency
+               account-from
+               brb-ledger-file))
+         (res (shell-command-to-string cmd)))
+    (message res)))
 
 ;;;###autoload
 (defun brb-ledger-deposit ()
