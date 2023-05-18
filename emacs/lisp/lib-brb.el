@@ -175,13 +175,12 @@ STYLE is either bold, del or normal (default)."
          (v (cond
              ((and (stringp v) (string-empty-p v)) nil)
              ((stringp v) (string-to-number v))
-             (t v))))
-    (if v
-        (pcase style
-          (`normal (format fmt v))
-          (`bold (concat "*" (format fmt v) "*"))
-          (`del (concat "+" (format fmt v) "+")))
-      "-")))
+             (t v)))
+         (str (if v (format fmt v) "-")))
+    (pcase style
+      (`normal str)
+      (`bold (concat "*" str "*"))
+      (`del (concat "+" str "+")))))
 
 (cl-defun brb-format-float-in (v &key floats fn style prec)
   "Format float V with precision PREC.
