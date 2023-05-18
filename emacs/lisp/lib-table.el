@@ -78,12 +78,13 @@ Empty cells of the column are ignored (e.g. filtered out).
 
 In short, this function allows to apply `calc' vector function on
 columns, but also supports missing data."
-  (-map (-compose #'calc-to-number
-                  (-applify fn)
-                  (-partial #'-map #'calc-from-number))
-        (-filter
-         #'identity
-         (-map (-partial #'-filter #'numberp) (table-transpose table)))))
+  (--map
+   (--> it
+        (-filter #'numberp it)
+        (-map #'calc-from-number it)
+        (when it (apply fn it))
+        (when it (calc-to-number it)))
+   (table-transpose table)))
 
 
 
