@@ -118,7 +118,8 @@ is balance."
                      :amount (plist-get invoice :personal-total)
                      :date (date-to-time date)
                      :comment (format "%s: delivery" (vulpea-note-title event))
-                     :code (concat (vulpea-note-id event) ":delivery"))))
+                     :code (concat (vulpea-note-id event) ":delivery"))
+                    (message "Done.")))
        "\n\n")
 
       (insert
