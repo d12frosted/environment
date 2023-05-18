@@ -121,12 +121,14 @@
                  it
                  (seq-length (brb-event-participants it))
                  (seq-length wines)
-                 (format "%.4f"
-                         (->> summary
-                              (--map (calc-from-number (assoc-default "rms" it)))
-                              (apply #'calcFunc-vec)
-                              (calcFunc-rms)
-                              (calc-to-number)))
+                 (->> summary
+                      (--map (assoc-default "rms" it))
+                      (-filter #'identity)
+                      (-map #'calc-from-number)
+                      (apply #'calcFunc-vec)
+                      (calcFunc-rms)
+                      (calc-to-number)
+                      (format "%.4f"))
                  (->> summary
                       (--map (assoc-default "price" it))
                       (-sum))
@@ -200,10 +202,13 @@
                                     (vulpea-note-meta-get it "producer" 'note)
                                     (vulpea-note-meta-get it "name")
                                     (or (vulpea-note-meta-get it "vintage") "NV")
-                                    (format "%.4f" (assoc-default "rms" (nth it-index summary)))
-                                    (format "%.4f" (assoc-default "sdev" (nth it-index summary)))
+                                    (if-let ((rms (assoc-default "rms" (nth it-index summary))))
+                                        (format "%.4f" rms) "-")
+                                    (if-let ((sdev (assoc-default "sdev" (nth it-index summary))))
+                                        (format "%.4f" sdev) "-")
                                     (assoc-default "price" (nth it-index summary))
-                                    (format "%.4f" (assoc-default "QPR" (nth it-index summary))))))))
+                                    (if-let ((qpr (assoc-default "QPR" (nth it-index summary))))
+                                        (format "%.4f" qpr) "-"))))))
             (-flatten-n 1)
             (--sort (string> (nth 5 it)
                              (nth 5 other)))))

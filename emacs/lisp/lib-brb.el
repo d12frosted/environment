@@ -188,11 +188,12 @@ STYLE is either bold, del or normal (default)."
 When both FLOATS and FN are provided, FN is called with FLOATS
 and if V equals to result, then it's styled using STYLE."
   (if v
-      (let ((b (and floats fn (funcall fn floats))))
+      (let* ((floats (-filter #'identity floats))
+             (b (and floats fn (funcall fn floats))))
         (brb-format-float v
           :prec prec
           :style (if (and b (= v b)) style 'normal)))
-    ""))
+    "-"))
 
 
 
@@ -232,7 +233,7 @@ When COLUMNS is not specified, all columns are returned.
 Otherwise only those specified in the list."
   (let* ((wines (- (length (car tbl)) 2))
          (names (-drop 2 (car tbl)))
-         (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
+         (ratings (table-select-rows "rating" tbl :column 1))
          (prices (car (table-select-rows "price" tbl :column 1)))
 
          (totals (table-vreduce-columns #'calcFunc-vsum ratings))
@@ -251,13 +252,14 @@ Otherwise only those specified in the list."
                           (-iota wines 1)))
 
          (qprs (-map (lambda (i)
-                       (/
-                        (*
-                         100
-                         (calc-to-number (calcFunc-fact (calc-from-number (nth i amean)))))
-                        (if (= 0 (nth i prices))
-                            1
-                          (nth i prices))))
+                       (when (nth i amean)
+                         (/
+                          (*
+                           100
+                           (calc-to-number (calcFunc-fact (calc-from-number (nth i amean)))))
+                          (if (= 0 (nth i prices))
+                              1
+                            (nth i prices)))))
                      (-iota wines)))
          (columns (or columns '("total" "amean" "rms" "sdev" "favourite" "outcast" "price" "QPR"))))
     (-concat
