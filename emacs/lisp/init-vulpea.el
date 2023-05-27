@@ -356,7 +356,8 @@
   :defer t
   :hook ((org-mode . org-download-enable))
   :init
-  (setq-default org-download-method 'attach))
+  (setq-default org-download-method 'attach
+                org-download-annotate-function (lambda (_) "")))
 
 
 
