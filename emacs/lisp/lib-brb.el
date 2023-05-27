@@ -157,10 +157,14 @@ Position is 1-based, while index is 0-based."
     (-map #'1+ idxs)))
 
 (defun brb-positions-of (row str)
-  "Find all positions of STR in ROW .
+  "Find all positions of STR in ROW.
+
+STR can be a list of strings.
 
 Position is 1-based, while index is 0-based."
-  (brb-positions-by row (-partial #'string-equal str)))
+  (if (stringp str)
+      (brb-positions-by row (-partial #'string-equal str))
+    (brb-positions-by row (-partial #'-contains-p str))))
 
 
 
@@ -241,10 +245,10 @@ Otherwise only those specified in the list."
          (rmss (table-vreduce-columns (lambda (&rest vecs) (calcFunc-rms (apply #'calcFunc-vec vecs))) ratings))
          (sdevs (table-vreduce-columns #'calcFunc-vpvar ratings))
          (favourites (-filter #'identity
-                              (-map (-rpartial #'brb-positions-of "favourite")
+                              (-map (-rpartial #'brb-positions-of '("favourite" "fav" "+"))
                                     (table-select-rows "extremum" tbl :column 1))))
          (outcasts (-filter #'identity
-                            (-map (-rpartial #'brb-positions-of "outcast")
+                            (-map (-rpartial #'brb-positions-of '("outcast" "out" "-"))
                                   (table-select-rows "extremum" tbl :column 1))))
          (favourited (-map (lambda (i) (-count (-rpartial #'-contains-p i) favourites))
                            (-iota wines 1)))
