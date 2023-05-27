@@ -208,8 +208,10 @@ TBL represents raw scores."
   (let* ((wines (-drop 2 (car tbl)))
          (people (->> tbl (-map 'car) (-remove 'string-empty-p)))
          (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
-         (favourites (-map (-rpartial #'brb-positions-of "favourite") (table-select-rows "extremum" tbl :column 1)))
-         (outcasts (-map (-rpartial #'brb-positions-of "outcast") (table-select-rows "extremum" tbl :column 1))))
+         (favourites (-map (-rpartial #'brb-positions-of '("favourite" "fav" "+"))
+                           (table-select-rows "extremum" tbl :column 1)))
+         (outcasts (-map (-rpartial #'brb-positions-of '("outcast" "out" "-"))
+                         (table-select-rows "extremum" tbl :column 1))))
     (-concat
      (list
       (cons " " wines)
