@@ -58,13 +58,13 @@ CALLBACK is called with updated plist."
                   (s-capitalize
                    (s-replace "-" " " (s-chop-prefix ":" (symbol-name prop))))
                   ": "))
-         (to-string (or to-string `(quote string-from)))
-         (read-fn (or read-fn `(quote read-fn))))
+         (to-string (or to-string `(quote string-from))))
     `(let* ((,plist-var ,(if (and (listp plist) (not (eq (car plist) 'quote)))
                              `(quote ,plist)
                            plist))
             (value (or (plist-get ,plist-var ,prop) ,default))
-            (read-fn (or ,read-fn
+            (read-fn (or
+                      ,read-fn
                       (pcase (type-of value)
                        (`integer #'read-number)
                        (_ #'read-string)))))
