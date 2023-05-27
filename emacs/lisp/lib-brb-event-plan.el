@@ -502,8 +502,9 @@ WINE-PRICES."
       (insert
        (->> (brb-event-wines event)
             (--map-indexed
-             (format "☆ %.2f - [%s](https://barberry.io/wines/%s.html)"
-                     (assoc-default "rms" (nth it-index summary))
+             (format "☆ %s - [%s](https://barberry.io/wines/%s.html)"
+                     (if-let ((rms (assoc-default "rms" (nth it-index summary))))
+                         (format "%.2f" rms) "N/A ")
                      (vulpea-note-title it)
                      (vulpea-note-id it)))
             (s-join "\n"))))
