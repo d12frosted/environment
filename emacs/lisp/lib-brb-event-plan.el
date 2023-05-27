@@ -491,10 +491,12 @@ WINE-PRICES."
 
 
 
-(defun brb-event-plan-display-tg-report (event)
+(defun brb-event-plan-display-tg-report (&optional event)
   "Display TG report for EVENT."
-  (let ((buffer (get-buffer-create (format "*%s TG report*" (vulpea-note-title event))))
-        (summary (brb-event-score-summary event)))
+  (interactive)
+  (let* ((event (brb-event-select))
+         (buffer (get-buffer-create (format "*%s TG report*" (vulpea-note-title event))))
+         (summary (brb-event-score-summary event)))
     (with-current-buffer buffer
       (erase-buffer)
       (insert
