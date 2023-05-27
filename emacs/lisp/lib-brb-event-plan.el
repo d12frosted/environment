@@ -228,8 +228,8 @@ is balance."
                       (vulpea-note-meta-get it "producer" 'note)
                       (vulpea-note-meta-get it "name")
                       (or (vulpea-note-meta-get it "vintage") "NV")
-                      (brb-price-format (nth it-index (plist-get wine-prices :public)))
-                      (brb-price-format (nth it-index (plist-get wine-prices :real)))))
+                      (brb-price-format (or (nth it-index (plist-get wine-prices :public)) 0))
+                      (brb-price-format (or (nth it-index (plist-get wine-prices :real)) 0))))
               it)
              (-concat it
                       '(sep)
