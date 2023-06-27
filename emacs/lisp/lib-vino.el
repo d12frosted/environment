@@ -429,6 +429,7 @@ Whatever that means."
       (--each
           (->> (vulpea-db-query-by-tags-every '("wine" "cellar" "barberry/public"))
                (--remove (vulpea-note-meta-get-list it "images"))
+               (--remove (eq 'yes (vulpea-note-meta-get it "image missing" 'symbol)))
                (-map #'vulpea-buttonize))
         (insert "- " it "\n"))
       (read-only-mode +1))
