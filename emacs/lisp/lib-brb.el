@@ -85,6 +85,14 @@ In all cases, except for interactive, only price entries with
                   (vulpea-note-meta-get wine "name")))
            (cons "vintage"
                  (or (vulpea-note-meta-get wine "vintage") "NV"))
+           (when-let ((a (vulpea-note-meta-get wine "base")))
+             (cons "base" a))
+           (when-let ((a (vulpea-note-meta-get wine "bottled")))
+             (cons "bottled" a))
+           (when-let ((a (vulpea-note-meta-get wine "degorgee")))
+             (cons "disgorged" a))
+           (when-let ((a (vulpea-note-meta-get wine "sur lie")))
+             (cons "sur lie" a))
            (cons "grapes"
                  (string-join
                   (-map #'vulpea-utils-link-make-string
