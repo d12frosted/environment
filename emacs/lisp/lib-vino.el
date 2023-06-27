@@ -334,10 +334,17 @@ BUTTON should be a proper button with following properties:
                     (point-max))))))
              (unfill-region pos (point))
              (delete-char -1)
-             (insert
-              "\n\n"
-              "Tasted on " (vino-rating-date rating) "\n"
-              "\n")))
+             (insert "\n\n")
+             (when-let (x (vulpea-note-meta-get (vino-rating-wine rating) "degorgee"))
+               (insert "Disgorged "
+                       (if-let ((time (ignore-errors (org-parse-time-string x))))
+                           (concat "on " (format-time-string "%F" (encode-time time)))
+                         (concat "in " x))
+                       "\n"))
+             (when-let (x (vulpea-note-meta-get (vino-rating-wine rating) "sur lie"))
+               (insert x " on lees\n\n"))
+             (insert "Tasted on " (vino-rating-date rating) "\n")
+             (insert "\n")))
          notes)
         (read-only-mode)
         (visual-line-mode)
