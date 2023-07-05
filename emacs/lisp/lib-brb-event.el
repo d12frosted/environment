@@ -200,5 +200,62 @@ list of prices (from the first to the last wine)."
 
 
 
+(defun brb-events-assign-public-names ()
+  "Assign public names to all public events."
+  (interactive)
+  (let* ((rules '("Kh" "Sh" "Yu" "Ya" "Tkh" "Ch" "Zh" "Shch"))
+         (convives (->> (brb-events-from-range (list "2000-01-01" (format-time-string "%Y-%m-%d" (current-time))))
+                        (--map (brb-event-participants it))
+                        (-flatten-n 1)
+                        (-distinct)
+                        (--sort (string< (vulpea-note-title it) (vulpea-note-title other)))))
+         (public-names))
+    (--each convives
+      (let* ((parts (s-split-words (vulpea-note-title it)))
+             (name (cond
+                    ((= (seq-length parts) 2)
+                     (concat (nth 0 parts)
+                             " "
+                             (if-let ((r (--find (s-prefix-p it (nth 1 parts)) rules)))
+                                 r
+                               (s-left 1 (nth 1 parts)))))
+                    (t (read-string
+                        (format "%s has a strangely shaped name, give it a public name manually: "
+                                (vulpea-note-title it)))))))
+        (when (-contains-p public-names name)
+          (setq name
+                (read-string (format "%s can not take %s as short name, as it is taken, provide new one (%s): "
+                                     (vulpea-note-title it)
+                                     name
+                                     (vulpea-note-meta-get it "public name"))
+                             nil nil (vulpea-note-meta-get it "public name"))))
+        (add-to-list 'public-names name)
+        (vulpea-utils-with-note it
+          (vulpea-buffer-meta-set "public name" name)
+          (save-buffer)
+          (kill-buffer))))))
+
+
+
+(defun brb-events-execute-blocks ()
+  "Execute code blocks in all public events."
+  (interactive)
+  (--each (brb-events-from-range (list "2000-01-01" (format-time-string "%Y-%m-%d" (current-time))))
+    (--each (seq-reverse
+             (org-element-map
+                 (org-element-parse-buffer 'element)
+                 'src-block
+               (lambda (h)
+                 (org-element-property :begin h))))
+      (goto-char it)
+      (let ((org-confirm-babel-evaluate nil))
+        (save-excursion
+          (silenzio
+           (funcall-interactively #'org-babel-execute-src-block)))))
+    (save-buffer)
+    (kill-buffer)))
+
+
+
 (provide 'lib-brb-event)
 ;;; lib-brb-event.el ends here
