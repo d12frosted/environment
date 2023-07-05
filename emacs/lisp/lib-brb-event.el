@@ -63,11 +63,10 @@
      :initial-prompt (when event (vulpea-note-title event)))))
 
 ;;;###autoload
-(defun brb-event--from-range (range)
+(defun brb-events-from-range (range)
   "Return list of events in time RANGE."
-  (->> (vulpea-db-query-by-tags-every '("wine" "event"))
+  (->> (vulpea-db-query-by-tags-every '("wine" "event" "barberry/public"))
        (--filter (= 0 (vulpea-note-level it)))
-       (--remove (vulpea-note-tagged-any-p it "external"))
        (--filter (let ((date (vulpea-utils-with-note it
                                (vulpea-buffer-prop-get "date"))))
                    (and (org-time>= date (nth 0 range))

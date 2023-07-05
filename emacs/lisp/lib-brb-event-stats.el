@@ -53,7 +53,8 @@
                                  (org-read-date nil nil nil "From (inclusive)")
                                  (org-read-date nil nil nil "To (exclusive)")))
                        (_ (vino-stats--time-frame-range frame))))
-              (events (brb-event--from-range range))
+              (events (->> (brb-events-from-range range)
+                           (--remove (vulpea-note-tagged-any-p it "external"))))
               (events-summary (hash-table-from events
                                 :key-fn #'vulpea-note-id
                                 :value-fn (lambda (event _) (brb-event-score-summary event))))
