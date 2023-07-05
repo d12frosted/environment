@@ -35,6 +35,7 @@
 (require 'vulpea)
 (require 'lib-calc)
 (require 'lib-table)
+(require 'lib-string)
 
 
 
@@ -246,8 +247,20 @@ TBL represents raw scores.
 When COLUMNS is not specified, all columns are returned.
 Otherwise only those specified in the list."
   (let* ((wines (- (length (car tbl)) 2))
+
          (names (-drop 2 (car tbl)))
+
+         (people (->> tbl (-map 'car) (-remove 'string-empty-p)))
+         (indices-to-remove (--find-indices
+                             (-contains-p
+                              '("3596871d-80c7-4aa5-a305-64550b92af14")
+                              (if (s-matches? string-uuid-regexp it)
+                                  (string-match-1 string-uuid-regexp it)
+                                it))
+                             people))
          (ratings (table-select-rows "rating" tbl :column 1))
+         (ratings (-remove-at-indices indices-to-remove ratings))
+
          (prices (car (table-select-rows "price" tbl :column 1)))
 
          (totals (table-vreduce-columns #'calcFunc-vsum ratings))
