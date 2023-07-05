@@ -227,16 +227,24 @@ TBL represents raw scores."
       'hline)
      (-map-indexed
       (lambda (i p)
-        (let ((rs (nth i ratings)))
-          (cons p (-map-indexed
-                   (lambda (ri r)
-                     (brb-format-float r
-                       :style
-                       (cond
-                        ((-contains-p (nth i favourites) (1+ ri)) 'bold)
-                        ((-contains-p (nth i outcasts) (1+ ri)) 'del)
-                        (t 'normal))))
-                   rs))))
+        (let ((rs (nth i ratings))
+              (convive (if (string-match-p string-uuid-regexp p)
+                           (let ((note (vulpea-db-get-by-id (string-match-1 string-uuid-regexp p))))
+                             (or (vulpea-note-meta-get note "public name")
+                                 (user-error "%s doesn't have public name, please set it up"
+                                             (vulpea-note-title note))))
+                         p)))
+          (cons
+           convive
+           (-map-indexed
+            (lambda (ri r)
+              (brb-format-float r
+                :style
+                (cond
+                 ((-contains-p (nth i favourites) (1+ ri)) 'bold)
+                 ((-contains-p (nth i outcasts) (1+ ri)) 'del)
+                 (t 'normal))))
+            rs))))
       people))))
 
 (cl-defun brb-raw-scores-to-summary (tbl &key columns)
