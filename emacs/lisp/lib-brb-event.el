@@ -163,6 +163,41 @@ list of prices (from the first to the last wine)."
                            (cdr it))
                (cdr raw))))))
 
+;;;###autoload
+(defun brb-event-score-personal (event)
+  "Return personal scores of EVENT."
+  (let* ((tbl (vulpea-utils-with-note event
+                (save-excursion
+                  (goto-char (point-min))
+                  (re-search-forward "#\\+name: data")
+                  (re-search-forward "|")
+                  (->> (org-table-to-lisp)
+                       (--remove (eq 'hline it))))))
+         (wines (-drop 2 (car tbl)))
+         (people (->> tbl (-map 'car) (-remove 'string-empty-p) (-map #'substring-no-properties)))
+         (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
+         (favourites (-map (-rpartial #'brb-positions-of '("favourite" "fav" "+"))
+                           (table-select-rows "extremum" tbl :column 1)))
+         (outcasts (-map (-rpartial #'brb-positions-of '("outcast" "out" "-"))
+                         (table-select-rows "extremum" tbl :column 1))))
+    (--map-indexed
+     (let ((rs (nth it-index ratings)))
+       (list
+        :convive
+        (cond
+         ((string-match string-uuid-regexp it) (match-string 1 it))
+         (t it))
+        :ratings
+        (--map
+         (cond
+          ((and (stringp it) (string-empty-p it)) nil)
+          ((stringp it) (string-to-number it))
+          (t it))
+         rs)
+        :favourites (nth it-index favourites)
+        :outcasts (nth it-index outcasts)))
+     people)))
+
 
 
 (provide 'lib-brb-event)
