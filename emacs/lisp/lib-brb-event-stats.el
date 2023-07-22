@@ -42,6 +42,40 @@
 (defun brb-event-stats (&optional frame)
   "Display events stats for a time FRAME."
   (interactive)
+  (brb-event-stats-for
+   :frame frame
+   :buffer-name "*brb-stats*"
+   :events-filter (lambda (it) (not (vulpea-note-tagged-any-p it "external")))
+   :include-gain t))
+
+(defun brb-event-stats-external (&optional frame)
+  "Display external events stats for a time FRAME."
+  (interactive)
+  (brb-event-stats-for
+   :frame frame
+   :buffer-name "*brb-stats-external*"
+   :events-filter (lambda (it) (vulpea-note-tagged-any-p it "external"))))
+
+(defun brb-event-stats-vova (&optional frame)
+  "Display Vova's events stats for a time FRAME."
+  (interactive)
+  (brb-event-stats-for
+   :frame frame
+   :buffer-name "*brb-stats-vova*"
+   :events-filter (lambda (it) (vulpea-note-tagged-all-p it "external" "@VovaUlianov"))))
+
+(cl-defun brb-event-stats-for (&key frame
+                                    events-filter
+                                    buffer-name
+                                    include-gain)
+  "Display events stats for FRAME.
+
+Events are filtered using EVENTS-FILTER.
+
+Optionally, one may provide BUFFER-NAME.
+
+When INCLUDE-GAIN is non-nil, the gain is included in the summary."
+  (interactive)
   (when-let* ((frame (or
                       frame
                       (intern
@@ -54,258 +88,263 @@
                                  (org-read-date nil nil nil "To (exclusive)")))
                        (_ (vino-stats--time-frame-range frame))))
               (events (->> (brb-events-from-range range)
-                           (--remove (vulpea-note-tagged-any-p it "external"))))
-              (events-summary (hash-table-from events
-                                :key-fn #'vulpea-note-id
-                                :value-fn (lambda (event _) (brb-event-score-summary event))))
+                           (-filter events-filter))))
+    (let* ((events-summary (hash-table-from events
+                             :key-fn #'vulpea-note-id
+                             :value-fn (lambda (event _) (brb-event-score-summary event))))
 
-              (participants-all (->> events
-                                     (--map (brb-event-participants it))
-                                     (-flatten)))
-              (participants (-distinct participants-all))
+           (participants-all (->> events
+                                  (--map (brb-event-participants it))
+                                  (-flatten)))
+           (participants (-distinct participants-all))
 
-              (wines-all (->> events
-                              (--map (brb-event-wines it))
-                              (-flatten)))
-              (wines (-distinct wines-all))
+           (wines-all (->> events
+                           (--map (brb-event-wines it))
+                           (-flatten)))
+           (wines (-distinct wines-all))
 
-              (grapes-all (->> wines-all
-                               (--map (vulpea-note-meta-get-list it "grapes" 'note))
+           (grapes-all (->> wines-all
+                            (--map (vulpea-note-meta-get-list it "grapes" 'note))
+                            (-flatten)))
+           (grapes (-distinct grapes-all))
+
+           (producers-all (->> wines-all
+                               (--map (vulpea-note-meta-get it "producer" 'note))
                                (-flatten)))
-              (grapes (-distinct grapes-all))
+           (producers (-distinct producers-all))
 
-              (producers-all (->> wines-all
-                                  (--map (vulpea-note-meta-get it "producer" 'note))
-                                  (-flatten)))
-              (producers (-distinct producers-all))
+           (roas-all (->> wines-all
+                          (--map (or (vulpea-note-meta-get it "region" 'note)
+                                     (vulpea-note-meta-get it "appellation" 'note)))
+                          (-flatten)))
+           (roas (-distinct roas-all))
 
-              (roas-all (->> wines-all
-                             (--map (or (vulpea-note-meta-get it "region" 'note)
-                                        (vulpea-note-meta-get it "appellation" 'note)))
-                             (-flatten)))
-              (roas (-distinct roas-all))
+           (countries-all (->> wines-all
+                               (--map (vulpea-note-meta-get
+                                       (or (vulpea-note-meta-get it "region" 'note)
+                                           (vulpea-note-meta-get it "appellation" 'note))
+                                       "country" 'note))
+                               (-flatten)))
+           (countries (-distinct countries-all))
+           (gains (when include-gain (--map (plist-get (brb-event-plan-invoice it) :balance) events))))
+      (buffer-display-result-with (or buffer-name "*brb-stats*")
+        (format "Stats for period from %s to %s"
+                (propertize (nth 0 range) 'face 'bold)
+                (propertize (nth 1 range) 'face 'bold))
+        ""
 
-              (countries-all (->> wines-all
-                                  (--map (vulpea-note-meta-get
-                                          (or (vulpea-note-meta-get it "region" 'note)
-                                              (vulpea-note-meta-get it "appellation" 'note))
-                                          "country" 'note))
-                                  (-flatten)))
-              (countries (-distinct countries-all))
-              (gains (--map (plist-get (brb-event-plan-invoice it) :balance) events)))
-    (buffer-display-result-with "*brb-stats*"
-      (format "Stats for period from %s to %s"
-              (propertize (nth 0 range) 'face 'bold)
-              (propertize (nth 1 range) 'face 'bold))
-      ""
+        (propertize (format "Events (%s)" (seq-length events)) 'face 'bold)
+        ""
+        (string-table
+         :header (if include-gain
+                     '("date" "event" "convives" "wines" "rms" "price" "gain")
+                   '("date" "event" "convives" "wines" "rms" "price"))
+         :pad-type '(right right left left left left left)
+         :width '(nil 48 nil nil nil nil nil)
+         :header-sep "-"
+         :header-sep-start "|-"
+         :header-sep-conj "-+-"
+         :header-sep-end "-|"
+         :row-start "| "
+         :row-end " |"
+         :sep " | "
+         :data
+         (-concat
+          (--map-indexed
+           (condition-case nil
+               (let* ((summary (gethash (vulpea-note-id it) events-summary))
+                      (wines (brb-event-wines it)))
+                 (list (vulpea-utils-with-note it
+                         (org-read-date nil nil (vulpea-buffer-prop-get "date")))
+                       it
+                       (seq-length (brb-event-participants it))
+                       (seq-length wines)
+                       (->> summary
+                            (--map (assoc-default "rms" it))
+                            (-filter #'identity)
+                            (-map #'calc-from-number)
+                            (apply #'calcFunc-vec)
+                            (calcFunc-rms)
+                            (calc-to-number)
+                            (format "%.4f"))
+                       (->> summary
+                            (--map (assoc-default "price" it))
+                            (-filter #'identity)
+                            (-sum))
+                       (when include-gain (nth it-index gains))))
+             ((debug error) (message "Failed to calculate summary of '%s'" (vulpea-note-title it))))
+           events)
+          '(sep)
+          `((""
+             ""
+             ,(--reduce-from
+               (+ acc (seq-length (brb-event-participants it)))
+               0 events)
+             ,(--reduce-from
+               (+ acc (seq-length (brb-event-wines it)))
+               0 events)
+             ""
+             ""
+             ,(when include-gain (-sum gains))))))
+        ""
 
-      (propertize (format "Events (%s)" (seq-length events)) 'face 'bold)
-      ""
-      (string-table
-       :header '("date" "event" "convives" "wines" "rms" "price" "gain")
-       :pad-type '(right right left left left left left)
-       :width '(nil 48 nil nil nil nil nil)
-       :header-sep "-"
-       :header-sep-start "|-"
-       :header-sep-conj "-+-"
-       :header-sep-end "-|"
-       :row-start "| "
-       :row-end " |"
-       :sep " | "
-       :data
-       (-concat
-        (--map-indexed
-         (let* ((summary (gethash (vulpea-note-id it) events-summary))
-                (wines (brb-event-wines it)))
-           (list (vulpea-utils-with-note it
-                   (org-read-date nil nil (vulpea-buffer-prop-get "date")))
-                 it
-                 (seq-length (brb-event-participants it))
-                 (seq-length wines)
-                 (->> summary
-                      (--map (assoc-default "rms" it))
-                      (-filter #'identity)
-                      (-map #'calc-from-number)
-                      (apply #'calcFunc-vec)
-                      (calcFunc-rms)
-                      (calc-to-number)
-                      (format "%.4f"))
-                 (->> summary
-                      (--map (assoc-default "price" it))
-                      (-sum))
-                 (nth it-index gains)))
-         events)
-        '(sep)
-        `((""
-           ""
-           ,(--reduce-from
-             (+ acc (seq-length (brb-event-participants it)))
-             0 events)
-           ,(--reduce-from
-             (+ acc (seq-length (brb-event-wines it)))
-             0 events)
-           ""
-           ""
-           ,(-sum gains)))))
-      ""
+        (propertize (format "Participants (%s)" (seq-length participants)) 'face 'bold)
+        ""
+        (string-table
+         :header '("participant" "count")
+         :header-sep "-"
+         :header-sep-start "|-"
+         :header-sep-conj "-+-"
+         :header-sep-end "-|"
+         :row-start "| "
+         :row-end " |"
+         :sep " | "
+         :data
+         (->> participants
+              (--map
+               (list it (-count (lambda (other)
+                                  (string-equal
+                                   (vulpea-note-id it)
+                                   (vulpea-note-id other)))
+                                participants-all)))
+              (--sort (> (nth 1 it)
+                         (nth 1 other)))))
+        ""
 
-      (propertize (format "Participants (%s)" (seq-length participants)) 'face 'bold)
-      ""
-      (string-table
-       :header '("participant" "count")
-       :header-sep "-"
-       :header-sep-start "|-"
-       :header-sep-conj "-+-"
-       :header-sep-end "-|"
-       :row-start "| "
-       :row-end " |"
-       :sep " | "
-       :data
-       (->> participants
-            (--map
-             (list it (-count (lambda (other)
-                                (string-equal
-                                 (vulpea-note-id it)
-                                 (vulpea-note-id other)))
-                              participants-all)))
-            (--sort (> (nth 1 it)
-                       (nth 1 other)))))
-      ""
+        (propertize (format "Wines (%s)" (seq-length wines)) 'face 'bold)
+        ""
+        (string-join
+         (--map (format "- %s" (string-from it)) wines)
+         "\n")
+        ""
 
-      (propertize (format "Wines (%s)" (seq-length wines)) 'face 'bold)
-      ""
-      (string-join
-       (--map (format "- %s" (string-from it)) wines)
-       "\n")
-      ""
+        (string-table
+         :header '("date" "event" "producer" "wine" "year" "rms" "sdev" "price" "qpr")
+         :header-sep "-"
+         :header-sep-start "|-"
+         :header-sep-conj "-+-"
+         :header-sep-end "-|"
+         :row-start "| "
+         :row-end " |"
+         :sep " | "
+         :pad-type '(right right right right left left left left left)
+         :width '(full 16 18 20 full full full full full)
+         :data
+         (->> events
+              (--map
+               (let ((summary (gethash (vulpea-note-id it) events-summary))
+                     (event it))
+                 (->> (brb-event-wines it)
+                      (--map-indexed (list
+                                      (vulpea-utils-with-note event
+                                        (org-read-date nil nil (vulpea-buffer-prop-get "date")))
+                                      event
+                                      (vulpea-note-meta-get it "producer" 'note)
+                                      (vulpea-note-meta-get it "name")
+                                      (or (vulpea-note-meta-get it "vintage") "NV")
+                                      (if-let ((rms (assoc-default "rms" (nth it-index summary))))
+                                          (format "%.4f" rms) "-")
+                                      (if-let ((sdev (assoc-default "sdev" (nth it-index summary))))
+                                          (format "%.4f" sdev) "-")
+                                      (assoc-default "price" (nth it-index summary))
+                                      (if-let ((qpr (assoc-default "QPR" (nth it-index summary))))
+                                          (format "%.4f" qpr) "-"))))))
+              (-flatten-n 1)
+              (--sort (string> (nth 5 it)
+                               (nth 5 other)))))
+        ""
 
-      (string-table
-       :header '("date" "event" "producer" "wine" "year" "rms" "sdev" "price" "qpr")
-       :header-sep "-"
-       :header-sep-start "|-"
-       :header-sep-conj "-+-"
-       :header-sep-end "-|"
-       :row-start "| "
-       :row-end " |"
-       :sep " | "
-       :pad-type '(right right right right left left left left left)
-       :width '(full 16 18 20 full full full full full)
-       :data
-       (->> events
-            (--map
-             (let ((summary (gethash (vulpea-note-id it) events-summary))
-                   (event it))
-               (->> (brb-event-wines it)
-                    (--map-indexed (list
-                                    (vulpea-utils-with-note event
-                                      (org-read-date nil nil (vulpea-buffer-prop-get "date")))
-                                    event
-                                    (vulpea-note-meta-get it "producer" 'note)
-                                    (vulpea-note-meta-get it "name")
-                                    (or (vulpea-note-meta-get it "vintage") "NV")
-                                    (if-let ((rms (assoc-default "rms" (nth it-index summary))))
-                                        (format "%.4f" rms) "-")
-                                    (if-let ((sdev (assoc-default "sdev" (nth it-index summary))))
-                                        (format "%.4f" sdev) "-")
-                                    (assoc-default "price" (nth it-index summary))
-                                    (if-let ((qpr (assoc-default "QPR" (nth it-index summary))))
-                                        (format "%.4f" qpr) "-"))))))
-            (-flatten-n 1)
-            (--sort (string> (nth 5 it)
-                             (nth 5 other)))))
-      ""
+        (propertize (format "Producers (%s)" (seq-length producers)) 'face 'bold)
+        ""
+        (string-table
+         :header '("producer" "count")
+         :header-sep "-"
+         :header-sep-start "|-"
+         :header-sep-conj "-+-"
+         :header-sep-end "-|"
+         :row-start "| "
+         :row-end " |"
+         :sep " | "
+         :data
+         (->> producers
+              (--map
+               (list it (-count (lambda (other)
+                                  (string-equal
+                                   (vulpea-note-id it)
+                                   (vulpea-note-id other)))
+                                producers-all)))
+              (--sort (> (nth 1 it)
+                         (nth 1 other)))))
+        ""
 
-      (propertize (format "Producers (%s)" (seq-length producers)) 'face 'bold)
-      ""
-      (string-table
-       :header '("producer" "count")
-       :header-sep "-"
-       :header-sep-start "|-"
-       :header-sep-conj "-+-"
-       :header-sep-end "-|"
-       :row-start "| "
-       :row-end " |"
-       :sep " | "
-       :data
-       (->> producers
-            (--map
-             (list it (-count (lambda (other)
-                                (string-equal
-                                 (vulpea-note-id it)
-                                 (vulpea-note-id other)))
-                              producers-all)))
-            (--sort (> (nth 1 it)
-                       (nth 1 other)))))
-      ""
+        (propertize (format "Grapes (%s)" (seq-length grapes)) 'face 'bold)
+        ""
+        (string-table
+         :header '("grape" "count")
+         :header-sep "-"
+         :header-sep-start "|-"
+         :header-sep-conj "-+-"
+         :header-sep-end "-|"
+         :row-start "| "
+         :row-end " |"
+         :sep " | "
+         :data
+         (->> grapes
+              (--map
+               (list it (-count (lambda (other)
+                                  (string-equal
+                                   (vulpea-note-id it)
+                                   (vulpea-note-id other)))
+                                grapes-all)))
+              (--sort (> (nth 1 it)
+                         (nth 1 other)))))
+        ""
 
-      (propertize (format "Grapes (%s)" (seq-length grapes)) 'face 'bold)
-      ""
-      (string-table
-       :header '("grape" "count")
-       :header-sep "-"
-       :header-sep-start "|-"
-       :header-sep-conj "-+-"
-       :header-sep-end "-|"
-       :row-start "| "
-       :row-end " |"
-       :sep " | "
-       :data
-       (->> grapes
-            (--map
-             (list it (-count (lambda (other)
-                                (string-equal
-                                 (vulpea-note-id it)
-                                 (vulpea-note-id other)))
-                              grapes-all)))
-            (--sort (> (nth 1 it)
-                       (nth 1 other)))))
-      ""
+        (propertize (format "Countries (%s)" (seq-length countries)) 'face 'bold)
+        ""
+        (string-table
+         :header '("grape" "count")
+         :header-sep "-"
+         :header-sep-start "|-"
+         :header-sep-conj "-+-"
+         :header-sep-end "-|"
+         :row-start "| "
+         :row-end " |"
+         :sep " | "
+         :data
+         (->> countries
+              (--map
+               (list it (-count (lambda (other)
+                                  (string-equal
+                                   (vulpea-note-id it)
+                                   (vulpea-note-id other)))
+                                countries-all)))
+              (--sort (> (nth 1 it)
+                         (nth 1 other)))))
+        ""
 
-      (propertize (format "Countries (%s)" (seq-length countries)) 'face 'bold)
-      ""
-      (string-table
-       :header '("grape" "count")
-       :header-sep "-"
-       :header-sep-start "|-"
-       :header-sep-conj "-+-"
-       :header-sep-end "-|"
-       :row-start "| "
-       :row-end " |"
-       :sep " | "
-       :data
-       (->> countries
-            (--map
-             (list it (-count (lambda (other)
-                                (string-equal
-                                 (vulpea-note-id it)
-                                 (vulpea-note-id other)))
-                              countries-all)))
-            (--sort (> (nth 1 it)
-                       (nth 1 other)))))
-      ""
-
-      (propertize (format "Regions (%s)" (seq-length roas)) 'face 'bold)
-      ""
-      (string-table
-       :header '("grape" "count")
-       :header-sep "-"
-       :header-sep-start "|-"
-       :header-sep-conj "-+-"
-       :header-sep-end "-|"
-       :row-start "| "
-       :row-end " |"
-       :sep " | "
-       :data
-       (->> roas
-            (--map
-             (list it (-count (lambda (other)
-                                (string-equal
-                                 (vulpea-note-id it)
-                                 (vulpea-note-id other)))
-                              roas-all)))
-            (--sort (> (nth 1 it)
-                       (nth 1 other)))))
-      "")))
+        (propertize (format "Regions (%s)" (seq-length roas)) 'face 'bold)
+        ""
+        (string-table
+         :header '("grape" "count")
+         :header-sep "-"
+         :header-sep-start "|-"
+         :header-sep-conj "-+-"
+         :header-sep-end "-|"
+         :row-start "| "
+         :row-end " |"
+         :sep " | "
+         :data
+         (->> roas
+              (--map
+               (list it (-count (lambda (other)
+                                  (string-equal
+                                   (vulpea-note-id it)
+                                   (vulpea-note-id other)))
+                                roas-all)))
+              (--sort (> (nth 1 it)
+                         (nth 1 other)))))
+        ""))))
 
 (provide 'lib-brb-event-stats)
 ;;; lib-brb-event-stats.el ends here
