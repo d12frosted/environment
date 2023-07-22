@@ -240,7 +240,7 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                                         (org-read-date nil nil (vulpea-buffer-prop-get "date")))
                                       event
                                       (vulpea-note-meta-get it "producer" 'note)
-                                      (vulpea-note-meta-get it "name")
+                                      (vulpea-buttonize it (lambda (it) (vulpea-note-meta-get it "name")))
                                       (or (vulpea-note-meta-get it "vintage") "NV")
                                       (if-let ((rms (assoc-default "rms" (nth it-index summary))))
                                           (format "%.4f" rms) "-")
