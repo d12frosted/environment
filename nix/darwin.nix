@@ -171,12 +171,10 @@ experimental-features = nix-command flakes
       {
         name = "yabai";
         args = [];
-        restart_service = true;
       }
       {
         name = "skhd";
         args = [];
-        restart_service = true;
       }
     ];
     casks = [
