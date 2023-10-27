@@ -173,7 +173,7 @@ list of prices (from the first to the last wine)."
                   (re-search-forward "|")
                   (->> (org-table-to-lisp)
                        (--remove (eq 'hline it))))))
-         (wines (-drop 2 (car tbl)))
+         ;; (wines (-drop 2 (car tbl)))
          (people (->> tbl (-map 'car) (-remove 'string-empty-p) (-map #'substring-no-properties)))
          (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
          (favourites (-map (-rpartial #'brb-positions-of '("favourite" "fav" "+"))
