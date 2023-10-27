@@ -163,6 +163,7 @@ experimental-features = nix-command flakes
     onActivation.cleanup = "uninstall"; # removes manually install brews and casks
     brews = [
       "llvm"
+      "pandoc"
       {
         name = "emacs-plus@30";
         args = ["with-dragon-icon"];
