@@ -22,6 +22,15 @@ yabai -m config auto_balance off
 yabai -m config split_ratio 0.5
 yabai -m config window_shadow off
 
+yabai -m config insert_feedback_color 0xffd75f5f
+yabai -m config active_window_border_color 0xff37474F
+yabai -m config normal_window_border_color 0xffECEFF1
+yabai -m config window_border_width 2
+yabai -m config window_border_radius 0
+yabai -m config window_border_blur off
+yabai -m config window_border_hidpi on
+yabai -m config window_border off
+
 #
 # setup spaces
 #
@@ -59,6 +68,7 @@ yabai -m rule --add app="^Emacs$" title!='^$' manage=on
 # move some apps automatically to specific spaces
 yabai -m rule --add app="^Safari$" space=3
 yabai -m rule --add app="^Firefox$" space=3
+yabai -m rule --add app="^Arc$" space=3
 yabai -m rule --add app="^Telegram$" space=4
 yabai -m rule --add app="^Messages$" space=4
 yabai -m rule --add app="^Music$" space=5
@@ -88,19 +98,19 @@ alt - space : yabai-layout-toggle
 # space manipulation
 #
 
-alt - 1 : yabai -m space --focus 1
-alt - 2 : yabai -m space --focus 2
-alt - 3 : yabai -m space --focus 3
-alt - 4 : yabai -m space --focus 4
-alt - 5 : yabai -m space --focus 5
-alt - 6 : yabai -m space --focus 6
+alt - f1 : yabai -m space --focus 1
+alt - f2 : yabai -m space --focus 2
+alt - f3 : yabai -m space --focus 3
+alt - f4 : yabai -m space --focus 4
+alt - f5 : yabai -m space --focus 5
+alt - f6 : yabai -m space --focus 6
 
-shift + alt - 1 : yabai -m window --space 1; yabai -m space --focus 1
-shift + alt - 2 : yabai -m window --space 2; yabai -m space --focus 2
-shift + alt - 3 : yabai -m window --space 3; yabai -m space --focus 3
-shift + alt - 4 : yabai -m window --space 4; yabai -m space --focus 4
-shift + alt - 5 : yabai -m window --space 5; yabai -m space --focus 5
-shift + alt - 6 : yabai -m window --space 6; yabai -m space --focus 6
+shift + alt - f1 : yabai -m window --space 1; yabai -m space --focus 1
+shift + alt - f2 : yabai -m window --space 2; yabai -m space --focus 2
+shift + alt - f3 : yabai -m window --space 3; yabai -m space --focus 3
+shift + alt - f4 : yabai -m window --space 4; yabai -m space --focus 4
+shift + alt - f5 : yabai -m window --space 5; yabai -m space --focus 5
+shift + alt - f6 : yabai -m window --space 6; yabai -m space --focus 6
 
 ################################################################################
 #
