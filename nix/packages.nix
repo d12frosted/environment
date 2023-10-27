@@ -17,6 +17,8 @@ in [
   gnused
   gnutar
   hledger
+  hledger-ui
+  hledger-web
   home-manager
   hpack
   imagemagick
@@ -28,7 +30,7 @@ in [
   ncdu
   openssh
   openssl
-  pandoc
+  # pandoc
   python310Packages.pygments
   ranger
   ripgrep
@@ -40,8 +42,8 @@ in [
   wget
 ] ++ lib.optionals stdenv.isDarwin [
   # xquartz
+  # emacs
   pinentry_mac
-  skhd
   terminal-notifier
   youtube-dl
 ] ++ lib.optionals stdenv.isLinux [
@@ -73,6 +75,7 @@ in [
 ] ++ [
   # all things editor
   (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
+  languagetool
   nixfmt
   nixpkgs-fmt
   ormolu
@@ -100,6 +103,7 @@ in [
   source-sans-pro
   source-serif-pro
   symbola
+  roboto-mono
 ] ++ lib.optionals stdenv.isLinux [
   # work
   globalprotect-openconnect
