@@ -229,7 +229,7 @@ list of prices (from the first to the last wine)."
                                      name
                                      (vulpea-note-meta-get it "public name"))
                              nil nil (vulpea-note-meta-get it "public name"))))
-        (add-to-list 'public-names name)
+        (push name public-names)
         (vulpea-utils-with-note it
           (vulpea-buffer-meta-set "public name" name)
           (save-buffer)
