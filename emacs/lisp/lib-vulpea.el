@@ -404,7 +404,14 @@ is ignored. Any buffer modification is saved."
     (org-roam-db-sync)
     (org-roam-update-org-id-locations)
     (org-persist-gc)
-    (org-persist-write-all)))
+    (org-persist-write-all)
+
+    ;; process missing files
+    (--each (org-roam-list-files)
+      (unless (vulpea-db-get-by-id (vulpea-db-get-id-by-file it))
+        (message "Found a broken file at %s" it)
+        (org-roam-db-clear-file it)
+        (org-roam-db-update-file it)))))
 
 
 
