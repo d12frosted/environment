@@ -287,7 +287,8 @@ Otherwise only those specified in the list."
                           (-iota wines 1)))
 
          (qprs (-map (lambda (i)
-                       (when (nth i amean)
+                       (when (and (nth i amean)
+                                  (numberp (nth i prices)))
                          (/
                           (*
                            100
