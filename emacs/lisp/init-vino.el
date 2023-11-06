@@ -73,6 +73,12 @@
                          :tags ("barberry/public"))
    vino-rating-template '(:file-name "wine/rating/${id}.org"
                           :tags ("barberry/public"))
+   vino-region-template '(:file-name "wine/region/%<%Y%m%d%H%M%S>-${slug}.org"
+                          :tags ("barberry/public"))
+   vino-appellation-template '(:file-name "wine/appellation/%<%Y%m%d%H%M%S>-${slug}.org"
+                               :tags ("barberry/public"))
+   vino-grape-template '(:file-name "wine/grape/%<%Y%m%d%H%M%S>-${slug}.org"
+                         :tags ("barberry/public"))
    vino-sources-fn #'vino-sources
    vino-rating-props
    '((1 . (("SCORE" . 3)))
