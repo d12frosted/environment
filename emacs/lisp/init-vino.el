@@ -53,15 +53,14 @@
     "vfp" '(vino-producer-find-file :which-key "producer")
     "vfr" '(vino-region-find-file :which-key "region")
     "vn" '(vino-entry-create :which-key "create vino")
-    "va" '(vino-entry-acquire :which-key "acquire vino")
-    "vc" '(vino-entry-consume :which-key "consume vino")
+    "va" '(vino-acquire :which-key "acquire vino")
+    "vc" '(vino-consume :which-key "consume vino")
     "vr" '(vino-entry-rate :which-key "rate vino"))
   :init
   (with-eval-after-load 'org-roam
     (vino-setup))
+  (add-hook 'vino-entry-create-handle-functions #'vi-acquire)
   (setq-default
-   vino-db-location (expand-file-name "vino.db" path-cache-dir)
-   vino-db-gc-threshold most-positive-fixnum
    vino-inventory-file (expand-file-name "wine.journal"
                                          vulpea-directory)
    vino-availability-fn #'vino-availability-get

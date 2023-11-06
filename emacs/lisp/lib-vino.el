@@ -39,6 +39,7 @@
 (require 'vino)
 (require 'request)
 (require 'request-deferred)
+(require 'lib-vi)
 
 (defvar vino-inventory-file nil
   "Path to journal file.")
@@ -47,8 +48,8 @@
 (defun vino-availability-get (id)
   "Get availability info for `vino-entry' with ID."
   (cons
-   (inventory-total-in vino-inventory-file id)
-   (inventory-total-out vino-inventory-file id)))
+   (vi-total-in id)
+   (vi-total-out id)))
 
 ;;;###autoload
 (defun vino-availability-add (id amount source date)
@@ -64,19 +65,8 @@
 (defun vino-entry-find-file-available ()
   "Select and visit available `vino-entry'."
   (interactive)
-  (let* ((available (seq-map
-                     #'car
-                     (inventory-balance-list
-                      vino-inventory-file)))
-         (res (vulpea-select
-               "Wine"
-               :filter-fn
-               (lambda (note)
-                 (let ((tags (vulpea-note-tags note)))
-                   (and (seq-contains-p tags "wine")
-                        (seq-contains-p tags "cellar")
-                        (seq-contains-p available
-                                        (vulpea-note-id note))))))))
+  (let* ((available (vi-available-wines))
+         (res (vulpea-select-from "Wine" available)))
     (if (vulpea-note-id res)
         (find-file (vulpea-note-path res))
       (user-error
@@ -400,25 +390,131 @@ Whatever that means."
         (goto-char (point-min))))
     (switch-to-buffer buffer)))
 
+(defun vino-acquire (&optional note)
+  "Acquire wine represented as NOTE."
+  (interactive)
+  (let* ((note (or note (vino-entry-note-get-dwim)))
+
+         ;; source
+         (sources (vi-sources-all))
+         (source (completing-read "Source: " (-map #'vi-source-name sources)))
+         (source-id (vi-source-id
+                     (if-let ((s (--find (string-equal (vi-source-name it) source) sources)))
+                         s (vi-sources-add source))))
+
+         ;; location
+         (locations (vi-locations-all))
+         (location (completing-read "Initial location: " (-map #'vi-location-name locations)))
+         (location-id (vi-location-id
+                       (if-let ((s (--find (string-equal (vi-location-name it) location) locations)))
+                           s (vi-locations-add location))))
+
+
+         ;; price
+         (prices-public (vulpea-note-meta-get-list note "price"))
+         (prices-private (vulpea-note-meta-get-list note "price private"))
+         (prices (-uniq (-concat prices-public prices-private)))
+         (price (if prices
+                    (completing-read "Price: " prices)
+                  (read-string "Price: ")))
+         (price-usd (if (s-suffix-p "USD" price)
+                        price
+                      (format "%.2f USD" (read-number (format "Convert %s to USD: " price)))))
+         (price-add-as (cond
+                        ((seq-contains-p prices-public price) nil)
+                        ((seq-contains-p prices-private price) nil)
+                        (t (completing-read "Add this price as: "
+                                            '(private public) nil t))))
+
+         ;; etc
+         (amount (read-number "Amount: " 1))
+         (volume (read-number "Volume (ml): " 750))
+         (date (format-time-string "%Y-%m-%d" (org-read-date nil t))))
+
+    ;; add price if needed
+    (when price-add-as
+      (vulpea-meta-set
+       note
+       (pcase price-add-as
+         (`"public" "price")
+         (`"private" "price private"))
+       (cons price (pcase price-add-as
+                     (`"public" prices-public)
+                     (`"private" prices-private)))
+       'append))
+
+    (--each (-iota amount)
+      (vi-bottle-purchase
+       :wine-id (vulpea-note-id note)
+       :volume volume
+       :date date
+       :price price
+       :price-usd price-usd
+       :location-id location-id
+       :source-id source-id))
+
+    (vino-entry-update-availability note)))
+
+(defun vino-consume (&optional note)
+  "Consume wine represented as NOTE."
+  (interactive)
+  (let* ((note (or note (vino-entry-note-get-dwim)))
+         (bottles (vi-available-bottles-for (vulpea-note-id note)))
+         (_ (unless bottles (user-error "There are no bottles to consume")))
+         (bottle (completing-read
+                  "Bottle: "
+                  (--map
+                   (concat
+                    (propertize (concat (number-to-string (assoc-default 'bottle-id it)) " ")
+                                'invisible t)
+                    (propertize (concat "#" (number-to-string (assoc-default 'bottle-id it)))
+                                'face 'barberry-theme-face-salient)
+                    (propertize " [" 'face 'barberry-theme-face-faded)
+                    (assoc-default 'purchase-date it)
+                    (propertize "] @" 'face 'barberry-theme-face-faded)
+                    (assoc-default 'location it)
+                    (propertize " - " 'face 'barberry-theme-face-faded)
+                    (assoc-default 'price it)
+                    (propertize " from " 'face 'barberry-theme-face-faded)
+                    (assoc-default 'source it))
+                   bottles)
+                  nil t))
+         ;; we use invisible part as a hack
+         (bottle-id (string-to-number bottle))
+         (action (read-string "Action: " "consume"))
+         (date (format-time-string "%Y-%m-%d" (org-read-date nil t))))
+    (vi-bottle-consume :bottle-id bottle-id :date date)
+    (vino-entry-update-availability note)
+    (when (and (string-equal action "consume")
+               (y-or-n-p "Rate? "))
+      (vino-entry-rate note date))))
+
 ;;;###autoload
 (defun vino-sources (_)
   "Get the list of vino sources."
   (inventory-sources vino-inventory-file))
 
 ;;;###autoload
-(defun vino-select-location ()
-  "Select a location."
-  (vulpea-select "Location"))
-
-;;;###autoload
-(defun vino-select-convive ()
-  "Select a convive."
-  (vulpea-select
-   "Convive"
-   :filter-fn (lambda (note)
-                (seq-contains-p
-                 (vulpea-note-tags note)
-                 "people"))))
+(defun vino-rating--read-meta (wine)
+  "Read extra meta for WINE."
+  (let ((location (vulpea-select "Location" :require-match t)))
+    (if (vulpea-note-tagged-all-p location "wine" "event")
+        (list (cons "location" (or (vulpea-note-meta-get location "location" 'note)
+                                   location))
+              (cons "event" location)
+              (cons "order"
+                    (->> (brb-event-wines location)
+                         (--map-indexed (cons it-index it))
+                         (--find (string-equal (vulpea-note-id wine)
+                                               (vulpea-note-id (cdr it))))
+                         (car)
+                         (+ 1)))
+              (cons "convive" (--remove (string-equal brb-event-narrator-id (vulpea-note-id it))
+                                        (brb-event-participants location))))
+      (list
+       (cons "location" (list location))
+       (cons "convive" (let ((people (vulpea-db-query-by-tags-every '("people"))))
+                         (vulpea-utils-collect-while #'vulpea-select-from nil "Convive" people)))))))
 
 ;;;###autoload
 (defun vino-list-entries-without-image ()
