@@ -89,14 +89,21 @@
                    (point))))
       (save-excursion
         (goto-char (point-min))
-        (when (search-forward "1. " bound 'no-error)
-          (beginning-of-line)
-          (->> (org-ml-parse-element-at (point))
-               (org-ml-get-children)
-               (-map #'org-ml-item-get-paragraph)
-               (-map #'car)
-               (--map (org-ml-get-property :path it))
-               (-map #'vulpea-db-get-by-id)))))))
+        (let ((search t)
+              (found nil))
+          (while search
+            (if (search-forward "1. " bound 'no-error)
+                (setq found (looking-at org-link-bracket-re)
+                      search (not found))
+              (setq search nil)))
+          (when found
+            (beginning-of-line)
+            (->> (org-ml-parse-element-at (point))
+                 (org-ml-get-children)
+                 (-map #'org-ml-item-get-paragraph)
+                 (-map #'car)
+                 (--map (org-ml-get-property :path it))
+                 (-map #'vulpea-db-get-by-id))))))))
 
 (defun brb-event-wines--prices (event)
   "Return prices of wines from EVENT.
