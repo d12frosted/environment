@@ -239,7 +239,7 @@ BUTTON should be a proper button with following properties:
                                (vulpea-note-meta-get note "date"))
                              #'string>
                              notes))
-         (notes (seq-take notes 36))
+         (notes (seq-take notes 64))
          (notes (seq-sort-by (lambda (note)
                                (vulpea-note-meta-get note "date"))
                              #'string<
