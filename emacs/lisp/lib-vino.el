@@ -265,7 +265,7 @@ BUTTON should be a proper button with following properties:
                 "\n")
         (seq-do
          (lambda (note)
-           (let* ((rating (vino-db-get-rating (vulpea-note-id note)))
+           (let* ((rating (vino-rating-get-by-id note))
                   (pos))
              (insert
               "* "
@@ -380,7 +380,7 @@ Whatever that means."
       (with-current-buffer buffer
         (seq-do
          (lambda (note)
-           (let ((rating (vino-db-get-rating (vulpea-note-id note))))
+           (let ((rating (vino-rating-get-by-id note)))
              (insert
               "["
               (vino-rating-date rating)

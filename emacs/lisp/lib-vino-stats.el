@@ -345,7 +345,7 @@ Result is a plist (:range :size :ratings-tbl :entries-tbl :countries-tbl)"
                       (emacsql-with-transaction (org-roam-db)
                         (seq-each
                          (lambda (id)
-                           (puthash id (vino-db-get-rating id) tbl))
+                           (puthash id (vino-rating-get-by-id id) tbl))
                          ratings))
                       tbl))
        (entries-tbl (let ((tbl (make-hash-table
@@ -355,7 +355,7 @@ Result is a plist (:range :size :ratings-tbl :entries-tbl :countries-tbl)"
                         (maphash
                          (lambda (_ rating)
                            (let ((id (vulpea-note-id (vino-rating-wine rating))))
-                             (puthash id (vino-db-get-entry id) tbl)))
+                             (puthash id (vino-entry-get-by-id id) tbl)))
                          ratings-tbl))
                       tbl))
        (countries-tbl (vino-stats-country-tbl)))
