@@ -406,6 +406,17 @@ is ignored. Any buffer modification is saved."
     (org-persist-gc)
     (org-persist-write-all)
 
+    ;; migration
+    (vulpea-db-process-notes
+     :filter-fn (lambda (note) (and (= 0 (vulpea-note-level note))
+                                    (not (vulpea-note-tagged-all-p note "barberry/public"))
+                                    (or (vulpea-note-tagged-all-p note "wine" "grape")
+                                        (vulpea-note-tagged-all-p note "wine" "region")
+                                        (vulpea-note-tagged-all-p note "wine" "appellation")
+                                        (vulpea-note-tagged-all-p note "places"))))
+     :process-fn (lambda (_)
+                   (vulpea-buffer-tags-add "barberry/public")))
+
     ;; process missing files
     (--each (org-roam-list-files)
       (unless (vulpea-db-get-by-id (vulpea-db-get-id-by-file it))
