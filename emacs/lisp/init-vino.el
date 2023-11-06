@@ -60,7 +60,8 @@
   :init
   (with-eval-after-load 'org-roam
     (vino-setup))
-  (add-hook 'vino-entry-create-handle-functions #'vi-acquire)
+  (add-hook 'vino-entry-create-handle-functions #'vino-acquire)
+  (add-hook 'vino-rating-create-handle-functions #'vino-rating-assign-extra-meta)
   (setq-default
    vino-inventory-file (expand-file-name "wine.journal"
                                          vulpea-directory)

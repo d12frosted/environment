@@ -495,7 +495,7 @@ Whatever that means."
   (inventory-sources vino-inventory-file))
 
 ;;;###autoload
-(defun vino-rating--read-meta (wine)
+(defun vino-rating-assign-extra-meta (wine)
   "Read extra meta for WINE."
   (let ((location (vulpea-select "Location" :require-match t)))
     (if (vulpea-note-tagged-all-p location "wine" "event")
