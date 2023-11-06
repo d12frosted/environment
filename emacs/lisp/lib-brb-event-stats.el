@@ -48,6 +48,7 @@
    :events-filter (lambda (it) (not (vulpea-note-tagged-any-p it "external")))
    :include-gain t))
 
+;;;###autoload
 (defun brb-event-stats-external (&optional frame)
   "Display external events stats for a time FRAME."
   (interactive)
@@ -56,6 +57,7 @@
    :buffer-name "*brb-stats-external*"
    :events-filter (lambda (it) (vulpea-note-tagged-any-p it "external"))))
 
+;;;###autoload
 (defun brb-event-stats-vova (&optional frame)
   "Display Vova's events stats for a time FRAME."
   (interactive)
