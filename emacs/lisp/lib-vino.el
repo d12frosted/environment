@@ -636,5 +636,28 @@ represented as association list."
                 (message "- %s" (vulpea-note-title it)))
               (user-error "Found duplicate, see messages buffer for more information")))))))))
 
+
+
+;;;###autoload
+(defun vino-attach-image ()
+  "Attach currently viewed image to corresponding vino note."
+  (interactive)
+  (cond
+   ((eq major-mode 'org-mode) (org-open-file (org-attach-dir-get-create)))
+   ((eq major-mode 'image-mode)
+    (unless (s-prefix-p org-attach-id-dir buffer-file-name)
+      (user-error "Seems like this image is not an attachment of some vulpea note"))
+    (let* ((parts (s-split "/" (s-chop-prefix org-attach-id-dir buffer-file-name)))
+           (id (concat (nth 0 parts) (nth 1 parts)))
+           (note (vulpea-db-get-by-id id)))
+      (unless note
+        (user-error "Could not find note with id %s" id))
+      (vulpea-utils-with-note note
+        (vulpea-buffer-meta-set "images"  (concat "[[attachment:" (nth 2 parts) "]]") 'append)
+        (save-buffer))
+      (vulpea-visit note)
+      note))
+   (t (user-error "Not sure how to help you in %s" major-mode))))
+
 (provide 'lib-vino)
 ;;; lib-vino.el ends here
