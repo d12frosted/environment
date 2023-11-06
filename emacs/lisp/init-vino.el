@@ -158,17 +158,6 @@
          ("good wine, will drink it again with pleasure" . 2)
          ("average wine, only with parents" . 1)
          ("bad wine, only for enemies" . 0))))))
-   vino-rating-extra-meta (list
-                           (list
-                            :name "location"
-                            :read-fn #'vino-select-location
-                            :mode 'single
-                            :type 'note)
-                           (list
-                            :name "convive"
-                            :read-fn #'vino-select-convive
-                            :mode 'multiple
-                            :type 'note))
    brb-ledger-file (expand-file-name "barberry-garden.journal"
                                      vulpea-directory)))
 
