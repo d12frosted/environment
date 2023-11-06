@@ -133,18 +133,22 @@ list of prices (from the first to the last wine)."
 (defun brb-event-participants (event)
   "Return list of participants from EVENT."
   (vulpea-utils-with-note event
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward (format org-complex-heading-regexp-format (regexp-quote "Preparation")))
-      (search-forward "1. ")
-      (beginning-of-line)
-      (->> (org-ml-parse-element-at (point))
-           (org-ml-get-children)
-           (-map #'org-ml-item-get-paragraph)
-           (-map #'car)
-           (--map (org-ml-get-property :path it))
-           (vulpea-db-query-by-ids)
-           (--remove (vulpea-note-primary-title it))))))
+    (brb-event--participants)))
+
+(defun brb-event--participants ()
+  "Return list of participants from the currently visited event."
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward (format org-complex-heading-regexp-format (regexp-quote "Preparation")))
+    (search-forward "1. ")
+    (beginning-of-line)
+    (->> (org-ml-parse-element-at (point))
+         (org-ml-get-children)
+         (-map #'org-ml-item-get-paragraph)
+         (-map #'car)
+         (--map (org-ml-get-property :path it))
+         (vulpea-db-query-by-ids)
+         (--remove (vulpea-note-primary-title it)))))
 
 
 
@@ -261,6 +265,88 @@ list of prices (from the first to the last wine)."
            (funcall-interactively #'org-babel-execute-src-block)))))
     (save-buffer)
     (kill-buffer)))
+
+
+
+
+
+;;;###autoload
+(defun brb-event-insert-participant-link ()
+  "Select a participant and insert link to it.
+
+Uses public name as description."
+  (interactive)
+  (let ((note (vulpea-select-from
+               "Participant"
+               (vulpea-db-query-by-tags-every '("people"))
+               :require-match t)))
+    (insert (org-link-make-string
+             (concat "id:" (vulpea-note-id note))
+             (vulpea-note-meta-get note "public name")))))
+
+;;;###autoload
+(defun brb-event-add-participant ()
+  "Select and add a participant to event."
+  (interactive)
+  (let ((note (vulpea-select-from
+               "Participant"
+               (vulpea-db-query-by-tags-every '("people"))
+               :require-match t)))
+    ;; insert to the list of participants
+    (brb-event-add-participant--to-list note)
+    ;; add to the table
+    (brb-event-add-participant--to-data note)))
+
+(defun brb-event-add-participant--to-list (participant)
+  "Add PARTICIPANT to the currently visited event.
+
+Noop in case the participant is already part of the list."
+  (unless (--find
+           (string-equal (vulpea-note-id it)
+                         (vulpea-note-id participant))
+           (brb-event--participants))
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward (format org-complex-heading-regexp-format (regexp-quote "Preparation")))
+      (search-forward "1. ")
+      (beginning-of-line)
+      (goto-char (org-element-property :contents-end (org-element-at-point)))
+      (insert "1. "
+              (org-link-make-string
+               (concat "id:" (vulpea-note-id participant))
+               (vulpea-note-title participant)))
+      (beginning-of-line)
+      (funcall-interactively #'org-ctrl-c-ctrl-c)
+      (end-of-line)
+      (insert "\n"))))
+
+(defun brb-event-add-participant--to-data (participant)
+  "Add PARTICIPANT to the currently visited event.
+
+Noop in case the participant is already part of the list."
+  (save-excursion
+    (goto-char (point-min))
+    (search-forward "#+name: data")
+    (let ((end (org-element-property :contents-end (org-element-at-point))))
+      (unless (save-excursion
+                (search-forward (vulpea-note-id participant) end 'no-error))
+        (goto-char end)
+        (forward-line -1)
+        (let ((end (point)))
+          (search-backward "|-")
+          (copy-region-as-kill (point) end)
+          (yank))
+        (search-backward "|-")
+        (forward-line 1)
+        (let ((x (+ (point) 2)))
+          (goto-char x)
+          (search-forward "|")
+          (delete-region x (- (point) 2))
+          (goto-char x)
+          (insert (org-link-make-string
+                   (concat "id:" (vulpea-note-id participant))
+                   (vulpea-note-meta-get participant "public name")))
+          (funcall-interactively #'org-ctrl-c-ctrl-c))))))
 
 
 
