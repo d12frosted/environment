@@ -480,6 +480,29 @@ Whatever that means."
                (y-or-n-p "Rate? "))
       (vino-entry-rate note date))))
 
+(defun vino-inv-ui-print-info ()
+  "Display print info for bottle at point."
+  (interactive)
+  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
+         (bottle (vino-inv-get-bottle bottle-id))
+         (buffer (get-buffer-create "*vino inventory print info*")))
+    (with-current-buffer buffer
+      (delete-region (point-min) (point-max))
+      (insert
+       "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine bottle)) "\n"
+       "#" (number-to-string (vino-inv-bottle-id bottle)) "\n"
+       (vino-inv-bottle-purchase-date bottle)
+       "\n"))
+    (display-buffer buffer)))
+
+(defun vino-inv-ui-kill-url ()
+  "Put URL to the bottle at point into `kill-ring'."
+  (interactive)
+  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
+         (bottle (vino-inv-get-bottle bottle-id))
+         (url (concat "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine bottle)))))
+    (kill-new url)))
+
 ;;;###autoload
 (defun vino-sources (_)
   "Get the list of vino sources."

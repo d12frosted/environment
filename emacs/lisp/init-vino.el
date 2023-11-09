@@ -58,6 +58,10 @@
     "va" '(vino-acquire :which-key "acquire vino")
     "vc" '(vino-consume :which-key "consume vino")
     "vr" '(vino-entry-rate :which-key "rate vino"))
+  (general-define-key
+   :keymaps 'vino-inv-ui-mode-map
+   "p" '(vino-inv-ui-print-info :which-key "display print info")
+   "cu" '(vino-inv-ui-kill-url :which-key "copy link to the wine"))
   :init
   (with-eval-after-load 'org-roam
     (vino-setup))
