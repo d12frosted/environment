@@ -37,6 +37,7 @@
 (require 'lib-inventory)
 (require 'lib-buffer)
 (require 'vino)
+(require 'vino-inv)
 (require 'request)
 (require 'request-deferred)
 (require 'lib-vi)
@@ -48,24 +49,14 @@
 (defun vino-availability-get (id)
   "Get availability info for `vino-entry' with ID."
   (cons
-   (vi-total-in id)
-   (vi-total-out id)))
-
-;;;###autoload
-(defun vino-availability-add (id amount source date)
-  "Add AMOUNT of `vino-entry' with ID from SOURCE on DATE."
-  (inventory-add vino-inventory-file id amount source date))
-
-;;;###autoload
-(defun vino-availability-sub (id amount action date)
-  "Subtrack AMOUNT of `vino-entry' with ID by ACTION on DATE."
-  (inventory-sub vino-inventory-file id amount action date))
+   (vino-inv-count-purchased-bottles-for id)
+   (vino-inv-count-consumed-bottles-for id)))
 
 ;;;###autoload
 (defun vino-entry-find-file-available ()
   "Select and visit available `vino-entry'."
   (interactive)
-  (let* ((available (vi-available-wines))
+  (let* ((available (vino-inv-query-available-wines))
          (res (vulpea-select-from "Wine" available)))
     (if (vulpea-note-id res)
         (find-file (vulpea-note-path res))
@@ -396,18 +387,18 @@ Whatever that means."
   (let* ((note (or note (vino-entry-note-get-dwim)))
 
          ;; source
-         (sources (vi-sources-all))
-         (source (completing-read "Source: " (-map #'vi-source-name sources)))
-         (source-id (vi-source-id
-                     (if-let ((s (--find (string-equal (vi-source-name it) source) sources)))
-                         s (vi-sources-add source))))
+         (sources (vino-inv-query-sources))
+         (source (completing-read "Source: " (-map #'vino-inv-source-name sources)))
+         (source-id (vino-inv-source-id
+                     (if-let ((s (--find (string-equal (vino-inv-source-name it) source) sources)))
+                         s (vino-inv-add-source source))))
 
          ;; location
-         (locations (vi-locations-all))
-         (location (completing-read "Initial location: " (-map #'vi-location-name locations)))
-         (location-id (vi-location-id
-                       (if-let ((s (--find (string-equal (vi-location-name it) location) locations)))
-                           s (vi-locations-add location))))
+         (locations (vino-inv-query-locations))
+         (location (completing-read "Initial location: " (-map #'vino-inv-location-name locations)))
+         (location-id (vino-inv-location-id
+                       (if-let ((s (--find (string-equal (vino-inv-location-name it) location) locations)))
+                           s (vino-inv-add-location location))))
 
 
          ;; price
@@ -444,7 +435,7 @@ Whatever that means."
        'append))
 
     (--each (-iota amount)
-      (vi-bottle-purchase
+      (vino-inv-add-bottle
        :wine-id (vulpea-note-id note)
        :volume volume
        :date date
@@ -459,31 +450,31 @@ Whatever that means."
   "Consume wine represented as NOTE."
   (interactive)
   (let* ((note (or note (vino-entry-note-get-dwim)))
-         (bottles (vi-available-bottles-for (vulpea-note-id note)))
+         (bottles (vino-inv-query-available-bottles-for (vulpea-note-id note)))
          (_ (unless bottles (user-error "There are no bottles to consume")))
          (bottle (completing-read
                   "Bottle: "
                   (--map
                    (concat
-                    (propertize (concat (number-to-string (assoc-default 'bottle-id it)) " ")
+                    (propertize (concat (number-to-string (vino-inv-bottle-id it)) " ")
                                 'invisible t)
-                    (propertize (concat "#" (number-to-string (assoc-default 'bottle-id it)))
+                    (propertize (concat "#" (number-to-string (vino-inv-bottle-id it)))
                                 'face 'barberry-theme-face-salient)
                     (propertize " [" 'face 'barberry-theme-face-faded)
-                    (assoc-default 'purchase-date it)
+                    (vino-inv-bottle-purchase-date it)
                     (propertize "] @" 'face 'barberry-theme-face-faded)
-                    (assoc-default 'location it)
+                    (vino-inv-location-name (vino-inv-bottle-location it))
                     (propertize " - " 'face 'barberry-theme-face-faded)
-                    (assoc-default 'price it)
+                    (vino-inv-bottle-price it)
                     (propertize " from " 'face 'barberry-theme-face-faded)
-                    (assoc-default 'source it))
+                    (vino-inv-source-name (vino-inv-bottle-source it)))
                    bottles)
                   nil t))
          ;; we use invisible part as a hack
          (bottle-id (string-to-number bottle))
          (action (read-string "Action: " "consume"))
-         (date (format-time-string "%Y-%m-%d" (org-read-date nil t))))
-    (vi-bottle-consume :bottle-id bottle-id :date date)
+         (date (org-read-date nil t)))
+    (vino-inv-consume-bottle :bottle-id bottle-id :date (format-time-string "%Y-%m-%d" date))
     (vino-entry-update-availability note)
     (when (and (string-equal action "consume")
                (y-or-n-p "Rate? "))

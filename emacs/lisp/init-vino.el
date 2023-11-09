@@ -66,8 +66,6 @@
    vino-inventory-file (expand-file-name "wine.journal"
                                          vulpea-directory)
    vino-availability-fn #'vino-availability-get
-   vino-availability-add-fn #'vino-availability-add
-   vino-availability-sub-fn #'vino-availability-sub
    vino-producer-template '(:file-name "wine/producer/%<%Y%m%d%H%M%S>-${slug}.org"
                             :tags ("barberry/public"))
    vino-entry-template '(:file-name "wine/cellar/${id}.org"
