@@ -47,6 +47,7 @@
     "vld" '(brb-ledger-display :which "deposit")
     "vls" '(brb-ledger-display :which "spend")
     "vv" '(vino-entry-find-file :which-key "find vino")
+    "vi" '(vino-entry-insert :which-key "find vino")
     "vf" '(nil :which-key "find...")
     "vfa" '(vino-entry-find-file-available
             :which-key "available vino")
