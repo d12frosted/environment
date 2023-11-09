@@ -486,26 +486,34 @@ Whatever that means."
   (inventory-sources vino-inventory-file))
 
 ;;;###autoload
-(defun vino-rating-assign-extra-meta (wine)
-  "Read extra meta for WINE."
-  (let ((location (vulpea-select "Location" :require-match t)))
+(defun vino-rating-assign-extra-meta (rating)
+  "Assign extra meta for RATING note."
+  (let ((wine (vulpea-note-meta-get rating "wine" 'note))
+        (location (vulpea-select-from "Location"
+                                      (vulpea-db-query-by-tags-some '("place" "people" "event"))
+                                      :require-match t)))
     (if (vulpea-note-tagged-all-p location "wine" "event")
-        (list (cons "location" (or (vulpea-note-meta-get location "location" 'note)
-                                   location))
-              (cons "event" location)
-              (cons "order"
-                    (->> (brb-event-wines location)
-                         (--map-indexed (cons it-index it))
-                         (--find (string-equal (vulpea-note-id wine)
-                                               (vulpea-note-id (cdr it))))
-                         (car)
-                         (+ 1)))
-              (cons "convive" (--remove (string-equal brb-event-narrator-id (vulpea-note-id it))
-                                        (brb-event-participants location))))
-      (list
-       (cons "location" (list location))
-       (cons "convive" (let ((people (vulpea-db-query-by-tags-every '("people"))))
-                         (vulpea-utils-collect-while #'vulpea-select-from nil "Convive" people)))))))
+        (vulpea-utils-with-note rating
+          (vulpea-buffer-meta-set "location" (or (vulpea-note-meta-get location "location" 'note) location) 'append)
+          (vulpea-buffer-meta-set "event" location 'append)
+          (vulpea-buffer-meta-set "order"
+                                  (->> (brb-event-wines location)
+                                       (--map-indexed (cons it-index it))
+                                       (--find (string-equal (vulpea-note-id wine)
+                                                             (vulpea-note-id (cdr it))))
+                                       (car)
+                                       (+ 1))
+                                  'append)
+          (vulpea-buffer-meta-set "convive"
+                                  (--remove (string-equal brb-event-narrator-id (vulpea-note-id it))
+                                            (brb-event-participants location))
+                                  'append))
+      (vulpea-utils-with-note rating
+        (vulpea-buffer-meta-set "location" location 'append)
+        (vulpea-buffer-meta-set "convive"
+                                (let ((people (vulpea-db-query-by-tags-every '("people"))))
+                                  (vulpea-utils-collect-while #'vulpea-select-from nil "Convive" people))
+                                'append)))))
 
 ;;;###autoload
 (defun vino-list-entries-without-image ()
