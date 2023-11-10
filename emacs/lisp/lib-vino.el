@@ -584,10 +584,10 @@ EXTRA-DATA contains bottle-id."
     (when (vulpea-note-tagged-all-p location "wine" "event" "barberry/public")
       (let* ((date (vulpea-note-meta-get rating "date"))
              (price (vino-inv-bottle-price bottle))
-             (cond
-              ((s-suffix-p brb-currency price) (string-to-number price))
-              ((= 0 (string-to-number price)) 0)
-              (t (read-number (format "Convert %s to UAH: " price)))))
+             (price (cond
+                     ((s-suffix-p brb-currency price) (string-to-number price))
+                     ((= 0 (string-to-number price)) 0)
+                     (t (read-number (format "Convert %s to UAH: " price))))))
         (brb-ledger-record-txn
          :date (date-to-time date)
          :comment (concat "[" (vulpea-note-id wine) "]")
