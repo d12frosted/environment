@@ -449,12 +449,13 @@ Whatever that means."
        :location-id location-id
        :source-id source-id)
 
-      (brb-ledger-record-txn
-       :date (date-to-time date)
-       :comment (concat "[" (vulpea-note-id note) "]")
-       :account-to "spending:wines"
-       :account-from "personal:account"
-       :amount price-uah))
+      (unless (= 0 price-uah)
+        (brb-ledger-record-txn
+         :date (date-to-time date)
+         :comment (concat "[" (vulpea-note-id note) "]")
+         :account-to "spending:wines"
+         :account-from "personal:account"
+         :amount price-uah)))
 
     (vino-entry-update-availability note)
 
