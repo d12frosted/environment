@@ -49,8 +49,7 @@
     "vv" '(vino-entry-find-file :which-key "find vino")
     "vi" '(vino-entry-insert :which-key "find vino")
     "vf" '(nil :which-key "find...")
-    "vfa" '(vino-entry-find-file-available
-            :which-key "available vino")
+    "vfa" '(vino-entry-find-file-available :which-key "available vino")
     "vfg" '(vino-grape-find-file :which-key "grape")
     "vfp" '(vino-producer-find-file :which-key "producer")
     "vfr" '(vino-region-find-file :which-key "region")
@@ -66,13 +65,11 @@
    "ci" '(vino-inv-ui-kill-wine-id :which-key "copy id of the wine"))
   :init
   (with-eval-after-load 'org-roam
-    (vino-setup))
+    (vino-setup)
+    (vino-inv-setup))
   (add-hook 'vino-entry-create-handle-functions #'vino-acquire)
   (add-hook 'vino-rating-create-handle-functions #'vino-rating-assign-extra-meta)
   (setq-default
-   vino-inventory-file (expand-file-name "wine.journal"
-                                         vulpea-directory)
-   vino-availability-fn #'vino-availability-get
    vino-producer-template '(:file-name "wine/producer/%<%Y%m%d%H%M%S>-${slug}.org"
                             :tags ("barberry/public"))
    vino-entry-template '(:file-name "wine/cellar/${id}.org"

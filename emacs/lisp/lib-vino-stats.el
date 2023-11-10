@@ -52,7 +52,6 @@
 (require 'lib-buffer)
 (require 'lib-string)
 (require 'lib-vulpea)
-(require 'lib-inventory)
 (require 'lib-table)
 (require 'lib-brb)
 (require 'lib-calc)
@@ -532,10 +531,7 @@ KEY is one of: country, colour, carbonation, vintage, grape."
        :sep " : "
        :pad-type '(right left)
        :data
-       (list (list "Wines consumed" (inventory-total-consumed
-                                     vino-inventory-file
-                                     (nth 0 range)
-                                     (nth 1 range)))
+       (list (list "Wines consumed" 0)
              (list "Wines rated" (seq-length (hash-table-keys entries-tbl)))
              (list "Ratings" (seq-length (hash-table-keys ratings-tbl)))
              (list "Countries" (seq-length countries-stat))

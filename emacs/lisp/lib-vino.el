@@ -40,17 +40,9 @@
 (require 'vino-inv)
 (require 'request)
 (require 'request-deferred)
-(require 'lib-vi)
 
 (defvar vino-inventory-file nil
   "Path to journal file.")
-
-;;;###autoload
-(defun vino-availability-get (id)
-  "Get availability info for `vino-entry' with ID."
-  (cons
-   (vino-inv-count-purchased-bottles-for id)
-   (vino-inv-count-consumed-bottles-for id)))
 
 ;;;###autoload
 (defun vino-entry-find-file-available ()
@@ -457,7 +449,7 @@ Whatever that means."
          :account-from "personal:account"
          :amount price-uah)))
 
-    (vino-entry-update-availability note)
+    (vino-inv-update-availability note)
 
     (when (get-buffer brb-ledger-buffer-name)
       (brb-ledger-buffer-create))))
@@ -491,7 +483,7 @@ Whatever that means."
          (action (read-string "Action: " "consume"))
          (date (org-read-date nil t)))
     (vino-inv-consume-bottle :bottle-id bottle-id :date (format-time-string "%Y-%m-%d" date))
-    (vino-entry-update-availability note)
+    (vino-inv-update-availability note)
     (when (and (string-equal action "consume")
                (y-or-n-p "Rate? "))
       (vino-entry-rate note date `((bottle-id . ,bottle-id))))))
