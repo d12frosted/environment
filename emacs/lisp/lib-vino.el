@@ -494,7 +494,7 @@ Whatever that means."
     (vino-entry-update-availability note)
     (when (and (string-equal action "consume")
                (y-or-n-p "Rate? "))
-      (vino-entry-rate note date))))
+      (vino-entry-rate note date `((bottle-id . ,bottle-id))))))
 
 (defun vino-inv-ui-print-info ()
   "Display print info for bottle at point."
@@ -552,12 +552,19 @@ Whatever that means."
   (inventory-sources vino-inventory-file))
 
 ;;;###autoload
-(defun vino-rating-assign-extra-meta (rating)
-  "Assign extra meta for RATING note."
-  (let ((wine (vulpea-note-meta-get rating "wine" 'note))
-        (location (vulpea-select-from "Location"
-                                      (vulpea-db-query-by-tags-some '("place" "people" "event"))
-                                      :require-match t)))
+(defun vino-rating-assign-extra-meta (rating extra-data)
+  "Assign extra meta for RATING note.
+
+EXTRA-DATA contains bottle-id."
+  (let* ((wine (vulpea-note-meta-get rating "wine" 'note))
+         (bottle-id (assoc-default 'bottle-id extra-data))
+         (bottle (vino-inv-get-bottle bottle-id))
+         (location (vulpea-select-from "Location"
+                                       (vulpea-db-query-by-tags-some '("place" "people" "event"))
+                                       :require-match t)))
+    (vulpea-utils-with-note rating
+      (vulpea-buffer-meta-set "bottle" bottle-id 'append)
+      (vulpea-buffer-meta-set "volume" (vino-inv-bottle-volume bottle) 'append))
     (if (vulpea-note-tagged-all-p location "wine" "event")
         (vulpea-utils-with-note rating
           (vulpea-buffer-meta-set "location" (or (vulpea-note-meta-get location "location" 'note) location) 'append)
