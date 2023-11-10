@@ -34,7 +34,6 @@
 ;;
 ;;; Code:
 
-(require 'lib-inventory)
 (require 'lib-buffer)
 (require 'vino)
 (require 'vino-inv)
