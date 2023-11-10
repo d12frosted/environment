@@ -82,7 +82,6 @@
                                :tags ("barberry/public"))
    vino-grape-template '(:file-name "wine/grape/%<%Y%m%d%H%M%S>-${slug}.org"
                          :tags ("barberry/public"))
-   vino-sources-fn #'vino-sources
    vino-rating-props
    '((1 . (("SCORE" . 3)))
      (2 . (("AROMA_QUALITY" . 3)
