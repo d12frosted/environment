@@ -408,12 +408,14 @@ Whatever that means."
          (price (if prices
                     (completing-read "Price: " prices)
                   (read-string "Price: ")))
-         (price-usd (if (s-suffix-p "USD" price)
-                        price
-                      (format "%.2f USD" (read-number (format "Convert %s to USD: " price)))))
-         (price-uah (if (s-suffix-p brb-currency price)
-                        (string-to-number price)
-                      (read-number (format "Convert %s to UAH: " price))))
+         (price-usd (cond
+                     ((s-suffix-p "USD" price) price)
+                     ((= 0 (string-to-number price)) "0 USD")
+                     (t (format "%.2f USD" (read-number (format "Convert %s to USD: " price))))))
+         (price-uah (cond
+                     ((s-suffix-p brb-currency price) price)
+                     ((= 0 (string-to-number price)) "0 UAH")
+                     (t (read-number (format "Convert %s to UAH: " price)))))
          (price-add-as (cond
                         ((seq-contains-p prices-public price) nil)
                         ((seq-contains-p prices-private price) nil)
