@@ -49,13 +49,13 @@
     "vv" '(vino-entry-find-file :which-key "find vino")
     "vi" '(vino-entry-insert :which-key "find vino")
     "vf" '(nil :which-key "find...")
-    "vfa" '(vino-entry-find-file-available :which-key "available vino")
+    "vfa" '(vino-inv-find-file-available :which-key "available vino")
     "vfg" '(vino-grape-find-file :which-key "grape")
     "vfp" '(vino-producer-find-file :which-key "producer")
     "vfr" '(vino-region-find-file :which-key "region")
     "vn" '(vino-entry-create :which-key "create vino")
-    "va" '(vino-acquire :which-key "acquire vino")
-    "vc" '(vino-consume :which-key "consume vino")
+    "va" '(vino-inv-acquire :which-key "acquire vino")
+    "vc" '(vino-inv-consume :which-key "consume vino")
     "vr" '(vino-entry-rate :which-key "rate vino"))
   (general-define-key
    :keymaps 'vino-inv-ui-mode-map
@@ -69,6 +69,7 @@
     (vino-inv-setup))
   (add-hook 'vino-entry-create-handle-functions #'vino-acquire)
   (add-hook 'vino-rating-create-handle-functions #'vino-rating-assign-extra-meta)
+  (add-hook 'vino-inv-acquire-handle-functions #'vino-inv-acquire-bottle-handler)
   (setq-default
    vino-producer-template '(:file-name "wine/producer/%<%Y%m%d%H%M%S>-${slug}.org"
                             :tags ("barberry/public"))

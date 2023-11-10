@@ -40,20 +40,130 @@
 (require 'request)
 (require 'request-deferred)
 
-(defvar vino-inventory-file nil
-  "Path to journal file.")
+;; * vino hooks
 
 ;;;###autoload
-(defun vino-entry-find-file-available ()
-  "Select and visit available `vino-entry'."
+(defun vino-rating-assign-extra-meta (rating extra-data)
+  "Assign extra meta for RATING note.
+
+EXTRA-DATA contains bottle-id."
+  (let* ((wine (vulpea-note-meta-get rating "wine" 'note))
+         (bottle-id (assoc-default 'bottle-id extra-data))
+         (bottle (vino-inv-get-bottle bottle-id))
+         (location (vulpea-select-from "Location"
+                                       (vulpea-db-query-by-tags-some '("place" "people" "event"))
+                                       :require-match t)))
+    (vulpea-utils-with-note rating
+      (vulpea-buffer-meta-set "bottle" bottle-id 'append)
+      (vulpea-buffer-meta-set "volume" (vino-inv-bottle-volume bottle) 'append))
+    (if (vulpea-note-tagged-all-p location "wine" "event")
+        (vulpea-utils-with-note rating
+          (vulpea-buffer-meta-set "location" (or (vulpea-note-meta-get location "location" 'note) location) 'append)
+          (vulpea-buffer-meta-set "event" location 'append)
+          (vulpea-buffer-meta-set "order"
+                                  (->> (brb-event-wines location)
+                                       (--map-indexed (cons it-index it))
+                                       (--find (string-equal (vulpea-note-id wine)
+                                                             (vulpea-note-id (cdr it))))
+                                       (car)
+                                       (+ 1))
+                                  'append)
+          (vulpea-buffer-meta-set "convive"
+                                  (--remove (string-equal brb-event-narrator-id (vulpea-note-id it))
+                                            (brb-event-participants location))
+                                  'append))
+      (vulpea-utils-with-note rating
+        (vulpea-buffer-meta-set "location" location 'append)
+        (vulpea-buffer-meta-set "convive"
+                                (let ((people (vulpea-db-query-by-tags-every '("people"))))
+                                  (vulpea-utils-collect-while #'vulpea-select-from nil "Convive" people))
+                                'append)))
+
+    ;; record transfer between personal and brb accounts
+    (when (vulpea-note-tagged-all-p location "wine" "event" "barberry/public")
+      (let* ((date (vulpea-note-meta-get rating "date"))
+             (price (vino-inv-bottle-price bottle))
+             (price (cond
+                     ((s-suffix-p brb-currency price) (string-to-number price))
+                     ((= 0 (string-to-number price)) 0)
+                     (t (read-number (format "Convert %s to UAH: " price))))))
+        (brb-ledger-record-txn
+         :date (date-to-time date)
+         :comment (concat "[" (vulpea-note-id wine) "]")
+         :account-to "personal:account"
+         :account-from "income:barberry-garden"
+         :amount price)))))
+
+;; * vino-inv hooks
+
+(defun vino-inv-acquire-bottle-handler (bottle wine)
+  "Handle WINE BOTTLE acquire event."
+  (let* ((price (vino-inv-bottle-price bottle))
+         (price (cond
+                 ((s-suffix-p brb-currency price) price)
+                 ((= 0 (string-to-number price)) "0 UAH")
+                 (t (read-number (format "Convert %s to UAH: " price))))))
+    (unless (= 0 price)
+      (brb-ledger-record-txn
+       :date (date-to-time (vino-inv-bottle-purchase-date bottle))
+       :comment (concat "[" (vulpea-note-id wine) "]")
+       :account-to "spending:wines"
+       :account-from "personal:account"
+       :amount price))))
+
+;; * vino-inv extensions
+
+(defun vino-inv-ui-print-info ()
+  "Display print info for bottle at point."
   (interactive)
-  (let* ((available (vino-inv-query-available-wines))
-         (res (vulpea-select-from "Wine" available)))
-    (if (vulpea-note-id res)
-        (find-file (vulpea-note-path res))
-      (user-error
-       "Can not visit vino entry that does not exist: %s"
-       (vulpea-note-title res)))))
+  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
+         (bottle (vino-inv-get-bottle bottle-id))
+         (buffer (get-buffer-create "*vino inventory print info*")))
+    (with-current-buffer buffer
+      (delete-region (point-min) (point-max))
+      (insert
+       "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine bottle)) "\n"
+       "#" (number-to-string (vino-inv-bottle-id bottle)) "\n"
+       (vino-inv-bottle-purchase-date bottle)
+       "\n"))
+    (display-buffer buffer)))
+
+(defun vino-inv-ui-kill-url ()
+  "Put URL to the bottle at point into `kill-ring'."
+  (interactive)
+  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
+         (bottle (vino-inv-get-bottle bottle-id))
+         (url (concat "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine bottle)))))
+    (kill-new url)))
+
+(defun vino-inv-ui-kill-wine-id ()
+  "Put ID of the wine at point into `kill-ring'."
+  (interactive)
+  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
+         (bottle (vino-inv-get-bottle bottle-id)))
+    (kill-new (vulpea-note-id (vino-inv-bottle-wine bottle)))))
+
+(defun vino-inv-ui-record-spending ()
+  "Record spending of the wine at point."
+  (interactive)
+  (when (y-or-n-p "Record? ")
+    (let* ((bottle-id (vino-inv-ui-get-bottle-id))
+           (bottle (vino-inv-get-bottle bottle-id))
+           (date (vino-inv-bottle-purchase-date bottle))
+           (price (vino-inv-bottle-price bottle))
+           (price (if (s-suffix-p brb-currency price)
+                      (string-to-number price)
+                    (read-number (format "Convert %s to UAH: " price)))))
+      (brb-ledger-record-txn
+       :date (date-to-time date)
+       :comment (concat "[" (vulpea-note-id (vino-inv-bottle-wine bottle)) "]")
+       :account-to "spending:wines"
+       :account-from "personal:account"
+       :amount price)
+      (when (get-buffer brb-ledger-buffer-name)
+        (brb-ledger-buffer-create)))))
+
+;; * network posting
 
 ;;;###autoload
 (defun vino-rating-mark-network-action (button)
@@ -195,288 +305,7 @@ BUTTON should be a proper button with following properties:
         (goto-char (point-min))))
     (switch-to-buffer buffer)))
 
-;;;###autoload
-(defun vino-display-incomplete-ratings ()
-  "Display a buffer listing incomplete rating notes.
-
-Whatever that means."
-  (interactive)
-  (let* ((name "*vino-incomplete*")
-         (buffer (buffer-generate name 'unique))
-         (props '("convive" "location"))
-         (limit 100)
-         (notes (vulpea-db-query
-                 (lambda (note)
-                   (let ((tags (vulpea-note-tags note))
-                         (vs (seq-map (lambda (p)
-                                        (vulpea-note-meta-get note p))
-                                      props)))
-                     (and
-                      (seq-contains-p tags "wine")
-                      (seq-contains-p tags "rating")
-                      (seq-some #'null vs))))))
-         (notes (seq-sort-by (lambda (note)
-                               (vulpea-note-meta-get note "date"))
-                             #'string>
-                             notes))
-         (notes (seq-take notes limit)))
-    (emacsql-with-transaction (org-roam-db)
-      (with-current-buffer buffer
-        (seq-do
-         (lambda (note)
-           (let ((rating (vino-rating-get-by-id note)))
-             (insert
-              "["
-              (vino-rating-date rating)
-              "] "
-              (vulpea-utils-link-make-string note)
-              " - missing "
-              (string-join
-               (seq-filter
-                (lambda (p)
-                  (null (vulpea-note-meta-get note p)))
-                props)
-               ", ")
-              "\n")))
-         notes)
-        (org-mode)
-        (read-only-mode)
-        (goto-char (point-min))))
-    (switch-to-buffer buffer)))
-
-(defun vino-acquire (&optional note)
-  "Acquire wine represented as NOTE."
-  (interactive)
-  (let* ((note (or note (vino-entry-note-get-dwim)))
-
-         ;; source
-         (sources (vino-inv-query-sources))
-         (source (completing-read "Source: " (-map #'vino-inv-source-name sources)))
-         (source-id (vino-inv-source-id
-                     (if-let ((s (--find (string-equal (vino-inv-source-name it) source) sources)))
-                         s (vino-inv-add-source source))))
-
-         ;; location
-         (locations (vino-inv-query-locations))
-         (location (completing-read "Initial location: " (-map #'vino-inv-location-name locations)))
-         (location-id (vino-inv-location-id
-                       (if-let ((s (--find (string-equal (vino-inv-location-name it) location) locations)))
-                           s (vino-inv-add-location location))))
-
-
-         ;; price
-         (prices-public (vulpea-note-meta-get-list note "price"))
-         (prices-private (vulpea-note-meta-get-list note "price private"))
-         (prices (-uniq (-concat prices-public prices-private)))
-         (price (if prices
-                    (completing-read "Price: " prices)
-                  (read-string "Price: ")))
-         (price-usd (cond
-                     ((s-suffix-p "USD" price) price)
-                     ((= 0 (string-to-number price)) "0 USD")
-                     (t (format "%.2f USD" (read-number (format "Convert %s to USD: " price))))))
-         (price-uah (cond
-                     ((s-suffix-p brb-currency price) price)
-                     ((= 0 (string-to-number price)) "0 UAH")
-                     (t (read-number (format "Convert %s to UAH: " price)))))
-         (price-add-as (cond
-                        ((seq-contains-p prices-public price) nil)
-                        ((seq-contains-p prices-private price) nil)
-                        (t (completing-read "Add this price as: "
-                                            '(private public) nil t))))
-
-         ;; etc
-         (amount (read-number "Amount: " 1))
-         (volume (read-number "Volume (ml): " 750))
-         (date (format-time-string "%Y-%m-%d" (org-read-date nil t))))
-
-    ;; add price if needed
-    (when price-add-as
-      (vulpea-meta-set
-       note
-       (pcase price-add-as
-         (`"public" "price")
-         (`"private" "price private"))
-       (cons price (pcase price-add-as
-                     (`"public" prices-public)
-                     (`"private" prices-private)))
-       'append))
-
-    (--each (-iota amount)
-      (vino-inv-add-bottle
-       :wine-id (vulpea-note-id note)
-       :volume volume
-       :date date
-       :price price
-       :price-usd price-usd
-       :location-id location-id
-       :source-id source-id)
-
-      (unless (= 0 price-uah)
-        (brb-ledger-record-txn
-         :date (date-to-time date)
-         :comment (concat "[" (vulpea-note-id note) "]")
-         :account-to "spending:wines"
-         :account-from "personal:account"
-         :amount price-uah)))
-
-    (vino-inv-update-availability note)
-
-    (when (get-buffer brb-ledger-buffer-name)
-      (brb-ledger-buffer-create))))
-
-(defun vino-consume (&optional note)
-  "Consume wine represented as NOTE."
-  (interactive)
-  (let* ((note (or note (vino-entry-note-get-dwim)))
-         (bottles (vino-inv-query-available-bottles-for (vulpea-note-id note)))
-         (_ (unless bottles (user-error "There are no bottles to consume")))
-         (bottle (completing-read
-                  "Bottle: "
-                  (--map
-                   (concat
-                    (propertize (concat (number-to-string (vino-inv-bottle-id it)) " ")
-                                'invisible t)
-                    (propertize (concat "#" (number-to-string (vino-inv-bottle-id it)))
-                                'face 'barberry-theme-face-salient)
-                    (propertize " [" 'face 'barberry-theme-face-faded)
-                    (vino-inv-bottle-purchase-date it)
-                    (propertize "] @" 'face 'barberry-theme-face-faded)
-                    (vino-inv-location-name (vino-inv-bottle-location it))
-                    (propertize " - " 'face 'barberry-theme-face-faded)
-                    (vino-inv-bottle-price it)
-                    (propertize " from " 'face 'barberry-theme-face-faded)
-                    (vino-inv-source-name (vino-inv-bottle-source it)))
-                   bottles)
-                  nil t))
-         ;; we use invisible part as a hack
-         (bottle-id (string-to-number bottle))
-         (action (read-string "Action: " "consume"))
-         (date (org-read-date nil t)))
-    (vino-inv-consume-bottle :bottle-id bottle-id :date (format-time-string "%Y-%m-%d" date))
-    (vino-inv-update-availability note)
-    (when (and (string-equal action "consume")
-               (y-or-n-p "Rate? "))
-      (vino-entry-rate note date `((bottle-id . ,bottle-id))))))
-
-(defun vino-inv-ui-print-info ()
-  "Display print info for bottle at point."
-  (interactive)
-  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
-         (bottle (vino-inv-get-bottle bottle-id))
-         (buffer (get-buffer-create "*vino inventory print info*")))
-    (with-current-buffer buffer
-      (delete-region (point-min) (point-max))
-      (insert
-       "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine bottle)) "\n"
-       "#" (number-to-string (vino-inv-bottle-id bottle)) "\n"
-       (vino-inv-bottle-purchase-date bottle)
-       "\n"))
-    (display-buffer buffer)))
-
-(defun vino-inv-ui-kill-url ()
-  "Put URL to the bottle at point into `kill-ring'."
-  (interactive)
-  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
-         (bottle (vino-inv-get-bottle bottle-id))
-         (url (concat "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine bottle)))))
-    (kill-new url)))
-
-(defun vino-inv-ui-kill-wine-id ()
-  "Put ID of the wine at point into `kill-ring'."
-  (interactive)
-  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
-         (bottle (vino-inv-get-bottle bottle-id)))
-    (kill-new (vulpea-note-id (vino-inv-bottle-wine bottle)))))
-
-(defun vino-inv-ui-record-spending ()
-  "Record spending of the wine at point."
-  (interactive)
-  (when (y-or-n-p "Record? ")
-    (let* ((bottle-id (vino-inv-ui-get-bottle-id))
-           (bottle (vino-inv-get-bottle bottle-id))
-           (date (vino-inv-bottle-purchase-date bottle))
-           (price (vino-inv-bottle-price bottle))
-           (price (if (s-suffix-p brb-currency price)
-                      (string-to-number price)
-                    (read-number (format "Convert %s to UAH: " price)))))
-      (brb-ledger-record-txn
-       :date (date-to-time date)
-       :comment (concat "[" (vulpea-note-id (vino-inv-bottle-wine bottle)) "]")
-       :account-to "spending:wines"
-       :account-from "personal:account"
-       :amount price)
-      (when (get-buffer brb-ledger-buffer-name)
-        (brb-ledger-buffer-create)))))
-
-;;;###autoload
-(defun vino-rating-assign-extra-meta (rating extra-data)
-  "Assign extra meta for RATING note.
-
-EXTRA-DATA contains bottle-id."
-  (let* ((wine (vulpea-note-meta-get rating "wine" 'note))
-         (bottle-id (assoc-default 'bottle-id extra-data))
-         (bottle (vino-inv-get-bottle bottle-id))
-         (location (vulpea-select-from "Location"
-                                       (vulpea-db-query-by-tags-some '("place" "people" "event"))
-                                       :require-match t)))
-    (vulpea-utils-with-note rating
-      (vulpea-buffer-meta-set "bottle" bottle-id 'append)
-      (vulpea-buffer-meta-set "volume" (vino-inv-bottle-volume bottle) 'append))
-    (if (vulpea-note-tagged-all-p location "wine" "event")
-        (vulpea-utils-with-note rating
-          (vulpea-buffer-meta-set "location" (or (vulpea-note-meta-get location "location" 'note) location) 'append)
-          (vulpea-buffer-meta-set "event" location 'append)
-          (vulpea-buffer-meta-set "order"
-                                  (->> (brb-event-wines location)
-                                       (--map-indexed (cons it-index it))
-                                       (--find (string-equal (vulpea-note-id wine)
-                                                             (vulpea-note-id (cdr it))))
-                                       (car)
-                                       (+ 1))
-                                  'append)
-          (vulpea-buffer-meta-set "convive"
-                                  (--remove (string-equal brb-event-narrator-id (vulpea-note-id it))
-                                            (brb-event-participants location))
-                                  'append))
-      (vulpea-utils-with-note rating
-        (vulpea-buffer-meta-set "location" location 'append)
-        (vulpea-buffer-meta-set "convive"
-                                (let ((people (vulpea-db-query-by-tags-every '("people"))))
-                                  (vulpea-utils-collect-while #'vulpea-select-from nil "Convive" people))
-                                'append)))
-
-    ;; record transfer between personal and brb accounts
-    (when (vulpea-note-tagged-all-p location "wine" "event" "barberry/public")
-      (let* ((date (vulpea-note-meta-get rating "date"))
-             (price (vino-inv-bottle-price bottle))
-             (price (cond
-                     ((s-suffix-p brb-currency price) (string-to-number price))
-                     ((= 0 (string-to-number price)) 0)
-                     (t (read-number (format "Convert %s to UAH: " price))))))
-        (brb-ledger-record-txn
-         :date (date-to-time date)
-         :comment (concat "[" (vulpea-note-id wine) "]")
-         :account-to "personal:account"
-         :account-from "income:barberry-garden"
-         :amount price)))))
-
-;;;###autoload
-(defun vino-list-entries-without-image ()
-  "List vino entries without primary image."
-  (interactive)
-  (let ((buffer (buffer-generate "*wines without images*" 'unique)))
-    (with-current-buffer buffer
-      (--each
-          (->> (vulpea-db-query-by-tags-every '("wine" "cellar" "barberry/public"))
-               (--remove (vulpea-note-meta-get-list it "images"))
-               (--remove (eq 'yes (vulpea-note-meta-get it "image missing" 'symbol)))
-               (-map #'vulpea-buttonize))
-        (insert "- " it "\n"))
-      (read-only-mode +1))
-    (switch-to-buffer buffer)))
-
-
+;; * VIVC info
 
 (defun vino-grape-fetch-vivc-info (id)
   "Fetch grape information from VIVC by ID.
@@ -581,7 +410,71 @@ represented as association list."
                 (message "- %s" (vulpea-note-title it)))
               (user-error "Found duplicate, see messages buffer for more information")))))))))
 
-
+;; * incomplete ratings
+
+;;;###autoload
+(defun vino-display-incomplete-ratings ()
+  "Display a buffer listing incomplete rating notes.
+
+Whatever that means."
+  (interactive)
+  (let* ((name "*vino-incomplete*")
+         (buffer (buffer-generate name 'unique))
+         (props '("convive" "location"))
+         (limit 100)
+         (notes (vulpea-db-query
+                 (lambda (note)
+                   (let ((tags (vulpea-note-tags note))
+                         (vs (seq-map (lambda (p)
+                                        (vulpea-note-meta-get note p))
+                                      props)))
+                     (and
+                      (seq-contains-p tags "wine")
+                      (seq-contains-p tags "rating")
+                      (seq-some #'null vs))))))
+         (notes (seq-sort-by (lambda (note)
+                               (vulpea-note-meta-get note "date"))
+                             #'string>
+                             notes))
+         (notes (seq-take notes limit)))
+    (emacsql-with-transaction (org-roam-db)
+      (with-current-buffer buffer
+        (seq-do
+         (lambda (note)
+           (let ((rating (vino-rating-get-by-id note)))
+             (insert
+              "["
+              (vino-rating-date rating)
+              "] "
+              (vulpea-utils-link-make-string note)
+              " - missing "
+              (string-join
+               (seq-filter
+                (lambda (p)
+                  (null (vulpea-note-meta-get note p)))
+                props)
+               ", ")
+              "\n")))
+         notes)
+        (org-mode)
+        (read-only-mode)
+        (goto-char (point-min))))
+    (switch-to-buffer buffer)))
+
+;;;###autoload
+(defun vino-list-entries-without-image ()
+  "List vino entries without primary image."
+  (interactive)
+  (let ((buffer (buffer-generate "*wines without images*" 'unique)))
+    (with-current-buffer buffer
+      (--each
+          (->> (vulpea-db-query-by-tags-every '("wine" "cellar" "barberry/public"))
+               (--remove (vulpea-note-meta-get-list it "images"))
+               (--remove (eq 'yes (vulpea-note-meta-get it "image missing" 'symbol)))
+               (-map #'vulpea-buttonize))
+        (insert "- " it "\n"))
+      (read-only-mode +1))
+    (switch-to-buffer buffer)))
 
 ;;;###autoload
 (defun vino-attach-image ()
