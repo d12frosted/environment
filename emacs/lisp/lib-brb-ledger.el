@@ -211,6 +211,8 @@ CODE can be passed only in non-interactive usage. See
   balances
   postings)
 
+(cl-defstruct brb-ledger-personal-data total postings)
+
 (cl-defstruct brb-ledger-posting
   date
   description
@@ -225,16 +227,13 @@ CODE can be passed only in non-interactive usage. See
 
          (cmd-bal (format "hledger -f '%s' balance '%s'" brb-ledger-file prefix))
          (res-bal (split-string (shell-command-to-string cmd-bal) "\n" t " +"))
-         (balances (seq-remove
-                    (lambda (kvp)
-                      (seq-contains-p ignored (car kvp)))
-                    (seq-map
-                     (lambda (x)
-                       (let ((vs (split-string x prefix t " +")))
-                         (cons
-                          (cadr vs)
-                          (string-to-number (car vs)))))
-                     (-drop-last 2 res-bal))))
+         (balances (->> (-drop-last 2 res-bal)
+                        (--map
+                         (let ((vs (split-string it prefix t " +")))
+                           (cons
+                            (cadr vs)
+                            (string-to-number (car vs)))))
+                        (--remove (seq-contains-p ignored (car it)))))
          (total (string-to-number (-last-item res-bal)))
 
          (cmd-accs (format "hledger -f '%s' accounts '%s'" brb-ledger-file prefix))
@@ -276,11 +275,45 @@ CODE can be passed only in non-interactive usage. See
      :balances balances
      :postings postings)))
 
+(defun brb-ledger-personal-data-read ()
+  "Read personal balance data from `brb-ledger-file'."
+  (let* ((prefix "personal:")
+
+         (cmd-bal (format "hledger -f '%s' balance '%s'" brb-ledger-file prefix))
+         (res-bal (split-string (shell-command-to-string cmd-bal) "\n" t " +"))
+         (total (string-to-number (-last-item res-bal)))
+
+         (cmd-register (format "hledger -f '%s' register -O csv -H '%s'"
+                               brb-ledger-file prefix))
+         (res-register (shell-command-to-string cmd-register))
+         (postings (seq-map
+                    (lambda (line)
+                      (let* ((parts (split-string-and-unquote line ","))
+                             (account (string-remove-prefix prefix (nth 4 parts)))
+                             (account (or (vulpea-db-get-by-id account)
+                                          account))
+                             (description (->> (nth 3 parts)
+                                               (s-chop-prefix "[")
+                                               (s-chop-suffix "]")))
+                             (description (or (vulpea-db-get-by-id description)
+                                              description)))
+                        (make-brb-ledger-posting
+                         :date (nth 1 parts)
+                         :description description
+                         :account account
+                         :amount (string-to-number (nth 5 parts))
+                         :total (string-to-number (nth 6 parts)))))
+                    (cdr (split-string res-register "\n" t)))))
+    (make-brb-ledger-personal-data
+     :total total
+     :postings postings)))
+
 (defun brb-ledger-buffer-create ()
   "Create ledger BUFFER and fill it with relevant information.
 
 Return generated buffer."
   (let ((data (brb-ledger-data-read))
+        (data-personal (brb-ledger-personal-data-read))
         (buffer (or (get-buffer brb-ledger-buffer-name)
                     (buffer-generate brb-ledger-buffer-name 'unique))))
     (with-current-buffer buffer
@@ -293,17 +326,21 @@ Return generated buffer."
                 ""
                 (string-table
                  :data
-                 (cons
-                  (list "Total"
-                        (brb-ledger--format-amount (brb-ledger-data-total data))
-                        (let* ((total (brb-ledger-data-total data))
-                               (uncleared (--reduce-from
-                                           (+ acc
-                                              (or (assoc-default (vulpea-note-id it) (brb-ledger-data-balances data)) 0))
-                                           0
-                                           (brb-ledger-data-convives data)))
-                               (cleared (- total uncleared)))
-                          (concat "(" (brb-ledger--format-amount cleared) ")")))
+                 (-concat
+                  (list
+                   (list "Barberry Garden"
+                         (brb-ledger--format-amount (brb-ledger-data-total data))
+                         (let* ((total (brb-ledger-data-total data))
+                                (uncleared (--reduce-from
+                                            (+ acc
+                                               (or (assoc-default (vulpea-note-id it) (brb-ledger-data-balances data)) 0))
+                                            0
+                                            (brb-ledger-data-convives data)))
+                                (cleared (- total uncleared)))
+                           (concat "(" (brb-ledger--format-amount cleared) ")")))
+                   (list "Personal"
+                         (brb-ledger--format-amount (brb-ledger-personal-data-total data-personal))
+                         ""))
                   (->> (brb-ledger-data-convives data)
                        (--sort
                         (< (or (assoc-default (vulpea-note-id it) (brb-ledger-data-balances data)) 0)
@@ -323,24 +360,46 @@ Return generated buffer."
                  :row-start "- "
                  :sep "  ")
                 ""
-                (propertize "Latest transactions" 'face 'bold)
+                (propertize "Latest transactions: Barberry Garden" 'face 'bold)
                 ""
                 (string-table
-                 :data (seq-map
-                        (lambda (p)
-                          (list
-                           (propertize (brb-ledger-posting-date p) 'face 'shadow)
-                           (if (vulpea-note-p (brb-ledger-posting-account p))
-                               (vulpea-note-title (brb-ledger-posting-account p))
-                             (brb-ledger-posting-description p))
-                           (brb-ledger--format-amount (brb-ledger-posting-amount p))
-                           "->"
-                           (brb-ledger--format-amount (brb-ledger-posting-total p))))
-                        (seq-reverse
-                         (seq-remove
-                          (lambda (p)
-                            (string-equal "charge" (brb-ledger-posting-description p)))
-                          (brb-ledger-data-postings data))))
+                 :data (->> (brb-ledger-data-postings data)
+                            (--remove (string-equal "charge" (brb-ledger-posting-description it)))
+                            (seq-reverse)
+                            (-take 20)
+                            (--map (list
+                                    (propertize (brb-ledger-posting-date it) 'face 'shadow)
+                                    (cond
+                                     ((vulpea-note-p (brb-ledger-posting-account it))
+                                      (vulpea-note-title (brb-ledger-posting-account it)))
+
+                                     ((vulpea-note-p (brb-ledger-posting-description it))
+                                      (vulpea-note-title (brb-ledger-posting-description it)))
+
+                                     (t (brb-ledger-posting-description it)))
+                                    (brb-ledger--format-amount (brb-ledger-posting-amount it))
+                                    "->"
+                                    (brb-ledger--format-amount (brb-ledger-posting-total it)))))
+                 :width '(nil 70 nil nil nil)
+                 :pad-type '(left right left left left)
+                 :row-start "- "
+                 :sep "  ")
+                ""
+                (propertize "Latest transactions: personal" 'face 'bold)
+                ""
+                (string-table
+                 :data (->> (brb-ledger-personal-data-postings data-personal)
+                            (seq-reverse)
+                            (-take 20)
+                            (--map (list
+                                    (propertize (brb-ledger-posting-date it) 'face 'shadow)
+                                    (if (vulpea-note-p (brb-ledger-posting-account it))
+                                        (vulpea-note-title (brb-ledger-posting-account it))
+                                      (brb-ledger-posting-description it))
+                                    (brb-ledger--format-amount (brb-ledger-posting-amount it))
+                                    "->"
+                                    (brb-ledger--format-amount (brb-ledger-posting-total it)))))
+                 :width '(nil 70 nil nil nil)
                  :pad-type '(left right left left left)
                  :row-start "- "
                  :sep "  "))
@@ -406,6 +465,27 @@ Result is a number in `brb-currency'."
                (-last-item)
                (string-to-number)))
          (--reduce-from (+ acc it) 0))))
+
+
+
+(cl-defun brb-ledger-buy-wine (&key wine price date code)
+  "Buy a WINE from personal account.
+
+PRICE is the actual purchase price. It must be in `brb-currency'.
+
+DATE is purchase date (internal time).
+
+See `brb-ledger-record-txn' to learn about CODE."
+  (let* ((wine-id (if (vulpea-note-p wine)
+                      (vulpea-note-id wine)
+                    wine)))
+    (brb-ledger-record-txn
+     :date date
+     :code code
+     :comment (concat "[" wine-id "]")
+     :account-to "spending:wines"
+     :account-from "personal:account"
+     :amount price)))
 
 
 
