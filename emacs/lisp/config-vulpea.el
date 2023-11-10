@@ -44,9 +44,13 @@ Probably that means using directory with test notes instead of
 real notes. Maybe it also means experimental features.")
 
 (defvar vulpea-directory
-  (expand-file-name
-   (if vulpea-test-mode "vulpea-test/" "Dropbox/vulpea/")
-   path-home-dir)
+  (if vulpea-test-mode
+      (expand-file-name
+       "vulpea-test/"
+       path-home-dir)
+    (expand-file-name
+       "vulpea/"
+       path-cloud-dir))
   "Directory containing notes.")
 
 (provide 'config-vulpea)

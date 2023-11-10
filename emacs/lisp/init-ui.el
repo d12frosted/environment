@@ -204,7 +204,8 @@
     (cons "custom" (concat
                     "file://"
                     (expand-file-name
-                     "~/Dropbox/resources/icons/custom/%s.svg")))
+                     "resources/icons/custom/%s.svg"
+                     path-cloud-dir)))
     (cons "bootstrap" (concat
                        "file://"
                        (expand-file-name

@@ -38,6 +38,9 @@
 
 In a nutshell, it's just a value of $HOME.")
 
+(defconst path-cloud-dir (expand-file-name "Library/CloudStorage/Dropbox/" path-home-dir)
+  "Path to a cloud storage directory.")
+
 (defconst path-config-dir
   (file-name-as-directory
    (or (getenv "XDG_CONFIG_HOME")
@@ -54,7 +57,7 @@ In a nutshell, it's just a value of $HOME.")
   "The path to personal autoloads file.")
 
 (defconst path-emacs-private-dir
-  (concat path-home-dir "Dropbox/emacs/")
+  (concat path-cloud-dir "emacs/")
   "The root directory for private configurations.")
 
 (defconst path-local-dir
