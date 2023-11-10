@@ -503,6 +503,13 @@ Whatever that means."
          (url (concat "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine bottle)))))
     (kill-new url)))
 
+(defun vino-inv-ui-kill-wine-id ()
+  "Put ID of the wine at point into `kill-ring'."
+  (interactive)
+  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
+         (bottle (vino-inv-get-bottle bottle-id)))
+    (kill-new (vulpea-note-id (vino-inv-bottle-wine bottle)))))
+
 ;;;###autoload
 (defun vino-sources (_)
   "Get the list of vino sources."
