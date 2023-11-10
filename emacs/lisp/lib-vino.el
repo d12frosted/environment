@@ -510,6 +510,26 @@ Whatever that means."
          (bottle (vino-inv-get-bottle bottle-id)))
     (kill-new (vulpea-note-id (vino-inv-bottle-wine bottle)))))
 
+(defun vino-inv-ui-record-spending ()
+  "Record spending of the wine at point."
+  (interactive)
+  (when (y-or-n-p "Record? ")
+    (let* ((bottle-id (vino-inv-ui-get-bottle-id))
+           (bottle (vino-inv-get-bottle bottle-id))
+           (date (vino-inv-bottle-purchase-date bottle))
+           (price (vino-inv-bottle-price bottle))
+           (price (if (s-suffix-p brb-currency price)
+                      (string-to-number price)
+                    (read-number (format "Convert %s to UAH: " price)))))
+      (brb-ledger-record-txn
+       :date (date-to-time date)
+       :comment (concat "[" (vulpea-note-id (vino-inv-bottle-wine bottle)) "]")
+       :account-to "spending:wines"
+       :account-from "personal:account"
+       :amount price)
+      (when (get-buffer brb-ledger-buffer-name)
+        (brb-ledger-buffer-create)))))
+
 ;;;###autoload
 (defun vino-sources (_)
   "Get the list of vino sources."
