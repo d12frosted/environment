@@ -366,7 +366,7 @@ Return generated buffer."
                  :data (->> (brb-ledger-data-postings data)
                             (--remove (string-equal "charge" (brb-ledger-posting-description it)))
                             (seq-reverse)
-                            (-take 20)
+                            (-take 36)
                             (--map (list
                                     (propertize (brb-ledger-posting-date it) 'face 'shadow)
                                     (cond
@@ -390,7 +390,7 @@ Return generated buffer."
                 (string-table
                  :data (->> (brb-ledger-personal-data-postings data-personal)
                             (seq-reverse)
-                            (-take 20)
+                            (-take 36)
                             (--map (list
                                     (propertize (brb-ledger-posting-date it) 'face 'shadow)
                                     (if (vulpea-note-p (brb-ledger-posting-account it))
