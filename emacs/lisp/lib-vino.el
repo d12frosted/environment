@@ -411,6 +411,9 @@ Whatever that means."
          (price-usd (if (s-suffix-p "USD" price)
                         price
                       (format "%.2f USD" (read-number (format "Convert %s to USD: " price)))))
+         (price-uah (if (s-suffix-p brb-currency price)
+                        (string-to-number price)
+                      (read-number (format "Convert %s to UAH: " price))))
          (price-add-as (cond
                         ((seq-contains-p prices-public price) nil)
                         ((seq-contains-p prices-private price) nil)
@@ -442,9 +445,19 @@ Whatever that means."
        :price price
        :price-usd price-usd
        :location-id location-id
-       :source-id source-id))
+       :source-id source-id)
 
-    (vino-entry-update-availability note)))
+      (brb-ledger-record-txn
+       :date (date-to-time date)
+       :comment (concat "[" (vulpea-note-id note) "]")
+       :account-to "spending:wines"
+       :account-from "personal:account"
+       :amount price-uah))
+
+    (vino-entry-update-availability note)
+
+    (when (get-buffer brb-ledger-buffer-name)
+      (brb-ledger-buffer-create))))
 
 (defun vino-consume (&optional note)
   "Consume wine represented as NOTE."
