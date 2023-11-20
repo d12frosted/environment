@@ -113,6 +113,7 @@ EXTRA-DATA contains bottle-id."
 
 ;; * vino-inv extensions
 
+;;;###autoload
 (defun vino-inv-ui-print-info ()
   "Display print info for bottle at point."
   (interactive)
@@ -128,6 +129,7 @@ EXTRA-DATA contains bottle-id."
        "\n"))
     (display-buffer buffer)))
 
+;;;###autoload
 (defun vino-inv-ui-kill-url ()
   "Put URL to the bottle at point into `kill-ring'."
   (interactive)
@@ -136,6 +138,7 @@ EXTRA-DATA contains bottle-id."
          (url (concat "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine bottle)))))
     (kill-new url)))
 
+;;;###autoload
 (defun vino-inv-ui-kill-wine-id ()
   "Put ID of the wine at point into `kill-ring'."
   (interactive)
