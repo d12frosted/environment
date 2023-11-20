@@ -100,8 +100,8 @@ EXTRA-DATA contains bottle-id."
   "Handle WINE BOTTLE acquire event."
   (let* ((price (vino-inv-bottle-price bottle))
          (price (cond
-                 ((s-suffix-p brb-currency price) price)
-                 ((= 0 (string-to-number price)) "0 UAH")
+                 ((s-suffix-p brb-currency price) (string-to-number price))
+                 ((= 0 (string-to-number price)) 0)
                  (t (read-number (format "Convert %s to UAH: " price))))))
     (unless (= 0 price)
       (brb-ledger-record-txn
