@@ -340,7 +340,13 @@ Return generated buffer."
                            (concat "(" (brb-ledger--format-amount cleared) ")")))
                    (list "Personal"
                          (brb-ledger--format-amount (brb-ledger-personal-data-total data-personal))
-                         ""))
+                         (concat
+                          "("
+                          (brb-ledger--format-amount
+                           (+
+                            (brb-ledger-data-total data)
+                            (brb-ledger-personal-data-total data-personal)))
+                          ")")))
                   (->> (brb-ledger-data-convives data)
                        (--sort
                         (< (or (assoc-default (vulpea-note-id it) (brb-ledger-data-balances data)) 0)
