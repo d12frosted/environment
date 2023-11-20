@@ -56,6 +56,7 @@ EXTRA-DATA contains bottle-id."
     (vulpea-utils-with-note rating
       (vulpea-buffer-meta-set "bottle" bottle-id 'append)
       (vulpea-buffer-meta-set "volume" (vino-inv-bottle-volume bottle) 'append))
+
     (if (vulpea-note-tagged-all-p location "wine" "event")
         (vulpea-utils-with-note rating
           (vulpea-buffer-meta-set "location" (or (vulpea-note-meta-get location "location" 'note) location) 'append)
@@ -77,22 +78,7 @@ EXTRA-DATA contains bottle-id."
         (vulpea-buffer-meta-set "convive"
                                 (let ((people (vulpea-db-query-by-tags-every '("people"))))
                                   (vulpea-utils-collect-while #'vulpea-select-from nil "Convive" people))
-                                'append)))
-
-    ;; record transfer between personal and brb accounts
-    (when (vulpea-note-tagged-all-p location "wine" "event" "barberry/public")
-      (let* ((date (vulpea-note-meta-get rating "date"))
-             (price (vino-inv-bottle-price bottle))
-             (price (cond
-                     ((s-suffix-p brb-currency price) (string-to-number price))
-                     ((= 0 (string-to-number price)) 0)
-                     (t (read-number (format "Convert %s to UAH: " price))))))
-        (brb-ledger-record-txn
-         :date (date-to-time date)
-         :comment (concat "[" (vulpea-note-id wine) "]")
-         :account-to "personal:account"
-         :account-from "income:barberry-garden"
-         :amount price)))))
+                                'append)))))
 
 ;; * vino-inv hooks
 
