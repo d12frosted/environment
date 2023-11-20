@@ -63,6 +63,8 @@
          (org-roam-db-autosync-mode . vulpea-db-autosync-enable))
   :init
   (setq-default
+   vulpea-find-default-candidates-source #'vulpea-find-candidates
+   vulpea-insert-default-candidates-source #'vulpea-insert-candidates
    vulpea-find-default-filter
    (lambda (note)
      (= (vulpea-note-level note) 0))

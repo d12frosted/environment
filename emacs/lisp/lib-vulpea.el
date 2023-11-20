@@ -97,6 +97,28 @@ tasks. The only exception is headings tagged as REFILE."
 
 
 ;;;###autoload
+(defun vulpea-find-candidates (&optional filter)
+  "Return list of candidates for `vulpea-find'.
+
+FILTER is a `vulpea-note' predicate."
+  (let ((notes (vulpea-db-query-by-tags-none '("cellar" "rating" "appellation" "grape" "region"))))
+    (if filter
+        (-filter filter notes)
+      notes)))
+
+;;;###autoload
+(defun vulpea-insert-candidates (&optional filter)
+  "Return list of candidates for `vulpea-find'.
+
+FILTER is a `vulpea-note' predicate."
+  (let ((notes (vulpea-db-query-by-tags-none '("cellar" "rating" "appellation" "grape" "region"))))
+    (if filter
+        (-filter filter notes)
+      notes)))
+
+
+
+;;;###autoload
 (defun vulpea-insert-handle (note)
   "Hook to be called on NOTE after `vulpea-insert'."
   (when-let* ((title (vulpea-note-title note))
