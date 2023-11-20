@@ -51,7 +51,7 @@ EXTRA-DATA contains bottle-id."
          (bottle-id (assoc-default 'bottle-id extra-data))
          (bottle (vino-inv-get-bottle bottle-id))
          (location (vulpea-select-from "Location"
-                                       (vulpea-db-query-by-tags-some '("place" "people" "event"))
+                                       (vulpea-db-query-by-tags-some '("places" "people" "event"))
                                        :require-match t)))
     (vulpea-utils-with-note rating
       (vulpea-buffer-meta-set "bottle" bottle-id 'append)
