@@ -67,7 +67,7 @@
   (with-eval-after-load 'org-roam
     (vino-setup)
     (vino-inv-setup))
-  (add-hook 'vino-entry-create-handle-functions #'vino-acquire)
+  (add-hook 'vino-entry-create-handle-functions #'vino-inv-acquire)
   (add-hook 'vino-rating-create-handle-functions #'vino-rating-assign-extra-meta)
   (add-hook 'vino-inv-acquire-handle-functions #'vino-inv-acquire-bottle-handler)
   (setq-default
