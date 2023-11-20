@@ -104,11 +104,13 @@ is balance."
        " "
        (buttonize "[Record spendings]"
                   (lambda (&rest _)
-                    (brb-ledger-spend
+                    (brb-ledger-record-txn
                      :amount (plist-get invoice :wines-total)
                      :date (date-to-time date)
                      :comment (format "%s: wines" (vulpea-note-title event))
-                     :code (concat (vulpea-note-id event) ":wines"))
+                     :code (concat (vulpea-note-id event) ":wines")
+                     :account-to "personal:account"
+                     :account-from "balance:assets")
                     (brb-ledger-spend
                      :amount (plist-get invoice :shared-total)
                      :date (date-to-time date)
