@@ -33,6 +33,7 @@
 
 (require 'org-ml)
 (require 'vulpea)
+(require 'lib-list)
 (require 'lib-vino-stats)
 (require 'lib-brb-ledger)
 
@@ -302,10 +303,10 @@ Participant can be a link to `vulpea-note'."
                 ratings))
          (sdevs (table-vreduce-columns #'calcFunc-vpvar ratings))
          (favourites (-filter #'identity
-                              (-map (-rpartial #'brb-positions-of '("favourite" "fav" "+"))
+                              (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
                                     (table-select-rows "extremum" tbl :column 1))))
          (outcasts (-filter #'identity
-                            (-map (-rpartial #'brb-positions-of '("outcast" "out" "-"))
+                            (-map (-rpartial #'-positions-of '("outcast" "out" "-"))
                                   (table-select-rows "extremum" tbl :column 1))))
          (favourited (-map (lambda (i) (-count (-rpartial #'-contains-p i) favourites))
                            (-iota count 1)))
@@ -389,9 +390,9 @@ TBL represents raw scores."
          ;; (wines (-drop 2 (car tbl)))
          (people (->> tbl (-map 'car) (-remove 'string-empty-p) (-map #'substring-no-properties)))
          (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
-         (favourites (-map (-rpartial #'brb-positions-of '("favourite" "fav" "+"))
+         (favourites (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
                            (table-select-rows "extremum" tbl :column 1)))
-         (outcasts (-map (-rpartial #'brb-positions-of '("outcast" "out" "-"))
+         (outcasts (-map (-rpartial #'-positions-of '("outcast" "out" "-"))
                          (table-select-rows "extremum" tbl :column 1))))
     (--map-indexed
      (let ((rs (nth it-index ratings)))
