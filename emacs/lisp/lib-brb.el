@@ -37,7 +37,7 @@
 (require 'lib-table)
 (require 'lib-string)
 
-
+;; * Price
 
 (defvar brb-currency "UAH")
 
@@ -53,7 +53,7 @@ Returns nil if PRICE is of different currency than
   (when (s-suffix-p brb-currency price)
     (string-to-number price)))
 
-
+;; * Candidates for deletion
 
 (defun brb-wine-info (wine list-mode &optional price-mode)
   "Return info about WINE note.
@@ -143,40 +143,6 @@ In all cases, except for interactive, only price entries with
           (--map (concat "- " (car it) sep (cdr it))))
      "\n")))
 
-
-
-(defun brb-position-by (row pred)
-  "Find first position in ROW satisfying PRED.
-
-Position is 1-based, while index is 0-based."
-  (when-let ((idx (-find-index pred row)))
-    (1+ idx)))
-
-(defun brb-position-of (row str)
-  "Find first position of STR in ROW .
-
-Position is 1-based, while index is 0-based."
-  (brb-position-by row (-partial #'string-equal str)))
-
-(defun brb-positions-by (row pred)
-  "Find all positions in ROW satisfying PRED.
-
-Position is 1-based, while index is 0-based."
-  (when-let ((idxs (-find-indices pred row)))
-    (-map #'1+ idxs)))
-
-(defun brb-positions-of (row str)
-  "Find all positions of STR in ROW.
-
-STR can be a list of strings.
-
-Position is 1-based, while index is 0-based."
-  (if (stringp str)
-      (brb-positions-by row (-partial #'string-equal str))
-    (brb-positions-by row (-partial #'-contains-p str))))
-
-
-
 (cl-defun brb-format-float (v &key style prec)
   "Format float V with precision PREC.
 
@@ -207,8 +173,6 @@ and if V equals to result, then it's styled using STYLE."
           :prec prec
           :style (if (and b (= v b)) style 'normal)))
     "-"))
-
-
 
 (provide 'lib-brb)
 ;;; lib-brb.el ends here
