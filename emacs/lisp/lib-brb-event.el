@@ -297,10 +297,17 @@ Participant can be a link to `vulpea-note'."
                        ))
 
          (ratings (->> (table-select-rows "rating" tbl :column 1)
-                       (--map (--map (if (stringp it) (string-to-number it) it) it))))
+                       (--map (--map (cond
+                                      ((numberp it) it)
+                                      ((and (stringp it) (string-non-empty-p it)) (string-to-number it))
+                                      (t nil))
+                                     it))))
 
          (prices (->> (car (table-select-rows "price" tbl :column 1))
-                      (--map (if (stringp it) (string-to-number it) it))))
+                      (--map (cond
+                              ((numberp it) it)
+                              ((and (stringp it) (string-non-empty-p it)) (string-to-number it))
+                              (t nil)))))
 
          (totals (table-vreduce-columns #'calcFunc-vsum ratings))
          (amean (table-vreduce-columns #'calcFunc-vmean ratings))
