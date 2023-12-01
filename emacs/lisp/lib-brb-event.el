@@ -172,6 +172,7 @@ list of prices (from the first to the last wine)."
 (defun brb-event-score-summary (event)
   "Return score summary of EVENT."
   (let* ((tbl (brb-event-score-data event))
+         (wines (brb-event-wines event))
          (summary (brb-event-score--calc-summary tbl))
          (amean (assoc-default 'amean summary))
          (rms (assoc-default 'rms summary))
@@ -180,17 +181,20 @@ list of prices (from the first to the last wine)."
          (favs (assoc-default 'favs summary))
          (outs (assoc-default 'outs summary))
          (prices (assoc-default 'prices summary))
-         (qprs (assoc-default 'qprs summary)))
-    (--map-indexed
-     `((amean . ,(nth it-index amean))
-       (rms . ,(nth it-index rms))
-       (wavg . ,(nth it-index wavg))
-       (sdev . ,(nth it-index sdevs))
-       (fav . ,(nth it-index favs))
-       (out . ,(nth it-index outs))
-       (price . ,(nth it-index prices))
-       (qpr . ,(nth it-index qprs)))
-     (assoc-default 'wines summary))))
+         (qprs (assoc-default 'qprs summary))
+
+         (wines-summary (--map-indexed
+                         `((wine . ,(nth it-index wines))
+                           (amean . ,(nth it-index amean))
+                           (rms . ,(nth it-index rms))
+                           (wavg . ,(nth it-index wavg))
+                           (sdev . ,(nth it-index sdevs))
+                           (fav . ,(nth it-index favs))
+                           (out . ,(nth it-index outs))
+                           (price . ,(nth it-index prices))
+                           (qpr . ,(nth it-index qprs)))
+                         (assoc-default 'wines summary))))
+    `((wines . ,wines-summary))))
 
 (cl-defun brb-event-raw-scores-to-summary (tbl &key columns)
   "Convert raw scores to summary.

@@ -498,7 +498,7 @@ WINE-PRICES."
   (interactive)
   (let* ((event (or event (brb-event-select)))
          (buffer (get-buffer-create (format "*%s TG report*" (vulpea-note-title event))))
-         (summary (brb-event-score-summary event)))
+         (summary (assoc-default 'wines (brb-event-score-summary event))))
     (with-current-buffer buffer
       (erase-buffer)
       (insert

@@ -93,7 +93,7 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                            (-filter events-filter))))
     (let* ((events-summary (hash-table-from events
                              :key-fn #'vulpea-note-id
-                             :value-fn (lambda (event _) (brb-event-score-summary event))))
+                             :value-fn (lambda (event _) (assoc-default 'wines (brb-event-score-summary event)))))
 
            (participants-all (->> events
                                   (--map (brb-event-participants it))
