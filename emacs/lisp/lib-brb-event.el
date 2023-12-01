@@ -36,12 +36,13 @@
 (require 'lib-list)
 (require 'lib-vino-stats)
 (require 'lib-brb-ledger)
+(require 'yaml)
 
-
+;; * Configuration
 
 (defvar brb-event-narrator-id "bc8aa837-3348-45e6-8468-85510966527a")
 
-
+;; * Event selection
 
 ;;;###autoload
 (defun brb-event-select ()
@@ -77,7 +78,7 @@
                           (vulpea-utils-with-note other
                             (vulpea-buffer-prop-get "date"))))))
 
-
+;; * Wines
 
 ;;;###autoload
 (defun brb-event-wines (event)
@@ -128,7 +129,7 @@ list of prices (from the first to the last wine)."
          :public (->> public (cdr) (-map #'string-to-number))
          :real (->> real (cdr) (-map #'string-to-number)))))))
 
-
+;; * Participants
 
 ;;;###autoload
 (defun brb-event-participants (event)
@@ -151,11 +152,11 @@ list of prices (from the first to the last wine)."
          (vulpea-db-query-by-ids)
          (--remove (vulpea-note-primary-title it)))))
 
-
+;; * Scores
 
 ;;;###autoload
-(defun brb-event-score-summary (event)
-  "Return score summary of EVENT."
+(defun brb-event-score-data (event)
+  "Return raw score data (table) of EVENT."
   (vulpea-utils-with-note event
     (save-excursion
       (goto-char (point-min))
@@ -163,25 +164,33 @@ list of prices (from the first to the last wine)."
       (beginning-of-line)
       (while (looking-at "#\\+")
         (forward-line))
-      (let* ((summary (brb-event-score--calc-summary (org-table-to-lisp)))
-             (amean (assoc-default 'amean summary))
-             (rms (assoc-default 'rms summary))
-             (wavg (assoc-default 'wavg summary))
-             (sdevs (assoc-default 'sdevs summary))
-             (favs (assoc-default 'favs summary))
-             (outs (assoc-default 'outs summary))
-             (prices (assoc-default 'prices summary))
-             (qprs (assoc-default 'qprs summary)))
-        (--map-indexed
-         `((amean . ,(nth it-index amean))
-           (rms . ,(nth it-index rms))
-           (wavg . ,(nth it-index wavg))
-           (sdev . ,(nth it-index sdevs))
-           (fav . ,(nth it-index favs))
-           (out . ,(nth it-index outs))
-           (price . ,(nth it-index prices))
-           (qpr . ,(nth it-index qprs)))
-         (assoc-default 'wines summary))))))
+      (->> (org-table-to-lisp)
+           (-filter #'listp)
+           (--map (--map (if (stringp it) (substring-no-properties it) it) it))))))
+
+;;;###autoload
+(defun brb-event-score-summary (event)
+  "Return score summary of EVENT."
+  (let* ((tbl (brb-event-score-data event))
+         (summary (brb-event-score--calc-summary tbl))
+         (amean (assoc-default 'amean summary))
+         (rms (assoc-default 'rms summary))
+         (wavg (assoc-default 'wavg summary))
+         (sdevs (assoc-default 'sdevs summary))
+         (favs (assoc-default 'favs summary))
+         (outs (assoc-default 'outs summary))
+         (prices (assoc-default 'prices summary))
+         (qprs (assoc-default 'qprs summary)))
+    (--map-indexed
+     `((amean . ,(nth it-index amean))
+       (rms . ,(nth it-index rms))
+       (wavg . ,(nth it-index wavg))
+       (sdev . ,(nth it-index sdevs))
+       (fav . ,(nth it-index favs))
+       (out . ,(nth it-index outs))
+       (price . ,(nth it-index prices))
+       (qpr . ,(nth it-index qprs)))
+     (assoc-default 'wines summary))))
 
 (cl-defun brb-event-raw-scores-to-summary (tbl &key columns)
   "Convert raw scores to summary.
@@ -266,10 +275,7 @@ TBL is a data table of the following format:
 |---------------+------------+------+------+-----+------|
 
 Participant can be a link to `vulpea-note'."
-  (let* ((tbl (-filter #'listp tbl))
-         (tbl (--map (--map (if (stringp it) (substring-no-properties it) it) it) tbl))
-
-         (count (- (length (car tbl)) 2))
+  (let* ((count (- (length (car tbl)) 2))
          (names (-drop 2 (car tbl)))
 
          ;; extract weights
@@ -336,8 +342,6 @@ Participant can be a link to `vulpea-note'."
       (favs . ,favourited)
       (outs . ,outcasted))))
 
-
-
 (defun brb-event-raw-scores-to-people (tbl)
   "Convert raw scores to individual scores.
 
@@ -345,9 +349,9 @@ TBL represents raw scores."
   (let* ((wines (-drop 2 (car tbl)))
          (people (->> tbl (-map 'car) (-remove 'string-empty-p)))
          (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
-         (favourites (-map (-rpartial #'brb-positions-of '("favourite" "fav" "+"))
+         (favourites (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
                            (table-select-rows "extremum" tbl :column 1)))
-         (outcasts (-map (-rpartial #'brb-positions-of '("outcast" "out" "-"))
+         (outcasts (-map (-rpartial #'-positions-of '("outcast" "out" "-"))
                          (table-select-rows "extremum" tbl :column 1))))
     (-concat
      (list
@@ -375,19 +379,10 @@ TBL represents raw scores."
             rs))))
       people))))
 
-
-
 ;;;###autoload
 (defun brb-event-score-personal (event)
   "Return personal scores of EVENT."
-  (let* ((tbl (vulpea-utils-with-note event
-                (save-excursion
-                  (goto-char (point-min))
-                  (re-search-forward "#\\+name: data")
-                  (re-search-forward "|")
-                  (->> (org-table-to-lisp)
-                       (--remove (eq 'hline it))))))
-         ;; (wines (-drop 2 (car tbl)))
+  (let* ((tbl (brb-event-score-data event))
          (people (->> tbl (-map 'car) (-remove 'string-empty-p) (-map #'substring-no-properties)))
          (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
          (favourites (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
@@ -412,66 +407,7 @@ TBL represents raw scores."
         :outcasts (nth it-index outcasts)))
      people)))
 
-
-
-(defun brb-events-assign-public-names ()
-  "Assign public names to all public events."
-  (interactive)
-  (let* ((rules '("Kh" "Sh" "Yu" "Ya" "Tkh" "Ch" "Zh" "Shch"))
-         (convives (->> (brb-events-from-range (list "2000-01-01" (format-time-string "%Y-%m-%d" (current-time))))
-                        (--map (brb-event-participants it))
-                        (-flatten-n 1)
-                        (-distinct)
-                        (--sort (string< (vulpea-note-title it) (vulpea-note-title other)))))
-         (public-names))
-    (--each convives
-      (let* ((parts (s-split-words (vulpea-note-title it)))
-             (name (cond
-                    ((= (seq-length parts) 2)
-                     (concat (nth 0 parts)
-                             " "
-                             (if-let ((r (--find (s-prefix-p it (nth 1 parts)) rules)))
-                                 r
-                               (s-left 1 (nth 1 parts)))))
-                    (t (read-string
-                        (format "%s has a strangely shaped name, give it a public name manually: "
-                                (vulpea-note-title it)))))))
-        (when (-contains-p public-names name)
-          (setq name
-                (read-string (format "%s can not take %s as short name, as it is taken, provide new one (%s): "
-                                     (vulpea-note-title it)
-                                     name
-                                     (vulpea-note-meta-get it "public name"))
-                             nil nil (vulpea-note-meta-get it "public name"))))
-        (push name public-names)
-        (vulpea-utils-with-note it
-          (vulpea-buffer-meta-set "public name" name)
-          (save-buffer)
-          (kill-buffer))))))
-
-
-
-(defun brb-events-execute-blocks ()
-  "Execute code blocks in all public events."
-  (interactive)
-  (--each (brb-events-from-range (list "2000-01-01" (format-time-string "%Y-%m-%d" (current-time))))
-    (--each (seq-reverse
-             (org-element-map
-                 (org-element-parse-buffer 'element)
-                 'src-block
-               (lambda (h)
-                 (org-element-property :begin h))))
-      (goto-char it)
-      (let ((org-confirm-babel-evaluate nil))
-        (save-excursion
-          (silenzio
-           (funcall-interactively #'org-babel-execute-src-block)))))
-    (save-buffer)
-    (kill-buffer)))
-
-
-
-
+;; * Content management
 
 ;;;###autoload
 (defun brb-event-insert-participant-link ()
@@ -551,7 +487,72 @@ Noop in case the participant is already part of the list."
                    (vulpea-note-meta-get participant "public name")))
           (funcall-interactively #'org-ctrl-c-ctrl-c))))))
 
-
+(defun brb-event-wine-edit ()
+  "Edit event wine at point."
+  (interactive)
+  (save-excursion
+    (unless (looking-at org-heading-regexp)
+      (outline-previous-heading)
+      (->> (org-ml-parse-this-subtree)
+           (org-ml-match '(:any * src-block))
+           (car)
+           (org-ml-get-property :value)
+           (yaml-parse-string)))))
+
+;; * Maintenance
+
+(defun brb-events-assign-public-names ()
+  "Assign public names to all public events."
+  (interactive)
+  (let* ((rules '("Kh" "Sh" "Yu" "Ya" "Tkh" "Ch" "Zh" "Shch"))
+         (convives (->> (brb-events-from-range (list "2000-01-01" (format-time-string "%Y-%m-%d" (current-time))))
+                        (--map (brb-event-participants it))
+                        (-flatten-n 1)
+                        (-distinct)
+                        (--sort (string< (vulpea-note-title it) (vulpea-note-title other)))))
+         (public-names))
+    (--each convives
+      (let* ((parts (s-split-words (vulpea-note-title it)))
+             (name (cond
+                    ((= (seq-length parts) 2)
+                     (concat (nth 0 parts)
+                             " "
+                             (if-let ((r (--find (s-prefix-p it (nth 1 parts)) rules)))
+                                 r
+                               (s-left 1 (nth 1 parts)))))
+                    (t (read-string
+                        (format "%s has a strangely shaped name, give it a public name manually: "
+                                (vulpea-note-title it)))))))
+        (when (-contains-p public-names name)
+          (setq name
+                (read-string (format "%s can not take %s as short name, as it is taken, provide new one (%s): "
+                                     (vulpea-note-title it)
+                                     name
+                                     (vulpea-note-meta-get it "public name"))
+                             nil nil (vulpea-note-meta-get it "public name"))))
+        (push name public-names)
+        (vulpea-utils-with-note it
+          (vulpea-buffer-meta-set "public name" name)
+          (save-buffer)
+          (kill-buffer))))))
+
+(defun brb-events-execute-blocks ()
+  "Execute code blocks in all public events."
+  (interactive)
+  (--each (brb-events-from-range (list "2000-01-01" (format-time-string "%Y-%m-%d" (current-time))))
+    (--each (seq-reverse
+             (org-element-map
+                 (org-element-parse-buffer 'element)
+                 'src-block
+               (lambda (h)
+                 (org-element-property :begin h))))
+      (goto-char it)
+      (let ((org-confirm-babel-evaluate nil))
+        (save-excursion
+          (silenzio
+           (funcall-interactively #'org-babel-execute-src-block)))))
+    (save-buffer)
+    (kill-buffer)))
 
 (provide 'lib-brb-event)
 ;;; lib-brb-event.el ends here
