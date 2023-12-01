@@ -182,16 +182,19 @@ list of prices (from the first to the last wine)."
                          (assoc-default 'wines summary)))
          (wines-price-total (-sum (-filter #'identity prices)))
          (wines-price-harmonic (->> prices
-                                  (-map #'calc-from-number)
-                                  (apply #'calcFunc-vec)
-                                  (calcFunc-vhmean)
-                                  (calc-to-number)))
+                                    (-filter #'identity)
+                                    (-map #'calc-from-number)
+                                    (apply #'calcFunc-vec)
+                                    (calcFunc-vhmean)
+                                    (calc-to-number)))
          (wines-price-median (->> prices
+                                  (-filter #'identity)
                                   (-map #'calc-from-number)
                                   (apply #'calcFunc-vec)
                                   (calcFunc-vmedian)
                                   (calc-to-number)))
          (event-rms (->> rms
+                         (-filter #'identity)
                          (-map #'calc-from-number)
                          (apply #'calcFunc-vec)
                          (calcFunc-rms)
@@ -336,12 +339,23 @@ Participant can be a link to `vulpea-note'."
          (totals (table-vreduce-columns #'calcFunc-vsum ratings))
          (amean (table-vreduce-columns #'calcFunc-vmean ratings))
          (rms (table-vreduce-columns (lambda (&rest vecs) (calcFunc-rms (apply #'calcFunc-vec vecs))) ratings))
-         (wavg (table-vreduce-columns
-                (lambda (&rest vecs)
-                  (calcFunc-div
-                   (calcFunc-vsum (apply #'calcFunc-vec (-zip-with #'calcFunc-mul vecs weights)))
-                   (-sum weights)))
-                ratings))
+
+         ;; this is a bit hard to read, but we need to support cases
+         ;; when someone DOESN'T rate a wine.
+         (wavg (->> (table-transpose ratings)
+                    (--map (-zip-with
+                            (lambda (a b)
+                              (when a
+                                (cons (calc-from-number a) (calc-from-number b))))
+                            it
+                            weights))
+                    (--map (-filter #'identity it))
+                    (--map (when it
+                             (calc-to-number
+                              (calcFunc-div
+                               (calcFunc-vsum (apply #'calcFunc-vec
+                                                     (--map (calcFunc-mul (car it) (cdr it)) it)))
+                               (calcFunc-vsum (apply #'calcFunc-vec (-map #'cdr it)))))))))
          (sdevs (table-vreduce-columns #'calcFunc-vpvar ratings))
          (favourites (-filter #'identity
                               (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
