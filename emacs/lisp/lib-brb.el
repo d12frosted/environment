@@ -53,6 +53,20 @@ Returns nil if PRICE is of different currency than
   (when (s-suffix-p brb-currency price)
     (string-to-number price)))
 
+;; * QPR
+
+(defun brb-qpr (price score)
+  "Calculate QPR.
+
+SCORE is a rational number in [0, 5].
+PRICE is a positive number in `brb-currency'."
+  (when (and score price)
+    (/
+     (*
+      100
+      (calc-to-number (calcFunc-fact (calc-from-number score))))
+     (if (= 0 price) 1 price))))
+
 ;; * Candidates for deletion
 
 (defun brb-wine-info (wine list-mode &optional price-mode)

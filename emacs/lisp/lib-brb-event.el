@@ -152,24 +152,10 @@ list of prices (from the first to the last wine)."
          (vulpea-db-query-by-ids)
          (--remove (vulpea-note-primary-title it)))))
 
-;; * Scores
+;; * Summary
 
 ;;;###autoload
-(defun brb-event-score-data (event)
-  "Return raw score data (table) of EVENT."
-  (vulpea-utils-with-note event
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "#\\+name: data")
-      (beginning-of-line)
-      (while (looking-at "#\\+")
-        (forward-line))
-      (->> (org-table-to-lisp)
-           (-filter #'listp)
-           (--map (--map (if (stringp it) (substring-no-properties it) it) it))))))
-
-;;;###autoload
-(defun brb-event-score-summary (event)
+(defun brb-event-summary (event)
   "Return score summary of EVENT."
   (let* ((tbl (brb-event-score-data event))
          (wines (brb-event-wines event))
@@ -193,8 +179,46 @@ list of prices (from the first to the last wine)."
                            (out . ,(nth it-index outs))
                            (price . ,(nth it-index prices))
                            (qpr . ,(nth it-index qprs)))
-                         (assoc-default 'wines summary))))
-    `((wines . ,wines-summary))))
+                         (assoc-default 'wines summary)))
+         (wines-price-total (-sum (-filter #'identity prices)))
+         (wines-price-harmonic (->> prices
+                                  (-map #'calc-from-number)
+                                  (apply #'calcFunc-vec)
+                                  (calcFunc-vhmean)
+                                  (calc-to-number)))
+         (wines-price-median (->> prices
+                                  (-map #'calc-from-number)
+                                  (apply #'calcFunc-vec)
+                                  (calcFunc-vmedian)
+                                  (calc-to-number)))
+         (event-rms (->> rms
+                         (-map #'calc-from-number)
+                         (apply #'calcFunc-vec)
+                         (calcFunc-rms)
+                         (calc-to-number)))
+         (event-qpr (brb-qpr wines-price-harmonic event-rms)))
+    `((wines . ,wines-summary)
+      (wines-price-total . ,wines-price-total)
+      (wines-price-harmonic . ,wines-price-harmonic)
+      (wines-price-median . ,wines-price-median)
+      (rms . ,event-rms)
+      (qpr . ,event-qpr))))
+
+;; * Scores
+
+;;;###autoload
+(defun brb-event-score-data (event)
+  "Return raw score data (table) of EVENT."
+  (vulpea-utils-with-note event
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "#\\+name: data")
+      (beginning-of-line)
+      (while (looking-at "#\\+")
+        (forward-line))
+      (->> (org-table-to-lisp)
+           (-filter #'listp)
+           (--map (--map (if (stringp it) (substring-no-properties it) it) it))))))
 
 (cl-defun brb-event-raw-scores-to-summary (tbl &key columns)
   "Convert raw scores to summary.
@@ -330,17 +354,7 @@ Participant can be a link to `vulpea-note'."
          (outcasted (-map (lambda (i) (-count (-rpartial #'-contains-p i) outcasts))
                           (-iota count 1)))
 
-         (qprs (-map (lambda (i)
-                       (when (and (nth i amean)
-                                  (numberp (nth i prices)))
-                         (/
-                          (*
-                           100
-                           (calc-to-number (calcFunc-fact (calc-from-number (nth i amean)))))
-                          (if (= 0 (nth i prices))
-                              1
-                            (nth i prices)))))
-                     (-iota count))))
+         (qprs (-map (lambda (i) (brb-qpr (nth i prices) (nth i rms))) (-iota count))))
     `((wines . ,names)
       (ratings . ,ratings)
       (totals . ,totals)
