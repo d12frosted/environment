@@ -71,6 +71,7 @@
   (add-hook 'vino-entry-create-handle-functions #'vino-inv-acquire)
   (add-hook 'vino-rating-create-handle-functions #'vino-rating-assign-extra-meta)
   (add-hook 'vino-inv-acquire-handle-functions #'vino-inv-acquire-bottle-handler)
+  (add-hook 'vino-inv-consume-handle-functions #'vino-inv-consume-bottle-handler)
   (setq-default
    vino-producer-template '(:file-name "wine/producer/%<%Y%m%d%H%M%S>-${slug}.org"
                             :tags ("barberry/public"))

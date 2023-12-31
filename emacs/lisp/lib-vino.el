@@ -97,6 +97,21 @@ EXTRA-DATA contains bottle-id."
        :account-from "personal:account"
        :amount price))))
 
+(defun vino-inv-consume-bottle-handler (bottle wine action date)
+  "Handle WINE BOTTLE consume event via ACTION on DATE."
+  (when (string-equal "sell" action)
+    (let* ((price (vino-inv-bottle-price bottle))
+           (price (read-number "Sell for: "
+                               (when (s-suffix-p brb-currency price)
+                                 (string-to-number price)))))
+      (unless (= 0 price)
+        (brb-ledger-record-txn
+         :date date
+         :comment (concat "[" (vulpea-note-id wine) "]")
+         :account-to "personal:account"
+         :account-from "income:sell"
+         :amount price)))))
+
 ;; * vino-inv extensions
 
 ;;;###autoload
