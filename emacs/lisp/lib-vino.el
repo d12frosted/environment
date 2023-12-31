@@ -40,6 +40,24 @@
 (require 'request)
 (require 'request-deferred)
 
+;; * insert methods
+
+(defun vino-insert-region-candidates (&optional filter)
+  "Return list of candidates for `vulpea-find'.
+
+FILTER is a `vulpea-note' predicate."
+  (let ((notes (vulpea-db-query-by-tags-every '("wine" "region"))))
+    (if filter
+        (-filter filter notes)
+      notes)))
+
+;;;###autoload
+(defun vino-insert-region ()
+  "Select a region and insert a link to it."
+  (interactive)
+  (let ((vulpea-insert-default-candidates-source #'vino-insert-region-candidates))
+    (funcall-interactively #'vulpea-insert)))
+
 ;; * vino hooks
 
 ;;;###autoload
