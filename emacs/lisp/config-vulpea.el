@@ -50,7 +50,7 @@ real notes. Maybe it also means experimental features.")
        path-home-dir)
     (expand-file-name
        "vulpea/"
-       path-cloud-dir))
+       path-home-dir))
   "Directory containing notes.")
 
 (provide 'config-vulpea)
