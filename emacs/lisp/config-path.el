@@ -38,8 +38,11 @@
 
 In a nutshell, it's just a value of $HOME.")
 
-(defconst path-cloud-dir (expand-file-name "Library/CloudStorage/Dropbox/" path-home-dir)
+(defconst path-cloud-dir (expand-file-name "Library/Mobile Documents/com~apple~CloudDocs/" path-home-dir)
   "Path to a cloud storage directory.")
+
+;; (defconst path-cloud-dir (expand-file-name "Library/CloudStorage/Dropbox/" path-home-dir)
+;;   "Path to a cloud storage directory.")
 
 (defconst path-config-dir
   (file-name-as-directory
