@@ -332,8 +332,7 @@ Participant can be a link to `vulpea-note'."
                                        'number)
                                       weight-def)
                                 weight-def))
-                       ;; (--map (* it it))
-                       ))
+                       (--map (* it it))))
 
          (ratings (->> (table-select-rows "rating" tbl :column 1)
                        (--map (--map (cond
