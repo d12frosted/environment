@@ -162,7 +162,7 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                        (seq-length (brb-event-participants it))
                        (seq-length wines)
                        (->> summary
-                            (--map (assoc-default 'rms it))
+                            (--map (assoc-default 'wavg it))
                             (-filter #'identity)
                             (-map #'calc-from-number)
                             (apply #'calcFunc-vec)
