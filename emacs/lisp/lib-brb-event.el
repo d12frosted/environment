@@ -347,13 +347,27 @@ Participant can be a link to `vulpea-note'."
                               ((and (stringp it) (string-non-empty-p it)) (string-to-number it))
                               (t nil)))))
 
-         (totals (table-vreduce-columns #'calcFunc-vsum ratings))
-         (amean (table-vreduce-columns #'calcFunc-vmean ratings))
-         (rms (table-vreduce-columns (lambda (&rest vecs) (calcFunc-rms (apply #'calcFunc-vec vecs))) ratings))
+         (exclude (->> (table-select-rows "exclude" tbl :column 1)
+                       (nth 0)
+                       (--map (when (or (string-equal "yes" it)
+                                        (string-equal "true" it)
+                                        (string-equal "t" it))
+                                t))))
+         (ratings-san (->> (table-select-rows "rating" tbl :column 1)
+                           (--map (--map-indexed
+                                   (cond
+                                    ((nth it-index exclude) nil)
+                                    ((numberp it) it)
+                                    ((and (stringp it) (string-non-empty-p it)) (string-to-number it))
+                                    (t nil))
+                                   it))))
+         (totals (table-vreduce-columns #'calcFunc-vsum ratings-san))
+         (amean (table-vreduce-columns #'calcFunc-vmean ratings-san))
+         (rms (table-vreduce-columns (lambda (&rest vecs) (calcFunc-rms (apply #'calcFunc-vec vecs))) ratings-san))
 
          ;; this is a bit hard to read, but we need to support cases
          ;; when someone DOESN'T rate a wine.
-         (wavg (->> (table-transpose ratings)
+         (wavg (->> (table-transpose ratings-san)
                     (--map (-zip-with
                             (lambda (a b)
                               (when a
