@@ -249,7 +249,7 @@ Make all the links to this alias point to newly created note."
              (vulpea-buffer-p))
     (org-with-point-at 1
       (org-fold-hide-drawer-toggle 'off))
-    (setq-local tab-width 1)
+    (setq-local tab-width 8)
     (vulpea-ensure-filetag)))
 
 ;;;###autoload
