@@ -505,8 +505,8 @@ WINE-PRICES."
        (->> (brb-event-wines event)
             (--map-indexed
              (format "☆ %s - [%s](https://barberry.io/wines/%s.html)"
-                     (if-let ((rms (assoc-default 'rms (nth it-index summary))))
-                         (format "%.2f" rms) "N/A ")
+                     (if-let ((wavg (assoc-default 'wavg (nth it-index summary))))
+                         (format "%.2f" wavg) "N/A ")
                      (vulpea-note-title it)
                      (vulpea-note-id it)))
             (s-join "\n"))))
