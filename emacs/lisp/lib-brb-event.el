@@ -151,6 +151,18 @@ list of prices (from the first to the last wine)."
          (prices (assoc-default 'prices summary))
          (qprs (assoc-default 'qprs summary))
 
+         (people (->> tbl
+                      (-map 'car)
+                      (-remove 'string-empty-p)
+                      (--map (if (string-match-p string-uuid-regexp it)
+                                 (vulpea-db-get-by-id (string-match-1 string-uuid-regexp it))
+                               it))))
+         (ratings (-map #'identity (table-select-rows "rating" tbl :column 1)))
+         (favourites (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
+                           (table-select-rows "extremum" tbl :column 1)))
+         (outcasts (-map (-rpartial #'-positions-of '("outcast" "out" "-"))
+                         (table-select-rows "extremum" tbl :column 1)))
+
          (wines-summary (--map-indexed
                          `((wine . ,(nth it-index wines))
                            (amean . ,(nth it-index amean))
@@ -160,28 +172,46 @@ list of prices (from the first to the last wine)."
                            (fav . ,(nth it-index favs))
                            (out . ,(nth it-index outs))
                            (price . ,(nth it-index prices))
-                           (qpr . ,(nth it-index qprs)))
+                           (qpr . ,(nth it-index qprs))
+                           (scores . ,(->>
+                                       (-zip-pair people (--map (nth it-index it) ratings))
+                                       (-map-indexed
+                                        (lambda (p-index p)
+                                          (list
+                                           (cons 'convive (car p))
+                                           (cons 'score (unless (string-empty-p (cdr p))
+                                                         (string-to-number (cdr p))))
+                                           (cons 'extremum
+                                            (cond
+                                             ((-contains-p (nth p-index favourites) (+ it-index 1)) 'fav)
+                                             ((-contains-p (nth p-index outcasts) (+ it-index 1)) 'out)
+                                             (t nil)))))))))
                          (assoc-default 'wines summary)))
-         (wines-price-total (-sum (-filter #'identity prices)))
-         (wines-price-harmonic (->> prices
+
+         (prices (-filter #'identity prices))
+         (wines-price-total (-sum prices))
+         (wines-price-harmonic (when prices
+                                 (->> prices
+                                      (-filter #'identity)
+                                      (-map #'calc-from-number)
+                                      (apply #'calcFunc-vec)
+                                      (calcFunc-vhmean)
+                                      (calc-to-number))))
+         (wines-price-median (when prices
+                               (->> prices
                                     (-filter #'identity)
                                     (-map #'calc-from-number)
                                     (apply #'calcFunc-vec)
-                                    (calcFunc-vhmean)
-                                    (calc-to-number)))
-         (wines-price-median (->> prices
-                                  (-filter #'identity)
-                                  (-map #'calc-from-number)
-                                  (apply #'calcFunc-vec)
-                                  (calcFunc-vmedian)
-                                  (calc-to-number)))
-         (event-rms (->> rms
-                         (-filter #'identity)
-                         (-map #'calc-from-number)
-                         (apply #'calcFunc-vec)
-                         (calcFunc-rms)
-                         (calc-to-number)))
-         (event-qpr (brb-qpr wines-price-harmonic event-rms)))
+                                    (calcFunc-vmedian)
+                                    (calc-to-number))))
+         (event-rms (when prices
+                      (->> wavg
+                           (-filter #'identity)
+                           (-map #'calc-from-number)
+                           (apply #'calcFunc-vec)
+                           (calcFunc-rms)
+                           (calc-to-number))))
+         (event-qpr (when prices (brb-qpr wines-price-harmonic event-rms))))
     `((wines . ,wines-summary)
       (wines-price-total . ,wines-price-total)
       (wines-price-harmonic . ,wines-price-harmonic)
