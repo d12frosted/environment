@@ -105,15 +105,6 @@
 (require 'init-markdown)
 (require 'init-nix)
 
-;; unfortunately
-(when (and
-       (not elpa-bootstrap-p)
-       env-graphic-p
-       env-sys-mac-p)
-  (add-hook 'after-init-hook
-            (lambda ()
-              (async-shell-command "yabai-relaunch"))))
-
 ;; I don't use `customize' interface, but .dir-locals.el put 'safe'
 ;; variables into `custom-file'. And to be honest, I hate to allow
 ;; them every time I restart Emacs.
