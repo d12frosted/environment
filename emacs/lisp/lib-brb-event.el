@@ -83,29 +83,7 @@
 ;;;###autoload
 (defun brb-event-wines (event)
   "Return list of wines from EVENT."
-  (vulpea-utils-with-note event
-    (let ((bound (save-excursion
-                   (goto-char (point-min))
-                   (re-search-forward org-heading-regexp)
-                   (beginning-of-line)
-                   (point))))
-      (save-excursion
-        (goto-char (point-min))
-        (let ((search t)
-              (found nil))
-          (while search
-            (if (search-forward "1. " bound 'no-error)
-                (setq found (looking-at org-link-bracket-re)
-                      search (not found))
-              (setq search nil)))
-          (when found
-            (beginning-of-line)
-            (->> (org-ml-parse-element-at (point))
-                 (org-ml-get-children)
-                 (-map #'org-ml-item-get-paragraph)
-                 (-map #'car)
-                 (--map (org-ml-get-property :path it))
-                 (-map #'vulpea-db-get-by-id))))))))
+  (vulpea-note-meta-get-list event "wines" 'note))
 
 (defun brb-event-wines--prices (event)
   "Return prices of wines from EVENT.
