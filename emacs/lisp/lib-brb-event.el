@@ -122,11 +122,15 @@ list of prices (from the first to the last wine)."
     (re-search-forward (format org-complex-heading-regexp-format (regexp-quote "Preparation")))
     (search-forward "1. ")
     (beginning-of-line)
-    (->> (org-ml-parse-element-at (point))
-         (org-ml-get-children)
-         (-map #'org-ml-item-get-paragraph)
-         (-map #'car)
-         (--map (org-ml-get-property :path it))
+    (->> (org-list-struct)
+         (--map
+          (save-excursion
+            (goto-char (+ (nth 0 it) (length (nth 2 it))))
+            (let ((e (org-element-context)))
+              (cond
+               ((eq 'link (org-element-type e))
+                (org-element-property :path e))))))
+         (-filter #'identity)
          (vulpea-db-query-by-ids)
          (--remove (vulpea-note-primary-title it)))))
 
