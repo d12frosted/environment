@@ -52,26 +52,6 @@
              pdf-tools-install)
   :init
   (setq-default pdf-view-display-size 'fit-page)
-  (when (and elpa-bootstrap-p (not (getenv "CI")))
-    (require 'pdf-tools)
-    (require 'lib-nix)
-    (unless (file-exists-p pdf-info-epdfinfo-program)
-      (let ((default-directory
-             (expand-file-name "server/" pdf-tools-directory)))
-        (nix-shell-command
-         :message-intro "building pdf-tools..."
-         :message-error "Failed to build pdf-tools"
-         :deps '("pkg-config"
-                 "poppler"
-                 "autoconf"
-                 "automake"
-                 "libtool"
-                 "libpng")
-         :command (concat "autoreconf -i -f"
-                          " && "
-                          "./autobuild -i "
-                          pdf-tools-directory
-                          " --os nixos")))))
   :config
   (add-hook 'pdf-view-mode-hook #'pdf-setup-view-mode))
 
