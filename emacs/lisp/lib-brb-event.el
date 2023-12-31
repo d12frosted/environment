@@ -393,7 +393,7 @@ Participant can be a link to `vulpea-note'."
          (outcasted (-map (lambda (i) (-count (-rpartial #'-contains-p i) outcasts))
                           (-iota count 1)))
 
-         (qprs (-map (lambda (i) (brb-qpr (nth i prices) (nth i rms))) (-iota count))))
+         (qprs (-map (lambda (i) (brb-qpr (nth i prices) (nth i wavg))) (-iota count))))
     `((wines . ,names)
       (ratings . ,ratings)
       (totals . ,totals)
