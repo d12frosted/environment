@@ -47,19 +47,21 @@
   (let* ((event (or event (brb-event-select)))
          (data (brb-event-plan--data-read event))
          (buffer (buffer-generate (format "*%s*" (vulpea-note-title event)) 'unique)))
-    (brb-event-plan--propagate buffer event data (make-hash-table :test 'equal))
+    (brb-event-plan--propagate buffer event data (make-hash-table :test 'equal) nil)
     (pop-to-buffer buffer)))
 
 
 
-(defun brb-event-plan--propagate (buffer event data balances)
+(defun brb-event-plan--propagate (buffer event data balances sensitive)
   "Propagate planning BUFFER for EVENT.
 
 DATA is a properly list containing information about shared and
 personal spendings.
 
 BALANCES is a hash-table, where key is participant id and value
-is balance."
+is balance.
+
+When SENSITIVE is non-nil, show sensitive content."
   (let* ((wines (brb-event-wines event))
          (date (vulpea-utils-with-note event
                  (vulpea-buffer-prop-get "date")))
@@ -98,7 +100,12 @@ is balance."
        (buttonize "[Refresh]"
                   (lambda (&rest _)
                     (brb-event-plan--propagate
-                     buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances)))
+                     buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances sensitive)))
+       " "
+       (buttonize (concat "[Sensitive: " (if sensitive "on" "off") "]")
+                  (lambda (&rest _)
+                    (brb-event-plan--propagate
+                     buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances (not sensitive))))
        " "
        (buttonize "[TG Report]" #'brb-event-plan-display-tg-report event)
        " "
@@ -142,10 +149,10 @@ is balance."
              ,(plist-buttonize-prop data :planned-participants 0
                (lambda (data)
                  (brb-event-plan--data-write event data)
-                 (brb-event-plan--propagate buffer event data balances)))
+                 (brb-event-plan--propagate buffer event data balances sensitive)))
              "")
             ("Price:" ,(vulpea-meta-buttonize event "price" 'number
-                        (lambda (event) (brb-event-plan--propagate buffer event data balances))
+                        (lambda (event) (brb-event-plan--propagate buffer event data balances sensitive))
                         :default 0
                         :to-string #'brb-price-format)
              "")
@@ -154,26 +161,32 @@ is balance."
                (lambda (data)
                  (brb-event-plan--data-write event data)
                  (brb-event-plan--propagate buffer event data balances))
-               #'brb-price-format)
+               (-compose (-partial #'brb-event-plan--mask-maybe sensitive) #'brb-price-format))
              "")
             ("Spending (wines):"
-             ,(brb-price-format wines-total-public)
-             ,(brb-price-format (plist-get invoice :wines-total)))
-            ("Spending (total):" ,(brb-price-format total-public) ,(brb-price-format total-real))
-            ("Price recommended (0%):" ,(brb-price-format price-public) ,(brb-price-format price-real))
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format wines-total-public))
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format (plist-get invoice :wines-total))))
+            ("Spending (total):"
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format total-public))
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format total-real)))
+            ("Price recommended (0%):"
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format price-public))
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format price-real)))
             ("Price recommended (10%):"
-             ,(brb-price-format (ceiling (* price-public 1.1)))
-             ,(brb-price-format (ceiling (* price-real 1.1))))
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format (ceiling (* price-public 1.1))))
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format (ceiling (* price-real 1.1)))))
             ("Price recommended (25%):"
-             ,(brb-price-format (ceiling (* price-public 1.25)))
-             ,(brb-price-format (ceiling (* price-real 1.25))))
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format (ceiling (* price-public 1.25))))
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format (ceiling (* price-real 1.25)))))
             ("Price recommended (33%):"
-             ,(brb-price-format (ceiling (* price-public 1.33)))
-             ,(brb-price-format (ceiling (* price-real 1.33))))
-            ("Planned debit:" ,(brb-price-format debit) "")
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format (ceiling (* price-public 1.33))))
+             ,(brb-event-plan--mask-maybe sensitive (brb-price-format (ceiling (* price-real 1.33)))))
+            ("Planned debit:" ,(brb-event-plan--mask-maybe sensitive (brb-price-format debit)) "")
             ("Planned gain:"
-             ,(propertize (brb-price-format gain-public) 'face (if (>= gain-public 0) 'success 'error))
-             ,(propertize (brb-price-format gain-real) 'face (if (>= gain-real 0) 'success 'error))))))
+             ,(brb-event-plan--mask-maybe sensitive
+               (propertize (brb-price-format gain-public) 'face (if (>= gain-public 0) 'success 'error)))
+             ,(brb-event-plan--mask-maybe sensitive
+               (propertize (brb-price-format gain-real) 'face (if (>= gain-real 0) 'success 'error)))))))
        "\n\n")
 
       (insert
@@ -186,7 +199,7 @@ is balance."
            ,(plist-buttonize-prop data :charge-narrator nil
              (lambda (data)
                (brb-event-plan--data-write event data)
-               (brb-event-plan--propagate buffer event data balances))
+               (brb-event-plan--propagate buffer event data balances sensitive))
              (lambda (v) (if v "[on]" "[off]"))
              (lambda (_) (not charge-narrator))))))
        "\n\n"
@@ -197,14 +210,14 @@ is balance."
         :data
         `(("Participants:" ,(number-to-string (seq-length participants)))
           ("Price:" ,(vulpea-meta-buttonize event "price" 'number
-                      (lambda (event) (brb-event-plan--propagate buffer event data balances))
+                      (lambda (event) (brb-event-plan--propagate buffer event data balances seq-length))
                       :default 0
                       :to-string #'brb-price-format))
-          ("Spending (shared):" ,(brb-price-format (plist-get invoice :shared-total)))
-          ("Spending (wines):" ,(brb-price-format (plist-get invoice :wines-total)))
-          ("Spending (total):" ,(brb-price-format (plist-get invoice :credit)))
+          ("Spending (shared):" ,(brb-event-plan--mask-maybe sensitive (brb-price-format (plist-get invoice :shared-total))))
+          ("Spending (wines):" ,(brb-event-plan--mask-maybe sensitive (brb-price-format (plist-get invoice :wines-total))))
+          ("Spending (total):" ,(brb-event-plan--mask-maybe sensitive (brb-price-format (plist-get invoice :credit))))
           ("Gain:" ,(let ((gain (plist-get invoice :balance)))
-                     (propertize (brb-price-format gain) 'face (if (>= gain 0) 'success 'error))))))
+                     (brb-event-plan--mask-maybe sensitive (propertize (brb-price-format gain) 'face (if (>= gain 0) 'success 'error)))))))
        "\n\n")
 
       (insert
@@ -221,7 +234,7 @@ is balance."
                                 (vulpea-buffer-meta-set "participants" (cons participant participants-all) 'append)
                                 (save-buffer))
                               (brb-event-plan--propagate
-                               buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances)))))
+                               buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances sensitive)))))
         'face 'org-level-2)
        "\n\n")
       (--each participants
@@ -234,7 +247,7 @@ is balance."
                                                        'append)
                                (save-buffer))
                              (brb-event-plan--propagate
-                               buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances)))
+                               buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances sensitive)))
          " "
          (vulpea-buttonize it)
          "\n"))
@@ -264,7 +277,7 @@ is balance."
                       (vulpea-note-meta-get it "name")
                       (or (vulpea-note-meta-get it "vintage") "NV")
                       (brb-price-format (or (nth it-index (plist-get wine-prices :public)) 0))
-                      (brb-price-format (or (nth it-index (plist-get wine-prices :real)) 0))))
+                      (brb-event-plan--mask-maybe sensitive (brb-price-format (or (nth it-index (plist-get wine-prices :real)) 0)))))
               it)
              (-concat it
                       '(sep)
@@ -273,7 +286,7 @@ is balance."
                          ,(seq-length wines)
                          ""
                          ,(brb-price-format wines-total-public)
-                         ,(brb-price-format (plist-get invoice :wines-total)))))))
+                         ,(brb-event-plan--mask-maybe sensitive (brb-price-format (plist-get invoice :wines-total))))))))
        "\n\n")
 
       (insert (propertize "4. Spending" 'face 'org-level-1) "\n\n")
@@ -291,7 +304,7 @@ is balance."
                                     (plist-put data :shared it)
                                     (setq data it))
                                (brb-event-plan--data-write event data)
-                               (brb-event-plan--propagate buffer event data balances)))))
+                               (brb-event-plan--propagate buffer event data balances sensitive)))))
         'face 'org-level-2)
        "\n\n"
        (string-table
@@ -317,7 +330,7 @@ is balance."
                                  (plist-put data :shared)
                                  (setq data))
                             (brb-event-plan--data-write event data)
-                            (brb-event-plan--propagate buffer event data balances)))
+                            (brb-event-plan--propagate buffer event data balances sensitive)))
                (plist-get it :item)
                (brb-price-format (plist-get it :price))
                (plist-get it :amount)
@@ -370,7 +383,7 @@ is balance."
                                         amount)
                                (plist-put data :personal personal)
                                (brb-event-plan--data-write event data)
-                               (brb-event-plan--propagate buffer event data balances)))))
+                               (brb-event-plan--propagate buffer event data balances sensitive)))))
         'face 'org-level-2)
        "\n\n"
        (string-table
@@ -616,6 +629,14 @@ Invoice is based on event PRICE, event DATA and current BALANCE."
          "")
        "🥂 Cheers! See you next time!"))
     (pop-to-buffer buffer)))
+
+;; * Utils
+
+(defun brb-event-plan--mask-maybe (sensitive str)
+  "Mask STR when SENSITIVE is non-nil."
+  (if sensitive
+      str
+    (s-repeat (length str) "*")))
 
 
 
