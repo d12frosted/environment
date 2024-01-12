@@ -112,8 +112,7 @@ list of prices (from the first to the last wine)."
 ;;;###autoload
 (defun brb-event-participants (event)
   "Return list of participants from EVENT."
-  (vulpea-utils-with-note event
-    (brb-event--participants)))
+  (vulpea-note-meta-get-list event "participants" 'note))
 
 (defun brb-event--participants ()
   "Return list of participants from the currently visited event."
