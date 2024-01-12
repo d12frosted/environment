@@ -204,19 +204,25 @@ list of prices (from the first to the last wine)."
                                     (apply #'calcFunc-vec)
                                     (calcFunc-vmedian)
                                     (calc-to-number))))
-         (event-rms (when prices
-                      (->> wavg
-                           (-filter #'identity)
-                           (-map #'calc-from-number)
-                           (apply #'calcFunc-vec)
-                           (calcFunc-rms)
-                           (calc-to-number))))
+         (event-rms (->> rms
+                         (-filter #'identity)
+                         (-map #'calc-from-number)
+                         (apply #'calcFunc-vec)
+                         (calcFunc-rms)
+                         (calc-to-number)))
+         (event-wavg (->> wavg
+                          (-filter #'identity)
+                          (-map #'calc-from-number)
+                          (apply #'calcFunc-vec)
+                          (calcFunc-rms)
+                          (calc-to-number)))
          (event-qpr (when prices (brb-qpr wines-price-harmonic event-rms))))
     `((wines . ,wines-summary)
       (wines-price-total . ,wines-price-total)
       (wines-price-harmonic . ,wines-price-harmonic)
       (wines-price-median . ,wines-price-median)
       (rms . ,event-rms)
+      (wavg . ,event-wavg)
       (qpr . ,event-qpr))))
 
 ;; * Scores
