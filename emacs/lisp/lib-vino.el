@@ -226,10 +226,13 @@ BUTTON should be a proper button with following properties:
                              #'string>
                              notes))
          (notes (seq-take notes 64))
-         (notes (seq-sort-by (lambda (note)
-                               (vulpea-note-meta-get note "date"))
-                             #'string<
-                             notes)))
+         (notes (--sort
+                 (let ((date1 (vulpea-note-meta-get it "date"))
+                       (date2 (vulpea-note-meta-get other "date")))
+                   (or (string< date1 date2)
+                       (< (or (vulpea-note-meta-get it "order" 'number) 0)
+                          (or (vulpea-note-meta-get other "order" 'number) 0))))
+                 notes)))
     (emacsql-with-transaction (org-roam-db)
       (with-current-buffer buffer
         (org-mode)
