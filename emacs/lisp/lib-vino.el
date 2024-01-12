@@ -245,7 +245,8 @@ BUTTON should be a proper button with following properties:
         (seq-do
          (lambda (note)
            (let* ((rating (vino-rating-get-by-id note))
-                  (pos))
+                  (pos)
+                  (has-meta))
              (insert
               "* "
               (vulpea-note-title (vino-rating-wine rating))
@@ -300,6 +301,29 @@ BUTTON should be a proper button with following properties:
                              (b (* 10 (- s5 (floor s5)))))
                         (round (+ a b))))
               "\n\n")
+             (when-let ((event (vulpea-note-meta-get note "event" 'note))
+                        (order (vulpea-note-meta-get note "order" 'number)))
+               (setq has-meta t)
+               (insert "Wine #" (number-to-string order) " on " (vulpea-note-title event) "\n"))
+             (when-let ((volume (vulpea-note-meta-get note "volume" 'number)))
+               (unless (= 750 volume)
+                 (setq has-meta t)
+                 (pcase volume
+                   (`1500 (insert "Magnum bottle\n"))
+                   (`375 (insert "Half bottle\n")))))
+             (when-let ((x (vulpea-note-meta-get (vino-rating-wine rating) "degorgee")))
+               (setq has-meta t)
+               (insert "Disgorged "
+                       (if-let ((time (ignore-errors (org-parse-time-string x))))
+                           (concat "on " (format-time-string "%F" (encode-time time)))
+                         (concat "in " x))
+                       "\n"))
+             (when-let ((x (vulpea-note-meta-get (vino-rating-wine rating) "sur lie")))
+               (unless (string-equal "N/A" x)
+                 (setq has-meta t)
+                 (insert x " on lees\n")))
+             (when has-meta
+               (insert "\n"))
              (setq pos (point))
              (insert
               (vulpea-utils-with-note note
@@ -314,14 +338,6 @@ BUTTON should be a proper button with following properties:
              (unfill-region pos (point))
              (delete-char -1)
              (insert "\n\n")
-             (when-let (x (vulpea-note-meta-get (vino-rating-wine rating) "degorgee"))
-               (insert "Disgorged "
-                       (if-let ((time (ignore-errors (org-parse-time-string x))))
-                           (concat "on " (format-time-string "%F" (encode-time time)))
-                         (concat "in " x))
-                       "\n"))
-             (when-let (x (vulpea-note-meta-get (vino-rating-wine rating) "sur lie"))
-               (insert x " on lees\n\n"))
              (insert "Tasted on " (vino-rating-date rating) "\n")
              (insert "\n")))
          notes)
