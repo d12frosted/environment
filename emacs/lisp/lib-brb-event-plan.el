@@ -208,6 +208,39 @@ is balance."
        "\n\n")
 
       (insert
+       (propertize
+        (concat
+         "2.1 Participants "
+         (buttonize "[+]" (lambda (&rest _)
+                            (let ((participant (vulpea-select-from "Participant"
+                                                                   (--remove
+                                                                    (-contains-p (-map #'vulpea-note-id participants-all) (vulpea-note-id it))
+                                                                    (vulpea-db-query-by-tags-every '("people")))
+                                                                   :require-match t)))
+                              (vulpea-utils-with-note event
+                                (vulpea-buffer-meta-set "participants" (cons participant participants-all) 'append)
+                                (save-buffer))
+                              (brb-event-plan--propagate
+                               buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances)))))
+        'face 'org-level-2)
+       "\n\n")
+      (--each participants
+        (insert
+         (buttonize "[x]" (lambda (&rest _)
+                             (vulpea-utils-with-note event
+                               (vulpea-buffer-meta-set "participants" (-remove (lambda (other)
+                                                                                 (string-equal (vulpea-note-id it) (vulpea-note-id other)))
+                                                                               participants-all)
+                                                       'append)
+                               (save-buffer))
+                             (brb-event-plan--propagate
+                               buffer (vulpea-db-get-by-id (vulpea-note-id event)) (brb-event-plan--data-read event) balances)))
+         " "
+         (vulpea-buttonize it)
+         "\n"))
+      (insert "\n")
+
+      (insert
        (propertize "3. Wine" 'face 'org-level-1) "\n\n"
        (string-table
         :header '("country" "producer" "name" "vintage" "public P" "real P")
