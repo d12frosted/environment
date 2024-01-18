@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: .stack-work cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: melkor/.stack-work
         key: ${{ runner.os }}-stack-work-${{ hashFiles('melkor/stack.yaml.lock') }}
@@ -18,7 +18,7 @@ jobs:
           ${{ runner.os }}-stack-work
 
     - name: $HOME/.stack cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.stack
         key: ${{ runner.os }}-stack-${{ hashFiles('melkor/stack.yaml.lock') }}
