@@ -289,10 +289,8 @@ BUTTON should be a proper button with following properties:
               "Total: "
               (format "%05.2f" (vino-rating-total rating))
               " / "
-              (format "%03.1f" (/ (vino-rating-total rating) 2))
-              " / "
               (format "%i"
-                      (let* ((s5 (/ (vino-rating-total rating) 2))
+                      (let* ((s5 (vino-rating-total rating))
                              (a (pcase (floor s5)
                                   (`5 100)
                                   (`4 90)
