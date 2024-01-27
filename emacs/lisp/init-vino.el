@@ -162,7 +162,8 @@
          ("great wine, will look into tasting it once more" . 3)
          ("good wine, will drink it again with pleasure" . 2)
          ("average wine, only with parents" . 1)
-         ("bad wine, only for enemies" . 0))))))
+         ("bad wine, only for enemies" . 0)))))
+     (4 . (("SCORE" . 5.0))))
    brb-ledger-file (expand-file-name "barberry-garden.journal"
                                      vulpea-directory)))
 
