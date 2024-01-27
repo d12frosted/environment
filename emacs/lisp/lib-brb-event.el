@@ -149,6 +149,7 @@ list of prices (from the first to the last wine)."
          (outs (assoc-default 'outs summary))
          (prices (assoc-default 'prices summary))
          (qprs (assoc-default 'qprs summary))
+         (excludes (assoc-default 'excludes summary))
 
          (people (->> tbl
                       (-map 'car)
@@ -205,17 +206,21 @@ list of prices (from the first to the last wine)."
                                     (calc-to-number))))
          (event-rms (->> rms
                          (-filter #'identity)
+                         (--map-indexed (unless (nth it-index excludes) it))
+                         (-filter #'identity)
                          (-map #'calc-from-number)
                          (apply #'calcFunc-vec)
                          (calcFunc-rms)
                          (calc-to-number)))
          (event-wavg (->> wavg
                           (-filter #'identity)
+                          (--map-indexed (unless (nth it-index excludes) it))
+                          (-filter #'identity)
                           (-map #'calc-from-number)
                           (apply #'calcFunc-vec)
                           (calcFunc-rms)
                           (calc-to-number)))
-         (event-qpr (when prices (brb-qpr wines-price-harmonic event-rms))))
+         (event-qpr (when prices (brb-qpr wines-price-harmonic event-wavg))))
     `((wines . ,wines-summary)
       (wines-price-total . ,wines-price-total)
       (wines-price-harmonic . ,wines-price-harmonic)
@@ -352,16 +357,17 @@ Participant can be a link to `vulpea-note'."
                               ((and (stringp it) (string-non-empty-p it)) (string-to-number it))
                               (t nil)))))
 
-         (exclude (->> (table-select-rows "exclude" tbl :column 1)
-                       (nth 0)
-                       (--map (when (or (string-equal "yes" it)
-                                        (string-equal "true" it)
-                                        (string-equal "t" it))
-                                t))))
+         (excludes (->> (table-select-rows "exclude" tbl :column 1)
+                        (nth 0)
+                        (--map (or (string-equal "yes" it)
+                                   (string-equal "true" it)
+                                   (string-equal "t" it)))))
+         ;; sanitized - each cell is number | nil (depending on the
+         ;; context of evaluation the tbl can contain mixed types or
+         ;; just numbers)
          (ratings-san (->> (table-select-rows "rating" tbl :column 1)
                            (--map (--map-indexed
                                    (cond
-                                    ((nth it-index exclude) nil)
                                     ((numberp it) it)
                                     ((and (stringp it) (string-non-empty-p it)) (string-to-number it))
                                     (t nil))
@@ -409,7 +415,8 @@ Participant can be a link to `vulpea-note'."
       (prices . ,prices)
       (qprs . ,qprs)
       (favs . ,favourited)
-      (outs . ,outcasted))))
+      (outs . ,outcasted)
+      (excludes . ,excludes))))
 
 (defun brb-event-raw-scores-to-people (tbl)
   "Convert raw scores to individual scores.
