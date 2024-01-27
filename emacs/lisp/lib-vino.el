@@ -100,6 +100,7 @@ EXTRA-DATA contains bottle-id."
 
 ;; * vino-inv hooks
 
+;;;###autoload
 (defun vino-inv-acquire-bottle-handler (bottle wine)
   "Handle WINE BOTTLE acquire event."
   (let* ((price (vino-inv-bottle-price bottle))
@@ -115,6 +116,7 @@ EXTRA-DATA contains bottle-id."
        :account-from "personal:account"
        :amount price))))
 
+;;;###autoload
 (defun vino-inv-consume-bottle-handler (bottle wine action date)
   "Handle WINE BOTTLE consume event via ACTION on DATE."
   (when (string-equal "sell" action)
