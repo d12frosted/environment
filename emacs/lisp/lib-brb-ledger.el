@@ -238,37 +238,29 @@ CODE can be passed only in non-interactive usage. See
 
          (cmd-accs (format "hledger -f '%s' accounts '%s'" brb-ledger-file prefix))
          (res-accs (shell-command-to-string cmd-accs))
-         (convives (emacsql-with-transaction (org-roam-db)
-                     (seq-map
-                      (lambda (id)
-                        (if-let ((convive (vulpea-db-get-by-id id)))
-                            convive
-                          (user-error "Could not find convive with id %s" id)))
-                      (seq-remove
-                       (lambda (x)
-                         (seq-contains-p ignored x))
-                       (seq-map
-                        (lambda (x)
-                          (string-remove-prefix prefix x))
-                        (split-string res-accs "\n" t))))))
+         (convives (->> (split-string res-accs "\n" t)
+                        (--map (string-remove-prefix prefix it))
+                        (--remove (-contains-p ignored it))
+                        (--map (if-let ((convive (vulpea-db-get-by-id it)))
+                                   convive
+                                 (user-error "Could not find convive with id %s" it)))))
 
          (cmd-register (format "hledger -f '%s' register -O csv -H '%s'"
                                brb-ledger-file prefix))
          (res-register (shell-command-to-string cmd-register))
-         (postings (seq-map
-                    (lambda (line)
-                      (let* ((parts
-                              (split-string-and-unquote line ","))
-                             (account (string-remove-prefix prefix (nth 4 parts)))
-                             (account (or (vulpea-db-get-by-id account)
-                                          account)))
-                        (make-brb-ledger-posting
-                         :date (nth 1 parts)
-                         :description (nth 3 parts)
-                         :account account
-                         :amount (string-to-number (nth 5 parts))
-                         :total (string-to-number (nth 6 parts)))))
-                    (cdr (split-string res-register "\n" t)))))
+         (postings (->> (split-string res-register "\n" t)
+                        (cdr)
+                        (--map (let* ((parts
+                                       (split-string-and-unquote it ","))
+                                      (account (string-remove-prefix prefix (nth 4 parts)))
+                                      (account (or (vulpea-db-get-by-id account)
+                                                   account)))
+                                 (make-brb-ledger-posting
+                                  :date (nth 1 parts)
+                                  :description (nth 3 parts)
+                                  :account account
+                                  :amount (string-to-number (nth 5 parts))
+                                  :total (string-to-number (nth 6 parts))))))))
     (make-brb-ledger-data
      :total total
      :convives convives
