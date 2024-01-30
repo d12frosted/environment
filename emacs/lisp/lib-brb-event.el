@@ -133,6 +133,55 @@ list of prices (from the first to the last wine)."
          (vulpea-db-query-by-ids)
          (--remove (vulpea-note-primary-title it)))))
 
+;; * Data (non-meta)
+
+(defun brb-event--data-file (event)
+  "Return path to data file of EVENT."
+  (file-name-with-extension (vulpea-note-path event) "data.el"))
+
+;;;###autoload
+(defun brb-event-data-read (event)
+  "Read data for EVENT.
+
+The result contains all the extra data for EVENT that can't be
+stored as metadata in vulpea-note. It has the following
+structure:
+
+  ((planned-participants . num)
+   (shared . (((item . str)
+               (amount . num)
+               (price . num))))
+   (personal . (((item . str)
+                 (price . num)
+                 (orders . (((participant . id)
+                             (amount . num)))))))
+   (wines . (((id . id)
+             (price-public . num)
+             (price-real . num)
+             (type . str)
+             (ignore-scores . bool)
+             (scores . (((participant . id)
+                         (score . num)
+                         (sentiment . str))))))))"
+  (let ((file (brb-event--data-file event)))
+    (when (file-exists-p file)
+      (with-temp-buffer
+        (condition-case nil
+	    (progn
+	      (insert-file-contents file)
+              (read (current-buffer)))
+	  (error
+	   (message "Could not read data from %s" file)))))))
+
+;;;###autoload
+(defun brb-event-data-write (event data)
+  "Write DATA for EVENT."
+  (let ((file (brb-event--data-file event)))
+    (with-temp-file file
+      (let ((print-level nil)
+	    (print-length nil))
+	(pp data (current-buffer))))))
+
 ;; * Summary
 
 ;;;###autoload
