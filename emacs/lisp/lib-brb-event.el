@@ -187,350 +187,136 @@ structure:
 ;;;###autoload
 (defun brb-event-summary (event)
   "Return score summary of EVENT."
-  (let* ((tbl (brb-event-score-data event))
+  (let* ((data (brb-event-data-read event))
          (wines (brb-event-wines event))
-         (summary (brb-event-score--calc-summary tbl))
-         (amean (assoc-default 'amean summary))
-         (rms (assoc-default 'rms summary))
-         (wavg (assoc-default 'wavg summary))
-         (sdevs (assoc-default 'sdevs summary))
-         (favs (assoc-default 'favs summary))
-         (outs (assoc-default 'outs summary))
-         (prices (assoc-default 'prices summary))
-         (qprs (assoc-default 'qprs summary))
-         (excludes (assoc-default 'excludes summary))
-
-         (people (->> tbl
-                      (-map 'car)
-                      (-remove 'string-empty-p)
-                      (--map (if (string-match-p string-uuid-regexp it)
-                                 (vulpea-db-get-by-id (string-match-1 string-uuid-regexp it))
-                               it))))
-         (ratings (-map #'identity (table-select-rows "rating" tbl :column 1)))
-         (favourites (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
-                           (table-select-rows "extremum" tbl :column 1)))
-         (outcasts (-map (-rpartial #'-positions-of '("outcast" "out" "-"))
-                         (table-select-rows "extremum" tbl :column 1)))
-
-         (wines-summary (--map-indexed
-                         `((wine . ,(nth it-index wines))
-                           (amean . ,(nth it-index amean))
-                           (rms . ,(nth it-index rms))
-                           (wavg . ,(nth it-index wavg))
-                           (sdev . ,(nth it-index sdevs))
-                           (fav . ,(nth it-index favs))
-                           (out . ,(nth it-index outs))
-                           (price . ,(nth it-index prices))
-                           (qpr . ,(nth it-index qprs))
-                           (scores . ,(->>
-                                       (-zip-pair people (--map (nth it-index it) ratings))
-                                       (-map-indexed
-                                        (lambda (p-index p)
-                                          (list
-                                           (cons 'convive (car p))
-                                           (cons 'score (unless (string-empty-p (cdr p))
-                                                         (string-to-number (cdr p))))
-                                           (cons 'extremum
-                                            (cond
-                                             ((-contains-p (nth p-index favourites) (+ it-index 1)) 'fav)
-                                             ((-contains-p (nth p-index outcasts) (+ it-index 1)) 'out)
-                                             (t nil)))))))))
-                         (assoc-default 'wines summary)))
-
-         (prices (-filter #'identity prices))
-         (wines-price-total (-sum prices))
+         (participants (brb-event-participants event))
+         (weight-def 2)
+         (weights (->> participants
+                       (--map
+                        (let ((weight (or (vulpea-note-meta-get
+                                           it
+                                           "tasting level"
+                                           'number)
+                                          weight-def)))
+                          `((participant . ,(vulpea-note-id it))
+                            (weight . ,(calc-from-number (* weight weight))))))))
+         (wines-data (->>
+                      wines
+                      (-map
+                       (lambda (wine)
+                         (let ((data (--find (string-equal (vulpea-note-id wine) (alist-get 'id it))
+                                             (alist-get 'wines data))))
+                           (unless data
+                             (error "Could not find scores data for %s" (vulpea-note-id wine)))
+                           (let* ((scores (->> data
+                                               (alist-get 'scores)
+                                               (--map (alist-get 'score it))
+                                               (--filter it)
+                                               (-map #'calc-from-number)))
+                                  (amean (when scores
+                                           (calc-to-number (apply #'calcFunc-vmean scores))))
+                                  (rms (when scores
+                                         (calc-to-number (calcFunc-rms (apply #'calcFunc-vec scores)))))
+                                  (weights-sum (->> weights
+                                                    (--filter (-contains-p
+                                                               (->> data
+                                                                    (alist-get 'scores)
+                                                                    (--filter (alist-get 'score it))
+                                                                    (--map (alist-get 'participant it)))
+                                                               (alist-get 'participant it)))
+                                                    (--map (alist-get 'weight it))
+                                                    (apply #'calcFunc-vec)
+                                                    (calcFunc-vsum)
+                                                    (calc-to-number)))
+                                  (wtotal (->> data
+                                               (alist-get 'scores)
+                                               (--filter (alist-get 'score it))
+                                               (--map
+                                                (let* ((pid (alist-get 'participant it))
+                                                       (weight-data (--find
+                                                                     (string-equal pid (alist-get 'participant it))
+                                                                     weights)))
+                                                  (unless weight-data
+                                                    (error "Could not find weight data for participant %s" pid))
+                                                  (calcFunc-mul (assoc-default 'weight weight-data)
+                                                                (assoc-default 'score it))))
+                                               (apply #'calcFunc-vec)
+                                               (calcFunc-vsum)))
+                                  (wavg (when scores (/ wtotal weights-sum)))
+                                  (price (alist-get 'price-public data))
+                                  (qpr (brb-qpr price wavg))
+                                  (sdev (when scores
+                                          (calc-to-number (apply #'calcFunc-vpvar scores))))
+                                  (fav (->> data
+                                            (alist-get 'scores)
+                                            (--map (alist-get 'sentiment it))
+                                            (--count (string-equal "favourite" it))))
+                                  (out (->> data
+                                            (alist-get 'scores)
+                                            (--map (alist-get 'sentiment it))
+                                            (--count (string-equal "outcast" it))))
+                                  (pscores (->> data
+                                                (alist-get 'scores)
+                                                (--map
+                                                 (let* ((pid (alist-get 'participant it))
+                                                        (p (--find (string-equal pid (vulpea-note-id it))
+                                                                   participants)))
+                                                   `((participant . ,p)
+                                                     (score . ,(alist-get 'score it))
+                                                     (sentiment . ,(alist-get 'sentiment it))))))))
+                             `((wine . ,wine)
+                               (ignore-scores . ,(alist-get 'ignore-scores data))
+                               (amean . ,amean)
+                               (rms . ,rms)
+                               (wavg . ,wavg)
+                               (sdev . ,sdev)
+                               (fav . ,fav)
+                               (out . ,out)
+                               (price . ,price)
+                               (qpr . ,qpr)
+                               (scores . ,pscores))))))))
+         (prices (->> data
+                      (alist-get 'wines)
+                      (--remove (alist-get 'ignore-scores it))
+                      (--map (alist-get 'price-public it))
+                      (--filter it)))
+         (wines-price-total (when prices (-sum prices)))
          (wines-price-harmonic (when prices
                                  (->> prices
-                                      (-filter #'identity)
                                       (-map #'calc-from-number)
                                       (apply #'calcFunc-vec)
                                       (calcFunc-vhmean)
                                       (calc-to-number))))
          (wines-price-median (when prices
                                (->> prices
-                                    (-filter #'identity)
                                     (-map #'calc-from-number)
                                     (apply #'calcFunc-vec)
                                     (calcFunc-vmedian)
                                     (calc-to-number))))
-         (event-rms (->> rms
-                         (-filter #'identity)
-                         (--map-indexed (unless (nth it-index excludes) it))
-                         (-filter #'identity)
+         (event-rms (->> wines-data
+                         (--remove (alist-get 'ignore-scores it))
+                         (--map (alist-get 'rms it))
+                         (--filter it)
                          (-map #'calc-from-number)
                          (apply #'calcFunc-vec)
                          (calcFunc-rms)
                          (calc-to-number)))
-         (event-wavg (->> wavg
-                          (-filter #'identity)
-                          (--map-indexed (unless (nth it-index excludes) it))
-                          (-filter #'identity)
-                          (-map #'calc-from-number)
-                          (apply #'calcFunc-vec)
-                          (calcFunc-rms)
-                          (calc-to-number)))
+         (event-wavg (->> wines-data
+                         (--remove (alist-get 'ignore-scores it))
+                         (--map (alist-get 'wavg it))
+                         (--filter it)
+                         (-map #'calc-from-number)
+                         (apply #'calcFunc-vec)
+                         (calcFunc-rms)
+                         (calc-to-number)))
          (event-qpr (when prices (brb-qpr wines-price-harmonic event-wavg))))
-    `((wines . ,wines-summary)
+    `((wines . ,wines-data)
       (wines-price-total . ,wines-price-total)
       (wines-price-harmonic . ,wines-price-harmonic)
       (wines-price-median . ,wines-price-median)
       (rms . ,event-rms)
       (wavg . ,event-wavg)
       (qpr . ,event-qpr))))
-
-;; * Scores
-
-;;;###autoload
-(defun brb-event-score-data (event)
-  "Return raw score data (table) of EVENT."
-  (vulpea-utils-with-note event
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "#\\+name: data")
-      (beginning-of-line)
-      (while (looking-at "#\\+")
-        (forward-line))
-      (->> (org-table-to-lisp)
-           (-filter #'listp)
-           (--map (--map (if (stringp it) (substring-no-properties it) it) it))))))
-
-(cl-defun brb-event-raw-scores-to-summary (tbl &key columns)
-  "Convert raw scores to summary.
-
-TBL represents raw scores.
-
-When COLUMNS is not specified, all columns are returned.
-Otherwise only those specified in the list."
-  (let* ((summary (brb-event-score--calc-summary tbl))
-         (wines (assoc-default 'wines summary))
-         (amean (assoc-default 'amean summary))
-         (rms (assoc-default 'rms summary))
-         (wavg (assoc-default 'wavg summary))
-         (sdevs (assoc-default 'sdevs summary))
-         (favs (assoc-default 'favs summary))
-         (outs (assoc-default 'outs summary))
-         (prices (assoc-default 'prices summary))
-         (qprs (assoc-default 'qprs summary))
-         (columns (or columns '("amean" "rms" "wavg" "sdev" "favourite" "outcast" "price" "QPR"))))
-    (-concat
-     (list (cons "" columns)
-           'hline)
-     (-map
-      (lambda (i)
-        (-filter
-         #'identity
-         (list
-          (nth i wines)
-          (when (-contains-p columns "amean")
-            (brb-format-float-in (nth i amean) :floats amean :fn #'-max :style 'bold :prec 4))
-          (when (-contains-p columns "rms")
-            (brb-format-float-in (nth i rms) :floats rms :fn #'-max :style 'bold :prec 4))
-          (when (-contains-p columns "wavg")
-            (brb-format-float-in (nth i wavg) :floats wavg :fn #'-max :style 'bold :prec 4))
-          (when (-contains-p columns "sdev")
-            (brb-format-float-in (nth i sdevs) :prec 4))
-          (when (-contains-p columns "favourite")
-            (brb-format-float-in (nth i favs) :floats favs :fn #'-max :style 'bold))
-          (when (-contains-p columns "outcast")
-            (brb-format-float-in (nth i outs) :floats outs :fn #'-max :style 'del))
-          (when (-contains-p columns "price")
-            (brb-format-float-in (nth i prices)))
-          (when (-contains-p columns "QPR")
-            (brb-format-float-in (nth i qprs) :floats qprs :fn #'-max :style 'bold :prec 4)))))
-      (-iota (seq-length wines))))))
-
-(defun brb-event-score--calc-summary (tbl)
-  "Calculate summary from TBL.
-
-TBL is a data table of the following format:
-
-|               |            | Wine | Wine | ... | Wine |
-|---------------+------------+------+------+-----+------|
-|               | prop 1     | val  | val  |     | val  |
-|               | prop 2     | val  | val  |     | val  |
-|               | ...        |      |      |     |      |
-|               | prop 3     | val  | val  |     | val  |
-|---------------+------------+------+------+-----+------|
-| Participant 1 |            |      |      |     |      |
-|               | rating     | num  | num  |     | num  |
-|               | extremum   | fav  |      |     | out  |
-|               | ...        |      |      |     |      |
-|               | extra prop | val  | val  |     | val  |
-|---------------+------------+------+------+-----+------|
-| Participant 2 |            |      |      |     |      |
-|               | rating     | num  | num  |     | num  |
-|               | extremum   | fav  |      |     | out  |
-|               | ...        |      |      |     |      |
-|               | extra prop | val  | val  |     | val  |
-|---------------+------------+------+------+-----+------|
-| ...           |            |      |      |     |      |
-|               | rating     |      |      |     |      |
-|               | extremum   |      |      |     |      |
-|               | ...        |      |      |     |      |
-|               | extra prop |      |      |     |      |
-|---------------+------------+------+------+-----+------|
-| Participant N |            |      |      |     |      |
-|               | rating     | num  | num  |     | num  |
-|               | extremum   | fav  |      |     | out  |
-|               | ...        |      |      |     |      |
-|               | extra prop | val  | val  |     | val  |
-|---------------+------------+------+------+-----+------|
-
-Participant can be a link to `vulpea-note'."
-  (let* ((count (- (length (car tbl)) 2))
-         (names (-drop 2 (car tbl)))
-
-         ;; extract weights
-         (people (->> tbl (-map 'car) (-remove 'string-empty-p)))
-         (weight-def 2)
-         (weights (->> people
-                       (--map (if (s-matches? string-uuid-regexp it)
-                                  (or (vulpea-note-meta-get
-                                       (vulpea-db-get-by-id (string-match-1 string-uuid-regexp it))
-                                       "tasting level"
-                                       'number)
-                                      weight-def)
-                                weight-def))
-                       (--map (* it it))))
-
-         (ratings (->> (table-select-rows "rating" tbl :column 1)
-                       (--map (--map (cond
-                                      ((numberp it) it)
-                                      ((and (stringp it) (string-non-empty-p it)) (string-to-number it))
-                                      (t nil))
-                                     it))))
-
-         (prices (->> (car (table-select-rows "price" tbl :column 1))
-                      (--map (cond
-                              ((numberp it) it)
-                              ((and (stringp it) (string-non-empty-p it)) (string-to-number it))
-                              (t nil)))))
-
-         (excludes (->> (table-select-rows "exclude" tbl :column 1)
-                        (nth 0)
-                        (--map (or (string-equal "yes" it)
-                                   (string-equal "true" it)
-                                   (string-equal "t" it)))))
-         ;; sanitized - each cell is number | nil (depending on the
-         ;; context of evaluation the tbl can contain mixed types or
-         ;; just numbers)
-         (ratings-san (->> (table-select-rows "rating" tbl :column 1)
-                           (--map (--map-indexed
-                                   (cond
-                                    ((numberp it) it)
-                                    ((and (stringp it) (string-non-empty-p it)) (string-to-number it))
-                                    (t nil))
-                                   it))))
-         (totals (table-vreduce-columns #'calcFunc-vsum ratings-san))
-         (amean (table-vreduce-columns #'calcFunc-vmean ratings-san))
-         (rms (table-vreduce-columns (lambda (&rest vecs) (calcFunc-rms (apply #'calcFunc-vec vecs))) ratings-san))
-
-         ;; this is a bit hard to read, but we need to support cases
-         ;; when someone DOESN'T rate a wine.
-         (wavg (->> (table-transpose ratings-san)
-                    (--map (-zip-with
-                            (lambda (a b)
-                              (when a
-                                (cons (calc-from-number a) (calc-from-number b))))
-                            it
-                            weights))
-                    (--map (-filter #'identity it))
-                    (--map (when it
-                             (calc-to-number
-                              (calcFunc-div
-                               (calcFunc-vsum (apply #'calcFunc-vec
-                                                     (--map (calcFunc-mul (car it) (cdr it)) it)))
-                               (calcFunc-vsum (apply #'calcFunc-vec (-map #'cdr it)))))))))
-         (sdevs (table-vreduce-columns #'calcFunc-vpvar ratings))
-         (favourites (-filter #'identity
-                              (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
-                                    (table-select-rows "extremum" tbl :column 1))))
-         (outcasts (-filter #'identity
-                            (-map (-rpartial #'-positions-of '("outcast" "out" "-"))
-                                  (table-select-rows "extremum" tbl :column 1))))
-         (favourited (-map (lambda (i) (-count (-rpartial #'-contains-p i) favourites))
-                           (-iota count 1)))
-         (outcasted (-map (lambda (i) (-count (-rpartial #'-contains-p i) outcasts))
-                          (-iota count 1)))
-
-         (qprs (-map (lambda (i) (brb-qpr (nth i prices) (nth i wavg))) (-iota count))))
-    `((wines . ,names)
-      (ratings . ,ratings)
-      (totals . ,totals)
-      (amean . ,amean)
-      (rms . ,rms)
-      (wavg . ,wavg)
-      (sdevs . ,sdevs)
-      (prices . ,prices)
-      (qprs . ,qprs)
-      (favs . ,favourited)
-      (outs . ,outcasted)
-      (excludes . ,excludes))))
-
-(defun brb-event-raw-scores-to-people (tbl)
-  "Convert raw scores to individual scores.
-
-TBL represents raw scores."
-  (let* ((wines (-drop 2 (car tbl)))
-         (people (->> tbl (-map 'car) (-remove 'string-empty-p)))
-         (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
-         (favourites (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
-                           (table-select-rows "extremum" tbl :column 1)))
-         (outcasts (-map (-rpartial #'-positions-of '("outcast" "out" "-"))
-                         (table-select-rows "extremum" tbl :column 1))))
-    (-concat
-     (list
-      (cons " " wines)
-      'hline)
-     (-map-indexed
-      (lambda (i p)
-        (let ((rs (nth i ratings))
-              (convive (if (string-match-p string-uuid-regexp p)
-                           (let ((note (vulpea-db-get-by-id (string-match-1 string-uuid-regexp p))))
-                             (or (vulpea-note-meta-get note "public name")
-                                 (user-error "%s doesn't have public name, please set it up"
-                                             (vulpea-note-title note))))
-                         p)))
-          (cons
-           convive
-           (-map-indexed
-            (lambda (ri r)
-              (brb-format-float r
-                :style
-                (cond
-                 ((-contains-p (nth i favourites) (1+ ri)) 'bold)
-                 ((-contains-p (nth i outcasts) (1+ ri)) 'del)
-                 (t 'normal))))
-            rs))))
-      people))))
-
-;;;###autoload
-(defun brb-event-score-personal (event)
-  "Return personal scores of EVENT."
-  (let* ((tbl (brb-event-score-data event))
-         (people (->> tbl (-map 'car) (-remove 'string-empty-p) (-map #'substring-no-properties)))
-         (ratings (-filter #'identity (-map #'identity (table-select-rows "rating" tbl :column 1))))
-         (favourites (-map (-rpartial #'-positions-of '("favourite" "fav" "+"))
-                           (table-select-rows "extremum" tbl :column 1)))
-         (outcasts (-map (-rpartial #'-positions-of '("outcast" "out" "-"))
-                         (table-select-rows "extremum" tbl :column 1))))
-    (--map-indexed
-     (let ((rs (nth it-index ratings)))
-       (list
-        :convive
-        (cond
-         ((string-match string-uuid-regexp it) (match-string 1 it))
-         (t it))
-        :ratings
-        (--map
-         (cond
-          ((and (stringp it) (string-empty-p it)) nil)
-          ((stringp it) (string-to-number it))
-          (t it))
-         rs)
-        :favourites (nth it-index favourites)
-        :outcasts (nth it-index outcasts)))
-     people)))
 
 ;; * Content management
 
@@ -547,70 +333,6 @@ Uses public name as description."
     (insert (org-link-make-string
              (concat "id:" (vulpea-note-id note))
              (vulpea-note-meta-get note "public name")))))
-
-;;;###autoload
-(defun brb-event-add-participant ()
-  "Select and add a participant to event."
-  (interactive)
-  (let ((note (vulpea-select-from
-               "Participant"
-               (vulpea-db-query-by-tags-every '("people"))
-               :require-match t)))
-    ;; insert to the list of participants
-    (brb-event-add-participant--to-list note)
-    ;; add to the table
-    (brb-event-add-participant--to-data note)))
-
-(defun brb-event-add-participant--to-list (participant)
-  "Add PARTICIPANT to the currently visited event.
-
-Noop in case the participant is already part of the list."
-  (unless (--find
-           (string-equal (vulpea-note-id it)
-                         (vulpea-note-id participant))
-           (brb-event--participants))
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward (format org-complex-heading-regexp-format (regexp-quote "Preparation")))
-      (search-forward "1. ")
-      (beginning-of-line)
-      (goto-char (org-element-property :contents-end (org-element-at-point)))
-      (insert "1. "
-              (org-link-make-string
-               (concat "id:" (vulpea-note-id participant))
-               (vulpea-note-title participant)))
-      (beginning-of-line)
-      (funcall-interactively #'org-ctrl-c-ctrl-c)
-      (end-of-line)
-      (insert "\n"))))
-
-(defun brb-event-add-participant--to-data (participant)
-  "Add PARTICIPANT to the currently visited event.
-
-Noop in case the participant is already part of the list."
-  (save-excursion
-    (goto-char (point-min))
-    (search-forward "#+name: data")
-    (let ((end (org-element-property :contents-end (org-element-at-point))))
-      (unless (save-excursion
-                (search-forward (vulpea-note-id participant) end 'no-error))
-        (goto-char end)
-        (forward-line -1)
-        (let ((end (point)))
-          (search-backward "|-")
-          (copy-region-as-kill (point) end)
-          (yank))
-        (search-backward "|-")
-        (forward-line 1)
-        (let ((x (+ (point) 2)))
-          (goto-char x)
-          (search-forward "|")
-          (delete-region x (- (point) 2))
-          (goto-char x)
-          (insert (org-link-make-string
-                   (concat "id:" (vulpea-note-id participant))
-                   (vulpea-note-meta-get participant "public name")))
-          (funcall-interactively #'org-ctrl-c-ctrl-c))))))
 
 (defun brb-event-wine-edit ()
   "Edit event wine at point."
