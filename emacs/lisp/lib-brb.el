@@ -43,7 +43,11 @@
 
 (defun brb-price-format (amount)
   "Format AMOUNT as price."
-  (format "%d %s" amount brb-currency))
+  (format
+   "%s %s"
+   (if amount (string-group-number (ceiling amount))
+     "–")
+   brb-currency))
 
 (defun brb-price-to-number (price)
   "Convert PRICE to number.
