@@ -481,14 +481,20 @@
         :data
         (cl-flet ((edit-fee (id)
                     (let* ((fee (read-number "Fee: "))
+                           (fee (unless (= fee price) fee))
                            (data (ep-data x))
                            (pds (alist-get 'participants data)))
                       (unless pds
                         (setf (alist-get 'participants data)
                               `(((id . ,id)
                                  (fee . ,fee)))))
-                      (ep-save-data x data)
-                      (message "%s" (pp (alist-get 'participants data))))))
+                      (if-let ((pd (--find (string-equal id (alist-get 'id it)) pds)))
+                          (setf (alist-get 'fee pd) fee)
+                        (setf (alist-get 'participants data)
+                              (-snoc (alist-get 'participants data)
+                                     `((id . ,id)
+                                       (fee . ,fee)))))
+                      (ep-save-data x data))))
           (-snoc
            (--map
             (let* ((pid (vulpea-note-id it))
@@ -497,11 +503,12 @@
                             (--find (string-equal pid (alist-get 'id it)))))
                    (mode (cond
                           ((and host (string-equal pid (vulpea-note-id host))) "host")
+                          ((and pd (/= (or (alist-get 'fee pd) price) price)) "custom")
                           (t "normal")))
                    (fee (pcase mode
                           (`"host" 0)
-                          (`"normal" (or (when pd (alist-get 'fee pd))
-                                         price)))))
+                          (_ (or (when pd (alist-get 'fee pd))
+                                 price)))))
               (list
                (buttonize "[x]" #'remove-participant (vulpea-note-id it))
                (vulpea-note-title it)
