@@ -71,7 +71,7 @@
 (cl-defmethod ep-save-data ((x ep) data)
   "Save DATA and reload X."
   (setf (ep-data x) data)
-  (brb-event--data-write (ep-event x) (ep-data x))
+  (brb-event-data-write (ep-event x) (ep-data x))
   (brb-event-plan--propagate-new x))
 
 (cl-defmethod ep-save-event ((x ep) (event vulpea-note))
@@ -133,6 +133,7 @@
   "Render plan tab for X."
   (let* ((participants (brb-event-participants (ep-event x)))
          (wines (brb-event-wines (ep-event x)))
+         (host (vulpea-note-meta-get (ep-event x) "host" 'note))
          (shared-total (->> (ep-data x)
                             (assoc-default 'shared)
                             (--map (ceiling
@@ -158,6 +159,18 @@
          (debit (* (or (vulpea-note-meta-get (ep-event x) "price" 'number)
                        0)
                    (- (length participants) 1)))
+         (price (vulpea-note-meta-get (ep-event x) "price" 'number))
+         (debit (->> participants
+                     (--map
+                      (let ((pid (vulpea-note-id it)))
+                        (if (and host (string-equal pid (vulpea-note-id host)))
+                            0
+                          (or (when-let ((pd (->> (ep-data x)
+                                                  (alist-get 'participants)
+                                                  (--find (string-equal pid (alist-get 'id it))))))
+                                (alist-get 'fee pd))
+                              price))))
+                     (-sum)))
          (gain-real (- debit credit-real))
          (gain-public (- debit credit-public)))
 
@@ -172,7 +185,12 @@
                     (unless (-contains-p (-map #'vulpea-note-id participants) (vulpea-note-id host))
                       (vulpea-buffer-meta-set "participants" (cons host participants) 'append))
                     (save-buffer))
-                  (ep-reload x))))
+                  (ep-reload x)))
+              (set-planned-participants (&rest _)
+                (let ((num (read-number "Planned participants: ")))
+                  (setf (alist-get 'planned-participants (ep-data x))
+                        num)
+                  (ep-save-data x (ep-data x)))))
       (insert (propertize "Planning" 'face 'org-level-1) "\n\n")
       (insert
        (string-table
@@ -181,15 +199,15 @@
         :sep "  "
         :data
         `(("Host:"
-           ,(buttonize
-             (if-let* ((host (vulpea-note-meta-get (ep-event x) "host" 'note)))
-                 (vulpea-note-title host)
-               "_____")
-             #'set-host)
+           ,(buttonize (if host (vulpea-note-title host) "_____") #'set-host)
            "")
           ("Participants:"
-           ,(plist-buttonize-prop (ep-data x) :planned-participants 0 (-partial #'ep-save-data x))
-           ,(format "(%d)" (length participants)))
+           ,(buttonize
+             (if-let ((v (alist-get 'planned-participants (ep-data x))))
+                 (format "%2d" v)
+               "__")
+             #'set-planned-participants)
+           ,(format "(%2d)" (length participants)))
           ("Price:" ,(vulpea-meta-buttonize (ep-event x) "price" 'number (-partial #'ep-save-event x)
                       :default 0 :to-string #'brb-price-format)
            "")
@@ -202,6 +220,9 @@
           ("Spending (total):"
            ,(brb-price-format credit-public)
            ,(brb-price-format credit-real))
+          ("Debit:"
+           ,(brb-price-format debit)
+           "")
           ("Gain:"
            ,(propertize (brb-price-format gain-public) 'face (if (>= gain-public 0) 'success 'error))
            ,(propertize (brb-price-format gain-real) 'face (if (>= gain-real 0) 'success 'error)))))
@@ -329,9 +350,7 @@
         :data
         (--> wines
              (--map-indexed
-              (let* ((roa (or (vulpea-note-meta-get it "region" 'note)
-                              (vulpea-note-meta-get it "appellation" 'note)))
-                     (data (->> (ep-data x)
+              (let* ((data (->> (ep-data x)
                                 (assoc-default 'wines)
                                 (-find (lambda (other)
                                          (string-equal (vulpea-note-id it)
@@ -448,13 +467,49 @@
                   (save-buffer))
                 (ep-reload x)))
       (insert (propertize (format "⇾ Participants (%d)" (length participants)) 'face 'org-level-2) "\n\n")
-      (--each participants
-        (insert
-         (buttonize "[x]" #'remove-participant (vulpea-note-id it))
-         " "
-         (vulpea-note-title it)
-         "\n"))
-      (insert (buttonize "[+]" #'add-participant) "\n"))))
+      (insert
+       (string-table
+        :header '("" "participant" "mode" "fee")
+        :pad-type '(left right right left)
+        :header-sep "-"
+        :header-sep-start "|-"
+        :header-sep-conj "-+-"
+        :header-sep-end "-|"
+        :row-start "| "
+        :row-end " |"
+        :sep " | "
+        :data
+        (cl-flet ((edit-fee (id)
+                    (let* ((fee (read-number "Fee: "))
+                           (data (ep-data x))
+                           (pds (alist-get 'participants data)))
+                      (unless pds
+                        (setf (alist-get 'participants data)
+                              `(((id . ,id)
+                                 (fee . ,fee)))))
+                      (ep-save-data x data)
+                      (message "%s" (pp (alist-get 'participants data))))))
+          (-snoc
+           (--map
+            (let* ((pid (vulpea-note-id it))
+                   (pd (->> (ep-data x)
+                            (alist-get 'participants)
+                            (--find (string-equal pid (alist-get 'id it)))))
+                   (mode (cond
+                          ((and host (string-equal pid (vulpea-note-id host))) "host")
+                          (t "normal")))
+                   (fee (pcase mode
+                          (`"host" 0)
+                          (`"normal" (or (when pd (alist-get 'fee pd))
+                                         price)))))
+              (list
+               (buttonize "[x]" #'remove-participant (vulpea-note-id it))
+               (vulpea-note-title it)
+               mode
+               (buttonize (brb-price-format fee) #'edit-fee pid)))
+            participants)
+           'sep
+           (list (buttonize "[+]" #'add-participant) "" "" (brb-price-format debit)))))))))
 
 (cl-defmethod brb-event-plan--tab-scores ((x ep))
   "Render scores tab for X."
@@ -478,10 +533,12 @@
                           "······"))
         ("Mean price (harmonic):" ,(brb-price-format (assoc-default 'wines-price-harmonic summary)))
         ("Mean price (median):" ,(brb-price-format (assoc-default 'wines-price-median summary)))
-        ("Event QPR:" ,(assoc-default 'qpr summary))))
+        ("Event QPR:" ,(if-let ((x (assoc-default 'qpr summary)))
+                           (format "%.4f" x)
+                         "······"))))
      "\n\n"
      (string-table
-      :header '("" "producer" "wine" "year" "place" "rms" "wavg" "qpr" "fav" "out")
+      :header '("" "producer" "wine" "year" "##" "rms" "wavg" "qpr" "fav" "out")
       :pad-type '(left right right right right left left left right left)
       :width '(nil 20 36 nil nil nil nil nil nil nil)
       :header-sep "-"

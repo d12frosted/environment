@@ -155,6 +155,8 @@ structure:
                  (price . num)
                  (orders . (((participant . id)
                              (amount . num)))))))
+   (participants . ((id . id)
+                    (fee . num)))
    (wines . (((id . id)
              (price-public . num)
              (price-real . num)
