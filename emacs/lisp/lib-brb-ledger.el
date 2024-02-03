@@ -205,6 +205,31 @@ CODE can be passed only in non-interactive usage. See
 
 
 
+;;;###autoload
+(cl-defun brb-ledger-spend-personal (&key amount date comment code)
+  "Spend from personal account.
+
+AMOUNT, DATE and COMMENT are optional arguments. Unless
+specified, user is asked to provide them interactively.
+
+CODE can be passed only in non-interactive usage. See
+`brb-ledger-record-txn' to learn about this argument."
+  (interactive)
+  (let ((amount (or amount (read-number "Amount: ")))
+        (date (or date (org-read-date nil t)))
+        (comment (or comment (read-string "Comment: "))))
+    (brb-ledger-record-txn
+     :date date
+     :code code
+     :comment comment
+     :account-to "spending:wines"
+     :account-from "personal:account"
+     :amount amount)
+    (when (get-buffer brb-ledger-buffer-name)
+      (brb-ledger-buffer-create))))
+
+
+
 (cl-defstruct brb-ledger-data
   total
   convives
