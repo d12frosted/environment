@@ -193,6 +193,58 @@ PID is id of participant."
       (balance-public . ,balance-public)
       (balance-real . ,balance-real))))
 
+;; * Wine data manipulations
+
+(defun ep-update-score-data (x wid pid fn def)
+  "Update score data in X using FN.
+
+WID is wine id.
+PID is participant id.
+
+When score data for given WID and PID not found, use DEF."
+  (let* ((data (ep-data x)))
+    (setf (alist-get 'wines data)
+          (--update-first-by
+           (string-equal wid (alist-get 'id it))
+           (progn
+             (setf (alist-get 'scores it)
+                   (-update-first-by
+                    (lambda (sd) (string-equal pid (alist-get 'participant sd)))
+                    fn
+                    def
+                    (alist-get 'scores it)))
+             it)
+           ;; TODO set more meaningful value
+           nil
+           (alist-get 'wines data)))
+    (ep-save-data x data)))
+
+(defun ep-set-score (x wid pid score)
+  "Set SCORE for wine in X.
+
+WID is wine id.
+PID is participant id."
+  (ep-update-score-data x wid pid
+                        (lambda (sd)
+                          (setf (alist-get 'score sd) score)
+                          sd)
+                        `((participant . ,pid)
+                          (score . ,score)
+                          (sentiment . nil))))
+
+(defun ep-set-sentiment (x wid pid sentiment)
+  "Set SENTIMENT for wine in X.
+
+WID is wine id.
+PID is participant id."
+  (ep-update-score-data x wid pid
+                        (lambda (sd)
+                          (setf (alist-get 'sentiment sd) sentiment)
+                          sd)
+                        `((participant . ,pid)
+                          (score . ,nil)
+                          (sentiment . ,sentiment))))
+
 ;; * Buffer building blocks
 
 (defun brb-event-plan--propagate-new (x)
@@ -370,17 +422,14 @@ PID is id of participant."
                                                 (--filter (s-suffix-p brb-currency it))
                                                 (-map #'string-to-number)
                                                 (-max))))
-                       (data (ep-data x))
-                       (wds (alist-get 'wines data))
-                       (wd (--find (string-equal id (alist-get 'id it)) wds)))
-                  (when wd
-                    (setf (alist-get 'price-public wd) price))
-                  (setq wds (--> (--remove (string-equal id (alist-get 'id it)) wds)
-                                 (-snoc it (or wd `((id . ,id)
-                                                    (price-public . ,price)
-                                                    (price-real . nil)
-                                                    (type . nil))))))
-                  (setf (alist-get 'wines data) wds)
+                       (data (ep-data x)))
+                  (--update-first-by
+                   (string-equal id (alist-get 'id it))
+                   (progn
+                     (setf (alist-get 'price-public it) price)
+                     it)
+                   nil
+                   (alist-get 'wines data))
                   (ep-save-data x data)))
               (edit-price-real (id)
                 (let* ((price (read-number "Price real: "
@@ -389,17 +438,14 @@ PID is id of participant."
                                                 (--filter (s-suffix-p brb-currency it))
                                                 (-map #'string-to-number)
                                                 (-min))))
-                       (data (ep-data x))
-                       (wine-data (--find (string-equal id (alist-get 'id it))
-                                          (alist-get 'wines data))))
-                  (if wine-data
-                      (setf (alist-get 'price-real wine-data) price)
-                    (setf (alist-get 'wines data)
-                          (-snoc (alist-get 'wines data)
-                                 `((id . ,id)
-                                   (price-public . nil)
-                                   (price-real . ,price)
-                                   (type . nil)))))
+                       (data (ep-data x)))
+                  (--update-first-by
+                   (string-equal id (alist-get 'id it))
+                   (progn
+                     (setf (alist-get 'price-real it) price)
+                     it)
+                   nil
+                   (alist-get 'wines data))
                   (ep-save-data x data)))
               (edit-type (id)
                 (let* ((type (completing-read "Type: "
@@ -700,51 +746,12 @@ PID is id of participant."
             wines))))
        '(sep)
        (cl-flet ((set-score (d)
-                   (let* ((score (read-number "Score: "))
-                          (score (unless (= 0 score) score))
-                          (data (ep-data x))
-                          (def-score `((participant . ,(assoc-default 'pid d))
-                                       (score . ,score)
-                                       (sentiment . nil))))
-                     (setf (alist-get 'wines data)
-                           (--update-first-by
-                            (string-equal (assoc-default 'wid d) (alist-get 'id it))
-                            (progn
-                              (setf (alist-get 'scores it)
-                                    (-update-first-by
-                                     (lambda (sd) (string-equal (assoc-default 'pid d) (alist-get 'participant sd)))
-                                     (lambda (sd)
-                                       (setf (alist-get 'score sd) score)
-                                       sd)
-                                     def-score
-                                     (alist-get 'scores it)))
-                              it)
-                            nil
-                            (alist-get 'wines data)))
-                     (ep-save-data x data)))
+                   (let ((score (read-number "Score: ")))
+                     (ep-set-score x (alist-get 'wid d) (alist-get 'pid d) (unless (= 0 score) score))))
                  (set-sentiment (d)
-                   (let* ((sentiment (completing-read "Sentiment: " '("favourite" "outcast" "none")))
-                          (sentiment (unless (string-equal "none" sentiment) sentiment))
-                          (data (ep-data x))
-                          (def-score `((participant . ,(assoc-default 'pid d))
-                                       (score . nil)
-                                       (sentiment . ,sentiment))))
-                     (setf (alist-get 'wines data)
-                           (--update-first-by
-                            (string-equal (assoc-default 'wid d) (alist-get 'id it))
-                            (progn
-                              (setf (alist-get 'scores it)
-                                    (-update-first-by
-                                     (lambda (sd) (string-equal (assoc-default 'pid d) (alist-get 'participant sd)))
-                                     (lambda (sd)
-                                       (setf (alist-get 'sentiment sd) sentiment)
-                                       sd)
-                                     def-score
-                                     (alist-get 'scores it)))
-                              it)
-                            nil
-                            (alist-get 'wines data)))
-                     (ep-save-data x data))))
+                   (let ((sentiment (completing-read "Sentiment: " '("favourite" "outcast" "none"))))
+                     (ep-set-sentiment x (alist-get 'wid d) (alist-get 'pid d)
+                                       (unless (string-equal "none" sentiment) sentiment)))))
          (-flatten-n
           1
           (-map
