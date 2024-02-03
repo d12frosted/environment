@@ -102,6 +102,9 @@ buffer."
          (str (if (stringp num)
                   num
                 (number-to-string num)))
+         ;; omit minus sign
+         (neg (string-prefix-p "-" str))
+         (str (string-remove-prefix "-" str))
          ;; omitting any trailing non-digit chars
          ;; NOTE: Calc supports BASE up to 36 (26 letters and 10 digits ;)
          (pt (or (string-match "[^0-9a-zA-Z]" str) (length str))))
@@ -110,7 +113,9 @@ buffer."
                         char
                         (substring str (- pt size)))
             pt (- pt size)))
-    str))
+    (if neg
+        (concat "-" str)
+      str)))
 
 ;;;###autoload
 (defun string-from (value)
