@@ -59,9 +59,7 @@ CALLBACK is called with updated plist."
                    (s-replace "-" " " (s-chop-prefix ":" (symbol-name prop))))
                   ": "))
          (to-string (or to-string `(quote string-from))))
-    `(let* ((,plist-var ,(if (and (listp plist) (not (eq (car plist) 'quote)))
-                             `(quote ,plist)
-                           plist))
+    `(let* ((,plist-var ,plist)
             (value (or (plist-get ,plist-var ,prop) ,default))
             (read-fn (or
                       ,read-fn
