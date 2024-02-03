@@ -160,6 +160,8 @@ structure:
    (wines . (((id . id)
              (price-public . num)
              (price-real . num)
+             (price-asking . num)
+             (participants . (id))
              (type . str)
              (ignore-scores . bool)
              (scores . (((participant . id)
@@ -265,7 +267,17 @@ structure:
                                                                    participants)))
                                                    `((participant . ,p)
                                                      (score . ,(alist-get 'score it))
-                                                     (sentiment . ,(alist-get 'sentiment it))))))))
+                                                     (sentiment . ,(alist-get 'sentiment it)))))))
+                                  (pscores (->>
+                                            participants
+                                            (--map
+                                             (let* ((pid (vulpea-note-id it))
+                                                    (sd (--find
+                                                         (string-equal pid (alist-get 'participant it))
+                                                         (alist-get 'scores data))))
+                                               `((participant . ,it)
+                                                 (score . ,(alist-get 'score sd))
+                                                 (sentiment . ,(alist-get 'sentiment sd))))))))
                              `((wine . ,wine)
                                (ignore-scores . ,(alist-get 'ignore-scores data))
                                (amean . ,amean)
@@ -285,33 +297,39 @@ structure:
          (wines-price-total (when prices (-sum prices)))
          (wines-price-harmonic (when prices
                                  (->> prices
+                                      (--remove (= 0 it))
                                       (-map #'calc-from-number)
                                       (apply #'calcFunc-vec)
                                       (calcFunc-vhmean)
                                       (calc-to-number))))
          (wines-price-median (when prices
                                (->> prices
+                                    (--remove (= 0 it))
                                     (-map #'calc-from-number)
                                     (apply #'calcFunc-vec)
                                     (calcFunc-vmedian)
                                     (calc-to-number))))
-         (event-rms (->> wines-data
+         (rms-scores (->> wines-data
                          (--remove (alist-get 'ignore-scores it))
                          (--map (alist-get 'rms it))
                          (--filter it)
-                         (-map #'calc-from-number)
-                         (apply #'calcFunc-vec)
-                         (calcFunc-rms)
-                         (calc-to-number)))
-         (event-wavg (->> wines-data
+                         (-map #'calc-from-number)))
+         (wavg-scores (->> wines-data
                          (--remove (alist-get 'ignore-scores it))
                          (--map (alist-get 'wavg it))
                          (--filter it)
-                         (-map #'calc-from-number)
-                         (apply #'calcFunc-vec)
-                         (calcFunc-rms)
-                         (calc-to-number)))
-         (event-qpr (when prices (brb-qpr wines-price-harmonic event-wavg))))
+                         (-map #'calc-from-number)))
+         (event-rms (when rms-scores
+                      (->> rms-scores
+                           (apply #'calcFunc-vec)
+                           (calcFunc-rms)
+                           (calc-to-number))))
+         (event-wavg (when wavg-scores
+                       (->> wavg-scores
+                            (apply #'calcFunc-vec)
+                            (calcFunc-rms)
+                            (calc-to-number))))
+         (event-qpr (when (and event-wavg prices) (brb-qpr wines-price-harmonic event-wavg))))
     `((wines . ,wines-data)
       (wines-price-total . ,wines-price-total)
       (wines-price-harmonic . ,wines-price-harmonic)
