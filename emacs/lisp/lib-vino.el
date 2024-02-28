@@ -61,6 +61,14 @@ FILTER is a `vulpea-note' predicate."
 ;; * vino hooks
 
 ;;;###autoload
+(defun vino-entry-assign-external-id (note)
+  "Interactively assign extra meta for wine NOTE."
+  (let ((external-id (read-string "External ID: ")))
+    (unless (string-empty-p external-id)
+      (vulpea-utils-with-note note
+        (vulpea-buffer-meta-set "externalId" external-id)))))
+
+;;;###autoload
 (defun vino-rating-assign-extra-meta (rating extra-data)
   "Assign extra meta for RATING note.
 
