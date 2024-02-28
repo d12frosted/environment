@@ -36,6 +36,7 @@
 (require 'lib-vino-stats)
 (require 'lib-brb-event)
 (require 'lib-brb-ledger)
+(require 'lib-hash-table)
 
 ;; * Entry point
 
@@ -44,9 +45,13 @@
   "Start planning session for barberry garden EVENT."
   (interactive)
   (let* ((event (or event (brb-event-select)))
-         (buffer (buffer-generate (format "*%s*" (vulpea-note-title event)) 'unique)))
-    (brb-event-plan--propagate-new
-     (ep-make buffer event 'plan))
+         (buffer (buffer-generate (format "*%s*" (vulpea-note-title event)) 'unique))
+         (x (-> (ep--create :buffer buffer
+                            :data (brb-event-data-read event)
+                            :tab 'plan)
+                (ep-set-event event)
+                (ep-set-balances))))
+    (brb-event-plan--propagate-new x)
     (pop-to-buffer buffer)))
 
 ;; * Event Plan
@@ -54,25 +59,40 @@
 (cl-defstruct (ep (:constructor ep--create)
                   (:copier nil))
   buffer
-  event
   data
   tab
+  event
   host
   participants
-  wines)
+  waiting
+  wines
+  balances)
 
-(defun ep-make (buffer event tab)
-  "Create EP from BUFFER, EVENT and TAB."
-  (let ((host (vulpea-note-meta-get event "host" 'note))
-        (participants (brb-event-participants event))
-        (wines (brb-event-wines event)))
-    (ep--create :buffer buffer
-                :event  event
-                :data (brb-event-data-read event)
-                :tab tab
-                :host host
-                :participants participants
-                :wines wines)))
+(cl-defun ep-set-event (x event)
+  "Set EVENT slot in X."
+  (let* ((host (vulpea-note-meta-get event "host" 'note))
+         (participants (brb-event-participants event))
+         (waiting (vulpea-note-meta-get-list event "waiting" 'note))
+         (wines (brb-event-wines event)))
+    (setf (ep-event x) event
+          (ep-host x) host
+          (ep-participants x) participants
+          (ep-waiting x) waiting
+          (ep-wines x) wines)
+    x))
+
+
+(cl-defun ep-set-balances (x)
+  "Set balances slot in X."
+  (let* ((date (vulpea-utils-with-note (ep-event x)
+                 (vulpea-buffer-prop-get "date")))
+         (balances (-> (--map `((pid . ,(vulpea-note-id it))
+                                (balance . ,(brb-ledger-balance-of (vulpea-note-id it) date)))
+                              (ep-participants x))
+                       (hash-table-from :key-fn (-partial #'alist-get 'pid)
+                                        :value-fn (-partial #'alist-get 'balance)))))
+    (setf (ep-balances x) balances)
+    x))
 
 ;; ** Refresh
 
@@ -80,11 +100,25 @@
   "Refresh X."
   (brb-event-plan--propagate-new x))
 
+(cl-defmethod ep-reload-event ((x ep))
+  "Reload event of X."
+  (let ((event (vulpea-db-get-by-id (vulpea-note-id (ep-event x)))))
+    (brb-event-plan--propagate-new
+     (-> (ep--create :buffer (ep-buffer x)
+                     :data (brb-event-data-read event)
+                     :tab (ep-tab x)
+                     :balances (ep-balances x))
+         (ep-set-event event)))))
+
 (cl-defmethod ep-reload ((x ep))
   "Reload X."
   (let ((event (vulpea-db-get-by-id (vulpea-note-id (ep-event x)))))
     (brb-event-plan--propagate-new
-     (ep-make (ep-buffer x) event (ep-tab x)))))
+     (-> (ep--create :buffer (ep-buffer x)
+                     :data (brb-event-data-read event)
+                     :tab (ep-tab x))
+         (ep-set-event event)
+         (ep-set-balances)))))
 
 ;; ** Saving
 
@@ -96,8 +130,7 @@
 
 (cl-defmethod ep-save-event ((x ep) (event vulpea-note))
   "Save EVENT and reload X."
-  (brb-event-plan--propagate-new
-   (ep-make (ep-buffer x) event (ep-tab x))))
+  (brb-event-plan--propagate-new (ep-set-event x event)))
 
 ;; ** Tabs
 
@@ -108,90 +141,33 @@
 
 ;; ** Financial calculations
 
-(cl-defmethod ep-statement-for ((x ep) pid)
-  "Return financial statement for participant of X.
-
-PID is id of participant."
-  (let* ((host (ep-host x))
-         (host-id (when host (vulpea-note-id host)))
-         (price (vulpea-note-meta-get (ep-event x) "price" 'number))
-         (host-p (string-equal pid host-id))
-         (fee (if host-p
-                  0
-                (or (->> (ep-data x)
-                         (alist-get 'participants)
-                         (--find (string-equal pid (alist-get 'id it)))
-                         (alist-get 'fee))
-                    price)))
-         (mode (cond
-                (host-p "host")
-                ((/= fee price) "custom")
-                (t "normal"))))
-    `((fee . ,fee)
-      (mode . ,mode))))
+(cl-defmethod ep-statement-for ((x ep) participant)
+  "Return financial statement for PARTICIPANT of X."
+  (brb-event-statement-for
+   (ep-event x)
+   participant
+   :data (ep-data x)
+   :host (ep-host x)
+   :wines (ep-wines x)
+   :balances (ep-balances x)))
 
 (cl-defmethod ep-statement ((x ep))
   "Return financial statement for X."
-  (let* ((price (vulpea-note-meta-get (ep-event x) "price" 'number))
-         (wines-normal (->> (ep-data x)
-                            (assoc-default 'wines)
-                            (--filter (string-equal "normal" (assoc-default 'type it)))))
-         (wines-extra (->> (ep-data x)
-                           (assoc-default 'wines)
-                           (--filter (string-equal "extra" (assoc-default 'type it)))))
+  (brb-event-statement
+   (ep-event x)
+   :data (ep-data x)
+   :host (ep-host x)
+   :participants (ep-participants x)
+   :wines (ep-wines x)
+   :balances (ep-balances x)))
 
-         (spending-shared (->> (ep-data x)
-                               (assoc-default 'shared)
-                               (--map (ceiling
-                                       (* (assoc-default 'amount it)
-                                          (assoc-default 'price it))))
-                               (-sum)))
-         (spending-wines-public (->> wines-normal
-                                     (--map (assoc-default 'price-public it))
-                                     (--filter it)
-                                     (-sum)))
-         (spending-wines-real (->> wines-normal
-                                   (--map (assoc-default 'price-real it))
-                                   (--filter it)
-                                   (-sum)))
-         (spending-extra-public (->> wines-extra
-                                     (--map (assoc-default 'price-public it))
-                                     (--filter it)
-                                     (-sum)))
-         (spending-extra-real (->> wines-extra
-                                   (--map (assoc-default 'price-real it))
-                                   (--filter it)
-                                   (-sum)))
-         (credit-public (+ spending-wines-public spending-extra-public spending-shared))
-         (credit-real (+ spending-wines-real spending-extra-real spending-shared))
-         (debit-base (->> (ep-participants x)
-                          (--map (alist-get 'fee (ep-statement-for x (vulpea-note-id it))))
-                          (-sum)))
-         ;; TODO: build based on smaller primitives
-         ;; Glass price calculation should be a separate function
-         (debit-extra (->> wines-extra
-                           (--map
-                            (let* ((price (or (assoc-default 'price-asking it)
-                                              (assoc-default 'price-public it)))
-                                   (ps (assoc-default 'participants it))
-                                   (glass-price (if ps (ceiling (/ price (float (length ps)))) 0)))
-                              (* glass-price (- (length ps) 1))))
-                           (-sum)))
-         (debit (+ debit-base debit-extra))
-         (balance-public (- debit credit-public))
-         (balance-real (- debit credit-real)))
-    `((spending-shared . ,spending-shared)
-      (spending-wines-public . ,spending-wines-public)
-      (spending-wines-real . ,spending-wines-real)
-      (spending-extra-public . ,spending-extra-public)
-      (spending-extra-real . ,spending-extra-real)
-      (credit-public . ,credit-public)
-      (credit-real . ,credit-real)
-      (debit-base . ,debit-base)
-      (debit-extra . ,debit-extra)
-      (debit . ,debit)
-      (balance-public . ,balance-public)
-      (balance-real . ,balance-real))))
+(defun ep--glass-price (it)
+  "Calculate glass price of an extra wine IT."
+  (let* ((price (or (assoc-default 'price-asking it)
+                    (assoc-default 'price-public it)))
+         (ps (assoc-default 'participants it))
+         (glass-price ))
+    (if ps (ceiling (/ price (float (length ps)))) 0)))
 
 ;; * Wine data manipulations
 
@@ -204,16 +180,16 @@ PID is participant id.
 When score data for given WID and PID not found, use DEF."
   (let* ((data (ep-data x)))
     (setf (alist-get 'wines data)
-          (--update-first-by
-           (string-equal wid (alist-get 'id it))
-           (progn
-             (setf (alist-get 'scores it)
+          (-update-first-by
+           (lambda (wd) (string-equal wid (alist-get 'id wd)))
+           (lambda (wd)
+             (setf (alist-get 'scores wd)
                    (-update-first-by
                     (lambda (sd) (string-equal pid (alist-get 'participant sd)))
                     fn
                     def
-                    (alist-get 'scores it)))
-             it)
+                    (alist-get 'scores wd)))
+             wd)
            ;; TODO set more meaningful value
            nil
            (alist-get 'wines data)))
@@ -310,12 +286,7 @@ PID is participant id."
                     (unless (-contains-p (-map #'vulpea-note-id (ep-participants x)) (vulpea-note-id host))
                       (vulpea-buffer-meta-set "participants" (cons host (ep-participants x)) 'append))
                     (save-buffer))
-                  (ep-reload x)))
-              (set-planned-participants (&rest _)
-                (let ((num (read-number "Planned participants: ")))
-                  (setf (alist-get 'planned-participants (ep-data x))
-                        num)
-                  (ep-save-data x (ep-data x)))))
+                  (ep-reload-event x))))
       (insert (propertize "Planning" 'face 'org-level-1) "\n\n")
       (insert
        (string-table
@@ -326,44 +297,80 @@ PID is participant id."
         `(("Host:"
            ,(buttonize (if (ep-host x) (vulpea-note-title (ep-host x)) "_____") #'set-host)
            "")
-          ("Participants:"
-           ,(buttonize
-             (if-let ((v (alist-get 'planned-participants (ep-data x))))
-                 (format "%2d" v)
-               "__")
-             #'set-planned-participants)
-           ,(format "(%2d)" (length (ep-participants x))))
           ("Price:" ,(vulpea-meta-buttonize (ep-event x) "price" 'number (-partial #'ep-save-event x)
                       :default 0 :to-string #'brb-price-format)
-           "")
-          ("Spending (shared):"
-           ,(brb-price-format (alist-get 'spending-shared statement))
-           "")
-          ("Spending (wines):"
-           ,(brb-price-format (alist-get 'spending-wines-public statement))
-           ,(brb-price-format (alist-get 'spending-wines-real statement)))
-          ("Spending (extra):"
-           ,(brb-price-format (alist-get 'spending-extra-public statement))
-           ,(brb-price-format (alist-get 'spending-extra-real statement)))
-          ("Spending (total):"
-           ,(brb-price-format (alist-get 'credit-public statement))
-           ,(brb-price-format (alist-get 'credit-real statement)))
-          ("Debit:"
-           ,(brb-price-format (alist-get 'debit-base statement))
-           "")
-          ("Debit (extra):"
-           ,(brb-price-format (alist-get 'debit-extra statement))
-           "")
-          ("Debit (total):"
-           ,(brb-price-format (alist-get 'debit statement))
-           "")
-          ("Gain:"
-           ,(propertize (brb-price-format (alist-get 'balance-public statement))
-             'face (if (>= (alist-get 'balance-public statement) 0) 'success 'error))
-           ,(propertize (brb-price-format (alist-get 'balance-real statement))
-             'face (if (>= (alist-get 'balance-real statement) 0) 'success 'error)))))
+           "")))
        "\n")
       (insert "\n"))
+
+    (cl-flet ((set-planned-participants (&rest _)
+                (let ((num (read-number "Planned participants: ")))
+                  (setf (alist-get 'planned-participants (ep-data x))
+                        num)
+                  (ep-save-data x (ep-data x)))))
+      (insert (propertize "⇾ Forecast" 'face 'org-level-2) "\n\n")
+      (let* ((ps (alist-get 'planned-participants (ep-data x)))
+             (debit (* (or ps 0)
+                       price))
+             (gain-public (- debit (alist-get 'credit-public statement)))
+             (gain-real (- debit (alist-get 'credit-real statement))))
+        (insert
+         (string-table
+          :row-start "- "
+          :pad-type '(right left left)
+          :sep "  "
+          :data
+          `(("Participants:"
+             ,(buttonize (if ps (format "%2d" ps) "__") #'set-planned-participants)
+             "")
+            ("Debit:" ,(brb-price-format debit) "")
+            ("Spending (total):"
+             ,(brb-price-format (alist-get 'credit-public statement))
+             ,(brb-price-format (alist-get 'credit-real statement)))
+            ("Gain:"
+             ,(propertize (brb-price-format gain-public)
+               'face (if (>= gain-public 0) 'success 'error))
+             ,(propertize (brb-price-format gain-real)
+               'face (if (>= gain-real 0) 'success 'error)))))
+         "\n"))
+      (insert "\n"))
+
+    (insert
+     (propertize "⇾ Finances" 'face 'org-level-2)
+     "\n\n"
+     (string-table
+      :row-start "- "
+      :pad-type '(right left left)
+      :sep "  "
+      :data
+      `(("Spending (shared):"
+         ,(brb-price-format (alist-get 'spending-shared statement))
+         "")
+        ("Spending (wines):"
+         ,(brb-price-format (alist-get 'spending-wines-public statement))
+         ,(brb-price-format (alist-get 'spending-wines-real statement)))
+        ("Spending (extra):"
+         ,(brb-price-format (alist-get 'spending-extra-public statement))
+         ,(brb-price-format (alist-get 'spending-extra-real statement)))
+        ("Spending (total):"
+         ,(brb-price-format (alist-get 'credit-public statement))
+         ,(brb-price-format (alist-get 'credit-real statement)))
+        ("Debit:"
+         ,(brb-price-format (alist-get 'debit-base statement))
+         "")
+        ("Debit (extra):"
+         ,(brb-price-format (alist-get 'debit-extra statement))
+         "")
+        ("Debit (total):"
+         ,(brb-price-format (alist-get 'debit statement))
+         "")
+        ("Gain:"
+         ,(propertize (brb-price-format (alist-get 'balance-public statement))
+           'face (if (>= (alist-get 'balance-public statement) 0) 'success 'error))
+         ,(propertize (brb-price-format (alist-get 'balance-real statement))
+           'face (if (>= (alist-get 'balance-real statement) 0) 'success 'error)))))
+     "\n"
+     "\n")
 
     ;; WINES
     (cl-flet ((add-wine (&rest _)
@@ -374,16 +381,18 @@ PID is participant id."
                                (vulpea-db-query-by-tags-every '("wine" "cellar")))
                               :require-match t))
                        (pricep (read-number "Price public: "
-                                            (->> (vulpea-note-meta-get-list wine "price")
-                                                 (--filter (s-suffix-p brb-currency it))
-                                                 (-map #'string-to-number)
-                                                 (-max))))
+                                            (ignore-errors
+                                              (->> (vulpea-note-meta-get-list wine "price")
+                                                   (--filter (s-suffix-p brb-currency it))
+                                                   (-map #'string-to-number)
+                                                   (-max)))))
                        (pricer (read-number "Price real: "
-                                            (->> (or (vulpea-note-meta-get-list wine "price private")
+                                            (ignore-errors
+                                              (->> (or (vulpea-note-meta-get-list wine "price private")
                                                      (vulpea-note-meta-get-list wine "price"))
                                                  (--filter (s-suffix-p brb-currency it))
                                                  (-map #'string-to-number)
-                                                 (-min))))
+                                                 (-min)))))
                        (data (ep-data x)))
                   (setf (alist-get 'wines data)
                         (-snoc (alist-get 'wines data) `((id . ,(vulpea-note-id wine))
@@ -394,7 +403,7 @@ PID is participant id."
                     (vulpea-buffer-meta-set "wines" (-concat wines (list wine)) 'append)
                     (save-buffer))
                   (ep-save-data x data)
-                  (ep-reload x)))
+                  (ep-reload-event x)))
               (remove-wine (id)
                 (vulpea-utils-with-note (ep-event x)
                   (vulpea-buffer-meta-set
@@ -402,7 +411,13 @@ PID is participant id."
                    (--remove (string-equal (vulpea-note-id it) id) wines)
                    'append)
                   (save-buffer))
-                (ep-reload x))
+                (let ((data (ep-data x)))
+                  (setf (alist-get 'wines data)
+                        (--remove
+                         (string-equal (alist-get 'id it) id)
+                         (alist-get 'wines data)))
+                  (brb-event-data-write (ep-event x) data))
+                (ep-reload-event x))
               (reorder-wine (pos)
                 (let ((ord (read-number "Order: ")))
                   (when (or (< ord 1) (> ord (length wines)))
@@ -415,7 +430,7 @@ PID is participant id."
                           (-insert-at (- ord 1) (nth pos wines)))
                      'append)
                     (save-buffer))
-                  (ep-reload x)))
+                  (ep-reload-event x)))
               (edit-price-public (id)
                 (let* ((price (read-number "Price public: "
                                            (->> (vulpea-note-meta-get-list (vulpea-db-get-by-id id) "price")
@@ -469,7 +484,7 @@ PID is participant id."
        (string-table
         :header '("" "" "producer" "name" "year" "p public" "p real" "type")
         :pad-type '(right right right right left left left right)
-        :width '(nil nil nil 32 nil nil nil nil)
+        :width '(nil nil 26 30 nil nil nil nil)
         :header-sep "-"
         :header-sep-start "|-"
         :header-sep-conj "-+-"
@@ -578,16 +593,23 @@ PID is participant id."
 
     ;; PARTICIPANTS
     (cl-flet ((add-participant (&rest _)
-                (let ((participant (vulpea-select-from
-                                    "Participant"
-                                    (--remove
-                                     (-contains-p (-map #'vulpea-note-id (ep-participants x)) (vulpea-note-id it))
-                                     (vulpea-db-query-by-tags-every '("people")))
-                                    :require-match t)))
+                (let ((p (vulpea-select-from
+                          "Participant"
+                          (->> (vulpea-db-query-by-tags-every '("people"))
+                               (--remove
+                                (-contains-p (-map #'vulpea-note-id (ep-participants x)) (vulpea-note-id it)))
+                               (--remove
+                                (-contains-p (-map #'vulpea-note-id (ep-waiting x)) (vulpea-note-id it))))
+                          :require-match t)))
                   (vulpea-utils-with-note (ep-event x)
-                    (vulpea-buffer-meta-set "participants" (-snoc (ep-participants x) participant) 'append)
+                    (vulpea-buffer-meta-set "participants" (-snoc (ep-participants x) p) 'append)
                     (save-buffer))
-                  (ep-reload x)))
+                  (puthash (vulpea-note-id p)
+                           (brb-ledger-balance-of (vulpea-note-id p)
+                                                  (vulpea-utils-with-note (ep-event x)
+                                                    (vulpea-buffer-prop-get "date")))
+                           (ep-balances x))
+                  (ep-reload-event x)))
               (remove-participant (id)
                 (vulpea-utils-with-note (ep-event x)
                   (vulpea-buffer-meta-set
@@ -595,7 +617,7 @@ PID is participant id."
                    (--remove (string-equal (vulpea-note-id it) id) (ep-participants x))
                    'append)
                   (save-buffer))
-                (ep-reload x)))
+                (ep-reload-event x)))
       (insert (propertize (format "⇾ Participants (%d)" (length (ep-participants x))) 'face 'org-level-2) "\n\n")
       (insert
        (string-table
@@ -627,7 +649,7 @@ PID is participant id."
                       (ep-save-data x data))))
           (-snoc
            (--map
-            (let ((statement (ep-statement-for x (vulpea-note-id it))))
+            (let ((statement (ep-statement-for x it)))
               (list
                (buttonize "[x]" #'remove-participant (vulpea-note-id it))
                (vulpea-note-title it)
@@ -635,7 +657,54 @@ PID is participant id."
                (buttonize (brb-price-format (alist-get 'fee statement)) #'edit-fee (vulpea-note-id it))))
             (ep-participants x))
            'sep
-           (list (buttonize "[+]" #'add-participant) "" "" (brb-price-format (alist-get 'debit-base statement))))))))))
+           (list (buttonize "[+]" #'add-participant) "" "" (brb-price-format (alist-get 'debit-base statement))))))))
+    (insert "\n\n")
+
+    ;; WAITING LIST
+    (cl-flet ((promote (pid)
+                (vulpea-utils-with-note (ep-event x)
+                  (vulpea-buffer-meta-set
+                   "participants" (-snoc (ep-participants x)
+                                         (--find (string-equal pid (vulpea-note-id it))
+                                                 (ep-waiting x))))
+                  (vulpea-buffer-meta-set
+                   "waiting" (--remove (string-equal pid (vulpea-note-id it)) (ep-waiting x)))
+                  (save-buffer))
+                (puthash pid
+                         (brb-ledger-balance-of pid (vulpea-utils-with-note (ep-event x)
+                                                      (vulpea-buffer-prop-get "date")))
+                         (ep-balances x))
+                (ep-reload-event x))
+              (remove (pid)
+                (vulpea-utils-with-note (ep-event x)
+                  (vulpea-buffer-meta-set
+                   "waiting" (--remove (string-equal pid (vulpea-note-id it)) (ep-waiting x)))
+                  (save-buffer))
+                (ep-reload-event x))
+              (add (&rest _)
+                (let* ((known (->> (-concat (ep-participants x) (ep-waiting x))
+                                   (-map #'vulpea-note-id)))
+                       (cands (->> (vulpea-db-query-by-tags-every '("people"))
+                                   (--remove (-contains-p known (vulpea-note-id it)))))
+                       (p (vulpea-select-from "Person" cands :require-match t)))
+                  (vulpea-utils-with-note (ep-event x)
+                    (vulpea-buffer-meta-set "waiting" (-snoc (ep-waiting x) p) 'append)
+                    (save-buffer))
+                  (ep-reload-event x))))
+      (insert (propertize
+             (format "⇾ Waiting list (%d)" (length (ep-waiting x)))
+             'face 'org-level-2)
+            "\n\n")
+      (--each (ep-waiting x)
+        (insert "- "
+                (buttonize "[x]" #'remove (vulpea-note-id it))
+                (buttonize "[↑]" #'promote (vulpea-note-id it))
+                " "
+                (vulpea-note-title it)
+                "\n"))
+      (insert "- "
+              (buttonize "[+]" #'add)
+              "\n"))))
 
 (cl-defmethod brb-event-plan--tab-scores ((x ep))
   "Render scores tab for X."
@@ -664,9 +733,9 @@ PID is participant id."
                          "······"))))
      "\n\n"
      (string-table
-      :header '("" "producer" "wine" "year" "##" "rms" "wavg" "qpr" "fav" "out")
+      :header '("" "producer" "wine" "year" "##" "wavg" "sdev" "qpr" "fav" "out")
       :pad-type '(left right right right right left left left right left)
-      :width '(nil 20 36 nil nil nil nil nil nil nil)
+      :width '(nil 20 36 nil nil nil nil 6 nil nil)
       :header-sep "-"
       :header-sep-start "|-"
       :header-sep-conj "-+-"
@@ -676,32 +745,44 @@ PID is participant id."
       :sep " | "
       :data
       (--map-indexed
-       (list
-        (+ 1 it-index)
-        (vulpea-note-title (vulpea-note-meta-get (assoc-default 'wine it) "producer" 'note))
-        (vulpea-buttonize (assoc-default 'wine it) (lambda (x) (vulpea-note-meta-get x "name")))
-        (or (vulpea-note-meta-get (assoc-default 'wine it) "vintage" 'number) "NV")
-        (->> (assoc-default 'wines summary)
-             (--sort (>= (or (assoc-default 'wavg it) 0) (or (assoc-default 'wavg other) 0)))
-             (-find-index (lambda (other)
-                            (string-equal (vulpea-note-id (assoc-default 'wine it))
-                                          (vulpea-note-id (assoc-default 'wine other)))))
-             (+ 1))
-        (if (assoc-default 'rms it)
-            (format "%.4f" (assoc-default 'rms it))
-          "------")
-        (if (assoc-default 'wavg it)
-            (format "%.4f" (assoc-default 'wavg it))
-          "------")
-        (if (assoc-default 'qpr it)
-            (format "%.4f" (assoc-default 'qpr it))
-          "------")
-        (if (assoc-default 'fav it)
-            (format "%d" (assoc-default 'fav it))
-          "-")
-        (if (assoc-default 'out it)
-            (format "%d" (assoc-default 'out it))
-          "-"))
+       (let* ((wid (vulpea-note-id (assoc-default 'wine it)))
+              (reveal (not (->> (ep-data x)
+                                (alist-get 'wines)
+                                (--find (string-equal wid (assoc-default 'id it)))
+                                (alist-get 'blind)))))
+         (message "%s => %s" wid reveal)
+         (list
+          (+ 1 it-index)
+          (if reveal
+              (vulpea-note-title (vulpea-note-meta-get (assoc-default 'wine it) "producer" 'note))
+            "********")
+          (if reveal
+              (vulpea-buttonize (assoc-default 'wine it) (lambda (x) (vulpea-note-meta-get x "name")))
+            "********")
+          (if reveal
+              (or (vulpea-note-meta-get (assoc-default 'wine it) "vintage" 'number) "NV")
+            "****")
+          (->> (assoc-default 'wines summary)
+               (--sort (>= (or (assoc-default 'wavg it) 0) (or (assoc-default 'wavg other) 0)))
+               (-find-index (lambda (other)
+                              (string-equal (vulpea-note-id (assoc-default 'wine it))
+                                            (vulpea-note-id (assoc-default 'wine other)))))
+               (+ 1))
+          (if (assoc-default 'rms it)
+              (format "%.4f" (assoc-default 'wavg it))
+            "------")
+          (if (assoc-default 'wavg it)
+              (format "%.4f" (assoc-default 'sdev it))
+            "------")
+          (if (assoc-default 'qpr it)
+              (format "%.4f" (assoc-default 'qpr it))
+            "------")
+          (if (assoc-default 'fav it)
+              (format "%d" (assoc-default 'fav it))
+            "-")
+          (if (assoc-default 'out it)
+              (format "%d" (assoc-default 'out it))
+            "-")))
        (assoc-default 'wines summary)))
      "\n\n")
 
@@ -730,9 +811,15 @@ PID is participant id."
         (cons
          "include"
          (cl-flet ((toggle (id)
-                     (let* ((data (ep-data x))
-                            (wd (--find (string-equal id (alist-get 'id it)) (alist-get 'wines data))))
-                       (setf (alist-get 'ignore-scores wd) (not (alist-get 'ignore-scores wd)))
+                     (let ((data (ep-data x)))
+                       (setf (alist-get 'wines data)
+                             (--update-first-by
+                              (string-equal id (alist-get 'id it))
+                              (progn
+                                (setf (alist-get 'ignore-scores it) (not (alist-get 'ignore-scores it)))
+                                it)
+                              nil
+                              (alist-get 'wines data)))
                        (ep-save-data x data))))
            (-map
             (lambda (wine)
@@ -741,6 +828,29 @@ PID is participant id."
                          (wd (--find (string-equal (alist-get 'id it) (vulpea-note-id wine)) wds))
                          (ignore (alist-get 'ignore-scores wd)))
                    (if ignore "{-}" "{+}")
+                 "{+}")
+               #'toggle (vulpea-note-id wine)))
+            wines)))
+        (cons
+         "reveal"
+         (cl-flet ((toggle (id)
+                     (let ((data (ep-data x)))
+                       (setf (alist-get 'wines data)
+                             (--update-first-by
+                              (string-equal id (alist-get 'id it))
+                              (progn
+                                (setf (alist-get 'blind it) (not (alist-get 'blind it)))
+                                it)
+                              nil
+                              (alist-get 'wines data)))
+                       (ep-save-data x data))))
+           (-map
+            (lambda (wine)
+              (buttonize
+               (if-let* ((wds (alist-get 'wines (ep-data x)))
+                         (wd (--find (string-equal (alist-get 'id it) (vulpea-note-id wine)) wds))
+                         (blind (alist-get 'blind wd)))
+                   (if blind "{-}" "{+}")
                  "{+}")
                #'toggle (vulpea-note-id wine)))
             wines))))
@@ -854,7 +964,7 @@ PID is participant id."
      (string-table
       :header '("" "item" "price" "q" "total" "participants")
       :pad-type '(left right right left left right)
-      :width '(nil 40 nil nil nil 42)
+      :width '(nil 40 nil nil nil 38)
       :header-sep "-"
       :header-sep-start "|-"
       :header-sep-conj "-+-"
@@ -956,13 +1066,19 @@ PID is participant id."
 (cl-defmethod brb-event-plan--tab-extra ((x ep))
   "Render extra wines tab in X."
   (insert (propertize "Extra wines" 'face 'org-level-1) "\n\n")
-  (let* ((extra-ids (->> (ep-data x)
-                         (assoc-default 'wines)
-                         (--filter (string-equal "extra" (assoc-default 'type it)))
-                         (--map (assoc-default 'id it))))
+  (let* ((wds (->> (ep-data x)
+                   (assoc-default 'wines)
+                   (--filter (string-equal "extra" (assoc-default 'type it)))))
          (wines (brb-event-wines (ep-event x)))
          (participants (brb-event-participants (ep-event x)))
-         (extra-wines (--filter (-contains-p extra-ids (vulpea-note-id it)) wines)))
+         (extra-wines (->> wines
+                           (--map
+                            (let ((wd (-find (lambda (wd) (string-equal (alist-get 'id wd)
+                                                                        (vulpea-note-id it)))
+                                             wds)))
+                              `((wine . ,it)
+                                (wd . ,wd))))
+                           (--filter (alist-get 'wd it)))))
     (cl-flet* ((edit-asking-price (wid)
                  (let ((price (read-number "Price: "))
                        (data (ep-data x)))
@@ -992,16 +1108,14 @@ PID is participant id."
                           (alist-get 'wines data)))
                    (ep-save-data x data))))
       (--each extra-wines
-        (let* ((wid (vulpea-note-id it))
-               (wd (->> (ep-data x)
-                        (alist-get 'wines)
-                        (--filter (string-equal "extra" (assoc-default 'type it)))
-                        (--find (string-equal wid (alist-get 'id it)))))
+        (let* ((wine (alist-get 'wine it))
+               (wd (alist-get 'wd it))
+               (wid (vulpea-note-id wine))
                (ps (alist-get 'participants wd))
                (price-asking (or (alist-get 'price-asking wd)
                                  (alist-get 'price-public wd)))
-               (glass-price (if ps (ceiling (/ price-asking (float (length ps)))) 0)))
-          (insert (propertize (concat "⇾ " (vulpea-note-title it)) 'face 'org-level-2) "\n\n")
+               (glass-price (ep--glass-price wd)))
+          (insert (propertize (concat "⇾ " (vulpea-note-title wine)) 'face 'org-level-2) "\n\n")
           (insert
            (string-table
             :row-start "- "
@@ -1034,74 +1148,125 @@ PID is participant id."
 
 (cl-defmethod brb-event-plan--tab-invoices ((x ep))
   "Render checkout tab in X."
-  (let* ((participants (brb-event-participants (ep-event x)))
-         (wines (brb-event-wines (ep-event x)))
-         (price (vulpea-note-meta-get (ep-event x) "price" 'number)))
-    (cl-flet ()
-    (insert (propertize "Invoices" 'face 'org-level-1) "\n\n")
-    (--each participants
-      (let* ((pid (vulpea-note-id it))
-             (pd (->> (ep-data x)
-                      (alist-get 'participants)
-                      (--find (string-equal pid (alist-get 'id it)))))
-             ;; TODO this must take into account host price
-             (price (or (alist-get 'fee pd)
-                        price))
-             ;; TODO this must be a separate function
-             (order (->> (ep-data x)
-                         (alist-get 'personal)
-                         (--map
-                          (let* ((od (->> (alist-get 'orders it)
-                                          (--find (string-equal pid (alist-get 'participant it)))))
-                                 (amount (or (when od (alist-get 'amount od))
-                                             0)))
-                            `((item . ,(alist-get 'item it))
-                              (price . ,(alist-get 'price it))
-                              (amount . ,amount)
-                              (total . ,(* amount (alist-get 'price it))))))
-                         (--filter (> (alist-get 'amount it) 0))))
-             (extra (->> (ep-data x)
-                         (alist-get 'wines)
-                         (--filter (string-equal "extra" (assoc-default 'type it)))
-                         (--filter (-contains-p (assoc-default 'participants it) pid))
-                         (--map
-                          (let* ((ps (alist-get 'participants it))
-                                 (wid (alist-get 'id it))
-                                 (price (or (alist-get 'price-asking it)
-                                            (alist-get 'price-public it)))
-                                 (glass-price (ceiling (/ price (float (length ps)))))
-                                 (wine (--find (string-equal wid (vulpea-note-id it)) wines)))
-                            `((glass-price . ,glass-price)
-                              (wine . ,wine))))
-                         (--filter (alist-get 'wine it))))
-             (total (+ price
-                       (-sum (--map (alist-get 'total it) order))
-                       (-sum (--map (alist-get 'glass-price it) extra)))))
-        (insert (propertize (concat "⇾ " (vulpea-note-title it)) 'face 'org-level-2) "\n\n")
-        (insert
-         (string-table
-          :row-start "- "
-          :pad-str " "
-          :pad-type '(right left)
-          :sep "  "
-          :data
-          (-concat
-           (list
-            (list "Balance" (brb-price-format 0))
-            (list "Event (x1.00)" (brb-price-format price)))
-           (--map
-            (list
-             (format "%s (x%.2f)" (alist-get 'item it) (alist-get 'amount it))
-             (brb-price-format (alist-get 'total it)))
-            order)
-           (--map
-            (list
-             (format "%s (x1.00)" (vulpea-note-title (alist-get 'wine it)))
-             (brb-price-format (alist-get 'glass-price it)))
-            extra)
-           (list
-            (list "Total" (brb-price-format total)))))
-         "\n\n"))))))
+  (cl-flet ((charge-all (&rest _)
+              (--each (ep-participants x)
+                (unless (string-equal brb-event-narrator-id (vulpea-note-id it))
+                  (let ((st (ep-statement-for x it))
+                      (event (ep-event x))
+                      (date (vulpea-utils-with-note (ep-event x)
+                              (vulpea-buffer-prop-get "date"))))
+                  (brb-ledger-charge
+                         :convive it
+                         :code (concat (vulpea-note-id event) ":" (vulpea-note-id it))
+                         :amount (alist-get 'total st)
+                         :date (date-to-time date)))))
+              (message "Done."))
+            (record-spendings (&rest _)
+              (let ((statement (ep-statement x))
+                    (event (ep-event x))
+                    (date (vulpea-utils-with-note (ep-event x)
+                            (vulpea-buffer-prop-get "date"))))
+                (brb-ledger-record-txn
+                 :amount (alist-get 'spending-wines-real statement)
+                 :date (date-to-time date)
+                 :comment (format "%s: wines" (vulpea-note-title event))
+                 :code (concat (vulpea-note-id event) ":wines")
+                 :account-to "personal:account"
+                 :account-from "balance:assets")
+                (brb-ledger-record-txn
+                 :amount (alist-get 'spending-extra-real statement)
+                 :date (date-to-time date)
+                 :comment (format "%s: wines extra" (vulpea-note-title event))
+                 :code (concat (vulpea-note-id event) ":wines-extra")
+                 :account-to "personal:account"
+                 :account-from "balance:assets")
+                (brb-ledger-spend
+                 :amount (alist-get 'spending-shared statement)
+                 :date (date-to-time date)
+                 :comment (format "%s: shared" (vulpea-note-title event))
+                 :code (concat (vulpea-note-id event) ":shared"))
+                (brb-ledger-spend
+                 :amount (alist-get 'spending-order statement)
+                 :date (date-to-time date)
+                 :comment (format "%s: delivery" (vulpea-note-title event))
+                 :code (concat (vulpea-note-id event) ":delivery"))
+                (message "Done."))))
+    (insert (propertize "Invoices" 'face 'org-level-1) "\n")
+    (insert (buttonize "[Charge All]" #'charge-all)
+            " "
+            (buttonize "[Record Spendings]" #'record-spendings)
+            "\n\n")
+    (--each (ep-participants x)
+      (let* ((statement (ep-statement-for x it))
+             (balance (alist-get 'balance statement))
+             (balance-final (alist-get 'balance-final statement))
+             (price (alist-get 'fee statement))
+             (order (alist-get 'order statement))
+             (extra (alist-get 'extra statement))
+             (total (alist-get 'total statement))
+             (listing (string-table
+                       :row-start "- "
+                       :pad-str " "
+                       :pad-type '(right left)
+                       :sep "  "
+                       :data
+                       (-concat
+                        (when (> balance 0)
+                          (list (list "Starting balance" (brb-price-format balance))))
+                        (list
+                         (list "Event (x1.00)" (brb-price-format price)))
+                        (--map
+                         (list
+                          (format "%s (x%.2f)" (alist-get 'item it) (alist-get 'amount it))
+                          (brb-price-format (alist-get 'total it)))
+                         order)
+                        (--map
+                         (list
+                          (format "%s (x1.00)" (vulpea-note-title (alist-get 'wine it)))
+                          (brb-price-format (alist-get 'glass-price it)))
+                         extra)
+                        (list
+                         (list "Total" (brb-price-format total)))
+                        (when (> balance 0)
+                          (list
+                           (list "Final balance" (brb-price-format balance-final))
+                           (list "Due" (brb-price-format (alist-get 'due statement)))))))))
+        (cl-flet ((kill-statement (&rest _)
+                    (let ((event (ep-event x))
+                          (narrator (vulpea-db-get-by-id brb-event-narrator-id)))
+                      (with-temp-buffer
+                        (insert
+                         "👋 Thank you for participating in " (vulpea-note-title event) "!\n\n"
+                         "📋 You can find more information about tasted wines and winners on Barberry Garden - "
+                         (format "https://barberry.io/posts/%s-%s.html"
+                                 (vulpea-utils-with-note event
+                                   (format-time-string "%Y-%m-%d" (date-to-time (vulpea-buffer-prop-get "date"))))
+                                 (vulpea-utils-with-note event
+                                   (vulpea-buffer-prop-get "slug")))
+                         ".\n\n"
+                         "🧾 This is your receipt:\n\n"
+                         listing
+                         "\n\n"
+                         (if (> total 0)
+                             (concat
+                              "mono: " (vulpea-note-meta-get narrator "cc mono") "\n"
+                              "ukrsib: " (vulpea-note-meta-get narrator "cc ukrsib") "\n"
+                              "web: " (vulpea-note-meta-get narrator "send mono") "\n"
+                              "\n")
+                           "")
+                         "🥂 Cheers! See you next time!")
+                        (goto-char (point-min))
+                        (replace-regexp "  +" ": ")
+                        (kill-new (buffer-substring (point-min) (point-max)))))))
+          (insert (propertize (concat
+                             "⇾ "
+                             (vulpea-note-title it)
+                             " "
+                             (buttonize "🖂" #'kill-statement))
+                            'face 'org-level-2)
+                  "\n\n"
+                  listing
+                  "\n\n"))))))
 
 
 
