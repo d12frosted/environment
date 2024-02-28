@@ -93,7 +93,7 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                            (-filter events-filter))))
     (let* ((events-summary (hash-table-from events
                              :key-fn #'vulpea-note-id
-                             :value-fn (lambda (event _) (assoc-default 'wines (brb-event-summary event)))))
+                             :value-fn (lambda (event _) (brb-event-summary event))))
 
            (participants-all (->> events
                                   (--map (brb-event-participants it))
@@ -108,7 +108,10 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
            (grapes-all (->> wines-all
                             (--map (vulpea-note-meta-get-list it "grapes" 'note))
                             (-flatten)))
-           (grapes (-distinct grapes-all))
+           (grapes (->> grapes-all
+                        (-map #'vulpea-note-id)
+                        (vulpea-db-query-by-ids)
+                        (--filter (null (vulpea-note-primary-title it)))))
 
            (producers-all (->> wines-all
                                (--map (vulpea-note-meta-get it "producer" 'note))
@@ -128,7 +131,9 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                                        "country" 'note))
                                (-flatten)))
            (countries (-distinct countries-all))
-           (gains (when include-gain (--map (plist-get (brb-event-plan-invoice it) :balance) events))))
+           (gains (when include-gain (--map (alist-get 'balance-real
+                                                       (brb-event-statement it :balances (make-hash-table)))
+                                            events))))
       (buffer-display-result-with (or buffer-name "*brb-stats*")
         (format "Stats for period from %s to %s"
                 (propertize (nth 0 range) 'face 'bold)
@@ -139,8 +144,8 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
         ""
         (string-table
          :header (if include-gain
-                     '("date" "event" "convives" "wines" "rms" "price" "gain")
-                   '("date" "event" "convives" "wines" "rms" "price"))
+                     '("date" "event" "convives" "wines" "wavg" "price" "gain")
+                   '("date" "event" "convives" "wines" "wavg" "price"))
          :pad-type '(right right left left left left left)
          :width '(nil 48 nil nil nil nil nil)
          :header-sep "-"
@@ -161,18 +166,10 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                        it
                        (seq-length (brb-event-participants it))
                        (seq-length wines)
-                       (->> summary
-                            (--map (assoc-default 'wavg it))
-                            (-filter #'identity)
-                            (-map #'calc-from-number)
-                            (apply #'calcFunc-vec)
-                            (calcFunc-rms)
-                            (calc-to-number)
-                            (format "%.4f"))
-                       (->> summary
-                            (--map (assoc-default 'price it))
-                            (-filter #'identity)
-                            (-sum))
+                       (if-let ((v (alist-get 'wavg summary)))
+                           (format "%.4f" v)
+                         "----")
+                       (alist-get 'wines-price-total summary)
                        (when include-gain (nth it-index gains))))
              ((debug error) (message "Failed to calculate summary of '%s'" (vulpea-note-title it))))
            events)
@@ -221,7 +218,7 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
         ""
 
         (string-table
-         :header '("date" "event" "producer" "wine" "year" "rms" "sdev" "price" "qpr")
+         :header '("date" "event" "producer" "wine" "year" "wavg" "sdev" "price" "qpr")
          :header-sep "-"
          :header-sep-start "|-"
          :header-sep-conj "-+-"
@@ -234,7 +231,7 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
          :data
          (->> events
               (--map
-               (let ((summary (gethash (vulpea-note-id it) events-summary))
+               (let ((summary (alist-get 'wines (gethash (vulpea-note-id it) events-summary)))
                      (event it))
                  (->> (brb-event-wines it)
                       (--map-indexed (list
@@ -244,9 +241,13 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                                       (vulpea-note-meta-get it "producer" 'note)
                                       (vulpea-buttonize it (lambda (it) (vulpea-note-meta-get it "name")))
                                       (or (vulpea-note-meta-get it "vintage") "NV")
-                                      (if-let ((rms (assoc-default 'wavg (nth it-index summary))))
-                                          (format "%.4f" rms) "-")
-                                      (if-let ((sdev (assoc-default 'sdev (nth it-index summary))))
+                                      (if-let ((wavg (->> summary
+                                                          (nth it-index)
+                                                          (alist-get 'wavg))))
+                                          (format "%.4f" wavg) "-")
+                                      (if-let ((sdev (->> summary
+                                                          (nth it-index)
+                                                          (alist-get 'sdev))))
                                           (format "%.4f" sdev) "-")
                                       (assoc-default 'price (nth it-index summary))
                                       (if-let ((qpr (assoc-default 'qpr (nth it-index summary))))
@@ -260,6 +261,7 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
         ""
         (string-table
          :header '("producer" "count")
+         :pad-type '(right left)
          :header-sep "-"
          :header-sep-start "|-"
          :header-sep-conj "-+-"
@@ -283,6 +285,7 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
         ""
         (string-table
          :header '("grape" "count")
+         :pad-type '(right left)
          :header-sep "-"
          :header-sep-start "|-"
          :header-sep-conj "-+-"
@@ -305,7 +308,8 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
         (propertize (format "Countries (%s)" (seq-length countries)) 'face 'bold)
         ""
         (string-table
-         :header '("grape" "count")
+         :header '("country" "count")
+         :pad-type '(right left)
          :header-sep "-"
          :header-sep-start "|-"
          :header-sep-conj "-+-"
@@ -328,7 +332,8 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
         (propertize (format "Regions (%s)" (seq-length roas)) 'face 'bold)
         ""
         (string-table
-         :header '("grape" "count")
+         :header '("region" "count")
+         :pad-type '(right left)
          :header-sep "-"
          :header-sep-start "|-"
          :header-sep-conj "-+-"
