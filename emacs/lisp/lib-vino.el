@@ -144,19 +144,56 @@ EXTRA-DATA contains bottle-id."
 
 ;;;###autoload
 (defun vino-inv-ui-print-info ()
-  "Display print info for bottle at point."
+  "Save print info for the marked bottles."
   (interactive)
-  (let* ((bottle-id (vino-inv-ui-get-bottle-id))
-         (bottle (vino-inv-get-bottle bottle-id))
-         (buffer (get-buffer-create "*vino inventory print info*")))
-    (with-current-buffer buffer
-      (delete-region (point-min) (point-max))
-      (insert
-       "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine bottle)) "\n"
-       "#" (number-to-string (vino-inv-bottle-id bottle)) "\n"
-       (vino-inv-bottle-purchase-date bottle)
-       "\n"))
-    (display-buffer buffer)))
+  (let (print-list bottle)
+    (save-excursion
+      (goto-char (point-min))
+      (while (not (eobp))
+        (setq cmd (char-after))
+        (when (eq cmd ?\*)
+          ;; This is the key PKG-DESC.
+          (setq bottle (tabulated-list-get-id))
+          (push bottle print-list))
+        (forward-line)))
+    (when (seq-empty-p print-list)
+      (user-error "There are no marked bottles."))
+    (let* ((data (->> print-list
+                      (--map
+                       (let ((bottle-id (string-to-number (nth 1 (s-split ":" it)))))
+                         (vino-inv-get-bottle bottle-id)))
+                      (--sort (< (vino-inv-bottle-id it)
+                                 (vino-inv-bottle-id other)))
+                      (--map
+                       (list (format "#%s" (vino-inv-bottle-id it))
+                             (vino-inv-bottle-purchase-date it)
+                             (concat "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine it)))))))
+           (file (make-temp-file "vino-inv-" nil ".csv"))
+           (buffer (find-file-noselect file)))
+      (with-current-buffer buffer
+        (delete-region (point-min) (point-max))
+        (insert (string-join '("bottle" "date" "url") ",") "\n")
+        (--each data
+          (insert (string-join it ",") "\n")))
+      (switch-to-buffer buffer)
+      (when (y-or-n-p "Convert?")
+        (save-buffer)
+        (shell-command-to-string
+         (format "ssconvert '%s' '%s'"
+                 file
+                 (expand-file-name
+                  "Documents/bottles.xlsx"
+                  path-home-dir)))))))
+
+;;;###autoload
+(defun vino-inv-ui-mark ()
+  "Mark entry at point."
+  (interactive)
+  (if-let ((tagged (save-excursion
+                     (beginning-of-line)
+                     (eq (char-after) ?\*))))
+      (tabulated-list-put-tag " " t)
+    (tabulated-list-put-tag "*" t)))
 
 ;;;###autoload
 (defun vino-inv-ui-kill-url ()
