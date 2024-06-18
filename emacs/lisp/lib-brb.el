@@ -64,7 +64,7 @@ Returns nil if PRICE is of different currency than
 
 SCORE is a rational number in [0, 5].
 PRICE is a positive number in `brb-currency'."
-  (when (and score price)
+  (when (and score price (> price 0))
     (/
      (*
       100
