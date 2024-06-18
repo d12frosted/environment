@@ -81,7 +81,6 @@
           (ep-wines x) wines)
     x))
 
-
 (cl-defun ep-set-balances (x)
   "Set balances slot in X."
   (let* ((date (vulpea-utils-with-note (ep-event x)
@@ -273,7 +272,7 @@ PID is participant id."
   "Render plan tab for X."
   (let* ((wines (ep-wines x))
          (host (ep-host x))
-         (price (vulpea-note-meta-get (ep-event x) "price" 'number))
+         (price (or (vulpea-note-meta-get (ep-event x) "price" 'number) 0))
          (statement (ep-statement x)))
 
     ;; GENERAL
@@ -433,10 +432,12 @@ PID is participant id."
                   (ep-reload-event x)))
               (edit-price-public (id)
                 (let* ((price (read-number "Price public: "
-                                           (->> (vulpea-note-meta-get-list (vulpea-db-get-by-id id) "price")
-                                                (--filter (s-suffix-p brb-currency it))
-                                                (-map #'string-to-number)
-                                                (-max))))
+                                           (ignore-errors
+                                             (->> (vulpea-note-meta-get-list (vulpea-db-get-by-id id) "price")
+                                                  (--filter (s-suffix-p brb-currency it))
+                                                  (-map #'string-to-number)
+                                                  (-max)))))
+                       (price (if (< price 0) nil price))
                        (data (ep-data x)))
                   (--update-first-by
                    (string-equal id (alist-get 'id it))
@@ -448,11 +449,13 @@ PID is participant id."
                   (ep-save-data x data)))
               (edit-price-real (id)
                 (let* ((price (read-number "Price real: "
-                                           (->> (or (vulpea-note-meta-get-list (vulpea-db-get-by-id id) "price private")
-                                                    (vulpea-note-meta-get-list (vulpea-db-get-by-id id) "price"))
-                                                (--filter (s-suffix-p brb-currency it))
-                                                (-map #'string-to-number)
-                                                (-min))))
+                                           (ignore-errors
+                                             (->> (or (vulpea-note-meta-get-list (vulpea-db-get-by-id id) "price private")
+                                                      (vulpea-note-meta-get-list (vulpea-db-get-by-id id) "price"))
+                                                  (--filter (s-suffix-p brb-currency it))
+                                                  (-map #'string-to-number)
+                                                  (-min)))))
+                       (price (if (< price 0) nil price))
                        (data (ep-data x)))
                   (--update-first-by
                    (string-equal id (alist-get 'id it))
