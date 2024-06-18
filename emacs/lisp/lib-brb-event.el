@@ -478,18 +478,17 @@ BALANCES is a hash table."
                       (alist-get 'wines)
                       (--remove (alist-get 'ignore-scores it))
                       (--map (alist-get 'price-public it))
-                      (--filter it)))
+                      (--filter it)
+                      (--remove (= 0 it))))
          (wines-price-total (when prices (-sum prices)))
          (wines-price-harmonic (when prices
                                  (->> prices
-                                      (--remove (= 0 it))
                                       (-map #'calc-from-number)
                                       (apply #'calcFunc-vec)
                                       (calcFunc-vhmean)
                                       (calc-to-number))))
          (wines-price-median (when prices
                                (->> prices
-                                    (--remove (= 0 it))
                                     (-map #'calc-from-number)
                                     (apply #'calcFunc-vec)
                                     (calcFunc-vmedian)
