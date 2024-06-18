@@ -145,46 +145,6 @@ It is relative to `vulpea-directory', unless it is absolute.")
               " on [%<%Y-%m-%d %a>] :MEETING:\n%U\n\n%?"))))
 
 ;;;###autoload
-(defun vulpea-capture-article ()
-  "Capture an article using `vulpea-capture-article-template'.
-
-User is asked to provide an URL, title and authors of the article
-being captured.
-
-Title is inferred from URL, but user may edit it.
-
-Authors can be created on the fly. See
-`vulpea-capture-person-template' for more information."
-  (interactive)
-  (when-let*
-      ((url (read-string "URL: "))
-       (title (org-cliplink-retrieve-title-synchronously url))
-       (title (read-string "Title: " title))
-       (people (fun-collect-while
-                (lambda ()
-                  (let ((person
-                         (vulpea-select-from
-                          "Person"
-                          (vulpea-db-query-by-tags-every '("people")))))
-                    (if (vulpea-note-id person)
-                        person
-                      (vulpea-create
-                       (vulpea-note-title person)
-                       "people/%<%Y%m%d%H%M%S>-${slug}.org"
-                       :immediate-finish t))))
-                nil))
-       (note (vulpea-create
-              title
-              "litnotes/%<%Y%m%d%H%M%S>-${slug}.org"
-              :tags '("litnotes" "content/article")
-              :properties (list (cons "ROAM_REFS" url))
-              :immediate-finish t)))
-    (vulpea-meta-set note "authors" people t)
-    (find-file (vulpea-note-path note))
-    (litnotes-status-set "new")
-    (save-buffer)))
-
-;;;###autoload
 (defun vulpea-capture-journal ()
   "Capture a journal entry.
 

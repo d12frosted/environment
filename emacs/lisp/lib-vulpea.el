@@ -35,7 +35,6 @@
 
 (require 'config-vulpea)
 (require 'lib-directory)
-(require 'lib-litnotes)
 (require 'lib-svg)
 
 (require 'vulpea)
@@ -174,9 +173,6 @@ FILTER is a `vulpea-note' predicate."
         (unless (seq-contains-p tags tag)
           (setq tags (cons tag tags)))))
 
-    ;; process litnotes
-    (setq tags (litnotes-ensure-filetags tags))
-
     ;; process projects
     (if (vulpea-project-p)
         (setq tags (cons "project" tags))
@@ -290,43 +286,31 @@ Make all the links to this alias point to newly created note."
   (let ((tags (vulpea-note-tags note))
         (scale 0.8)
         (padding 2))
-    (cond
-     ((seq-contains-p tags litnotes-tag)
+    (when-let ((data
+                (cond
+                 ((seq-contains-p tags "people")
+                  '("bootstrap" "person"))
+                 ((seq-contains-p tags "grape")
+                  '("custom" "grapes"))
+                 ((seq-contains-p tags "cellar")
+                  '("fa-solid" "wine-glass"))
+                 ((seq-contains-p tags "appellation")
+                  '("fa-solid" "location-arrow"))
+                 ((seq-contains-p tags "region")
+                  '("fa-solid" "location-arrow"))
+                 ((seq-contains-p tags "places")
+                  '("fa-solid" "location-arrow"))
+                 ((seq-contains-p tags "producer")
+                  '("bootstrap" "person"))
+                 ((seq-contains-p tags "aroma")
+                  '("bootstrap" "flower3")))))
       (svg-concat
-       (litnotes-content-icon
-        (litnotes-entry-content (litnotes-entry note))
-        :face 'vulpea-svg-tag-face
-        :scale scale)
-       (svg-label
-        (vulpea-note-title note)
-        :face 'vulpea-svg-tag-face
-        :padding padding)))
-
-     (t (when-let ((data
-                    (cond
-                     ((seq-contains-p tags "people")
-                      '("bootstrap" "person"))
-                     ((seq-contains-p tags "grape")
-                      '("custom" "grapes"))
-                     ((seq-contains-p tags "cellar")
-                      '("fa-solid" "wine-glass"))
-                     ((seq-contains-p tags "appellation")
-                      '("fa-solid" "location-arrow"))
-                     ((seq-contains-p tags "region")
-                      '("fa-solid" "location-arrow"))
-                     ((seq-contains-p tags "places")
-                      '("fa-solid" "location-arrow"))
-                     ((seq-contains-p tags "producer")
-                      '("bootstrap" "person"))
-                     ((seq-contains-p tags "aroma")
-                      '("bootstrap" "flower3")))))
-          (svg-concat
-           (svg-icon (nth 0 data) (nth 1 data)
-                     :face 'vulpea-svg-tag-face
-                     :scale scale)
-           (svg-label (vulpea-note-title note)
-                      :face 'vulpea-svg-tag-face
-                      :padding padding)))))))
+       (svg-icon (nth 0 data) (nth 1 data)
+                 :face 'vulpea-svg-tag-face
+                 :scale scale)
+       (svg-label (vulpea-note-title note)
+                  :face 'vulpea-svg-tag-face
+                  :padding padding)))))
 
 
 
@@ -445,6 +429,13 @@ is ignored. Any buffer modification is saved."
         (message "Found a broken file at %s" it)
         (org-roam-db-clear-file it)
         (org-roam-db-update-file it)))))
+
+;; (vulpea-db-process-notes
+;;  :filter-fn (lambda (note)
+;;               (and (= 0 (vulpea-note-level note))
+;;                    (vulpea-note-tagged-all-p note "wine" "cellar")))
+;;  :process-fn (lambda (_)
+;;                (vino-entry-update)))
 
 
 
