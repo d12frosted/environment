@@ -69,14 +69,27 @@
   "Return list of events in time RANGE."
   (->> (vulpea-db-query-by-tags-every '("wine" "event" "barberry/public"))
        (--filter (= 0 (vulpea-note-level it)))
-       (--filter (let ((date (vulpea-utils-with-note it
-                               (vulpea-buffer-prop-get "date"))))
+       (--filter (let ((date (brb-event-date-string it)))
                    (and (org-time>= date (nth 0 range))
                         (org-time< date (nth 1 range)))))
-       (--sort (org-time< (vulpea-utils-with-note it
-                            (vulpea-buffer-prop-get "date"))
-                          (vulpea-utils-with-note other
-                            (vulpea-buffer-prop-get "date"))))))
+       (--sort (org-time< (brb-event-date-string it)
+                          (brb-event-date-string other)))))
+
+;;;###autoload
+(defun brb-events-without-date ()
+  "Return list of events without any date set."
+  (->> (vulpea-db-query-by-tags-every '("wine" "event" "barberry/public"))
+       (--filter (= 0 (vulpea-note-level it)))
+       (-remove #'brb-event-date-string)))
+
+;; * Metadata
+
+;;;###autoload
+(defun brb-event-date-string (event)
+  "Return date of EVENT as string using %F format."
+  (vulpea-utils-with-note event
+    (when-let ((str (vulpea-buffer-prop-get "date")))
+      (org-read-date nil nil str))))
 
 ;; * Event creation
 
