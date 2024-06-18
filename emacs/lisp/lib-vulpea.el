@@ -606,5 +606,16 @@ Defaults to `string-from'."
 
 
 
+;;;###autoload
+(defun vulpea-eval-all-code-blocks ()
+  "Eval all code blocks in a buffer."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward "#+begin_src emacs-lisp" nil t)
+      (let ((org-confirm-babel-evaluate nil))
+        (funcall-interactively #'org-ctrl-c-ctrl-c))
+      (forward-line 1))))
+
 (provide 'lib-vulpea)
 ;;; lib-vulpea.el ends here
