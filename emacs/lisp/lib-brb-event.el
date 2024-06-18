@@ -78,6 +78,35 @@
                           (vulpea-utils-with-note other
                             (vulpea-buffer-prop-get "date"))))))
 
+;; * Event creation
+
+;;;###autoload
+(defun brb-event-create ()
+  "Create a new event."
+  (interactive)
+  (let* ((name (read-string "Name: "))
+         (slug (read-string "Slug: "))
+         (date-str
+          (with-temp-buffer
+            (let ((date (org-read-date nil t nil "Date: ")))
+              (org-insert-timestamp date nil t)
+              (buffer-substring (point-min) (point-max))))))
+    (vulpea-create
+     name
+     "wine/event/%<%Y%m%d%H%M%S>-${slug}.org"
+     :tags '("wine" "event" "barberry/public" "barberry/post")
+     :head (->> (list (cons "date" date-str)
+                      (cons "slug" slug)
+                      (cons "tags" "report")
+                      (cons "language" "EN")
+                      (cons "author" "Boris")
+                      (cons "description" "")
+                      (cons "image" ""))
+                (--map (format "#+%s: %s" (car it) (cdr it)))
+                (s-join "\n"))
+     :body "- publish :: false\n- time to book :: N/A\n"
+     :immediate-finish t)))
+
 ;; * Wines
 
 ;;;###autoload
