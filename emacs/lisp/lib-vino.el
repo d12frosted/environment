@@ -383,7 +383,13 @@ BUTTON should be a proper button with following properties:
              (unfill-region pos (point))
              (delete-char -1)
              (insert "\n\n")
-             (insert "Tasted on " (vino-rating-date rating) "\n")
+             (insert ""
+                     (vino-rating-date rating)
+                     " @"
+                     (when-let ((loc (vulpea-note-meta-get note "location" 'note)))
+                       (or (vulpea-note-meta-get loc "public name")
+                           (vulpea-note-title loc)))
+                     "\n")
              (insert "\n")))
          notes)
         (read-only-mode)
