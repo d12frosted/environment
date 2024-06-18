@@ -70,6 +70,7 @@ All other currencies are ignored.")
 ;; time frames
 
 (defconst vino-stats-time-frames '(this-year
+                                   this-year-full
                                    this-month
                                    this-week
                                    today
@@ -90,6 +91,8 @@ All other currencies are ignored.")
                     (list
                      (format-time-string fmt (time-subtract now (* day (- diff 1))))
                      (format-time-string fmt tomorrow))))
+      (`this-year-full (let ((year (string-to-number (format-time-string "%Y" now))))
+                         (list (format "%s-01-01" year) (format "%s-01-01" (+ year 1)))))
       (`this-month (let ((diff (string-to-number (format-time-string "%e" now))))
                      (list
                       (format-time-string fmt (time-subtract now (* day (- diff 1))))
