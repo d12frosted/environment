@@ -49,7 +49,7 @@
     (user-error "You are not in project")))
 
 (use-package project
-  :elpaca nil
+  :ensure nil
   :general
   (leader-def
     "p" '(nil :which-key "project...")
@@ -85,6 +85,7 @@
         (?e "Eshell" project-eshell)))
 
 (use-package rg
+  :ensure t
   :defer t
   :commands (rg-project)
   :init

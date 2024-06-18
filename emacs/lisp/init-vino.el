@@ -34,9 +34,7 @@
 ;;; Code:
 
 (use-package vino
-  :elpaca (vino :host github
-                :repo "d12frosted/vino"
-                :branch "v0.4.0")
+  :ensure (:host github :repo "d12frosted/vino")
   :defer t
   :commands (vino-setup)
   :general

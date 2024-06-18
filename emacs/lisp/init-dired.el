@@ -36,7 +36,7 @@
 
 
 (use-package dired
-  :elpaca nil
+  :ensure nil
   :init
   (setq
    dired-listing-switches "-alh"

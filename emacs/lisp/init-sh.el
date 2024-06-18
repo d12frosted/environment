@@ -45,7 +45,7 @@
   (require 'sh-script))
 
 (use-package sh-script
-  :elpaca nil
+  :ensure nil
   :commands (sh-shell-process)
   :config
   ;; setup indentation
@@ -66,6 +66,7 @@
       (0 'font-lock-type-face append)))))
 
 (use-package company-shell
+  :ensure t
   :after sh-script
   :config
   (add-to-list 'company-backends '(company-shell
@@ -116,6 +117,7 @@ Search is bounded by LIMIT."
 
 
 (use-package fish-mode
+  :ensure t
   :defer t
   :init
   (setq-default fish-indent-offset tab-width))
@@ -123,7 +125,7 @@ Search is bounded by LIMIT."
 
 
 (use-package eshell
-  :elpaca nil
+  :ensure nil
   :defer t
   :init
   (setq-default

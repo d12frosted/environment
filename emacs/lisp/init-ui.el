@@ -110,6 +110,7 @@
 (setq bidi-display-reordering nil)
 
 (use-package minions
+  :ensure t
   :init
   (minions-mode 1))
 
@@ -128,21 +129,20 @@
 
 
 (use-package font-lock+
-  :elpaca (font-lock+ :host github :repo "emacsmirror/font-lock-plus"))
-
-(elpaca-wait)
+  :ensure (font-lock+ :host github :repo "emacsmirror/font-lock-plus" :wait t)
+  :demand t)
 
 
 
-(use-package bui
-  :defer t)
+;; (use-package bui
+;;   :defer t)
 
-(use-package lister
-  :elpaca (lister
-           :host github
-           :repo "publicimageltd/lister"
-           :branch "archive-version-0.7.2")
-  :defer t)
+;; (use-package lister
+;;   :elpaca (lister
+;;            :host github
+;;            :repo "publicimageltd/lister"
+;;            :branch "archive-version-0.7.2")
+;;   :defer t)
 
 
 
@@ -193,7 +193,7 @@
         faces)))))
 
 (use-package svg-lib
-  :elpaca (svg-lib :host github :repo "rougier/svg-lib")
+  :ensure (:host github :repo "rougier/svg-lib")
   :defer t
   :init
   (setq-default
@@ -228,7 +228,7 @@
                        path-cache-dir))))))
 
 (use-package svg-tag-mode
-  :elpaca (svg-tag-mode :host github :repo "rougier/svg-tag-mode")
+  :ensure (:host github :repo "rougier/svg-tag-mode")
   :commands (svg-tag-mode
              svg-tag-mode-on)
   :init
@@ -256,9 +256,7 @@
 
 
 (use-package fancy-compilation
-  :elpaca (fancy-compilation
-           :host codeberg
-           :repo "ideasman42/emacs-fancy-compilation")
+  :ensure (:host codeberg :repo "ideasman42/emacs-fancy-compilation")
   :commands (fancy-compilation-mode)
   :init
   (setf fancy-compilation-override-colors nil)

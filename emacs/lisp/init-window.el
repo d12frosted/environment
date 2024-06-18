@@ -41,6 +41,7 @@
 (setq window-min-height 1)
 
 (use-package ace-window
+  :ensure t
   :defer t
   :init
   (setq-default aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o)))

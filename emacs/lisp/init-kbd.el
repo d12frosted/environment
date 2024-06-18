@@ -33,6 +33,8 @@
 ;;
 ;;; Code:
 
+(require 'init-env)
+
 (defmacro leader-def (&rest args)
   "A wrapper for `general-def'.
 
@@ -45,6 +47,8 @@ ARGS are arguments, right?"
                              :prefix-map 'prefix-map)))
 
 (use-package general
+  :ensure (:wait t)
+  :demand t
   :init
   (leader-def
     "/" '(nil :which-key "search...")
@@ -57,11 +61,11 @@ ARGS are arguments, right?"
     "v" '(nil :which-key "vino...")))
 
 (use-package which-key
+  :ensure (:wait t)
+  :demand t
   :diminish which-key-mode
   :init
   (which-key-mode))
-
-(elpaca-wait)
 
 (defvar kbd-escape-hook nil
   "A hook run after \\[keyboard-quit] is pressed.

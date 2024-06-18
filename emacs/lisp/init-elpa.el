@@ -50,12 +50,12 @@
 
 ;; bootstrap `elpaca'
 
-(defvar elpaca-installer-version 0.6)
+(defvar elpaca-installer-version 0.7)
 (defvar elpaca-directory (expand-file-name "elpaca/" path-packages-dir))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil
+                              :ref nil :depth 1
                               :files (:defaults "elpaca-test.el" (:exclude "extensions"))
                               :build (:not elpaca--activate-package)))
 (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
@@ -68,8 +68,10 @@
     (when (< emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop (call-process "git" nil buffer t "clone"
-                                       (plist-get order :repo) repo)))
+                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                 ,@(when-let ((depth (plist-get order :depth)))
+                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                 ,(plist-get order :repo) ,repo))))
                  ((zerop (call-process "git" nil buffer t "checkout"
                                        (or (plist-get order :ref) "--"))))
                  (emacs (concat invocation-directory invocation-name))
@@ -86,6 +88,10 @@
     (load "./elpaca-autoloads")))
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
+
+;; something is wrong with use-package version
+;; (advice-add 'elpaca--check-version :around (lambda (_ e)
+;;                                              (elpaca--continue-build e)))
 
 (when elpa-bootstrap-p
   (elpaca-generate-autoloads "init" (expand-file-name "lisp/" path-emacs-dir)))
@@ -105,43 +111,39 @@ FN is called with ARGS."
 ;; Install `use-package' support
 
 (elpaca elpaca-use-package
-  ;; Enable :elpaca use-package keyword.
-  (elpaca-use-package-mode)
-  ;; Assume :elpaca t unless otherwise specified.
-  (setq elpaca-use-package-by-default t))
-(setq-default use-package-enable-imenu-support t)
+  ;; Enable use-package :ensure support for Elpaca.
+  (elpaca-use-package-mode))
 
-(elpaca-wait)
+(setq-default use-package-enable-imenu-support t)
 
 
 ;; critical packages
 
-(use-package s)
-(use-package dash)
-(use-package emacsql)
-(use-package emacsql-sqlite-builtin)
-
-(elpaca-wait)
+(use-package s :ensure (:wait t) :demand t)
+(use-package dash :ensure (:wait t) :demand t)
+(use-package emacsql :ensure t)
+(use-package emacsql-sqlite-builtin :ensure t)
 
 
 ;; 'common' packages
 
-(use-package async
-  :defer t)
+(use-package async :ensure t :defer t)
 
-(use-package ts
-  :defer t)
+(use-package ts :ensure t :defer t)
 
 (use-package request
+  :ensure t
   :defer t
   :init
   (setq-default
    request-storage-directory (expand-file-name "request" path-cache-dir)))
 
 (use-package request-deferred
+  :ensure t
   :defer t)
 
 (use-package esup
+  :ensure t
   :defer t
   :init
   ;; https://github.com/progfolio/elpaca/issues/23

@@ -40,7 +40,7 @@
 
 
 (use-package vulpea
-  :elpaca (vulpea :host github :repo "d12frosted/vulpea")
+  :ensure (:host github :repo "d12frosted/vulpea")
   :defer t
   :general
   (leader-def
@@ -83,7 +83,7 @@
 
 
 (use-package org
-  :elpaca (org :host sourcehut :repo "bzg/org-mode")
+  :ensure (org :host sourcehut :repo "bzg/org-mode")
   :hook ((org-mode . visual-line-mode)
          (org-mode . adaptive-wrap-prefix-mode)
          ;; oh, how much I hate it in Org mode buffers
@@ -174,7 +174,7 @@
 
 
 (use-package org-persist
-  :elpaca nil
+  :ensure nil
   :after org
   :commands (org-persist-gc
              org-persist-write-all)
@@ -187,7 +187,7 @@
 
 
 (use-package org-clock
-  :elpaca nil
+  :ensure nil
   :after org
   :commands (org-clock-save)
   :init
@@ -205,7 +205,7 @@
 
 
 (use-package org-refile
-  :elpaca nil
+  :ensure nil
   :after org
   :init
   (setq
@@ -219,7 +219,7 @@
 
 
 (use-package org-id
-  :elpaca nil
+  :ensure nil
   :after org
   :hook ((before-save . vulpea-id-auto-assign)
          (org-capture-prepare-finalize . org-id-get-create))
@@ -239,7 +239,7 @@
 
 
 (use-package org-capture
-  :elpaca nil
+  :ensure nil
   :after org
   :general
   (leader-def
@@ -258,7 +258,7 @@
 
 
 (use-package org-attach
-  :elpaca nil
+  :ensure nil
   :after org
   :config
   (setq-default
@@ -270,7 +270,7 @@
 
 
 (use-package org-archive
-  :elpaca nil
+  :ensure nil
   :after org
   :init
   (setq-default
@@ -282,7 +282,7 @@
 
 
 (use-package org-agenda
-  :elpaca nil
+  :ensure nil
   :after org
   :general
   (leader-def
@@ -329,6 +329,7 @@
 
 
 (use-package org-roam
+  :ensure t
   :defer t
   :commands (org-roam-db-autosync-enable
              org-roam-db-sync)
@@ -355,6 +356,7 @@
 
 
 (use-package org-download
+  :ensure t
   :defer t
   :hook ((org-mode . org-download-enable))
   :init
@@ -366,7 +368,7 @@
 
 
 (use-package ox-latex
-  :elpaca nil
+  :ensure nil
   :after org
   :config
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
@@ -393,7 +395,7 @@
          '(1 2 3))))
 
 (use-package ox-beamer
-  :elpaca nil
+  :ensure nil
   :after org
   :config
   (add-to-list
@@ -403,23 +405,26 @@
 
 
 (use-package ob-plantuml
-  :elpaca nil
+  :ensure nil
   :defer t
   :defines (org-plantuml-jar-path))
 
 
 
 (use-package toc-org
+  :ensure t
   :hook (org-mode . toc-org-mode))
 
 
 
 (use-package org-ml
+  :ensure t
   :defer t)
 
 
 
 (use-package org-cliplink
+  :ensure t
   :defer t)
 
 

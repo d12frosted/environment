@@ -34,6 +34,7 @@
 ;;; Code:
 
 (use-package haskell-mode
+  :ensure t
   :hook ((haskell-mode . subword-mode))
   :config
   (file-templates-set
@@ -47,9 +48,11 @@
   (add-to-list 'completion-ignored-extensions ".hi"))
 
 (use-package ormolu
+  :ensure t
   :hook (haskell-mode . ormolu-format-on-save-mode))
 
 (use-package lsp-haskell
+  :ensure t
   :after haskell-mode
   :hook ((haskell-mode . lsp))
   :commands (lsp-haskell--hie-command)

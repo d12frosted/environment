@@ -46,6 +46,7 @@
 ;;; Code:
 
 (use-package pdf-tools
+  :ensure t
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . auto-revert-mode)
   :commands (pdf-info-close

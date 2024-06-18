@@ -39,21 +39,23 @@
 
 
 (use-package elsa
+  :ensure t
   :defer t
   :disabled)
 
-(use-package lispy
-  :diminish
-  :defines (lispy-mode-map)
-  :hook ((emacs-lisp-mode . lispy-mode))
-  :bind (:map lispy-mode-map
-              ("C-a" . beginning-of-line)))
+;; (use-package lispy
+;;   :diminish
+;;   :defines (lispy-mode-map)
+;;   :hook ((emacs-lisp-mode . lispy-mode))
+;;   :bind (:map lispy-mode-map
+;;               ("C-a" . beginning-of-line)))
 
 (use-package eldoc
-  :elpaca nil
+  :ensure nil
   :diminish eldoc-mode)
 
 (use-package flycheck-eldev
+  :ensure t
   :after flycheck)
 
 (use-package page-break-lines
@@ -61,6 +63,7 @@
   :hook ((emacs-lisp-mode . page-break-lines-mode)))
 
 (use-package form-feed
+  :ensure t
   :hook ((emacs-lisp-mode . form-feed-mode)))
 
 ;; (use-package emacsql
@@ -68,6 +71,7 @@
 ;;   :hook ((emacs-lisp-mode . emacsql-fix-vector-indentation)))
 
 (use-package buttercup
+  :ensure t
   :defer t
   :config
   (when (version<= "29" emacs-version)

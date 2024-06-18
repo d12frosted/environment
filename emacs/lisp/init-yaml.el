@@ -34,6 +34,7 @@
 ;;; Code:
 
 (use-package yaml-mode
+  :ensure t
   :defer t
   :hook
   (yaml-mode . lsp)

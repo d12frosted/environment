@@ -84,7 +84,7 @@
  word-wrap t)
 
 (use-package ws-butler
-  :elpaca (ws-butler :host github :repo "hlissner/ws-butler")
+  :ensure (:host github :repo "hlissner/ws-butler")
   :diminish
   :commands (ws-butler-global-mode)
   :init
@@ -114,12 +114,15 @@
 (setq-default fill-column 120)
 
 (use-package visual-fill-column
+  :ensure t
   :hook ((visual-line-mode . visual-fill-column-mode)))
 
 (use-package adaptive-wrap
+  :ensure t
   :defer t)
 
 (use-package unfill
+  :ensure t
   :commands (unfill-toggle)
   :bind
   (("M-q" . #'unfill-toggle)))
@@ -127,15 +130,14 @@
 
 
 (use-package ukrainian-input-method
-  :elpaca (ukrainian-input-method
-           :host github
-           :repo "d12frosted/emacs-ukrainian-input-method")
+  :ensure (:host github :repo "d12frosted/emacs-ukrainian-input-method")
   :init
   (setq-default default-input-method "ukrainian"))
 
 
 
 (use-package move-text
+  :ensure t
   :commands (move-text-up
              move-text-down)
   :bind
@@ -145,9 +147,7 @@
 
 
 (use-package fancy-yank
-  :elpaca (fancy-yank
-           :host github
-           :repo "d12frosted/fancy-yank")
+  :ensure (:host github :repo "d12frosted/fancy-yank")
   :commands (fancy-yank)
   :bind
   (("C-S-y" . #'fancy-yank))
@@ -189,6 +189,7 @@
 
 
 (use-package avy
+  :ensure t
   :defer t
   :general
   (leader-def
@@ -198,6 +199,7 @@
     "jJ" '(avy-goto-char-timer :which-key "Chars")))
 
 (use-package ace-link
+  :ensure t
   :defer t
   :general
   (leader-def
@@ -206,6 +208,7 @@
 
 
 (use-package mwim
+  :ensure t
   :defer t
   :bind (("C-a" . mwim-beginning)))
 

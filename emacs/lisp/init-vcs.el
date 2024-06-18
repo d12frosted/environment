@@ -43,6 +43,7 @@
 ;; (hook-with-delay 'find-file-hook 1 #'vc-refresh-state)
 
 (use-package magit
+  :ensure t
   :defer t
   :defines (magit-status-mode-map
             magit-revision-show-gravatars
@@ -79,12 +80,15 @@
         magit-diff-refine-hunk t))
 
 (use-package closql
+  :ensure t
   :defer t)
 
 (use-package ghub
+  :ensure t
   :defer t)
 
 (use-package forge
+  :ensure t
   :commands forge-create-pullreq forge-create-issue
   :init
   (setq-default forge-database-file
@@ -92,16 +96,18 @@
                                   path-etc-dir)))
 
 (use-package git-timemachine
+  :ensure t
   :defer t)
 
 (use-package ediff-wind
-  :elpaca nil
+  :ensure nil
   :defer t
   :init
   (setq ediff-window-setup-function 'ediff-setup-windows-plain
         ediff-split-window-function 'split-window-horizontally))
 
 (use-package diff-hl
+  :ensure t
   :defer t
   :hook ((prog-mode . turn-on-diff-hl-mode)
          (text-mode . turn-on-diff-hl-mode)

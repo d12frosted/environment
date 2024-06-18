@@ -37,6 +37,7 @@
 (require 'config-path)
 
 (use-package company
+  :ensure t
   :defer 2
   :diminish
   :defines (company-backends)
@@ -59,6 +60,7 @@
      company-echo-metadata-frontend)))
 
 (use-package company-prescient
+  :ensure t
   :hook (company-mode . company-prescient-mode)
   :defines (prescient-save-file)
   :commands (prescient-persist-mode)
@@ -68,6 +70,7 @@
   (prescient-persist-mode +1))
 
 (use-package flycheck
+  :ensure t
   :defer 1
   :commands (global-flycheck-mode)
   :init
@@ -87,6 +90,7 @@
     (add-to-list 'load-path dir)))
 
 (use-package lsp-mode
+  :ensure t
   :hook
   (lsp-mode . lsp-lens-mode)
   :init
@@ -96,21 +100,25 @@
    lsp-keep-workspace-alive nil))
 
 (use-package lsp-ui
+  :ensure t
   :defer t
   :commands lsp-ui-mode)
 
-(use-package posframe)
+(use-package posframe
+  :ensure t)
 
-(use-package dap-mode
-  :hook
-  (lsp-mode . dap-mode)
-  (lsp-mode . dap-ui-mode))
+;; (use-package dap-mode
+;;   :hook
+;;   (lsp-mode . dap-mode)
+;;   (lsp-mode . dap-ui-mode))
 
 (use-package eglot
+  :ensure t
   :defer t
   :defines (eglot-server-programs))
 
 (use-package consult-lsp
+  :ensure t
   :defer t
   :after lsp
   :config

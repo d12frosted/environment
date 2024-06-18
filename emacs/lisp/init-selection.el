@@ -40,22 +40,22 @@
 
 
 (use-package vertico
-  :elpaca (vertico :files ("*.el" "extensions/*.el"))
+  :ensure (vertico :files ("*.el" "extensions/*.el"))
   :init
   (vertico-mode))
 
 (use-package vertico-repeat
-  :elpaca nil
+  :ensure nil
   :bind ("M-R" . vertico-repeat)
   :hook ((minibuffer-setup . vertico-repeat-save)))
 
 (use-package savehist
-  :elpaca nil
+  :ensure nil
   :init
   (savehist-mode))
 
 (use-package emacs
-  :elpaca nil
+  :ensure nil
   :init
   ;; Do not allow the cursor in the minibuffer prompt
   (setq minibuffer-prompt-properties
@@ -105,6 +105,7 @@ _TOTAL arguments."
         (cons (cdr x) (substring word 0 -1)))))))
 
 (use-package orderless
+  :ensure t
   :functions (orderless-define-completion-style)
   :config
   ;; Define orderless style with initialism by default
@@ -122,6 +123,8 @@ _TOTAL arguments."
         orderless-style-dispatchers '(selection-orderless-dispatch)))
 
 (use-package marginalia
+  :ensure (:wait t)
+  :demand t
   :commands (marginalia-mode
              marginalia-cycle)
   :init
@@ -140,6 +143,7 @@ _TOTAL arguments."
                   nil)))
 
 (use-package consult
+  :ensure t
   :bind
   (("M-y" . consult-yank-pop))
   :general
@@ -159,6 +163,7 @@ _TOTAL arguments."
 
 
 (use-package transient
+  :ensure t
   :defer t
   :init
   (setq

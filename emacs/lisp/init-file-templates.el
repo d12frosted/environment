@@ -64,6 +64,7 @@ The CDR is a plist. See `file-templates-set' for more
 information.")
 
 (use-package yasnippet
+  :ensure t
   :diminish yas-minor-mode
   :commands (yas-minor-mode-on
              yas-expand

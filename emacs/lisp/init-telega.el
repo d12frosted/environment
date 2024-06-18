@@ -35,7 +35,7 @@
 ;;; Code:
 
 (use-package telega
-  :elpaca (telega
+  :ensure (telega
            :host github
            :repo "zevlg/telega.el"
            :branch "releases"
