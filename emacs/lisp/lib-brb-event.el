@@ -465,6 +465,7 @@ BALANCES is a hash table."
                                                  (sentiment . ,(alist-get 'sentiment sd))))))))
                              `((wine . ,wine)
                                (ignore-scores . ,(alist-get 'ignore-scores data))
+                               (type . ,(alist-get 'type data))
                                (amean . ,amean)
                                (rms . ,rms)
                                (wavg . ,wavg)
