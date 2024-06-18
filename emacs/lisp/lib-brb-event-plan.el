@@ -52,7 +52,7 @@
                 (ep-set-event event)
                 (ep-set-balances))))
     (brb-event-plan--propagate-new x)
-    (pop-to-buffer buffer)))
+    (display-buffer buffer)))
 
 ;; * Event Plan
 
