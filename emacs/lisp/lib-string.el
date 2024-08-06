@@ -136,16 +136,16 @@ buffer."
                               padding-num)
   "Return the decimal representation of NUM as string.
 
-When MIN-LENGTH is specified, the result is padded on the left
-with PADDING, which can be either \\='zero or \\='space (default).
+When MIN-LENGTH is specified, the result is padded on the left with
+PADDING, which can be either \\='zero or \\='space (default).
 
 Padding also happens when PADDING-NUM is specified, in that case
- MIN-LENGTH equals to the length of decimal representation of
- PADDING-NUM as string.
+MIN-LENGTH equals to the length of decimal representation of PADDING-NUM
+as string.
 
 This function might be considered an overkill, but it\\='s used in
- short-lived scripts so often that I am tired of writing this
- kind of formatting every time."
+short-lived scripts so often that I am tired of writing this kind of
+formatting every time."
   (if (or min-length padding-num)
       (let ((l (number-to-string
                 (or min-length
