@@ -372,7 +372,16 @@ ARG to override and query for specific frame."
          (countries (->> countries-all
                          (-map #'vulpea-note-id)
                          (vulpea-db-query-by-ids)
-                         (--filter (null (vulpea-note-primary-title it))))))
+                         (--filter (null (vulpea-note-primary-title it)))))
+
+         (colours-all (->> wines-all
+                           (--map (vulpea-note-meta-get it "colour" 'string))
+                           (-flatten)))
+         (colours-past (->> wines-past
+                              (--map (vulpea-note-meta-get it "colour" 'string))
+                              (-flatten)))
+         (colours (->> colours-all
+                       (-uniq))))
 
     ;; events overview
     (insert
@@ -518,7 +527,7 @@ ARG to override and query for specific frame."
                   (event it))
               (->> (brb-event-wines it)
                    (--map-indexed (list
-                                   (brb-event-date-string it)
+                                   (brb-event-date-string event)
                                    event
                                    (vulpea-note-meta-get it "producer" 'note)
                                    (vulpea-buttonize it (lambda (it) (vulpea-note-meta-get it "name")))
@@ -641,6 +650,37 @@ ARG to override and query for specific frame."
                         (vulpea-note-id it)
                         (vulpea-note-id other)))
                      roas-all)))
+           (--sort (> (nth 1 it)
+                      (nth 1 other)))))
+     "\n")
+
+    (insert "\n")
+
+    ;; colours
+    (insert
+     (propertize (format "Colours (%s)" (seq-length colours)) 'face 'outline-1)
+     "\n\n"
+     (string-table
+      :header '("colour" "past" "all")
+      :pad-type '(right left left)
+      :header-sep "-"
+      :header-sep-start "|-"
+      :header-sep-conj "-+-"
+      :header-sep-end "-|"
+      :row-start "| "
+      :row-end " |"
+      :sep " | "
+      :data
+      (->> colours
+           (--map
+            (list
+             it
+             (-count (lambda (other)
+                       (string-equal it other))
+                     colours-past)
+             (-count (lambda (other)
+                       (string-equal it other))
+                     colours-all)))
            (--sort (> (nth 1 it)
                       (nth 1 other)))))
      "\n")
