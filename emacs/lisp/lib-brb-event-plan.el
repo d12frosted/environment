@@ -52,7 +52,7 @@
                 (ep-set-event event)
                 (ep-set-balances))))
     (brb-event-plan--propagate-new x)
-    (display-buffer buffer)))
+    (switch-to-buffer buffer)))
 
 ;; * Event Plan
 
@@ -1257,7 +1257,10 @@ PID is participant id."
                               "web: " (vulpea-note-meta-get narrator "send mono") "\n"
                               "\n")
                            "")
-                         "🥂 Cheers! See you next time!")
+                         "🥂 Cheers! See you next time!"
+                         "\n\n"
+                         "P.S. Don't forget you have your personal page at https://barberry.io/convives/"
+                         (vulpea-note-id it))
                         (goto-char (point-min))
                         (replace-regexp "  +" ": ")
                         (kill-new (buffer-substring (point-min) (point-max)))))))
