@@ -3,6 +3,7 @@
 with pkgs;
 let exe = haskell.lib.justStaticExecutables;
 in [
+  # pandoc
   coreutils
   ffmpeg
   fish
@@ -12,6 +13,7 @@ in [
   git-lfs
   gnugrep
   gnumake
+  gnumeric
   gnupg
   gnuplot
   gnused
@@ -30,7 +32,6 @@ in [
   ncdu
   openssh
   openssl
-  # pandoc
   python310Packages.pygments
   ranger
   ripgrep

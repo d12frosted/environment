@@ -182,6 +182,7 @@ experimental-features = nix-command flakes
       # multimedia
       "spotify"
       "vlc"
+      "mpv"
 
       # extra browsers
       "firefox"
@@ -189,6 +190,7 @@ experimental-features = nix-command flakes
 
       # social
       "telegram"
+      "hey"
 
       # network
       "protonvpn"
@@ -202,6 +204,10 @@ experimental-features = nix-command flakes
       # other
       "appcleaner"
       "warp"
+      "figma"
+      "dbeaver-community"
+      "whisky"
+      "workflowy"
     ];
     taps = [
       "d12frosted/emacs-plus"
