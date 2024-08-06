@@ -340,88 +340,96 @@ Make all the links to this alias point to newly created note."
 
 
 
-(cl-defun vulpea-db-process-notes (&key
-                                   filter-fn
-                                   process-fn
-                                   quiet)
-  "Process `vulpea-note's.
+(defmacro vulpea-utils-process-notes (notes &rest body)
+  "Evaluate BODY for each element of NOTES.
 
-Mostly used for simple migrations.
+Each element of NOTE in turn is bound to `it' and its index within NOTES
+to `it-index' before evaluating BODY.
 
-This function has the following features and properties.
+This function can be used for simple migrations as it provides some
+useful features and properties:
 
-- It tries to avoid performance degradation even when 10k+ notes
-  are being processed.
+- Visibility. Each step is logged, so the progress is visible.
 
-- Each (id . file) pair is processed only once, meaning that
-  PROCESS-FN is not called multiple times on the same node.
-  Despite this, keep your PROCESS-FN idempotent.
+- While result of BODY evaluation is discarded, any changes to the
+  buffer are saved. For better performance, *all* Org mode buffers are
+  *killed* after each step. Based on benchmarks, saving and killing
+  buffers after each step is times faster than saving after all
+  modifications.
+
+- Each (id . file) pair is processed only once, meaning that BODY is not
+  called multiple times on the same node. Despite this, keep your BODY
+  idempotent.
 
 - Point is placed at the beginning of note. Meaning that for
   file-level notes the point is at the beginning of buffer; and
   for heading-level notes the point is at the beginning of
-  heading.
-
-- Progress is printed on the go unless QUIET is non-nil.
-
-Notes are selected by using FILTER-FN which takes `vulpea-note'
-as its only argument and returns non-nil if the note needs to be
-selected.
-
-PROCESS-FN is called with `vulpea-note' as it's argument. Result
-is ignored. Any buffer modification is saved."
-  (let* ((notes (seq-filter
-                 (lambda (n) (null (vulpea-note-primary-title n)))
-                 (vulpea-db-query filter-fn)))
-         (count (seq-length notes)))
-    (unless quiet
-      (pcase count
-        (`0 (message "No notes to process"))
-        (`1 (message "Processing 1 note"))
-        (_ (message "Processing %d notes" count))))
-    (seq-map-indexed
-     (lambda (n i)
-       (let ((level (vulpea-note-level n))
-             (file-name (file-name-nondirectory (vulpea-note-path n)) ))
-         (unless quiet
-           (message
-            (s-truncate
-             80
-             (format
-              "[%s/%d] Processing %s"
-              (string-from-number (+ i 1) :padding-num count)
-              count
-              (if (= 0 level)
-                  file-name
-                (concat file-name "#" (vulpea-note-title n))))))))
-       (cl-letf (((symbol-function 'message) (lambda (&rest _))))
-         (vulpea-visit n))
-       (when process-fn
-         (funcall process-fn n))
-       (save-buffer)
-       (kill-buffer))
-     notes)))
+  heading."
+  (declare (debug (form body)) (indent 1))
+  (let ((l (make-symbol "notes"))
+        (i (make-symbol "i"))
+        (count (make-symbol "count"))
+        (countl (make-symbol "countl"))
+        (level (make-symbol "level"))
+        (file-name (make-symbol "file-name")))
+    `(let* ((,l (-remove #'vulpea-note-primary-title ,notes))
+            (,count (seq-length ,l))
+            (,countl (number-to-string (length (number-to-string ,count))))
+            (,i 0))
+      (pcase ,count
+       (`0 (message "No notes to process"))
+       (`1 (message "Processing 1 note"))
+       (_ (message "Processing %d notes" ,count)))
+      (while ,l
+       (let* ((it (pop ,l))
+              (it-index ,i)
+              (,level (vulpea-note-level it))
+              (,file-name (file-name-nondirectory (vulpea-note-path it))))
+        (message
+         (s-truncate
+          80
+          (format
+           (concat
+            "[%" ,countl ".d/%d] Processing %s")
+           (+ it-index 1)
+           ,count
+           (if (= 0 ,level)
+               ,file-name
+             (concat ,file-name "#" (vulpea-note-title it))))))
+        (cl-letf (((symbol-function 'message) (lambda (&rest _))))
+         (vulpea-visit it))
+        (ignore it it-index)
+        ,@body
+        (save-some-buffers t)
+        (kill-matching-buffers-no-ask ".*\\.org$"))
+       (setq ,i (1+ ,i))))))
 
 ;;;###autoload
 (defun vulpea-db-build ()
   "Update notes database."
   (when (file-directory-p vulpea-directory)
     (require 'vino)
+    (require 'lib-brb)
     (org-roam-db-sync)
     (org-roam-update-org-id-locations)
     (org-persist-gc)
     (org-persist-write-all)
 
-    ;; migration
-    (vulpea-db-process-notes
-     :filter-fn (lambda (note) (and (= 0 (vulpea-note-level note))
-                                    (not (vulpea-note-tagged-all-p note "barberry/public"))
-                                    (or (vulpea-note-tagged-all-p note "wine" "grape")
-                                        (vulpea-note-tagged-all-p note "wine" "region")
-                                        (vulpea-note-tagged-all-p note "wine" "appellation")
-                                        (vulpea-note-tagged-all-p note "places"))))
-     :process-fn (lambda (_)
-                   (vulpea-buffer-tags-add "barberry/public")))
+    ;; make sure that barberry/public is set on all notes that require it
+    (vulpea-utils-process-notes (->> (vulpea-db-query-by-level 0)
+                                     (--filter
+                                      (and (not (vulpea-note-tagged-all-p it "barberry/public"))
+                                           (or (vulpea-note-tagged-all-p it "wine" "grape")
+                                               (vulpea-note-tagged-all-p it "wine" "region")
+                                               (vulpea-note-tagged-all-p it "wine" "appellation")
+                                               (vulpea-note-tagged-all-p it "places")))))
+      (vulpea-buffer-tags-add "barberry/public"))
+
+    ;; update sabotage links in wine entries
+    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
+                                     (--filter (vulpea-note-meta-get it "externalId")))
+      (when-let ((url (brb-sabotage-link (vulpea-note-meta-get it "externalId"))))
+        (vulpea-buffer-meta-set "sabotage" url 'append)))
 
     ;; process missing files
     (--each (org-roam-list-files)
