@@ -35,6 +35,7 @@
 ;;; Code:
 
 (require 'lib-buffer)
+(require 'lib-brb)
 (require 'vino)
 (require 'vino-inv)
 (require 'request)
@@ -51,12 +52,36 @@ FILTER is a `vulpea-note' predicate."
         (-filter filter notes)
       notes)))
 
+(defun vino-insert-appellation-candidates (&optional filter)
+  "Return list of candidates for `vulpea-find'.
+
+FILTER is a `vulpea-note' predicate."
+  (let ((notes (vulpea-db-query-by-tags-every '("wine" "appellation"))))
+    (if filter
+        (-filter filter notes)
+      notes)))
+
 ;;;###autoload
 (defun vino-insert-region ()
   "Select a region and insert a link to it."
   (interactive)
   (let ((vulpea-insert-default-candidates-source #'vino-insert-region-candidates))
-    (funcall-interactively #'vulpea-insert)))
+    (funcall-interactively
+     #'vulpea-insert
+     nil
+     (lambda (title props)
+       (vino-region-create :title title :capture-properties props)))))
+
+;;;###autoload
+(defun vino-insert-appellation ()
+  "Select a appellation and insert a link to it."
+  (interactive)
+  (let ((vulpea-insert-default-candidates-source #'vino-insert-appellation-candidates))
+    (funcall-interactively
+     #'vulpea-insert
+     nil
+     (lambda (title props)
+       (vino-appellation-create :title title :capture-properties props)))))
 
 ;; * vino hooks
 
@@ -109,9 +134,10 @@ EXTRA-DATA contains bottle-id."
 ;; * vino-inv hooks
 
 ;;;###autoload
-(defun vino-inv-acquire-bottle-handler (bottle wine)
-  "Handle WINE BOTTLE acquire event."
-  (let* ((price (vino-inv-bottle-price bottle))
+(defun vino-inv-acquire-bottle-handler (bottle)
+  "Handle wine BOTTLE acquire event."
+  (let* ((wine (vino-inv-bottle-wine bottle))
+         (price (vino-inv-bottle-price bottle))
          (price (cond
                  ((s-suffix-p brb-currency price) (string-to-number price))
                  ((= 0 (string-to-number price)) 0)
@@ -125,10 +151,11 @@ EXTRA-DATA contains bottle-id."
        :amount price))))
 
 ;;;###autoload
-(defun vino-inv-consume-bottle-handler (bottle wine action date)
-  "Handle WINE BOTTLE consume event via ACTION on DATE."
+(defun vino-inv-consume-bottle-handler (bottle action date)
+  "Handle wine BOTTLE consume event via ACTION on DATE."
   (when (string-equal "sell" action)
-    (let* ((price (vino-inv-bottle-price bottle))
+    (let* ((wine (vino-inv-bottle-wine bottle))
+           (price (vino-inv-bottle-price bottle))
            (price (read-number "Sell for: "
                                (when (s-suffix-p brb-currency price)
                                  (string-to-number price)))))
@@ -588,6 +615,292 @@ Whatever that means."
       (vulpea-visit note)
       note))
    (t (user-error "Not sure how to help you in %s" major-mode))))
+
+;; * Smart region setting
+
+(defconst vino/germany/wein "b4afc600-1592-4830-8402-77961dbc595d")
+(defconst vino/germany/qualitatswein "82861689-1a6c-47e9-90c2-71835759f92c")
+(defconst vino/germany/pradikatswein "29744fde-ad06-4085-8490-00991be1947b")
+(defconst vino/germany/landwein
+  '("b893b7ea-1888-4a7a-97ef-e837cff30df9"
+    "dc8c4787-73e3-4ffc-9f4d-393d49142cd8"
+    "f59b5ff2-098b-42c3-86ca-8e08641cdf94"
+    "15793fde-91b7-4a7a-bdcc-7c15fe864ce7"
+    "c07c9851-1ed6-4391-b2ca-08cdb4a8d7aa"
+    "27830cd0-ac57-4273-8d48-c253ce6c3dd5"
+    "a497a039-de97-40d8-8930-de60f70091f1"
+    "6c53e3e6-9758-4065-adfc-ed049278f82d"
+    "394903af-7980-4727-b76a-49dc334f195a"
+    "918ea808-4f7e-44ce-b0d3-939ac6c17297"
+    "93deceaf-85fe-46e5-9901-6a8dd92b4e4e"
+    "501260a7-8f55-4c6e-947f-ea832f463fcb"
+    "347ccf73-a124-4223-a6b7-b09ff397ce87"
+    "3949561f-7881-44ff-bb8f-10ed73573397"
+    "563e96aa-c8d2-4952-9fd2-22779e5234c5"
+    "8733af09-7135-4589-a56e-039dab3ba7b1"
+    "7a8348dd-999d-4b35-865a-9ad9de3095a1"
+    "eaaf74a6-f9e4-4e1c-87c5-353d9270421f"
+    "9e5353a5-c2da-4bb2-bc5d-ec09954d3c27"
+    "dddd3512-94c5-4225-b2db-7f84bb360632"
+    "9356a819-e53e-48c0-a408-fbc38a7fd8ed"
+    "cef1f2c5-2a04-423e-b14f-7892aaf77264"
+    "c79491b2-824f-4de8-b4d4-f89824a9c856"
+    "76ca5b68-eb8b-45c4-9826-6e4561142ff7"
+    "ae668fd4-4221-4f35-8f20-42ad6c421af7"
+    "190d3a9b-1fef-4344-a460-88f1b99c9ebc"))
+(defconst vino/germany/regions
+  '("d132a2b6-5dda-4741-8a37-a918852b0b50"
+    "cb214156-1394-4fd1-bd3a-f6036f78b3d1"
+    "3025012e-f6c3-40b7-a6dd-931bb8274daa"
+    "f01f1c70-005c-4a4c-bf9b-11f97357894e"
+    "28aed8eb-0567-42a1-8885-f3098d3b3cd4"
+    "a5051493-9ef5-43a6-a9c5-4a7f8865ce1d"
+    "c12ca7ee-0a81-4ca7-9222-db77d8a3b6ca"
+    "a7607fef-e2c2-4df8-8e49-da195f82a14c"
+    "19ca3ef7-5b84-41f5-be47-3bcfbc41a25d"
+    "d7edf304-d970-4440-bad1-6a759662e851"
+    "aad73bdf-1f85-4d4c-b149-223688c9f748"
+    "4108c59d-cc0b-4335-905d-486c12d34c5b"
+    "6f0c9592-67c4-436e-a26d-8cbd43504c51"))
+
+;; (setq vino-origin-select-fn #'vino-origin-select-custom)
+;;;###autoload
+(defun vino-origin-select-custom ()
+  "Custom origin selection function.
+
+This one handles some countries in a very custom/specific way.
+
+See `vino-origin-select-fn' for more information."
+  (interactive)
+  (let ((country (vulpea-select-from
+                  "Country"
+                  (vulpea-db-query-by-tags-every '("wine" "country"))))
+        rora region appellation subregion)
+    (unless (vulpea-note-id country)
+      (when (y-or-n-p "Country %s doesn not exist. Would you like to create it?")
+        (setq country (vino-country-create (vulpea-note-title country)))))
+    (when (vulpea-note-id country)
+      (pcase (vulpea-note-title country)
+        ("Germany"
+         (pcase (completing-read "Quality level: " '("wein" "landwein" "qualitätswein" "prädikatswein") nil t)
+           ("wein"
+            (setq appellation (vulpea-db-get-by-id vino/germany/wein)))
+           ("landwein"
+            (setq appellation (vulpea-select-from
+                               "Landwein"
+                               (vulpea-db-query-by-ids vino/germany/landwein)
+                               :require-match t))
+            (setq region (vulpea-note-meta-get appellation "parent" 'note)))
+           ("qualitätswein"
+            (setq appellation (vulpea-db-get-by-id vino/germany/qualitatswein))
+            (setq region (vulpea-select-from
+                          "Region"
+                          (vulpea-db-query-by-ids vino/germany/regions)
+                          :require-match t)))
+           ("prädikatswein"
+            (setq appellation (vulpea-db-get-by-id vino/germany/pradikatswein))
+            (setq region (vulpea-select-from
+                          "Region"
+                          (vulpea-db-query-by-ids vino/germany/regions)
+                          :require-match t)))))
+
+        ;; default case
+        (_ (setq rora (vulpea-select-from
+                       "Region or appellation"
+                       (->> (append (vulpea-db-query-by-tags-every '("wine" "region"))
+                                    (vulpea-db-query-by-tags-every '("wine" "appellation")))
+                            (--filter (string-equal (vulpea-note-id country)
+                                                    (vulpea-note-meta-get it "country" 'link)))
+                            (--remove (vulpea-note-tagged-any-p it "subregion")))))
+           (unless (vulpea-note-id rora)
+             (setq rora (pcase (completing-read
+                                (format "%s does not exist. What to do?"
+                                        (vulpea-note-title rora))
+                                '("Create region"
+                                  "Create appellation"
+                                  "Abort"))
+                          (`"Create region"
+                           (vino-region-create :title (vulpea-note-title rora)
+                                               :country country))
+                          (`"Create appellation"
+                           (vino-appellation-create :title (vulpea-note-title rora)
+                                                    :country))
+                          (_ (error "Abort")))))
+           (if (vulpea-note-tagged-any-p rora "region")
+               (setq region rora)
+             (setq appellation rora))))
+
+      ;; custom rules
+
+      ;; -> champagne - pick subregion
+      (when (and appellation (string-equal "Champagne AOC" (vulpea-note-title appellation)))
+        (let ((subregions (vulpea-db-query-by-tags-every '("wine" "champagne" "subregion"))))
+          (setq subregion (vino--repeat-while
+                             #'vulpea-select-from
+                             #'null
+                             "Subregion (C-g for none)" subregions :require-match t))))
+
+      (-filter
+       #'cdr
+       `(("country" . ,country)
+         ("region" . ,region)
+         ("appellation" . ,appellation)
+         ("subregion" . ,subregion))))))
+
+(defun vino-set-region-full ()
+  "Set region for vino entry in current buffer."
+  (interactive)
+  (let ((country (vulpea-select-from
+                  "Country"
+                  (vulpea-db-query-by-tags-every '("wine" "country"))
+                  :require-match t))
+        region appellation)
+    (pcase (vulpea-note-title country)
+      ("Germany"
+       (pcase (completing-read "Quality level: " '("wein" "landwein" "qualitätswein" "prädikatswein") nil t)
+         ("wein"
+          (setq appellation (vulpea-db-get-by-id vino/germany/wein)))
+         ("landwein"
+          (setq appellation (vulpea-select-from
+                             "Landwein"
+                             (vulpea-db-query-by-ids vino/germany/landwein)
+                             :require-match t))
+          (setq region (vulpea-note-meta-get appellation "parent" 'note)))
+         ("qualitätswein"
+          (setq appellation (vulpea-db-get-by-id vino/germany/qualitatswein))
+          (setq region (vulpea-select-from
+                        "Region"
+                        (vulpea-db-query-by-ids vino/germany/regions)
+                        :require-match t)))
+         ("prädikatswein"
+          (setq appellation (vulpea-db-get-by-id vino/germany/pradikatswein))
+          (setq region (vulpea-select-from
+                        "Region"
+                        (vulpea-db-query-by-ids vino/germany/regions)
+                        :require-match t)))))
+
+      ;; default mode
+      (_ (let ((note (vulpea-select-from
+                      "Region"
+                      (->> (vulpea-db-query-by-links-some `(("id" . ,(vulpea-note-id country))))
+                           (--filter (and
+                                      (or (vulpea-note-tagged-all-p it "wine" "region")
+                                          (vulpea-note-tagged-all-p it "wine" "appellation"))
+                                      (string-equal (vulpea-meta-get it "country" 'link) (vulpea-note-id country))))))))
+           (unless (vulpea-note-id note)
+             (setq note
+                   (pcase (completing-read
+                           (format "Region %s does not exist. What to do?"
+                                   (vulpea-note-title note))
+                           '("Create region"
+                             "Create appellation"
+                             "Ignore"))
+                     (`"Create region"
+                      (vulpea-create
+                       (vulpea-note-title note)
+                       (concat "wine/region/"
+                               (or (vulpea-note-meta-get country "short name")
+                                   (vulpea-note-title country))
+                               "/%<%Y%m%d%H%M%S>-${slug}.org")
+                       :tags (seq-union (plist-get vino-region-template :tags)
+                                        '("wine" "region"))
+                       :head (plist-get vino-region-template :head)
+                       :body (format "- country :: %s" (vulpea-utils-link-make-string country))
+                       :context (plist-get vino-region-template :context)
+                       :properties (plist-get vino-region-template :properties)
+                       :unnarrowed t
+                       :immediate-finish t))
+                     (`"Create appellation"
+                      (vulpea-create
+                       (vulpea-note-title note)
+                       (concat "wine/appellation/"
+                               (or (vulpea-note-meta-get country "short name")
+                                   (vulpea-note-title country))
+                               "/%<%Y%m%d%H%M%S>-${slug}.org")
+                       :tags (seq-union (plist-get vino-appellation-template :tags)
+                                        '("wine" "appellation"))
+                       :head (plist-get vino-appellation-template :head)
+                       :body (format "- country :: %s" (vulpea-utils-link-make-string country))
+                       :context (plist-get vino-appellation-template :context)
+                       :properties (plist-get vino-appellation-template :properties)
+                       :unnarrowed t
+                       :immediate-finish t))
+                     (_ (user-error "Abort")))))
+           (if (vulpea-note-tagged-all-p note "wine" "region")
+               (setq region note)
+             (setq appellation note)
+             (setq region (vulpea-note-meta-get note "parent" 'note))))))
+    
+    (vulpea-buffer-meta-set "country" country)
+    (if appellation
+        (vulpea-buffer-meta-set "appellation" appellation)
+      (vulpea-buffer-meta-remove "appellation"))
+    (if region
+        (vulpea-buffer-meta-set "region" region)
+      (vulpea-buffer-meta-remove "region"))
+    (vulpea-buffer-sort-meta vino-meta-props-order)
+    (save-buffer)))
+
+;;;###autoload
+(defun vino-entry-origin (wine)
+  "Return origin of WINE denoted as `vulpea-note'.
+
+Origin is a list from the widest origin to the most specific. Each
+element is a list itself, because some appellations are part of multiple
+wine-making regions thus there is a need to support this case. But in
+most cases each of these sub-lists should contain single element.
+
+Assumptions:
+
+- Each wine entry can have zero or one appellation.
+
+- Each wine entry can have zero, one or many regions.
+
+- Each appellation/region can have zero, one or many
+  parents (appellation or region). The parent is denoted by 'parent'
+  meta.
+
+- Each entry must have exactly one country."
+  (let* ((country (or (vulpea-note-meta-get wine "country" 'note)
+                      (error "Country is missing in '%s' (%s)"
+                             (vulpea-note-title wine)
+                             (vulpea-note-id wine))))
+         (appellation (vulpea-note-meta-get wine "appellation" 'note))
+         (regions (vulpea-note-meta-get-list wine "region" 'note))
+         (subregion (vulpea-note-meta-get wine "subregion" 'note))
+         result
+         cursor)
+    ;; include subregion tree when present
+    (when subregion
+      (setq result (cons (list subregion) result))
+      (while (and (setq subregion (vulpea-note-meta-get subregion "parent" 'note))
+                  (vulpea-note-tagged-all-p subregion "subregion"))
+        (setq result (cons (list subregion) result))))
+
+    ;; pick a cursor for parents lookup
+    (setq cursor (vulpea-note-meta-get-list
+                  (if appellation appellation (nth 0 regions))
+                  "parent" 'note))
+
+    ;; include appellation when present
+    (when appellation
+      (setq result (cons (list appellation) result)))
+
+    ;; include regions when present, but ignore when cursor already
+    ;; includes at least one of the regions
+    (when (and regions (not (--any-p (-contains-p regions it) cursor)))
+      (setq result (cons regions result)))
+
+    ;; traverse parents, but ignore wide trees
+    (while (= 1 (seq-length cursor))
+      (setq result (cons cursor result))
+      (setq cursor (vulpea-note-meta-get-list (nth 0 cursor) "parent" 'note)))
+
+    ;; include country
+    (setq result (cons (list country) result))
+
+    ;; done
+    result))
 
 (provide 'lib-vino)
 ;;; lib-vino.el ends here

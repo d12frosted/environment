@@ -47,6 +47,7 @@
     "vv" '(vino-entry-find-file :which-key "find vino")
     "vi" '(vino-entry-insert :which-key "insert vino")
     "vIr" '(vino-insert-region :which-key "insert region")
+    "vIa" '(vino-insert-appellation :which-key "insert appellation")
     "vf" '(nil :which-key "find...")
     "vfa" '(vino-inv-find-file-available :which-key "available vino")
     "vfg" '(vino-grape-find-file :which-key "grape")
@@ -79,12 +80,40 @@
                          :tags ("barberry/public"))
    vino-rating-template '(:file-name "wine/rating/${id}.org"
                           :tags ("barberry/public"))
-   vino-region-template '(:file-name "wine/region/%<%Y%m%d%H%M%S>-${slug}.org"
+   vino-region-template '(:file-name "wine/region/${country}/%<%Y%m%d%H%M%S>-${slug}.org"
                           :tags ("barberry/public"))
-   vino-appellation-template '(:file-name "wine/appellation/%<%Y%m%d%H%M%S>-${slug}.org"
+   vino-appellation-template '(:file-name "wine/appellation/${country}/%<%Y%m%d%H%M%S>-${slug}.org"
                                :tags ("barberry/public"))
    vino-grape-template '(:file-name "wine/grape/%<%Y%m%d%H%M%S>-${slug}.org"
                          :tags ("barberry/public"))
+   vino-origin-select-fn #'vino-origin-select-custom
+   vino-entry-rating-average-method 'latest
+   vino-entry-meta-props-order '("externalId"
+                                 "carbonation"
+                                 "carbonation method"
+                                 "colour"
+                                 "sweetness"
+                                 "producer"
+                                 "name"
+                                 "vintage"
+                                 "base"
+                                 "sur lie"
+                                 "degorgee"
+                                 "country"
+                                 "region"
+                                 "appellation"
+                                 "subregion"
+                                 "grapes"
+                                 "alcohol"
+                                 "sugar"
+                                 "price"
+                                 "price private"
+                                 "acquired"
+                                 "consumed"
+                                 "available"
+                                 "rating"
+                                 "ratings"
+                                 "images")
    vino-rating-props
    '((1 . (("SCORE" . 3)))
      (2 . (("AROMA_QUALITY" . 3)
