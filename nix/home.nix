@@ -30,7 +30,7 @@ in {
       XDG_CONFIG_HOME       = config.xdg.configHome;
       XDG_DATA_HOME         = config.xdg.dataHome;
       BUDGET_DIR            = "${home}/Dropbox/budget";
-      VULPEA_DIR            = "${home}/Dropbox/vulpea";
+      VULPEA_DIR            = "${home}/vulpea";
       GHCUP_USE_XDG_DIRS    = "1";
       QT_XCB_GL_INTEGRATION = "none";
     };

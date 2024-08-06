@@ -140,7 +140,7 @@ experimental-features = nix-command flakes
   launchd.user.agents.vulpea-sync = {
     command = "${xdg_configHome}/bin/vulpea-sync";
     environment = {
-      VULPEA_DIR = "${home}/Dropbox/vulpea";
+      VULPEA_DIR = "${home}/vulpea";
     };
     path = [
       pkgs.bash
