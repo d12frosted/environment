@@ -64,6 +64,8 @@ yabai -m rule --add app="^System Preferences$" manage=off
 yabai -m rule --add app="^Cryptomator$" manage=off
 yabai -m rule --add app="^NIIMBOT$" manage=off
 yabai -m rule --add app="^Emacs$" title!='^$' manage=on
+yabai -m rule --add app="^XIV on Mac$" manage=off
+yabai -m rule --add app="^Finder$" title="Copy" manage=off
 
 # move some apps automatically to specific spaces
 yabai -m rule --add app="^Safari$" space=3
