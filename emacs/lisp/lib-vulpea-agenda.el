@@ -325,7 +325,8 @@ Usage example:
         \\='((agenda . \" %(vulpea-agenda-category) %?-12t %12s\")))
 
 Refer to `org-agenda-prefix-format' for more information."
-  (let* ((file-name (when buffer-file-name
+  (if (eq major-mode 'org-mode)
+      (let* ((file-name (when buffer-file-name
                       (file-name-sans-extension
                        (file-name-nondirectory buffer-file-name))))
          (title (vulpea-buffer-prop-get "title"))
@@ -339,7 +340,8 @@ Refer to `org-agenda-prefix-format' for more information."
               "")))
     (if (numberp len)
         (s-truncate len (s-pad-right len " " result))
-      result)))
+      result))
+    (s-repeat (or len 0) " ")))
 
 
 
