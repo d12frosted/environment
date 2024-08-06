@@ -750,7 +750,3 @@
 
 (provide 'barberry-theme)
 ;;; barberry-theme.el ends here
-
-;; Local Variables:
-;; eval: (unless elpa-bootstrap-p (rainbow-mode +1))
-;; End:
