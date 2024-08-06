@@ -439,7 +439,7 @@ BALANCES is a hash table."
                                                                      (string-equal pid (alist-get 'participant it))
                                                                      weights)))
                                                   (unless weight-data
-                                                    (error "Could not find weight data for participant %s" pid))
+                                                    (error "Could not find weight data for participant %s for '%s' event" pid (vulpea-note-title event)))
                                                   (calcFunc-mul (assoc-default 'weight weight-data)
                                                                 (assoc-default 'score it))))
                                                (apply #'calcFunc-vec)
