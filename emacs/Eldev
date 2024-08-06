@@ -1,8 +1,8 @@
 ; -*- mode: emacs-lisp; lexical-binding: t; no-byte-compile: t -*-
 
 ;; Inject private configurations
-(let ((private-dir (expand-file-name "Library/CloudStorage/Dropbox/emacs/" (getenv "HOME"))))
-  (when (file-exists-p private-dir)
+(let ((private-dir (getenv "EMACS_PRIVATE_DIR")))
+  (when (and private-dir (file-exists-p private-dir))
     (let ((files (seq-filter
                   (lambda (file)
                     (and (string-suffix-p ".el" file)
@@ -43,12 +43,11 @@
 ;; Bootstrap flow. Basically set `elpa-bootstrap-p' to `t' and load
 ;; init.el, which forces `init-elpa' to install all dependencies.
 
-(defvar elpa-freeze nil)
-
 (defun elpa-bootstrap ()
   "Bootstrap personal configurations."
-  (setq-default elpa-bootstrap-p t
-                load-prefer-newer t)
+  (setq-default
+   elpa-bootstrap-p t
+   load-prefer-newer t)
   (eldev--inject-loading-roots 'bootstrap)
   (require 'config-path)
   (load (expand-file-name "init.el" path-emacs-dir))
