@@ -270,10 +270,13 @@
   :config
   (setq modus-themes-italic-constructs nil
         modus-themes-bold-constructs nil
-        modus-themes-common-palette-overrides modus-themes-preset-overrides-cooler
-        modus-themes-headings '((1 . (semibold 1.4))
-                                (2 . (medium 1.2))
-                                (t . (medium 1.1))))
+        modus-themes-common-palette-overrides (append
+                                               '((overline-heading-1 bg-blue-subtle)
+                                                 (overline-heading-2 bg-blue-subtle))
+                                               modus-themes-preset-overrides-faint)
+        modus-themes-headings '((1 . (bold 1.5))
+                                (2 . (semibold 1.3))
+                                (t . (medium 1.2))))
 
   ;; Load the theme of your choice.
   (load-theme 'modus-operandi :no-confirm)

@@ -243,9 +243,11 @@ Make all the links to this alias point to newly created note."
   "Setup current buffer for notes viewing and editing."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
+    (setq-local tab-width 8)
+    (when (s-contains-p "journal" (buffer-file-name))
+      (org-set-startup-visibility))
     (org-with-point-at 1
       (org-fold-hide-drawer-toggle 'off))
-    (setq-local tab-width 8)
     (vulpea-ensure-filetag)))
 
 ;;;###autoload

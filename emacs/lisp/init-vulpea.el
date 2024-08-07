@@ -107,7 +107,7 @@
    org-image-actual-width '(512)
    org-imenu-depth 1
    org-pretty-entities nil
-   org-startup-folded 'content
+   org-startup-folded 'show2levels
    org-fontify-whole-heading-line nil
    org-blank-before-new-entry '((heading . nil)
                                 (plain-list-item . nil))
