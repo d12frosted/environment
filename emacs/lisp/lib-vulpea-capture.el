@@ -44,8 +44,7 @@
 (require 'org-roam)
 (require 'org-cliplink)
 
-(defvar vulpea-capture-inbox-file
-  (format "inbox-%s.org" env-sys-name)
+(defvar vulpea-capture-inbox-file "inbox.org"
   "The path to the inbox file.
 
 It is relative to `vulpea-directory', unless it is absolute.")
@@ -66,7 +65,11 @@ It is relative to `vulpea-directory', unless it is absolute.")
       (function vulpea-capture-meeting-target)
       (function vulpea-capture-meeting-template)
       :clock-in t
-      :clock-resume t))
+      :clock-resume t)
+
+     ("p" "Project" entry
+      (function vulpea-capture-project-target)
+      (function vulpea-capture-project-template)))
    org-roam-capture-templates
    '(("d" "default" plain "%?"
       :if-new (file+head
@@ -95,6 +98,35 @@ It is relative to `vulpea-directory', unless it is absolute.")
   "Capture a meeting."
   (interactive)
   (org-capture nil "m"))
+
+;;;###autoload
+(defun vulpea-capture-area (&optional title novisit)
+  "Capture an area with TITLE.
+
+Captured area is visited unless NOVISIT is provided."
+  (interactive)
+  (let ((title (or title (s-trim (read-string "Area: ")))))
+    (when (string-empty-p title)
+      (user-error "Area name can't be empty"))
+    (when-let ((note (vulpea-create
+                      title "area/%<%Y%m%d%H%M%S>-${slug}.org"
+                      :immediate-finish t
+                      :body (string-join
+                             '("* Notes"
+                               "* Research"
+                               "* Action Items"
+                               "* Projects"
+                               "* History Log"
+                               "* Archive")
+                             "\n\n"))))
+      (unless novisit
+        (vulpea-visit note)))))
+
+;;;###autoload
+(defun vulpea-capture-project ()
+  "Capture a project."
+  (interactive)
+  (org-capture nil "p"))
 
 (defun vulpea-capture-meeting-target ()
   "Return a target for a meeting capture."
@@ -143,6 +175,70 @@ It is relative to `vulpea-directory', unless it is absolute.")
       (concat "* MEETING with "
               (vulpea-note-title person)
               " on [%<%Y-%m-%d %a>] :MEETING:\n%U\n\n%?"))))
+
+(defun vulpea-capture-project-target ()
+  "Return a target for a project capture."
+  (let ((area (org-capture-get :project-area)))
+    ;; unfortunately, I could not find a way to reuse
+    ;; `org-capture-set-target-location'
+    (let ((path (vulpea-note-path area))
+          (headline "Projects"))
+      (set-buffer (org-capture-target-buffer path))
+      ;; Org expects the target file to be in Org mode, otherwise
+      ;; it throws an error. However, the default notes files
+      ;; should work out of the box. In this case, we switch it to
+      ;; Org mode.
+      (unless (derived-mode-p 'org-mode)
+        (org-display-warning
+         (format
+          "Capture requirement: switching buffer %S to Org mode"
+          (current-buffer)))
+        (org-mode))
+      (org-capture-put-target-region-and-position)
+      (widen)
+      (goto-char (point-min))
+      (if (re-search-forward
+           (format org-complex-heading-regexp-format
+                   (regexp-quote headline))
+           nil t)
+          (beginning-of-line)
+        (goto-char (point-max))
+        (unless (bolp) (insert "\n"))
+        (insert "* " headline "\n")
+        (beginning-of-line 0)))))
+
+(defun vulpea-capture-project-template ()
+  "Return a template for a project capture."
+  (let* ((area (vulpea-select-from
+                "Area"
+                (->> (vulpea-db-query-by-tags-every '("area"))
+                     (--filter (= 0 (vulpea-note-level it))))))
+         (area (if (vulpea-note-id area)
+                   area
+                 (vulpea-capture-area (vulpea-note-title area) :no-visit)))
+         (title (s-trim (read-string "Project: "))))
+    (when (string-empty-p title)
+      (user-error "Project name can't be empty"))
+    (org-capture-put :project-area area)
+    (let ((header (string-join
+                   (list (concat "* " title "%? :project:")
+                         ":PROPERTIES:"
+                         (format org-property-format ":CATEGORY:"
+                                 (concat
+                                  (or (vulpea-note-meta-get area "short name")
+                                      (vulpea-note-title area))
+                                  " > "
+                                  title))
+                         ":END:")
+                   "\n")))
+      (string-join
+       `(,header
+         "** Notes"
+         "** Research"
+         "** Action Items"
+         "** History Log"
+         "")
+       "\n\n"))))
 
 ;;;###autoload
 (defun vulpea-capture-journal ()

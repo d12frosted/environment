@@ -249,10 +249,11 @@
   (leader-def
     "c" '(nil :which-key "capture...")
     "cX" '(org-capture :which-key "dispatch")
-    "ca" '(vulpea-capture-article :which-key "article")
+    "ca" '(vulpea-capture-area :which-key "area")
     "cj" '(vulpea-capture-journal :which-key "journal")
     "cl" '(org-store-link :which-key "link")
     "cm" '(vulpea-capture-meeting :which-key "meeting")
+    "cp" '(vulpea-capture-project :which-key "project")
     "cx" '(vulpea-capture-task :which-key "task"))
   :init
   (setq-default org-capture-bookmark nil)
