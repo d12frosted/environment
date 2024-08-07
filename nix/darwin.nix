@@ -214,10 +214,7 @@ experimental-features = nix-command flakes
     taps = [
       "d12frosted/emacs-plus"
       "homebrew/bundle"
-      "homebrew/cask"
-      "homebrew/cask"
       "homebrew/cask-drivers"
-      "homebrew/core"
       "homebrew/services"
       "koekeishiya/formulae"
     ];
