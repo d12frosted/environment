@@ -436,14 +436,9 @@ useful features and properties:
       (unless (vulpea-db-get-by-id (vulpea-db-get-id-by-file it))
         (message "Found a broken file at %s" it)
         (org-roam-db-clear-file it)
-        (org-roam-db-update-file it)))))
+        (org-roam-db-update-file it)))
 
-;; (vulpea-db-process-notes
-;;  :filter-fn (lambda (note)
-;;               (and (= 0 (vulpea-note-level note))
-;;                    (vulpea-note-tagged-all-p note "wine" "cellar")))
-;;  :process-fn (lambda (_)
-;;                (vino-entry-update)))
+    (message " -> done building vulpea db")))
 
 
 
