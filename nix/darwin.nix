@@ -203,9 +203,11 @@ experimental-features = nix-command flakes
 
       # other
       "appcleaner"
-      "warp"
-      "figma"
+      "cryptomator"
       "dbeaver-community"
+      "figma"
+      "syncthing"
+      "warp"
       "whisky"
       "workflowy"
     ];
