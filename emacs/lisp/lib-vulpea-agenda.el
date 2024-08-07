@@ -80,10 +80,12 @@ Affects the following commands:
 ;;;###autoload
 (defun vulpea-agenda-files-update (&rest _)
   "Update the value of `org-agenda-files'."
-  (setq org-agenda-files (seq-uniq
-                          (seq-map
-                           #'vulpea-note-path
-                           (vulpea-db-query-by-tags-some '("project"))))))
+  (setq org-agenda-files
+        (->> (vulpea-db-query-by-tags-some '("project"))
+             ; (--remove (vulpea-note-tagged-any-p it "cemetery"))
+             (-map #'vulpea-note-path)
+             (--remove (s-contains-p "cemetery" it :ignore-case))
+             (-uniq))))
 
 
 ;; Commands
