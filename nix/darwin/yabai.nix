@@ -61,11 +61,15 @@ setup_space 6 other
 
 # floating apps and windows
 yabai -m rule --add app="^System Preferences$" manage=off
+yabai -m rule --add app="^Calculator$" manage=off
+yabai -m rule --add app="^Archive Utility$" manage=off
 yabai -m rule --add app="^Cryptomator$" manage=off
 yabai -m rule --add app="^NIIMBOT$" manage=off
 yabai -m rule --add app="^Emacs$" title!='^$' manage=on
 yabai -m rule --add app="^XIV on Mac$" manage=off
 yabai -m rule --add app="^Finder$" title="Copy" manage=off
+yabai -m rule --add title="^Preferences" manage=off
+yabai -m rule --add title="^Settings" manage=off
 
 # move some apps automatically to specific spaces
 yabai -m rule --add app="^Safari$" space=3
