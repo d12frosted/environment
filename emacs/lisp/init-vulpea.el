@@ -428,6 +428,46 @@
 
 
 
+(use-package fancy-yank
+  :ensure (:host github :repo "d12frosted/fancy-yank")
+  :commands (fancy-yank)
+  :bind
+  (("C-S-y" . #'fancy-yank))
+  :config
+  (setq
+   fancy-yank-rules
+   (list
+    (cons vcs-url-github-issue-regexp
+          '(fancy-yank-extract-regex
+            (lambda (url owner repo type number &rest args)
+              (list url
+               (vcs-url-format-github-issue
+                owner repo type number)))
+            fancy-yank-format-link))
+    (cons vcs-url-github-project-regexp
+          '(fancy-yank-extract-regex
+            (lambda (url owner repo &rest args)
+              (list url
+               (vcs-url-format-github-project owner repo)))
+            fancy-yank-format-link))
+    (cons (format "\\(https?://%s/package/\\([-[:alnum:]]+\\).*\\)"
+                  "hackage.haskell.org")
+          '(fancy-yank-extract-regex
+            (lambda (url package &rest args)
+              (list
+               url
+               package))
+            fancy-yank-format-link))
+    (cons string-http-url-regexp
+          '(fancy-yank-extract-regex
+            (lambda (url &rest args)
+              (list
+               url
+               (or (ignore-errors (url-domain
+                                   (url-generic-parse-url url)))
+                (read-string "Description: "))))
+            fancy-yank-format-link)))))
+
 (use-package org-cliplink
   :ensure t
   :defer t)
