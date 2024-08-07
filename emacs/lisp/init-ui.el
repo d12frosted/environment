@@ -285,6 +285,7 @@
 
 (use-package fontaine
   :ensure t
+  :if env-graphic-p
   :config
   (setq fontaine-presets
         '((regular
