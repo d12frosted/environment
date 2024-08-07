@@ -34,14 +34,14 @@
 ;;; Code:
 
 (require 'init-env)
-(require 'barberry-theme)
+;; (require 'barberry-theme)
 
 (let ((font-size (if env-sys-mac-p 12 10)))
   (setq-default barberry-theme-font-mono-size font-size
                 barberry-theme-font-sans-size font-size
                 barberry-theme-font-serif-size font-size))
 
-(load-theme 'barberry 'no-confirm)
+;; (load-theme 'barberry 'no-confirm)
 
 ;; no startup  screen
 (setq inhibit-startup-screen t)
@@ -262,6 +262,66 @@
   (setf fancy-compilation-override-colors nil)
   (with-eval-after-load 'compile
     (fancy-compilation-mode)))
+
+
+
+(use-package modus-themes
+  :ensure t
+  :config
+  (setq modus-themes-italic-constructs nil
+        modus-themes-bold-constructs nil
+        modus-themes-common-palette-overrides modus-themes-preset-overrides-cooler
+        modus-themes-headings '((1 . (semibold 1.4))
+                                (2 . (medium 1.2))
+                                (t . (medium 1.1))))
+
+  ;; Load the theme of your choice.
+  (load-theme 'modus-operandi :no-confirm)
+
+  (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
+
+(use-package fontaine
+  :ensure t
+  :config
+  (setq fontaine-presets
+        '((regular
+           :default-height 120)
+          (medium
+           :default-weight semilight
+           :default-height 140)
+          (large
+           :default-weight semilight
+           :default-height 180
+           :bold-weight extrabold)
+          (t ; our shared fallback properties
+           :default-family "Source Code Pro"
+           :default-weight normal
+           ;; :default-height 100
+           :fixed-pitch-family nil ; falls back to :default-family
+           :fixed-pitch-weight nil ; falls back to :default-weight
+           :fixed-pitch-height 1.0
+           :variable-pitch-family "FiraGO"
+           :variable-pitch-weight normal
+           :variable-pitch-height 1.05
+           :bold-family nil ; use whatever the underlying face has
+           :bold-weight bold
+           :italic-family nil
+           :italic-slant italic
+           :line-spacing nil)))
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+  (fontaine-mode 1))
+
+(use-package spacious-padding
+  :ensure t
+  :config
+  (setq spacious-padding-widths
+      '( :internal-border-width 15
+         :header-line-width 4
+         :mode-line-width 6
+         :tab-width 4
+         :right-divider-width 30
+         :scroll-bar-width 8))
+  (spacious-padding-mode 1))
 
 
 

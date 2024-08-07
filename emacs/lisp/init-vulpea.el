@@ -85,6 +85,7 @@
   :ensure (org :host sourcehut :repo "bzg/org-mode")
   :hook ((org-mode . visual-line-mode)
          (org-mode . adaptive-wrap-prefix-mode)
+         (org-mode . org-indent-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
   :commands (org-check-agenda-file
@@ -101,12 +102,16 @@
   (setq
    org-adapt-indentation nil
    org-hidden-keywords nil
-   org-hide-emphasis-markers nil
-   org-hide-leading-stars nil
+   org-hide-emphasis-markers t
+   org-hide-leading-stars t
    org-image-actual-width '(512)
    org-imenu-depth 1
    org-pretty-entities nil
-   org-startup-folded t)
+   org-startup-folded 'content
+   org-fontify-whole-heading-line nil
+   org-blank-before-new-entry '((heading . nil)
+                                (plain-list-item . nil))
+   org-cycle-separator-lines 1)
 
   ;; do not allow invisible edits (...)
   (setq-default org-fold-catch-invisible-edits 'smart)
