@@ -109,7 +109,7 @@
    org-pretty-entities nil
    org-startup-folded 'show2levels
    org-fontify-whole-heading-line nil
-   org-blank-before-new-entry '((heading . nil)
+   org-blank-before-new-entry '((heading . t)
                                 (plain-list-item . nil))
    org-cycle-separator-lines 1)
 
