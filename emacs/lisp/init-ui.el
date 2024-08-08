@@ -272,11 +272,15 @@
         modus-themes-bold-constructs nil
         modus-themes-common-palette-overrides (append
                                                '((overline-heading-1 bg-blue-subtle)
-                                                 (overline-heading-2 bg-blue-subtle))
+                                                 (overline-heading-2 bg-blue-subtle)
+                                                 (overline-heading-3 bg-blue-subtle)
+                                                 (overline-heading-4 bg-blue-subtle))
                                                modus-themes-preset-overrides-faint)
-        modus-themes-headings '((1 . (bold 1.5))
-                                (2 . (semibold 1.3))
-                                (t . (medium 1.2))))
+        modus-themes-headings '((1 . (bold 1.4))
+                                (2 . (semibold 1.2))
+                                (3 . (semibold 1.2))
+                                (4 . (semibold 1.2))
+                                (t . (medium 1.1))))
 
   ;; Load the theme of your choice.
   (load-theme 'modus-operandi :no-confirm)
