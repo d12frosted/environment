@@ -59,27 +59,33 @@ setup_space 4 social
 setup_space 5 media
 setup_space 6 other
 
-# floating apps and windows
-yabai -m rule --add app="^System Preferences$" manage=off
-yabai -m rule --add app="^Calculator$" manage=off
-yabai -m rule --add app="^Archive Utility$" manage=off
-yabai -m rule --add app="^Cryptomator$" manage=off
-yabai -m rule --add app="^NIIMBOT$" manage=off
-yabai -m rule --add app="^Emacs$" title!='^$' manage=on
-yabai -m rule --add app="^XIV on Mac$" manage=off
-yabai -m rule --add app="^Finder$" title="Copy" manage=off
-yabai -m rule --add title="^Preferences" manage=off
-yabai -m rule --add title="^Settings" manage=off
-
-# move some apps automatically to specific spaces
-yabai -m rule --add app="^Safari$" space=3
-yabai -m rule --add app="^Firefox$" space=3
+# custom application runes
 yabai -m rule --add app="^Arc$" space=3
-yabai -m rule --add app="^Telegram$" space=4
+yabai -m rule --add app="^Firefox$" space=3
+yabai -m rule --add app="^Safari$" space=3
+
+yabai -m rule --add app="^Discord$" space=4
+yabai -m rule --add app="^Hey$" space=4
 yabai -m rule --add app="^Messages$" space=4
+yabai -m rule --add app="^Slack$" space=4
+yabai -m rule --add app="^Telegram$" space=4
+
 yabai -m rule --add app="^Music$" space=5
 yabai -m rule --add app="^Spotify$" space=5
+
 yabai -m rule --add app="^Transmission$" space=6
+yabai -m rule --add app="^XIV on Mac$" space=6 manage=off
+
+yabai -m rule --add app="^Archive Utility$" manage=off
+yabai -m rule --add app="^Calculator$" manage=off
+yabai -m rule --add app="^Cryptomator$" manage=off
+yabai -m rule --add app="^Emacs$" title!='^$' manage=on
+yabai -m rule --add app="^Finder$" title="Copy" manage=off
+yabai -m rule --add app="^NIIMBOT$" manage=off
+yabai -m rule --add app="^System Preferences$" manage=off
+yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add title="^Preferences" manage=off
+yabai -m rule --add title="^Settings" manage=off
       '';
   };
 
