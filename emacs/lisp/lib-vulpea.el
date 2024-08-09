@@ -342,6 +342,37 @@ Make all the links to this alias point to newly created note."
 
 
 
+;;;###autoload
+(defun vulpea-select-area ()
+  "Select an area note."
+  (interactive)
+  (let* ((candidates (->> (vulpea-db-query-by-tags-every '("area"))
+                          (--filter (= 0 (vulpea-note-level it)))
+                          (--remove (vulpea-note-tagged-all-p it "cemetery"))))
+         (area (vulpea-select-from "Area" candidates)))
+    (unless (vulpea-note-id area)
+      (setq area (vulpea-capture-area (vulpea-note-title area) :no-visit)))
+    area))
+
+;;;###autoload
+(defun vulpea-find-area ()
+  "Select and visit area note."
+  (interactive)
+  (when-let ((area (vulpea-select-area)))
+    (vulpea-visit area)))
+
+;;;###autoload
+(defun vulpea-select-project ()
+  "Select a project note."
+  (interactive)
+  (let* ((candidates (->> (vulpea-db-query-by-tags-every '("project"))
+                          (--filter (= 2 (vulpea-note-level it)))
+                          (--remove (vulpea-note-tagged-all-p it "cemetery"))))
+         (project (vulpea-select-from "Project" candidates)))
+    project))
+
+
+
 (defmacro vulpea-utils-process-notes (notes &rest body)
   "Evaluate BODY for each element of NOTES.
 

@@ -120,7 +120,8 @@ Captured area is visited unless NOVISIT is provided."
                                "* Archive")
                              "\n\n"))))
       (unless novisit
-        (vulpea-visit note)))))
+        (vulpea-visit note))
+      note)))
 
 ;;;###autoload
 (defun vulpea-capture-project ()

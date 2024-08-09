@@ -44,6 +44,10 @@
   :defer t
   :general
   (leader-def
+    "f" '(nil :which-key "find...")
+    "fa" '(vulpea-find-area :which-key "area")
+    "ft" '(vulpea-find-project :which-key "project")
+    "fp" '(vulpea-find-person :which-key "person")
     "n" '(nil :which-key "vulpea...")
     "nd" '(nil :which-key "by date...")
     "ndd" '(vulpea-dailies-date :which-key "arbitrary date")
