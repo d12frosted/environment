@@ -100,7 +100,7 @@ tasks. The only exception is headings tagged as REFILE."
   "Return list of candidates for `vulpea-find'.
 
 FILTER is a `vulpea-note' predicate."
-  (let ((notes (vulpea-db-query-by-tags-none '("cellar" "rating" "appellation" "grape" "region"))))
+  (let ((notes (vulpea-db-query-by-tags-none '("cellar" "rating" "appellation" "grape" "region" "cemetery"))))
     (if filter
         (-filter filter notes)
       notes)))
