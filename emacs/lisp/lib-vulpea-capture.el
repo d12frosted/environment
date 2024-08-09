@@ -221,7 +221,7 @@ Captured area is visited unless NOVISIT is provided."
       (user-error "Project name can't be empty"))
     (org-capture-put :project-area area)
     (let ((header (string-join
-                   (list (concat "* " title "%? :project:")
+                   (list (concat "* TODO " title "%? :project:")
                          ":PROPERTIES:"
                          (format org-property-format ":CATEGORY:"
                                  (concat
