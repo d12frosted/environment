@@ -157,7 +157,9 @@
                               ("PROJECT" . ?p))
    org-use-tag-inheritance t
    org-tags-exclude-from-inheritance '("project"
+                                       "area"
                                        "litnotes"
+                                       "FOCUS"
                                        "people"))
 
   ;; avoid noisy `org-check-agenda-file'
