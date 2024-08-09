@@ -126,6 +126,12 @@
 (setq window-divider-default-places 'right-only)
 (window-divider-mode 1)
 
+;; use suitable font for emojis on macos
+(when env-sys-mac-p
+  (set-fontset-font
+   t 'emoji
+   '("Apple Color Emoji" . "iso10646-1") nil 'prepend))
+
 
 
 (use-package font-lock+
