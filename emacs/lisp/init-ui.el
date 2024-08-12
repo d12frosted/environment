@@ -278,10 +278,8 @@
         modus-themes-bold-constructs nil
         modus-themes-common-palette-overrides (append
                                                '((overline-heading-1 bg-blue-subtle)
-                                                 (overline-heading-2 bg-magenta-nuanced)
-                                                 (overline-heading-3 bg-cyan-nuanced)
-                                                 (overline-heading-4 bg-red-nuanced))
-                                               modus-themes-preset-overrides-faint)
+                                                 (overline-heading-2 bg-magenta-nuanced))
+                                               modus-themes-preset-overrides-cooler)
         modus-themes-headings '((1 . (bold 1.4))
                                 (2 . (semibold 1.2))
                                 (3 . (semibold 1.2))
