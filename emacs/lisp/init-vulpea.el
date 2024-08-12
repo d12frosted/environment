@@ -89,7 +89,8 @@
   :ensure (org :host sourcehut :repo "bzg/org-mode")
   :hook ((org-mode . visual-line-mode)
          (org-mode . adaptive-wrap-prefix-mode)
-         (org-mode . org-indent-mode)
+         ;; I like it, but it's too buggy
+         ;; (org-mode . org-indent-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
   :commands (org-check-agenda-file
@@ -112,7 +113,8 @@
    org-imenu-depth 1
    org-pretty-entities nil
    org-startup-folded 'show2levels
-   org-fontify-whole-heading-line t
+   ;; I like it, but it's too buggy
+   org-fontify-whole-heading-line nil
    org-blank-before-new-entry '((heading . t)
                                 (plain-list-item . nil))
    org-cycle-separator-lines 1)
