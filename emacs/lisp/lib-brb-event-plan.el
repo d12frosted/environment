@@ -142,13 +142,44 @@
 
 (cl-defmethod ep-statement-for ((x ep) participant)
   "Return financial statement for PARTICIPANT of X."
-  (brb-event-statement-for
-   (ep-event x)
-   participant
-   :data (ep-data x)
-   :host (ep-host x)
-   :wines (ep-wines x)
-   :balances (ep-balances x)))
+  (if (->> (ep-data x)
+           (alist-get 'participants)
+           (--mapcat (alist-get 'pays-for it))
+           (-uniq)
+           (--find (string-equal it (vulpea-note-id participant))))
+      (brb-event-empty-statement-for
+       (ep-event x)
+       participant
+       :data (ep-data x)
+       :wines (ep-wines x)
+       :balances (ep-balances x))
+    (--reduce-from
+     (brb-event-statement-add
+      acc
+      (brb-event-statement-for
+       (ep-event x)
+       it
+       :data (ep-data x)
+       :host (ep-host x)
+       :wines (ep-wines x)
+       :balances (ep-balances x)))
+     (brb-event-statement-for
+      (ep-event x)
+      participant
+      :data (ep-data x)
+      :host (ep-host x)
+      :wines (ep-wines x)
+      :balances (ep-balances x))
+     (->> (ep-data x)
+          (alist-get 'participants)
+          (--find (string-equal
+                   (vulpea-note-id participant)
+                   (alist-get 'id it)))
+          (alist-get 'pays-for)
+          (-map (lambda (pid)
+                  (--find
+                   (string-equal pid (vulpea-note-id it))
+                   (ep-participants x))))))))
 
 (cl-defmethod ep-statement ((x ep))
   "Return financial statement for X."
@@ -167,6 +198,41 @@
          (ps (assoc-default 'participants it))
          (glass-price ))
     (if ps (ceiling (/ price (float (length ps)))) 0)))
+
+(cl-defmethod ep-add-pays-for ((x ep) payer participant)
+  "Make PAYER to pay for PARTICIPANT.
+
+X is `ep'."
+  (let* ((data (ep-data x)))
+    (setf (alist-get 'participants data)
+          (-update-first-by
+           (lambda (pd) (string-equal (vulpea-note-id payer) (alist-get 'id pd)))
+           (lambda (pd)
+             (setf (alist-get 'pays-for pd)
+                   (-uniq (append (alist-get 'pays-for pd) (list (vulpea-note-id participant)))))
+             pd)
+           `((id . ,(vulpea-note-id payer))
+             (pays-for . (,(vulpea-note-id participant))))
+           (alist-get 'participants data)))
+    (ep-save-data x data)))
+
+(cl-defmethod ep-remove-pays-for ((x ep) payer participant)
+  "Stop making PAYER to pay for PARTICIPANT.
+
+X is `ep'."
+  (let* ((data (ep-data x)))
+    (setf (alist-get 'participants data)
+          (-update-first-by
+           (lambda (pd) (string-equal (vulpea-note-id payer) (alist-get 'id pd)))
+           (lambda (pd)
+             (setf (alist-get 'pays-for pd)
+                   (->> (alist-get 'pays-for pd)
+                        (--remove (string-equal it (vulpea-note-id participant)))
+                        (-uniq)))
+             pd)
+           nil
+           (alist-get 'participants data)))
+    (ep-save-data x data)))
 
 ;; * Wine data manipulations
 
@@ -1228,13 +1294,42 @@ PID is participant id."
      "\n")
     (insert "\n")
     (--each (ep-participants x)
-      (let* ((statement (ep-statement-for x it))
+      (let* ((participant it)
+             (statement (ep-statement-for x it))
              (balance (alist-get 'balance statement))
              (balance-final (alist-get 'balance-final statement))
              (price (alist-get 'fee statement))
              (order (alist-get 'order statement))
              (extra (alist-get 'extra statement))
              (total (alist-get 'total statement))
+             (paysfor (->> (ep-data x)
+                           (alist-get 'participants)
+                           (--find (string-equal
+                                    (vulpea-note-id participant)
+                                    (alist-get 'id it)))
+                           (alist-get 'pays-for)
+                           (-map (lambda (pid)
+                                   (--find
+                                    (string-equal pid (vulpea-note-id it))
+                                    (ep-participants x))))))
+             (paysfor-str
+              (string-table
+               :row-start "- "
+               :pad-str " "
+               :pad-type '(right left)
+               :sep "  "
+               :data
+               (cl-flet ((remove-pays-for (pid)
+                           (ep-remove-pays-for
+                            x
+                            participant
+                            (->> (ep-participants x)
+                                 (--find (string-equal pid (vulpea-note-id it)))))))
+                 (when paysfor
+                   (-map
+                    (lambda (p)
+                      (list p (buttonize "[x]" #'remove-pays-for (vulpea-note-id p))))
+                    paysfor)))))
              (listing (string-table
                        :row-start "- "
                        :pad-str " "
@@ -1245,7 +1340,8 @@ PID is participant id."
                         (when (> balance 0)
                           (list (list "Starting balance" (brb-price-format balance))))
                         (list
-                         (list "Event (x1.00)" (brb-price-format price)))
+                         (list (format "Event (x%.2f)" (+ 1 (seq-length paysfor)))
+                               (brb-price-format price)))
                         (--map
                          (list
                           (format "%s (x%.2f)" (alist-get 'item it) (alist-get 'amount it))
@@ -1291,16 +1387,38 @@ PID is participant id."
                          (vulpea-note-id it))
                         (goto-char (point-min))
                         (replace-regexp "  +" ": ")
-                        (kill-new (buffer-substring (point-min) (point-max)))))))
-          (insert (propertize (concat
-                             "⇾ "
-                             (vulpea-note-title it)
-                             " "
-                             (buttonize "🖂" #'kill-statement))
-                            'face 'org-level-2)
-                  "\n\n"
-                  listing
-                  "\n\n"))))))
+                        (kill-new (buffer-substring (point-min) (point-max))))))
+                  (add-pays-for (&rest _)
+                    (let* ((person (vulpea-select-from
+                                    "Person"
+                                    (->> (ep-participants x)
+                                         (--remove (string-equal (vulpea-note-id it)
+                                                                 (vulpea-note-id participant))))
+                                    :require-match t))
+                           (pid (vulpea-note-id participant)))
+                      (ep-add-pays-for x participant person))))
+          (insert
+           (propertize
+            (concat
+             "⇾ "
+             (vulpea-note-title it)
+             " "
+             (buttonize "🖂" #'kill-statement))
+            'face 'org-level-2)
+           "\n\n"
+           (propertize
+            (concat "Pays for "
+                    (buttonize "[+]" #'add-pays-for))
+            'face 'org-level-3)
+           "\n"
+           (if (string-empty-p paysfor-str)
+               ""
+             (concat paysfor-str "\n"))
+           "\n"
+           (propertize "Invoice" 'face 'org-level-3)
+           "\n"
+           listing
+           "\n\n"))))))
 
 
 

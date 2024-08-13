@@ -318,8 +318,41 @@ BALANCES is a hash table."
       (balance-real . ,balance-real))))
 
 ;;;###autoload
-(cl-defun brb-event-statement-for (event participant &key data host wines balances)
+(cl-defun brb-event-empty-statement-for (event participant &key data wines balances)
   "Prepare statement for PARTICIPANT of EVENT.
+
+DATA is loaded unless provided.
+WINES is a list of `vulpea-note'. Loaded unless provided.
+BALANCES is a hash table."
+  (let* ((data (or data (brb-event-data-read event)))
+         (use-balance (pcase (or (vulpea-note-meta-get event "use balance") "true")
+                        ("true" t)
+                        (_ nil)))
+         (wines (or wines (brb-event-wines event)))
+         (pid (vulpea-note-id participant))
+         (price (or (vulpea-note-meta-get event "price" 'number) 0))
+         (fee 0)
+         (mode "normal")
+         (order nil)
+         (extra nil)
+         (balance (if use-balance
+                      (or (gethash pid balances) 0)
+                    0))
+         (total 0)
+         (due 0)
+         (balance-final balance))
+    `((balance . ,balance)
+      (balance-final . ,balance-final)
+      (mode . ,mode)
+      (fee . ,fee)
+      (order . ,order)
+      (extra . ,extra)
+      (total . ,total)
+      (due . ,due))))
+
+;;;###autoload
+(cl-defun brb-event-statement-for (event participant &key data host wines balances)
+  "Empty statement for PARTICIPANT of EVENT.
 
 DATA is loaded unless provided.
 HOST is a `vulpea-note'. Loaded unless provided.
@@ -380,6 +413,51 @@ BALANCES is a hash table."
                    (-sum (--map (alist-get 'glass-price it) extra))))
          (due (max 0 (- total balance)))
          (balance-final (- balance total)))
+    `((balance . ,balance)
+      (balance-final . ,balance-final)
+      (mode . ,mode)
+      (fee . ,fee)
+      (order . ,order)
+      (extra . ,extra)
+      (total . ,total)
+      (due . ,due))))
+
+;;;###autoload
+(defun brb-event-statement-add (s1 s2)
+  "Add two statements S1 and S2."
+  (let ((balance (+ (alist-get 'balance s1)
+                    (alist-get 'balance s2)))
+        (balance-final (+ (alist-get 'balance-final s1)
+                          (alist-get 'balance-final s2)))
+        (mode (alist-get 'mode s1))
+        (fee (+ (alist-get 'fee s1)
+                (alist-get 'fee s2)))
+        (order (let* ((o1 (alist-get 'order s1))
+                      (o2 (alist-get 'order s1))
+                      (items (-uniq (append
+                                     (--map (alist-get 'item it) o1)
+                                     (--map (alist-get 'item it) o2)))))
+                 (--map
+                  (let* ((item it)
+                         (i1 (--find (string-equal item (alist-get 'item it)) o1))
+                         (i2 (--find (string-equal item (alist-get 'item it)) o1))
+                         (price (alist-get 'price (or i1 i2)))
+                         (amount (+ (or (alist-get 'amount i1) 0)
+                                    (or (alist-get 'amount i2) 0)))
+                         (total (+ (or (alist-get 'total i1) 0)
+                                   (or (alist-get 'total i2) 0))))
+                    `((item . ,item)
+                      (price . ,price)
+                      (amount . ,amount)
+                      (total . ,total)))
+                  items)))
+        ;; this is not really correct
+        (extra (append (alist-get 'extra s1)
+                       (alist-get 'extra s2)))
+        (total (+ (alist-get 'total s1)
+                  (alist-get 'total s2)))
+        (due (+ (alist-get 'due s1)
+                (alist-get 'due s2))))
     `((balance . ,balance)
       (balance-final . ,balance-final)
       (mode . ,mode)
