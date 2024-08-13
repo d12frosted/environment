@@ -60,7 +60,8 @@ setup_space 5 media
 setup_space 6 other
 
 # custom application runes
-yabai -m rule --add app="^Arc$" space=3
+yabai -m rule --add app="^Arc$" title"^$" space=3
+yabai -m rule --add app="Arc.LittleBrowserWindow" manage=off
 yabai -m rule --add app="^Firefox$" space=3
 yabai -m rule --add app="^Safari$" space=3
 
@@ -98,10 +99,10 @@ yabai -m rule --add title="^Settings" manage=off
 #
 
 fn - return : yabai -m window --swap first
-fn + shift - space : yabai -m space --balance
-fn - space : yabai-layout-toggle
+ralt + rshift - space : yabai -m space --balance
+ralt - space : yabai-layout-toggle
 
-fn - r : yabai -m space --rotate 90
+ralt - r : yabai -m space --rotate 90
 
 fn - j : yabai-window-focus prev
 fn - k : yabai-window-focus next
@@ -116,19 +117,19 @@ fn + alt - l : yabai -m window --resize top:0:-100 || yabai -m window --resize b
 # space manipulation
 #
 
-fn - 1 : yabai -m space --focus 1
-fn - 2 : yabai -m space --focus 2
-fn - 3 : yabai -m space --focus 3
-fn - 4 : yabai -m space --focus 4
-fn - 5 : yabai -m space --focus 5
-fn - 6 : yabai -m space --focus 6
+ralt - 1 : yabai -m space --focus 1
+ralt - 2 : yabai -m space --focus 2
+ralt - 3 : yabai -m space --focus 3
+ralt - 4 : yabai -m space --focus 4
+ralt - 5 : yabai -m space --focus 5
+ralt - 6 : yabai -m space --focus 6
 
-fn + shift - 1 : yabai -m window --space 1; yabai -m space --focus 1
-fn + shift - 2 : yabai -m window --space 2; yabai -m space --focus 2
-fn + shift - 3 : yabai -m window --space 3; yabai -m space --focus 3
-fn + shift - 4 : yabai -m window --space 4; yabai -m space --focus 4
-fn + shift - 5 : yabai -m window --space 5; yabai -m space --focus 5
-fn + shift - 6 : yabai -m window --space 6; yabai -m space --focus 6
+ralt + rshift - 1 : yabai -m window --space 1; yabai -m space --focus 1
+ralt + rshift - 2 : yabai -m window --space 2; yabai -m space --focus 2
+ralt + rshift - 3 : yabai -m window --space 3; yabai -m space --focus 3
+ralt + rshift - 4 : yabai -m window --space 4; yabai -m space --focus 4
+ralt + rshift - 5 : yabai -m window --space 5; yabai -m space --focus 5
+ralt + rshift - 6 : yabai -m window --space 6; yabai -m space --focus 6
 
 ################################################################################
 #
