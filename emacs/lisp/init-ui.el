@@ -312,7 +312,7 @@
            :fixed-pitch-family nil ; falls back to :default-family
            :fixed-pitch-weight nil ; falls back to :default-weight
            :fixed-pitch-height 1.0
-           :variable-pitch-family "FiraGO"
+           :variable-pitch-family "Source Code Pro"
            :variable-pitch-weight normal
            :variable-pitch-height 1.05
            :bold-family nil ; use whatever the underlying face has
@@ -327,7 +327,7 @@
   :ensure t
   :config
   (setq spacious-padding-widths
-        '(:internal-border-width 15
+        '(:internal-border-width 14
           :header-line-width 4
           :mode-line-width 6
           :tab-width 4
