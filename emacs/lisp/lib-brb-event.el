@@ -326,6 +326,9 @@ HOST is a `vulpea-note'. Loaded unless provided.
 WINES is a list of `vulpea-note'. Loaded unless provided.
 BALANCES is a hash table."
   (let* ((data (or data (brb-event-data-read event)))
+         (use-balance (pcase (or (vulpea-note-meta-get event "use balance") "true")
+                        ("true" t)
+                        (_ nil)))
          (host (or host (vulpea-note-meta-get event "host" 'note)))
          (wines (or wines (brb-event-wines event)))
          (host-id (when host (vulpea-note-id host)))
@@ -369,7 +372,9 @@ BALANCES is a hash table."
                         `((glass-price . ,glass-price)
                           (wine . ,wine))))
                      (--filter (alist-get 'wine it))))
-         (balance (or (gethash pid balances) 0))
+         (balance (if use-balance
+                      (or (gethash pid balances) 0)
+                    0))
          (total (+ fee
                    (-sum (--map (alist-get 'total it) order))
                    (-sum (--map (alist-get 'glass-price it) extra))))

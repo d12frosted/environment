@@ -1151,7 +1151,9 @@ PID is participant id."
 
 (cl-defmethod brb-event-plan--tab-invoices ((x ep))
   "Render checkout tab in X."
-  (cl-flet ((charge-all (&rest _)
+  (cl-flet ((refresh-balances (&rest _)
+              (ep-refresh (ep-set-balances x)))
+            (charge-all (&rest _)
               (--each (ep-participants x)
                 (unless (string-equal brb-event-narrator-id (vulpea-note-id it))
                   (let ((st (ep-statement-for x it))
@@ -1193,12 +1195,38 @@ PID is participant id."
                  :date (date-to-time date)
                  :comment (format "%s: delivery" (vulpea-note-title event))
                  :code (concat (vulpea-note-id event) ":delivery"))
-                (message "Done."))))
+                (message "Done.")))
+            (toggle-use-balance (&rest _)
+              (let ((use-balance (pcase (or (vulpea-note-meta-get (ep-event x) "use balance") "true")
+                                    ("true" "false")
+                                    (_ "true"))))
+                (vulpea-utils-with-note (ep-event x)
+                  (vulpea-buffer-meta-set "use balance" use-balance 'append)
+                  (save-buffer))
+                (ep-reload-event x)))
+            (set-use-balance ))
     (insert (propertize "Invoices" 'face 'org-level-1) "\n")
-    (insert (buttonize "[Charge All]" #'charge-all)
-            " "
-            (buttonize "[Record Spendings]" #'record-spendings)
-            "\n\n")
+    (insert
+     (buttonize "[Refresh Balances]" #'refresh-balances)
+     " "
+     (buttonize "[Charge All]" #'charge-all)
+     " "
+     (buttonize "[Record Spendings]" #'record-spendings)
+     "\n\n")
+    (insert
+     (string-table
+        :row-start "- "
+        :pad-type '(right left)
+        :sep "  "
+        :data
+        `(("Use balance:"
+           ,(buttonize
+             (format "[%s]" (pcase (or (vulpea-note-meta-get (ep-event x) "use balance") "true")
+                             ("true" "X")
+                             (_ " ")))
+             #'toggle-use-balance))))
+     "\n")
+    (insert "\n")
     (--each (ep-participants x)
       (let* ((statement (ep-statement-for x it))
              (balance (alist-get 'balance statement))
