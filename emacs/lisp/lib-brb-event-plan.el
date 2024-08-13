@@ -967,7 +967,7 @@ PID is participant id."
      (string-table
       :header '("" "item" "price" "q" "total" "participants")
       :pad-type '(left right right left left right)
-      :width '(nil 40 nil nil nil 38)
+      :width '(nil 40 nil nil nil 36)
       :header-sep "-"
       :header-sep-start "|-"
       :header-sep-conj "-+-"
