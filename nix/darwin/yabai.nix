@@ -98,45 +98,45 @@ yabai -m rule --add title="^Settings" manage=off
 # window manipulation
 #
 
-fn - return : yabai -m window --swap first
-ralt + rshift - space : yabai -m space --balance
-ralt - space : yabai-layout-toggle
+alt - return : yabai -m window --swap first
+alt + shift - space : yabai -m space --balance
+alt - space : yabai-layout-toggle
 
-ralt - r : yabai -m space --rotate 90
+alt - r : yabai -m space --rotate 90
 
-fn - j : yabai-window-focus prev
-fn - k : yabai-window-focus next
+lalt - j : yabai-window-focus prev
+lalt - k : yabai-window-focus next
 
-fn - h : yabai -m window --resize left:-100:0 || yabai -m window --resize right:-100:0
-fn - l : yabai -m window --resize right:100:0 || yabai -m window --resize left:100:0
-fn + alt - h : yabai -m window --resize bottom:0:100 || yabai -m window --resize top:0:100
-fn + alt - l : yabai -m window --resize top:0:-100 || yabai -m window --resize bottom:0:-100
+lalt - h : yabai -m window --resize left:-100:0 || yabai -m window --resize right:-100:0
+lalt - l : yabai -m window --resize right:100:0 || yabai -m window --resize left:100:0
+lalt + shift - h : yabai -m window --resize bottom:0:100 || yabai -m window --resize top:0:100
+lalt + shift - l : yabai -m window --resize top:0:-100 || yabai -m window --resize bottom:0:-100
 
 ################################################################################
 #
 # space manipulation
 #
 
-ralt - 1 : yabai -m space --focus 1
-ralt - 2 : yabai -m space --focus 2
-ralt - 3 : yabai -m space --focus 3
-ralt - 4 : yabai -m space --focus 4
-ralt - 5 : yabai -m space --focus 5
-ralt - 6 : yabai -m space --focus 6
+lalt - 1 : yabai -m space --focus 1
+lalt - 2 : yabai -m space --focus 2
+lalt - 3 : yabai -m space --focus 3
+lalt - 4 : yabai -m space --focus 4
+lalt - 5 : yabai -m space --focus 5
+lalt - 6 : yabai -m space --focus 6
 
-ralt + rshift - 1 : yabai -m window --space 1; yabai -m space --focus 1
-ralt + rshift - 2 : yabai -m window --space 2; yabai -m space --focus 2
-ralt + rshift - 3 : yabai -m window --space 3; yabai -m space --focus 3
-ralt + rshift - 4 : yabai -m window --space 4; yabai -m space --focus 4
-ralt + rshift - 5 : yabai -m window --space 5; yabai -m space --focus 5
-ralt + rshift - 6 : yabai -m window --space 6; yabai -m space --focus 6
+lalt + shift - 1 : yabai -m window --space 1; yabai -m space --focus 1
+lalt + shift - 2 : yabai -m window --space 2; yabai -m space --focus 2
+lalt + shift - 3 : yabai -m window --space 3; yabai -m space --focus 3
+lalt + shift - 4 : yabai -m window --space 4; yabai -m space --focus 4
+lalt + shift - 5 : yabai -m window --space 5; yabai -m space --focus 5
+lalt + shift - 6 : yabai -m window --space 6; yabai -m space --focus 6
 
 ################################################################################
 #
 # Applications
 #
 
-shift + alt - c [
+lalt + shift - c [
   "emacs" : skhd -k "ctrl - x" ; skhd -k "ctrl - c"
   *       : skhd -k "cmd - q"
 ]
@@ -147,16 +147,16 @@ shift + alt - c [
 #
 
 :: open @
-fn - o ; open
-open < fn - o ; default
+lalt - o ; open
+open < lalt - o ; default
 
 # emacs
-open < e : nohup emacs &>/dev/null & ; skhd -k "fn - o"
-open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "fn - o"
+open < e : nohup emacs &>/dev/null & ; skhd -k "lalt - o"
+open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "lalt - o"
 
 # alacritty
-open < return : open -na ${pkgs.alacritty}/Applications/Alacritty.app ; skhd -k "fn - o"
-shift + alt - return : open -na ${pkgs.alacritty}/Applications/Alacritty.app
+open < return : open -na ${pkgs.alacritty}/Applications/Alacritty.app ; skhd -k "lalt - o"
+alt + shift - return : open -na ${pkgs.alacritty}/Applications/Alacritty.app
       '';
   };
 }
