@@ -403,6 +403,8 @@ BALANCES is a hash table."
                              (glass-price (ceiling (/ price (float (length ps)))))
                              (wine (--find (string-equal wid (vulpea-note-id it)) wines)))
                         `((glass-price . ,glass-price)
+                          (amount . 1)
+                          (total . ,glass-price)
                           (wine . ,wine))))
                      (--filter (alist-get 'wine it))))
          (balance (if use-balance
@@ -433,14 +435,14 @@ BALANCES is a hash table."
         (fee (+ (alist-get 'fee s1)
                 (alist-get 'fee s2)))
         (order (let* ((o1 (alist-get 'order s1))
-                      (o2 (alist-get 'order s1))
+                      (o2 (alist-get 'order s2))
                       (items (-uniq (append
                                      (--map (alist-get 'item it) o1)
                                      (--map (alist-get 'item it) o2)))))
                  (--map
                   (let* ((item it)
                          (i1 (--find (string-equal item (alist-get 'item it)) o1))
-                         (i2 (--find (string-equal item (alist-get 'item it)) o1))
+                         (i2 (--find (string-equal item (alist-get 'item it)) o2))
                          (price (alist-get 'price (or i1 i2)))
                          (amount (+ (or (alist-get 'amount i1) 0)
                                     (or (alist-get 'amount i2) 0)))
@@ -451,9 +453,27 @@ BALANCES is a hash table."
                       (amount . ,amount)
                       (total . ,total)))
                   items)))
-        ;; this is not really correct
-        (extra (append (alist-get 'extra s1)
-                       (alist-get 'extra s2)))
+        (extra (--reduce-from
+                (let* ((extra it)
+                       (data (--find
+                              (string-equal (vulpea-note-id (alist-get 'wine it))
+                                            (vulpea-note-id (alist-get 'wine extra)))
+                              acc))
+                       (glass-price (alist-get 'glass-price extra))
+                       (amount (+ (alist-get 'amount extra) (or (alist-get 'amount data) 0)))
+                       (total (+ (alist-get 'total extra) (or (alist-get 'total data) 0)))
+                       (wine (alist-get 'wine extra)))
+                  (-snoc
+                   (--remove (string-equal (vulpea-note-id (alist-get 'wine it))
+                                           (vulpea-note-id (alist-get 'wine extra)))
+                             acc)
+                   `((glass-price . ,glass-price)
+                     (amount . ,amount)
+                     (total . ,total)
+                     (wine . ,wine))))
+                nil
+                (append (alist-get 'extra s1)
+                        (alist-get 'extra s2))))
         (total (+ (alist-get 'total s1)
                   (alist-get 'total s2)))
         (due (+ (alist-get 'due s1)

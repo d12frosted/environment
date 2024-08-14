@@ -1349,8 +1349,8 @@ PID is participant id."
                          order)
                         (--map
                          (list
-                          (format "%s (x1.00)" (vulpea-note-title (alist-get 'wine it)))
-                          (brb-price-format (alist-get 'glass-price it)))
+                          (format "%s (x%.2f)" (vulpea-note-title (alist-get 'wine it)) (alist-get 'amount it))
+                          (brb-price-format (alist-get 'total it)))
                          extra)
                         (list
                          (list "Total" (brb-price-format total)))
