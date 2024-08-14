@@ -353,6 +353,10 @@ macos_guard && {
     yabai --stop-service
     yabai --start-service
   }
+
+  theme_guard "system" "ensure skhd installation" && {
+    skhd --restart-service
+  }
 }
 
 theme_guard "system" "make Eru more approachable" && {
