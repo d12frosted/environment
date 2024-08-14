@@ -311,6 +311,8 @@ upgrade_guard && {
 theme_guard "system" "build nix environment" && {
   cd "$XDG_CONFIG_HOME" && {
     macos_guard && {
+      export NIXPKGS_ALLOW_BROKEN=1
+      export NIXPKGS_ALLOW_INSECURE=1
       nix build --impure \
         ./#darwinConfigurations.${fellow}.system
       result/sw/bin/darwin-rebuild switch \
