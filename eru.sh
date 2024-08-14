@@ -349,7 +349,7 @@ theme_guard "system" "build nix environment" && {
 
 macos_guard && {
   theme_guard "system" "ensure yabai installation" && {
-    echo "$(whoami) ALL=(root) NOPASSWD: sha256:$(shasum -a 256 "$(which yabai)") $(which yabai) --load-sa" | sudo tee /private/etc/sudoers.d/yabai
+    echo "$(whoami) ALL=(root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) | cut -d " " -f 1) $(which yabai) --load-sa" | sudo tee /private/etc/sudoers.d/yabai
     yabai --stop-service
     yabai --start-service
   }
