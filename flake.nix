@@ -37,25 +37,16 @@
         ];
       };
 
-      homeConfigurations.borysb =
-        let system = "x86_64-linux";
-            pkgs = nixpkgs.legacyPackages.${system};
-        in home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [
-            ./nix/home.nix
-            ./nix/linux/xsession.nix
-            ./nix/linux/services.nix
-            {
-              nixpkgs.config.allowUnfreePredicate = (pkg: true);
-              nixpkgs.overlays = overlays;
-              home = {
-                username = "borysb";
-                homeDirectory = "/home/borysb";
-              };
-            }
-          ];
-        };
+      darwinConfigurations.borysb = darwin.lib.darwinSystem {
+        system = "aarch64-darwin"; # "x86_64-darwin";
+        modules = [
+          ./nix/darwin.nix
+          home-manager.darwinModules.home-manager
+          {
+            nixpkgs.overlays = overlays;
+          }
+        ];
+      };
 
     };
 }

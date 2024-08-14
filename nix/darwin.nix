@@ -26,7 +26,7 @@ experimental-features = nix-command flakes
       max-jobs = "auto";
       cores = 0;
 
-      trusted-users = [ "root" "d12frosted" ];
+      trusted-users = [ "root" "@wheel" user ];
 
       trusted-public-keys = [
         "emacs.cachix.org-1:b1SMJNLY/mZF6GxQE+eDBeps7WnkT0Po55TAyzwOxTY="
@@ -60,14 +60,16 @@ experimental-features = nix-command flakes
 
   home-manager = {
     useGlobalPkgs = true;
-    users.d12frosted = lib.mkMerge [
-      (import ./home.nix)
-      {
-        imports = [
-          ./darwin/yabai.nix
-        ];
-      }
-    ];
+    users = {
+      "${user}" = lib.mkMerge [
+        (import ./home.nix)
+        {
+          imports = [
+            ./darwin/yabai.nix
+          ];
+        }
+      ];
+    };
   };
 
   system = {
@@ -119,11 +121,11 @@ experimental-features = nix-command flakes
     };
   };
 
-  networking.hostName = "d12frosted";
+  networking.hostName = "${user}";
   users = {
-    users.d12frosted = {
+    users.${user} = {
      shell = pkgs.fish;
-     home = "/Users/d12frosted";
+     home = "${home}";
     };
   };
 
@@ -151,8 +153,8 @@ experimental-features = nix-command flakes
     ];
     serviceConfig = {
       StartInterval = 60;
-      StandardErrorPath = "/Users/d12frosted/vulpea-sync.log";
-      StandardOutPath = "/Users/d12frosted/vulpea-sync.log";
+      StandardErrorPath = "${home}/vulpea-sync.log";
+      StandardOutPath = "${home}/vulpea-sync.log";
       RunAtLoad = true;
     };
   };

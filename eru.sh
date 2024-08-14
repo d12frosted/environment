@@ -314,19 +314,13 @@ theme_guard "system" "build nix environment" && {
       export NIXPKGS_ALLOW_BROKEN=1
       export NIXPKGS_ALLOW_INSECURE=1
       nix build --impure \
-        ./#darwinConfigurations.${fellow}.system
+        ./#darwinConfigurations."${USER}".system
       result/sw/bin/darwin-rebuild switch \
         --impure \
-        --flake ./#${fellow}
+        --flake ./#"${USER}"
     }
     nixos_guard && {
       sudo nixos-rebuild switch --flake .
-    }
-    linux_guard && ! nixos_guard && {
-      nix build \
-        --experimental-features 'nix-command flakes' \
-        ./#homeConfigurations.borysb.activationPackage
-      ./result/activate switch
     }
   }
 
