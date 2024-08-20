@@ -349,7 +349,19 @@ macos_guard && {
   }
 
   theme_guard "system" "ensure skhd installation" && {
-    skhd --restart-service
+    PLIST_PATH="$HOME/Library/LaunchAgents/com.koekeishiya.skhd.plist"
+    if grep -q '<key>SHELL</key>' "$PLIST_PATH"; then
+      echo "$PLIST_PATH is already patched"
+      skhd --restart-service
+    else
+      echo "$PLIST_PATH needs to be patched..."
+      skhd --stop-service || true
+      skhd --uninstall-service || true
+      skhd --install-service
+      /usr/libexec/PlistBuddy -c 'add :EnvironmentVariables:SHELL string /bin/sh' "$PLIST_PATH"
+      skhd --start-service
+      echo "$PLIST_PATH is now patched"
+    fi
   }
 }
 
