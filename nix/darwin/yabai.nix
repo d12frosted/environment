@@ -168,6 +168,7 @@ alt + shift - return : open -na ${pkgs.alacritty}/Applications/Alacritty.app
   "ffxiv_dx11.exe"
 ]
 
+lalt - f : terminal-notifier -message $SHELL -group system-wide-whisper -timeout 1
       '';
   };
 }
