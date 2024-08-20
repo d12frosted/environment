@@ -157,6 +157,17 @@ open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "alt - o"
 # alacritty
 open < return : open -na ${pkgs.alacritty}/Applications/Alacritty.app ; skhd -k "alt - o"
 alt + shift - return : open -na ${pkgs.alacritty}/Applications/Alacritty.app
+
+################################################################################
+#
+# Blacklist some applications
+#
+
+.blacklist [
+  "Final Fantasy XIV"
+  "ffxiv_dx11.exe"
+]
+
       '';
   };
 }
