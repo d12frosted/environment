@@ -448,6 +448,13 @@ useful features and properties:
     (org-persist-gc)
     (org-persist-write-all)
 
+    ;; process missing files
+    (--each (org-roam-list-files)
+      (unless (vulpea-db-get-by-id (vulpea-db-get-id-by-file it))
+        (message "Found a broken file at %s" it)
+        (org-roam-db-clear-file it)
+        (org-roam-db-update-file it)))
+
     ;; make sure that barberry/public is set on all notes that require it
     (vulpea-utils-process-notes (->> (vulpea-db-query-by-level 0)
                                      (--filter
@@ -463,13 +470,6 @@ useful features and properties:
                                      (--filter (vulpea-note-meta-get it "externalId")))
       (when-let ((url (brb-sabotage-link (vulpea-note-meta-get it "externalId"))))
         (vulpea-buffer-meta-set "sabotage" url 'append)))
-
-    ;; process missing files
-    (--each (org-roam-list-files)
-      (unless (vulpea-db-get-by-id (vulpea-db-get-id-by-file it))
-        (message "Found a broken file at %s" it)
-        (org-roam-db-clear-file it)
-        (org-roam-db-update-file it)))
 
     (message " -> done building vulpea db")))
 
