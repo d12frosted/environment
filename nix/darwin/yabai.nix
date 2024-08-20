@@ -151,11 +151,11 @@ lalt - o ; open
 open < lalt - o ; default
 
 # emacs
-open < e : nohup emacs &>/dev/null & ; skhd -k "lalt - o"
-open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "lalt - o"
+open < e : open -na "$(brew --cellar emacs-plus@30)/30.0.50/Emacs.app" ; skhd -k "alt - o"
+open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "alt - o"
 
 # alacritty
-open < return : open -na ${pkgs.alacritty}/Applications/Alacritty.app ; skhd -k "lalt - o"
+open < return : open -na ${pkgs.alacritty}/Applications/Alacritty.app ; skhd -k "alt - o"
 alt + shift - return : open -na ${pkgs.alacritty}/Applications/Alacritty.app
       '';
   };
