@@ -1,6 +1,8 @@
 { config, pkgs, lib, ... }: let
   jq = "${pkgs.jq}/bin/jq";
   open_alacritty = "open -na ${pkgs.alacritty}/Applications/Alacritty.app";
+  set_shell = "export SHELL=/run/current-system/sw/bin/fish";
+  open_emacs = "open -na \"$(brew --cellar emacs-plus@30)/30.0.50/Emacs.app\"";
 in {
   home.file.yabai = {
     executable = true;
@@ -152,7 +154,7 @@ lalt - o ; open
 open < lalt - o ; default
 
 # emacs
-open < e : open -na "$(brew --cellar emacs-plus@30)/30.0.50/Emacs.app" ; skhd -k "alt - o"
+open < e : ${set_shell} ; ${open_emacs} ; skhd -k "alt - o"
 open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "alt - o"
 
 # alacritty
