@@ -123,9 +123,11 @@ experimental-features = nix-command flakes
 
   networking.hostName = "${user}";
   users = {
-    users.${user} = {
-     shell = pkgs.fish;
-     home = "${home}";
+    users = {
+      "${user}" = {
+        shell = pkgs.fish;
+        home = "${home}";
+      };
     };
   };
 
