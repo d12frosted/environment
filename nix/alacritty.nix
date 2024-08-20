@@ -1,4 +1,5 @@
 {
+  shell = "/run/current-system/sw/bin/fish";
   font = {
     normal = {
       family = "Source Code Pro";
