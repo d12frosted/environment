@@ -158,7 +158,6 @@ experimental-features = nix-command flakes
       RunAtLoad = true;
     };
   };
-
   homebrew = {
     enable = true;
     onActivation.autoUpdate = true;
@@ -166,6 +165,7 @@ experimental-features = nix-command flakes
     brews = [
       "llvm"
       "pandoc"
+      "terminal-notifier"
       {
         name = "emacs-plus@30";
         args = ["with-dragon-icon"];
@@ -198,16 +198,14 @@ experimental-features = nix-command flakes
       "protonvpn"
       "transmission"
 
-      # system tweaks
-      "raycast"
-      "karabiner-elements"
-      "flameshot"
-
       # other
       "appcleaner"
+      "bartender"
       "cryptomator"
       "dbeaver-community"
       "figma"
+      "flameshot"
+      "raycast"
       "syncthing"
       "warp"
       "whisky"
