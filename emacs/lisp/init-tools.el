@@ -41,5 +41,11 @@
   :ensure t
   :defer t)
 
+(use-package gptel
+  :ensure t
+  :defer t
+  :config
+  (setq gptel-model "gpt-4o"))
+
 (provide 'init-tools)
 ;;; init-tools.el ends here
