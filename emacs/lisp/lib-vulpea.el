@@ -477,8 +477,9 @@ useful features and properties:
     ;; update sabotage links in wine entries
     (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
                                      (--filter (vulpea-note-meta-get it "externalId")))
-      (when-let ((url (brb-sabotage-link (vulpea-note-meta-get it "externalId"))))
-        (vulpea-buffer-meta-set "sabotage" url 'append)))
+      (if-let ((url (brb-sabotage-link (vulpea-note-meta-get it "externalId"))))
+          (vulpea-buffer-meta-set "sabotage" url 'append)
+        (vulpea-buffer-meta-remove "sabotage")))
 
     (message " -> done building vulpea db")))
 
