@@ -465,6 +465,15 @@ useful features and properties:
                                                (vulpea-note-tagged-all-p it "places")))))
       (vulpea-buffer-tags-add "barberry/public"))
 
+    ;; make sure that people I drink with are marked as public convives
+    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "rating"))
+                                     (--mapcat (vulpea-note-meta-get-list it "convive" 'link))
+                                     (-uniq)
+                                     (vulpea-db-query-by-ids)
+                                     (--remove (vulpea-note-tagged-all-p it "barberry/public" "barberry/convive")))
+      (vulpea-buffer-tags-add "barberry/public")
+      (vulpea-buffer-tags-add "barberry/convive"))
+
     ;; update sabotage links in wine entries
     (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
                                      (--filter (vulpea-note-meta-get it "externalId")))
@@ -652,6 +661,8 @@ Defaults to `string-from'."
       (let ((org-confirm-babel-evaluate nil))
         (funcall-interactively #'org-ctrl-c-ctrl-c))
       (forward-line 1))))
+
+
 
 (provide 'lib-vulpea)
 ;;; lib-vulpea.el ends here
