@@ -183,7 +183,7 @@ Captured area is visited unless NOVISIT is provided."
     ;; unfortunately, I could not find a way to reuse
     ;; `org-capture-set-target-location'
     (let ((path (vulpea-note-path area))
-          (headline "Projects"))
+          (headline "Tasks"))
       (set-buffer (org-capture-target-buffer path))
       ;; Org expects the target file to be in Org mode, otherwise
       ;; it throws an error. However, the default notes files
@@ -221,25 +221,20 @@ Captured area is visited unless NOVISIT is provided."
     (when (string-empty-p title)
       (user-error "Project name can't be empty"))
     (org-capture-put :project-area area)
-    (let ((header (string-join
-                   (list (concat "* TODO " title "%? :project:")
-                         ":PROPERTIES:"
-                         (format org-property-format ":CATEGORY:"
-                                 (concat
-                                  (or (vulpea-note-meta-get area "short name")
-                                      (vulpea-note-title area))
-                                  " > "
-                                  title))
-                         ":END:")
-                   "\n")))
-      (string-join
-       `(,header
-         "** Notes"
-         "** Research"
-         "** Action Items"
-         "** History Log"
-         "")
-       "\n\n"))))
+    (string-join
+     (list (concat "* TODO " title " :project:")
+           ":PROPERTIES:"
+           (format org-property-format ":CATEGORY:"
+                   (concat
+                    (or (vulpea-note-meta-get area "short name")
+                        (vulpea-note-title area))
+                    " > "
+                    title))
+           ":END:"
+           (format-time-string (org-time-stamp-format t 'inactive))
+           ""
+           "%?")
+     "\n")))
 
 ;;;###autoload
 (defun vulpea-capture-journal ()
