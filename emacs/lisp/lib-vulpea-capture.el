@@ -58,7 +58,7 @@ It is relative to `vulpea-directory', unless it is absolute.")
     (setq org-default-notes-file vulpea-capture-inbox-file))
   (setq
    org-capture-templates
-   '(("t" "todo" plain (file vulpea-capture-inbox-file)
+   '(("t" "todo" entry (file+headline vulpea-capture-inbox-file "Tasks")
       "* TODO %?\n%U\n" :clock-in t :clock-resume t)
 
      ("m" "Meeting" entry
