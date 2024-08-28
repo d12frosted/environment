@@ -127,8 +127,10 @@ EXTRA-DATA contains bottle-id."
       (vulpea-utils-with-note rating
         (vulpea-buffer-meta-set "location" location 'append)
         (vulpea-buffer-meta-set "convive"
-                                (let ((people (vulpea-db-query-by-tags-every '("people"))))
-                                  (vulpea-utils-collect-while #'vulpea-select-from nil "Convive" people))
+                                (vulpea-select-multiple-from
+                                 "Convive"
+                                 (vulpea-db-query-by-tags-every '("people"))
+                                 :require-match t)
                                 'append)))))
 
 ;; * vino-inv hooks
