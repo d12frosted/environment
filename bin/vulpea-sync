@@ -20,6 +20,7 @@ section "$(date '+%d/%m/%y %H:%M:%S')"
 
 echo "Sync Vulpea files in $VULPEA_DIR as $USER"
 cd "$VULPEA_DIR" && {
+  git add .
   if git diff-index --quiet --cached HEAD --; then
     echo "nothing to commit"
   else
@@ -31,5 +32,8 @@ echo "fetching commits..."
 git fetch origin
 echo "rebasing..."
 git rebase origin/master
-echo "pushing..."
-git push origin master
+
+if [ "$USER" = "d12frosted" ]; then
+  echo "pushing..."
+  git push origin master
+fi
