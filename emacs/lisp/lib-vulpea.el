@@ -481,6 +481,24 @@ useful features and properties:
           (vulpea-buffer-meta-set "sabotage" url 'append)
         (vulpea-buffer-meta-remove "sabotage")))
 
+    ;; update vivino links in wine entries
+    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
+                                     (--filter (vulpea-note-meta-get it "vivino")))
+      (unless (brb-link-exists (vulpea-note-meta-get it "vivino" 'link))
+        (vulpea-buffer-meta-remove "vivino")))
+
+    ;; update goodwine links in wine entries
+    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
+                                     (--filter (vulpea-note-meta-get it "goodwine")))
+      (unless (brb-link-exists (vulpea-note-meta-get it "goodwine" 'link))
+        (vulpea-buffer-meta-remove "sabotage")))
+
+    ;; update goodwine links in wine entries
+    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
+                                     (--filter (vulpea-note-meta-get it "winewine")))
+      (unless (brb-link-exists (vulpea-note-meta-get it "winewine" 'link))
+        (vulpea-buffer-meta-remove "winewine")))
+
     (message " -> done building vulpea db")))
 
 

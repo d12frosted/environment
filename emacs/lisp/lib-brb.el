@@ -192,15 +192,19 @@ and if V equals to result, then it's styled using STYLE."
           :style (if (and b (= v b)) style 'normal)))
     "-"))
 
-;; * Sabotage
+;; * Social links
 
-(cl-defun brb-sabotage-link (external-id)
-  "Return sabotage link for EXTERNAL-ID if it exists."
-  (let* ((url (concat "https://sabotage.wine/product/" (s-downcase external-id)))
-         (cmd (concat "curl -o /dev/null -Isw '%{http_code}\n' '" url "'"))
+(cl-defun brb-link-exists (url)
+  "Return URL if it exists."
+  (let* ((cmd (concat "curl -o /dev/null -LIsw '%{http_code}\n' '" url "'"))
          (status (s-trim (shell-command-to-string cmd))))
     (when (string-equal "200" status)
       url)))
+
+(cl-defun brb-sabotage-link (external-id)
+  "Return sabotage link for EXTERNAL-ID if it exists."
+  (let ((url (concat "https://sabotage.wine/product/" (s-downcase external-id))))
+    (brb-link-exists url)))
 
 (provide 'lib-brb)
 ;;; lib-brb.el ends here
