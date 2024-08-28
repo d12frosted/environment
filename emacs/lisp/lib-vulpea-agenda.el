@@ -330,20 +330,21 @@ Usage example:
 Refer to `org-agenda-prefix-format' for more information."
   (if (eq major-mode 'org-mode)
       (let* ((file-name (when buffer-file-name
-                      (file-name-sans-extension
-                       (file-name-nondirectory buffer-file-name))))
-         (title (vulpea-buffer-prop-get "title"))
-         (category (org-get-category))
-         (result
-          (or (if (and
-                   title
-                   (string-equal category file-name))
-                  title
-                category)
-              "")))
-    (if (numberp len)
-        (s-truncate len (s-pad-right len " " result))
-      result))
+                          (file-name-sans-extension
+                           (file-name-nondirectory buffer-file-name))))
+             (title (or (vulpea-buffer-meta-get! (vulpea-buffer-meta) "short name")
+                        (vulpea-buffer-prop-get "title")))
+             (category (org-get-category))
+             (result
+              (or (if (and
+                       title
+                       (string-equal category file-name))
+                      title
+                    category)
+                  "")))
+        (if (numberp len)
+            (s-truncate len (s-pad-right len " " result))
+          result))
     (s-repeat (or len 0) " ")))
 
 
