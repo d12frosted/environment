@@ -465,6 +465,13 @@
                url
                package))
             fancy-yank-format-link))
+    (cons "\\(https://www.vivino.com/.*/?w/\\([[:alnum:]]+.*\\)\\)"
+          '(fancy-yank-extract-regex
+            (lambda (_ query &rest _)
+              (list
+               (concat "https://www.vivino.com/w/" query)
+               "vivino.com"))
+            fancy-yank-format-link))
     (cons string-http-url-regexp
           '(fancy-yank-extract-regex
             (lambda (url &rest args)
