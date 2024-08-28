@@ -95,7 +95,8 @@ Affects the following commands:
   '(tags
     "REFILE"
     ((org-agenda-overriding-header "To refile")
-     (org-tags-match-list-sublevels nil))))
+     (org-tags-match-list-sublevels t)
+     (org-agenda-skip-function 'vulpea-agenda-skip-non-tasks))))
 
 ;;;###autoload
 (defconst vulpea-agenda-cmd-today
