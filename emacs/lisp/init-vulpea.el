@@ -233,8 +233,7 @@
 (use-package org-id
   :ensure nil
   :after org
-  :hook ((before-save . vulpea-id-auto-assign)
-         (org-capture-prepare-finalize . org-id-get-create))
+  :hook ((before-save . vulpea-id-auto-assign))
   :init
   (setq org-id-uuid-program
         "uuidgen | tr \"[:upper:]\" \"[:lower:]\"")
