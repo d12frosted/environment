@@ -201,9 +201,16 @@ and if V equals to result, then it's styled using STYLE."
     (when (string-equal "200" status)
       url)))
 
-(cl-defun brb-sabotage-link (external-id)
-  "Return sabotage link for EXTERNAL-ID if it exists."
-  (let ((url (concat "https://sabotage.wine/product/" (s-downcase external-id))))
+(cl-defun brb-sabotage-link (wine-bureau-id)
+  "Return sabotage link for WINE-BUREAU-ID (if it exists)."
+  (let ((url (concat "https://sabotage.wine/product/" (s-downcase wine-bureau-id))))
+    (brb-link-exists url)))
+
+(cl-defun brb-vivino-link (vivino-id vintage)
+  "Return vivino link for VIVINO-ID and VINTAGE if it exists."
+  (let ((url (concat "https://www.vivino.com/w/"
+                     vivino-id
+                     (if vintage (format "?year=%s" vintage) ""))))
     (brb-link-exists url)))
 
 (provide 'lib-brb)

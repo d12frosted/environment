@@ -483,8 +483,10 @@ useful features and properties:
 
     ;; update vivino links in wine entries
     (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
-                                     (--filter (vulpea-note-meta-get it "vivino")))
-      (unless (brb-link-exists (vulpea-note-meta-get it "vivino" 'link))
+                                     (--filter (vulpea-note-meta-get it "vivinoId")))
+      (if-let ((url (brb-vivino-link (vulpea-note-meta-get it "vivinoId")
+                                     (vulpea-note-meta-get it "vintage"))))
+          (vulpea-buffer-meta-set "vivino" url 'append)
         (vulpea-buffer-meta-remove "vivino")))
 
     ;; update goodwine links in wine entries
