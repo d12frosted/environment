@@ -88,8 +88,7 @@
                          :tags ("barberry/public"))
    vino-origin-select-fn #'vino-origin-select-custom
    vino-entry-rating-average-method 'latest
-   vino-entry-meta-props-order '("externalId"
-                                 "carbonation"
+   vino-entry-meta-props-order '("carbonation"
                                  "carbonation method"
                                  "colour"
                                  "sweetness"
@@ -113,6 +112,13 @@
                                  "available"
                                  "rating"
                                  "ratings"
+                                 "externalId"
+                                 "vivinoId"
+                                 "vivino"
+                                 "wineBureauId"
+                                 "sabotage"
+                                 "winewineId"
+                                 "winewine"
                                  "images")
    vino-rating-props
    '((1 . (("SCORE" . 3)))
