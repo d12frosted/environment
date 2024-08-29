@@ -45,7 +45,17 @@
   :ensure t
   :defer t
   :config
-  (setq gptel-model "gpt-4o"))
+  (setq gptel-model "gpt-4o"
+        gptel-directives
+        (let ((file (expand-file-name "gptel-directives.el" vulpea-directory)))
+          (when (file-exists-p file)
+            (with-temp-buffer
+              (condition-case nil
+	          (progn
+	            (insert-file-contents file)
+                    (read (current-buffer)))
+	        (error
+	         (message "Could not read data from %s" file))))))))
 
 (provide 'init-tools)
 ;;; init-tools.el ends here
