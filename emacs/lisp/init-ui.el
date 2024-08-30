@@ -282,8 +282,6 @@
                                                modus-themes-preset-overrides-cooler)
         modus-themes-headings '((1 . (bold 1.4))
                                 (2 . (semibold 1.2))
-                                (3 . (semibold 1.2))
-                                (4 . (semibold 1.2))
                                 (t . (medium 1.1))))
 
   ;; Load the theme of your choice.
