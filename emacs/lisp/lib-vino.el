@@ -36,6 +36,7 @@
 
 (require 'lib-buffer)
 (require 'lib-brb)
+(require 'lib-string)
 (require 'vino)
 (require 'vino-inv)
 (require 'request)
@@ -86,12 +87,50 @@ FILTER is a `vulpea-note' predicate."
 ;; * vino hooks
 
 ;;;###autoload
-(defun vino-entry-assign-external-id (note)
+(defun vino-entry-assign-social-links (&optional note)
   "Interactively assign extra meta for wine NOTE."
-  (let ((external-id (read-string "External ID: ")))
-    (unless (string-empty-p external-id)
-      (vulpea-utils-with-note note
-        (vulpea-buffer-meta-set "externalId" external-id)))))
+  (interactive)
+  (let* ((note (vino-entry-note-get-dwim note))
+         (wineBureauId (s-presence (read-string "Wine Bureau ID: "
+                                                (vulpea-note-meta-get note "wineBureauId"))))
+         (sabotage (when wineBureauId (brb-sabotage-link wineBureauId)))
+         (winewineId (unless wineBureauId
+                       (s-presence (read-string "Wine Wine ID: "
+                                                (vulpea-note-meta-get note "winewineId")))))
+         (winewine (when winewineId (or
+                                     (vulpea-note-meta-get note "winewine" 'link)
+                                     (s-presence (read-string "Wine Wine URL: ")))))
+         (vivinoUrlRaw)
+         (vivinoId)
+         (vivino))
+
+    (kill-new (vulpea-note-title note))
+    (setq vivinoUrlRaw (or
+                        (vulpea-note-meta-get note "vivino" 'link)
+                        (s-presence (read-string "Vivino URL: "))))
+    (while vivinoUrlRaw
+      (setq vivinoId (s-presence (string-match-1 "^https://www.vivino.com.*/w/\\([0-9]+\\).*$" vivinoUrlRaw)))
+      (if vivinoId
+          (setq vivinoUrlRaw nil)
+        (message "Could not extract vivino ID")
+        (sit-for 1)
+        (setq vivinoUrlRaw (s-presence (read-string "Vivino URL: ")))))
+    (setq vivino (brb-vivino-link vivinoId (vulpea-note-meta-get note "vintage")))
+
+    (vulpea-utils-with-note note
+      (when wineBureauId
+        (vulpea-buffer-meta-set "wineBureauId" wineBureauId))
+      (when sabotage
+        (vulpea-buffer-meta-set "sabotage" sabotage))
+      (when winewineId
+        (vulpea-buffer-meta-set "winewineId" winewineId))
+      (when winewine
+        (vulpea-buffer-meta-set "winewine" winewine))
+      (when vivinoId
+        (vulpea-buffer-meta-set "vivinoId" vivinoId))
+      (when vivino
+        (vulpea-buffer-meta-set "vivino" vivino))
+      (vulpea-buffer-meta-sort vino-entry-meta-props-order))))
 
 ;;;###autoload
 (defun vino-rating-assign-extra-meta (rating extra-data)
