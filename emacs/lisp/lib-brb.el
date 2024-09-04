@@ -59,12 +59,17 @@ Returns nil if PRICE is of different currency than
 
 ;; * QPR
 
-(defun brb-qpr (price score)
+(defun brb-qpr (price score &optional volume)
   "Calculate QPR.
 
 SCORE is a rational number in [0, 5].
-PRICE is a positive number in `brb-currency'."
+PRICE is a positive number in `brb-currency'.
+VOLUME is a positive number in ml (default 750).
+
+QPR is adjusted to account for VOLUME."
   (when (and score price (> price 0))
+    (setq volume (or volume 750))
+    (setq price (* price (/ 750.0 volume)))
     (/
      (*
       100

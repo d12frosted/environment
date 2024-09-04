@@ -546,14 +546,26 @@ PID is participant id."
                                    (price-public . nil)
                                    (price-real . nil)
                                    (type . ,type)))))
+                  (ep-save-data x data)))
+              (edit-volume (id)
+                (let* ((volume (read-number "Volume: "))
+                       (data (ep-data x)))
+                  (setf (alist-get 'wines data)
+                        (--update-first-by
+                         (string-equal id (alist-get 'id it))
+                         (progn
+                           (setf (alist-get 'volume it) volume)
+                           it)
+                         nil
+                         (alist-get 'wines data)))
                   (ep-save-data x data))))
       (insert
        (propertize "⇾ Wines" 'face 'org-level-2) "\n"
        "\n"
        (string-table
-        :header '("" "" "producer" "name" "year" "p public" "p real" "type")
-        :pad-type '(right right right right left left left right)
-        :width '(nil nil 26 30 nil nil nil nil)
+        :header '("" "" "producer" "name" "year" "p public" "p real" "type" "volume")
+        :pad-type '(right right right right left left left right left)
+        :width '(nil nil 22 26 nil nil nil nil nil)
         :header-sep "-"
         :header-sep-start "|-"
         :header-sep-conj "-+-"
@@ -580,7 +592,9 @@ PID is participant id."
                  (buttonize (brb-price-format (or (assoc-default 'price-real data) 0))
                             #'edit-price-real (vulpea-note-id it))
                  (buttonize (or (assoc-default 'type data) "[_]")
-                            #'edit-type (vulpea-note-id it))))
+                            #'edit-type (vulpea-note-id it))
+                 (buttonize (format "%d" (or (assoc-default 'volume data) 750))
+                            #'edit-volume (vulpea-note-id it))))
               it)
              (-concat it
                       '(sep)
@@ -591,6 +605,7 @@ PID is participant id."
                          ""
                          ,(brb-price-format (alist-get 'spending-wines-public statement))
                          ,(brb-price-format (alist-get 'spending-wines-real statement))
+                         ""
                          ""
                          "")))))
        "\n"

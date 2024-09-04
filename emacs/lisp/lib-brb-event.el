@@ -206,6 +206,7 @@ structure:
              (participants . (id))
              (type . str)
              (ignore-scores . bool)
+             (volume . num)
              (scores . (((participant . id)
                          (score . num)
                          (sentiment . str))))))))"
@@ -549,7 +550,8 @@ BALANCES is a hash table."
                                                (calcFunc-vsum)))
                                   (wavg (when scores (/ wtotal weights-sum)))
                                   (price (alist-get 'price-public data))
-                                  (qpr (brb-qpr price wavg))
+                                  (volume (or (alist-get 'volume data) 750))
+                                  (qpr (brb-qpr price wavg volume))
                                   (sdev (when scores
                                           (calc-to-number (apply #'calcFunc-vpvar scores))))
                                   (fav (->> data
@@ -582,6 +584,7 @@ BALANCES is a hash table."
                              `((wine . ,wine)
                                (ignore-scores . ,(alist-get 'ignore-scores data))
                                (type . ,(alist-get 'type data))
+                               (volume . ,volume)
                                (amean . ,amean)
                                (rms . ,rms)
                                (wavg . ,wavg)
