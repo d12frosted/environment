@@ -106,6 +106,7 @@
                                  "alcohol"
                                  "sugar"
                                  "price"
+                                 "price date"
                                  "price private"
                                  "acquired"
                                  "consumed"
