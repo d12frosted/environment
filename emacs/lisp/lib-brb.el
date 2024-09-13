@@ -221,13 +221,35 @@ and if V equals to result, then it's styled using STYLE."
 ;; * Prices
 
 (cl-defun brb-sabotage-price (wine-bureau-id)
-  "Return price of for WINE-BUREAU-ID."
+  "Return price for WINE-BUREAU-ID."
   (let* ((url (brb-sabotage-link wine-bureau-id))
          (cmd (concat "curl -sL '" url "' | hq '{price: .andro_product-price}' | jq -r '.price'"))
          (raw (s-trim (shell-command-to-string cmd)))
          (price (string-to-number raw)))
     (when (> price 0)
       price)))
+
+(cl-defun brb-winewine-price (url)
+  "Return price of wine from WineWine URL."
+  (let* ((cmd (concat "curl -sL '" url "' | hq '{price: .woocommerce-Price-amount}' | jq -r '.price'"))
+         (raw (s-trim (shell-command-to-string cmd)))
+         (price (string-to-number raw)))
+    (when (> price 0)
+      (round price))))
+
+(cl-defun brb--add-price (note price)
+  "Add PRICE to wine NOTE in current buffer."
+  (when-let ((priceNew price)
+             (priceOld (vulpea-note-meta-get note "price" 'number)))
+    (unless (= priceNew priceOld)
+      (unless (= 0 priceOld)
+        (vulpea-buffer-meta-set "price private"
+                                (-uniq
+                                 (cons (vulpea-note-meta-get note "price")
+                                       (vulpea-note-meta-get-list note "price private")))))
+      (vulpea-buffer-meta-set "price" (format "%d %s" priceNew brb-currency))
+      (vulpea-buffer-meta-set "price date" (format-time-string "%F"))
+      (vulpea-buffer-meta-sort vino-entry-meta-props-order))))
 
 ;; * External data synchronisation (social links and prices)
 
@@ -269,17 +291,7 @@ and if V equals to result, then it's styled using STYLE."
   ;; update prices from sabotage
   (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
                                    (--filter (vulpea-note-meta-get it "sabotage")))
-    (when-let ((priceNew (brb-sabotage-price (vulpea-note-meta-get it "wineBureauId")))
-               (priceOld (vulpea-note-meta-get it "price" 'number)))
-      (unless (= priceNew priceOld)
-        (unless (= 0 priceOld)
-          (vulpea-buffer-meta-set "price private"
-                                  (-uniq
-                                   (cons (vulpea-note-meta-get it "price")
-                                         (vulpea-note-meta-get-list it "price private")))))
-        (vulpea-buffer-meta-set "price" (format "%d %s" priceNew brb-currency))
-        (vulpea-buffer-meta-set "price date" (format-time-string "%F"))
-        (vulpea-buffer-meta-sort vino-entry-meta-props-order))))
+    (brb--add-price it (brb-sabotage-price (vulpea-note-meta-get it "wineBureauId"))))
 
   ;; update vivino links in wine entries
   (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
@@ -295,11 +307,16 @@ and if V equals to result, then it's styled using STYLE."
     (unless (brb-link-exists (vulpea-note-meta-get it "goodwine" 'link))
       (vulpea-buffer-meta-remove "sabotage")))
 
-  ;; update goodwine links in wine entries
+  ;; update winewine links in wine entries
   (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
                                    (--filter (vulpea-note-meta-get it "winewine")))
     (unless (brb-link-exists (vulpea-note-meta-get it "winewine" 'link))
-      (vulpea-buffer-meta-remove "winewine"))))
+      (vulpea-buffer-meta-remove "winewine")))
+
+  ;; update prices from winewine
+  (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
+                                   (--filter (vulpea-note-meta-get it "winewine")))
+    (brb--add-price it (brb-winewine-price (vulpea-note-meta-get it "winewine" 'link)))))
 
 (provide 'lib-brb)
 ;;; lib-brb.el ends here
