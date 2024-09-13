@@ -117,6 +117,24 @@
                       (cons "image" ""))
                 (--map (format "#+%s: %s" (car it) (cdr it)))
                 (s-join "\n"))
+     :body (string-join
+            '("- publish :: false"
+              "- time to book :: N/A"
+              ""
+              "#+begin_src event_summary"
+              "skip:"
+              "- outs"
+              "hideExtraWines: false"
+              "#+end_src"
+              ""
+              "* Raw scores"
+              ""
+              "#+begin_src event_personal_scores"
+              "hideExtraWines: false"
+              "#+end_src"
+              ""
+              "* Notes                                                            :noexport:")
+            "\n")
      :body "- publish :: false\n- time to book :: N/A\n"
      :immediate-finish t)))
 
