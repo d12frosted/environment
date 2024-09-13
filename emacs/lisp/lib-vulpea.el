@@ -466,8 +466,14 @@ useful features and properties:
       (vulpea-buffer-tags-add "barberry/public"))
 
     ;; make sure that people I drink with are marked as public convives
-    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "rating"))
-                                     (--mapcat (vulpea-note-meta-get-list it "convive" 'link))
+    (vulpea-utils-process-notes (->> (-union
+                                      ;; convives from ratings
+                                      (--mapcat (vulpea-note-meta-get-list it "convive" 'link)
+                                                (vulpea-db-query-by-tags-every '("wine" "rating")))
+                                      ;; participants of events
+                                      (--mapcat (-union (vulpea-note-meta-get-list it "participants" 'link)
+                                                        (vulpea-note-meta-get-list it "waiting" 'link))
+                                                (vulpea-db-query-by-tags-every '("wine" "event"))))
                                      (-uniq)
                                      (vulpea-db-query-by-ids)
                                      (--remove (vulpea-note-tagged-all-p it "barberry/public" "barberry/convive")))
