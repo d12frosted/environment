@@ -167,6 +167,7 @@ experimental-features = nix-command flakes
     brews = [
       "llvm"
       "pandoc"
+      "hq"
       "terminal-notifier"
       {
         name = "emacs-plus@30";
