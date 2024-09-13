@@ -218,6 +218,17 @@ and if V equals to result, then it's styled using STYLE."
                      (if vintage (format "?year=%s" vintage) ""))))
     (brb-link-exists url)))
 
+;; * Prices
+
+(cl-defun brb-sabotage-price (wine-bureau-id)
+  "Return price of for WINE-BUREAU-ID."
+  (let* ((url (brb-sabotage-link wine-bureau-id))
+         (cmd (concat "curl -sL '" url "' | hq '{price: .andro_product-price}' | jq -r '.price'"))
+         (raw (s-trim (shell-command-to-string cmd)))
+         (price (string-to-number raw)))
+    (when (> price 0)
+      price)))
+
 ;; * External data synchronisation (social links and prices)
 
 (defun brb-sync-external-data-with-upstream ()
@@ -254,6 +265,21 @@ and if V equals to result, then it's styled using STYLE."
     (if-let ((url (brb-sabotage-link (vulpea-note-meta-get it "externalId"))))
         (vulpea-buffer-meta-set "sabotage" url 'append)
       (vulpea-buffer-meta-remove "sabotage")))
+
+  ;; update prices from sabotage
+  (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
+                                   (--filter (vulpea-note-meta-get it "sabotage")))
+    (when-let ((priceNew (brb-sabotage-price (vulpea-note-meta-get it "wineBureauId")))
+               (priceOld (vulpea-note-meta-get it "price" 'number)))
+      (unless (= priceNew priceOld)
+        (unless (= 0 priceOld)
+          (vulpea-buffer-meta-set "price private"
+                                  (-uniq
+                                   (cons (vulpea-note-meta-get it "price")
+                                         (vulpea-note-meta-get-list it "price private")))))
+        (vulpea-buffer-meta-set "price" (format "%d %s" priceNew brb-currency))
+        (vulpea-buffer-meta-set "price date" (format-time-string "%F"))
+        (vulpea-buffer-meta-sort vino-entry-meta-props-order))))
 
   ;; update vivino links in wine entries
   (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
