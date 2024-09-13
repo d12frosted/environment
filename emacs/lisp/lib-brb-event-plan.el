@@ -565,7 +565,7 @@ PID is participant id."
        (string-table
         :header '("" "" "producer" "name" "year" "p public" "p real" "type" "volume")
         :pad-type '(right right right right left left left right left)
-        :width '(nil nil 22 26 nil nil nil nil nil)
+        :width '(nil nil 20 26 nil nil nil nil nil)
         :header-sep "-"
         :header-sep-start "|-"
         :header-sep-conj "-+-"
@@ -819,7 +819,7 @@ PID is participant id."
      (string-table
       :header '("" "producer" "wine" "year" "##" "wavg" "sdev" "qpr" "fav" "out")
       :pad-type '(left right right right right left left left right left)
-      :width '(nil 20 36 nil nil nil nil 6 nil nil)
+      :width '(nil 20 34 nil nil nil nil 6 nil nil)
       :header-sep "-"
       :header-sep-start "|-"
       :header-sep-conj "-+-"
