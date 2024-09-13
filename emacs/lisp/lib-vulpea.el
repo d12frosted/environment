@@ -455,58 +455,6 @@ useful features and properties:
         (org-roam-db-clear-file it)
         (org-roam-db-update-file it)))
 
-    ;; make sure that barberry/public is set on all notes that require it
-    (vulpea-utils-process-notes (->> (vulpea-db-query-by-level 0)
-                                     (--filter
-                                      (and (not (vulpea-note-tagged-all-p it "barberry/public"))
-                                           (or (vulpea-note-tagged-all-p it "wine" "grape")
-                                               (vulpea-note-tagged-all-p it "wine" "region")
-                                               (vulpea-note-tagged-all-p it "wine" "appellation")
-                                               (vulpea-note-tagged-all-p it "places")))))
-      (vulpea-buffer-tags-add "barberry/public"))
-
-    ;; make sure that people I drink with are marked as public convives
-    (vulpea-utils-process-notes (->> (-union
-                                      ;; convives from ratings
-                                      (--mapcat (vulpea-note-meta-get-list it "convive" 'link)
-                                                (vulpea-db-query-by-tags-every '("wine" "rating")))
-                                      ;; participants of events
-                                      (--mapcat (-union (vulpea-note-meta-get-list it "participants" 'link)
-                                                        (vulpea-note-meta-get-list it "waiting" 'link))
-                                                (vulpea-db-query-by-tags-every '("wine" "event"))))
-                                     (-uniq)
-                                     (vulpea-db-query-by-ids)
-                                     (--remove (vulpea-note-tagged-all-p it "barberry/public" "barberry/convive")))
-      (vulpea-buffer-tags-add "barberry/public")
-      (vulpea-buffer-tags-add "barberry/convive"))
-
-    ;; update sabotage links in wine entries
-    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
-                                     (--filter (vulpea-note-meta-get it "externalId")))
-      (if-let ((url (brb-sabotage-link (vulpea-note-meta-get it "externalId"))))
-          (vulpea-buffer-meta-set "sabotage" url 'append)
-        (vulpea-buffer-meta-remove "sabotage")))
-
-    ;; update vivino links in wine entries
-    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
-                                     (--filter (vulpea-note-meta-get it "vivinoId")))
-      (if-let ((url (brb-vivino-link (vulpea-note-meta-get it "vivinoId")
-                                     (vulpea-note-meta-get it "vintage"))))
-          (vulpea-buffer-meta-set "vivino" url 'append)
-        (vulpea-buffer-meta-remove "vivino")))
-
-    ;; update goodwine links in wine entries
-    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
-                                     (--filter (vulpea-note-meta-get it "goodwine")))
-      (unless (brb-link-exists (vulpea-note-meta-get it "goodwine" 'link))
-        (vulpea-buffer-meta-remove "sabotage")))
-
-    ;; update goodwine links in wine entries
-    (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
-                                     (--filter (vulpea-note-meta-get it "winewine")))
-      (unless (brb-link-exists (vulpea-note-meta-get it "winewine" 'link))
-        (vulpea-buffer-meta-remove "winewine")))
-
     (message " -> done building vulpea db")))
 
 
