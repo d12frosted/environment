@@ -223,7 +223,7 @@ and if V equals to result, then it's styled using STYLE."
 (cl-defun brb-sabotage-price (wine-bureau-id)
   "Return price for WINE-BUREAU-ID."
   (let* ((url (brb-sabotage-link wine-bureau-id))
-         (cmd (concat "curl -sL '" url "' | hq '{price: .andro_product-price}' | jq -r '.price'"))
+         (cmd (concat "curl -sL '" url "' | hq '{wine: .col-md-7 | {title: .product-title-page, price: .andro_product-price}}' | jq -r '.wine.price'"))
          (raw (s-trim (shell-command-to-string cmd)))
          (price (string-to-number raw)))
     (when (> price 0)
