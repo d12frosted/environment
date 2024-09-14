@@ -70,11 +70,16 @@ QPR is adjusted to account for VOLUME."
   (when (and score price (> price 0))
     (setq volume (or volume 750))
     (setq price (* price (/ 750.0 volume)))
-    (/
-     (*
-      100
-      (calc-to-number (calcFunc-fact (calc-from-number score))))
-     (if (= 0 price) 1 price))))
+    (setq p (calc-from-number (float price)))
+    (setq s (calc-from-number (float score)))
+    (calc-to-number
+     (math-div
+      (math-mul
+       1400
+       (math-mul (math-pow (calcFunc-fact s) (math-add 1 (math-phi)))
+                 (calcFunc-ln (math-add (calc-from-number 1.1) s))))
+      p))))
+
 
 ;; * Candidates for deletion
 
