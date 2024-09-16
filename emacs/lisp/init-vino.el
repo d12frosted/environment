@@ -98,6 +98,7 @@
                                  "base"
                                  "sur lie"
                                  "degorgee"
+                                 "volume"
                                  "country"
                                  "region"
                                  "appellation"

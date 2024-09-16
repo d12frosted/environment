@@ -144,8 +144,7 @@ EXTRA-DATA contains bottle-id."
                                        (vulpea-db-query-by-tags-some '("places" "people" "event"))
                                        :require-match t)))
     (vulpea-utils-with-note rating
-      (vulpea-buffer-meta-set "bottle" bottle-id 'append)
-      (vulpea-buffer-meta-set "volume" (vino-inv-bottle-volume bottle) 'append))
+      (vulpea-buffer-meta-set "bottle" bottle-id 'append))
 
     (if (vulpea-note-tagged-all-p location "wine" "event")
         (vulpea-utils-with-note rating
@@ -422,7 +421,7 @@ BUTTON should be a proper button with following properties:
                         (order (vulpea-note-meta-get note "order" 'number)))
                (setq has-meta t)
                (insert "Wine #" (number-to-string order) " on " (vulpea-note-title event) "\n"))
-             (when-let ((volume (vulpea-note-meta-get note "volume" 'number)))
+             (when-let ((volume (vulpea-note-meta-get (vino-rating-wine rating) "volume" 'number)))
                (unless (= 750 volume)
                  (setq has-meta t)
                  (pcase volume
