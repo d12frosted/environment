@@ -608,7 +608,8 @@ BALANCES is a hash table."
                                (sdev . ,sdev)
                                (fav . ,fav)
                                (out . ,out)
-                               (price . ,price)
+                               (price . ((amount . ,price)
+                                         (currency . ,brb-currency)))
                                (qpr . ,qpr)
                                (scores . ,pscores))))))))
          (prices (->> data
