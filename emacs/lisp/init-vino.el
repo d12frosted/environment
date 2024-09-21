@@ -60,7 +60,7 @@
   (general-define-key
    :keymaps 'vino-inv-ui-mode-map
    "b" '(vino-inv-ui-record-spending :which-key "record spending")
-   "p" '(vino-inv-ui-print-info :which-key "display print info")
+   "P" '(vino-inv-ui-print-info :which-key "display print info")
    "m" '(vino-inv-ui-mark :which-key "mark entry at point")
    "cu" '(vino-inv-ui-kill-url :which-key "copy link to the wine")
    "ci" '(vino-inv-ui-kill-wine-id :which-key "copy id of the wine"))
