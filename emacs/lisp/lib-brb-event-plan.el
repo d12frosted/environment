@@ -533,7 +533,7 @@ PID is participant id."
                   (ep-save-data x data)))
               (edit-type (id)
                 (let* ((type (completing-read "Type: "
-                                              '("normal" "bonus" "extra")
+                                              '("normal" "bonus" "extra" "welcome")
                                               nil t))
                        (data (ep-data x))
                        (wine-data (--find (string-equal id (alist-get 'id it))

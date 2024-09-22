@@ -264,7 +264,7 @@ BALANCES is a hash table."
          (price (vulpea-note-meta-get event "price" 'number))
          (wines-normal (->> data
                             (assoc-default 'wines)
-                            (--filter (string-equal "normal" (assoc-default 'type it)))))
+                            (--filter (-contains-p '("welcome" "normal") (assoc-default 'type it)))))
          (wines-extra (->> data
                            (assoc-default 'wines)
                            (--filter (string-equal "extra" (assoc-default 'type it)))))
