@@ -229,7 +229,7 @@ EXTRA-DATA contains bottle-id."
           (push bottle print-list))
         (forward-line)))
     (when (seq-empty-p print-list)
-      (user-error "There are no marked bottles."))
+      (user-error "There are no marked bottles"))
     (let* ((data (->> print-list
                       (--map
                        (let ((bottle-id (string-to-number (nth 1 (s-split ":" it)))))
