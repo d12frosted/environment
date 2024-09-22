@@ -182,11 +182,12 @@ EXTRA-DATA contains bottle-id."
                  ((s-suffix-p brb-currency price) (string-to-number price))
                  ((= 0 (string-to-number price)) 0)
                  (t (read-number (format "Convert %s to UAH: " price))))))
-    (vulpea-utils-with-note wine
-      (vulpea-buffer-meta-set "price date" (format-time-string "%F"))
-      (vulpea-buffer-meta-sort vino-entry-meta-props-order)
-      (save-buffer))
     (unless (= 0 price)
+      (vulpea-utils-with-note wine
+        (vulpea-buffer-meta-set "price date" (format-time-string "%F"))
+        (vulpea-buffer-meta-sort vino-entry-meta-props-order)
+        (save-buffer))
+
       (brb-ledger-record-txn
        :date (date-to-time (vino-inv-bottle-purchase-date bottle))
        :comment (concat "[" (vulpea-note-id wine) "]")
