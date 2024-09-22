@@ -566,8 +566,7 @@ BALANCES is a hash table."
                                                (calcFunc-vsum)))
                                   (wavg (when scores (/ wtotal weights-sum)))
                                   (price (alist-get 'price-public data))
-                                  (volume (vulpea-note-meta-get wine "volume" 'number))
-                                  (qpr (brb-qpr price wavg volume))
+                                  (qpr (brb-qpr price wavg wine))
                                   (sdev (when scores
                                           (calc-to-number (apply #'calcFunc-vpvar scores))))
                                   (fav (->> data
@@ -600,8 +599,6 @@ BALANCES is a hash table."
                              `((wine . ,wine)
                                (ignore-scores . ,(alist-get 'ignore-scores data))
                                (type . ,(alist-get 'type data))
-                               ;; TODO remove
-                               (volume . ,volume)
                                (amean . ,amean)
                                (rms . ,rms)
                                (wavg . ,wavg)
@@ -651,7 +648,8 @@ BALANCES is a hash table."
                             (apply #'calcFunc-vec)
                             (calcFunc-rms)
                             (calc-to-number))))
-         (event-qpr (when (and event-wavg prices) (brb-qpr wines-price-harmonic event-wavg))))
+         (event-qpr (when (and event-wavg prices)
+                      (brb-qpr wines-price-harmonic event-wavg event))))
     `((wines . ,wines-data)
       (wines-price-total . ,wines-price-total)
       (wines-price-harmonic . ,wines-price-harmonic)

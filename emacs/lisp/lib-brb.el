@@ -59,29 +59,36 @@ Returns nil if PRICE is of different currency than
 
 ;; * QPR
 
-(defun brb-qpr (price score &optional volume)
+(defun brb-qpr (price score wine)
   "Calculate QPR.
 
 SCORE is a rational number in [0, 5].
 PRICE is a positive number in `brb-currency'.
-VOLUME is a positive number in ml (default 750).
+WINE is a note representing wine.
 
 QPR is adjusted to account for VOLUME."
   (when (and score price (> price 0) (> score 0))
-    (setq volume (or volume 750))
-    (setq price (* price (/ 750.0 volume)))
-    (setq p (calc-from-number (float price)))
-    (setq s (calc-from-number (float score)))
-    (calc-to-number
-     (math-div
-      (math-sqrt
+    (let* ((volume (or (vulpea-note-meta-get wine "volume" 'number) 750))
+           (appellation (vulpea-note-meta-get wine "appellation"))
+           (multiplier (if (and appellation
+                                (seq-contains-p
+                                 '("Champagne AOC")
+                                 (string-match-n 3 org-link-any-re appellation)))
+                           2500
+                         1600)))
+      (setq price (* price (/ 750.0 volume)))
+      (setq p (calc-from-number (float price)))
+      (setq s (calc-from-number (float score)))
+      (calc-to-number
        (math-div
-        (math-mul
-         1400
-         (math-mul (math-pow (calcFunc-fact s) (math-add 1 (math-phi)))
-                   (calcFunc-ln (math-add (calc-from-number 1.1) s))))
-        p))
-      100))))
+        (math-sqrt
+         (math-div
+          (math-mul
+           multiplier
+           (math-mul (math-pow (calcFunc-fact s) (math-add 1 (math-phi)))
+                     (calcFunc-ln (math-add (calc-from-number 1.1) s))))
+          p))
+        100)))))
 
 ;; * Candidates for deletion
 
