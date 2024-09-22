@@ -258,16 +258,6 @@ EXTRA-DATA contains bottle-id."
                   path-home-dir)))))))
 
 ;;;###autoload
-(defun vino-inv-ui-mark ()
-  "Mark entry at point."
-  (interactive)
-  (if-let ((tagged (save-excursion
-                     (beginning-of-line)
-                     (eq (char-after) ?\*))))
-      (tabulated-list-put-tag " " t)
-    (tabulated-list-put-tag "*" t)))
-
-;;;###autoload
 (defun vino-inv-ui-kill-url ()
   "Put URL to the bottle at point into `kill-ring'."
   (interactive)
