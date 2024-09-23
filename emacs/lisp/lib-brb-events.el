@@ -471,13 +471,16 @@ ARG to override and query for specific frame."
            (participants-all (->> events-all
                                   (--map (brb-event-participants it))
                                   (-flatten)))
-           (participants (-distinct participants-all)))
+           (participants (->> participants-all
+                              (-map #'vulpea-note-id)
+                              (vulpea-db-query-by-ids)
+                              (-remove #'vulpea-note-primary-title))))
       (insert
        (propertize (format "Participants (%s)" (seq-length participants)) 'face 'outline-1)
        "\n\n"
        (string-table
-        :header '("participant" "past" "all")
-        :pad-type '(right left left)
+        :header '("participant" "level" "wix" "past" "all")
+        :pad-type '(right left right left left)
         :header-sep "-"
         :header-sep-start "|-"
         :header-sep-conj "-+-"
@@ -489,6 +492,8 @@ ARG to override and query for specific frame."
         (->> participants
              (--map
               (list it
+                    (vulpea-note-meta-get it "tasting level")
+                    (vulpea-note-meta-get it "wix")
                     (-count (lambda (other)
                               (string-equal
                                (vulpea-note-id it)
@@ -499,8 +504,8 @@ ARG to override and query for specific frame."
                                (vulpea-note-id it)
                                (vulpea-note-id other)))
                             participants-all)))
-             (--sort (> (nth 1 it)
-                        (nth 1 other)))))
+             (--sort (> (nth 3 it)
+                        (nth 3 other)))))
        "\n"))
 
     (insert "\n")
@@ -540,7 +545,7 @@ ARG to override and query for specific frame."
                                                        (nth it-index)
                                                        (alist-get 'sdev))))
                                        (format "%.4f" sdev) "-")
-                                   (or (assoc-default 'price (nth it-index summary))
+                                   (or (alist-get 'amount (alist-get 'price (nth it-index summary)))
                                        "-")
                                    (if-let ((qpr (assoc-default 'qpr (nth it-index summary))))
                                        (format "%.4f" qpr) "-"))))))
