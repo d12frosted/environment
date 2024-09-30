@@ -440,6 +440,7 @@ useful features and properties:
 ;;;###autoload
 (defun vulpea-db-build ()
   "Update notes database."
+  (interactive)
   (when (file-directory-p vulpea-directory)
     (require 'vino)
     (require 'lib-brb)
