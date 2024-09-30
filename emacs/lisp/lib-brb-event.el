@@ -564,7 +564,7 @@ BALANCES is a hash table."
                                                                 (assoc-default 'score it))))
                                                (apply #'calcFunc-vec)
                                                (calcFunc-vsum)))
-                                  (wavg (when scores (/ wtotal weights-sum)))
+                                  (wavg (when (and scores (> weights-sum 0)) (/ wtotal weights-sum)))
                                   (price (alist-get 'price-public data))
                                   (qpr (brb-qpr price wavg wine))
                                   (sdev (when scores
