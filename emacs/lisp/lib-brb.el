@@ -245,9 +245,10 @@ and if V equals to result, then it's styled using STYLE."
 
 (cl-defun brb-winewine-price (url)
   "Return price of wine from WineWine URL."
-  (let* ((cmd (concat "curl -sL '" url "' | hq '{price: .woocommerce-Price-amount}' | jq -r '.price'"))
-         (raw (s-trim (shell-command-to-string cmd)))
-         (price (string-to-number raw)))
+  (when-let* ((url url)
+              (cmd (concat "curl -sL '" url "' | hq '{price: .woocommerce-Price-amount}' | jq -r '.price'"))
+              (raw (s-trim (shell-command-to-string cmd)))
+              (price (string-to-number raw)))
     (when (> price 0)
       (round price))))
 
