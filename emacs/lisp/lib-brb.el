@@ -298,8 +298,8 @@ and if V equals to result, then it's styled using STYLE."
 
   ;; update sabotage links in wine entries
   (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
-                                   (--filter (vulpea-note-meta-get it "externalId")))
-    (if-let ((url (brb-sabotage-link (vulpea-note-meta-get it "externalId"))))
+                                   (--filter (vulpea-note-meta-get it "wineBureauId")))
+    (if-let ((url (brb-sabotage-link (vulpea-note-meta-get it "wineBureauId"))))
         (vulpea-buffer-meta-set "sabotage" url 'append)
       (vulpea-buffer-meta-remove "sabotage")))
 
