@@ -759,7 +759,7 @@ See `vino-origin-select-fn' for more information."
                                                :country country))
                           (`"Create appellation"
                            (vino-appellation-create :title (vulpea-note-title rora)
-                                                    :country))
+                                                    :country country))
                           (_ (error "Abort")))))
            (if (vulpea-note-tagged-any-p rora "region")
                (setq region rora)
