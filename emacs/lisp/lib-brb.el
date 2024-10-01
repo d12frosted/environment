@@ -255,7 +255,7 @@ and if V equals to result, then it's styled using STYLE."
 (cl-defun brb--add-price (note price)
   "Add PRICE to wine NOTE in current buffer."
   (when-let ((priceNew price)
-             (priceOld (vulpea-note-meta-get note "price" 'number)))
+             (priceOld (or (vulpea-note-meta-get note "price" 'number) 0)))
     (unless (= priceNew priceOld)
       (unless (= 0 priceOld)
         (vulpea-buffer-meta-set "price private"
