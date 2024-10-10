@@ -265,26 +265,26 @@ When score data for given WID and PID not found, use DEF."
 
 WID is wine id.
 PID is participant id."
-  (ep-update-score-data x wid pid
-                        (lambda (sd)
-                          (setf (alist-get 'score sd) score)
-                          sd)
-                        `((participant . ,pid)
-                          (score . ,score)
-                          (sentiment . nil))))
+  (ep-update-score-data
+   x wid pid
+   (lambda (sd)
+     (-snoc (--remove (eq 'score (car it)) sd) `(score . ,score)))
+   `((participant . ,pid)
+     (score . ,score)
+     (sentiment . nil))))
 
 (defun ep-set-sentiment (x wid pid sentiment)
   "Set SENTIMENT for wine in X.
 
 WID is wine id.
 PID is participant id."
-  (ep-update-score-data x wid pid
-                        (lambda (sd)
-                          (setf (alist-get 'sentiment sd) sentiment)
-                          sd)
-                        `((participant . ,pid)
-                          (score . ,nil)
-                          (sentiment . ,sentiment))))
+  (ep-update-score-data
+   x wid pid
+   (lambda (sd)
+     (-snoc (--remove (eq 'sentiment (car it)) sd) `(sentiment . ,sentiment)))
+   `((participant . ,pid)
+     (score . ,nil)
+     (sentiment . ,sentiment))))
 
 ;; * Buffer building blocks
 
