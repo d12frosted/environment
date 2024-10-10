@@ -1374,8 +1374,10 @@ PID is participant id."
                            (list "Final balance" (brb-price-format balance-final))
                            (list "Due" (brb-price-format (alist-get 'due statement)))))))))
         (cl-flet ((kill-statement (&rest _)
-                    (let ((event (ep-event x))
-                          (narrator (vulpea-db-get-by-id brb-event-narrator-id)))
+                    (let* ((event (ep-event x))
+                           (narrator (vulpea-db-get-by-id brb-event-narrator-id))
+                           (use-balance (vulpea-note-meta-get event "use balance"))
+                           (use-balance (and use-balance (string-equal "true" use-balance))))
                       (with-temp-buffer
                         (insert
                          "👋 Thank you for participating in " (vulpea-note-title event) "!\n\n"
@@ -1386,7 +1388,9 @@ PID is participant id."
                                  (vulpea-utils-with-note event
                                    (vulpea-buffer-prop-get "slug")))
                          ".\n\n"
-                         "🧾 This is your receipt:\n\n"
+                         "🧾 This is your receipt"
+                         (if use-balance "" " (balance is ignored this time)")
+                         ":\n\n"
                          listing
                          "\n\n"
                          (if (> total 0)
