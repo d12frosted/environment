@@ -1244,7 +1244,8 @@ PID is participant id."
                          :convive it
                          :code (concat (vulpea-note-id event) ":" (vulpea-note-id it))
                          :amount (alist-get 'total st)
-                         :date (date-to-time date)))))
+                         :date (date-to-time date)
+                         :comment (vulpea-note-title event)))))
               (message "Done."))
             (record-spendings (&rest _)
               (let ((statement (ep-statement x))
