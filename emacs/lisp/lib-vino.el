@@ -133,6 +133,13 @@ FILTER is a `vulpea-note' predicate."
       (vulpea-buffer-meta-sort vino-entry-meta-props-order))))
 
 ;;;###autoload
+(defun vino-entry-assign-extra-meta (entry)
+  "Assign extra meta for vino ENTRY note."
+  (vulpea-utils-with-note entry
+    (vulpea-buffer-meta-set "price date" (format-time-string "%F") 'append)
+    (vulpea-buffer-meta-sort vino-entry-meta-props-order)))
+
+;;;###autoload
 (defun vino-rating-assign-extra-meta (rating extra-data)
   "Assign extra meta for RATING note.
 
