@@ -444,19 +444,23 @@ useful features and properties:
   (when (file-directory-p vulpea-directory)
     (require 'vino)
     (require 'lib-brb)
-    (org-roam-db-sync)
-    (org-roam-update-org-id-locations)
-    (org-persist-gc)
-    (org-persist-write-all)
 
-    ;; process missing files
-    (--each (org-roam-list-files)
-      (unless (vulpea-db-get-by-id (vulpea-db-get-id-by-file it))
-        (message "Found a broken file at %s" it)
-        (org-roam-db-clear-file it)
-        (org-roam-db-update-file it)))
+    (let ((org-element-use-cache nil))
+      (org-roam-db-sync)
+      (org-roam-update-org-id-locations)
+      (org-persist-gc)
+      (org-persist-write-all)
 
-    (message " -> done building vulpea db")))
+      ;; process missing files
+      (--each (org-roam-list-files)
+        (unless (vulpea-db-get-by-id (vulpea-db-get-id-by-file it))
+          (message "Found a broken file at %s" it)
+          (org-roam-db-clear-file it)
+          (org-roam-db-update-file it)))
+
+      ;; (brb-sync-external-data-with-upstream)
+
+      (message " -> done building vulpea db"))))
 
 
 
