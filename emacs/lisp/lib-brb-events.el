@@ -88,7 +88,7 @@ ARG to override and query for specific frame."
 
 (cl-defmethod events-data-reload-events ((x events-data))
   "Reload events in X."
-  (let* ((events (-concat (brb-events-from-range (events-data-range x))
+  (let* ((events (-concat (apply #'brb-events-from-range (events-data-range x))
                           (brb-events-without-date))))
     (setf (events-data-events-all x) events
           (events-data-summary x) nil

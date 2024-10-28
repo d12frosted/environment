@@ -33,29 +33,10 @@
 
 (require 'dash)
 (require 'vulpea)
+(require 'brb)
 (require 'lib-calc)
 (require 'lib-table)
 (require 'lib-string)
-
-;; * Price
-
-(defvar brb-currency "UAH")
-
-(defun brb-price-format (amount)
-  "Format AMOUNT as price."
-  (format
-   "%s %s"
-   (if amount (string-group-number (ceiling amount))
-     "–")
-   brb-currency))
-
-(defun brb-price-to-number (price)
-  "Convert PRICE to number.
-
-Returns nil if PRICE is of different currency than
-`brb-currency'."
-  (when (s-suffix-p brb-currency price)
-    (string-to-number price)))
 
 ;; * QPR
 
@@ -179,37 +160,6 @@ In all cases, except for interactive, only price entries with
           (-filter #'identity)
           (--map (concat "- " (car it) sep (cdr it))))
      "\n")))
-
-(cl-defun brb-format-float (v &key style prec)
-  "Format float V with precision PREC.
-
-STYLE is either bold, del or normal (default)."
-  (declare (indent 1))
-  (let* ((style (or style 'normal))
-         (prec (or prec 2))
-         (fmt (concat "%." (number-to-string prec) "f"))
-         (v (cond
-             ((and (stringp v) (string-empty-p v)) nil)
-             ((stringp v) (string-to-number v))
-             (t v)))
-         (str (if v (format fmt v) "-")))
-    (pcase style
-      (`normal str)
-      (`bold (concat "*" str "*"))
-      (`del (concat "+" str "+")))))
-
-(cl-defun brb-format-float-in (v &key floats fn style prec)
-  "Format float V with precision PREC.
-
-When both FLOATS and FN are provided, FN is called with FLOATS
-and if V equals to result, then it's styled using STYLE."
-  (if v
-      (let* ((floats (-filter #'identity floats))
-             (b (and floats fn (funcall fn floats))))
-        (brb-format-float v
-          :prec prec
-          :style (if (and b (= v b)) style 'normal)))
-    "-"))
 
 ;; * Social links
 
