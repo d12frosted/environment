@@ -34,7 +34,6 @@
 ;;; Code:
 
 (require 'lib-brb)
-(require 'lib-brb-ledger)
 
 
 

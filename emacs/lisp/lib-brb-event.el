@@ -35,7 +35,6 @@
 (require 'vulpea)
 (require 'lib-list)
 (require 'lib-vino-stats)
-(require 'lib-brb-ledger)
 (require 'yaml)
 
 ;; * Configuration

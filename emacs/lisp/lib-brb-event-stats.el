@@ -34,7 +34,6 @@
 (require 'vulpea)
 (require 'lib-vino-stats)
 (require 'lib-hash-table)
-(require 'lib-brb-ledger)
 (require 'lib-brb-event)
 (require 'lib-brb-event-plan)
 

@@ -40,10 +40,6 @@
   :general
   (leader-def
     "v" '(nil :which-key "vino...")
-    "vl" '(nil :which-key "ledger...")
-    "vlo" '(brb-ledger-display :which "display")
-    "vld" '(brb-ledger-display :which "deposit")
-    "vls" '(brb-ledger-display :which "spend")
     "vv" '(vino-entry-find-file :which-key "find vino")
     "vi" '(vino-entry-insert :which-key "insert vino")
     "vIr" '(vino-insert-region :which-key "insert region")
@@ -203,6 +199,16 @@
      (4 . (("SCORE" . 5.0))))
    brb-ledger-file (expand-file-name "barberry-garden.journal"
                                      vulpea-directory)))
+
+(use-package brb
+  :ensure (:host github :repo "d12frosted/brb")
+  :defer t
+  :general
+  (leader-def
+    "vl" '(nil :which-key "ledger...")
+    "vlo" '(brb-ledger-display :which "display")
+    "vld" '(brb-ledger-display :which "deposit")
+    "vls" '(brb-ledger-display :which "spend")))
 
 (provide 'init-vino)
 ;;; init-vino.el ends here

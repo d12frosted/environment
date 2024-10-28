@@ -38,7 +38,6 @@
 (require 'lib-vino-stats)
 (require 'lib-brb-event)
 (require 'lib-brb-event-plan)
-(require 'lib-brb-ledger)
 (require 'lib-hash-table)
 
 ;;;###autoload

@@ -35,7 +35,6 @@
 (require 'lib-plist)
 (require 'lib-vino-stats)
 (require 'lib-brb-event)
-(require 'lib-brb-ledger)
 (require 'lib-hash-table)
 
 ;; * Entry point
