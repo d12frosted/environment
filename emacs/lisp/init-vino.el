@@ -197,9 +197,7 @@
          ("good wine, will drink it again with pleasure" . 2)
          ("average wine, only with parents" . 1)
          ("bad wine, only for enemies" . 0)))))
-     (4 . (("SCORE" . 5.0))))
-   brb-ledger-file (expand-file-name "barberry-garden.journal"
-                                     vulpea-directory)))
+     (4 . (("SCORE" . 5.0))))))
 
 (use-package brb
   :ensure (:host github :repo "d12frosted/brb")
@@ -209,7 +207,9 @@
     "vl" '(nil :which-key "ledger...")
     "vlo" '(brb-ledger-display :which "display")
     "vld" '(brb-ledger-display :which "deposit")
-    "vls" '(brb-ledger-display :which "spend")))
+    "vls" '(brb-ledger-display :which "spend"))
+  :init
+  (setq-default brb-ledger-file (expand-file-name "barberry-garden.journal" vulpea-directory)))
 
 (provide 'init-vino)
 ;;; init-vino.el ends here
