@@ -38,128 +38,40 @@
 (require 'lib-table)
 (require 'lib-string)
 
-;; * QPR
-
-(defun brb-qpr (price score wine)
-  "Calculate QPR.
-
-SCORE is a rational number in [0, 5].
-PRICE is a positive number in `brb-currency'.
-WINE is a note representing wine.
-
-QPR is adjusted to account for VOLUME."
-  (when (and score price (> price 0) (> score 0))
-    (let* ((volume (or (vulpea-note-meta-get wine "volume" 'number) 750))
-           (appellation (vulpea-note-meta-get wine "appellation"))
-           (multiplier (if (and appellation
-                                (seq-contains-p
-                                 '("Champagne AOC")
-                                 (string-match-n 3 org-link-any-re appellation)))
-                           2500
-                         1600)))
-      (setq price (* price (/ 750.0 volume)))
-      (setq p (calc-from-number (float price)))
-      (setq s (calc-from-number (float score)))
-      (calc-to-number
-       (math-div
-        (math-sqrt
-         (math-div
-          (math-mul
-           multiplier
-           (math-mul (math-pow (calcFunc-fact s) (math-add 1 (math-phi)))
-                     (calcFunc-ln (math-add (calc-from-number 1.1) s))))
-          p))
-        100)))))
-
-;; * Candidates for deletion
-
-(defun brb-wine-info (wine list-mode &optional price-mode)
-  "Return info about WINE note.
-
-Used for slides and blog posts.
-
-LIST-MODE is either description or regular.
-
-When WINE entry has multiple price records, only one price is
-returned, but the value depends on PRICE-MODE:
-
-- max-price returns the highest;
-- min-price returns the smallest;
-- avg-price returns the average;
-- pick-price interactively asks user to select.
-
-In all cases, except for interactive, only price entries with
-`brb-currency' are taken into consideration."
-  (let ((sep (pcase list-mode
-               (`description " :: ")
-               (_ ": "))))
-    (string-join
-     (->> (list
-           (cons "producer"
-                 (vulpea-utils-link-make-string
-                  (vulpea-note-meta-get wine "producer" 'note)))
-           (cons "name"
-                 (org-link-make-string
-                  (concat "id:" (vulpea-note-id wine))
-                  (vulpea-note-meta-get wine "name")))
-           (cons "vintage"
-                 (or (vulpea-note-meta-get wine "vintage") "NV"))
-           (when-let ((a (vulpea-note-meta-get wine "base")))
-             (cons "base" a))
-           (when-let ((a (vulpea-note-meta-get wine "bottled")))
-             (cons "bottled" a))
-           (when-let ((a (vulpea-note-meta-get wine "degorgee")))
-             (cons "disgorged" a))
-           (when-let ((a (vulpea-note-meta-get wine "sur lie")))
-             (cons "sur lie" a))
-           (cons "grapes"
-                 (string-join
-                  (-map #'vulpea-utils-link-make-string
-                        (vulpea-note-meta-get-list wine "grapes" 'note))
-                  ", "))
-           (when-let ((a (vulpea-note-meta-get wine "appellation" 'note)))
-             (cons "appellation" (vulpea-utils-link-make-string a)))
-           (when-let ((a (vulpea-note-meta-get wine "region" 'note)))
-             (cons "region" (vulpea-utils-link-make-string a)))
-           (cons "location"
-                 (let* ((a (or (vulpea-note-meta-get wine "appellation" 'note)
-                               (vulpea-note-meta-get wine "region" 'note)))
-                        (b a)
-                        (res nil)
-                        (go t))
-                   (while go
-                     (setq b (or (vulpea-note-meta-get b "parent" 'note)
-                                 (vulpea-note-meta-get b "region" 'note)))
-                     (unless b
-                       (setq go nil
-                             b (vulpea-note-meta-get a "country" 'note)))
-                     (setq res (cons (vulpea-utils-link-make-string b) res)))
-                   (string-join (seq-reverse res) ", ")))
-           (cons "alcohol" (vulpea-note-meta-get wine "alcohol"))
-           (cons "sugar" (or (vulpea-note-meta-get wine "sugar") "N/A"))
-           (cons "price" (let ((prices (vulpea-note-meta-get-list wine "price")))
-                           (if (= 1 (seq-length prices))
-                               (car prices)
-                             (pcase price-mode
-                               (`pick-price (completing-read
-                                             (concat "Price (" (vulpea-note-title wine) "): ")
-                                             prices nil t))
-                               (_ (concat (->> prices
-                                               (--filter (s-suffix-p brb-currency it))
-                                               (-map #'string-to-number)
-                                               (apply #'calcFunc-vec)
-                                               (funcall
-                                                (pcase price-mode
-                                                  (`max-price #'calcFunc-vmax)
-                                                  (`min-price #'calcFunc-vmin)
-                                                  (`avg-price #'calcFunc-vmean)))
-                                               (calc-to-number)
-                                               (floor)
-                                               (number-to-string))
-                                          " UAH")))))))
-          (-filter #'identity)
-          (--map (concat "- " (car it) sep (cdr it))))
-     "\n")))
+(defun brb-qpr-data ()
+  "Test data for QPR experiments."
+  (with-temp-buffer
+    (let ((data (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
+                     (--filter (vulpea-note-meta-get it "price"))
+                     (--filter (s-suffix-p "UAH" (vulpea-note-meta-get it "price")))
+                     (--filter (vulpea-note-meta-get it "rating"))
+                     (--filter (vulpea-note-tagged-all-p it "barberry/public"))
+                     (-filter (lambda (wine)
+                                (--filter
+                                 (string> (vulpea-note-meta-get it "date") "2024-01-01")
+                                 (vulpea-note-meta-get-list wine "ratings" 'note))))
+                     (--map `(("producer" . ,(vulpea-note-title (vulpea-note-meta-get it "producer" 'note)))
+                              ("name" . ,(vulpea-note-meta-get it "name"))
+                              ("wine" . ,(vulpea-note-title it))
+                              ("price" . ,(vulpea-note-meta-get it "price" 'number))
+                              ("rating" . ,(vulpea-note-meta-get it "rating" 'number))
+                              ("appellation" . ,(string-match-n
+                                                 3
+                                                 org-link-any-re
+                                                 (or (vulpea-note-meta-get it "appellation") "")))
+                              ("qpr" . ,(brb-qpr
+                                         (vulpea-note-meta-get it "price" 'number)
+                                         (vulpea-note-meta-get it "rating" 'number)
+                                         it))
+                              ("qpr1" . ,(brb-qpr-1
+                                         (vulpea-note-meta-get it "price" 'number)
+                                         (vulpea-note-meta-get it "rating" 'number)))
+                              ("qpr2" . ,(brb-qpr-2
+                                         (vulpea-note-meta-get it "price" 'number)
+                                         (vulpea-note-meta-get it "rating" 'number))))))))
+      (let ((json-encoding-pretty-print t))
+        (insert (json-encode data)))
+      (kill-new (buffer-substring-no-properties (point-min) (point-max))))))
 
 ;; * Social links
 
@@ -207,6 +119,10 @@ In all cases, except for interactive, only price entries with
   (when-let ((priceNew price)
              (priceOld (or (vulpea-note-meta-get note "price" 'number) 0)))
     (unless (= priceNew priceOld)
+      (message "[%s] price changed: %d -> %d"
+               (vulpea-note-title note)
+               priceOld
+               priceNew)
       (unless (= 0 priceOld)
         (vulpea-buffer-meta-set "price private"
                                 (-uniq

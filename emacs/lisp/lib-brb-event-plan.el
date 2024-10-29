@@ -146,12 +146,7 @@
            (--mapcat (alist-get 'pays-for it))
            (-uniq)
            (--find (string-equal it (vulpea-note-id participant))))
-      (brb-event-empty-statement-for
-       (ep-event x)
-       participant
-       :data (ep-data x)
-       :wines (ep-wines x)
-       :balances (ep-balances x))
+      (brb-event-empty-statement-for (ep-event x) participant (ep-balances x))
     (--reduce-from
      (brb-event-statement-add
       acc
@@ -192,11 +187,7 @@
 
 (defun ep--glass-price (it)
   "Calculate glass price of an extra wine IT."
-  (let* ((price (or (assoc-default 'price-asking it)
-                    (assoc-default 'price-public it)))
-         (ps (assoc-default 'participants it))
-         (glass-price ))
-    (if ps (ceiling (/ price (float (length ps)))) 0)))
+  (brb-event--glass-price it))
 
 (cl-defmethod ep-add-pays-for ((x ep) payer participant)
   "Make PAYER to pay for PARTICIPANT.
