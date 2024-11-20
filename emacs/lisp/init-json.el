@@ -34,9 +34,11 @@
 ;;; Code:
 
 (use-package json-snatcher
+  :ensure t
   :defer t)
 
 (use-package json-mode
+  :ensure t
   :defer t)
 
 (provide 'init-json)
