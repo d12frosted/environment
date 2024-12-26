@@ -464,12 +464,14 @@ BUTTON should be a proper button with following properties:
               (vulpea-utils-with-note note
                 (let* ((meta (vulpea-buffer-meta))
                        (pl (plist-get meta :pl)))
-                  (s-replace-regexp
-                   org-link-any-re
-                   (lambda (txt) (match-string 3 txt))
-                   (buffer-substring-no-properties
-                    (org-element-property :end pl)
-                    (point-max))))))
+                  (->> (buffer-substring-no-properties
+                        (org-element-property :end pl)
+                        (point-max))
+                       (s-replace-regexp
+                        org-link-any-re
+                        (lambda (txt) (match-string 3 txt)))
+                       (s-replace "—" " - ")
+                       (s-replace "’" "'")))))
              (unfill-region pos (point))
              (delete-char -1)
              (insert "\n\n")
