@@ -140,15 +140,9 @@
 
 
 
-;; (use-package bui
-;;   :defer t)
-
-;; (use-package lister
-;;   :elpaca (lister
-;;            :host github
-;;            :repo "publicimageltd/lister"
-;;            :branch "archive-version-0.7.2")
-;;   :defer t)
+(use-package widget-extra
+  :ensure (widget-extra :host github :repo "d12frosted/widget-extra" :wait t)
+  :demand t)
 
 
 
