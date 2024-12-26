@@ -42,6 +42,27 @@
 (require 'request)
 (require 'request-deferred)
 
+;; * average rating
+
+(defun vino-entry-rating-average-method-impl (values note)
+  "Custom implementation of `vino-entry-rating-average-method'.
+
+Allows to override method inside the note using _rating average method_
+meta property.
+
+VALUES are numbers.
+NOTE is wine entry."
+  (when values
+    (pcase (or (vulpea-note-meta-get note "rating average method" 'symbol) 'latest)
+      (`amean (/ (apply #'+ values)
+                 (float (length values))))
+      (`min (-min values))
+      (`max (-max values))
+      (`oldest (car values))
+      (`latest (car (reverse values)))
+      (_ (user-error "Unexpected value of `vino-entry-rating-average-method': %S"
+                     vino-entry-rating-average-method)))))
+
 ;; * insert methods
 
 (defun vino-insert-region-candidates (&optional filter)

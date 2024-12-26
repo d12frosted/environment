@@ -84,7 +84,7 @@
    vino-grape-template '(:file-name "wine/grape/%<%Y%m%d%H%M%S>-${slug}.org"
                          :tags ("barberry/public"))
    vino-origin-select-fn #'vino-origin-select-custom
-   vino-entry-rating-average-method 'latest
+   vino-entry-rating-average-method #'vino-entry-rating-average-method-impl
    vino-entry-meta-props-order '("carbonation"
                                  "carbonation method"
                                  "colour"
@@ -109,6 +109,7 @@
                                  "acquired"
                                  "consumed"
                                  "available"
+                                 "rating average method"
                                  "rating"
                                  "ratings"
                                  "externalId"
