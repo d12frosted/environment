@@ -387,7 +387,7 @@ ARG to override and query for specific frame."
      (propertize (format "Events (%d)" (seq-length events-all)) 'face 'outline-1)
      "\n\n"
      (string-table
-      :header '("date" "event" "folks" "wines" "wavg" "price" "gain")
+      :header '("date" "event" "folks" "wines" "wavg" "price" "qpr")
       :pad-type '(right right left left left left left)
       :width '(nil 30 nil nil nil nil nil nil)
       :header-sep "-"
@@ -411,12 +411,14 @@ ARG to override and query for specific frame."
                                   (format "%.4f" wavg)
                                 "-")
                               (brb-price-format (vulpea-meta-get it "price" 'number))
-                              (if-let* ((statement (gethash (vulpea-note-id it) (events-data-statement x)))
-                                        (gain (assoc-default 'balance-real statement)))
-                                  (if (string> date today)
-                                      "-"
-                                    (brb-ledger--format-amount gain))
-                                "-")))
+                              (assoc-default 'qpr summary)
+                              ;; (if-let* ((statement (gethash (vulpea-note-id it) (events-data-statement x)))
+                              ;;           (gain (assoc-default 'balance-real statement)))
+                              ;;     (if (string> date today)
+                              ;;         "-"
+                              ;;       (brb-ledger--format-amount gain))
+                              ;;   "-")
+                              ))
                       events-all))
               (splitted (--split-with (string< (nth 0 it) today) lines)))
          (-concat (nth 0 splitted)
