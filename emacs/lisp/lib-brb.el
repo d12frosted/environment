@@ -100,7 +100,8 @@
   "Return price for WINE-BUREAU-ID."
   (when-let* ((url (brb-sabotage-link wine-bureau-id))
               (cmd (concat "curl -sL '" url "' | hq '{wine: .col-md-7 | {title: .product-title-page, price: .andro_product-price}}' | jq -r '.wine.price'"))
-              (raw (s-trim (shell-command-to-string cmd)))
+              (cmd (concat "curl -sL '" url "' | hq '{wine: {title: .product-title-page, price: .buy-row-price-text}}' | jq -r '.wine.price'"))
+              (raw (s-replace " " "" (s-trim (shell-command-to-string cmd))))
               (price (string-to-number raw)))
     (when (> price 0)
       (round price))))
