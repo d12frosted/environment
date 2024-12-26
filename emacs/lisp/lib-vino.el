@@ -967,5 +967,21 @@ Assumptions:
     ;; done
     result))
 
+;;;###autoload;
+(defun vino-set-price ()
+  "Interactively set price for a wine at point."
+  (interactive)
+  (let* ((note (vino-entry-note-get-dwim))
+         (price-new (read-string "Price: "))
+         (price-old (vulpea-note-meta-get note "price")))
+    (unless (string-equal price-new price-old)
+      (when price-old
+        (vulpea-buffer-meta-set
+         "price private"
+         (-uniq (cons price-old (vulpea-note-meta-get-list note "price private")))))
+      (vulpea-buffer-meta-set "price" price-new)
+      (vulpea-buffer-meta-set "price date" (format-time-string "%F"))
+      (vulpea-buffer-meta-sort vino-entry-meta-props-order))))
+
 (provide 'lib-vino)
 ;;; lib-vino.el ends here
