@@ -895,7 +895,7 @@ See `vino-origin-select-fn' for more information."
                (setq region note)
              (setq appellation note)
              (setq region (vulpea-note-meta-get note "parent" 'note))))))
-    
+
     (vulpea-buffer-meta-set "country" country)
     (if appellation
         (vulpea-buffer-meta-set "appellation" appellation)
