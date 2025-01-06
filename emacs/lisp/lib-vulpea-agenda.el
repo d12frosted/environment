@@ -168,7 +168,8 @@ Affects the following commands:
       vulpea-agenda-hide-scheduled-and-waiting-next-tasks))))
 
 ;;;###autoload
-(defconst vulpea-agenda-cmd-current-quarter
+(defun vulpea-agenda-cmd-current-quarter ()
+  "Return an agenda command"
   (let ((quarter (vulpea-agenda-current-quarter (current-time))))
     `(tags-todo
       ,quarter
