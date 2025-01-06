@@ -167,6 +167,28 @@ Affects the following commands:
      (org-agenda-todo-ignore-deadlines
       vulpea-agenda-hide-scheduled-and-waiting-next-tasks))))
 
+;;;###autoload
+(defconst vulpea-agenda-cmd-current-quarter
+  (let ((quarter (vulpea-agenda-current-quarter (current-time))))
+    `(tags-todo
+      ,quarter
+      ((org-agenda-overriding-header
+        (concat "Tasks for" ,quarter
+         (if vulpea-agenda-hide-scheduled-and-waiting-next-tasks
+             ""
+           " (including WAITING and SCHEDULED tasks)")))
+       (org-agenda-skip-function 'vulpea-agenda-skip-habits)
+       (org-tags-match-list-sublevels t)
+       (org-agenda-todo-ignore-scheduled
+        vulpea-agenda-hide-scheduled-and-waiting-next-tasks)
+       (org-agenda-todo-ignore-deadlines
+        vulpea-agenda-hide-scheduled-and-waiting-next-tasks)
+       (org-agenda-todo-ignore-with-date
+        vulpea-agenda-hide-scheduled-and-waiting-next-tasks)
+       (org-agenda-tags-todo-honor-ignore-options t)
+       (org-agenda-sorting-strategy
+        '(todo-state-down priority-down effort-up category-keep))))))
+
 
 ;; Utilities to build agenda commands -- skip
 
@@ -346,6 +368,20 @@ Refer to `org-agenda-prefix-format' for more information."
             (s-truncate len (s-pad-right len " " result))
           result))
     (s-repeat (or len 0) " ")))
+
+;;;###autoload
+(defun vulpea-agenda-current-quarter (time)
+  "Return the quarter of the given TIME in the format YYQn (e.g. 25Q1)."
+  (let* ((decoded (decode-time time))
+         (year (nth 5 decoded))
+         (month (nth 4 decoded))
+         (yy (mod year 100))       ;; last two digits of the year
+         (quarter (cond
+                   ((<= month 3)  "Q1")
+                   ((<= month 6)  "Q2")
+                   ((<= month 9)  "Q3")
+                   (t            "Q4"))))
+    (format "%02d%s" yy quarter)))
 
 
 

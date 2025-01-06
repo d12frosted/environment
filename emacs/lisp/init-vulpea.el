@@ -335,7 +335,8 @@
       (,vulpea-agenda-cmd-refile
        ,vulpea-agenda-cmd-today
        ,vulpea-agenda-cmd-focus
-       ,vulpea-agenda-cmd-waiting)
+       ,vulpea-agenda-cmd-waiting
+       ,vulpea-agenda-cmd-current-quarter)
       ((org-agenda-buffer-name vulpea-agenda-main-buffer-name))))))
 
 
