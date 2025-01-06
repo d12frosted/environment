@@ -103,9 +103,9 @@ yabai -m rule --add title="^Settings" manage=off
 # window manipulation
 #
 
-alt - return : yabai -m window --swap first
-alt + shift - space : yabai -m space --balance
-alt - space : yabai-layout-toggle
+lalt - return : yabai -m window --swap first
+lalt + shift - space : yabai -m space --balance
+lalt - space : yabai-layout-toggle
 
 alt - r : yabai -m space --rotate 90
 
