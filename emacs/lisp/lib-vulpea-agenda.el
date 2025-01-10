@@ -169,12 +169,12 @@ Affects the following commands:
 
 ;;;###autoload
 (defun vulpea-agenda-cmd-current-quarter ()
-  "Return an agenda command"
+  "Return an agenda command."
   (let ((quarter (vulpea-agenda-current-quarter (current-time))))
     `(tags-todo
       ,quarter
       ((org-agenda-overriding-header
-        (concat "Tasks for" ,quarter
+        (concat "Tasks for " ,quarter
          (if vulpea-agenda-hide-scheduled-and-waiting-next-tasks
              ""
            " (including WAITING and SCHEDULED tasks)")))
