@@ -665,6 +665,84 @@ PID is participant id."
                  "" "" "" ,(brb-price-format (alist-get 'spending-shared statement)))))))
        "\n\n"))
 
+    ;; EXPENSE WINES
+    (cl-flet ((add-wine (&rest _)
+                (let* ((data (ep-data x))
+                       (wine (vulpea-select-from
+                              "Wine"
+                              (--remove
+                               (-contains-p (--map (alist-get 'id it) (alist-get 'expense-wines data))
+                                            (vulpea-note-id it))
+                               (vulpea-db-query-by-tags-every '("wine" "cellar")))
+                              :require-match t))
+                       (price (read-number "Price: "
+                                           (ignore-errors
+                                             (->> (or (vulpea-note-meta-get-list wine "price private")
+                                                      (vulpea-note-meta-get-list wine "price"))
+                                                  (--filter (s-suffix-p brb-currency it))
+                                                  (-map #'string-to-number)
+                                                  (-min)))))
+                       (amount (read-number "Amount: " 1))
+                       (data (ep-data x)))
+                  (setf (alist-get 'expense-wines data)
+                        (-snoc (alist-get 'expense-wines data)
+                               `((id . ,(vulpea-note-id wine))
+                                 (amount . ,amount)
+                                 (price . ,price))))
+                  (ep-save-data x data)))
+              (remove-item (id)
+                (let ((data (ep-data x)))
+                  (setf (alist-get 'expense-wines data)
+                        (--remove (string-equal id (alist-get 'id it))
+                                  (alist-get 'expense-wines data)))
+                  (ep-save-data x data)))
+              (edit-price (id)
+                (let* ((price (read-number "Price: "))
+                       (data (ep-data x)))
+                  (setf (alist-get 'price
+                                   (--find (string-equal (alist-get 'id it) id)
+                                           (alist-get 'expense-wines data)))
+                        price)
+                  (ep-save-data x data)))
+              (edit-amount (id)
+                (let* ((amount (read-number "Amount: "))
+                       (data (ep-data x)))
+                  (setf (alist-get 'amount
+                                   (--find (string-equal (alist-get 'id it) id)
+                                           (alist-get 'expense-wines data)))
+                        amount)
+                  (ep-save-data x data))))
+      (insert
+       (propertize "⇾ Expense Wines" 'face 'org-level-2) "\n\n"
+       (string-table
+        :header '("" "wine" "price" "amount" "total")
+        :pad-type '(left right left left left)
+        :header-sep "-"
+        :header-sep-start "|-"
+        :header-sep-conj "-+-"
+        :header-sep-end "-|"
+        :row-start "| "
+        :row-end " |"
+        :sep " | "
+        :data
+        (--> (alist-get 'expense-wines (ep-data x))
+             (--map
+              (list
+               (buttonize "[x]" #'remove-item (alist-get 'id it))
+               (vulpea-buttonize (vulpea-db-get-by-id (alist-get 'id it)))
+               (buttonize (brb-price-format (alist-get 'price it)) #'edit-price (alist-get 'id it))
+               (buttonize (number-to-string (alist-get 'amount it)) #'edit-amount (alist-get 'id it))
+               (brb-price-format (ceiling
+                                  (* (alist-get 'amount it)
+                                     (alist-get 'price it)))))
+              it)
+             (-concat
+              it
+              '(sep)
+              `((,(buttonize "[+]" #'add-wine)
+                 "" "" "" ,(brb-price-format (alist-get 'spending-expense-wines statement)))))))
+       "\n\n"))
+
     ;; PARTICIPANTS
     (cl-flet ((add-participant (&rest _)
                 (let ((p (vulpea-select-from
@@ -1262,6 +1340,14 @@ PID is participant id."
                  :date (date-to-time date)
                  :comment (format "%s: shared" (vulpea-note-title event))
                  :code (concat (vulpea-note-id event) ":shared"))
+                (when (> (alist-get 'spending-expense-wines statement) 0)
+                  (brb-ledger-record-txn
+                   :amount (alist-get 'spending-expense-wines statement)
+                   :date (date-to-time date)
+                   :comment (format "%s: expense wines" (vulpea-note-title event))
+                   :code (concat (vulpea-note-id event) ":expense-wines")
+                   :account-to "personal:account"
+                   :account-from "balance:assets"))
                 (brb-ledger-spend
                  :amount (alist-get 'spending-order statement)
                  :date (date-to-time date)
