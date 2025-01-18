@@ -188,6 +188,8 @@ experimental-features = nix-command flakes
       "spotify"
       "vlc"
       "mpv"
+      "stolendata-mpv"
+      "cog"
 
       # extra browsers
       "firefox"
@@ -195,7 +197,6 @@ experimental-features = nix-command flakes
 
       # social
       "telegram"
-      "hey"
 
       # network
       "protonvpn"
