@@ -117,21 +117,24 @@
 
 (cl-defun brb--add-price (note price)
   "Add PRICE to wine NOTE in current buffer."
-  (when-let ((priceNew price)
-             (priceOld (or (vulpea-note-meta-get note "price" 'number) 0)))
-    (unless (= priceNew priceOld)
-      (message "[%s] price changed: %d -> %d"
-               (vulpea-note-title note)
-               priceOld
-               priceNew)
-      (unless (= 0 priceOld)
-        (vulpea-buffer-meta-set "price private"
-                                (-uniq
-                                 (cons (vulpea-note-meta-get note "price")
-                                       (vulpea-note-meta-get-list note "price private")))))
-      (vulpea-buffer-meta-set "price" (format "%d %s" priceNew brb-currency))
-      (vulpea-buffer-meta-set "price date" (format-time-string "%F"))
-      (vulpea-buffer-meta-sort vino-entry-meta-props-order))))
+  (if-let ((priceNew price)
+           (priceOld (or (vulpea-note-meta-get note "price" 'number) 0)))
+      (if (= priceNew priceOld)
+          (message "[%s] price has not changed: %d" (vulpea-note-title note) priceNew)
+        (message "[%s] price changed: %d -> %d"
+                 (vulpea-note-title note)
+                 priceOld
+                 priceNew)
+        (unless (= 0 priceOld)
+          (vulpea-buffer-meta-set "price private"
+                                  (-uniq
+                                   (cons (vulpea-note-meta-get note "price")
+                                         (vulpea-note-meta-get-list note "price private")))))
+        (vulpea-buffer-meta-set "price" (format "%d %s" priceNew brb-currency))
+        (vulpea-buffer-meta-set "price date" (format-time-string "%F"))
+        (vulpea-buffer-meta-sort vino-entry-meta-props-order))
+    (message "[%s] could not extract price"
+             (vulpea-note-title note))))
 
 ;; * External data synchronisation (social links and prices)
 
