@@ -210,7 +210,11 @@
     "vld" '(brb-ledger-display :which "deposit")
     "vls" '(brb-ledger-display :which "spend"))
   :init
-  (setq-default brb-ledger-file (expand-file-name "barberry-garden.journal" vulpea-directory)))
+  (setq-default brb-ledger-file
+                (list (expand-file-name "barberry-garden.journal" vulpea-directory)
+                      (lambda () (expand-file-name (format "barberry-garden-%s.journal"
+                                                           (format-time-string "%Y"))
+                                                   vulpea-directory)))))
 
 (provide 'init-vino)
 ;;; init-vino.el ends here
