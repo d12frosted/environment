@@ -78,6 +78,11 @@
   (run-hooks 'after-init-hook)
   (vulpea-db-build))
 
+(defun -brb-sync ()
+  "Sync brb data."
+  (run-hooks 'after-init-hook)
+  (brb-sync-external-data-with-upstream))
+
 
 
 (defun elpa-load-autoloads-file ()

@@ -28,3 +28,7 @@ test:
 .PHONY: vulpea
 vulpea:
 	eldev -C --unstable exec "(-vulpea-db-bootstrap)"
+
+.PHONY: brb
+brb:
+	eldev -C --unstable exec "(-brb-sync)"

@@ -138,6 +138,7 @@
 
 ;; * External data synchronisation (social links and prices)
 
+;;;###autoload
 (defun brb-sync-external-data-with-upstream ()
   "Sync external data with upstream."
   (interactive)
