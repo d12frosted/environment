@@ -5,6 +5,7 @@ let exe = haskell.lib.justStaticExecutables;
 in [
   # pandoc
   coreutils
+  eask
   ffmpeg
   fish
   fontconfig
@@ -77,7 +78,7 @@ in [
   # all things editor
   (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
   languagetool
-  nixfmt
+  nixfmt-classic
   nixpkgs-fmt
   ormolu
   shellcheck
