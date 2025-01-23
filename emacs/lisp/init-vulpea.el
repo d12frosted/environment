@@ -286,10 +286,9 @@
   :after org
   :init
   (setq-default
-   org-archive-location
-   (concat org-directory ".archive/%s_archive" "::" "datetree/*")
+   org-archive-location "::* Archive"
    org-archive-save-context-info
-   '(time file ltags itags todo category olpath)))
+   '(time ltags itags todo category olpath)))
 
 
 
