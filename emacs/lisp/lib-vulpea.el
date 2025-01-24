@@ -644,5 +644,14 @@ Defaults to `string-from'."
 
 
 
+;;;###autoload
+(defun org-archive-subtree-tidily ()
+  "Archive current heading without changing visibility."
+  (interactive)
+  (org-save-outline-visibility t
+    (org-archive-subtree)))
+
+
+
 (provide 'lib-vulpea)
 ;;; lib-vulpea.el ends here
