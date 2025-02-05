@@ -67,6 +67,7 @@
   (add-hook 'vino-entry-create-handle-functions #'vino-inv-acquire)
   (add-hook 'vino-entry-create-handle-functions #'vino-entry-assign-extra-meta)
   (add-hook 'vino-entry-create-handle-functions #'vino-entry-assign-social-links)
+  (add-hook 'vino-entry-update-handle-functions #'vino-entry-update-qpr)
   (add-hook 'vino-rating-create-handle-functions #'vino-rating-assign-extra-meta)
   (add-hook 'vino-inv-acquire-handle-functions #'vino-inv-acquire-bottle-handler)
   (add-hook 'vino-inv-consume-handle-functions #'vino-inv-consume-bottle-handler)
@@ -110,6 +111,7 @@
                                  "consumed"
                                  "available"
                                  "rating average method"
+                                 "qpr"
                                  "rating"
                                  "ratings"
                                  "externalId"

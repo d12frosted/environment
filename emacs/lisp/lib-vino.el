@@ -44,6 +44,7 @@
 
 ;; * average rating
 
+;;;###autoload
 (defun vino-entry-rating-average-method-impl (values note)
   "Custom implementation of `vino-entry-rating-average-method'.
 
@@ -198,6 +199,16 @@ EXTRA-DATA contains bottle-id."
                                  (vulpea-db-query-by-tags-every '("people"))
                                  :require-match t)
                                 'append)))))
+
+(defun vino-entry-update-qpr (note)
+  "Update QPR in NOTE."
+  (when-let* ((price (brb-price note))
+              (rating (let ((rating (vulpea-note-meta-get note "rating")))
+                        (unless (string= "NA" rating)
+                          (string-to-number rating))))
+              (qpr (when (string= brb-currency (alist-get 'currency price))
+                     (brb-qpr (alist-get 'amount price) rating note))))
+    (vulpea-buffer-meta-set "qpr" qpr)))
 
 ;; * vino-inv hooks
 
