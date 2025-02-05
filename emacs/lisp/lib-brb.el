@@ -142,6 +142,8 @@
 (defun brb-sync-external-data-with-upstream ()
   "Sync external data with upstream."
   (interactive)
+  (vcl-start)
+
   ;; make sure that barberry/public is set on all notes that require it
   (vulpea-utils-process-notes (->> (vulpea-db-query-by-level 0)
                                    (--filter
@@ -202,7 +204,10 @@
   ;; update prices from winewine
   (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
                                    (--filter (vulpea-note-meta-get it "winewine")))
-    (brb--add-price it (brb-winewine-price (vulpea-note-meta-get it "winewine" 'link)))))
+    (brb--add-price it (brb-winewine-price (vulpea-note-meta-get it "winewine" 'link))))
+
+  (vcl-stop)
+  (vcl-report))
 
 (provide 'lib-brb)
 ;;; lib-brb.el ends here
