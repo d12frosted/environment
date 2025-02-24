@@ -50,6 +50,7 @@
 ;; this battle is simple
 (setq-default indent-tabs-mode nil)
 (setq-default tab-always-indent t)
+(setq-default tab-width 2)
 
 
 

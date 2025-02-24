@@ -65,15 +65,6 @@
      (,(regexp-opt sh-builtin-keywords 'words)
       (0 'font-lock-type-face append)))))
 
-(use-package company-shell
-  :ensure t
-  :after sh-script
-  :config
-  (add-to-list 'company-backends '(company-shell
-                                   company-shell-env
-                                   company-fish-shell))
-  (setq company-shell-delete-duplicates t))
-
 (defun sh--match-variables-in-quotes (limit)
   "Search for variables in double-quoted strings.
 Search is bounded by LIMIT."

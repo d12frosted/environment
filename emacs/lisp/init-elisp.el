@@ -38,17 +38,21 @@
 
 
 
-(use-package elsa
-  :ensure t
-  :defer t
-  :disabled)
+(use-package emacs
+  :init
+  (setq-default
+   ;; Enable indentation+completion using the TAB key.
+   ;; `completion-at-point' is often bound to M-TAB.
+   tab-always-indent 'complete
 
-;; (use-package lispy
-;;   :diminish
-;;   :defines (lispy-mode-map)
-;;   :hook ((emacs-lisp-mode . lispy-mode))
-;;   :bind (:map lispy-mode-map
-;;               ("C-a" . beginning-of-line)))
+   ;; Emacs 30 and newer: Disable Ispell completion function.
+   ;; Try `cape-dict' as an alternative.
+   text-mode-ispell-word-completion nil
+
+   ;; Hide commands in M-x which do not apply to the current mode.  Corfu
+   ;; commands are hidden, since they are not used via M-x. This setting is
+   ;; useful beyond Corfu.
+   read-extended-command-predicate #'command-completion-default-include-p))
 
 (use-package eldoc
   :ensure nil
@@ -65,10 +69,6 @@
 (use-package form-feed
   :ensure t
   :hook ((emacs-lisp-mode . form-feed-mode)))
-
-;; (use-package emacsql
-;;   :defer t
-;;   :hook ((emacs-lisp-mode . emacsql-fix-vector-indentation)))
 
 (use-package buttercup
   :ensure t

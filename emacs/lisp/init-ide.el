@@ -30,44 +30,19 @@
 ;;; Commentary:
 ;;
 ;; Emacs can be an IDE. Sort of, thanks to `flycheck', `lsp-mode' and
-;; `company'.
+;; `corfu'.
 ;;
 ;;; Code:
 
 (require 'config-path)
 
-(use-package company
+(use-package corfu
   :ensure t
-  :defer 2
-  :diminish
-  :defines (company-backends)
-  :commands (company-complete-common
-             company-manual-begin
-             company-grab-line
-             global-company-mode)
+  :commands (global-corfu-mode)
   :init
-  (global-company-mode)
+  (global-corfu-mode)
   (setq-default
-   company-minimum-prefix-length 2
-   company-tooltip-limit 14
-   company-tooltip-align-annotations t
-   company-require-match 'never
-   company-global-modes
-   '(not erc-mode message-mode help-mode gud-mode eshell-mode)
-   company-backends '(company-capf)
-   company-frontends
-   '(company-pseudo-tooltip-frontend
-     company-echo-metadata-frontend)))
-
-(use-package company-prescient
-  :ensure t
-  :hook (company-mode . company-prescient-mode)
-  :defines (prescient-save-file)
-  :commands (prescient-persist-mode)
-  :config
-  (setq prescient-save-file (concat path-cache-dir
-                                    "prescient-save.el"))
-  (prescient-persist-mode +1))
+   corfu-cycle t))
 
 (use-package flycheck
   :ensure t
@@ -106,11 +81,6 @@
 
 (use-package posframe
   :ensure t)
-
-;; (use-package dap-mode
-;;   :hook
-;;   (lsp-mode . dap-mode)
-;;   (lsp-mode . dap-ui-mode))
 
 (use-package eglot
   :ensure t
