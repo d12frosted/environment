@@ -110,9 +110,7 @@
   :ensure t
   :defer t
   :hook ((prog-mode . turn-on-diff-hl-mode)
-         (text-mode . turn-on-diff-hl-mode)
-         (vc-dir-mode . turn-on-diff-hl-mode)
-         (dired-mode . diff-hl-dired-mode)))
+         (text-mode . turn-on-diff-hl-mode)))
 
 (defun vcs-quit (&optional _kill-buffer)
   "Clean up magit buffers after quitting `magit-status'.
