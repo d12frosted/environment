@@ -31,6 +31,8 @@
 ;;
 ;;; Code:
 
+(require 'config-vulpea)
+
 (use-package restclient
   :ensure (:host github :repo "pashky/restclient.el" :files ("restclient.el" "restclient-jq.el"))
   :defer t
@@ -45,17 +47,21 @@
   :ensure t
   :defer t
   :config
-  (setq gptel-model "gpt-4o"
-        gptel-directives
-        (let ((file (expand-file-name "gptel-directives.el" vulpea-directory)))
-          (when (file-exists-p file)
-            (with-temp-buffer
-              (condition-case nil
-	          (progn
-	            (insert-file-contents file)
-                    (read (current-buffer)))
-	        (error
-	         (message "Could not read data from %s" file))))))))
+  (gptel-make-anthropic "Claude"
+    :stream t
+    :key (auth-source-pick-first-password :host "api.anthropic.com"))
+  (setq-default
+   gptel-model 'o1
+   gptel-directives
+   (let ((file (expand-file-name "gptel-directives.el" vulpea-directory)))
+     (when (file-exists-p file)
+       (with-temp-buffer
+         (condition-case nil
+	     (progn
+	       (insert-file-contents file)
+               (read (current-buffer)))
+	   (error
+	    (message "Could not read data from %s" file))))))))
 
 (provide 'init-tools)
 ;;; init-tools.el ends here
