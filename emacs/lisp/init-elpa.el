@@ -122,7 +122,6 @@ FN is called with ARGS."
 (use-package s :ensure (:wait t) :demand t)
 (use-package dash :ensure (:wait t) :demand t)
 (use-package emacsql :ensure t)
-(use-package emacsql-sqlite-builtin :ensure t)
 (use-package gcmh
   :ensure t
   :init

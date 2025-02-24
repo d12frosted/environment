@@ -2,7 +2,7 @@
   jq = "${pkgs.jq}/bin/jq";
   open_alacritty = "open -na ${pkgs.alacritty}/Applications/Alacritty.app";
   set_shell = "export SHELL=/run/current-system/sw/bin/fish";
-  open_emacs = "open -na \"$(brew --cellar emacs-plus@30)/30.0.50/Emacs.app\"";
+  open_emacs = "open -na \"$(brew --cellar emacs-plus@30)/30.1/Emacs.app\"";
 in {
   home.file.yabai = {
     executable = true;
