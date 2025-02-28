@@ -197,10 +197,15 @@ experimental-features = nix-command flakes
 
       # social
       "telegram"
+      "element"
 
       # network
       "protonvpn"
       "transmission"
+
+      # fonts
+      "font-iosevka"
+      "font-iosevka-curly"
 
       # other
       "appcleaner"
