@@ -492,5 +492,14 @@
 
 
 
+(use-package org-modern
+  :ensure t
+  :defer t
+  :after org
+  :config
+  (global-org-modern-mode))
+
+
+
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
