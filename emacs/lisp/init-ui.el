@@ -306,7 +306,7 @@
            :fixed-pitch-height 1.0
            :variable-pitch-family "Iosevka Aile" ; "Source Code Pro"
            :variable-pitch-weight normal
-           :variable-pitch-height 1.05
+           :variable-pitch-height 1.0
            :bold-family nil ; use whatever the underlying face has
            :bold-weight bold
            :italic-family nil
@@ -323,7 +323,7 @@
           :header-line-width 4
           :mode-line-width 6
           :tab-width 4
-          :right-divider-width 30
+          :right-divider-width 14
           :scroll-bar-width 8))
   (spacious-padding-mode 1))
 
