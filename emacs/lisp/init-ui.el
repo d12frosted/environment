@@ -298,20 +298,20 @@
            :default-height 180
            :bold-weight extrabold)
           (t ; our shared fallback properties
-           :default-family "Source Code Pro"
+           :default-family "Iosevka Term Curly" ; "Source Code Pro"
            :default-weight normal
            ;; :default-height 100
            :fixed-pitch-family nil ; falls back to :default-family
            :fixed-pitch-weight nil ; falls back to :default-weight
            :fixed-pitch-height 1.0
-           :variable-pitch-family "Source Code Pro"
+           :variable-pitch-family "Iosevka Aile" ; "Source Code Pro"
            :variable-pitch-weight normal
            :variable-pitch-height 1.05
            :bold-family nil ; use whatever the underlying face has
            :bold-weight bold
            :italic-family nil
            :italic-slant italic
-           :line-spacing nil)))
+           :line-spacing 0.2)))
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (fontaine-mode 1))
 
