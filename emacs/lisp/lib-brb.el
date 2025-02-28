@@ -37,6 +37,7 @@
 (require 'lib-calc)
 (require 'lib-table)
 (require 'lib-string)
+(require 'lib-vcl)
 
 (defun brb-qpr-data ()
   "Test data for QPR experiments."
