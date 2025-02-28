@@ -88,8 +88,7 @@ yabai -m rule --add app="^Finder$" title="Copy" manage=off
 yabai -m rule --add app="^NIIMBOT$" manage=off
 yabai -m rule --add app="^System Preferences$" manage=off
 yabai -m rule --add app="^System Settings$" manage=off
-# strangely, dialog windows use AXStandardWindow role instead of AXDialog
-yabai -m rule --add app='^IntelliJ IDEA$' subrole='AXStandardWindow' manage=off
+yabai -m rule --add app='^IntelliJ IDEA$' subrole='AXDialog' manage=off
 yabai -m rule --add title="^Preferences" manage=off
 yabai -m rule --add title="^Settings" manage=off
       '';
