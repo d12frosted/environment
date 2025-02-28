@@ -494,7 +494,6 @@
 
 (use-package org-modern
   :ensure t
-  :defer t
   :after org
   :config
   (global-org-modern-mode))
