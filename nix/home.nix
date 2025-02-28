@@ -9,8 +9,7 @@
 let
   home         = config.home.homeDirectory;
   tmpdir       = "/tmp";
-  emacs-server = "${tmpdir}/emacs-emacs/server";
-  emacsclient  = "emacsclient -s ${emacs-server}";
+  emacsclient  = "emacsclient";
 in {
   home = {
     # These are packages that should always be present in the user
@@ -23,7 +22,6 @@ in {
       ASPELL_CONF           = "dict-dir ${home}/.nix-profile/lib/aspell";
       BASE16_HOME           = "${pkgs.base16-shell}";
       EDITOR                = "${emacsclient}";
-      EMACS_SERVER_FILE     = "${emacs-server}";
       NIX_CONF              = "${config.xdg.configHome}/nix";
       PROJECTS_HOME         = "${home}/Developer";
       XDG_CACHE_HOME        = config.xdg.cacheHome;
