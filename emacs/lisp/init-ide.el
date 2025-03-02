@@ -193,6 +193,21 @@
    lsp-ui-doc-include-signature t
    lsp-ui-doc-position 'at-point))
 
+(use-package combobulate
+  :ensure (:host github :repo "mickeynp/combobulate")
+  :preface
+  (setq combobulate-key-prefix "C-c o")
+  :hook
+  ((python-ts-mode . combobulate-mode)
+   (js-ts-mode . combobulate-mode)
+   (go-mode . go-ts-mode)
+   (html-ts-mode . combobulate-mode)
+   (css-ts-mode . combobulate-mode)
+   (yaml-ts-mode . combobulate-mode)
+   (typescript-ts-mode . combobulate-mode)
+   (json-ts-mode . combobulate-mode)
+   (tsx-ts-mode . combobulate-mode)))
+
 (use-package posframe
   :ensure t)
 
