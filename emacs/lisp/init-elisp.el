@@ -35,6 +35,7 @@
 ;;; Code:
 
 (require 'init-elpa)
+(require 'init-ide)
 
 
 
@@ -53,6 +54,15 @@
    ;; commands are hidden, since they are not used via M-x. This setting is
    ;; useful beyond Corfu.
    read-extended-command-predicate #'command-completion-default-include-p))
+
+(with-eval-after-load 'corfu
+  (add-hook 'eshell-mode-hook
+            (lambda () (setq-local corfu-quit-at-boundary t
+                                   corfu-quit-no-match t
+                                   corfu-auto nil)
+              (corfu-mode))
+            nil
+            t))
 
 (use-package eldoc
   :ensure nil

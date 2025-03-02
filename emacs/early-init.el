@@ -49,5 +49,8 @@
 ;; (add-to-list 'default-frame-alist '(left-fringe . 0))
 ;; (add-to-list 'default-frame-alist '(right-fringe . 0))
 
+;; LSP needs that
+(setenv "LSP_USE_PLISTS" "true")
+
 (provide 'early-init)
 ;;; early-init.el ends here

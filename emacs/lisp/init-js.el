@@ -36,29 +36,26 @@
 ;;; Code:
 
 (require 'init-elpa)
+(require 'init-ide)
 
-(use-package js
-  :ensure nil
-  :defer t
+(use-package lsp-eslint
+  :after lsp-mode)
+
+(use-package lsp-tailwindcss
+  :ensure (:host github :repo "merrickluo/lsp-tailwindcss")
   :init
-  (setq js-indent-level 2))
-
-(use-package typescript-mode
-  :ensure t
-  :defer t
-  :hook ((typescript-mode . lsp))
-  :init
-  (setq typescript-indent-level 2))
-
-(use-package css-mode
-  :ensure nil
-  :defer t
-  :init
-  (setq-default css-indent-offset 2))
-
-(use-package vue-mode
-  :ensure t
-  :defer t)
+  (setq lsp-tailwindcss-add-on-mode t)
+  :config
+  (dolist (tw-major-mode
+           '(css-mode
+             css-ts-mode
+             typescript-mode
+             typescript-ts-mode
+             tsx-ts-mode
+             js2-mode
+             js-ts-mode
+             clojure-mode))
+    (add-to-list 'lsp-tailwindcss-major-modes tw-major-mode)))
 
 (provide 'init-js)
 ;;; init-js.el ends here

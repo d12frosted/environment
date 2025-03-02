@@ -135,6 +135,7 @@
 
 
 (use-package font-lock+
+  :disabled t
   :ensure (font-lock+ :host github :repo "emacsmirror/font-lock-plus" :wait t)
   :demand t)
 
