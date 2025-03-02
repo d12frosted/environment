@@ -33,55 +33,13 @@
 ;;
 ;;; Code:
 
-(advice-add #'flyspell-mode :around #'fun-silent)
-(advice-add #'flyspell-prog-mode :around #'fun-silent)
-
-(use-package ispell
-  :ensure nil
-  :defer t
-  :config
-  (setq ispell-dictionary "english"
-        ispell-program-name (executable-find "aspell"))
-  (when (equal (file-name-base ispell-program-name) "aspell")
-    (add-to-list 'ispell-extra-args "--sug-mode=ultra")))
-
-(use-package flyspell
-  :ensure nil
-  :defer t
-  :diminish flyspell-mode
-  :hook ((text-mode . flyspell-mode)
-         (prog-mode . flyspell-prog-mode)))
-
-(use-package flyspell-lazy
+(use-package jinx
   :ensure t
-  :after flyspell
-  :commands (flyspell-lazy-mode)
-  :defines (flyspell-lazy-idle-seconds
-            flyspell-lazy-window-idle-seconds)
-  :config
-  (setq flyspell-lazy-idle-seconds 1
-        flyspell-lazy-window-idle-seconds 3)
-  (flyspell-lazy-mode +1))
-
-(use-package flyspell-correct
-  :ensure t
-  :defer t
-  :general
-  (leader-def
-    "[s" '(flyspell-correct-wrapper
-           :which-key "Spelling correction")))
-
-(use-package langtool
-  :ensure t
-  :defer t
+  :commands (global-jinx-mode)
+  :bind (("M-$" . jinx-correct)
+         ("C-M-$" . jinx-languages))
   :init
-  (setq langtool-language-tool-server-jar
-        (expand-file-name ".nix-profile/share/languagetool-server.jar" path-home-dir)
-        langtool-server-user-arguments '("-p" "8082"))
-  (setq langtool-language-tool-server-jar nil
-        langtool-server-user-arguments nil)
-  (setq langtool-http-server-host "localhost"
-        langtool-http-server-port 8081))
+  (global-jinx-mode))
 
 (provide 'init-spell)
 ;;; init-spell.el ends here
