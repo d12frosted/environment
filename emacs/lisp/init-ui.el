@@ -34,14 +34,6 @@
 ;;; Code:
 
 (require 'init-env)
-;; (require 'barberry-theme)
-
-(let ((font-size (if env-sys-mac-p 12 10)))
-  (setq-default barberry-theme-font-mono-size font-size
-                barberry-theme-font-sans-size font-size
-                barberry-theme-font-serif-size font-size))
-
-;; (load-theme 'barberry 'no-confirm)
 
 ;; no startup  screen
 (setq inhibit-startup-screen t)
@@ -147,52 +139,6 @@
 
 
 
-(defun ui-display-faces ()
-  "Display core faces in a separate buffer."
-  (interactive)
-  (let ((faces '(barberry-theme-face-mono
-                 barberry-theme-face-sans
-                 barberry-theme-face-serif
-                 barberry-theme-face-default
-                 barberry-theme-face-default-i
-                 barberry-theme-face-subtle
-                 barberry-theme-face-subtle-i
-                 barberry-theme-face-faded
-                 barberry-theme-face-faded-i
-                 barberry-theme-face-salient
-                 barberry-theme-face-salient-i
-                 barberry-theme-face-strong
-                 barberry-theme-face-strong-i
-                 barberry-theme-face-popout
-                 barberry-theme-face-popout-i
-                 barberry-theme-face-critical
-                 barberry-theme-face-critical-i
-                 barberry-theme-face-successful
-                 barberry-theme-face-successful-i
-
-                 cursor
-                 highlight
-
-                 org-level-1
-                 org-level-2
-                 org-level-3
-                 org-level-4
-                 org-level-5
-                 org-level-6
-                 org-level-7
-                 org-level-8)))
-    (buffer-display-result-with "*core-faces*"
-      (string-table
-       :data
-       (seq-map
-        (lambda (face)
-          (list
-           face
-           (propertize
-            "The quick brown fox jumps over the lazy dog"
-            'face face)))
-        faces)))))
-
 (use-package svg-lib
   :ensure (:host github :repo "rougier/svg-lib")
   :defer t
@@ -290,7 +236,7 @@
   :config
   (setq fontaine-presets
         '((regular
-           :default-height 120)
+           :default-height 140)
           (medium
            :default-weight semilight
            :default-height 140)
