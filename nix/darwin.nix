@@ -15,13 +15,13 @@ in {
   time.timeZone = "Europe/Kiev";
 
   nix = {
-    package = pkgs.nixFlakes;
+    enable = true;
+    package = pkgs.nixVersions.stable;
 
     extraOptions = ''
 experimental-features = nix-command flakes
     '';
 
-    configureBuildUsers = true;
     settings = {
       max-jobs = "auto";
       cores = 0;
@@ -136,11 +136,6 @@ experimental-features = nix-command flakes
   programs.gnupg.agent.enable = true;
   programs.gnupg.agent.enableSSHSupport = true;
 
-  services = {
-    nix-daemon.enable = true;
-    activate-system.enable = true;
-  };
-
   launchd.user.agents.vulpea-sync = {
     command = "${xdg_configHome}/bin/vulpea-sync";
     environment = {
@@ -169,6 +164,7 @@ experimental-features = nix-command flakes
       "pandoc"
       "hq"
       "terminal-notifier"
+      "enchant"
       {
         name = "emacs-plus@30";
         args = ["with-dragon-icon"];
@@ -202,10 +198,6 @@ experimental-features = nix-command flakes
       # network
       "protonvpn"
       "transmission"
-
-      # fonts
-      "font-iosevka"
-      "font-iosevka-curly"
 
       # other
       "appcleaner"

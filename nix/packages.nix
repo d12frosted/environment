@@ -43,37 +43,9 @@ in [
   unzip
   wget
 ] ++ lib.optionals stdenv.isDarwin [
-  # xquartz
-  # emacs
   pinentry_mac
   terminal-notifier
   youtube-dl
-] ++ lib.optionals stdenv.isLinux [
-  brave
-  chrony
-  docker
-  dropbox-cli
-  emacsGit
-  entr
-  feh
-  firefox
-  flameshot
-  graphviz
-  htop
-  inxi
-  jd-gui
-  krita
-  mysql80
-  pcmanfm
-  pinta
-  qutebrowser
-  scala
-  scrot
-  slack
-  traceroute
-  tree
-  xdg-utils
-  zip
 ] ++ [
   # all things editor
   (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
@@ -99,17 +71,13 @@ in [
   # fonts
   font-awesome_4
   fontconfig
-  # liberation_ttf
+  (iosevka-bin.override { variant = ""; })
+  (iosevka-bin.override { variant = "Aile"; })
+  (iosevka-bin.override { variant = "Curly"; })
   mplus-outline-fonts.githubRelease
+  roboto-mono
   source-code-pro
   source-sans-pro
   source-serif-pro
   symbola
-  roboto-mono
-] ++ lib.optionals stdenv.isLinux [
-  # work
-  globalprotect-openconnect
-  jetbrains.idea-ultimate
-  networkmanager-openconnect
-  openconnect
 ]
