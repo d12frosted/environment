@@ -43,8 +43,10 @@
 
 (use-package lsp-tailwindcss
   :ensure (:host github :repo "merrickluo/lsp-tailwindcss")
+  :after lsp-mode
   :init
-  (setq lsp-tailwindcss-add-on-mode t)
+  (setq lsp-tailwindcss-add-on-mode t
+        lsp-tailwindcss-server-version "0.14.7")
   :config
   (dolist (tw-major-mode
            '(css-mode
