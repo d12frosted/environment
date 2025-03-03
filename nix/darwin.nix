@@ -7,9 +7,9 @@
 # https://github.com/cmacrae/config/blob/master/modules/macintosh.nix
 
 let
-  fullName       = "Boris Buliga";
-  user           = builtins.getEnv "USER";
-  home           = builtins.getEnv "HOME";
+  fullName = "Boris Buliga";
+  user = builtins.getEnv "USER";
+  home = builtins.getEnv "HOME";
   xdg_configHome = "${home}/.config";
 in {
   time.timeZone = "Europe/Kiev";
@@ -19,7 +19,7 @@ in {
     package = pkgs.nixVersions.stable;
 
     extraOptions = ''
-experimental-features = nix-command flakes
+      experimental-features = nix-command flakes
     '';
 
     settings = {
@@ -45,29 +45,17 @@ experimental-features = nix-command flakes
 
   nixpkgs = {
     config.allowUnfree = true;
-    overlays = [
-      (import ./overlays)
-    ];
+    overlays = [ (import ./overlays) ];
   };
 
-  environment = {
-    shells = [
-      pkgs.fish
-      pkgs.zsh
-      pkgs.bash
-    ];
-  };
+  environment = { shells = [ pkgs.fish pkgs.zsh pkgs.bash ]; };
 
   home-manager = {
     useGlobalPkgs = true;
     users = {
       "${user}" = lib.mkMerge [
         (import ./home.nix)
-        {
-          imports = [
-            ./darwin/yabai.nix
-          ];
-        }
+        { imports = [ ./darwin/yabai.nix ]; }
       ];
     };
   };
@@ -106,13 +94,9 @@ experimental-features = nix-command flakes
         tilesize = 32;
       };
 
-      finder = {
-        AppleShowAllExtensions = true;
-      };
+      finder = { AppleShowAllExtensions = true; };
 
-      trackpad = {
-        Clicking = true;
-      };
+      trackpad = { Clicking = true; };
     };
 
     keyboard = {
@@ -138,16 +122,8 @@ experimental-features = nix-command flakes
 
   launchd.user.agents.vulpea-sync = {
     command = "${xdg_configHome}/bin/vulpea-sync";
-    environment = {
-      VULPEA_DIR = "${home}/vulpea";
-    };
-    path = [
-      pkgs.bash
-      pkgs.git
-      pkgs.git-lfs
-      pkgs.coreutils
-      pkgs.openssh
-    ];
+    environment = { VULPEA_DIR = "${home}/vulpea"; };
+    path = [ pkgs.bash pkgs.git pkgs.git-lfs pkgs.coreutils pkgs.openssh ];
     serviceConfig = {
       StartInterval = 60;
       StandardErrorPath = "${home}/vulpea-sync.log";
@@ -158,7 +134,8 @@ experimental-features = nix-command flakes
   homebrew = {
     enable = true;
     onActivation.autoUpdate = true;
-    onActivation.cleanup = "uninstall"; # removes manually install brews and casks
+    onActivation.cleanup =
+      "uninstall"; # removes manually install brews and casks
     brews = [
       "llvm"
       "pandoc"
@@ -167,16 +144,16 @@ experimental-features = nix-command flakes
       "enchant"
       {
         name = "emacs-plus@30";
-        args = ["with-dragon-icon"];
+        args = [ "with-dragon-icon" ];
         link = true;
       }
       {
         name = "yabai";
-        args = [];
+        args = [ ];
       }
       {
         name = "skhd";
-        args = [];
+        args = [ ];
       }
     ];
     casks = [
