@@ -125,6 +125,7 @@
   :init
   (setq-default
    lsp-session-file (concat path-etc-dir "lsp-session")
+   lsp-server-install-dir (concat path-etc-dir "lsp/")
    lsp-completion-provider :none ; using corfu
    lsp-diagnostics-provider :flycheck
    lsp-log-io nil ; use only for debugging as it drastically affects performance
@@ -222,9 +223,9 @@
   :after lsp
   :config
   (define-key
-    lsp-mode-map
-    [remap xref-find-apropos]
-    #'consult-lsp-symbols))
+   lsp-mode-map
+   [remap xref-find-apropos]
+   #'consult-lsp-symbols))
 
 (defun ide-treesit-install-grammars ()
   "Install Tree-sitter grammars if they are absent."
