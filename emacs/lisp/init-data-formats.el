@@ -48,5 +48,9 @@
   (setq-default yaml-indent-offset tab-width)
   :config)
 
+(use-package protobuf-mode
+  :ensure t
+  :defer t)
+
 (provide 'init-data-formats)
 ;;; init-data-formats.el ends here
