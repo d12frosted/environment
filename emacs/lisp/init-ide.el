@@ -41,6 +41,9 @@
   :commands (global-corfu-mode
              corfu-history-mode
              corfu-popupinfo-mode)
+  :hook ((prog-mode . corfu-mode)
+         (shell-mode . corfu-mode)
+         (eshell-mode . corfu-mode))
   :init
   (setq-default
    corfu-cycle t
@@ -51,7 +54,6 @@
    corfu-preview-current 'insert
    corfu-preselect 'prompt
    corfu-on-exact-match nil)
-  (global-corfu-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode))
 
