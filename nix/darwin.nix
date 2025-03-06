@@ -167,6 +167,7 @@ in {
       # extra browsers
       "firefox"
       "tor-browser"
+      "zen-browser"
 
       # social
       "telegram"
@@ -179,10 +180,12 @@ in {
       # other
       "appcleaner"
       "bartender"
+      "chatgpt"
       "cryptomator"
       "dbeaver-community"
       "figma"
       "flameshot"
+      "proton-pass"
       "raycast"
       "syncthing"
       "warp"
