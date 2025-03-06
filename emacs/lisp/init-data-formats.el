@@ -1,13 +1,13 @@
-;;; init-json.el --- JSON editing support -*- lexical-binding: t; -*-
+;;; init-data-formats.el --- Data Formats -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
+;; Copyright (c) 2025, Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;;
-;; Created: 15 Feb 2021
+;; Created: 06 Mar 2025
 ;;
-;; URL: https://github.com/d12frosted/environment/tree/master/emacs
+;; URL: https://github.com/d12frosted/
 ;;
 ;; License: GPLv3
 ;;
@@ -29,8 +29,6 @@
 ;;
 ;;; Commentary:
 ;;
-;; JSON editing support.
-;;
 ;;; Code:
 
 (use-package json-snatcher
@@ -41,5 +39,14 @@
   :ensure t
   :defer t)
 
-(provide 'init-json)
-;;; init-json.el ends here
+(use-package yaml-mode
+  :ensure t
+  :defer t
+  :hook
+  (yaml-mode . lsp)
+  :init
+  (setq-default yaml-indent-offset tab-width)
+  :config)
+
+(provide 'init-data-formats)
+;;; init-data-formats.el ends here
