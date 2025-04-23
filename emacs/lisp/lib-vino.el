@@ -39,6 +39,7 @@
 (require 'lib-string)
 (require 'vino)
 (require 'vino-inv)
+(require 'brb-ledger)
 (require 'request)
 (require 'request-deferred)
 
