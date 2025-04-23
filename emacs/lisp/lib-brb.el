@@ -34,6 +34,7 @@
 (require 'dash)
 (require 'vulpea)
 (require 'brb)
+(require 'brb-ledger)
 (require 'lib-calc)
 (require 'lib-table)
 (require 'lib-string)
@@ -136,6 +137,38 @@
         (vulpea-buffer-meta-sort vino-entry-meta-props-order))
     (message "[%s] could not extract price"
              (vulpea-note-title note))))
+
+;; * Ledger helpers
+
+(cl-defun brb-ledger-reimburse (&key convive amount date comment)
+  "Reimburse wine spendings.
+
+Basically, pick a CONVIVE that pays for a wine (or whatever) by
+transfering AMOUNT from their balance to personal balance on a DATE with
+some COMMENT. The balance of Barberry Garden decreases."
+  (interactive)
+  (let* ((name (unless convive
+                 (brb-ledget-buffer-convive-at-point)))
+         (convive (or convive
+                      (vulpea-select-from
+                       "People"
+                       (vulpea-db-query-by-tags-some '("people"))
+                       :require-match t
+                       :initial-prompt name)))
+         (amount (or amount (read-number "Amount: ")))
+         (date (or date (org-read-date nil t)))
+         (comment (or comment (read-string "Comment: "))))
+    (brb-ledger-record-txn
+     :amount amount
+     :date date
+     :comment comment
+     :account-to "personal:account"
+     :account-from "balance:assets")
+    (brb-ledger-charge
+     :convive convive
+     :amount amount
+     :date date
+     :comment comment)))
 
 ;; * External data synchronisation (social links and prices)
 
