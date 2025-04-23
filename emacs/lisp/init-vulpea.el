@@ -286,8 +286,8 @@
   :after org
   :general
   (general-define-key
-    :keymaps 'org-mode-map
-    [remap org-archive-subtree] 'org-archive-subtree-tidily)
+   :keymaps 'org-mode-map
+   [remap org-archive-subtree] 'org-archive-subtree-tidily)
   :init
   (setq-default
    org-archive-location "::* Archive"
