@@ -505,6 +505,7 @@
 
 
 (use-package org-modern
+  :disabled
   :ensure t
   :after org
   :config
