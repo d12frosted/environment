@@ -197,7 +197,8 @@
 
 
 
-(use-package rainbow-mode
+(use-package colorful-mode
+  :ensure t
   :defer t)
 
 
