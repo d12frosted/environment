@@ -485,7 +485,7 @@
                                    (url-generic-parse-url url)))
                 (read-string "Description: "))))
             fancy-yank-format-link))
-    (cons "\\(.+\\)"
+    (cons "\\(\\(.\\|\n\\)+\\)"
           '(fancy-yank-extract-regex
             (lambda (text &rest _)
               (s-replace-all
