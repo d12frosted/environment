@@ -1429,7 +1429,7 @@ PID is participant id."
                        :sep "  "
                        :data
                        (-concat
-                        (when (> balance 0)
+                        (unless (= balance 0)
                           (list (list "Starting balance" (brb-price-format balance))))
                         (list
                          (list (format "Event (x%.2f)" (+ 1 (seq-length paysfor)))
@@ -1446,14 +1446,14 @@ PID is participant id."
                          extra)
                         (list
                          (list "Total" (brb-price-format total)))
-                        (when (> balance 0)
+                        (unless (= balance 0)
                           (list
                            (list "Final balance" (brb-price-format balance-final))
                            (list "Due" (brb-price-format (alist-get 'due statement)))))))))
         (cl-flet ((kill-statement (&rest _)
                     (let* ((event (ep-event x))
                            (narrator (vulpea-db-get-by-id brb-event-narrator-id))
-                           (use-balance (vulpea-note-meta-get event "use balance"))
+                           (use-balance (or (vulpea-note-meta-get event "use balance") "true"))
                            (use-balance (and use-balance (string-equal "true" use-balance))))
                       (with-temp-buffer
                         (insert
