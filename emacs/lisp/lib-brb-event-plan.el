@@ -444,10 +444,10 @@ PID is participant id."
                        (pricer (read-number "Price real: "
                                             (ignore-errors
                                               (->> (or (vulpea-note-meta-get-list wine "price private")
-                                                     (vulpea-note-meta-get-list wine "price"))
-                                                 (--filter (s-suffix-p brb-currency it))
-                                                 (-map #'string-to-number)
-                                                 (-min)))))
+                                                       (vulpea-note-meta-get-list wine "price"))
+                                                   (--filter (s-suffix-p brb-currency it))
+                                                   (-map #'string-to-number)
+                                                   (-min)))))
                        (data (ep-data x)))
                   (setf (alist-get 'wines data)
                         (-snoc (alist-get 'wines data) `((id . ,(vulpea-note-id wine))
@@ -844,9 +844,9 @@ PID is participant id."
                     (save-buffer))
                   (ep-reload-event x))))
       (insert (propertize
-             (format "⇾ Waiting list (%d)" (length (ep-waiting x)))
-             'face 'org-level-2)
-            "\n\n")
+               (format "⇾ Waiting list (%d)" (length (ep-waiting x)))
+               'face 'org-level-2)
+              "\n\n")
       (--each (ep-waiting x)
         (insert "- "
                 (buttonize "[x]" #'remove (vulpea-note-id it))
@@ -1306,15 +1306,15 @@ PID is participant id."
               (--each (ep-participants x)
                 (unless (string-equal brb-event-narrator-id (vulpea-note-id it))
                   (let ((st (ep-statement-for x it))
-                      (event (ep-event x))
-                      (date (vulpea-utils-with-note (ep-event x)
-                              (vulpea-buffer-prop-get "date"))))
-                  (brb-ledger-charge
-                         :convive it
-                         :code (concat (vulpea-note-id event) ":" (vulpea-note-id it))
-                         :amount (alist-get 'total st)
-                         :date (date-to-time date)
-                         :comment (vulpea-note-title event)))))
+                        (event (ep-event x))
+                        (date (vulpea-utils-with-note (ep-event x)
+                                (vulpea-buffer-prop-get "date"))))
+                    (brb-ledger-charge
+                     :convive it
+                     :code (concat (vulpea-note-id event) ":" (vulpea-note-id it))
+                     :amount (alist-get 'total st)
+                     :date (date-to-time date)
+                     :comment (vulpea-note-title event)))))
               (message "Done."))
             (record-spendings (&rest _)
               (let ((statement (ep-statement x))
@@ -1356,8 +1356,8 @@ PID is participant id."
                 (message "Done.")))
             (toggle-use-balance (&rest _)
               (let ((use-balance (pcase (or (vulpea-note-meta-get (ep-event x) "use balance") "true")
-                                    ("true" "false")
-                                    (_ "true"))))
+                                   ("true" "false")
+                                   (_ "true"))))
                 (vulpea-utils-with-note (ep-event x)
                   (vulpea-buffer-meta-set "use balance" use-balance 'append)
                   (save-buffer))
@@ -1373,16 +1373,16 @@ PID is participant id."
      "\n\n")
     (insert
      (string-table
-        :row-start "- "
-        :pad-type '(right left)
-        :sep "  "
-        :data
-        `(("Use balance:"
-           ,(buttonize
-             (format "[%s]" (pcase (or (vulpea-note-meta-get (ep-event x) "use balance") "true")
-                             ("true" "X")
-                             (_ " ")))
-             #'toggle-use-balance))))
+      :row-start "- "
+      :pad-type '(right left)
+      :sep "  "
+      :data
+      `(("Use balance:"
+         ,(buttonize
+           (format "[%s]" (pcase (or (vulpea-note-meta-get (ep-event x) "use balance") "true")
+                           ("true" "X")
+                           (_ " ")))
+           #'toggle-use-balance))))
      "\n")
     (insert "\n")
     (--each (ep-participants x)

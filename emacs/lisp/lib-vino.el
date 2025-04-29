@@ -813,9 +813,9 @@ See `vino-origin-select-fn' for more information."
       (when (and appellation (string-equal "Champagne AOC" (vulpea-note-title appellation)))
         (let ((subregions (vulpea-db-query-by-tags-every '("wine" "champagne" "subregion"))))
           (setq subregion (vino--repeat-while
-                             #'vulpea-select-from
-                             #'null
-                             "Subregion (C-g for none)" subregions :require-match t))))
+                           #'vulpea-select-from
+                           #'null
+                           "Subregion (C-g for none)" subregions :require-match t))))
 
       (-filter
        #'cdr

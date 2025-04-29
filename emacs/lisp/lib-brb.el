@@ -66,11 +66,11 @@
                                          (vulpea-note-meta-get it "rating" 'number)
                                          it))
                               ("qpr1" . ,(brb-qpr-1
-                                         (vulpea-note-meta-get it "price" 'number)
-                                         (vulpea-note-meta-get it "rating" 'number)))
+                                          (vulpea-note-meta-get it "price" 'number)
+                                          (vulpea-note-meta-get it "rating" 'number)))
                               ("qpr2" . ,(brb-qpr-2
-                                         (vulpea-note-meta-get it "price" 'number)
-                                         (vulpea-note-meta-get it "rating" 'number))))))))
+                                          (vulpea-note-meta-get it "price" 'number)
+                                          (vulpea-note-meta-get it "rating" 'number))))))))
       (let ((json-encoding-pretty-print t))
         (insert (json-encode data)))
       (kill-new (buffer-substring-no-properties (point-min) (point-max))))))
