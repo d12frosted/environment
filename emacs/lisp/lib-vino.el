@@ -754,8 +754,8 @@ See `vino-origin-select-fn' for more information."
                   (vulpea-db-query-by-tags-every '("wine" "country"))))
         rora region appellation subregion)
     (unless (vulpea-note-id country)
-      (when (y-or-n-p "Country %s doesn not exist. Would you like to create it?")
-        (setq country (vino-country-create (vulpea-note-title country)))))
+      (when (y-or-n-p (format "Country %s doesn not exist. Would you like to create it?" (vulpea-note-title country)))
+        (setq country (vino-country-create :title (vulpea-note-title country)))))
     (when (vulpea-note-id country)
       (pcase (vulpea-note-title country)
         ("Germany"
