@@ -81,11 +81,11 @@ It is relative to `vulpea-directory', unless it is absolute.")
       "* %<%H:%M>\n\n%?"
       :if-new (file+head
                ,(expand-file-name "%<%Y-%m-%d>.org"
-                                  org-roam-dailies-directory)
+                 org-roam-dailies-directory)
                ,(string-join '("#+title: %<%A, %d %B %Y>"
                                "#+filetags: journal"
                                "\n")
-                             "\n"))))))
+                 "\n"))))))
 
 ;;;###autoload
 (defun vulpea-capture-task ()
@@ -131,39 +131,36 @@ Captured area is visited unless NOVISIT is provided."
 
 (defun vulpea-capture-meeting-target ()
   "Return a target for a meeting capture."
-  (let ((person (org-capture-get :meeting-person)))
+  (let* ((person (org-capture-get :meeting-person))
+         (path (if (vulpea-note-id person)
+                   (vulpea-note-path person)
+                 vulpea-capture-inbox-file))
+         (headline "Meetings"))
     ;; unfortunately, I could not find a way to reuse
     ;; `org-capture-set-target-location'
-    (if (vulpea-note-id person)
-        (let ((path (vulpea-note-path person))
-              (headline "Meetings"))
-          (set-buffer (org-capture-target-buffer path))
-          ;; Org expects the target file to be in Org mode, otherwise
-          ;; it throws an error. However, the default notes files
-          ;; should work out of the box. In this case, we switch it to
-          ;; Org mode.
-          (unless (derived-mode-p 'org-mode)
-            (org-display-warning
-             (format
-              "Capture requirement: switching buffer %S to Org mode"
-              (current-buffer)))
-            (org-mode))
-          (org-capture-put-target-region-and-position)
-          (widen)
-          (goto-char (point-min))
-          (if (re-search-forward
-               (format org-complex-heading-regexp-format
-                       (regexp-quote headline))
-               nil t)
-              (beginning-of-line)
-            (goto-char (point-max))
-            (unless (bolp) (insert "\n"))
-            (insert "* " headline "\n")
-            (beginning-of-line 0)))
-      (let ((path vulpea-capture-inbox-file))
-        (set-buffer (org-capture-target-buffer path))
-        (org-capture-put-target-region-and-position)
-        (widen)))))
+    (set-buffer (org-capture-target-buffer path))
+    ;; Org expects the target file to be in Org mode, otherwise
+    ;; it throws an error. However, the default notes files
+    ;; should work out of the box. In this case, we switch it to
+    ;; Org mode.
+    (unless (derived-mode-p 'org-mode)
+      (org-display-warning
+       (format
+        "Capture requirement: switching buffer %S to Org mode"
+        (current-buffer)))
+      (org-mode))
+    (org-capture-put-target-region-and-position)
+    (widen)
+    (goto-char (point-min))
+    (if (re-search-forward
+         (format org-complex-heading-regexp-format
+                 (regexp-quote headline))
+         nil t)
+        (beginning-of-line)
+      (goto-char (point-max))
+      (unless (bolp) (insert "\n"))
+      (insert "* " headline "\n")
+      (beginning-of-line 0))))
 
 (defun vulpea-capture-meeting-template ()
   "Return a template for a meeting capture."
