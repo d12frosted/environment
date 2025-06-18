@@ -315,7 +315,7 @@ theme_guard "system" "build nix environment" && {
       export NIXPKGS_ALLOW_INSECURE=1
       nix build --impure \
         ./#darwinConfigurations."${USER}".system
-      result/sw/bin/darwin-rebuild switch \
+      sudo result/sw/bin/darwin-rebuild switch \
         --impure \
         --flake ./#"${USER}"
     }

@@ -41,12 +41,10 @@ in [
   texlive.combined.scheme-full
   unrar
   unzip
+  uv
   wget
-] ++ lib.optionals stdenv.isDarwin [
-  pinentry_mac
-  terminal-notifier
-  youtube-dl
-] ++ [
+] ++ lib.optionals stdenv.isDarwin [ pinentry_mac terminal-notifier yt-dlp ]
+++ [
   # all things editor
   (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
   languagetool
@@ -56,8 +54,8 @@ in [
   shellcheck
 ] ++ [
   # all things haskell
-  cabal2nix
-  hpack
+  # cabal2nix
+  # hpack
 ] ++ [
   # all things node :fear:
   nodePackages.npm
@@ -67,6 +65,9 @@ in [
   nodePackages.webpack
   nodejs
   yarn
+  (writeShellScriptBin "claude-code" ''
+    ${nodejs}/bin/npx @anthropic-ai/claude-code "$@"
+  '')
 ] ++ [
   # fonts
   font-awesome_4

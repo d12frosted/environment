@@ -61,6 +61,8 @@ in {
   };
 
   system = {
+    primaryUser = "d12frosted";
+
     stateVersion = 4;
 
     defaults = {
@@ -181,6 +183,7 @@ in {
       "appcleaner"
       "bartender"
       "chatgpt"
+      "claude"
       "cryptomator"
       "dbeaver-community"
       "figma"
@@ -189,6 +192,7 @@ in {
       "proton-pass"
       "rancher"
       "raycast"
+      "shottr"
       "syncthing"
       "warp"
       "whisky"
