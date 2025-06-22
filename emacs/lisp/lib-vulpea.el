@@ -243,9 +243,8 @@ Make all the links to this alias point to newly created note."
   "Setup current buffer for notes viewing and editing."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
-    (setq-local tab-width 8)
     (when (s-contains-p "journal" (buffer-file-name))
-      (org-set-startup-visibility))
+      (org-cycle-set-startup-visibility))
     (org-with-point-at 1
       (org-fold-hide-drawer-toggle 'off))
     (vulpea-ensure-filetag)))
@@ -611,7 +610,7 @@ Defaults to `string-from'."
   (when-let ((dir (org-attach-dir)))
     (org-roam-db-query
      [:delete :from attachments
-      :where (= node-id $s1)]
+              :where (= node-id $s1)]
      (vulpea-note-id note))
     (--each (org-attach-file-list dir)
       (org-roam-db-query!
@@ -621,7 +620,7 @@ Defaults to `string-from'."
                 it
                 (vulpea-note-title note) (vulpea-note-id note) (vulpea-note-path note)))
        [:insert :into attachments
-        :values $v1]
+                :values $v1]
        (vector (vulpea-note-id note)
                it
                (s-trim

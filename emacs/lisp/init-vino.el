@@ -71,6 +71,7 @@
   (add-hook 'vino-rating-create-handle-functions #'vino-rating-assign-extra-meta)
   (add-hook 'vino-inv-acquire-handle-functions #'vino-inv-acquire-bottle-handler)
   (add-hook 'vino-inv-consume-handle-functions #'vino-inv-consume-bottle-handler)
+  (add-hook 'vino-inv-edit-location-handle-functions #'vino-inv-edit-location-handler)
   (setq-default
    vino-producer-template '(:file-name "wine/producer/%<%Y%m%d%H%M%S>-${slug}.org"
                             :tags ("barberry/public"))
@@ -86,7 +87,8 @@
                          :tags ("barberry/public"))
    vino-origin-select-fn #'vino-origin-select-custom
    vino-entry-rating-average-method #'vino-entry-rating-average-method-impl
-   vino-entry-meta-props-order '("carbonation"
+   vino-entry-meta-props-order '("update_ts"
+                                 "carbonation"
                                  "carbonation method"
                                  "colour"
                                  "sweetness"

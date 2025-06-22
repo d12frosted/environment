@@ -43,6 +43,15 @@
 (require 'request)
 (require 'request-deferred)
 
+;; * custom updates
+
+;;;###autoload
+(defun vino-entry-tap-change (note)
+  "Tap vino entry NOTE for change."
+  (vulpea-utils-with-note note
+    (vulpea-buffer-meta-set "update_ts" (format-time-string "%F %T:%N" (current-time)))
+    (save-buffer)))
+
 ;; * average rating
 
 ;;;###autoload
@@ -252,6 +261,11 @@ EXTRA-DATA contains bottle-id."
          :account-from "income:sell"
          :amount price)))))
 
+;;;###autoload
+(defun vino-inv-edit-location-handler (bottle)
+  "Handle wine BOTTLE location change."
+  (vino-entry-tap-change (vino-inv-bottle-wine bottle)))
+
 ;; * vino-inv extensions
 
 ;;;###autoload
@@ -279,12 +293,28 @@ EXTRA-DATA contains bottle-id."
                       (--map
                        (list (format "#%s" (vino-inv-bottle-id it))
                              (vino-inv-bottle-purchase-date it)
-                             (concat "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine it)))))))
+                             (concat "https://barberry.io/wines/" (vulpea-note-id (vino-inv-bottle-wine it)))
+                             (vulpea-note-title (vino-inv-bottle-wine it))
+                             (concat
+                              "\""
+                              (string-join
+                               (list (let* ((wine (vino-inv-bottle-wine it))
+                                            (vintage (vulpea-note-meta-get wine "vintage"))
+                                            (base (vulpea-note-meta-get wine "base"))
+                                            (base (when (and base (not (string-equal base "N/A"))) (concat "based on " base)))
+                                            (degorgee (vulpea-note-meta-get wine "degorgee"))
+                                            (degorgee (when (and degorgee (not (string-equal degorgee "N/A"))) (concat "disgorged in " degorgee)))
+                                            (sur-lie (vulpea-note-meta-get wine "sur lie"))
+                                            (sur-lie (when (and sur-lie (not (string-equal sur-lie "N/A"))) (concat sur-lie " sur lie"))))
+                                       (string-join (--filter it (list vintage base degorgee sur-lie)) " · "))
+                                     (string-join (-map #'vulpea-note-title (vulpea-note-meta-get-list (vino-inv-bottle-wine it) "grapes" 'note)) " · "))
+                               "\n")
+                              "\"")))))
            (file (make-temp-file "vino-inv-" nil ".csv"))
            (buffer (find-file-noselect file)))
       (with-current-buffer buffer
         (delete-region (point-min) (point-max))
-        (insert (string-join '("bottle" "date" "url") ",") "\n")
+        (insert (string-join '("bottle" "date" "url" "name" "data") ",") "\n")
         (--each data
           (insert (string-join it ",") "\n")))
       (switch-to-buffer buffer)
@@ -978,22 +1008,6 @@ Assumptions:
 
     ;; done
     result))
-
-;;;###autoload;
-(defun vino-set-price ()
-  "Interactively set price for a wine at point."
-  (interactive)
-  (let* ((note (vino-entry-note-get-dwim))
-         (price-new (read-string "Price: "))
-         (price-old (vulpea-note-meta-get note "price")))
-    (unless (string-equal price-new price-old)
-      (when price-old
-        (vulpea-buffer-meta-set
-         "price private"
-         (-uniq (cons price-old (vulpea-note-meta-get-list note "price private")))))
-      (vulpea-buffer-meta-set "price" price-new)
-      (vulpea-buffer-meta-set "price date" (format-time-string "%F"))
-      (vulpea-buffer-meta-sort vino-entry-meta-props-order))))
 
 (provide 'lib-vino)
 ;;; lib-vino.el ends here
