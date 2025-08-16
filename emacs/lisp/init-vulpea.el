@@ -379,7 +379,8 @@
   (setq-default
    org-download-method 'attach
    org-download-annotate-function (lambda (_) "")
-   org-download-file-format-function #'identity))
+   org-download-file-format-function #'identity
+   org-download-display-inline-images nil))
 
 
 
