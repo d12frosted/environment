@@ -1362,6 +1362,12 @@ PID is participant id."
                   (vulpea-buffer-meta-set "use balance" use-balance 'append)
                   (save-buffer))
                 (ep-reload-event x)))
+            (set-pay-url (&rest _)
+              (let ((url (read-string "URL: ")))
+                (vulpea-utils-with-note (ep-event x)
+                  (vulpea-buffer-meta-set "pay url" url 'append)
+                  (save-buffer))
+                (ep-reload-event x)))
             (set-use-balance ))
     (insert (propertize "Invoices" 'face 'org-level-1) "\n")
     (insert
@@ -1382,7 +1388,13 @@ PID is participant id."
            (format "[%s]" (pcase (or (vulpea-note-meta-get (ep-event x) "use balance") "true")
                            ("true" "X")
                            (_ " ")))
-           #'toggle-use-balance))))
+           #'toggle-use-balance))
+        ("Custom pay URL:"
+         ,(buttonize
+           (format "[%s]" (or (vulpea-note-meta-get (ep-event x) "pay url" 'link) " "))
+           #'set-pay-url))
+        ("Total due:" ,(brb-price-format
+                        (-sum (--map (alist-get 'due (ep-statement-for x it)) (ep-participants x)))))))
      "\n")
     (insert "\n")
     (--each (ep-participants x)
@@ -1454,7 +1466,8 @@ PID is participant id."
                     (let* ((event (ep-event x))
                            (narrator (vulpea-db-get-by-id brb-event-narrator-id))
                            (use-balance (or (vulpea-note-meta-get event "use balance") "true"))
-                           (use-balance (and use-balance (string-equal "true" use-balance))))
+                           (use-balance (and use-balance (string-equal "true" use-balance)))
+                           (pay-link (vulpea-note-meta-get event "pay url" 'link)))
                       (with-temp-buffer
                         (insert
                          "👋 Thank you for participating in " (vulpea-note-title event) "!\n\n"
@@ -1471,11 +1484,15 @@ PID is participant id."
                          listing
                          "\n\n"
                          (if (> total 0)
-                             (concat
-                              "mono: " (vulpea-note-meta-get narrator "cc mono") "\n"
-                              "ukrsib: " (vulpea-note-meta-get narrator "cc ukrsib") "\n"
-                              "web: " (vulpea-note-meta-get narrator "send mono") "\n"
-                              "\n")
+                             (if pay-link
+                                 (concat
+                                  "💸 " pay-link " 💸\n"
+                                  "\n")
+                               (concat
+                                "mono: " (vulpea-note-meta-get narrator "cc mono") "\n"
+                                "ukrsib: " (vulpea-note-meta-get narrator "cc ukrsib") "\n"
+                                "web: " (vulpea-note-meta-get narrator "send mono") "\n"
+                                "\n"))
                            "")
                          "🥂 Cheers! See you next time!"
                          "\n\n"
