@@ -169,6 +169,19 @@ FILTER is a `vulpea-note' predicate."
   "Assign extra meta for vino ENTRY note."
   (vulpea-utils-with-note entry
     (vulpea-buffer-meta-set "price date" (format-time-string "%F") 'append)
+    (let ((importer (completing-read "Importer: "
+                                     '("bandol"
+                                       "barberry"
+                                       "frankwines"
+                                       "roots"
+                                       "silpo"
+                                       "unspecified"
+                                       "vitis"
+                                       "wine.ua"
+                                       "wineBureau"
+                                       "winetime"
+                                       "winewine"))))
+      (vulpea-buffer-meta-set "importer" importer 'append))
     (vulpea-buffer-meta-sort vino-entry-meta-props-order)))
 
 ;;;###autoload
