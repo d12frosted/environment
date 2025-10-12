@@ -53,11 +53,14 @@
     (insert "* " (vulpea-note-title wine) "\n\n")
     (insert "#+begin_src wine\n"
             "id: " (vulpea-note-id wine) "\n"
-            "#+end_src\n")))
+            "#+end_src\n")
+    (funcall #'brb-post-insert-rating t)))
 
 ;;;###autoload
-(defun brb-post-insert-rating ()
-  "Select a wine entry and insert a code block for it."
+(defun brb-post-insert-rating (&optional extra-new-line)
+  "Select a wine entry and insert a code block for it.
+
+Inserts extra new line when EXTRA-NEW-LINE is non-nil."
   (interactive)
   (when-let* ((event (brb-event-in-buffer))
               (date (brb-event-date-string event))
@@ -71,6 +74,8 @@
                         (1 (car ratings))
                         (_ (user-error "Too many ratings on '%s' for '%s'"
                                        datetime (vulpea-note-title wine))))))
+    (when extra-new-line
+      (insert "\n"))
     (insert "#+begin_src review\n"
             "id: " (vulpea-note-id rating) "\n"
             "#+end_src\n")))
