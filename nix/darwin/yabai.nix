@@ -1,178 +1,173 @@
-{ config, pkgs, lib, ... }: let
+{ config, pkgs, lib, ... }:
+let
   jq = "${pkgs.jq}/bin/jq";
   open_alacritty = "open -na ${pkgs.alacritty}/Applications/Alacritty.app";
   set_shell = "export SHELL=/run/current-system/sw/bin/fish";
-  open_emacs = "open -na \"$(brew --cellar emacs-plus@30)/30.1/Emacs.app\"";
+  open_emacs = ''open -na "$(brew --cellar emacs-plus@30)/30.1/Emacs.app"'';
 in {
   home.file.yabai = {
     executable = true;
     target = ".config/yabai/yabairc";
     text = ''
-#!/usr/bin/env sh
+      #!/usr/bin/env sh
 
-# load scripting additions
-yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
-sudo yabai --load-sa
+      # load scripting additions
+      yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+      sudo yabai --load-sa
 
-# config
-yabai -m config layout bsp
-yabai -m config top_padding    8
-yabai -m config bottom_padding 8
-yabai -m config left_padding   8
-yabai -m config right_padding  8
-yabai -m config window_gap     8
-yabai -m config auto_balance off
-yabai -m config split_ratio 0.5
-yabai -m config window_shadow off
+      # config
+      yabai -m config layout bsp
+      yabai -m config top_padding    8
+      yabai -m config bottom_padding 8
+      yabai -m config left_padding   8
+      yabai -m config right_padding  8
+      yabai -m config window_gap     8
+      yabai -m config auto_balance off
+      yabai -m config split_ratio 0.5
+      yabai -m config window_shadow off
 
-yabai -m config insert_feedback_color 0xffd75f5f
-yabai -m config active_window_border_color 0xff37474F
-yabai -m config normal_window_border_color 0xffECEFF1
-yabai -m config window_border_width 2
-yabai -m config window_border_radius 0
-yabai -m config window_border_blur off
-yabai -m config window_border_hidpi on
-yabai -m config window_border off
+      # borders
+      borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
 
-#
-# setup spaces
-#
-for _ in $(yabai -m query --spaces | jq '.[].index | select(. > 6)'); do
-  yabai -m space --destroy 7
-done
+      #
+      # setup spaces
+      #
+      for _ in $(yabai -m query --spaces | jq '.[].index | select(. > 6)'); do
+        yabai -m space --destroy 7
+      done
 
-function setup_space {
-  local idx="$1"
-  local name="$2"
-  local space=
-  echo "setup space $idx : $name"
+      function setup_space {
+        local idx="$1"
+        local name="$2"
+        local space=
+        echo "setup space $idx : $name"
 
-  space=$(yabai -m query --spaces --space "$idx")
-  if [ -z "$space" ]; then
-    yabai -m space --create
-  fi
+        space=$(yabai -m query --spaces --space "$idx")
+        if [ -z "$space" ]; then
+          yabai -m space --create
+        fi
 
-  yabai -m space "$idx" --label "$name"
-}
+        yabai -m space "$idx" --label "$name"
+      }
 
-setup_space 1 emacs
-setup_space 2 code
-setup_space 3 web
-setup_space 4 social
-setup_space 5 media
-setup_space 6 other
+      setup_space 1 emacs
+      setup_space 2 code
+      setup_space 3 web
+      setup_space 4 social
+      setup_space 5 media
+      setup_space 6 other
 
-# custom application runes
-yabai -m rule --add app="^Arc$" title"^$" space=3
-yabai -m rule --add app="Arc.LittleBrowserWindow" manage=off
-yabai -m rule --add app="^Firefox$" space=3
-yabai -m rule --add app="^Safari$" space=3
+      # custom application runes
+      yabai -m rule --add app="^Arc$" title"^$" space=3
+      yabai -m rule --add app="Arc.LittleBrowserWindow" manage=off
+      yabai -m rule --add app="^Firefox$" space=3
+      yabai -m rule --add app="^Safari$" space=3
 
-yabai -m rule --add app="^Discord$" space=4
-yabai -m rule --add app="^Hey$" space=4
-yabai -m rule --add app="^Messages$" space=4
-yabai -m rule --add app="^Slack$" space=4
-yabai -m rule --add app="^Telegram$" space=4
+      yabai -m rule --add app="^Discord$" space=4
+      yabai -m rule --add app="^Hey$" space=4
+      yabai -m rule --add app="^Messages$" space=4
+      yabai -m rule --add app="^Slack$" space=4
+      yabai -m rule --add app="^Telegram$" space=4
 
-yabai -m rule --add app="^Music$" space=5
-yabai -m rule --add app="^Spotify$" space=5
+      yabai -m rule --add app="^Music$" space=5
+      yabai -m rule --add app="^Spotify$" space=5
 
-yabai -m rule --add app="^Transmission$" space=6
-yabai -m rule --add app="^XIV on Mac$" space=6 manage=off
+      yabai -m rule --add app="^Transmission$" space=6
+      yabai -m rule --add app="^XIV on Mac$" space=6 manage=off
 
-yabai -m rule --add app="^Archive Utility$" manage=off
-yabai -m rule --add app="^Calculator$" manage=off
-yabai -m rule --add app="^Cryptomator$" manage=off
-yabai -m rule --add app="^Emacs$" title!='^$' manage=on
-yabai -m rule --add app="^Finder$" title="Copy" manage=off
-yabai -m rule --add app="^NIIMBOT$" manage=off
-yabai -m rule --add app="^System Preferences$" manage=off
-yabai -m rule --add app="^System Settings$" manage=off
-yabai -m rule --add app='^IntelliJ IDEA$' subrole='AXDialog' manage=off
-yabai -m rule --add title="^Preferences" manage=off
-yabai -m rule --add title="^Settings" manage=off
-      '';
+      yabai -m rule --add app="^Archive Utility$" manage=off
+      yabai -m rule --add app="^Calculator$" manage=off
+      yabai -m rule --add app="^Cryptomator$" manage=off
+      yabai -m rule --add app="^Emacs$" title!='^$' manage=on
+      yabai -m rule --add app="^Finder$" title="Copy" manage=off
+      yabai -m rule --add app="^NIIMBOT$" manage=off
+      yabai -m rule --add app="^System Preferences$" manage=off
+      yabai -m rule --add app="^System Settings$" manage=off
+      yabai -m rule --add app='^IntelliJ IDEA$' subrole='AXDialog' manage=off
+      yabai -m rule --add title="^Preferences" manage=off
+      yabai -m rule --add title="^Settings" manage=off
+    '';
   };
 
   home.file.skhd = {
     target = ".config/skhd/skhdrc";
     text = ''
-################################################################################
-#
-# window manipulation
-#
+      ################################################################################
+      #
+      # window manipulation
+      #
 
-lalt - return : yabai -m window --swap first
-lalt + shift - space : yabai -m space --balance
-lalt - space : yabai-layout-toggle
+      lalt - return : yabai -m window --swap first
+      lalt + shift - space : yabai -m space --balance
+      lalt - space : yabai-layout-toggle
 
-alt - r : yabai -m space --rotate 90
+      alt - r : yabai -m space --rotate 90
 
-lalt - j : yabai-window-focus prev
-lalt - k : yabai-window-focus next
+      lalt - j : yabai-window-focus prev
+      lalt - k : yabai-window-focus next
 
-lalt - h : yabai -m window --resize left:-100:0 || yabai -m window --resize right:-100:0
-lalt - l : yabai -m window --resize right:100:0 || yabai -m window --resize left:100:0
-lalt + shift - h : yabai -m window --resize bottom:0:100 || yabai -m window --resize top:0:100
-lalt + shift - l : yabai -m window --resize top:0:-100 || yabai -m window --resize bottom:0:-100
+      lalt - h : yabai -m window --resize left:-100:0 || yabai -m window --resize right:-100:0
+      lalt - l : yabai -m window --resize right:100:0 || yabai -m window --resize left:100:0
+      lalt + shift - h : yabai -m window --resize bottom:0:100 || yabai -m window --resize top:0:100
+      lalt + shift - l : yabai -m window --resize top:0:-100 || yabai -m window --resize bottom:0:-100
 
-################################################################################
-#
-# space manipulation
-#
+      ################################################################################
+      #
+      # space manipulation
+      #
 
-lalt - 1 : yabai -m space --focus 1
-lalt - 2 : yabai -m space --focus 2
-lalt - 3 : yabai -m space --focus 3
-lalt - 4 : yabai -m space --focus 4
-lalt - 5 : yabai -m space --focus 5
-lalt - 6 : yabai -m space --focus 6
+      lalt - 1 : yabai -m space --focus 1
+      lalt - 2 : yabai -m space --focus 2
+      lalt - 3 : yabai -m space --focus 3
+      lalt - 4 : yabai -m space --focus 4
+      lalt - 5 : yabai -m space --focus 5
+      lalt - 6 : yabai -m space --focus 6
 
-lalt + shift - 1 : yabai -m window --space 1; yabai -m space --focus 1
-lalt + shift - 2 : yabai -m window --space 2; yabai -m space --focus 2
-lalt + shift - 3 : yabai -m window --space 3; yabai -m space --focus 3
-lalt + shift - 4 : yabai -m window --space 4; yabai -m space --focus 4
-lalt + shift - 5 : yabai -m window --space 5; yabai -m space --focus 5
-lalt + shift - 6 : yabai -m window --space 6; yabai -m space --focus 6
+      lalt + shift - 1 : yabai -m window --space 1; yabai -m space --focus 1
+      lalt + shift - 2 : yabai -m window --space 2; yabai -m space --focus 2
+      lalt + shift - 3 : yabai -m window --space 3; yabai -m space --focus 3
+      lalt + shift - 4 : yabai -m window --space 4; yabai -m space --focus 4
+      lalt + shift - 5 : yabai -m window --space 5; yabai -m space --focus 5
+      lalt + shift - 6 : yabai -m window --space 6; yabai -m space --focus 6
 
-################################################################################
-#
-# Applications
-#
+      ################################################################################
+      #
+      # Applications
+      #
 
-lalt + shift - c [
-  "emacs" : skhd -k "ctrl - x" ; skhd -k "ctrl - c"
-  *       : skhd -k "cmd - q"
-]
+      lalt + shift - c [
+        "emacs" : skhd -k "ctrl - x" ; skhd -k "ctrl - c"
+        *       : skhd -k "cmd - q"
+      ]
 
-################################################################################
-#
-# Mode for opening applications
-#
+      ################################################################################
+      #
+      # Mode for opening applications
+      #
 
-:: open @
-lalt - o ; open
-open < lalt - o ; default
+      :: open @
+      lalt - o ; open
+      open < lalt - o ; default
 
-# emacs
-open < e : ${set_shell} ; ${open_emacs} ; skhd -k "alt - o"
-open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "alt - o"
+      # emacs
+      open < e : ${set_shell} ; ${open_emacs} ; skhd -k "alt - o"
+      open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "alt - o"
 
-# alacritty
-open < return : ${open_alacritty} ; skhd -k "alt - o"
-alt + shift - return : ${open_alacritty}
+      # alacritty
+      open < return : ${open_alacritty} ; skhd -k "alt - o"
+      alt + shift - return : ${open_alacritty}
 
-################################################################################
-#
-# Blacklist some applications
-#
+      ################################################################################
+      #
+      # Blacklist some applications
+      #
 
-.blacklist [
-  "Final Fantasy XIV"
-  "ffxiv_dx11.exe"
-]
+      .blacklist [
+        "Final Fantasy XIV"
+        "ffxiv_dx11.exe"
+      ]
 
-lalt - f : terminal-notifier -message $SHELL -group system-wide-whisper -timeout 1
-      '';
+      lalt - f : terminal-notifier -message $SHELL -group system-wide-whisper -timeout 1
+    '';
   };
 }

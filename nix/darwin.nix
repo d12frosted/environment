@@ -139,11 +139,12 @@ in {
     onActivation.cleanup =
       "uninstall"; # removes manually install brews and casks
     brews = [
+      "borders"
+      "enchant"
+      "hq"
       "llvm"
       "pandoc"
-      "hq"
       "terminal-notifier"
-      "enchant"
       {
         name = "emacs-plus@30";
         args = [ "with-dragon-icon" ];
@@ -204,6 +205,7 @@ in {
       "homebrew/cask-drivers"
       "homebrew/services"
       "koekeishiya/formulae"
+      "FelixKratz/formulae"
     ];
   };
 

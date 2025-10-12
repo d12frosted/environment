@@ -2,7 +2,7 @@
   terminal = { shell = "/run/current-system/sw/bin/fish"; };
   font = { normal = { family = "Source Code Pro"; }; };
   window = {
-    decorations = "none";
+    decorations = "full";
     option_as_alt = "both";
   };
   env = {
