@@ -1,12 +1,9 @@
 # nix managed
-alacritty/alacritty.yml
 fish/conf.d/
 fish/config.fish
 git
 gnupg
-skhd/skhdrc
 ssh
-yabai/yabairc
 
 # nix-darwin result
 result

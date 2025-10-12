@@ -230,9 +230,6 @@ in {
       font = "Source Code Pro 10";
     };
 
-    alacritty = {
-      enable = true;
-      settings = (import ./alacritty.nix);
-    };
+    alacritty = { enable = true; };
   };
 }

@@ -55,7 +55,7 @@ in {
     users = {
       "${user}" = lib.mkMerge [
         (import ./home.nix)
-        { imports = [ ./darwin/yabai.nix ]; }
+        # { imports = [ ./darwin/yabai.nix ]; }
       ];
     };
   };
