@@ -1,3 +1,0 @@
-.ghci ~/.ghci
-stack-global.yaml ~/.stack/global-project/stack.yaml
-stack.yaml ~/.stack/config.yaml

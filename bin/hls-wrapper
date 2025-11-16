@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-ghc-bootstrap
-exec haskell-language-server-wrapper
