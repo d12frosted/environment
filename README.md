@@ -1,4 +1,3 @@
-#+begin_html
 <h1 align="center">d12frosted environment</h1>
 <p align="center">
   <img width="256px" src="images/d12frosted.png" alt="Banner">
@@ -11,7 +10,6 @@
     <img src="https://github.com/d12frosted/environment/workflows/Emacs/badge.svg" alt="Emacs Status Badge">
   </a>
 </p>
-#+end_html
 
 > *"Of the theme that I have declared to you, I will now that ye make in harmony together a Great Music."*
 > — Eru Ilúvatar, The Silmarillion
