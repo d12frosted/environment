@@ -659,8 +659,15 @@ function task_emacs() {
     info "Running Emacs setup script..."
     if [[ "$DRY_RUN" != "true" ]]; then
       cd "$emacs_dir"
-      if ! bash setup.sh "${EMACS_SUBTASKS[@]}"; then
-        fail "Failed to run Emacs setup script"
+      # Pass subtasks if any were specified, otherwise run default (install)
+      if [[ ${#EMACS_SUBTASKS[@]} -gt 0 ]]; then
+        if ! bash setup.sh "${EMACS_SUBTASKS[@]}"; then
+          fail "Failed to run Emacs setup script"
+        fi
+      else
+        if ! bash setup.sh; then
+          fail "Failed to run Emacs setup script"
+        fi
       fi
     fi
   else
