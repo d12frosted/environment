@@ -109,44 +109,16 @@
 
 (advice-add 'eldev-lint-find-files :around #'eldev-lint-find-files-absolute)
 
-;; In general, `package-lint' is useful. But package prefix naming
-;; policy is not useful for personal configurations. So we chop
-;; lib/init part from the package name.
-;;
-;; And `eval-after-load'. In general it's not a good idea to use it in
-;; packages, but these are configurations.
-(with-eval-after-load 'package-lint
-  (defun package-lint--package-prefix-cleanup (prefix)
-    "Cleanup PREFIX."
-    (replace-regexp-in-string
-     "\\(private\\)-?" ""
-     (replace-regexp-in-string
-      "\\(init\\|lib\\|config\\|compat\\)-?" ""
-      prefix)))
+;; Make project files available during linting so init-XXX can find init-YYY
+(add-hook 'eldev-lint-hook
+          (lambda ()
+            ;; Add lisp/ to load-path so files can find each other
+            (add-to-list 'load-path (expand-file-name "lisp" eldev-project-dir))))
 
-  (defun package-lint--get-package-prefix-wrapper (f &rest args)
-    "Call F with ARGS and cleanup it's result."
-    (let ((r (apply f args)))
-      (package-lint--package-prefix-cleanup r)))
-  (advice-add 'package-lint--get-package-prefix :around #'package-lint--get-package-prefix-wrapper)
-
-  (defun package-lint--check-defs-prefix-wrapper (f prefix definitions)
-    "Call F with cleared PREFIX and DEFINITIONS."
-    (funcall f (package-lint--package-prefix-cleanup prefix) definitions))
-  (advice-add 'package-lint--check-defs-prefix :around #'package-lint--check-defs-prefix-wrapper)
-
-  (defun package-lint--check-defalias-wrapper (f prefix def)
-    "Call F with cleared PREFIX and DEF."
-    (funcall f (package-lint--package-prefix-cleanup prefix) def))
-  (advice-add 'package-lint--check-defalias :around #'package-lint--check-defalias-wrapper)
-
-  (defun package-lint--check-eval-after-load ()
-    "Do nothing.")
-  (defun package-lint--check-autoloads-on-private-functions (&rest _)
-    "Do nothing.")
-
-  (defun package-lint--check-emacs-version (_)
-    "Do nothing"))
+;; Disable package-lint for personal configurations
+;; package-lint is designed for ELPA packages, not personal configs.
+;; We rely on checkdoc and byte-compilation instead.
+(setq eldev-lint-default '(doc re))
 
 ;; Teach linter how to properly indent emacsql vectors.
 (eldev-add-extra-dependencies 'lint 'emacsql)
