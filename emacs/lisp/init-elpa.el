@@ -42,10 +42,7 @@
 
 
 
-(setq package-user-dir
-      (expand-file-name
-       "elpa/"
-       path-packages-dir))
+(setq package-user-dir (expand-file-name "elpa/" path-packages-dir))
 
 
 ;; bootstrap `elpaca'
