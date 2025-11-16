@@ -19,6 +19,7 @@ brew "emacs-plus@30", args: ["with-dragon-icon"]
 brew "eza"
 brew "fd"
 brew "fish"
+brew "fswatch"
 brew "fzf"
 brew "git"
 brew "git-lfs"
