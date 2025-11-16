@@ -4,10 +4,7 @@
 </p>
 <p align="center">
   <a href="https://github.com/d12frosted/environment/actions?query=workflow%3ACI">
-    <img src="https://github.com/d12frosted/environment/workflows/CI/badge.svg" alt="CI Status Badge">
-  </a>
-  <a href="https://github.com/d12frosted/environment/actions?query=workflow%3AEmacs">
-    <img src="https://github.com/d12frosted/environment/workflows/Emacs/badge.svg" alt="Emacs Status Badge">
+    <img src="https://github.com/d12frosted/environment/workflows/ci/badge.svg" alt="CI Status Badge">
   </a>
 </p>
 
