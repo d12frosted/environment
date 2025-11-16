@@ -634,6 +634,19 @@ function task_symlinks() {
         create_symlink "$ssh_file" "$HOME/.ssh/$filename"
       fi
     done
+
+    # Fix SSH file permissions (SSH requires strict permissions)
+    if [[ "$DRY_RUN" != "true" ]]; then
+      info "Fixing SSH permissions..."
+      # Config file must be 600 (rw-------)
+      if [[ -f "$XDG_CONFIG_HOME/ssh/config" ]]; then
+        chmod 600 "$XDG_CONFIG_HOME/ssh/config" 2>/dev/null || true
+      fi
+      # Private keys must be 600
+      find "$XDG_CONFIG_HOME/ssh" -type f -name "id_*" ! -name "*.pub" -exec chmod 600 {} \; 2>/dev/null || true
+      # Public keys can be 644 (rw-r--r--)
+      find "$XDG_CONFIG_HOME/ssh" -type f -name "*.pub" -exec chmod 644 {} \; 2>/dev/null || true
+    fi
   else
     info "No SSH config found at $XDG_CONFIG_HOME/ssh"
   fi
