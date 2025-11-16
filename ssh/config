@@ -1,0 +1,40 @@
+# SSH Configuration
+#
+# This file will be symlinked to ~/.ssh/config
+# Copy this file to config and customize for your hosts
+
+# Global defaults
+Host *
+  # Use SSH protocol 2 only
+  Protocol 2
+
+  # Add SSH keys to agent
+  AddKeysToAgent yes
+
+  # Use macOS keychain for SSH keys (macOS only)
+  UseKeychain yes
+
+  # Prefer ed25519 keys
+  IdentityFile ~/.ssh/id_ed25519
+  IdentityFile ~/.ssh/id_rsa
+
+  # Security settings
+  ServerAliveInterval 60
+  ServerAliveCountMax 3
+
+  # Connection settings
+  Compression yes
+  TCPKeepAlive yes
+
+# Example host configuration
+# Host github.com
+#   User git
+#   IdentityFile ~/.ssh/id_ed25519
+#   IdentitiesOnly yes
+
+# Example host with custom port
+# Host myserver
+#   HostName myserver.example.com
+#   User myuser
+#   Port 2222
+#   IdentityFile ~/.ssh/id_ed25519

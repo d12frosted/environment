@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+# set PATH to include Homebrew and custom scripts
+export PATH=/Users/d12frosted/.config/bin:/Users/d12frosted/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin
+
 # load scripting additions
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 sudo yabai --load-sa

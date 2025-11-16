@@ -1,0 +1,10 @@
+# GnuPG Directory Manager Configuration
+#
+# This file will be symlinked to ~/.gnupg/dirmngr.conf
+# Copy this file to dirmngr.conf and customize for your needs
+
+# Use standard keyserver
+# keyserver hkps://keys.openpgp.org
+
+# Honor HTTP proxy settings
+honor-http-proxy

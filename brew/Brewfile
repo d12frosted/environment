@@ -1,0 +1,89 @@
+# Common packages for all machines
+# This file contains packages that should be installed on every machine
+
+#
+# Taps
+#
+
+tap "d12frosted/emacs-plus"
+tap "koekeishiya/formulae"
+tap "tinted-theming/tinted"
+
+#
+# Essential CLI tools
+#
+
+brew "bat"
+brew "curl"
+brew "emacs-plus@30", args: ["with-dragon-icon"]
+brew "eza"
+brew "fd"
+brew "fish"
+brew "fzf"
+brew "git"
+brew "git-lfs"
+brew "gnupg"
+brew "htop"
+brew "jq"
+brew "llvm"
+brew "openssh"
+brew "pandoc"
+brew "pinentry-mac"
+brew "ripgrep"
+brew "shellcheck"
+brew "starship"
+brew "terminal-notifier"
+brew "tinty"
+brew "wget"
+cask "gpg-suite"
+
+#
+# Window Management
+#
+
+brew "yabai"
+brew "skhd"
+
+#
+# GUI Applications
+#
+
+# multimedia
+cask "spotify"
+cask "stolendata-mpv"
+cask "cog-app"
+
+# browsers
+cask "firefox"
+cask "brave-browser"
+
+# social
+cask "telegram"
+# cask "whatsapp"
+
+# network
+cask "protonvpn"
+cask "transmission"
+
+# system
+cask "alacritty"
+cask "appcleaner"
+cask "bartender"
+cask "chatgpt"
+cask "claude"
+cask "cryptomator"
+cask "dbeaver-community"
+cask "figma"
+cask "maccy"
+cask "proton-pass"
+cask "rancher"
+cask "raycast"
+cask "shottr"
+cask "syncthing-app"
+
+#
+# Fonts
+#
+
+cask "font-source-code-pro"
+cask "font-sauce-code-pro-nerd-font"

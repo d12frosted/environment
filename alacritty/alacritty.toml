@@ -1,12 +1,13 @@
-[env]
-WINIT_X11_SCALE_FACTOR = "1.0"
+[general]
+import = ["~/.config/alacritty/colors.toml"]
 
 [font.normal]
-family = "Source Code Pro"
+family = "SauceCodePro Nerd Font"
+style = "Medium"
 
-[terminal]
-shell = "/run/current-system/sw/bin/fish"
+[terminal.shell]
+program = "/opt/homebrew/bin/fish"
+args = ["--login"]
 
 [window]
-decorations = "transparent"
 option_as_alt = "both"

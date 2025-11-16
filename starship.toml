@@ -1,0 +1,10 @@
+[aws]
+disabled = true
+
+[status]
+disabled = false
+symbol = '✗ '
+
+[cmd_duration]
+show_notifications = true
+min_time_to_notify = 5000

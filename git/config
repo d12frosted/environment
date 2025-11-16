@@ -1,0 +1,13 @@
+[user]
+	name = Boris Buliga
+	email = boris@d12frosted.io
+	signingkey = F9EBF09436BCB50F
+[commit]
+	gpgsign = true
+[tag]
+	gpgSign = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

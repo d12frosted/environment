@@ -56,12 +56,12 @@ lalt - o ; open
 open < lalt - o ; default
 
 # emacs
-open < e : export SHELL=/run/current-system/sw/bin/fish ; open -na "$(brew --cellar emacs-plus@30)/30.1/Emacs.app" ; skhd -k "alt - o"
+open < e : open -na "$(brew --cellar emacs-plus@30)/30.2/Emacs.app" ; skhd -k "alt - o"
 open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "alt - o"
 
 # alacritty
-open < return : open -na /nix/store/hvj702mb0kih62wc8hvaid2kwpb4jbvz-alacritty-0.15.1/Applications/Alacritty.app ; skhd -k "alt - o"
-alt + shift - return : open -na /nix/store/hvj702mb0kih62wc8hvaid2kwpb4jbvz-alacritty-0.15.1/Applications/Alacritty.app
+open < return : open -na /Applications/Alacritty.app ; skhd -k "alt - o"
+alt + shift - return : open -na /Applications/Alacritty.app
 
 ################################################################################
 #

@@ -1,0 +1,4 @@
+# Ignore user and hostname specific Brewfiles
+# (but keep the example templates)
+*.Brewfile
+!example-*.Brewfile
