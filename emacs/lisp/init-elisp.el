@@ -70,7 +70,25 @@
 
 (use-package flycheck-eldev
   :ensure t
-  :after flycheck)
+  :after flycheck
+  :config
+  ;; Setup for Emacs configurations - use regular checker with elpaca load-path
+  (defun my-flycheck-setup ()
+    "Setup flycheck for Emacs configurations."
+    (when-let ((root (locate-dominating-file (or (buffer-file-name) default-directory) "Eldev")))
+      ;; Build load-path with lisp/ and elpaca packages
+      (let* ((elpaca-builds-dir (expand-file-name "elpaca/builds"
+                                                   (bound-and-true-p path-packages-dir)))
+             (elpaca-builds (when (and elpaca-builds-dir
+                                      (file-directory-p elpaca-builds-dir))
+                              (directory-files elpaca-builds-dir t "^[^.]")))
+             (load-paths (append (list (expand-file-name "lisp" root))
+                                elpaca-builds)))
+        (setq-local flycheck-emacs-lisp-load-path load-paths))
+      ;; Disable elisp-eldev since it's not working properly, use regular emacs-lisp
+      (setq-local flycheck-disabled-checkers '(elisp-eldev))))
+
+  (add-hook 'emacs-lisp-mode-hook #'my-flycheck-setup 90))
 
 (use-package page-break-lines
   :disabled
