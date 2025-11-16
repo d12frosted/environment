@@ -1,66 +1,48 @@
-# nix managed
-fish/conf.d/
-fish/config.fish
-git
-gnupg
-ssh
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# nix-darwin result
-result
+# Thumbnails
+._*
 
-# haskell
-# https://github.com/commercialhaskell/stack/blob/master/.gitignore
-.stack-work/
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
 
-# melkor
-melkor.cabal
-.shake/
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
 
-# csharp
-NuGet/
-xbuild/
+# Local configuration
+.envrc
+.direnv/
 
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
 
-# output files
-*.out
+# Org-mode
+.org-id-locations
+*_archive
+ltximg/
 
-# some .mono files
-.mono/
-
-# Ignored applications
-Blue Jeans
-BraveSoftware
-GIMP
-GottCode
-Pinta
-QtProject.conf
-Slack
-StardewValley
-Trolltech.conf
-audacious
-bloop
-brittany
-calibre
-cef_user_data
-chromium
-configstore
-dconf
-enchant
-fisher
-gconf
-google-chrome
-gopass
-gtk-2.0
-gtk-3.0
-libfm
-mc
-menus
-mono.addins
-neofetch
-nvm
-pcmanfm
-procps
-pulse
-spotify
-wix
-yay
+# Private data
+secrets/
+*.secret
+*.gpg
+!*.gpg.example

@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-if [ -f flake.nix ]; then
-  nix develop --command haskell-language-server $@
-else
-  $HOME/.local/bin/haskell-language-server-wrapper $@
-fi

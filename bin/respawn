@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-for PID in `pgrep $1`; do
-  kill ${PID} > /dev/null &
-done
-
-$1 &

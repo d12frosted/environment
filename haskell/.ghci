@@ -1,4 +1,0 @@
-:set prompt "λ "
-:set -XOverloadedStrings
-:set -XDataKinds
-:set -XTypeApplications
