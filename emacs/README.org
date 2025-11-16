@@ -38,14 +38,52 @@ In order to achieve these goals, the following approach is used.
    byte complication, linting, testing and upgrading is managed by [[https://github.com/doublep/eldev/][Eldev]]. See
    [[Eldev][Eldev]] file details.
 3. Life cycle of configurations are install, upgrade and test. They are executed
-   using [[../eru.sh][eru]] script. Read further for details.
-4. [[https://github.com/raxod502/straight.el/][straight.el]] is used as a package manager instead of =package.el= or any other
-   system. While being pretty complex, in my opinion it is the most stable and
-   reliable package manager when it comes to installing and upgrading packages.
+   using =./setup.sh= script (or via [[../bootstrap.sh][eru]] from the dotfiles root). See [[*Installation][Installation]]
+   section for details.
+4. [[https://github.com/progfolio/elpaca][elpaca]] is used as a package manager instead of =package.el=, supporting
+   ELPA, MELPA, and git repositories. It provides fast, reliable package
+   installation with excellent integration with =use-package=.
 5. For better =flycheck= experience there is [[https://github.com/flycheck/flycheck-eldev][flycheck-eldev]].
 6. [[https://github.com/gonewest818/elisp-lint][elisp-lint]] is used for linting, some custom rules applied (for
    =package-lint=).
 7. Testing framework of choice is [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]].
+
+* Installation
+
+** Quick Start
+
+From the dotfiles root:
+
+#+begin_src bash
+# Install Emacs configuration
+./bootstrap.sh install emacs
+
+# Or from the emacs directory directly
+cd emacs
+./setup.sh install
+#+end_src
+
+** Available Commands
+
+The =setup.sh= script supports the following commands:
+
+- =install= - Bootstrap packages and generate autoloads
+- =upgrade= - Upgrade all packages
+- =compile= - Byte-compile all Emacs Lisp files
+- =lint= - Run linters (checkdoc, package-lint, elisp-lint)
+- =test= - Run tests
+- =clean= - Clean generated files
+- =doctor= - Check configuration health
+
+You can also use the Makefile:
+
+#+begin_src bash
+make install    # or just: make
+make compile
+make lint
+make test
+make doctor
+#+end_src
 
 * Interesting modules
 
@@ -90,11 +128,17 @@ Points of interest:
   - =vulpea-capture-meeting-target= - a function that picks a target for
     captured note depending on selection from =vulpea-capture-meeting-template=.
 
-** straight.el with retries
+** Package management with elpaca
 
-I have already covered this topic at [[https://d12frosted.io/posts/2021-04-08-straight-el-retries.html][d12frosted.io]]. In short, =init-elpa.el=
-file contains functionality to automatically retry [[https://github.com/raxod502/straight.el/][raxod502/straight.el]]
-operations. Take a look at definition and usage of =elpa-straight-with-retry=.
+The configuration uses [[https://github.com/progfolio/elpaca][elpaca]] as the package manager, which provides:
+
+- Fast, asynchronous package installation
+- Support for ELPA, MELPA, and git repositories
+- Native =use-package= integration via =elpaca-use-package-mode=
+- Ability to install packages from personal git repositories
+
+The package management is configured in =init-elpa.el= with bootstrap logic in
+the =Eldev= file for CI/development workflows.
 
 ** Managing litnotes
 

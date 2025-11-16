@@ -1,29 +1,37 @@
-.PHONY: clean
-clean:
-	eldev clean all
+.PHONY: help
+help:
+	@./setup.sh --help
+
+.PHONY: install
+install:
+	./setup.sh install
 
 .PHONY: bootstrap
-bootstrap:
-	eldev clean
-	eldev -C --unstable -a -dtT build
+bootstrap: install
 
 .PHONY: upgrade
 upgrade:
-	eldev -C --unstable -a -dtT upgrade
+	./setup.sh upgrade
 
 .PHONY: compile
 compile:
-	eldev clean elc
-	eldev -C --unstable -a -dtT compile
+	./setup.sh compile
 
 .PHONY: lint
 lint:
-	eldev -C --unstable -a -dtT lint
+	./setup.sh lint
 
 .PHONY: test
 test:
-	eldev exec t
-	eldev -C --unstable -a -dtT test
+	./setup.sh test
+
+.PHONY: clean
+clean:
+	./setup.sh clean
+
+.PHONY: doctor
+doctor:
+	./setup.sh doctor
 
 .PHONY: vulpea
 vulpea:
