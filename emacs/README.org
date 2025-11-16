@@ -11,42 +11,22 @@ Personal frustration and the biggest time waster in my life (comparable to video
 games). Please, turn away and retain your sanity. Otherwise you might end up
 tracking all your tasks, notes, thoughts and wine in Emacs.
 
-Aside from configuring Emacs for my personal needs, this project has several
-additional design goals in mind.
+* Overview
 
-1. Byte compilation must succeed without any warnings.
-2. Linter must be happy.
-3. Loading must be fast (less than a second).
-4. Ability to write applications that could be separate packages, but are too
-   personal or too experimental to be worth the effort.
-6. Ability to write and run tests.
+This Emacs configuration is designed with the following goals:
 
-In order to achieve these goals, the following approach is used.
+1. *Fast loading* - Less than a second startup time
+2. *Clean compilation* - Byte compilation succeeds without warnings
+3. *Passing lints* - All code passes style checks
+4. *Testable* - Ability to write and run tests
+5. *Extensible* - Easy to add personal libraries and applications
 
-1. All lisp files are divided into 3 categories.
-   1. =init= files that configure built-in and external packages via
-      =use-package= interface. They must not =require= (e.g. eagerly load) any
-      packages that should be loaded lazily. All =init= files are required by
-      main =init.el=.
-   2. =config= files that contain configuration variables or constants. Safe to
-      =require= from any place as they do not contribute much into loading time.
-   3. =lib= files that should not be required directly from other files and
-      should be loaded via =autoloads= file generated during build process.
-      These files are fine to =require= any packages they need to make byte
-      compiler happy.
-2. All the build process, consisting of bootstrapping, =autoloads= generation,
-   byte complication, linting, testing and upgrading is managed by [[https://github.com/doublep/eldev/][Eldev]]. See
-   [[Eldev][Eldev]] file details.
-3. Life cycle of configurations are install, upgrade and test. They are executed
-   using =./setup.sh= script (or via [[../bootstrap.sh][eru]] from the dotfiles root). See [[*Installation][Installation]]
-   section for details.
-4. [[https://github.com/progfolio/elpaca][elpaca]] is used as a package manager instead of =package.el=, supporting
-   ELPA, MELPA, and git repositories. It provides fast, reliable package
-   installation with excellent integration with =use-package=.
-5. For better =flycheck= experience there is [[https://github.com/flycheck/flycheck-eldev][flycheck-eldev]].
-6. [[https://github.com/gonewest818/elisp-lint][elisp-lint]] is used for linting, some custom rules applied (for
-   =package-lint=).
-7. Testing framework of choice is [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]].
+** Technology Stack
+
+- *Package Manager*: [[https://github.com/progfolio/elpaca][elpaca]] - Fast, asynchronous installation from ELPA, MELPA, and git repositories
+- *Build System*: [[https://github.com/doublep/eldev/][Eldev]] - Manages bootstrapping, autoloads, compilation, linting, and testing
+- *Setup Script*: =./setup.sh= - Unified interface for all operations
+- *Testing Framework*: [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]]
 
 * Installation
 
@@ -55,7 +35,7 @@ In order to achieve these goals, the following approach is used.
 From the dotfiles root:
 
 #+begin_src bash
-# Install Emacs configuration
+# Install Emacs configuration and all packages
 ./bootstrap.sh install emacs
 
 # Or from the emacs directory directly
@@ -63,252 +43,245 @@ cd emacs
 ./setup.sh install
 #+end_src
 
+** Requirements
+
+- Emacs 29.1 or higher
+- Eldev (automatically installed by =setup.sh= if not present)
+
 ** Available Commands
 
-The =setup.sh= script supports the following commands:
+The =setup.sh= script provides:
 
-- =install= - Bootstrap packages and generate autoloads
-- =upgrade= - Upgrade all packages
-- =compile= - Byte-compile all Emacs Lisp files
-- =lint= - Run linters (checkdoc, package-lint, elisp-lint)
-- =test= - Run tests
-- =clean= - Clean generated files
-- =doctor= - Check configuration health
-
-You can also use the Makefile:
+| Command   | Description                              |
+|-----------+------------------------------------------|
+| install   | Bootstrap packages and generate autoloads |
+| upgrade   | Upgrade all packages                     |
+| compile   | Byte-compile all Emacs Lisp files        |
+| lint      | Run linters (checkdoc, regexp)           |
+| test      | Run test suite                           |
+| clean     | Remove generated files                   |
+| doctor    | Health check for configuration           |
 
 #+begin_src bash
-make install    # or just: make
-make compile
+# Multiple commands can be chained
+./setup.sh compile lint test
+
+# Or use make
+make install
 make lint
-make test
 make doctor
 #+end_src
 
-* Development Workflow
+* Configuration Structure
 
 ** File Organization
 
-The configuration follows a clear structure to maintain fast loading and clean separation:
+All configuration files live in =lisp/= and are organized into three categories:
 
-*** File Categories
+*** =init-*.el= - Feature Configurations
 
-1. *=init-*.el=* files - Feature configurations
-   - Configure built-in and external packages via =use-package=
-   - Must not eagerly load packages that should be lazy-loaded
-   - All =init= files are required by =init.el=
-   - Example: =init-editor.el=, =init-ui.el=
+Configure built-in and external packages via =use-package=.
 
-2. *=config-*.el=* files - Configuration constants
-   - Contain variables and constants
-   - Safe to require from anywhere (minimal loading time impact)
-   - Example: =config-path.el=
+- Must avoid eagerly loading packages (use lazy loading)
+- All =init= files are required by =init.el=
+- Can require other =init= and =config= files
+- Examples: =init-editor.el=, =init-ui.el=, =init-org.el=
 
-3. *=lib-*.el=* files - Autoloaded libraries
-   - Should not be required directly
-   - Loaded via autoloads generated during build
-   - Can freely require packages for byte-compilation
-   - Example: =lib-vulpea.el=, =lib-vino.el=
+*** =config-*.el= - Configuration Constants
 
-*** Dependencies Between Files
+Contain variables and constants.
 
-- =init-*.el= can require other =init-*.el= files
-- =init-*.el= can require =config-*.el= files
-- =lib-*.el= functions are available via autoloads
-- All files have access to =lisp/= directory in load-path
+- Safe to require from anywhere (minimal loading impact)
+- No package loading or heavy computation
+- Example: =config-path.el=
+
+*** =lib-*.el= - Autoloaded Libraries
+
+Personal libraries and utilities.
+
+- *Should not* be required directly
+- Loaded automatically via generated autoloads
+- Can freely require packages for byte-compilation
+- Public functions marked with =;;;###autoload=
+- Examples: =lib-vulpea.el=, =lib-vino.el=, =lib-brb.el=
+
+** Example: Creating a Library
+
+#+begin_src emacs-lisp
+;;; lib-my-feature.el --- My custom feature -*- lexical-binding: t; -*-
+
+(require 'dash)  ; OK to require dependencies in lib files
+
+;;;###autoload
+(defun my-feature-do-something ()
+  "This function is automatically available everywhere."
+  (interactive)
+  (-map #'upcase '("hello" "world")))
+
+(provide 'lib-my-feature)
+;;; lib-my-feature.el ends here
+#+end_src
+
+After creating the file:
+1. Run =./setup.sh install= to regenerate autoloads
+2. Function =my-feature-do-something= is now available globally
+
+* Development Workflow
 
 ** Eldev Integration
 
-[[https://github.com/doublep/eldev/][Eldev]] manages the entire development lifecycle. The =Eldev= file in the project root configures:
+[[https://github.com/doublep/eldev/][Eldev]] manages the development lifecycle. The =Eldev= file configures:
 
 *** Build Process
 
-- Bootstraps elpaca and installs all packages
-- Generates autoloads from =lib-*.el= files
-- Byte-compiles all Emacs Lisp files with warnings as errors
+#+begin_src bash
+./setup.sh install
+#+end_src
+
+1. Bootstraps elpaca
+2. Installs all packages via =use-package= declarations
+3. Generates =init-autoloads.el= from =lib-*.el= files
+4. Byte-compiles with warnings as errors
 
 *** Linting
 
-Linting is configured to work with personal configurations (not ELPA packages):
+#+begin_src bash
+./setup.sh lint
+#+end_src
 
-- *checkdoc* - Documentation style checking
-- *regexp linter* - Regular expression validation
-- *package-lint* is disabled (designed for packages, not configs)
-- Custom =.dir-locals.el= with =byte-compile-error-on-warn=
+Runs two linters:
+- *checkdoc* - Documentation style (docstrings, formatting)
+- *regexp* - Regular expression validation
 
-The linter understands the project structure:
-- =init-*.el= files can find each other via =lisp/= in load-path
-- =lib-*.el= files are checked without prefix requirements
+*Note*: =package-lint= is deliberately disabled because it's designed for ELPA
+packages, not personal configurations. It expects package.el conventions like
+prefix naming that don't make sense here.
+
+Configuration details:
+- =.dir-locals.el= enforces =byte-compile-error-on-warn=
+- =lisp/= directory is added to load-path during linting
+- =init-*.el= files can find each other without errors
 - Non-standard separators allowed (e.g., =vino/germany/wein=)
 
 *** Testing
 
-Uses [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]] as the testing framework:
-
 #+begin_src bash
 ./setup.sh test
-# or
-make test
 #+end_src
 
-** In-Editor Experience
+Runs [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]] test suite.
 
-*** Flycheck Integration
+** In-Editor Flycheck
 
-The configuration includes smart flycheck integration that:
+The configuration includes smart flycheck integration:
 
-1. *Detects Eldev projects* - Automatically when =Eldev= file is present
-2. *Adds project load-path* - =lisp/= directory is available
-3. *Includes elpaca packages* - All installed packages are in load-path
-4. *No false errors* - =init-*.el= can find each other, =lib-*.el= can find dependencies
+- *Auto-detects Eldev projects* via =Eldev= file
+- *Adds =lisp/= to load-path* so =init-*.el= files can find each other
+- *Includes elpaca packages* so =lib-*.el= files can find dependencies
 
-This means when editing:
-- =init-ide.el= can =(require 'config-path)= without errors
-- =lib-brb.el= can =(require 'dash)= without errors
-- =lib-vulpea.el= can use =org-roam= functions without errors
+This eliminates false errors:
+- =(require 'config-path)= in =init-ide.el= ✓
+- =(require 'dash)= in =lib-brb.el= ✓
+- Using =org-roam= functions in =lib-vulpea.el= ✓
 
-*** Autoloads
+The flycheck checker used is the standard =emacs-lisp= checker with an enhanced
+load-path, not =emacs-lisp-eldev= (which doesn't work well with elpaca-based
+configurations).
 
-Functions in =lib-*.el= files marked with =;;;###autoload= are automatically available:
+** Common Tasks
 
-#+begin_src emacs-lisp
-;;;###autoload
-(defun my-public-function ()
-  "This function is available without requiring the file."
-  ...)
-#+end_src
-
-Autoloads are regenerated by:
-- =./setup.sh install= - During installation
-- =make bootstrap= - Via Eldev build process
-
-** Common Workflows
-
-*** Adding a New Package
+*** Adding a Package
 
 #+begin_src emacs-lisp
-;; In init-*.el
-(use-package new-package
+;; In any init-*.el file
+(use-package helpful
   :ensure t
-  :config
-  (setq new-package-option t))
+  :bind (("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)))
 #+end_src
 
-*** Creating a New Library
-
-1. Create =lib-my-feature.el= in =lisp/=
-2. Add =;;;###autoload= to public functions
-3. Run =./setup.sh install= to regenerate autoloads
-4. Functions are now available globally
+Restart Emacs or =M-x eval-buffer=.
 
 *** Verifying Changes
 
 #+begin_src bash
-# Check compilation
+# Recommended workflow
+./setup.sh compile lint test
+
+# Just compilation
 ./setup.sh compile
 
-# Run linters
-./setup.sh lint
-
-# Run tests
-./setup.sh test
-
-# Or all at once
-./setup.sh compile lint test
-#+end_src
-
-*** Health Check
-
-#+begin_src bash
+# Health check
 ./setup.sh doctor
 #+end_src
 
-Checks:
-- Autoloads file exists
-- Elpaca is installed
-- Eldev is available
-- Emacs version is compatible
-- Critical files are present
+*** Upgrading Packages
+
+#+begin_src bash
+# Via setup script
+./setup.sh upgrade
+
+# Via eru
+./bootstrap.sh upgrade emacs
+#+end_src
 
 ** Troubleshooting
 
-*** Flycheck shows "Cannot open load file"
+*** Flycheck: "Cannot open load file"
 
-1. Ensure packages are installed: =./setup.sh install=
-2. Restart Emacs to reload flycheck configuration
-3. Check =M-x flycheck-verify-setup= for diagnostics
+1. Install packages: =./setup.sh install=
+2. Restart Emacs
+3. Check diagnostics: =M-x flycheck-verify-setup=
 
-*** Byte-compilation fails
+*** Byte-compilation Fails
 
-1. Check if autoloads are generated: =ls lisp/init-autoloads.el=
-2. Ensure all dependencies in =use-package= declarations have =:ensure t=
-3. Run =./setup.sh clean install= for a fresh build
+1. Verify autoloads exist: =ls lisp/init-autoloads.el=
+2. Check =use-package= declarations have =:ensure t=
+3. Clean rebuild: =./setup.sh clean install=
 
-*** Linter shows errors
+*** Linter Reports Errors
 
 The linter only checks:
 - Documentation style (checkdoc)
 - Regexp syntax
-- *Not* package.el conventions (prefix naming, etc.)
 
-If you see package-lint-style errors, they should have been disabled.
+It does *not* check:
+- Package.el naming conventions (=package-lint= is disabled)
+- Prefix requirements
+- File headers
 
-* Interesting modules
+If you see package-lint-style errors about prefixes or naming, something is
+misconfigured.
 
-/Section is under construction. Please return in -2147483648 seconds./
+* Interesting Features
 
-** Dynamic and fast agenda
+** Dynamic Org Agenda
 
-At the moment of writing this, I already have more than 10k org files. Most of
-them do not contain any TODOs. When =org-agenda= is built, it needs to traverse
-all these files. So the idea is to build =org-agenda-files= dynamically before
-=org-agenda= is executed by marking files containing TODOs on file change and by
-using wonderfully fast query capabilities of =org-roam=. You can read more at
-[[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][d12frosted.io]].
+With 10k+ org files, building =org-agenda-files= by scanning all files is slow.
+This configuration dynamically builds the agenda file list by:
 
-Points of interest:
+1. Marking files with =project= tag when they contain TODOs
+2. Querying only tagged files using =org-roam= database
+3. Updating =org-agenda-files= before running agenda
 
-- =lib-vulpea-agenda.el=
-  - =vulpea-agenda-files-update= - a function that updates =org-agenda-files= to
-    contain only files marked with =project= tag (e.g. containing TODOs).
-- =lib-vulpea.el=
-  - =vulpea-project-files= - a function to query the list of files marked with
-    =project= tag (e.g. containing TODOs).
-  - =vulpea-ensure-filetag= - a function that adds or removes =project= tag from
-    current buffer depending on existence or absence of TODOs.
-  - =vulpea-setup-buffer= and =vulpea-pre-save-hook= - functions that execute
-    =vulpea-ensure-filetag=, used as hooks.
-- =init-vulpea.el= - module that sets up all hooks (e.g. =org-agenda=,
-  =before-save= and =window-buffer-change-functions=).
+Read more at [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][d12frosted.io]].
 
-** Almost intelligent meeting capture flow
+*Implementation*:
+- =lib-vulpea-agenda.el= - =vulpea-agenda-files-update=
+- =lib-vulpea.el= - =vulpea-ensure-filetag=, =vulpea-project-files=
+- =init-vulpea.el= - Hooks setup
 
-It is described in greater details at [[https://d12frosted.io/posts/2021-05-21-task-management-with-roam-vol7.html][d12frosted.io]], but in short, whenever a
-meeting starts, I want to select a person I have a meeting with and capture
-notes under =Meetings= outline in that persons file.
+** Meeting Capture Flow
 
-Points of interest:
+Intelligent meeting note capture that prompts for a person and creates notes
+under =Meetings= outline in their file.
 
-- =lib-vulpea-capture-el=
-  - =vulpea-capture-setup= - a function that sets up capture templates.
-  - =vulpea-capture-meeting-template= - a function that prompts to select a
-    person and depending on the result returns different templates.
-  - =vulpea-capture-meeting-target= - a function that picks a target for
-    captured note depending on selection from =vulpea-capture-meeting-template=.
+Read more at [[https://d12frosted.io/posts/2021-05-21-task-management-with-roam-vol7.html][d12frosted.io]].
 
-** Package management with elpaca
+*Implementation*:
+- =lib-vulpea-capture.el= - =vulpea-capture-meeting-template=, =vulpea-capture-meeting-target=
 
-The configuration uses [[https://github.com/progfolio/elpaca][elpaca]] as the package manager, which provides:
-
-- Fast, asynchronous package installation
-- Support for ELPA, MELPA, and git repositories
-- Native =use-package= integration via =elpaca-use-package-mode=
-- Ability to install packages from personal git repositories
-
-The package management is configured in =init-elpa.el= with bootstrap logic in
-the =Eldev= file for CI/development workflows.
-
-** Managing litnotes
+** Litnotes Management
 
 #+begin_html
 <p align="center">
@@ -317,33 +290,22 @@ the =Eldev= file for CI/development workflows.
 </p>
 #+end_html
 
-Not so long ago (few years ago?) I've started to take notes while I am reading books, articles, listening to videos, or completing courses. Previously it was a scattered mess (mostly left in my e-reading application), but now I have it all under =litnotes= directory in my Org directory.
+Reading notes management using [[https://github.com/publicimageltd/lister][lister]], [[https://github.com/d12frosted/vulpea][vulpea]], and [[https://github.com/org-roam/org-roam/][org-roam]].
 
-In order to list all my reading notes, I've built a solution based on [[https://github.com/publicimageltd/lister][publicimageltd/lister]], [[https://github.com/d12frosted/vulpea][vulpea]] and [[https://github.com/org-roam/org-roam/][org-roam]] libraries. Take a look at =lib-litnotes.el= file, your entry point is =litnotes= function.
+Features:
+- List all reading notes grouped by status
+- Configurable faces
+- Tab expansion to show/hide groups
+- Visit notes (=TAB= in other window, =RET= in current)
+- Assign status (=s= by default)
 
-Right now this buffer has minimal functionality:
+*Entry point*: =M-x litnotes= (see =lib-litnotes.el=)
 
-- List all litnotes grouped by status (see =litnotes-status-values=).
-- Configurable faces for each element.
-- Tab expansion to hide or show specific group (e.g. status).
-- Visiting note (=TAB= visits litnote in other window, =RETURN= visits in current window).
-- Assign status to a note at point (by default, =s=).
+** Wine Tracking (vino)
 
-More functionality to come:
+The [[https://github.com/d12frosted/vino][vino]] library tracks wine tasting notes. Personal extensions here include:
 
-- Ability to change default grouping (e.g. by content type, author or no grouping at all).
-- Interactive sorting.
-- Interactive filtering.
-
-This is a playground for building more complex solution to support something like [[https://github.com/d12frosted/vino][vino]].
-
-** =vino=
-
-The [[https://github.com/d12frosted/vino][vino]] library is far from having all the features I want it to have, but =v0.3= is mature and rich enough to use it to keep record on wines. Things that are either not well designed (from user perspective) or are too tied to my personal usage find their place here, in my personal configurations.
-
-There are several interesting functions.
-
-*** Inventory
+*** Inventory Management
 
 #+begin_html
 <p align="center">
@@ -351,11 +313,11 @@ There are several interesting functions.
 </p>
 #+end_html
 
-There is an [[https://github.com/d12frosted/vino/#configuration][option]] to tell =vino= library how to calculate availability of =vino-entry=. There is no solution out of box (yet), but =vino-availability-fn= (together with =add= and =sub=) allow to easily implement inventory solution on your own. And for that I am using [[https://hledger.org][hledger]]. You can grab the code from =lib-invetory.el= file, nothing overly fancy there.
+Using [[https://hledger.org][hledger]] to track wine cellar inventory.
 
-Now, having =vino=, =vulpea= and =lib-invetory= it's fairly easy to implement a function that displays wines in my cellar - =vino-balance-display=, you can find it in =lib-vino.el=.
+*Implementation*: =lib-inventory.el=, =vino-balance-display= in =lib-vino.el=
 
-*** =vino-stats=
+*** Statistics
 
 #+begin_html
 <p align="center">
@@ -363,112 +325,12 @@ Now, having =vino=, =vulpea= and =lib-invetory= it's fairly easy to implement a 
 </p>
 #+end_html
 
-I am not statistical expert, but I love to see numbers related to wine consumption. It's amazing to see a bigger picture after I put so much effort into writing down most wines I taste. The 'bigger picture' is calculated on some period (custom or predefined) and includes (but not limited to):
+Consumption statistics over custom or predefined periods:
+- General stats (consumption, ratings, prices, QPR)
+- Per country, vintage, colour, carbonation
+- Complete rating lists
 
-- General stats like wines consumption, rating data, price data and QPR data;
-- Per country stats;
-- Per vintage stats;
-- Per colour stats;
-- Per carbonation stats;
-- List of all ratings in the given period.
+Used to generate wine tasting reports for Barberry Garden events (see
+[[https://www.dropbox.com/sh/k91o9gwjvxwamoy/AAA-z_sM04W2zOACS6Ul0UnIa?dl=0][Dropbox]]).
 
-My plan is to provide functionality to export all this data (probably) with images and graphs.
-
-I am using part of this library to generate reports on wine tastings I organise in Kyiv. You can find some stuff on my [[https://www.dropbox.com/sh/k91o9gwjvxwamoy/AAA-z_sM04W2zOACS6Ul0UnIa?dl=0][Dropbox]] (mostly in English, but some documents are in Ukrainian). Hopefully soon my Barberry Garden will get its own site.
-
-Checkout =vino-stats.el= module for implementation.
-
-* How to run
-
-** Requirements
-
-All requirements are installed by =eru=. But the full (and dramatically huge)
-list of dependencies is here:
-
-- Emacs 29 or higher - installed by =eru install system=.
-- [[https://github.com/doublep/eldev][Eldev]] - installed by =eru install emacs=.
-
-** Install Emacs
-
-For OS X users I recommend to install [[https://github.com/d12frosted/homebrew-emacs-plus][emacs-plus]] (who would guess?) - GNU Emacs
-with some sane defaults, available via [[https://brew.sh][brew]] package manager, though in general I
-prefer (and highly recommend) using [[https://nixos.org/][nix]] or [[https://www.macports.org/][macports]] instead of [[https://brew.sh][brew]].
-
-#+BEGIN_SRC
-$ brew tap d12frosted/emacs-plus
-$ brew install emacs-plus@29
-#+END_SRC
-
-You are free™ to use whatever Emacs variant you wish to use, though I don't give
-any guarantees that it will work with these configurations. In case you wish to
-investigate more on this topic, please refer to [[http://emacs.stackexchange.com/a/274/5161][this answer]].
-
-** Install configurations
-
-*** Using =eru=
-:PROPERTIES:
-:ID:                     e6695e2e-c47e-4e4f-8064-3f36ddc6cca0
-:END:
-
-#+begin_src bash
-$ eru install emacs
-#+end_src
-
-*** Manual
-:PROPERTIES:
-:ID:                     92685c2c-099b-4d03-aabb-458ad6041f4a
-:END:
-
-Install [[https://github.com/doublep/eldev][Eldev]].
-
-#+begin_src bash
-  $ eldev_bin=$HOME/.local/bin/eldev
-  $ curl -fsSL https://raw.github.com/doublep/eldev/master/bin/eldev > "$eldev_bin"
-  $ chmod a+x "$eldev_bin"
-#+end_src
-
-Bootstrap Emacs configurations, compile them and lint.
-
-#+begin_src bash
-  $ cd "$XDG_CONFIG_HOME/emacs" && make bootstrap compile lint
-#+end_src
-
-** Upgrade dependencies
-
-*** Using =eru=
-:PROPERTIES:
-:ID:                     2e3561bd-5c86-49e5-9362-60b35baf4e38
-:END:
-
-#+begin_src bash
-  $ eru upgrade emacs
-#+end_src
-
-*** Manual
-:PROPERTIES:
-:ID:                     5324beaf-a155-40ec-b905-800331ac0be9
-:END:
-
-#+begin_src bash
-  $ cd "$XDG_CONFIG_HOME/emacs" && make upgrade compile lint
-#+end_src
-
-** Run tests
-
-*** Using =eru=
-:PROPERTIES:
-:ID:                     8f02e45c-4718-4c14-94fd-6f5081763ce2
-:END:
-
-#+begin_src bash
-  $ eru test emacs
-#+end_src
-
-*** Manual
-:PROPERTIES:
-:ID:                     7796b84e-2977-4298-a9c8-eb9271db98b6
-:END:
-
-#+begin_src bash
-  $ cd "$XDG_CONFIG_HOME/emacs" && make test
-#+end_src
+*Implementation*: =lib-vino-stats.el=
