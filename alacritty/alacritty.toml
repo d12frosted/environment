@@ -11,3 +11,8 @@ args = ["--login"]
 
 [window]
 option_as_alt = "both"
+
+[keyboard]
+bindings = [
+  { key = "Return", mods = "Shift", chars = "\n" }
+]
