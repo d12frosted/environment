@@ -324,31 +324,14 @@ function task_packages() {
     fi
   fi
 
-  # mise - install Node.js and npm packages from .tool-versions
-  if command -v mise &> /dev/null; then
-    if [[ -f "$XDG_CONFIG_HOME/.tool-versions" ]]; then
-      if [[ "$ACTION" == "upgrade" ]]; then
-        info "Upgrading mise tools..."
-        if [[ "$DRY_RUN" != "true" ]]; then
-          cd "$XDG_CONFIG_HOME"
-          if ! mise upgrade; then
-            warn "Failed to upgrade some mise tools (this may be normal)"
-          fi
-        fi
-      else
-        info "Installing mise tools from .tool-versions..."
-        if [[ "$DRY_RUN" != "true" ]]; then
-          cd "$XDG_CONFIG_HOME"
-          if ! mise install; then
-            warn "Failed to install some mise tools (this may be normal)"
-          fi
-        fi
-      fi
-    else
-      info "No .tool-versions file found at $XDG_CONFIG_HOME/.tool-versions"
+  # npm global packages
+  if command -v npm &> /dev/null; then
+    info "Installing global npm packages..."
+    if [[ "$DRY_RUN" != "true" ]]; then
+      npm install -g @zed-industries/claude-code-acp
     fi
   else
-    info "mise not installed yet (will be available after homebrew install)"
+    info "npm not available (install node via brew if needed)"
   fi
 
   task_complete "packages" "Packages installed"
