@@ -328,7 +328,8 @@ function task_packages() {
   if command -v npm &> /dev/null; then
     info "Installing global npm packages..."
     if [[ "$DRY_RUN" != "true" ]]; then
-      npm install -g @zed-industries/claude-code-acp
+      npm i -g @zed-industries/claude-code-acp
+      npm i -g @openai/codex
     fi
   else
     info "npm not available (install node via brew if needed)"
