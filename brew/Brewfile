@@ -38,6 +38,7 @@ brew "starship"
 brew "terminal-notifier"
 brew "tinty"
 brew "wget"
+brew "yarn"
 cask "gpg-suite"
 
 #
