@@ -8,8 +8,8 @@
 #+end_html
 
 Personal frustration and the biggest time waster in my life (comparable to video
-games). Please, turn away and retain your sanity. Otherwise you might end up
-tracking all your tasks, notes, thoughts and wine in Emacs.
+games). Please turn away and retain your sanity. Otherwise you might end up
+tracking all your tasks, notes, thoughts, and wine in Emacs.
 
 * Overview
 
@@ -45,7 +45,7 @@ cd emacs
 
 ** Requirements
 
-- Emacs 29.1 or higher
+- Emacs 30.2 or higher
 - Eldev (automatically installed by =setup.sh= if not present)
 
 ** Available Commands
@@ -85,11 +85,11 @@ Configure built-in and external packages via =use-package=.
 - Must avoid eagerly loading packages (use lazy loading)
 - All =init= files are required by =init.el=
 - Can require other =init= and =config= files
-- Examples: =init-editor.el=, =init-ui.el=, =init-org.el=
+- Examples: =init-editor.el=, =init-ui.el=, =init-vulpea.el=
 
 *** =config-*.el= - Configuration Constants
 
-Contain variables and constants.
+Contains variables and constants.
 
 - Safe to require from anywhere (minimal loading impact)
 - No package loading or heavy computation
@@ -281,38 +281,8 @@ Read more at [[https://d12frosted.io/posts/2021-05-21-task-management-with-roam-
 *Implementation*:
 - =lib-vulpea-capture.el= - =vulpea-capture-meeting-template=, =vulpea-capture-meeting-target=
 
-** Litnotes Management
-
-#+begin_html
-<p align="center">
-  <img src="images/litnotes-1.png" width="48%"/>
-  <img src="images/litnotes-2.png" width="48%"/>
-</p>
-#+end_html
-
-Reading notes management using [[https://github.com/publicimageltd/lister][lister]], [[https://github.com/d12frosted/vulpea][vulpea]], and [[https://github.com/org-roam/org-roam/][org-roam]].
-
-Features:
-- List all reading notes grouped by status
-- Configurable faces
-- Tab expansion to show/hide groups
-- Visit notes (=TAB= in other window, =RET= in current)
-- Assign status (=s= by default)
-
-*Entry point*: =M-x litnotes= (see =lib-litnotes.el=)
-
 ** Wine Tracking (vino)
 
-The [[https://github.com/d12frosted/vino][vino]] library tracks wine tasting notes. Personal extensions here include:
+The [[https://github.com/d12frosted/vino][vino]] library tracks wine tasting notes.
 
-*** Inventory Management
-
-#+begin_html
-<p align="center">
-  <img src="images/vino-inventory.png" width="50%"/>
-</p>
-#+end_html
-
-Using [[https://hledger.org][hledger]] to track wine cellar inventory.
-
-*Implementation*: =lib-inventory.el=, =vino-balance-display= in =lib-vino.el=
+*Implementation*: =lib-vino.el=

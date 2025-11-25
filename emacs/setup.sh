@@ -86,8 +86,8 @@ function check_emacs() {
   local major_version
   major_version=$(echo "$emacs_version" | cut -d. -f1)
 
-  if [[ "$major_version" -lt 29 ]]; then
-    fail "Emacs 29.1 or higher is required (found $emacs_version)"
+  if [[ "$major_version" -lt 30 ]]; then
+    fail "Emacs 30.2 or higher is required (found $emacs_version)"
   fi
 
   info "Using Emacs $emacs_version"
@@ -238,10 +238,10 @@ function cmd_doctor() {
   local major_version
   major_version=$(echo "$emacs_version" | cut -d. -f1)
 
-  if [[ "$major_version" -ge 29 ]]; then
-    success "Emacs version is $emacs_version (>= 29.1)"
+  if [[ "$major_version" -ge 30 ]]; then
+    success "Emacs version is $emacs_version (>= 30.2)"
   else
-    error "Emacs version is $emacs_version (< 29.1 required)"
+    error "Emacs version is $emacs_version (< 30.2 required)"
     ((issues++))
   fi
 
