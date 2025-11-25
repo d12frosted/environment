@@ -20,7 +20,7 @@ yabai -m config split_ratio 0.5
 yabai -m config window_shadow off
 
 # borders
-borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
+# borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
 
 #
 # setup spaces
