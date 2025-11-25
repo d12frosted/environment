@@ -35,8 +35,8 @@ doctor:
 
 .PHONY: vulpea
 vulpea:
-	eldev -C --unstable exec "(-vulpea-db-bootstrap)"
+	eldev -C --unstable vulpea-db-build
 
 .PHONY: brb
 brb:
-	eldev -C --unstable exec "(-brb-sync)"
+	eldev -C --unstable brb-sync
