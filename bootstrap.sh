@@ -262,7 +262,9 @@ function task_homebrew() {
 #
 
 function task_packages() {
-  task_start "packages" "Installing packages"
+  local action_label="Installing"
+  [[ "$ACTION" == "upgrade" ]] && action_label="Upgrading"
+  task_start "packages" "$action_label packages"
 
   if ! is_macos; then
     task_skip "Not on macOS (Homebrew only)"
@@ -301,6 +303,14 @@ function task_packages() {
     return 0
   fi
 
+  # Upgrade all installed packages when running upgrade action
+  if [[ "$ACTION" == "upgrade" ]]; then
+    info "Upgrading all packages..."
+    if [[ "$DRY_RUN" != "true" ]]; then
+      brew upgrade
+    fi
+  fi
+
   for brewfile in "${brewfiles[@]}"; do
     info "Processing $(basename "$brewfile")..."
     if [[ "$DRY_RUN" != "true" ]]; then
@@ -335,7 +345,9 @@ function task_packages() {
     info "npm not available (install node via brew if needed)"
   fi
 
-  task_complete "packages" "Packages installed"
+  local complete_label="installed"
+  [[ "$ACTION" == "upgrade" ]] && complete_label="upgraded"
+  task_complete "packages" "Packages $complete_label"
 }
 
 #
