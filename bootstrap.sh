@@ -713,6 +713,303 @@ function task_emacs() {
   task_complete "emacs" "Emacs configured"
 }
 
+################################################################################
+#
+# Doctor Functions
+#
+################################################################################
+
+DOCTOR_ISSUES=0
+
+function doctor_issue() {
+  local message=$1
+  warn "  ✗ $message"
+  ((DOCTOR_ISSUES++))
+}
+
+function doctor_ok() {
+  local message=$1
+  success "  ✓ $message"
+}
+
+#
+# Doctor: Brew
+#
+function doctor_brew() {
+  info "Checking Homebrew packages..."
+
+  if ! check_homebrew; then
+    doctor_issue "Homebrew is not installed"
+    return 1
+  fi
+
+  # Collect all packages from Brewfiles
+  local brewfiles=()
+  [[ -f "$SCRIPT_DIR/brew/Brewfile" ]] && brewfiles+=("$SCRIPT_DIR/brew/Brewfile")
+  [[ -f "$SCRIPT_DIR/brew/$USER.Brewfile" ]] && brewfiles+=("$SCRIPT_DIR/brew/$USER.Brewfile")
+  local hostname
+  hostname=$(hostname -s)
+  [[ -f "$SCRIPT_DIR/brew/$hostname.Brewfile" ]] && brewfiles+=("$SCRIPT_DIR/brew/$hostname.Brewfile")
+
+  # Extract package names from Brewfiles (brew and cask)
+  local brewfile_packages=()
+  for brewfile in "${brewfiles[@]}"; do
+    while IFS= read -r line; do
+      # Match: brew "package" or brew "package", args: [...]
+      if [[ $line =~ ^brew[[:space:]]+\"([^\"]+)\" ]]; then
+        brewfile_packages+=("${BASH_REMATCH[1]%%@*}")  # Remove @version suffix
+      fi
+      # Match: cask "package"
+      if [[ $line =~ ^cask[[:space:]]+\"([^\"]+)\" ]]; then
+        brewfile_packages+=("${BASH_REMATCH[1]}")
+      fi
+    done < "$brewfile"
+  done
+
+  # Get installed top-level packages (leaves = not dependencies)
+  local installed_leaves
+  installed_leaves=$(brew leaves)
+
+  # Get installed casks
+  local installed_casks
+  installed_casks=$(brew list --cask 2>/dev/null)
+
+  # Find orphan formulae (installed but not in Brewfile)
+  local orphan_formulae=()
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" ]] && continue
+    local found=false
+    for bp in "${brewfile_packages[@]}"; do
+      if [[ "$pkg" == "$bp" ]]; then
+        found=true
+        break
+      fi
+    done
+    if [[ "$found" == "false" ]]; then
+      orphan_formulae+=("$pkg")
+    fi
+  done <<< "$installed_leaves"
+
+  # Find orphan casks
+  local orphan_casks=()
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" ]] && continue
+    local found=false
+    for bp in "${brewfile_packages[@]}"; do
+      if [[ "$pkg" == "$bp" ]]; then
+        found=true
+        break
+      fi
+    done
+    if [[ "$found" == "false" ]]; then
+      orphan_casks+=("$pkg")
+    fi
+  done <<< "$installed_casks"
+
+  # Report
+  if [[ ${#orphan_formulae[@]} -eq 0 ]] && [[ ${#orphan_casks[@]} -eq 0 ]]; then
+    doctor_ok "All installed packages are in Brewfiles"
+  else
+    if [[ ${#orphan_formulae[@]} -gt 0 ]]; then
+      doctor_issue "Orphan formulae (not in Brewfile):"
+      for pkg in "${orphan_formulae[@]}"; do
+        log "      brew \"$pkg\""
+      done
+    fi
+    if [[ ${#orphan_casks[@]} -gt 0 ]]; then
+      doctor_issue "Orphan casks (not in Brewfile):"
+      for pkg in "${orphan_casks[@]}"; do
+        log "      cask \"$pkg\""
+      done
+    fi
+  fi
+}
+
+#
+# Doctor: Shell
+#
+function doctor_shell() {
+  info "Checking shell configuration..."
+
+  local fish_path
+  fish_path=$(command -v fish 2>/dev/null)
+
+  if [[ -z "$fish_path" ]]; then
+    doctor_issue "Fish shell is not installed"
+    return 1
+  fi
+
+  # Check if fish is in /etc/shells
+  if grep -q "^$fish_path$" /etc/shells 2>/dev/null; then
+    doctor_ok "Fish is in /etc/shells"
+  else
+    doctor_issue "Fish is not in /etc/shells"
+  fi
+
+  # Check if fish is the default shell
+  local current_shell
+  current_shell=$(dscl . -read ~/ UserShell 2>/dev/null | awk '{print $2}')
+  if [[ "$current_shell" == "$fish_path" ]]; then
+    doctor_ok "Fish is the default shell"
+  else
+    doctor_issue "Default shell is $current_shell (expected $fish_path)"
+  fi
+}
+
+#
+# Doctor: Window Manager
+#
+function doctor_wm() {
+  info "Checking window manager..."
+
+  if ! is_macos; then
+    info "  Skipping (not on macOS)"
+    return 0
+  fi
+
+  # Check yabai
+  if command -v yabai &>/dev/null; then
+    if pgrep -x yabai &>/dev/null; then
+      doctor_ok "yabai is running"
+    else
+      doctor_issue "yabai is installed but not running"
+    fi
+  else
+    doctor_issue "yabai is not installed"
+  fi
+
+  # Check skhd
+  if command -v skhd &>/dev/null; then
+    if pgrep -x skhd &>/dev/null; then
+      doctor_ok "skhd is running"
+    else
+      doctor_issue "skhd is installed but not running"
+    fi
+  else
+    doctor_issue "skhd is not installed"
+  fi
+}
+
+#
+# Doctor: Symlinks
+#
+function doctor_symlinks() {
+  info "Checking symlinks..."
+
+  # Check GnuPG symlinks
+  if [[ -d "$XDG_CONFIG_HOME/gnupg" ]]; then
+    for config_file in "$XDG_CONFIG_HOME/gnupg"/*; do
+      if [[ -f "$config_file" ]]; then
+        local filename
+        filename=$(basename "$config_file")
+
+        # Skip example files and READMEs
+        [[ "$filename" == *.example ]] && continue
+        [[ "$filename" == "README.md" ]] && continue
+
+        local target="$HOME/.gnupg/$filename"
+        if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$config_file" ]]; then
+          doctor_ok "\$HOME/.gnupg/$filename → $config_file"
+        else
+          doctor_issue "\$HOME/.gnupg/$filename is not symlinked correctly"
+        fi
+      fi
+    done
+  fi
+
+  # Check SSH config symlink
+  local ssh_source="$XDG_CONFIG_HOME/ssh/config"
+  local ssh_target="$HOME/.ssh/config"
+  if [[ -f "$ssh_source" ]]; then
+    if [[ -L "$ssh_target" ]] && [[ "$(readlink "$ssh_target")" == "$ssh_source" ]]; then
+      doctor_ok "\$HOME/.ssh/config → $ssh_source"
+    else
+      doctor_issue "\$HOME/.ssh/config is not symlinked correctly"
+    fi
+  fi
+}
+
+#
+# Doctor: Emacs
+#
+function doctor_emacs() {
+  info "Checking Emacs..."
+
+  if ! command -v emacs &>/dev/null; then
+    doctor_issue "Emacs is not installed"
+    return 1
+  fi
+
+  doctor_ok "Emacs is installed"
+
+  local emacs_dir="$XDG_CONFIG_HOME/emacs"
+  if [[ ! -d "$emacs_dir" ]]; then
+    doctor_issue "Emacs config directory not found: $emacs_dir"
+    return 1
+  fi
+
+  # Check if eldev is available
+  if ! command -v eldev &>/dev/null; then
+    doctor_issue "eldev is not installed (needed for linting)"
+    return 1
+  fi
+
+  doctor_ok "eldev is installed"
+
+  # Run eldev lint
+  info "Running eldev lint..."
+  pushd "$emacs_dir" > /dev/null || return 1
+  if eldev lint 2>&1; then
+    doctor_ok "eldev lint passed"
+  else
+    doctor_issue "eldev lint found issues"
+  fi
+  popd > /dev/null || return 1
+}
+
+#
+# Doctor: Main
+#
+function run_doctor() {
+  local checks=("$@")
+
+  # Default to all checks if none specified
+  if [[ ${#checks[@]} -eq 0 ]]; then
+    checks=(brew shell wm symlinks emacs)
+  fi
+
+  DOCTOR_ISSUES=0
+
+  log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  info "Running doctor checks: ${checks[*]}"
+  log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  log ""
+
+  for check in "${checks[@]}"; do
+    case "$check" in
+      brew) doctor_brew ;;
+      shell) doctor_shell ;;
+      wm) doctor_wm ;;
+      symlinks) doctor_symlinks ;;
+      emacs) doctor_emacs ;;
+      *)
+        warn "Unknown doctor check: $check"
+        ;;
+    esac
+    log ""
+  done
+
+  log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  if [[ $DOCTOR_ISSUES -eq 0 ]]; then
+    success "All checks passed!"
+  else
+    warn "Found $DOCTOR_ISSUES issue(s)"
+  fi
+  log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+  return $DOCTOR_ISSUES
+}
+
 #
 # Task Registry
 #
@@ -758,8 +1055,9 @@ Usage: $0 <action> [tasks...] [options]
 Actions:
   install           Run installation tasks
   upgrade           Run upgrade tasks
+  doctor            Run health checks
 
-Tasks (run all if none specified):
+Tasks for install/upgrade (run all if none specified):
   homebrew          Install/update Homebrew
   packages          Install packages from Brewfiles
   macos             Configure macOS defaults
@@ -768,6 +1066,13 @@ Tasks (run all if none specified):
   devtools          Set up git, ssh, gpg
   symlinks          Create symlinks
   emacs             Set up Emacs (supports emacs:subtask syntax)
+
+Checks for doctor (run all if none specified):
+  brew              Check for orphan packages not in Brewfiles
+  shell             Verify fish is the default shell
+  wm                Check yabai/skhd are running
+  symlinks          Verify symlinks are correct
+  emacs             Run eldev lint
 
 Options:
   --dry-run         Show what would be done without doing it
@@ -780,6 +1085,8 @@ Examples:
   $0 upgrade packages           # Upgrade packages only
   $0 install emacs:config       # Run specific Emacs subtask
   $0 install --dry-run          # See what would happen
+  $0 doctor                     # Run all health checks
+  $0 doctor brew                # Check only brew packages
 
 EOF
 }
@@ -790,6 +1097,31 @@ function main() {
   case "$ACTION" in
     install|upgrade)
       shift
+      ;;
+    doctor)
+      shift
+      # Collect doctor checks
+      local doctor_checks=()
+      while [[ $# -gt 0 ]]; do
+        case "$1" in
+          -h|--help)
+            show_usage
+            exit 0
+            ;;
+          brew|shell|wm|symlinks|emacs)
+            doctor_checks+=("$1")
+            shift
+            ;;
+          *)
+            error "Unknown doctor check: $1"
+            show_usage
+            exit 1
+            ;;
+        esac
+      done
+      show_greeting
+      run_doctor "${doctor_checks[@]}"
+      exit $?
       ;;
     -h|--help|help)
       show_usage
