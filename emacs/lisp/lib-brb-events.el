@@ -33,11 +33,13 @@
 ;;
 ;;; Code:
 
-(require 'vulpea)
-(require 'lib-plist)
+(require 'lib-brb)
 (require 'lib-brb-event)
 (require 'lib-brb-event-plan)
+(require 'lib-fun)
 (require 'lib-hash-table)
+(require 'lib-plist)
+(require 'vulpea)
 
 ;;;###autoload
 (defun brb-events (&optional arg)
@@ -99,17 +101,17 @@ ARG to override and query for specific frame."
   (unless (events-data-summary x)
     (setf (events-data-summary x)
           (hash-table-from (events-data-events-all x)
-                           :key-fn #'vulpea-note-id
-                           :value-fn (lambda (event _) (brb-event-summary event))))))
+            :key-fn #'vulpea-note-id
+            :value-fn (lambda (event _) (brb-event-summary event))))))
 
 (cl-defmethod events-data-load-statement-maybe ((x events-data))
   "Load data into statement slot of X if its missing."
   (unless (events-data-statement x)
     (setf (events-data-statement x)
           (hash-table-from (events-data-events-all x)
-                           :key-fn #'vulpea-note-id
-                           :value-fn (lambda (event _)
-                                       (brb-event-statement event :balances (make-hash-table)))))))
+            :key-fn #'vulpea-note-id
+            :value-fn (lambda (event _)
+                        (brb-event-statement event :balances (make-hash-table)))))))
 
 (cl-defmethod events-data-set-filter ((x events-data) filter)
   "Set FILTER in X."
@@ -555,6 +557,39 @@ ARG to override and query for specific frame."
      "\n")
 
     (insert "\n")
+
+    ;; producers
+    (insert
+     (propertize (format "Producers (%s)" (seq-length producers)) 'face 'outline-1)
+     "\n\n"
+     (string-table
+      :header '("producer" "past" "all")
+      :pad-type '(right left left)
+      :header-sep "-"
+      :header-sep-start "|-"
+      :header-sep-conj "-+-"
+      :header-sep-end "-|"
+      :row-start "| "
+      :row-end " |"
+      :sep " | "
+      :data
+      (->> producers
+           (--map
+            (list
+             it
+             (-count (lambda (other)
+                       (string-equal
+                        (vulpea-note-id it)
+                        (vulpea-note-id other)))
+                     producers-past)
+             (-count (lambda (other)
+                       (string-equal
+                        (vulpea-note-id it)
+                        (vulpea-note-id other)))
+                     producers-all)))
+           (--sort (> (nth 1 it)
+                      (nth 1 other)))))
+     "\n")
 
     ;; grapes
     (insert

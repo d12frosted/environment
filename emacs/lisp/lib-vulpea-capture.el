@@ -226,9 +226,9 @@ By default it uses current date to find a daily. With
   (interactive)
   (cond
    ((equal current-prefix-arg '(4))     ; select date
-    (org-roam-dailies-capture-date))
+    (user-error "Not implemented"))
    (t
-    (org-roam-dailies-capture-today))))
+    (user-error "Not implemented"))))
 
 (provide 'lib-vulpea-capture)
 ;;; lib-vulpea-capture.el ends here

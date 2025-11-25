@@ -31,14 +31,16 @@
 ;;
 ;;; Code:
 
-(require 'dash)
-(require 'vulpea)
-(require 'brb)
-(require 'brb-ledger)
 (require 'lib-calc)
 (require 'lib-table)
 (require 'lib-string)
 (require 'lib-vcl)
+
+(require 'brb)
+(require 'brb-ledger)
+(require 'dash)
+(require 'vino)
+(require 'vulpea)
 
 (defun brb-qpr-data ()
   "Test data for QPR experiments."
@@ -64,13 +66,7 @@
                               ("qpr" . ,(brb-qpr
                                          (vulpea-note-meta-get it "price" 'number)
                                          (vulpea-note-meta-get it "rating" 'number)
-                                         it))
-                              ("qpr1" . ,(brb-qpr-1
-                                          (vulpea-note-meta-get it "price" 'number)
-                                          (vulpea-note-meta-get it "rating" 'number)))
-                              ("qpr2" . ,(brb-qpr-2
-                                          (vulpea-note-meta-get it "price" 'number)
-                                          (vulpea-note-meta-get it "rating" 'number))))))))
+                                         it)))))))
       (let ((json-encoding-pretty-print t))
         (insert (json-encode data)))
       (kill-new (buffer-substring-no-properties (point-min) (point-max))))))
