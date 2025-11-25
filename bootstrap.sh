@@ -757,7 +757,10 @@ function doctor_brew() {
     while IFS= read -r line; do
       # Match: brew "package" or brew "package", args: [...]
       if [[ $line =~ ^brew[[:space:]]+\"([^\"]+)\" ]]; then
-        brewfile_packages+=("${BASH_REMATCH[1]%%@*}")  # Remove @version suffix
+        local pkg_name="${BASH_REMATCH[1]}"
+        # Extract formula name from tap path (e.g., "tap/repo/formula@ver" -> "formula@ver")
+        pkg_name="${pkg_name##*/}"
+        brewfile_packages+=("$pkg_name")
       fi
       # Match: cask "package"
       if [[ $line =~ ^cask[[:space:]]+\"([^\"]+)\" ]]; then
@@ -778,9 +781,11 @@ function doctor_brew() {
   local orphan_formulae=()
   while IFS= read -r pkg; do
     [[ -z "$pkg" ]] && continue
+    # Extract formula name from tap path for comparison
+    local pkg_name="${pkg##*/}"
     local found=false
     for bp in "${brewfile_packages[@]}"; do
-      if [[ "$pkg" == "$bp" ]]; then
+      if [[ "$pkg_name" == "$bp" ]]; then
         found=true
         break
       fi
