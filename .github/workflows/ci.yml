@@ -21,6 +21,9 @@ jobs:
       - name: Run ShellCheck on macos/defaults.sh
         run: shellcheck macos/defaults.sh
 
+      - name: Run ShellCheck on emacs/setup.sh
+        run: shellcheck emacs/setup.sh
+
   test-dry-run:
     name: Test Dry Run (macOS)
     runs-on: macos-latest
@@ -42,6 +45,9 @@ jobs:
           ./bootstrap.sh install shell --dry-run
           ./bootstrap.sh install wm --dry-run
           ./bootstrap.sh install devtools --dry-run
+
+      - name: Test doctor help
+        run: ./bootstrap.sh doctor --help
 
   test-homebrew:
     name: Test Homebrew Installation
@@ -115,6 +121,36 @@ jobs:
           fi
         continue-on-error: false
 
+      - name: Test invalid doctor check
+        run: |
+          if ./bootstrap.sh doctor invalid-check; then
+            echo "Should have failed!"
+            exit 1
+          fi
+        continue-on-error: false
+
+  test-doctor:
+    name: Test Doctor Command
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Ensure Homebrew is installed
+        run: ./bootstrap.sh install homebrew
+
+      - name: Test doctor brew check
+        run: ./bootstrap.sh doctor brew
+        continue-on-error: true
+
+      - name: Test doctor shell check
+        run: ./bootstrap.sh doctor shell
+        continue-on-error: true
+
+      - name: Test doctor all checks
+        run: ./bootstrap.sh doctor
+        continue-on-error: true
+
   test-syntax:
     name: Test Script Syntax
     runs-on: ubuntu-latest
@@ -127,3 +163,6 @@ jobs:
 
       - name: Check macos/defaults.sh syntax
         run: bash -n macos/defaults.sh
+
+      - name: Check emacs/setup.sh syntax
+        run: bash -n emacs/setup.sh
