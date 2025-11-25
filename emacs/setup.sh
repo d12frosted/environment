@@ -216,7 +216,8 @@ function cmd_doctor() {
   fi
 
   # Check for elpaca installation
-  local elpaca_dir="${XDG_CACHE_HOME:-$HOME/.cache}/emacs/packages/$(emacs --batch --eval '(princ (format "%s.%s" emacs-major-version emacs-minor-version))')/elpaca"
+  local elpaca_dir
+  elpaca_dir="${XDG_CACHE_HOME:-$HOME/.cache}/emacs/packages/$(emacs --batch --eval '(princ (format "%s.%s" emacs-major-version emacs-minor-version))')/elpaca"
   if [[ ! -d "$elpaca_dir" ]]; then
     warn "Elpaca not installed (run: ./setup.sh install)"
     ((issues++))
