@@ -1,0 +1,3 @@
+# Enchant backend ordering
+# Use aspell for all languages (has better coverage)
+*:aspell

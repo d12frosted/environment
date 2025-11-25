@@ -38,6 +38,10 @@
   :commands (global-jinx-mode)
   :bind (("M-$" . jinx-correct)
          ("C-M-$" . jinx-languages))
+  :custom
+  ;; Check against both British English and Ukrainian
+  ;; Words valid in either language are considered correct
+  (jinx-languages "en_GB uk")
   :init
   (global-jinx-mode))
 
