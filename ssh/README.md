@@ -6,9 +6,9 @@ This directory contains SSH configuration files that will be symlinked to `~/.ss
 
 1. Edit the config file to add your hosts and settings
 
-3. Run the bootstrap symlinks task:
+3. Run the symlinks task:
    ```bash
-   ./bootstrap.sh symlinks
+   ./eru.sh install symlinks
    ```
 
 ## Why Symlinks?

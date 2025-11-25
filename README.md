@@ -31,23 +31,23 @@ git clone <your-repo> ~/.config
 cd ~/.config
 
 # Full installation
-./bootstrap.sh install
+./eru.sh install
 
 # See what would happen without doing it
-./bootstrap.sh install --dry-run
+./eru.sh install --dry-run
 
 # Run specific tasks
-./bootstrap.sh install packages wm
+./eru.sh install packages wm
 
 # Upgrade packages
-./bootstrap.sh upgrade packages
+./eru.sh upgrade packages
 ```
 
 ## Structure
 
 ```
 ~/.config/
-├── bootstrap.sh             # Main bootstrap script
+├── eru.sh                   # Main bootstrap script
 ├── brew/                    # Homebrew packages
 │   ├── Brewfile             # Common packages for all machines
 │   ├── $USER.Brewfile       # User-specific packages (gitignored)
@@ -75,8 +75,8 @@ The bootstrap system is organized into independent tasks:
 Install or update Homebrew itself.
 
 ```bash
-./bootstrap.sh install homebrew
-./bootstrap.sh upgrade homebrew
+./eru.sh install homebrew
+./eru.sh upgrade homebrew
 ```
 
 ### `packages`
@@ -86,22 +86,22 @@ Install packages from Brewfiles. Automatically processes:
 - `brew/$HOSTNAME.Brewfile` - Hostname-specific (e.g., `macbook-pro.Brewfile`)
 
 ```bash
-./bootstrap.sh install packages
-./bootstrap.sh upgrade packages
+./eru.sh install packages
+./eru.sh upgrade packages
 ```
 
 ### `macos`
 Configure macOS system defaults (Dock, Finder, keyboard, etc.).
 
 ```bash
-./bootstrap.sh install macos
+./eru.sh install macos
 ```
 
 ### `shell`
 Set up fish shell as the default shell.
 
 ```bash
-./bootstrap.sh install shell
+./eru.sh install shell
 ```
 
 ### `wm`
@@ -111,7 +111,7 @@ Configure window manager (yabai + skhd):
 - Restarts services
 
 ```bash
-./bootstrap.sh install wm
+./eru.sh install wm
 ```
 
 ### `devtools`
@@ -121,7 +121,7 @@ Set up development tools:
 - Configure git, etc.
 
 ```bash
-./bootstrap.sh install devtools
+./eru.sh install devtools
 ```
 
 ### `symlinks`
@@ -135,7 +135,7 @@ Some programs (like GnuPG and SSH) don't support XDG Base Directory spec and exp
 Setup:
 
 ```bash
-./bootstrap.sh install symlinks
+./eru.sh install symlinks
 ```
 
 Features:
@@ -149,9 +149,9 @@ See [gnupg/README.md](gnupg/README.md) and [ssh/README.md](ssh/README.md) for de
 Set up Emacs configuration. Supports subtasks:
 
 ```bash
-./bootstrap.sh install emacs           # All Emacs setup
-./bootstrap.sh install emacs:config    # Just config
-./bootstrap.sh install emacs:db        # Just database sync
+./eru.sh install emacs           # All Emacs setup
+./eru.sh install emacs:config    # Just config
+./eru.sh install emacs:db        # Just database sync
 ```
 
 ## Usage
@@ -171,23 +171,23 @@ Set up Emacs configuration. Supports subtasks:
 
 ```bash
 # Full installation with dry-run first
-./bootstrap.sh install --dry-run
-./bootstrap.sh install
+./eru.sh install --dry-run
+./eru.sh install
 
 # Install just packages and window manager
-./bootstrap.sh install packages wm
+./eru.sh install packages wm
 
 # Upgrade packages only
-./bootstrap.sh upgrade packages
+./eru.sh upgrade packages
 
 # Reset yabai/skhd configuration
-./bootstrap.sh install wm
+./eru.sh install wm
 
 # Run Emacs-specific subtask
-./bootstrap.sh install emacs:config
+./eru.sh install emacs:config
 
 # Force install even if dependencies missing
-./bootstrap.sh install wm --force
+./eru.sh install wm --force
 ```
 
 ## Setting Up Your Machine
@@ -217,10 +217,10 @@ Set up Emacs configuration. Supports subtasks:
 4. **Run bootstrap**
    ```bash
    # See what will happen
-   ./bootstrap.sh install --dry-run
+   ./eru.sh install --dry-run
 
    # Do it!
-   ./bootstrap.sh install
+   ./eru.sh install
    ```
 
 ### Dependency Chain
@@ -273,7 +273,7 @@ cask "zoom"
 Then run:
 
 ```bash
-./bootstrap.sh install packages
+./eru.sh install packages
 ```
 
 ## CI Testing
@@ -291,20 +291,20 @@ Run tests locally:
 
 ```bash
 # Lint
-shellcheck bootstrap.sh macos/defaults.sh
+shellcheck eru.sh macos/defaults.sh
 
 # Syntax check
-bash -n bootstrap.sh
+bash -n eru.sh
 
 # Dry run
-./bootstrap.sh install --dry-run
+./eru.sh install --dry-run
 ```
 
 ## Customization
 
 ### Adding a New Task
 
-1. **Define the task function** in `bootstrap.sh`:
+1. **Define the task function** in `eru.sh`:
 
 ```bash
 function task_mytask() {
@@ -343,7 +343,7 @@ defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 Run:
 
 ```bash
-./bootstrap.sh install macos
+./eru.sh install macos
 ```
 
 ## Troubleshooting
@@ -351,7 +351,7 @@ Run:
 ### Bootstrap is locked
 
 ```bash
-rm ~/.cache/bootstrap/bootstrap.lock
+rm ~/.cache/eru/eru.lock
 ```
 
 ### Dependency errors
@@ -359,7 +359,7 @@ rm ~/.cache/bootstrap/bootstrap.lock
 Use `--force` to skip checks (use with caution):
 
 ```bash
-./bootstrap.sh install mytask --force
+./eru.sh install mytask --force
 ```
 
 ### Check what would happen
@@ -367,7 +367,7 @@ Use `--force` to skip checks (use with caution):
 Always available:
 
 ```bash
-./bootstrap.sh install --dry-run
+./eru.sh install --dry-run
 ```
 
 ### Homebrew not in PATH
