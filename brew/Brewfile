@@ -5,6 +5,7 @@
 #
 
 tap "d12frosted/emacs-plus"
+tap "felixkratz/formulae"
 tap "koekeishiya/formulae"
 tap "tinted-theming/tinted"
 
@@ -97,7 +98,7 @@ brew "hledger"
 brew "cliclick"
 brew "fswatch"
 brew "terminal-notifier"
-brew "tinty"
+brew "tinted-theming/tinted/tinty"
 
 ################################################################################
 #
