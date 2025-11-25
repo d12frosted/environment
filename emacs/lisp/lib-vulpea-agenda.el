@@ -67,9 +67,8 @@ Affects the following commands:
   (let* ((person (vulpea-select-from
                   "Person"
                   (vulpea-db-query-by-tags-some '("people"))))
-         (node (org-roam-node-from-id (vulpea-note-id person)))
-         (names (cons (org-roam-node-title node)
-                      (org-roam-node-aliases node)))
+         (names (cons (vulpea-note-title person)
+                      (vulpea-note-aliases person)))
          (tags (seq-map #'vulpea--title-to-tag names))
          (query (string-join tags "|")))
     (let ((org-agenda-overriding-arguments (list t query)))
@@ -116,9 +115,9 @@ Affects the following commands:
     "FOCUS"
     ((org-agenda-overriding-header
       (concat "To focus on"
-              (if vulpea-agenda-hide-scheduled-and-waiting-next-tasks
-                  ""
-                " (including WAITING and SCHEDULED tasks)")))
+       (if vulpea-agenda-hide-scheduled-and-waiting-next-tasks
+           ""
+         " (including WAITING and SCHEDULED tasks)")))
      (org-agenda-skip-function 'vulpea-agenda-skip-habits)
      (org-tags-match-list-sublevels t)
      (org-agenda-todo-ignore-scheduled
@@ -157,9 +156,9 @@ Affects the following commands:
     "-CANCELLED+WAITING-READING-FOCUS|+HOLD/!"
     ((org-agenda-overriding-header
       (concat "Waiting and Postponed Tasks"
-              (if vulpea-agenda-hide-scheduled-and-waiting-next-tasks
-                  ""
-                " (including WAITING and SCHEDULED tasks)")))
+       (if vulpea-agenda-hide-scheduled-and-waiting-next-tasks
+           ""
+         " (including WAITING and SCHEDULED tasks)")))
      (org-agenda-skip-function 'vulpea-agenda-skip-non-tasks)
      (org-tags-match-list-sublevels nil)
      (org-agenda-todo-ignore-scheduled

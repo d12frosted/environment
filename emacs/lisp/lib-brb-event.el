@@ -34,7 +34,6 @@
 (require 'org-ml)
 (require 'vulpea)
 (require 'lib-list)
-(require 'lib-vino-stats)
 (require 'brb-event)
 (require 'yaml)
 
@@ -79,11 +78,11 @@ structure:
     (when (file-exists-p file)
       (with-temp-buffer
         (condition-case nil
-	    (progn
-	      (insert-file-contents file)
+	          (progn
+	            (insert-file-contents file)
               (read (current-buffer)))
-	  (error
-	   (message "Could not read data from %s" file)))))))
+	        (error
+	         (message "Could not read data from %s" file)))))))
 
 ;;;###autoload
 (defun brb-event-data-write (event data)
@@ -91,8 +90,8 @@ structure:
   (let ((file (brb-event--data-file event)))
     (with-temp-file file
       (let ((print-level nil)
-	    (print-length nil))
-	(pp data (current-buffer))))))
+	          (print-length nil))
+	      (pp data (current-buffer))))))
 
 ;; * Summary
 

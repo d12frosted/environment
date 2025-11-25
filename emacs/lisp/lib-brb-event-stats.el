@@ -32,7 +32,6 @@
 ;;; Code:
 
 (require 'vulpea)
-(require 'lib-vino-stats)
 (require 'lib-hash-table)
 (require 'lib-brb-event)
 (require 'lib-brb-event-plan)
@@ -81,18 +80,19 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                       frame
                       (intern
                        (completing-read
-                        "Time frame: " (cons 'custom vino-stats-time-frames)
+                        "Time frame: " (cons 'custom brb-time-frames)
                         nil 'require-match))))
               (range (pcase frame
                        (`custom (list
                                  (org-read-date nil nil nil "From (inclusive)")
                                  (org-read-date nil nil nil "To (exclusive)")))
-                       (_ (vino-stats--time-frame-range frame))))
+                       (_ (brb-time-frame-range frame))))
               (events (->> (brb-events-from-range range)
                            (-filter events-filter))))
-    (let* ((events-summary (hash-table-from events
-                             :key-fn #'vulpea-note-id
-                             :value-fn (lambda (event _) (brb-event-summary event))))
+    (let* ((events-summary (hash-table-from
+                            events
+                            :key-fn #'vulpea-note-id
+                            :value-fn (lambda (event _) (brb-event-summary event))))
 
            (participants-all (->> events
                                   (--map (brb-event-participants it))

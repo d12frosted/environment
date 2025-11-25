@@ -33,6 +33,8 @@
 ;;
 ;;; Code:
 
+(require 'config-path)
+
 
 
 ;; easier to search
@@ -97,7 +99,7 @@
 
 
 ;; Disable backup files. While I find them useful in general, they
-;; keep interfering with `org-roam'.
+;; keep interfering with `vulpea'
 
 (setq make-backup-files nil)
 

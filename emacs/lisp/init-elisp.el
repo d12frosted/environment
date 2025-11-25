@@ -78,12 +78,12 @@
     (when-let ((root (locate-dominating-file (or (buffer-file-name) default-directory) "Eldev")))
       ;; Build load-path with lisp/ and elpaca packages
       (let* ((elpaca-builds-dir (expand-file-name "elpaca/builds"
-                                                   (bound-and-true-p path-packages-dir)))
+                                                  (bound-and-true-p path-packages-dir)))
              (elpaca-builds (when (and elpaca-builds-dir
-                                      (file-directory-p elpaca-builds-dir))
+                                       (file-directory-p elpaca-builds-dir))
                               (directory-files elpaca-builds-dir t "^[^.]")))
              (load-paths (append (list (expand-file-name "lisp" root))
-                                elpaca-builds)))
+                                 elpaca-builds)))
         (setq-local flycheck-emacs-lisp-load-path load-paths))
       ;; Disable elisp-eldev since it's not working properly, use regular emacs-lisp
       (setq-local flycheck-disabled-checkers '(elisp-eldev))))
@@ -112,6 +112,11 @@ a call to `save-match-data', as `format-spec' modifies that."
         (format-spec format (--map
                              (cons (car it) (lambda () (cdr it)))
                              specification))))))
+
+(use-package emacsql
+  :ensure t
+  :defer t
+  :hook ((emacs-lisp-mode . emacsql-fix-vector-indentation)))
 
 
 

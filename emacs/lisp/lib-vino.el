@@ -191,7 +191,6 @@ FILTER is a `vulpea-note' predicate."
 EXTRA-DATA contains bottle-id."
   (let* ((wine (vulpea-note-meta-get rating "wine" 'note))
          (bottle-id (assoc-default 'bottle-id extra-data))
-         (bottle (vino-inv-get-bottle bottle-id))
          (location (vulpea-select-from "Location"
                                        (vulpea-db-query-by-tags-some '("places" "people" "event"))
                                        :require-match t)))
@@ -377,173 +376,6 @@ EXTRA-DATA contains bottle-id."
       (when (get-buffer brb-ledger-buffer-name)
         (brb-ledger-buffer-create)))))
 
-;; * network posting
-
-;;;###autoload
-(defun vino-rating-mark-network-action (button)
-  "Mark rating note with some status in some network.
-
-BUTTON should be a proper button with following properties:
-
-- note - a `vulpea-note' object
-- network - string
-- status - string"
-  (let ((note (button-get button 'note))
-        (network (button-get button 'network))
-        (status (button-get button 'status)))
-    (vulpea-meta-set note network status 'append)
-    (vulpea-utils-with-note note
-      (save-buffer))))
-
-;;;###autoload
-(defun vino-display-network-candidates ()
-  "Display ratings for posting on various networks."
-  (interactive)
-  (let* ((networks '("vivino"))
-         (network (if (= 1 (seq-length networks))
-                      (car networks)
-                    (completing-read "Network: " networks)))
-         (name (concat "*" network "*"))
-         (buffer (buffer-generate name 'unique))
-         (notes (vulpea-db-query-by-tags-every '("wine" "rating")))
-         (notes (seq-filter
-                 (lambda (note)
-                   (let ((v (vulpea-note-meta-get note network)))
-                     (or (null v)
-                         (string-equal v "false"))))
-                 notes))
-         (total (seq-length notes))
-         (notes (seq-sort-by (lambda (note)
-                               (vulpea-note-meta-get note "date"))
-                             #'string>
-                             notes))
-         (notes (seq-take notes 64))
-         (notes (--sort
-                 (let ((date1 (vulpea-note-meta-get it "date"))
-                       (date2 (vulpea-note-meta-get other "date")))
-                   (or (string< date1 date2)
-                       (< (or (vulpea-note-meta-get it "order" 'number) 0)
-                          (or (vulpea-note-meta-get other "order" 'number) 0))))
-                 notes)))
-    (emacsql-with-transaction (org-roam-db)
-      (with-current-buffer buffer
-        (org-mode)
-        (insert "Showing "
-                (number-to-string (seq-length notes))
-                " ratings out of "
-                (number-to-string total)
-                "\n"
-                "\n")
-        (seq-do
-         (lambda (note)
-           (let* ((rating (vino-rating-get-by-id note))
-                  (pos)
-                  (has-meta))
-             (insert
-              "* "
-              (vulpea-note-title (vino-rating-wine rating))
-              "\n\n")
-             (insert (org-link-make-string
-                      (concat
-                       "id:" (vulpea-note-id
-                              (vino-rating-wine rating)))
-                      "[ Wine ]")
-                     " | "
-                     (org-link-make-string
-                      (concat "id:" (vulpea-note-id note))
-                      "[ Rating ]")
-                     "\n\n")
-             (seq-do
-              (lambda (network)
-                (let ((value (vulpea-note-meta-get note network)))
-                  (when (or (null value)
-                            (string-equal value "false"))
-                    (insert-text-button
-                     "[ post ]"
-                     'note note
-                     'network network
-                     'status "true"
-                     'action #'vino-rating-mark-network-action)
-                    (insert " / ")
-                    (insert-text-button
-                     "[ skip ]"
-                     'note note
-                     'network network
-                     'status "skip"
-                     'action #'vino-rating-mark-network-action)
-                    (insert " " (capitalize network))
-                    (insert "\n"))))
-              networks)
-             (insert "\n")
-             (insert
-              "Total: "
-              (format "%05.2f" (vino-rating-total rating))
-              " / "
-              (format "%i"
-                      (let* ((s5 (vino-rating-total rating))
-                             (a (pcase (floor s5)
-                                  (`5 100)
-                                  (`4 90)
-                                  (`3 80)
-                                  (`2 70)
-                                  (`1 60)
-                                  (`0 50)))
-                             (b (* 10 (- s5 (floor s5)))))
-                        (round (+ a b))))
-              "\n\n")
-             (when-let ((event (vulpea-note-meta-get note "event" 'note))
-                        (order (vulpea-note-meta-get note "order" 'number)))
-               (setq has-meta t)
-               (insert "Wine #" (number-to-string order) " on " (vulpea-note-title event) "\n"))
-             (when-let ((volume (vulpea-note-meta-get (vino-rating-wine rating) "volume" 'number)))
-               (unless (= 750 volume)
-                 (setq has-meta t)
-                 (pcase volume
-                   (`1500 (insert "Magnum bottle\n"))
-                   (`375 (insert "Half bottle\n")))))
-             (when-let ((x (vulpea-note-meta-get (vino-rating-wine rating) "degorgee")))
-               (setq has-meta t)
-               (insert "Disgorged "
-                       (if-let ((time (ignore-errors (org-parse-time-string x))))
-                           (concat "on " (format-time-string "%F" (encode-time time)))
-                         (concat "in " x))
-                       "\n"))
-             (when-let ((x (vulpea-note-meta-get (vino-rating-wine rating) "sur lie")))
-               (unless (string-equal "N/A" x)
-                 (setq has-meta t)
-                 (insert x " on lees\n")))
-             (when has-meta
-               (insert "\n"))
-             (setq pos (point))
-             (insert
-              (vulpea-utils-with-note note
-                (let* ((meta (vulpea-buffer-meta))
-                       (pl (plist-get meta :pl)))
-                  (->> (buffer-substring-no-properties
-                        (org-element-property :end pl)
-                        (point-max))
-                       (s-replace-regexp
-                        org-link-any-re
-                        (lambda (txt) (match-string 3 txt)))
-                       (s-replace "—" " - ")
-                       (s-replace "’" "'")))))
-             (unfill-region pos (point))
-             (delete-char -1)
-             (insert "\n\n")
-             (insert ""
-                     (vino-rating-date rating)
-                     " @"
-                     (when-let ((loc (vulpea-note-meta-get note "location" 'note)))
-                       (or (vulpea-note-meta-get loc "public name")
-                           (vulpea-note-title loc)))
-                     "\n")
-             (insert "\n")))
-         notes)
-        (read-only-mode)
-        (visual-line-mode)
-        (goto-char (point-min))))
-    (switch-to-buffer buffer)))
-
 ;; * VIVC info
 
 (defun vino-grape-fetch-vivc-info (id)
@@ -649,56 +481,7 @@ represented as association list."
                 (message "- %s" (vulpea-note-title it)))
               (user-error "Found duplicate, see messages buffer for more information")))))))))
 
-;; * incomplete ratings
-
-;;;###autoload
-(defun vino-display-incomplete-ratings ()
-  "Display a buffer listing incomplete rating notes.
-
-Whatever that means."
-  (interactive)
-  (let* ((name "*vino-incomplete*")
-         (buffer (buffer-generate name 'unique))
-         (props '("convive" "location"))
-         (limit 100)
-         (notes (vulpea-db-query
-                 (lambda (note)
-                   (let ((tags (vulpea-note-tags note))
-                         (vs (seq-map (lambda (p)
-                                        (vulpea-note-meta-get note p))
-                                      props)))
-                     (and
-                      (seq-contains-p tags "wine")
-                      (seq-contains-p tags "rating")
-                      (seq-some #'null vs))))))
-         (notes (seq-sort-by (lambda (note)
-                               (vulpea-note-meta-get note "date"))
-                             #'string>
-                             notes))
-         (notes (seq-take notes limit)))
-    (emacsql-with-transaction (org-roam-db)
-      (with-current-buffer buffer
-        (seq-do
-         (lambda (note)
-           (let ((rating (vino-rating-get-by-id note)))
-             (insert
-              "["
-              (vino-rating-date rating)
-              "] "
-              (vulpea-utils-link-make-string note)
-              " - missing "
-              (string-join
-               (seq-filter
-                (lambda (p)
-                  (null (vulpea-note-meta-get note p)))
-                props)
-               ", ")
-              "\n")))
-         notes)
-        (org-mode)
-        (read-only-mode)
-        (goto-char (point-min))))
-    (switch-to-buffer buffer)))
+;;; * vino and image
 
 ;;;###autoload
 (defun vino-list-entries-without-image ()
@@ -921,30 +704,26 @@ See `vino-origin-select-fn' for more information."
                        (concat "wine/region/"
                                (or (vulpea-note-meta-get country "short name")
                                    (vulpea-note-title country))
-                               "/%<%Y%m%d%H%M%S>-${slug}.org")
+                               "/${timestamp}-${slug}.org")
                        :tags (seq-union (plist-get vino-region-template :tags)
                                         '("wine" "region"))
                        :head (plist-get vino-region-template :head)
                        :body (format "- country :: %s" (vulpea-utils-link-make-string country))
                        :context (plist-get vino-region-template :context)
-                       :properties (plist-get vino-region-template :properties)
-                       :unnarrowed t
-                       :immediate-finish t))
+                       :properties (plist-get vino-region-template :properties)))
                      (`"Create appellation"
                       (vulpea-create
                        (vulpea-note-title note)
                        (concat "wine/appellation/"
                                (or (vulpea-note-meta-get country "short name")
                                    (vulpea-note-title country))
-                               "/%<%Y%m%d%H%M%S>-${slug}.org")
+                               "/${timestamp}-${slug}.org")
                        :tags (seq-union (plist-get vino-appellation-template :tags)
                                         '("wine" "appellation"))
                        :head (plist-get vino-appellation-template :head)
                        :body (format "- country :: %s" (vulpea-utils-link-make-string country))
                        :context (plist-get vino-appellation-template :context)
-                       :properties (plist-get vino-appellation-template :properties)
-                       :unnarrowed t
-                       :immediate-finish t))
+                       :properties (plist-get vino-appellation-template :properties)))
                      (_ (user-error "Abort")))))
            (if (vulpea-note-tagged-all-p note "wine" "region")
                (setq region note)

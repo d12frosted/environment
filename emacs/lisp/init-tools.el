@@ -57,11 +57,11 @@
      (when (file-exists-p file)
        (with-temp-buffer
          (condition-case nil
-	     (progn
-	       (insert-file-contents file)
+	           (progn
+	             (insert-file-contents file)
                (read (current-buffer)))
-	   (error
-	    (message "Could not read data from %s" file))))))))
+	         (error
+	          (message "Could not read data from %s" file))))))))
 
 (provide 'init-tools)
 ;;; init-tools.el ends here

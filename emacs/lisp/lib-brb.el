@@ -75,7 +75,56 @@
         (insert (json-encode data)))
       (kill-new (buffer-substring-no-properties (point-min) (point-max))))))
 
-;; * Social links
+;;; * Time frames
+
+(defconst brb-time-frames '(this-year
+                            this-year-full
+                            this-month
+                            this-week
+                            today
+                            365-days
+                            30-days
+                            7-days
+                            eternity)
+  "List of time frames.")
+
+(defun brb-time-frame-range (frame)
+  "Convert time FRAME into range of dates."
+  (let* ((now (current-time))
+         (day (* 60 60 24))
+         (fmt "%Y-%m-%d")
+         (tomorrow (time-add now day)))
+    (pcase frame
+      (`this-year (let ((diff (string-to-number (format-time-string "%j" now))))
+                    (list
+                     (format-time-string fmt (time-subtract now (* day (- diff 1))))
+                     (format-time-string fmt tomorrow))))
+      (`this-year-full (let ((year (string-to-number (format-time-string "%Y" now))))
+                         (list (format "%s-01-01" year) (format "%s-01-01" (+ year 1)))))
+      (`this-month (let ((diff (string-to-number (format-time-string "%e" now))))
+                     (list
+                      (format-time-string fmt (time-subtract now (* day (- diff 1))))
+                      (format-time-string fmt tomorrow))))
+      (`this-week (let ((diff (string-to-number (format-time-string "%u" now))))
+                    (list
+                     (format-time-string fmt (time-subtract now (* day (- diff 1))))
+                     (format-time-string fmt tomorrow))))
+      (`365-days (list
+                  (format-time-string fmt (time-subtract now (* day 364)))
+                  (format-time-string fmt tomorrow)))
+      (`30-days (list
+                 (format-time-string fmt (time-subtract now (* day 29)))
+                 (format-time-string fmt tomorrow)))
+      (`7-days (list
+                (format-time-string fmt (time-subtract now (* day 6)))
+                (format-time-string fmt tomorrow)))
+      (`today (list
+               (format-time-string fmt (time-subtract now day))
+               :end-incl
+               (format-time-string fmt tomorrow)))
+      (_ (user-error "Unexpected time frame '%s'" frame)))))
+
+;;; * Social links
 
 (cl-defun brb-link-exists (url)
   "Return URL if it exists."

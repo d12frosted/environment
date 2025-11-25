@@ -316,21 +316,3 @@ The [[https://github.com/d12frosted/vino][vino]] library tracks wine tasting not
 Using [[https://hledger.org][hledger]] to track wine cellar inventory.
 
 *Implementation*: =lib-inventory.el=, =vino-balance-display= in =lib-vino.el=
-
-*** Statistics
-
-#+begin_html
-<p align="center">
-  <img src="images/vino-stats.png" width="100%"/>
-</p>
-#+end_html
-
-Consumption statistics over custom or predefined periods:
-- General stats (consumption, ratings, prices, QPR)
-- Per country, vintage, colour, carbonation
-- Complete rating lists
-
-Used to generate wine tasting reports for Barberry Garden events (see
-[[https://www.dropbox.com/sh/k91o9gwjvxwamoy/AAA-z_sM04W2zOACS6Ul0UnIa?dl=0][Dropbox]]).
-
-*Implementation*: =lib-vino-stats.el=

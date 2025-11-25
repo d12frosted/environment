@@ -41,7 +41,6 @@
 (require 'vulpea)
 (require 'org)
 (require 'org-capture)
-(require 'org-roam)
 (require 'org-cliplink)
 
 (defvar vulpea-capture-inbox-file "inbox.org"
@@ -70,22 +69,8 @@ It is relative to `vulpea-directory', unless it is absolute.")
      ("p" "Project" entry
       (function vulpea-capture-project-target)
       (function vulpea-capture-project-template)))
-   org-roam-capture-templates
-   '(("d" "default" plain "%?"
-      :if-new (file+head
-               "%(vulpea-subdir-select)/%<%Y%m%d%H%M%S>-${slug}.org"
-               "#+title: ${title}\n\n")
-      :unnarrowed t))
-   org-roam-dailies-capture-templates
-   `(("d" "default" entry
-      "* %<%H:%M>\n\n%?"
-      :if-new (file+head
-               ,(expand-file-name "%<%Y-%m-%d>.org"
-                 org-roam-dailies-directory)
-               ,(string-join '("#+title: %<%A, %d %B %Y>"
-                               "#+filetags: journal"
-                               "\n")
-                 "\n"))))))
+   vulpea-create-default-template
+   '(:file-name "%(vulpea-subdir-select)/${timestamp}-${slug}.org")))
 
 ;;;###autoload
 (defun vulpea-capture-task ()
@@ -109,8 +94,7 @@ Captured area is visited unless NOVISIT is provided."
     (when (string-empty-p title)
       (user-error "Area name can't be empty"))
     (when-let ((note (vulpea-create
-                      title "area/%<%Y%m%d%H%M%S>-${slug}.org"
-                      :immediate-finish t
+                      title "area/${timestamp}-${slug}.org"
                       :body (string-join
                              '("* Notes"
                                "* Research"

@@ -30,7 +30,7 @@
 ;;; Commentary:
 ;;
 ;; This module configures all things for note taking and project
-;; management. The stars are `org' and `org-roam'.
+;; management.
 ;;
 ;;; Code:
 
@@ -40,7 +40,8 @@
 
 
 (use-package vulpea
-  :ensure (:host github :repo "d12frosted/vulpea")
+  :ensure (:host github :repo "d12frosted/vulpea" :branch "v2-rewrite")
+  ;; :ensure nil :load-path "/Users/d12frosted/Developer/vulpea"
   :defer t
   :general
   (leader-def
@@ -57,31 +58,47 @@
     "nf" '(vulpea-find :which-key "find")
     "nF" '(vulpea-find-backlink :which-key "find backlink")
     "ni" '(vulpea-insert :which-key "insert")
-    "nt" '(vulpea-tags-add :which-key "tag")
-    "nT" '(vulpea-tags-delete :which-key "untag")
-    "na" '(vulpea-alias-add :which-key "alias")
-    "nA" '(vulpea-alias-delete :which-key "unalias"))
+    "nt" '(vulpea-buffer-tags-add :which-key "tag")
+    "nT" '(vulpea-buffer-tags-remove :which-key "untag")
+    "na" '(vulpea-buffer-alias-add :which-key "alias")
+    "nA" '(vulpea-buffer-alias-remove :which-key "unalias"))
   :hook ((before-save . vulpea-pre-save-hook)
-         (org-roam-db-autosync-mode . vulpea-db-setup-attachments)
-         (org-roam-db-autosync-mode . vulpea-db-autosync-enable))
+         ;; we could use after-init; but we need to wait for elpaca to
+         ;; finish its work
+         (elpaca-after-init . vulpea-db-setup-attachments)
+         (elpaca-after-init . vulpea-db-autosync-mode))
   :init
   (setq-default
+   ;; file locations
+   vulpea-db-sync-directories (list vulpea-directory)
+   vulpea-default-notes-directory vulpea-directory
+   vulpea-db-location (expand-file-name "vulpea.db" path-cache-dir)
+
+   ;; performance (we also rely on fd + fswatch)
+   vulpea-db-parse-method 'single-temp-buffer
+
+   ;; eh, sadly, I need it for attachments
+   vulpea-db-index-heading-level t
+
+   ;; automatic scan on enable
+   vulpea-db-sync-scan-on-enable 'async
+
+   ;; candidates
    vulpea-find-default-candidates-source #'vulpea-find-candidates
    vulpea-insert-default-candidates-source #'vulpea-insert-candidates
-   vulpea-find-default-filter
-   (lambda (note)
-     (= (vulpea-note-level note) 0))
-   vulpea-insert-default-filter
-   (lambda (note)
-     (= (vulpea-note-level note) 0)))
+   vulpea-find-default-filter (when vulpea-db-index-heading-level
+                                (lambda (note)
+                                  (= (vulpea-note-level note) 0)))
+   vulpea-insert-default-filter (when vulpea-db-index-heading-level
+                                  (lambda (note)
+                                    (= (vulpea-note-level note) 0))))
   :config
-  (add-hook 'vulpea-insert-handle-functions
-            #'vulpea-insert-handle)
+  (add-hook 'vulpea-insert-handle-functions #'vulpea-insert-handle)
 
   ;; This must be configured in config hook to avoid unnecessary load
   ;; of `vulpea' stuff.
-  (add-to-list 'window-buffer-change-functions
-               #'vulpea-setup-buffer))
+  ;; (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer)
+  )
 
 
 
@@ -104,7 +121,7 @@
   (setq org-modules '(org-id org-attach))
 
   ;; pretty org files
-  (setq
+  (setq-default
    org-adapt-indentation nil
    org-hidden-keywords nil
    org-hide-emphasis-markers t
@@ -344,33 +361,6 @@
 
 
 
-(use-package org-roam
-  :ensure t
-  :defer t
-  :commands (org-roam-db-autosync-enable
-             org-roam-db-sync)
-  :init
-  (setq
-   org-roam-v2-ack t
-   org-roam-directory vulpea-directory
-   org-roam-dailies-directory (expand-file-name
-                               "journal/" org-roam-directory)
-   org-roam-database-connector 'sqlite-builtin
-   org-roam-db-location (expand-file-name
-                         (if vulpea-test-mode
-                             "org-roam-test.db"
-                           "org-roam.db")
-                         path-cache-dir)
-   org-roam-completion-everywhere nil
-   ;; remove this atrocity from save-hook, it eats too much CPU on
-   ;; buffers with lots of links and serves me zero purpose.
-   org-roam-link-auto-replace nil)
-  :config
-  (unless elpa-bootstrap-p
-    (org-roam-db-autosync-enable)))
-
-
-
 (use-package org-download
   :ensure t
   :defer t
@@ -477,7 +467,7 @@
                (concat "https://www.vivino.com/w/" query)
                "vivino.com"))
             fancy-yank-format-link))
-    (cons string-http-url-regexp
+    (cons (concat "^" string-http-url-regexp "$")
           '(fancy-yank-extract-regex
             (lambda (url &rest args)
               (list

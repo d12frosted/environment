@@ -34,7 +34,7 @@
 ;;; Code:
 
 (use-package vino
-  :ensure (:host github :repo "d12frosted/vino")
+  :ensure (:host github :repo "d12frosted/vino" :branch "vulpea-v2")
   :defer t
   :commands (vino-setup)
   :general
@@ -61,7 +61,7 @@
    "cu" '(vino-inv-ui-kill-url :which-key "copy link to the wine")
    "ci" '(vino-inv-ui-kill-wine-id :which-key "copy id of the wine"))
   :init
-  (with-eval-after-load 'org-roam
+  (with-eval-after-load 'vulpea
     (vino-setup)
     (vino-inv-setup))
   (add-hook 'vino-entry-create-handle-functions #'vino-inv-acquire)
@@ -73,17 +73,17 @@
   (add-hook 'vino-inv-consume-handle-functions #'vino-inv-consume-bottle-handler)
   (add-hook 'vino-inv-edit-location-handle-functions #'vino-inv-edit-location-handler)
   (setq-default
-   vino-producer-template '(:file-name "wine/producer/%<%Y%m%d%H%M%S>-${slug}.org"
+   vino-producer-template '(:file-name "wine/producer/${timestamp}-${slug}.org"
                             :tags ("barberry/public"))
    vino-entry-template '(:file-name "wine/cellar/${id}.org"
                          :tags ("barberry/public"))
    vino-rating-template '(:file-name "wine/rating/${id}.org"
                           :tags ("barberry/public"))
-   vino-region-template '(:file-name "wine/region/${country}/%<%Y%m%d%H%M%S>-${slug}.org"
+   vino-region-template '(:file-name "wine/region/${country}/${timestamp}-${slug}.org"
                           :tags ("barberry/public"))
-   vino-appellation-template '(:file-name "wine/appellation/${country}/%<%Y%m%d%H%M%S>-${slug}.org"
+   vino-appellation-template '(:file-name "wine/appellation/${country}/${timestamp}-${slug}.org"
                                :tags ("barberry/public"))
-   vino-grape-template '(:file-name "wine/grape/%<%Y%m%d%H%M%S>-${slug}.org"
+   vino-grape-template '(:file-name "wine/grape/${timestamp}-${slug}.org"
                          :tags ("barberry/public"))
    vino-origin-select-fn #'vino-origin-select-custom
    vino-entry-rating-average-method #'vino-entry-rating-average-method-impl
