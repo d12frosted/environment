@@ -3,7 +3,7 @@
 # Emacs configuration setup script
 #
 # This script handles installation, upgrade, compilation, linting, and testing
-# of Emacs configuration. It can be called standalone or via eru (bootstrap.sh).
+# of Emacs configuration. It can be called standalone or via eru.sh.
 #
 # Usage:
 #   ./setup.sh [command...]

@@ -36,7 +36,7 @@ From the dotfiles root:
 
 #+begin_src bash
 # Install Emacs configuration and all packages
-./bootstrap.sh install emacs
+./eru.sh install emacs
 
 # Or from the emacs directory directly
 cd emacs
@@ -222,7 +222,7 @@ Restart Emacs or =M-x eval-buffer=.
 ./setup.sh upgrade
 
 # Via eru
-./bootstrap.sh upgrade emacs
+./eru.sh upgrade emacs
 #+end_src
 
 ** Troubleshooting

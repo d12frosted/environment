@@ -200,7 +200,7 @@ function check_homebrew() {
 # Lock File Management
 #
 
-LOCK_FILE="$XDG_CACHE_HOME/bootstrap/bootstrap.lock"
+LOCK_FILE="$XDG_CACHE_HOME/eru/eru.lock"
 
 function acquire_lock() {
   if [ -f "$LOCK_FILE" ]; then
@@ -674,8 +674,8 @@ function task_symlinks() {
     info "No SSH config found at $XDG_CONFIG_HOME/ssh"
   fi
 
-  # symlink bootstrap.sh to eru
-  create_symlink "$XDG_CONFIG_HOME/bootstrap.sh" "$HOME/.local/bin/eru"
+  # symlink eru.sh to eru
+  create_symlink "$XDG_CONFIG_HOME/eru.sh" "$HOME/.local/bin/eru"
 
   task_complete "symlinks" "Symlinks created"
 }

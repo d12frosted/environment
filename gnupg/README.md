@@ -9,9 +9,9 @@ This directory contains GnuPG configuration files that will be symlinked to `~/.
      - macOS: `/opt/homebrew/bin/pinentry-mac`
      - Linux: `/usr/bin/pinentry-curses` or `/usr/bin/pinentry-gtk-2`
 
-2. Run the bootstrap symlinks task:
+2. Run the symlinks task:
    ```bash
-   ./bootstrap.sh symlinks
+   ./eru.sh install symlinks
    ```
 
 3. Reload gpg-agent to apply changes:

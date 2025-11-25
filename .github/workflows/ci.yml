@@ -15,8 +15,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run ShellCheck on bootstrap.sh
-        run: shellcheck bootstrap.sh
+      - name: Run ShellCheck on eru.sh
+        run: shellcheck eru.sh
 
       - name: Run ShellCheck on macos/defaults.sh
         run: shellcheck macos/defaults.sh
@@ -32,22 +32,22 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Test dry-run install all
-        run: ./bootstrap.sh install --dry-run
+        run: ./eru.sh install --dry-run
 
       - name: Test dry-run upgrade all
-        run: ./bootstrap.sh upgrade --dry-run
+        run: ./eru.sh upgrade --dry-run
 
       - name: Test dry-run individual tasks
         run: |
-          ./bootstrap.sh install homebrew --dry-run
-          ./bootstrap.sh install packages --dry-run
-          ./bootstrap.sh install macos --dry-run
-          ./bootstrap.sh install shell --dry-run
-          ./bootstrap.sh install wm --dry-run
-          ./bootstrap.sh install devtools --dry-run
+          ./eru.sh install homebrew --dry-run
+          ./eru.sh install packages --dry-run
+          ./eru.sh install macos --dry-run
+          ./eru.sh install shell --dry-run
+          ./eru.sh install wm --dry-run
+          ./eru.sh install devtools --dry-run
 
       - name: Test doctor help
-        run: ./bootstrap.sh doctor --help
+        run: ./eru.sh doctor --help
 
   test-homebrew:
     name: Test Homebrew Installation
@@ -64,7 +64,7 @@ jobs:
         continue-on-error: true
 
       - name: Run homebrew task
-        run: ./bootstrap.sh install homebrew
+        run: ./eru.sh install homebrew
 
       - name: Verify Homebrew installation
         run: |
@@ -79,10 +79,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Ensure Homebrew is installed
-        run: ./bootstrap.sh install homebrew
+        run: ./eru.sh install homebrew
 
       - name: Test package installation
-        run: FORMULA_ONLY=true ./bootstrap.sh install packages
+        run: FORMULA_ONLY=true ./eru.sh install packages
         env:
           FORMULA_ONLY: true
 
@@ -101,13 +101,13 @@ jobs:
 
       - name: Test help command
         run: |
-          ./bootstrap.sh --help
-          ./bootstrap.sh help
-          ./bootstrap.sh -h
+          ./eru.sh --help
+          ./eru.sh help
+          ./eru.sh -h
 
       - name: Test invalid action
         run: |
-          if ./bootstrap.sh invalid-action; then
+          if ./eru.sh invalid-action; then
             echo "Should have failed!"
             exit 1
           fi
@@ -115,7 +115,7 @@ jobs:
 
       - name: Test invalid task
         run: |
-          if ./bootstrap.sh install invalid-task; then
+          if ./eru.sh install invalid-task; then
             echo "Should have failed!"
             exit 1
           fi
@@ -123,7 +123,7 @@ jobs:
 
       - name: Test invalid doctor check
         run: |
-          if ./bootstrap.sh doctor invalid-check; then
+          if ./eru.sh doctor invalid-check; then
             echo "Should have failed!"
             exit 1
           fi
@@ -137,18 +137,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Ensure Homebrew is installed
-        run: ./bootstrap.sh install homebrew
+        run: ./eru.sh install homebrew
 
       - name: Test doctor brew check
-        run: ./bootstrap.sh doctor brew
+        run: ./eru.sh doctor brew
         continue-on-error: true
 
       - name: Test doctor shell check
-        run: ./bootstrap.sh doctor shell
+        run: ./eru.sh doctor shell
         continue-on-error: true
 
       - name: Test doctor all checks
-        run: ./bootstrap.sh doctor
+        run: ./eru.sh doctor
         continue-on-error: true
 
   test-syntax:
@@ -159,7 +159,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check bash syntax
-        run: bash -n bootstrap.sh
+        run: bash -n eru.sh
 
       - name: Check macos/defaults.sh syntax
         run: bash -n macos/defaults.sh
