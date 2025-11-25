@@ -29,9 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; Personal knowledge management using vulpea (built on org-roam) and
-;; org-mode. Includes capture templates, agenda views, refiling, and
-;; various org extensions.
+;; Personal knowledge management using vulpea and org-mode. Includes
+;; capture templates, agenda views, refiling, and various org
+;; extensions.
 ;;
 ;;; Code:
 
@@ -124,7 +124,7 @@
   (setq-default
    org-adapt-indentation nil
    org-hidden-keywords nil
-   org-hide-emphasis-markers t
+   org-hide-emphasis-markers nil
    org-hide-leading-stars t
    org-image-actual-width '(512)
    org-imenu-depth 1
@@ -199,6 +199,7 @@
 
   ;; Use RET to open org-mode links, including those in quick-help.org
   (setq org-return-follows-link t))
+
 
 
 
@@ -511,6 +512,13 @@
   :ensure nil
   :after org
   :hook (org-mode . org-margin-mode))
+
+(use-package lib-org-emphasis
+  :ensure nil
+  :after org
+  :hook (org-mode . org-emphasis-marker-mode)
+  :init
+  (setq org-hide-emphasis-markers nil))
 
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
