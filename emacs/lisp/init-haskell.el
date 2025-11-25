@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Haskell support.
+;; Haskell development with haskell-mode, LSP via haskell-language-server,
+;; and ormolu formatting on save.
 ;;
 ;;; Code:
 

@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; This module provides utilities for refiling vulpea notes.
+;; Refile target verification: excludes done tasks and entries with
+;; blacklisted tags (JOURNAL, REFILE) from refile targets.
 ;;
 ;;; Code:
 

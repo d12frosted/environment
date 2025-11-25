@@ -29,7 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; This module configures yasnippet.
+;; Automatic file template expansion using yasnippet. When creating a new
+;; file, expands appropriate template based on file name or major mode
+;; (see `file-templates-alist').
 ;;
 ;;; Code:
 

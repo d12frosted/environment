@@ -29,6 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
+;; Single wine event management: data extraction, participant handling,
+;; wine selection, scoring, and event buffer display.
+;;
 ;;; Code:
 
 (require 'org-ml)

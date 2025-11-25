@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Various utilities extending `vulpea'
+;; Core vulpea utilities: note detection, project tagging, filetag management,
+;; SVG rendering for note links, buffer setup hooks, and database building.
 ;;
 ;;; Code:
 
@@ -240,7 +241,7 @@ FILTER is a `vulpea-note' predicate."
 
 ;;;###autoload
 (defun vulpea-setup-svg-tags ()
-  "Do something useful."
+  "Configure SVG tag rendering for vulpea note links."
   (setq-local
    svg-tag-tags
    (list

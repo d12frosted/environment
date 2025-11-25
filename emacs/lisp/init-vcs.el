@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Git is wonderful. Especially when you have `magit'.
+;; Git integration using magit, forge (GitHub/GitLab), git-timemachine for
+;; history browsing, and diff-hl for gutter indicators. Keybindings under M-m g.
 ;;
 ;;; Code:
 

@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Project support via `project'.
+;; Project management using built-in project.el with rg for fast searching.
+;; Keybindings under M-m p.
 ;;
 ;;; Code:
 

@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Configurations for wonderful `dired'.
+;; Dired file manager configuration: human-readable sizes, recursive
+;; operations, and directories sorted first.
 ;;
 ;;; Code:
 

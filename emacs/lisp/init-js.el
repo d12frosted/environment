@@ -29,9 +29,10 @@
 ;;
 ;;; Commentary:
 ;;
-;; JS/TS support.
+;; JavaScript/TypeScript development with LSP (typescript-language-server),
+;; ESLint integration, and Tailwind CSS support.
 ;;
-;; npm i -g typescript-language-server; npm i -g typescript
+;; Requires: npm i -g typescript-language-server typescript
 ;;
 ;;; Code:
 

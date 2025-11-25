@@ -29,7 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; Making Emacs beautiful. See also `early-init'.
+;; Visual appearance: theme (modus), fonts (fontaine), spacing, mode-line
+;; (minions), SVG icons, and various display settings. Frame customizations
+;; are in early-init.el.
 ;;
 ;;; Code:
 
@@ -123,6 +125,12 @@
   (set-fontset-font
    t 'emoji
    '("Apple Color Emoji" . "iso10646-1") nil 'prepend))
+
+;; but setup unicode fonts properly
+(use-package unicode-fonts
+  :ensure t
+  :config
+  (unicode-fonts-setup))
 
 
 

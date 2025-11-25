@@ -29,7 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; Emacs lacks only good editor. Try a little bit.
+;; Core editing behavior: UTF-8 encoding, indentation (spaces, not tabs),
+;; electric pairs, whitespace handling, line wrapping, and navigation
+;; enhancements (avy, ace-link, mwim).
 ;;
 ;;; Code:
 

@@ -29,7 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; Buffer configurations and utilities.
+;; Buffer management: unique naming, scratch buffers (persistent and
+;; temporary), messages buffer access, and sudo editing. Keybindings
+;; under M-m b.
 ;;
 ;;; Code:
 

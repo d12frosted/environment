@@ -29,9 +29,15 @@
 ;;
 ;;; Commentary:
 ;;
+;; Miscellaneous tools: REST client for API testing, jq for JSON processing,
+;; and gptel for AI chat integration with Claude and other models.
+;;
 ;;; Code:
 
 (require 'config-vulpea)
+
+(use-package agent-shell
+  :ensure t)
 
 (use-package restclient
   :ensure (:host github :repo "pashky/restclient.el" :files ("restclient.el" "restclient-jq.el"))

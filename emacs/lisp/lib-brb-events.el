@@ -31,6 +31,9 @@
 ;;
 ;;; Commentary:
 ;;
+;; Multi-event view and management: listing events, creating new events,
+;; and aggregating statistics across the wine club history.
+;;
 ;;; Code:
 
 (require 'lib-brb)

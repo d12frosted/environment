@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Shell support.
+;; Shell script support: sh-mode with enhanced fontification for variables
+;; and command substitution, fish-mode for Fish shell, and eshell config.
 ;;
 ;;; Code:
 

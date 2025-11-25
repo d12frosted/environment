@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Spell check support.
+;; Spell checking using jinx with enchant backend. Configured for both
+;; British English and Ukrainian languages simultaneously.
 ;;
 ;;; Code:
 

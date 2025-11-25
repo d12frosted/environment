@@ -29,9 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; These functions are unlikely to be used directly somewhere in my
-;; configurations, but I use them when I need to quickly hack some
-;; solution.
+;; Utility functions for buffer manipulation: extracting content, iterating
+;; over lines, transforming lines, and generating result buffers.
 ;;
 ;;; Code:
 

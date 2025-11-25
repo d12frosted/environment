@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Utilities for property lists.
+;; Property list utilities: deletion and interactive buttonization for
+;; editing values in place.
 ;;
 ;;; Code:
 

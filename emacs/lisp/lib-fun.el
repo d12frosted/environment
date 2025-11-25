@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Utilities to build functions.
+;; Function utilities: unquoting, interactive loops with collection or
+;; filtering, suppressing messages, and removing keyword parameters.
 ;;
 ;;; Code:
 

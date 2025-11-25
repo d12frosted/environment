@@ -29,6 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
+;; Markdown editing with native syntax highlighting in code blocks.
+;;
 ;;; Code:
 
 (use-package markdown-mode

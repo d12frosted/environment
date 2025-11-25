@@ -29,7 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; Configurations for `vulpea' and `org-mode'.
+;; Configuration variables for vulpea, a personal knowledge management
+;; system built on org-roam. Defines the notes directory location and
+;; test mode toggle.
 ;;
 ;;; Code:
 

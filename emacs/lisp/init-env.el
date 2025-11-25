@@ -29,15 +29,25 @@
 ;;
 ;;; Commentary:
 ;;
-;; Environment-related configurations.
+;; Defines constants for detecting the runtime environment: display type,
+;; operating system, and user privileges. Used for conditional configuration.
 ;;
 ;;; Code:
 
-(defconst env-graphic-p (display-graphic-p))
-(defconst env-rootp (string-equal "root" (getenv "USER")))
-(defconst env-sys-mac-p (eq system-type 'darwin))
-(defconst env-sys-linux-p (eq system-type 'gnu/linux))
-(defconst env-sys-name (system-name))
+(defconst env-graphic-p (display-graphic-p)
+  "Non-nil if Emacs is running with a graphical display.")
+
+(defconst env-rootp (string-equal "root" (getenv "USER"))
+  "Non-nil if Emacs is running as root user.")
+
+(defconst env-sys-mac-p (eq system-type 'darwin)
+  "Non-nil if running on macOS.")
+
+(defconst env-sys-linux-p (eq system-type 'gnu/linux)
+  "Non-nil if running on GNU/Linux.")
+
+(defconst env-sys-name (system-name)
+  "The host name of the machine Emacs is running on.")
 
 (provide 'init-env)
 ;;; init-env.el ends here

@@ -29,6 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
+;; Event statistics display: wine ratings, participant scores, and
+;; comparative analysis across events.
+;;
 ;;; Code:
 
 (require 'brb-event)

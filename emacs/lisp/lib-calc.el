@@ -29,10 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; This module contains various utilities for working with `calc'
-;; programatically.
-;;
-;; Feedback on this code is highly appreciated!
+;; Utilities for programmatic use of Emacs calc: converting between
+;; Emacs Lisp numbers and calc's internal format.
 ;;
 ;;; Code:
 

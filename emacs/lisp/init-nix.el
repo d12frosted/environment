@@ -29,7 +29,7 @@
 ;;
 ;;; Commentary:
 ;;
-;; Nix support.
+;; Nix expression language support via nix-mode.
 ;;
 ;;; Code:
 

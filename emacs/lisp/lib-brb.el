@@ -29,6 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
+;; Core utilities for Barberry Garden wine club: time frame handling,
+;; QPR (quality-price ratio) calculations, data export, and external sync.
+;;
 ;;; Code:
 
 (require 'lib-calc)

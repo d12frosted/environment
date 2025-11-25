@@ -29,8 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; Emacs can be an IDE. Sort of, thanks to `flycheck', `lsp-mode' and
-;; `corfu'.
+;; IDE features: completion (corfu, cape), syntax checking (flycheck),
+;; language servers (lsp-mode with booster), tree-sitter for syntax
+;; highlighting, and code formatting (apheleia).
 ;;
 ;;; Code:
 
@@ -215,6 +216,7 @@
   :ensure t)
 
 (use-package eglot
+  :disabled
   :ensure t
   :defer t
   :defines (eglot-server-programs))

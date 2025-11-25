@@ -29,8 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; See Emacs Help for more information on The Early Init File.
-;; Basically, this file contains frame customizations.
+;; This file is loaded before the package system and GUI are initialized.
+;; It configures frame appearance (no toolbars, rounded corners, internal
+;; borders) and disables package.el in favor of elpaca.
 ;;
 ;;; Code:
 

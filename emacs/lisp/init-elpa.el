@@ -1,4 +1,4 @@
-;;; init-elpa.el --- Initialize ELPA -*- lexical-binding: t; -*-
+;;; init-elpa.el --- Package manager bootstrap -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
 ;;
@@ -29,8 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; Setup Emacs for installing packages from MELPA and Git
-;; repositories. Enable configuration via `use-package'.
+;; Bootstraps elpaca package manager and configures use-package integration.
+;; Also installs essential utility packages (dash, s, async) that are used
+;; throughout the configuration.
 ;;
 ;;; Code:
 
@@ -38,7 +39,9 @@
 
 
 
-(defvar elpa-bootstrap-p nil)
+(defvar elpa-bootstrap-p nil
+  "Non-nil during package installation via Eldev.
+When set, triggers autoload generation and verbose logging.")
 
 
 
