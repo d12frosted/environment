@@ -226,13 +226,18 @@
   :config
   (setq modus-themes-italic-constructs nil
         modus-themes-bold-constructs nil
-        modus-themes-common-palette-overrides (append
-                                               '((overline-heading-1 bg-blue-subtle)
-                                                 (overline-heading-2 bg-magenta-nuanced))
-                                               modus-themes-preset-overrides-cooler)
-        modus-themes-headings '((1 . (bold 1.4))
-                                (2 . (semibold 1.2))
-                                (t . (medium 1.1))))
+        modus-themes-common-palette-overrides
+        (append
+         '((overline-heading-1 bg-blue-subtle)
+           (overline-heading-2 bg-magenta-nuanced))
+         modus-themes-preset-overrides-cooler)
+        modus-themes-headings
+        '((1 . (variable-pitch bold 1.4))
+          (2 . (variable-pitch semibold 1.25))
+          (3 . (variable-pitch semibold 1.15))
+          (4 . (variable-pitch medium 1.1))
+          (5 . (variable-pitch medium 1.05))
+          (t . (variable-pitch regular 1.0))))
 
   ;; Load the theme of your choice.
   (load-theme 'modus-operandi :no-confirm)
