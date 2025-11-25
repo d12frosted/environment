@@ -29,8 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Because Emacs, baby. Chatting in Telegram never was so pleasant and
-;; hassle free.
+;; Telegram client using telega.el. Currently disabled. Includes automatic
+;; server building on Linux via Nix.
 ;;
 ;;; Code:
 

@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Utilities for `string' data type.
+;; String utilities: regexp matching helpers, number formatting with
+;; grouping, value-to-string conversion, and table formatting.
 ;;
 ;;; Code:
 

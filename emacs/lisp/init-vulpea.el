@@ -29,8 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; This module configures all things for note taking and project
-;; management.
+;; Personal knowledge management using vulpea (built on org-roam) and
+;; org-mode. Includes capture templates, agenda views, refiling, and
+;; various org extensions.
 ;;
 ;;; Code:
 

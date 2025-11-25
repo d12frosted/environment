@@ -29,7 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; Various utilities for capturing tasks and notes.
+;; Org-capture templates and target functions for tasks, meetings, areas,
+;; and projects. Meetings are captured under person notes, projects under
+;; area notes.
 ;;
 ;;; Code:
 

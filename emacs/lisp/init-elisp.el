@@ -29,8 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; While Emacs Lisp is supported out of the box, there are still
-;; things to improve.
+;; Emacs Lisp enhancements: improved plist/keyword indentation, flycheck
+;; integration with elpaca load paths, form-feed display, and buttercup
+;; testing support.
 ;;
 ;;; Code:
 

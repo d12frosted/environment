@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Configurations for window system.
+;; Window management: splitting, zooming, and ace-window for quick navigation.
+;; Prefers vertical splits by default. Keybindings under M-m w.
 ;;
 ;;; Code:
 

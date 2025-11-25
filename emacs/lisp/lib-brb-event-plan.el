@@ -29,6 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
+;; Event planning utilities: budget calculation, wine cost allocation,
+;; participant charges, and financial summaries.
+;;
 ;;; Code:
 
 (require 'brb-ledger)

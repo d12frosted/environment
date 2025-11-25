@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Utilities for working with VCS
+;; GitHub URL parsing and formatting utilities for issues, pull requests,
+;; milestones, commits, and project references.
 ;;
 ;;; Code:
 

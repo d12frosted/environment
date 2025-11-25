@@ -29,7 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; This module provides various utilities for building agenda buffer.
+;; Dynamic org-agenda building using vulpea database. Includes commands for
+;; refile, focus, projects, waiting tasks, and person-specific views. The
+;; agenda file list is built from notes tagged "project".
 ;;
 ;;; Code:
 
@@ -62,7 +64,7 @@ Affects the following commands:
 
 ;;;###autoload
 (defun vulpea-agenda-person ()
-  "Show main `org-agenda' view."
+  "Show `org-agenda' filtered by selected person."
   (interactive)
   (let* ((person (vulpea-select-from
                   "Person"

@@ -29,8 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Selection system configurations. Choose from ivy, selectrum and
-;; consult.
+;; Completion framework using vertico, orderless, marginalia, and consult.
+;; Provides fuzzy matching, rich annotations, and powerful search commands.
 ;;
 ;;; Code:
 
@@ -66,14 +66,17 @@
   (setq enable-recursive-minibuffers t))
 
 (defvar selection-orderless-dispatch-alist
-    '((?% . char-fold-to-regexp)
-      (?! . orderless-without-literal)
-      (?`. orderless-initialism)
-      (?= . orderless-literal)
-      (?~ . orderless-flex)))
+  '((?% . char-fold-to-regexp)
+    (?! . orderless-without-literal)
+    (?`. orderless-initialism)
+    (?= . orderless-literal)
+    (?~ . orderless-flex))
+  "Alist mapping prefix/suffix characters to orderless matching styles.
+Use % for char-fold, ! for without-literal, ` for initialism,
+= for literal, and ~ for flex matching.")
 
 (defun selection-orderless--suffix-regexp ()
-  "."
+  "Return regexp matching consult disambiguation suffixes."
   (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
       (format "[%c-%c]*$"
               consult--tofu-char

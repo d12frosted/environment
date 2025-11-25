@@ -29,6 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
+;; Support for data serialization formats: JSON, YAML (with LSP), and
+;; Protocol Buffers.
+;;
 ;;; Code:
 
 (use-package json-snatcher

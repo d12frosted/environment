@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Taming hooks using some utilities.
+;; Hook utilities: `hook-with-delay' adds a function to a hook that
+;; runs after an idle delay instead of immediately.
 ;;
 ;;; Code:
 

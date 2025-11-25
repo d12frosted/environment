@@ -29,7 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; This module adds support of `vino' package.
+;; Wine cellar management using vino package. Tracks producers, regions,
+;; grapes, inventory (acquisitions and consumption), and ratings with a
+;; customizable scoring system. Keybindings under M-m v.
 ;;
 ;;; Code:
 

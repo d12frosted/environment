@@ -29,6 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
+;; List utilities extending dash.el: 1-based position finding, element
+;; counting, and conditional updates.
+;;
 ;;; Code:
 
 (require 'dash)

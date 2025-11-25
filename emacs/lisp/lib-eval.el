@@ -29,7 +29,8 @@
 ;;
 ;;; Commentary:
 ;;
-;; Eval utilities.
+;; Evaluation helpers: running code in a specific directory and
+;; bypassing confirmation prompts.
 ;;
 ;;; Code:
 

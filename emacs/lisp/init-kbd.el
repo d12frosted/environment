@@ -29,16 +29,17 @@
 ;;
 ;;; Commentary:
 ;;
-;; Install all required packages and setup key bindings.
+;; Configures keybindings using general.el with M-m as the leader prefix.
+;; Sets up which-key for discoverability and provides an enhanced escape
+;; handler. On macOS, remaps Command to Meta for ergonomic editing.
 ;;
 ;;; Code:
 
 (require 'init-env)
 
 (defmacro leader-def (&rest args)
-  "A wrapper for `general-def'.
-
-ARGS are arguments, right?"
+  "Define keybindings under the leader prefix (M-m).
+ARGS are passed to `general-def' with leader prefix configuration."
   (declare (indent defun))
   `(,'general-def ,@args ,@'(:states nil
                              :keymaps 'override

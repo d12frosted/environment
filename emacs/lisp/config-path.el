@@ -29,7 +29,9 @@
 ;;
 ;;; Commentary:
 ;;
-;; This module defines path constants used across other modules.
+;; Defines path constants for Emacs directories (config, cache, packages)
+;; and external locations (home, cloud storage, projects). These paths are
+;; used throughout the configuration to ensure consistent file placement.
 ;;
 ;;; Code:
 

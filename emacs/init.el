@@ -1,11 +1,11 @@
-;;; init.el --- Custom configurations -*- lexical-binding: t; -*-
+;;; init.el --- Emacs configuration entry point -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "29.1"))
+;; Package-Requires: ((emacs "30.2"))
 ;;
 ;; Created: 08 Jan 2021
 ;;
@@ -31,8 +31,11 @@
 ;;
 ;;; Commentary:
 ;;
-;; These are my personal Emacs configurations. Please refer to the
-;; README for information on how to run and modify them.
+;; Main entry point for Emacs configuration. This file sets up load paths,
+;; garbage collection thresholds, bootstraps the package manager, and loads
+;; all feature modules from the lisp/ directory.
+;;
+;; See README.org for installation and usage instructions.
 ;;
 ;;; Code:
 
