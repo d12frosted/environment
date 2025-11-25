@@ -29,21 +29,23 @@
 ;;
 ;;; Commentary:
 ;;
-;; Various utilities extending `vulpea' and `org-roam'.
+;; Various utilities extending `vulpea'
 ;;
 ;;; Code:
 
+(require 'init-env)
+
 (require 'config-vulpea)
+
 (require 'lib-directory)
 (require 'lib-svg)
+(require 'lib-string)
 
 (require 'vulpea)
 (require 'vino)
-(require 'org-roam)
-(require 'org-roam-db)
-(require 'org-roam-dailies)
 (require 'svg-lib)
 (require 'svg-tag-mode)
+(require 'org-attach)
 
 
 
@@ -138,101 +140,74 @@ FILTER is a `vulpea-note' predicate."
 
 
 ;;;###autoload
-(defun vulpea-tags-add ()
-  "Add a tag to current note."
-  (interactive)
-  (org-with-point-at 1
-    (when (call-interactively #'org-roam-tag-add)
-      (vulpea-ensure-filetag))))
-
-;;;###autoload
-(defun vulpea-tags-delete ()
-  "Delete a tag from current note."
-  (interactive)
-  (call-interactively #'org-roam-tag-remove))
-
-;;;###autoload
 (defun vulpea-ensure-filetag ()
   "Add missing FILETAGS to the current note."
-  (let* ((file (buffer-file-name))
-         (path-tags
-          (when file
-            (seq-filter
-             (lambda (x) (not (string-empty-p x)))
-             (split-string
-              (string-remove-prefix
-               vulpea-directory
-               (file-name-directory file))
-              "/"))))
-         (original-tags (vulpea-buffer-tags-get))
-         (tags (append original-tags path-tags)))
+  (save-excursion
+    (goto-char (point-min))
+    (let* ((file (buffer-file-name))
+           (path-tags
+            (when file
+              (seq-filter
+               (lambda (x) (not (string-empty-p x)))
+               (split-string
+                (string-remove-prefix
+                 vulpea-directory
+                 (file-name-directory file))
+                "/"))))
+           (original-tags (vulpea-buffer-tags-get))
+           (tags (append original-tags path-tags)))
 
-    ;; process people
-    (when (seq-contains-p tags "people")
-      (let ((tag (vulpea--title-as-tag)))
-        (unless (seq-contains-p tags tag)
-          (setq tags (cons tag tags)))))
+      ;; process people
+      (when (seq-contains-p tags "people")
+        (let ((tag (vulpea--title-as-tag)))
+          (unless (seq-contains-p tags tag)
+            (setq tags (cons tag tags)))))
 
-    ;; process projects
-    (if (vulpea-project-p)
-        (setq tags (cons "project" tags))
-      (setq tags (remove "project" tags)))
+      ;; process projects
+      (if (vulpea-project-p)
+          (setq tags (cons "project" tags))
+        (setq tags (remove "project" tags)))
 
-    (setq tags (seq-uniq tags))
+      (setq tags (seq-uniq tags))
 
-    ;; update tags if changed
-    (when (or (seq-difference tags original-tags)
-              (seq-difference original-tags tags))
-      (apply #'vulpea-buffer-tags-set (seq-uniq tags)))))
+      ;; update tags if changed
+      (when (or (seq-difference tags original-tags)
+                (seq-difference original-tags tags))
+        (apply #'vulpea-buffer-tags-set tags)))))
 
 
-
-;;;###autoload
-(defun vulpea-alias-add ()
-  "Add an alias to current note."
-  (interactive)
-  (call-interactively #'org-roam-alias-add))
-
-;;;###autoload
-(defun vulpea-alias-delete ()
-  "Delete an alias from current note."
-  (interactive)
-  (call-interactively #'org-roam-alias-remove))
 
 ;;;###autoload
 (defun vulpea-alias-extract ()
   "Extract an alias from current note as a separate note.
 
-Make all the links to this alias point to newly created note."
+  Make all the links to this alias point to newly created note."
   (interactive)
-  (if-let* ((node (org-roam-node-at-point 'assert))
-            (aliases (org-roam-node-aliases node)))
+  (if-let* ((id (org-entry-get nil "ID"))
+            (note (vulpea-db-get-by-id id))
+            (aliases (vulpea-note-aliases note)))
       (let* ((alias (completing-read
                      "Alias: " aliases nil 'require-match))
-             (backlinks (seq-map
-                         #'org-roam-backlink-source-node
-                         (org-roam-backlinks-get node)))
-             (id-old (org-roam-node-id node)))
-        (org-roam-alias-remove alias)
-        (org-roam-db-update-file (org-roam-node-file node))
-        (let* ((note (vulpea-create
-                      alias
-                      "%<%Y%m%d%H%M%S>-${slug}.org"
-                      :immediate-finish t
-                      :unnarrowed t)))
+             (backlinks (vulpea-db-query-by-links-some (list id)))
+             (id-old id))
+        (vulpea-buffer-alias-remove alias)
+        (save-buffer)
+        (vulpea-db-update-file (vulpea-note-path note))
+        (let* ((new-note (vulpea-create alias "${timestamp}-${slug}.org")))
           (seq-each
-           (lambda (node)
-             (vulpea-utils-with-file (org-roam-node-file node)
+           (lambda (backlink)
+             (vulpea-utils-with-file (vulpea-note-path backlink)
                (goto-char (point-min))
                (let ((link-old
                       (org-link-make-string
                        (concat "id:" id-old)
                        alias))
                      (link-new
-                      (vulpea-utils-link-make-string note)))
+                      (vulpea-utils-link-make-string new-note)))
                  (while (search-forward link-old nil 'noerror)
-                   (replace-match link-new))))
-             (org-roam-db-update-file (org-roam-node-file node)))
+                   (replace-match link-new)))
+               (save-buffer))
+             (vulpea-db-update-file (vulpea-note-path backlink)))
            backlinks)))
     (user-error "No aliases to extract")))
 
@@ -319,25 +294,25 @@ Make all the links to this alias point to newly created note."
 (defun vulpea-dailies-today ()
   "Find a daily note for today."
   (interactive)
-  (org-roam-dailies-goto-today))
+  (user-error "Not implemented yet"))
 
 ;;;###autoload
 (defun vulpea-dailies-date ()
   "Find a daily note for date specified using calendar."
   (interactive)
-  (org-roam-dailies-goto-date))
+  (user-error "Not implemented yet"))
 
 ;;;###autoload
 (defun vulpea-dailies-prev ()
   "Find a daily note that comes before current."
   (interactive)
-  (org-roam-dailies-goto-previous-note))
+  (user-error "Not implemented yet"))
 
 ;;;###autoload
 (defun vulpea-dailies-next ()
   "Find a daily note that comes after current."
   (interactive)
-  (org-roam-dailies-goto-next-note))
+  (user-error "Not implemented yet"))
 
 
 
@@ -444,22 +419,10 @@ useful features and properties:
     (require 'vino)
     (require 'lib-brb)
 
-    (let ((org-element-use-cache nil))
-      (org-roam-db-sync)
-      (org-roam-update-org-id-locations)
-      (org-persist-gc)
-      (org-persist-write-all)
+    (vulpea-db-sync-full-scan)
+    (brb-sync-external-data-with-upstream)
 
-      ;; process missing files
-      (--each (org-roam-list-files)
-        (unless (vulpea-db-get-by-id (vulpea-db-get-id-by-file it))
-          (message "Found a broken file at %s" it)
-          (org-roam-db-clear-file it)
-          (org-roam-db-update-file it)))
-
-      ;; (brb-sync-external-data-with-upstream)
-
-      (message " -> done building vulpea db"))))
+    (message " -> done building vulpea db")))
 
 
 
@@ -500,19 +463,6 @@ list of `org-agenda-files' or not, since it is built dynamically
 via `vulpea-agenda-files-update'.")
 
 
-
-;;;###autoload
-(defun vulpea-visit (note-or-id &optional other-window)
-  "Visit NOTE-OR-ID.
-
-If OTHER-WINDOW, visit the NOTE in another window."
-  (let ((id (if (vulpea-note-p note-or-id)
-                (vulpea-note-id note-or-id)
-              note-or-id)))
-    (org-roam-node-visit
-     (org-roam-node-from-id id)
-     (or current-prefix-arg
-         other-window))))
 
 ;;;###autoload
 (defun vulpea-buttonize (note &optional title-fn)
@@ -591,42 +541,48 @@ Defaults to `string-from'."
 ;;;###autoload
 (defun vulpea-db-setup-attachments ()
   "Setup attachments table in Vulpea DB."
-  (vulpea-db-define-table
-   'attachments 1
-   '([(node-id :not-null)
-      (file :not-null)
-      (hash :not-null)]
-     (:foreign-key
-      [node-id]
-      :references
-      nodes [id]
-      :on-delete
-      :cascade))
-   '((attachments-node-id [node-id])))
-  (add-hook 'vulpea-db-insert-note-functions #'vulpea-db-insert-attachments))
+  (message ">>> register")
+  (vulpea-db-register-extractor
+   (make-vulpea-extractor
+    :name 'vulpea-attachment-extractor
+    :version 1
+    :priority 50
+    :schema '((attachments
+               [(note-id :not-null)
+                (file :not-null)
+                (hash :not-null)]
+               (:primary-key [note-id file])
+               (:foreign-key [note-id] :references notes [id]
+                :on-delete :cascade)))
+    :extract-fn #'vulpea-attachment-extractor-fn)))
 
-(defun vulpea-db-insert-attachments (note)
-  "Insert attachments of NOTE to database."
-  (when-let ((dir (org-attach-dir)))
-    (org-roam-db-query
+(defun vulpea-attachment-extractor-fn (_ctx note-data)
+  "Extract attachment data from CTX and NOTE-DATA.
+
+CTX is the parse context (vulpea-parse-ctx).
+NOTE-DATA is the plist of note data being processed.
+
+Returns NOTE-DATA, possibly with additional keys added."
+  (when-let ((note-id (plist-get note-data :id))
+             (dir (plist-get note-data :attach-dir)))
+    (emacsql
+     (vulpea-db)
      [:delete :from attachments
-              :where (= node-id $s1)]
-     (vulpea-note-id note))
-    (--each (org-attach-file-list dir)
-      (org-roam-db-query!
-       (lambda (err)
-         (lwarn 'org-roam :warning "%s for attachment '%s' in %s (%s) %s"
-                (error-message-string err)
-                it
-                (vulpea-note-title note) (vulpea-note-id note) (vulpea-note-path note)))
-       [:insert :into attachments
-                :values $v1]
-       (vector (vulpea-note-id note)
-               it
-               (s-trim
-                (shell-command-to-string
-                 (format "sha1sum '%s' | cut -d ' ' -f 1 -"
-                         (expand-file-name it dir)))))))))
+      :where (= note-id $s1)]
+     note-id)
+
+    (when (file-exists-p dir)
+      (--each (org-attach-file-list dir)
+        (emacsql (vulpea-db)
+                 [:insert :into attachments :values $v1]
+                 (vector note-id
+                         it
+                         (s-trim
+                          (shell-command-to-string
+                           (format "sha1sum '%s' | cut -d ' ' -f 1 -"
+                                   (expand-file-name it dir))))))))
+
+    note-data))
 
 
 

@@ -35,7 +35,6 @@
 
 (require 'vulpea)
 (require 'lib-plist)
-(require 'lib-vino-stats)
 (require 'lib-brb-event)
 (require 'lib-brb-event-plan)
 (require 'lib-hash-table)
@@ -53,13 +52,13 @@ ARG to override and query for specific frame."
                  frame
                  (intern
                   (completing-read
-                   "Time frame: " (cons 'custom vino-stats-time-frames)
+                   "Time frame: " (cons 'custom brb-time-frames)
                    nil 'require-match))))
          (range (pcase frame
                   (`custom (list
                             (org-read-date nil nil nil "From (inclusive)")
                             (org-read-date nil nil nil "To (exclusive)")))
-                  (_ (vino-stats--time-frame-range frame))))
+                  (_ (brb-time-frame-range frame))))
          (data (events-data--create :buffer buffer
                                     :tab 'overview
                                     :filter 'internal
@@ -100,17 +99,17 @@ ARG to override and query for specific frame."
   (unless (events-data-summary x)
     (setf (events-data-summary x)
           (hash-table-from (events-data-events-all x)
-            :key-fn #'vulpea-note-id
-            :value-fn (lambda (event _) (brb-event-summary event))))))
+                           :key-fn #'vulpea-note-id
+                           :value-fn (lambda (event _) (brb-event-summary event))))))
 
 (cl-defmethod events-data-load-statement-maybe ((x events-data))
   "Load data into statement slot of X if its missing."
   (unless (events-data-statement x)
     (setf (events-data-statement x)
           (hash-table-from (events-data-events-all x)
-            :key-fn #'vulpea-note-id
-            :value-fn (lambda (event _)
-                        (brb-event-statement event :balances (make-hash-table)))))))
+                           :key-fn #'vulpea-note-id
+                           :value-fn (lambda (event _)
+                                       (brb-event-statement event :balances (make-hash-table)))))))
 
 (cl-defmethod events-data-set-filter ((x events-data) filter)
   "Set FILTER in X."
@@ -377,8 +376,8 @@ ARG to override and query for specific frame."
                            (--map (vulpea-note-meta-get it "colour" 'string))
                            (-flatten)))
          (colours-past (->> wines-past
-                              (--map (vulpea-note-meta-get it "colour" 'string))
-                              (-flatten)))
+                            (--map (vulpea-note-meta-get it "colour" 'string))
+                            (-flatten)))
          (colours (->> colours-all
                        (-uniq))))
 

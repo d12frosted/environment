@@ -33,7 +33,6 @@
 
 (require 'vulpea)
 (require 'lib-plist)
-(require 'lib-vino-stats)
 (require 'lib-brb-event)
 (require 'lib-hash-table)
 
