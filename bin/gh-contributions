@@ -1,0 +1,477 @@
+#!/usr/bin/env bash
+#
+# gh-contributions — List your GitHub contributions for a given time period
+#
+# Usage:
+#   gh-contributions [options] [period]
+#
+# Periods:
+#   today, yesterday, day:YYYY-MM-DD
+#   week, last7 (default)
+#   month, last30
+#   year, last365
+#
+# Options:
+#   -u, --user USER        GitHub username (auto-detected if authenticated)
+#   -f, --format FORMAT    Output format: text (default) or org
+#   -e, --extra BRANCH     Extra branch to check (repeatable)
+#                          Format: owner/repo:branch
+#   -h, --help             Show this help
+#
+# Examples:
+#   gh-contributions last7
+#   gh-contributions -e d12frosted/vulpea:v2 -e wix/foo:feature week
+#   gh-contributions --format org today
+#
+# Commits are gathered from:
+#   1. GitHub search index (default branches)
+#   2. All your open PR branches (auto-discovered)
+#   3. Extra branches you specify via -e/--extra
+#
+# Requires: gh (GitHub CLI) authenticated, jq
+#
+
+set -euo pipefail
+
+# ------------------------------------------------------------------------------
+# Argument parsing
+# ------------------------------------------------------------------------------
+
+GH_USER=""
+OUTPUT_FORMAT="text"
+EXTRA_BRANCHES=()
+PERIOD=""
+
+show_help() {
+  sed -n '2,/^$/p' "$0" | sed 's/^# \?//'
+  exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help)
+      show_help
+      ;;
+    -u|--user)
+      GH_USER="$2"
+      shift 2
+      ;;
+    -f|--format)
+      OUTPUT_FORMAT="$2"
+      shift 2
+      ;;
+    -e|--extra)
+      EXTRA_BRANCHES+=("$2")
+      shift 2
+      ;;
+    -*)
+      echo "Unknown option: $1" >&2
+      echo "Use --help for usage information." >&2
+      exit 1
+      ;;
+    *)
+      if [[ -z "$PERIOD" ]]; then
+        PERIOD="$1"
+      else
+        echo "Unexpected argument: $1" >&2
+        exit 1
+      fi
+      shift
+      ;;
+  esac
+done
+
+PERIOD="${PERIOD:-last7}"
+
+# ------------------------------------------------------------------------------
+# Configuration
+# ------------------------------------------------------------------------------
+
+if [[ -z "$GH_USER" ]]; then
+  GH_USER=$(gh api user --jq '.login' 2>/dev/null || echo "")
+fi
+
+if [[ -z "$GH_USER" ]]; then
+  echo "Error: Could not determine GitHub username." >&2
+  echo "Either authenticate with 'gh auth login' or use --user." >&2
+  exit 1
+fi
+
+# ------------------------------------------------------------------------------
+# Date calculations
+# ------------------------------------------------------------------------------
+
+case "$PERIOD" in
+  today)
+    DATE_FROM=$(date -u +%Y-%m-%d)
+    DATE_TO=$(date -u +%Y-%m-%d)
+    PERIOD_LABEL="Today ($DATE_FROM)"
+    ;;
+  yesterday)
+    DATE_FROM=$(date -u -d "yesterday" +%Y-%m-%d 2>/dev/null || date -u -v-1d +%Y-%m-%d)
+    DATE_TO="$DATE_FROM"
+    PERIOD_LABEL="Yesterday ($DATE_FROM)"
+    ;;
+  day:*)
+    DATE_FROM="${PERIOD#day:}"
+    DATE_TO="$DATE_FROM"
+    PERIOD_LABEL="Day: $DATE_FROM"
+    ;;
+  week)
+    # Start of current week (Monday)
+    if date --version >/dev/null 2>&1; then
+      # GNU date
+      DATE_FROM=$(date -u -d "last monday" +%Y-%m-%d)
+    else
+      # BSD date (macOS)
+      days_since_monday=$(( ($(date +%u) - 1) ))
+      DATE_FROM=$(date -u -v-${days_since_monday}d +%Y-%m-%d)
+    fi
+    DATE_TO=$(date -u +%Y-%m-%d)
+    PERIOD_LABEL="This week ($DATE_FROM to $DATE_TO)"
+    ;;
+  last7)
+    if date --version >/dev/null 2>&1; then
+      DATE_FROM=$(date -u -d "7 days ago" +%Y-%m-%d)
+    else
+      DATE_FROM=$(date -u -v-7d +%Y-%m-%d)
+    fi
+    DATE_TO=$(date -u +%Y-%m-%d)
+    PERIOD_LABEL="Last 7 days ($DATE_FROM to $DATE_TO)"
+    ;;
+  month)
+    DATE_FROM=$(date -u +%Y-%m-01)
+    DATE_TO=$(date -u +%Y-%m-%d)
+    PERIOD_LABEL="This month ($DATE_FROM to $DATE_TO)"
+    ;;
+  last30)
+    if date --version >/dev/null 2>&1; then
+      DATE_FROM=$(date -u -d "30 days ago" +%Y-%m-%d)
+    else
+      DATE_FROM=$(date -u -v-30d +%Y-%m-%d)
+    fi
+    DATE_TO=$(date -u +%Y-%m-%d)
+    PERIOD_LABEL="Last 30 days ($DATE_FROM to $DATE_TO)"
+    ;;
+  year)
+    DATE_FROM=$(date -u +%Y-01-01)
+    DATE_TO=$(date -u +%Y-%m-%d)
+    PERIOD_LABEL="This year ($DATE_FROM to $DATE_TO)"
+    ;;
+  last365)
+    if date --version >/dev/null 2>&1; then
+      DATE_FROM=$(date -u -d "365 days ago" +%Y-%m-%d)
+    else
+      DATE_FROM=$(date -u -v-365d +%Y-%m-%d)
+    fi
+    DATE_TO=$(date -u +%Y-%m-%d)
+    PERIOD_LABEL="Last 365 days ($DATE_FROM to $DATE_TO)"
+    ;;
+  *)
+    echo "Unknown period: $PERIOD" >&2
+    echo "Valid: today, yesterday, day:YYYY-MM-DD, week, last7, month, last30, year, last365" >&2
+    exit 1
+    ;;
+esac
+
+DATE_FROM_ISO="${DATE_FROM}T00:00:00Z"
+DATE_TO_ISO="${DATE_TO}T23:59:59Z"
+
+# ------------------------------------------------------------------------------
+# Formatting helpers
+# ------------------------------------------------------------------------------
+
+print_header() {
+  if [[ "$OUTPUT_FORMAT" == "org" ]]; then
+    echo "* $1"
+  else
+    echo ""
+    echo "═══════════════════════════════════════════════════════════════"
+    echo "  $1"
+    echo "═══════════════════════════════════════════════════════════════"
+  fi
+}
+
+print_subheader() {
+  if [[ "$OUTPUT_FORMAT" == "org" ]]; then
+    echo "** $1"
+  else
+    echo ""
+    echo "── $1 ──"
+  fi
+}
+
+print_item() {
+  local status="$1"
+  local title="$2"
+  local url="$3"
+  local repo="$4"
+
+  if [[ "$OUTPUT_FORMAT" == "org" ]]; then
+    local org_status
+    case "$status" in
+      OPEN|open)     org_status="TODO" ;;
+      CLOSED|closed) org_status="DONE" ;;
+      MERGED|merged) org_status="DONE" ;;
+      *)             org_status="$status" ;;
+    esac
+    echo "*** $org_status $title"
+    echo ":PROPERTIES:"
+    echo ":REPO: $repo"
+    echo ":URL: $url"
+    echo ":END:"
+  else
+    printf "  [%-6s] %s\n" "$status" "$title"
+    printf "           %s — %s\n" "$repo" "$url"
+  fi
+}
+
+print_commit_item() {
+  local repo="$1"
+  local message="$2"
+  local url="$3"
+  local date="$4"
+
+  if [[ "$OUTPUT_FORMAT" == "org" ]]; then
+    echo "*** $message"
+    echo ":PROPERTIES:"
+    echo ":REPO: $repo"
+    echo ":DATE: $date"
+    echo ":URL: $url"
+    echo ":END:"
+  else
+    printf "  %s\n" "$message"
+    printf "           %s — %s\n" "$repo" "$url"
+  fi
+}
+
+# ------------------------------------------------------------------------------
+# Fetch data
+# ------------------------------------------------------------------------------
+
+print_header "GitHub Contributions for $GH_USER"
+echo "Period: $PERIOD_LABEL"
+
+# --- Pull Requests ---
+print_subheader "Pull Requests"
+
+prs=$(gh search prs \
+  --author="$GH_USER" \
+  --created="${DATE_FROM}..${DATE_TO}" \
+  --limit=200 \
+  --json "title,url,state,repository" \
+  2>/dev/null || echo "[]")
+
+pr_count=$(echo "$prs" | jq 'length')
+
+if [[ "$pr_count" -eq 0 ]]; then
+  echo "  (none)"
+else
+  echo "$prs" | jq -r '.[] | [.state, .title, .url, .repository.nameWithOwner] | @tsv' | \
+  while IFS=$'\t' read -r state title url repo; do
+    print_item "$state" "$title" "$url" "$repo"
+  done
+  echo ""
+  echo "  Total: $pr_count PRs"
+fi
+
+# --- Issues ---
+print_subheader "Issues Opened"
+
+issues=$(gh search issues \
+  --author="$GH_USER" \
+  --created="${DATE_FROM}..${DATE_TO}" \
+  --limit=200 \
+  --json "title,url,state,repository" \
+  2>/dev/null || echo "[]")
+
+issue_count=$(echo "$issues" | jq 'length')
+
+if [[ "$issue_count" -eq 0 ]]; then
+  echo "  (none)"
+else
+  echo "$issues" | jq -r '.[] | [.state, .title, .url, .repository.nameWithOwner] | @tsv' | \
+  while IFS=$'\t' read -r state title url repo; do
+    print_item "$state" "$title" "$url" "$repo"
+  done
+  echo ""
+  echo "  Total: $issue_count issues"
+fi
+
+# --- Commits ---
+# Strategy:
+#   1. Search API for default branch commits
+#   2. Fetch commits from open PR branches
+#   3. Fetch commits from user-specified extra branches (GH_EXTRA_BRANCHES)
+#   4. Dedupe by SHA
+
+print_subheader "Commits"
+
+# Temp file to collect all commits (will dedupe later)
+ALL_COMMITS_FILE=$(mktemp)
+trap "rm -f $ALL_COMMITS_FILE" EXIT
+
+# 1. Search API (default branches + indexed commits)
+page=1
+while true; do
+  page_data=$(gh api search/commits \
+    -X GET \
+    --raw-field "q=author:${GH_USER} committer-date:${DATE_FROM}..${DATE_TO}" \
+    --raw-field "per_page=100" \
+    --raw-field "page=$page" \
+    2>/dev/null || echo '{"items":[]}')
+
+  echo "$page_data" | jq -r '.items[] | {
+    sha: .sha,
+    short_sha: .sha[0:7],
+    message: (.commit.message | split("\n")[0]),
+    url: .html_url,
+    repo: .repository.full_name,
+    repo_url: .repository.html_url,
+    date: .commit.committer.date,
+    source: "search"
+  }' >> "$ALL_COMMITS_FILE"
+
+  item_count=$(echo "$page_data" | jq '.items | length')
+  if [[ "$item_count" -lt 100 ]] || [[ "$page" -ge 10 ]]; then
+    break
+  fi
+  ((page++))
+done
+
+# 2. Open PR branches
+# gh search prs doesn't return head branch info, so we use GraphQL
+pr_branches_data=$(gh api graphql -f query="
+query {
+  search(query: \"author:${GH_USER} is:pr is:open\", type: ISSUE, first: 100) {
+    nodes {
+      ... on PullRequest {
+        headRefName
+        headRepository {
+          nameWithOwner
+        }
+      }
+    }
+  }
+}
+" 2>/dev/null || echo '{"data":{"search":{"nodes":[]}}}')
+
+# Extract unique repo:branch pairs
+pr_branches=$(echo "$pr_branches_data" | jq -r '
+  .data.search.nodes // [] |
+  .[] |
+  select(.headRepository != null and .headRefName != null) |
+  "\(.headRepository.nameWithOwner):\(.headRefName)"
+' 2>/dev/null | sort -u)
+
+for repo_branch in $pr_branches; do
+  [[ -z "$repo_branch" ]] && continue
+  repo="${repo_branch%:*}"
+  branch="${repo_branch#*:}"
+
+  # Fetch commits from this branch (use URL params for GET request)
+  gh api "repos/${repo}/commits?sha=${branch}&author=${GH_USER}&since=${DATE_FROM_ISO}&until=${DATE_TO_ISO}&per_page=100" \
+    2>/dev/null | jq -r --arg repo "$repo" --arg branch "$branch" '.[] | {
+      sha: .sha,
+      short_sha: .sha[0:7],
+      message: (.commit.message | split("\n")[0]),
+      url: .html_url,
+      repo: $repo,
+      repo_url: ("https://github.com/" + $repo),
+      date: .commit.committer.date,
+      source: ("pr:" + $branch)
+    }' >> "$ALL_COMMITS_FILE" 2>/dev/null || true
+done
+
+# 3. Extra branches from -e/--extra args
+if [[ ${#EXTRA_BRANCHES[@]} -gt 0 ]]; then
+  for repo_branch in "${EXTRA_BRANCHES[@]}"; do
+    repo="${repo_branch%:*}"
+    branch="${repo_branch#*:}"
+
+    gh api "repos/${repo}/commits?sha=${branch}&author=${GH_USER}&since=${DATE_FROM_ISO}&until=${DATE_TO_ISO}&per_page=100" \
+      2>/dev/null | jq -r --arg repo "$repo" --arg branch "$branch" '.[] | {
+        sha: .sha,
+        short_sha: .sha[0:7],
+        message: (.commit.message | split("\n")[0]),
+        url: .html_url,
+        repo: $repo,
+        repo_url: ("https://github.com/" + $repo),
+        date: .commit.committer.date,
+        source: ("extra:" + $branch)
+      }' >> "$ALL_COMMITS_FILE" 2>/dev/null || true
+  done
+fi
+
+# 4. Dedupe by SHA and format output
+commits_json=$(cat "$ALL_COMMITS_FILE" | jq -s '
+  group_by(.sha) |
+  map(.[0]) |
+  sort_by(.date) |
+  reverse
+')
+
+total_commits=$(echo "$commits_json" | jq 'length')
+
+if [[ "$total_commits" -eq 0 ]]; then
+  echo "  (none)"
+else
+  # Group by repo and show individual commits
+  echo "$commits_json" | jq -r '
+    group_by(.repo) |
+    sort_by(-length) |
+    .[] |
+    .[0].repo as $repo |
+    .[0].repo_url as $repo_url |
+    "REPO\t\($repo)\t\($repo_url)\t\(length)",
+    (.[] | "COMMIT\t\(.short_sha)\t\(.message)\t\(.url)\t\(.source)")
+  ' | while IFS=$'\t' read -r type f1 f2 f3 f4; do
+    if [[ "$type" == "REPO" ]]; then
+      repo="$f1"
+      repo_url="$f2"
+      count="$f3"
+      if [[ "$OUTPUT_FORMAT" == "org" ]]; then
+        echo "*** $repo ($count commits)"
+        echo ":PROPERTIES:"
+        echo ":URL: $repo_url"
+        echo ":END:"
+      else
+        echo ""
+        printf "  ┌─ %s (%d commits)\n" "$repo" "$count"
+      fi
+    else
+      sha="$f1"
+      message="$f2"
+      url="$f3"
+      source="$f4"
+      # Show source indicator for non-default-branch commits
+      if [[ "$OUTPUT_FORMAT" == "org" ]]; then
+        if [[ "$source" != "search" ]]; then
+          echo "**** $sha $message [$source]"
+        else
+          echo "**** $sha $message"
+        fi
+        echo ":PROPERTIES:"
+        echo ":URL: $url"
+        echo ":END:"
+      else
+        if [[ "$source" != "search" ]]; then
+          printf "  │  %s %s  ← %s\n" "$sha" "$message" "$source"
+        else
+          printf "  │  %s %s\n" "$sha" "$message"
+        fi
+      fi
+    fi
+  done
+
+  echo ""
+  echo "  Total: $total_commits commits"
+fi
+
+# --- Summary ---
+if [[ "$OUTPUT_FORMAT" != "org" ]]; then
+  echo ""
+  echo "═══════════════════════════════════════════════════════════════"
+  printf "  Summary: %d PRs, %d issues, %d commits\n" "$pr_count" "$issue_count" "$total_commits"
+  echo "═══════════════════════════════════════════════════════════════"
+fi
