@@ -1,5 +1,4 @@
 # Common packages for all machines
-# This file contains packages that should be installed on every machine
 
 #
 # Taps
@@ -9,87 +8,178 @@ tap "d12frosted/emacs-plus"
 tap "koekeishiya/formulae"
 tap "tinted-theming/tinted"
 
+################################################################################
 #
-# Essential CLI tools
+# CLI Tools
+#
+################################################################################
+
+#
+# Shell & Prompt
+#
+
+brew "fish"
+brew "starship"
+
+#
+# Search & Navigation
+#
+
+brew "fd"
+brew "fzf"
+brew "ripgrep"
+
+#
+# File Viewers & Utilities
 #
 
 brew "bat"
-brew "curl"
-brew "emacs-plus@30", args: ["with-dragon-icon"]
 brew "eza"
-brew "fd"
-brew "fish"
-brew "fswatch"
-brew "fzf"
-brew "git"
-brew "git-lfs"
-brew "gnupg"
-brew "hledger"
 brew "htop"
-brew "imagemagick"
 brew "jq"
-brew "llvm"
-brew "node"
-brew "openssh"
-brew "pandoc"
-brew "pinentry-mac"
-brew "ripgrep"
-brew "shellcheck"
-brew "starship"
-brew "terminal-notifier"
-brew "tinty"
+
+#
+# Network
+#
+
+brew "curl"
 brew "wget"
-brew "yarn"
+brew "openssh"
+
+#
+# Text & Document Processing
+#
+
+brew "pandoc"
+brew "imagemagick"
+
+#
+# Security
+#
+
+brew "gnupg"
+brew "pinentry-mac"
 cask "gpg-suite"
 
 #
+# Development
+#
+
+brew "git"
+brew "git-lfs"
+brew "llvm"
+brew "node"
+brew "yarn"
+brew "shellcheck"
+
+#
+# Finance
+#
+
+brew "hledger"
+
+#
+# System Utilities
+#
+
+brew "fswatch"
+brew "terminal-notifier"
+brew "tinty"
+
+################################################################################
+#
 # Window Management
 #
+################################################################################
 
 brew "yabai"
 brew "skhd"
 
+################################################################################
 #
-# GUI Applications
+# Desktop Applications
+#
+################################################################################
+
+#
+# Editors
 #
 
-# multimedia
-cask "spotify"
-cask "stolendata-mpv"
-cask "cog-app"
+brew "emacs-plus@30", args: ["with-dragon-icon"]
 
-# browsers
-cask "firefox"
-cask "brave-browser"
+#
+# Terminals
+#
 
-# social
-cask "telegram"
-# cask "whatsapp"
-
-# network
-cask "protonvpn"
-cask "transmission"
-
-# system
 cask "alacritty"
-cask "appcleaner"
+
+#
+# Browsers
+#
+
+cask "brave-browser"
+cask "firefox"
+
+#
+# Productivity
+#
+
 cask "bartender"
-cask "chatgpt"
-cask "claude"
-cask "cryptomator"
-cask "dbeaver-community"
-cask "figma"
 cask "maccy"
-cask "proton-pass"
-cask "rancher"
 cask "raycast"
 cask "shottr"
-cask "syncthing-app"
 
+#
+# AI Assistants
+#
+
+cask "chatgpt"
+cask "claude"
+
+#
+# Development
+#
+
+cask "dbeaver-community"
+cask "figma"
+cask "rancher"
+
+#
+# Media
+#
+
+cask "cog-app"
+cask "spotify"
+cask "stolendata-mpv"
+
+#
+# Communication
+#
+
+cask "telegram"
+
+#
+# Security & Privacy
+#
+
+cask "cryptomator"
+cask "proton-pass"
+cask "protonvpn"
+
+#
+# System Utilities
+#
+
+cask "appcleaner"
+cask "syncthing-app"
+cask "transmission"
+
+################################################################################
 #
 # Fonts
 #
+################################################################################
 
-cask "font-source-code-pro"
-cask "font-sauce-code-pro-nerd-font"
 cask "font-iosevka"
+cask "font-sauce-code-pro-nerd-font"
+cask "font-source-code-pro"
