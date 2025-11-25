@@ -724,7 +724,7 @@ DOCTOR_ISSUES=0
 function doctor_issue() {
   local message=$1
   warn "  ✗ $message"
-  ((DOCTOR_ISSUES++))
+  DOCTOR_ISSUES=$((DOCTOR_ISSUES + 1))
 }
 
 function doctor_ok() {
