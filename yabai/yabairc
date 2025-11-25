@@ -50,9 +50,7 @@ setup_space 4 social
 setup_space 5 media
 setup_space 6 other
 
-# custom application runes
-yabai -m rule --add app="^Arc$" title"^$" space=3
-yabai -m rule --add app="Arc.LittleBrowserWindow" manage=off
+# custom application rules
 yabai -m rule --add app="^Firefox$" space=3
 yabai -m rule --add app="^Safari$" space=3
 
