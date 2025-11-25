@@ -126,12 +126,6 @@
    t 'emoji
    '("Apple Color Emoji" . "iso10646-1") nil 'prepend))
 
-;; but setup unicode fonts properly
-(use-package unicode-fonts
-  :ensure t
-  :config
-  (unicode-fonts-setup))
-
 
 
 (use-package font-lock+
