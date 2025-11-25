@@ -1120,7 +1120,7 @@ function main() {
         esac
       done
       show_greeting
-      run_doctor "${doctor_checks[@]}"
+      run_doctor ${doctor_checks[@]+"${doctor_checks[@]}"}
       exit $?
       ;;
     -h|--help|help)
