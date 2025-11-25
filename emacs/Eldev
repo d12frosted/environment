@@ -62,7 +62,7 @@
 ;; Upgrade flow. Hooks into Eldev upgrade flow.
 
 (defun elpa-upgrade ()
-  "Bootstrap personal configurations."
+  "Upgrade personal configurations."
   (elpa-bootstrap))
 
 (add-hook 'eldev-upgrade-hook #'elpa-upgrade)
@@ -73,13 +73,15 @@
 
 
 
-(defun -vulpea-db-bootstrap ()
-  "Bootstrap `vulpea-db'."
+(eldev-defcommand myconfig-vulpea-db-build (&rest _)
+  "Build vulpea database."
+  :command "vulpea-db-build"
   (run-hooks 'after-init-hook)
   (vulpea-db-build))
 
-(defun -brb-sync ()
-  "Sync brb data."
+(eldev-defcommand myconfig-brb-sync (&rest _)
+  "Sync brb data with upstream."
+  :command "brb-sync"
   (run-hooks 'after-init-hook)
   (brb-sync-external-data-with-upstream))
 
