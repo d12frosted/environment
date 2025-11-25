@@ -232,12 +232,12 @@
            (overline-heading-2 bg-magenta-nuanced))
          modus-themes-preset-overrides-cooler)
         modus-themes-headings
-        '((1 . (variable-pitch bold 1.4))
-          (2 . (variable-pitch semibold 1.25))
-          (3 . (variable-pitch semibold 1.15))
-          (4 . (variable-pitch medium 1.1))
-          (5 . (variable-pitch medium 1.05))
-          (t . (variable-pitch regular 1.0))))
+        '((1 . (variable-pitch heavy 2.0))
+          (2 . (variable-pitch bold 1.6))
+          (3 . (variable-pitch semibold 1.3))
+          (4 . (variable-pitch semibold 1.1))
+          (5 . (variable-pitch medium 1.0))
+          (t . (variable-pitch medium 1.0))))
 
   ;; Load the theme of your choice.
   (load-theme 'modus-operandi :no-confirm)
@@ -259,16 +259,16 @@
            :default-height 180
            :bold-weight extrabold)
           (t ; our shared fallback properties
-           :default-family "Iosevka Term Curly" ; "Source Code Pro"
+           :default-family "Iosevka Term Curly"
            :default-weight normal
            ;; :default-height 100
            :fixed-pitch-family nil ; falls back to :default-family
            :fixed-pitch-weight nil ; falls back to :default-weight
            :fixed-pitch-height 1.0
-           :variable-pitch-family "Iosevka Aile" ; "Source Code Pro"
+           :variable-pitch-family "Iosevka Aile"
            :variable-pitch-weight normal
            :variable-pitch-height 1.0
-           :bold-family nil ; use whatever the underlying face has
+           :bold-family nil
            :bold-weight bold
            :italic-family nil
            :italic-slant italic
