@@ -1,2 +1,18 @@
-**/.claude/settings.local.json
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+
+# IDE/Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Claude Code
+**/.claude/settings.local.json
