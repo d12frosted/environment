@@ -81,7 +81,7 @@
                                                   (bound-and-true-p path-packages-dir)))
              (elpaca-builds (when (and elpaca-builds-dir
                                        (file-directory-p elpaca-builds-dir))
-                              (directory-files elpaca-builds-dir t "^[^.]")))
+                              (directory-files elpaca-builds-dir t "\\`[^.]")))
              (load-paths (append (list (expand-file-name "lisp" root))
                                  elpaca-builds)))
         (setq-local flycheck-emacs-lisp-load-path load-paths))
