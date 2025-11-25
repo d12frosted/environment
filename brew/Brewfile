@@ -75,6 +75,7 @@ cask "gpg-suite"
 #
 
 brew "automake"
+brew "gh"
 brew "git"
 brew "git-lfs"
 brew "git-sizer"
