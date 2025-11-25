@@ -38,6 +38,7 @@
 ;;
 ;;; Code:
 
+(require 'brb-event)
 (require 'lib-brb)
 
 
@@ -46,7 +47,7 @@
 (defun brb-post-insert-wine ()
   "Select a wine entry and insert a code block for it."
   (interactive)
-  (when-let* ((event (brb-event-in-buffer))
+  (when-let* ((event (brb-event-select))
               (wine (vulpea-select-from
                      "Wine" (brb-event-wines event)
                      :require-match t)))
@@ -62,7 +63,7 @@
 
 Inserts extra new line when EXTRA-NEW-LINE is non-nil."
   (interactive)
-  (when-let* ((event (brb-event-in-buffer))
+  (when-let* ((event (brb-event-select))
               (date (brb-event-date-string event))
               (wine (brb-post-get-wine-block-id-element))
               (wine (vulpea-db-get-by-id wine))
@@ -73,7 +74,7 @@ Inserts extra new line when EXTRA-NEW-LINE is non-nil."
                                        date (vulpea-note-title wine)))
                         (1 (car ratings))
                         (_ (user-error "Too many ratings on '%s' for '%s'"
-                                       datetime (vulpea-note-title wine))))))
+                                       date (vulpea-note-title wine))))))
     (when extra-new-line
       (insert "\n"))
     (insert "#+begin_src review\n"
@@ -104,37 +105,6 @@ This is a more robust implementation using Org's element parser."
                       (setq wine-id (match-string 1 content))))))))))
       nil t)
     wine-id))
-
-;; * Deprecated functions
-;;
-
-;;;###autoload
-(defun brb-post-insert-wine-v0 ()
-  "Select a wine entry and insert a heading with its information."
-  (interactive)
-  (let* ((wine (vulpea-select-from "Wine" (vulpea-db-query-by-tags-every '("wine" "cellar"))
-                                   :require-match t)))
-    ;; create heading
-    (insert
-     "* " (vulpea-note-title wine) "\n"
-     "\n")
-
-    ;; deal with attachment
-    (let* ((image (vulpea-note-meta-get wine "images" 'link))
-           (image (string-remove-prefix "attachment:" image))
-           (source (expand-file-name image (org-attach-dir-from-id (vulpea-note-id wine))))
-           (target-dir (org-attach-dir-from-id (org-id-get-create)))
-           (target (expand-file-name image target-dir)))
-      (mkdir target-dir t)
-      (shell-command (format "convert '%s' -strip -auto-orient '%s'" source target))
-      (insert
-       "#+attr_html: :class bottle-right\n"
-       "[[attachment:" image "]]\n"
-       "\n"))
-
-    ;; info
-    (insert
-     (brb-wine-info wine 'regular 'pick-price))))
 
 
 

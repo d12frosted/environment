@@ -35,6 +35,7 @@
 
 (require 'lib-brb)
 (require 'lib-vulpea)
+(require 'lib-brb-event)
 
 
 

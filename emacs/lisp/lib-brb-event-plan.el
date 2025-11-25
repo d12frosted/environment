@@ -31,10 +31,14 @@
 ;;
 ;;; Code:
 
-(require 'vulpea)
-(require 'lib-plist)
+(require 'brb-ledger)
 (require 'lib-brb-event)
+(require 'lib-buffer)
 (require 'lib-hash-table)
+(require 'lib-plist)
+(require 'lib-vulpea)
+(require 'vulpea)
+(require 'ws-butler)
 
 ;; * Entry point
 
@@ -326,7 +330,6 @@ PID is participant id."
 (cl-defmethod brb-event-plan--tab-plan ((x ep))
   "Render plan tab for X."
   (let* ((wines (ep-wines x))
-         (host (ep-host x))
          (price (or (vulpea-note-meta-get (ep-event x) "price" 'number) 0))
          (statement (ep-statement x)))
 
@@ -1498,16 +1501,15 @@ PID is participant id."
                          "P.S. Don't forget you have your personal page at https://barberry.io/convives/"
                          (vulpea-note-id it))
                         (goto-char (point-min))
-                        (replace-regexp "  +" ": ")
+                        (call-interactively #'replace-regexp "  +" ": ")
                         (kill-new (buffer-substring (point-min) (point-max))))))
                   (add-pays-for (&rest _)
-                    (let* ((person (vulpea-select-from
-                                    "Person"
-                                    (->> (ep-participants x)
-                                         (--remove (string-equal (vulpea-note-id it)
-                                                                 (vulpea-note-id participant))))
-                                    :require-match t))
-                           (pid (vulpea-note-id participant)))
+                    (let ((person (vulpea-select-from
+                                   "Person"
+                                   (->> (ep-participants x)
+                                        (--remove (string-equal (vulpea-note-id it)
+                                                                (vulpea-note-id participant))))
+                                   :require-match t)))
                       (ep-add-pays-for x participant person))))
           (insert
            (propertize

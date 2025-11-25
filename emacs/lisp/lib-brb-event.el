@@ -131,7 +131,7 @@ Uses public name as description."
   "Assign public names to all public events."
   (interactive)
   (let* ((rules '("Kh" "Sh" "Yu" "Ya" "Tkh" "Ch" "Zh" "Shch"))
-         (convives (->> (brb-events-from-range (list "2000-01-01" (format-time-string "%Y-%m-%d" (current-time))))
+         (convives (->> (brb-events-from-range "2000-01-01" (format-time-string "%Y-%m-%d" (current-time)))
                         (--map (brb-event-participants it))
                         (-flatten-n 1)
                         (-distinct)
@@ -165,7 +165,7 @@ Uses public name as description."
 (defun brb-events-execute-blocks ()
   "Execute code blocks in all public events."
   (interactive)
-  (--each (brb-events-from-range (list "2000-01-01" (format-time-string "%Y-%m-%d" (current-time))))
+  (--each (brb-events-from-range "2000-01-01" (format-time-string "%Y-%m-%d" (current-time)))
     (--each (seq-reverse
              (org-element-map
                  (org-element-parse-buffer 'element)

@@ -31,10 +31,12 @@
 ;;
 ;;; Code:
 
-(require 'vulpea)
-(require 'lib-hash-table)
+(require 'brb-event)
+(require 'lib-brb)
 (require 'lib-brb-event)
 (require 'lib-brb-event-plan)
+(require 'lib-hash-table)
+(require 'vulpea)
 
 ;;;###autoload
 (defun brb-event-stats (&optional frame)
@@ -87,12 +89,12 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                                  (org-read-date nil nil nil "From (inclusive)")
                                  (org-read-date nil nil nil "To (exclusive)")))
                        (_ (brb-time-frame-range frame))))
-              (events (->> (brb-events-from-range range)
+              (events (->> (apply #'brb-events-from-range range)
                            (-filter events-filter))))
     (let* ((events-summary (hash-table-from
-                            events
-                            :key-fn #'vulpea-note-id
-                            :value-fn (lambda (event _) (brb-event-summary event))))
+                               events
+                             :key-fn #'vulpea-note-id
+                             :value-fn (lambda (event _) (brb-event-summary event))))
 
            (participants-all (->> events
                                   (--map (brb-event-participants it))

@@ -34,14 +34,18 @@
 ;;
 ;;; Code:
 
-(require 'lib-buffer)
-(require 'lib-brb)
-(require 'lib-string)
-(require 'vino)
-(require 'vino-inv)
 (require 'brb-ledger)
+(require 'config-path)
+(require 'lib-brb)
+(require 'lib-brb-event)
+(require 'lib-buffer)
+(require 'lib-string)
+(require 'lib-vulpea)
+(require 'org-attach)
 (require 'request)
 (require 'request-deferred)
+(require 'vino)
+(require 'vino-inv)
 
 ;; * custom updates
 
@@ -284,7 +288,7 @@ EXTRA-DATA contains bottle-id."
 (defun vino-inv-ui-print-info ()
   "Save print info for the marked bottles."
   (interactive)
-  (let (print-list bottle)
+  (let (print-list bottle cmd)
     (save-excursion
       (goto-char (point-min))
       (while (not (eobp))
@@ -374,7 +378,7 @@ EXTRA-DATA contains bottle-id."
        :account-from "personal:account"
        :amount price)
       (when (get-buffer brb-ledger-buffer-name)
-        (brb-ledger-buffer-create)))))
+        (brb-ledger-display)))))
 
 ;; * VIVC info
 
@@ -737,7 +741,7 @@ See `vino-origin-select-fn' for more information."
     (if region
         (vulpea-buffer-meta-set "region" region)
       (vulpea-buffer-meta-remove "region"))
-    (vulpea-buffer-sort-meta vino-meta-props-order)
+    (vulpea-buffer-meta-sort vino-entry-meta-props-order)
     (save-buffer)))
 
 ;;;###autoload
@@ -756,7 +760,7 @@ Assumptions:
 - Each wine entry can have zero, one or many regions.
 
 - Each appellation/region can have zero, one or many
-  parents (appellation or region). The parent is denoted by 'parent'
+  parents (appellation or region). The parent is denoted by PARENT
   meta.
 
 - Each entry must have exactly one country."
