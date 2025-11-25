@@ -107,8 +107,7 @@
   :ensure (org :host sourcehut :repo "bzg/org-mode")
   :hook ((org-mode . visual-line-mode)
          (org-mode . adaptive-wrap-prefix-mode)
-         ;; I like it, but it's too buggy
-         ;; (org-mode . org-indent-mode)
+         (org-mode . org-indent-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
   :commands (org-check-agenda-file
@@ -507,6 +506,11 @@
   (global-org-modern-mode))
 
 
+
+(use-package lib-org-margin
+  :ensure nil
+  :after org
+  :hook (org-mode . org-margin-mode))
 
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
