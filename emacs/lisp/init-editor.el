@@ -89,7 +89,7 @@
  word-wrap t)
 
 (use-package ws-butler
-  :ensure (:host github :repo "hlissner/ws-butler")
+  :ensure t
   :diminish
   :commands (ws-butler-global-mode)
   :init
