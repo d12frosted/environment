@@ -16,17 +16,23 @@
 #   -f, --format FORMAT    Output format: text (default) or org
 #   -e, --extra BRANCH     Extra branch to check (repeatable)
 #                          Format: owner/repo:branch
+#   -F, --force            Force fetch, bypass cache
+#   --backfill DAYS        Backfill cache for last N days (e.g., --backfill 30)
 #   -h, --help             Show this help
 #
 # Examples:
 #   gh-contributions last7
 #   gh-contributions -e d12frosted/vulpea:v2 -e wix/foo:feature week
 #   gh-contributions --format org today
+#   gh-contributions --backfill 365    # Cache last year of data
+#   gh-contributions -F today          # Force fresh fetch
 #
 # Commits are gathered from:
 #   1. GitHub search index (default branches)
 #   2. All your open PR branches (auto-discovered)
 #   3. Extra branches you specify via -e/--extra
+#
+# Data is cached in ~/.cache/gh-contributions/ for analytics and faster lookups.
 #
 # Requires: gh (GitHub CLI) authenticated, jq
 #
@@ -41,6 +47,12 @@ GH_USER=""
 OUTPUT_FORMAT="text"
 EXTRA_BRANCHES=()
 PERIOD=""
+FORCE_FETCH=false
+BACKFILL_DAYS=""
+
+# Cache directory
+CACHE_DIR="${HOME}/.cache/gh-contributions"
+mkdir -p "$CACHE_DIR"
 
 show_help() {
   sed -n '2,/^$/p' "$0" | sed 's/^# \?//'
@@ -62,6 +74,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     -e|--extra)
       EXTRA_BRANCHES+=("$2")
+      shift 2
+      ;;
+    -F|--force)
+      FORCE_FETCH=true
+      shift
+      ;;
+    --backfill)
+      BACKFILL_DAYS="$2"
       shift 2
       ;;
     -*)
@@ -124,7 +144,7 @@ case "$PERIOD" in
       DATE_FROM=$(date -u -d "last monday" +%Y-%m-%d)
     else
       # BSD date (macOS)
-      days_since_monday=$(( ($(date +%u) - 1) ))
+      days_since_monday=$(( $(date +%u) - 1 ))
       DATE_FROM=$(date -u -v-${days_since_monday}d +%Y-%m-%d)
     fi
     DATE_TO=$(date -u +%Y-%m-%d)
@@ -246,6 +266,542 @@ print_commit_item() {
 }
 
 # ------------------------------------------------------------------------------
+# Cache functions
+# ------------------------------------------------------------------------------
+#
+# Cache strategy:
+#   - One JSON file per day: ~/.cache/gh-contributions/{user}-{date}.json
+#   - Past days: immutable, always use cache if available
+#   - Today: always fetch fresh (still accumulating contributions)
+#   - Use --force to bypass cache and re-fetch any day
+#   - Use --backfill N to populate cache for last N days
+#
+# Each cache file contains:
+#   { date, user, prs_count, issues_count, commits_count, prs[], issues[], commits[] }
+#
+# ------------------------------------------------------------------------------
+
+cache_file_for_date() {
+  local date="$1"
+  echo "${CACHE_DIR}/${GH_USER}-${date}.json"
+}
+
+cache_exists() {
+  local date="$1"
+  [[ -f "$(cache_file_for_date "$date")" ]]
+}
+
+read_cache() {
+  local date="$1"
+  local cache_file
+  cache_file="$(cache_file_for_date "$date")"
+  if [[ -f "$cache_file" ]]; then
+    cat "$cache_file"
+  else
+    echo "{}"
+  fi
+}
+
+write_cache() {
+  local date="$1"
+  local data="$2"
+  local cache_file
+  cache_file="$(cache_file_for_date "$date")"
+  echo "$data" > "$cache_file"
+}
+
+# Fetch data for a single day (returns JSON with prs, issues, commits, counts)
+fetch_day_data() {
+  local target_date="$1"
+  local date_from_iso="${target_date}T00:00:00Z"
+  local date_to_iso="${target_date}T23:59:59Z"
+
+  # Fetch PRs
+  local prs
+  prs=$(gh search prs \
+    --author="$GH_USER" \
+    --created="${target_date}..${target_date}" \
+    --limit=200 \
+    --json "title,url,state,repository" \
+    2>/dev/null || echo "[]")
+
+  # Fetch Issues
+  local issues
+  issues=$(gh search issues \
+    --author="$GH_USER" \
+    --created="${target_date}..${target_date}" \
+    --limit=200 \
+    --json "title,url,state,repository" \
+    2>/dev/null || echo "[]")
+
+  # Fetch Commits - search API first
+  local commits_tmp
+  commits_tmp=$(mktemp)
+
+  local page=1
+  while true; do
+    local page_data
+    page_data=$(gh api search/commits \
+      -X GET \
+      --raw-field "q=author:${GH_USER} committer-date:${target_date}..${target_date}" \
+      --raw-field "per_page=100" \
+      --raw-field "page=$page" \
+      2>/dev/null || echo '{"items":[]}')
+
+    # Check if we got valid items
+    local item_count
+    item_count=$(echo "$page_data" | jq -r '.items | length // 0' 2>/dev/null || echo "0")
+    # Ensure item_count is a valid number
+    item_count="${item_count//[^0-9]/}"
+    item_count="${item_count:-0}"
+
+    if [[ "$item_count" -gt 0 ]]; then
+      echo "$page_data" | jq -r '.items[] | {
+        sha: .sha,
+        short_sha: .sha[0:7],
+        message: (.commit.message | split("\n")[0]),
+        url: .html_url,
+        repo: .repository.full_name,
+        repo_url: .repository.html_url,
+        date: .commit.committer.date,
+        source: "search"
+      }' >> "$commits_tmp" 2>/dev/null || true
+    fi
+
+    if [[ "$item_count" -lt 100 ]] || [[ "$page" -ge 10 ]]; then
+      break
+    fi
+    ((page++))
+  done
+
+  # Fetch from open PR branches
+  local pr_branches_data
+  pr_branches_data=$(gh api graphql -f query="
+query {
+  search(query: \"author:${GH_USER} is:pr is:open\", type: ISSUE, first: 100) {
+    nodes {
+      ... on PullRequest {
+        headRefName
+        headRepository {
+          nameWithOwner
+        }
+      }
+    }
+  }
+}
+" 2>/dev/null || echo '{"data":{"search":{"nodes":[]}}}')
+
+  local pr_branches
+  pr_branches=$(echo "$pr_branches_data" | jq -r '
+    .data.search.nodes // [] |
+    .[] |
+    select(.headRepository != null and .headRefName != null) |
+    "\(.headRepository.nameWithOwner):\(.headRefName)"
+  ' 2>/dev/null | sort -u)
+
+  for repo_branch in $pr_branches; do
+    [[ -z "$repo_branch" ]] && continue
+    local repo="${repo_branch%:*}"
+    local branch="${repo_branch#*:}"
+
+    gh api "repos/${repo}/commits?sha=${branch}&author=${GH_USER}&since=${date_from_iso}&until=${date_to_iso}&per_page=100" \
+      2>/dev/null | jq -r --arg repo "$repo" --arg branch "$branch" '.[] | {
+        sha: .sha,
+        short_sha: .sha[0:7],
+        message: (.commit.message | split("\n")[0]),
+        url: .html_url,
+        repo: $repo,
+        repo_url: ("https://github.com/" + $repo),
+        date: .commit.committer.date,
+        source: ("pr:" + $branch)
+      }' >> "$commits_tmp" 2>/dev/null || true
+  done
+
+  # Extra branches
+  if [[ ${#EXTRA_BRANCHES[@]} -gt 0 ]]; then
+    for repo_branch in "${EXTRA_BRANCHES[@]}"; do
+      local repo="${repo_branch%:*}"
+      local branch="${repo_branch#*:}"
+
+      gh api "repos/${repo}/commits?sha=${branch}&author=${GH_USER}&since=${date_from_iso}&until=${date_to_iso}&per_page=100" \
+        2>/dev/null | jq -r --arg repo "$repo" --arg branch "$branch" '.[] | {
+          sha: .sha,
+          short_sha: .sha[0:7],
+          message: (.commit.message | split("\n")[0]),
+          url: .html_url,
+          repo: $repo,
+          repo_url: ("https://github.com/" + $repo),
+          date: .commit.committer.date,
+          source: ("extra:" + $branch)
+        }' >> "$commits_tmp" 2>/dev/null || true
+    done
+  fi
+
+  # Dedupe commits by SHA
+  local commits_json
+  commits_json=$(cat "$commits_tmp" | jq -s '
+    group_by(.sha) |
+    map(.[0]) |
+    sort_by(.date) |
+    reverse
+  ')
+  rm -f "$commits_tmp"
+
+  # Build result JSON
+  local pr_count issue_count commit_count
+  pr_count=$(echo "$prs" | jq 'length')
+  issue_count=$(echo "$issues" | jq 'length')
+  commit_count=$(echo "$commits_json" | jq 'length')
+
+  jq -n \
+    --arg date "$target_date" \
+    --arg user "$GH_USER" \
+    --argjson prs "$prs" \
+    --argjson issues "$issues" \
+    --argjson commits "$commits_json" \
+    --argjson pr_count "$pr_count" \
+    --argjson issue_count "$issue_count" \
+    --argjson commit_count "$commit_count" \
+    '{
+      date: $date,
+      user: $user,
+      prs_count: $pr_count,
+      issues_count: $issue_count,
+      commits_count: $commit_count,
+      prs: $prs,
+      issues: $issues,
+      commits: $commits
+    }'
+}
+
+# Get data for a single day (from cache or fetch)
+get_day_data() {
+  local target_date="$1"
+  local today
+  today=$(date -u +%Y-%m-%d)
+
+  # For today or with --force, always fetch fresh
+  if [[ "$target_date" == "$today" ]] || [[ "$FORCE_FETCH" == "true" ]]; then
+    local data
+    data=$(fetch_day_data "$target_date")
+    write_cache "$target_date" "$data"
+    echo "$data"
+  elif cache_exists "$target_date"; then
+    read_cache "$target_date"
+  else
+    local data
+    data=$(fetch_day_data "$target_date")
+    write_cache "$target_date" "$data"
+    echo "$data"
+  fi
+}
+
+# Iterate dates in a range (inclusive)
+date_range() {
+  local start="$1"
+  local end="$2"
+  local current="$start"
+
+  while [[ "$current" < "$end" ]] || [[ "$current" == "$end" ]]; do
+    echo "$current"
+    if date --version >/dev/null 2>&1; then
+      current=$(date -u -d "$current + 1 day" +%Y-%m-%d)
+    else
+      current=$(date -u -j -f "%Y-%m-%d" -v+1d "$current" +%Y-%m-%d)
+    fi
+  done
+}
+
+# ------------------------------------------------------------------------------
+# Analytics functions
+# ------------------------------------------------------------------------------
+#
+# Why median instead of mean?
+# ---------------------------
+# Analysis of 365 days of contribution data revealed:
+#   - Mean: 5.2 commits/day
+#   - Median: 2 commits/day
+#   - 23% of days have 0 commits
+#   - 9 outlier days with >30 commits (max: 79)
+#
+# The mean (5.2) is 2.6x the median (2) due to outlier days. This makes mean
+# misleading: a 4-commit day appears "below average" when it's actually above
+# typical. Median better represents "what does a normal day look like?"
+#
+# Why same-weekday comparison?
+# ----------------------------
+# Contribution patterns vary significantly by day of week:
+#
+#   Day     Median  Mean   (mean inflated by outliers)
+#   Mon       2     7.1
+#   Tue       3     5.5
+#   Wed       3     7.0
+#   Thu       3     5.0
+#   Fri       3     5.8
+#   Sat       1     3.4
+#   Sun       1     2.9
+#
+# Weekday median (2-3) is ~2-3x weekend median (1). Comparing a Sunday to
+# overall average is unfair - same-weekday comparison is apples-to-apples.
+#
+# Why not mean over window size?
+# ------------------------------
+# With 23% zero-activity days, dividing by window size (e.g., sum/30 for
+# 30-day window) would dilute the signal. We compare against days with data.
+#
+# Output format:
+#   vs yesterday:      PRs +2, Commits +5           (raw delta)
+#   vs Thu median:     PRs +1 (med 0), Commits -1 (med 3)  [n=52]
+#   vs 30-day median:  PRs -1 (med 2), Commits +4 (med 5)  [n=30]
+#
+# ------------------------------------------------------------------------------
+
+# Calculate median from a newline-separated list of numbers
+calc_median() {
+  local sorted
+  sorted=$(echo "$1" | sort -n)
+  local count
+  count=$(echo "$sorted" | wc -l | tr -d ' ')
+  if [[ "$count" -eq 0 ]]; then
+    echo "0"
+    return
+  fi
+  local mid=$(( (count + 1) / 2 ))
+  echo "$sorted" | sed -n "${mid}p"
+}
+
+# Get day of week (1=Mon, 7=Sun) for a date
+get_dow() {
+  local d="$1"
+  if date --version >/dev/null 2>&1; then
+    date -d "$d" +%u
+  else
+    date -j -f "%Y-%m-%d" "$d" +%u 2>/dev/null || echo "0"
+  fi
+}
+
+# Calculate analytics from cached data
+# Args: prs, issues, commits, query_date
+# Compares current values against:
+#   1. Yesterday (raw delta)
+#   2. Same weekday median (e.g., all Thursdays in history)
+#   3. 30-day rolling median
+calculate_analytics() {
+  local current_prs="$1"
+  local current_issues="$2"  # kept for API consistency, not displayed
+  local current_commits="$3"
+  local query_date="$4"  # The date being queried (for weekday comparison)
+
+  local today
+  today=$(date -u +%Y-%m-%d)
+
+  # Use query_date if provided, otherwise use today
+  local target_date="${query_date:-$today}"
+  local target_dow
+  target_dow=$(get_dow "$target_date")
+
+  # Get yesterday's date relative to target
+  local yesterday
+  if date --version >/dev/null 2>&1; then
+    yesterday=$(date -u -d "$target_date - 1 day" +%Y-%m-%d)
+  else
+    yesterday=$(date -u -j -f "%Y-%m-%d" -v-1d "$target_date" +%Y-%m-%d)
+  fi
+
+  # Collect all cached data
+  local all_cache_files
+  all_cache_files=$(find "$CACHE_DIR" -name "${GH_USER}-*.json" -type f 2>/dev/null | sort -r)
+
+  if [[ -z "$all_cache_files" ]]; then
+    echo ""
+    echo "── Analytics ──"
+    echo "  (no historical data yet - run with --backfill to populate)"
+    return
+  fi
+
+  # Yesterday's data
+  local yesterday_data=""
+  if cache_exists "$yesterday"; then
+    yesterday_data=$(read_cache "$yesterday")
+  fi
+
+  # Date boundaries
+  local date_30_ago
+  if date --version >/dev/null 2>&1; then
+    date_30_ago=$(date -u -d "$target_date - 30 days" +%Y-%m-%d)
+  else
+    date_30_ago=$(date -u -j -f "%Y-%m-%d" -v-30d "$target_date" +%Y-%m-%d)
+  fi
+
+  # Collect values for median calculation
+  # We store newline-separated lists of values, then sort and pick middle
+  local commits_30="" prs_30="" issues_30=""   # 30-day rolling window
+  local commits_dow="" prs_dow="" issues_dow="" # same day-of-week (all time)
+  local count_30=0 count_dow=0
+
+  while IFS= read -r cache_file; do
+    [[ -z "$cache_file" ]] && continue
+    local file_date
+    file_date=$(basename "$cache_file" | sed "s/${GH_USER}-//" | sed 's/\.json$//')
+
+    # Skip the target date itself
+    [[ "$file_date" == "$target_date" ]] && continue
+
+    local data
+    data=$(cat "$cache_file")
+    local prs issues commits
+    prs=$(echo "$data" | jq -r '.prs_count // 0')
+    issues=$(echo "$data" | jq -r '.issues_count // 0')
+    commits=$(echo "$data" | jq -r '.commits_count // 0')
+
+    # 30-day rolling window for recent baseline
+    if [[ "$file_date" > "$date_30_ago" ]] || [[ "$file_date" == "$date_30_ago" ]]; then
+      commits_30="${commits_30}${commits}"$'\n'
+      prs_30="${prs_30}${prs}"$'\n'
+      issues_30="${issues_30}${issues}"$'\n'
+      ((count_30++)) || true
+    fi
+
+    # Same day of week (all time) - compare Mon to Mon, Sat to Sat, etc.
+    local file_dow
+    file_dow=$(get_dow "$file_date")
+    if [[ "$file_dow" == "$target_dow" ]]; then
+      commits_dow="${commits_dow}${commits}"$'\n'
+      prs_dow="${prs_dow}${prs}"$'\n'
+      issues_dow="${issues_dow}${issues}"$'\n'
+      ((count_dow++)) || true
+    fi
+  done <<< "$all_cache_files"
+
+  # Print analytics
+  echo ""
+  echo "── Analytics ──"
+
+  # vs Yesterday
+  if [[ -n "$yesterday_data" ]]; then
+    local y_prs y_issues y_commits
+    y_prs=$(echo "$yesterday_data" | jq -r '.prs_count // 0')
+    y_issues=$(echo "$yesterday_data" | jq -r '.issues_count // 0')
+    y_commits=$(echo "$yesterday_data" | jq -r '.commits_count // 0')
+
+    local diff_prs=$((current_prs - y_prs))
+    local diff_commits=$((current_commits - y_commits))
+
+    printf "  vs yesterday:      PRs %+d, Commits %+d\n" "$diff_prs" "$diff_commits"
+  fi
+
+  # vs same weekday (median)
+  if [[ "$count_dow" -gt 0 ]]; then
+    local median_prs_dow median_commits_dow
+    median_prs_dow=$(calc_median "$prs_dow")
+    median_commits_dow=$(calc_median "$commits_dow")
+
+    local diff_prs=$((current_prs - median_prs_dow))
+    local diff_commits=$((current_commits - median_commits_dow))
+
+    local dow_name
+    dow_name=$(echo "Mon Tue Wed Thu Fri Sat Sun" | cut -d' ' -f"$target_dow")
+
+    printf "  vs %s median:    PRs %+d (med %d), Commits %+d (med %d)  [n=%d]\n" \
+      "$dow_name" "$diff_prs" "$median_prs_dow" "$diff_commits" "$median_commits_dow" "$count_dow"
+  fi
+
+  # vs 30-day median
+  if [[ "$count_30" -gt 0 ]]; then
+    local median_prs_30 median_commits_30
+    median_prs_30=$(calc_median "$prs_30")
+    median_commits_30=$(calc_median "$commits_30")
+
+    local diff_prs=$((current_prs - median_prs_30))
+    local diff_commits=$((current_commits - median_commits_30))
+
+    printf "  vs 30-day median:  PRs %+d (med %d), Commits %+d (med %d)  [n=%d]\n" \
+      "$diff_prs" "$median_prs_30" "$diff_commits" "$median_commits_30" "$count_30"
+  fi
+
+  if [[ "$count_30" -eq 0 ]] && [[ "$count_dow" -eq 0 ]] && [[ -z "$yesterday_data" ]]; then
+    echo "  (no historical data yet - run with --backfill to populate)"
+  fi
+}
+
+# ------------------------------------------------------------------------------
+# Rate limit handling
+# ------------------------------------------------------------------------------
+
+check_rate_limit() {
+  local rate_info
+  rate_info=$(gh api rate_limit 2>/dev/null || echo '{}')
+
+  local remaining reset_at
+  remaining=$(echo "$rate_info" | jq -r '.resources.core.remaining // 100')
+  reset_at=$(echo "$rate_info" | jq -r '.resources.core.reset // 0')
+
+  # If we have fewer than 50 requests remaining, wait for reset
+  if [[ "$remaining" -lt 50 ]]; then
+    local now reset_in
+    now=$(date +%s)
+    reset_in=$((reset_at - now))
+
+    if [[ "$reset_in" -gt 0 ]]; then
+      printf "\n  Rate limit low (%d remaining). Waiting %d seconds for reset..." "$remaining" "$reset_in"
+      sleep "$reset_in"
+      echo " resumed."
+    fi
+  fi
+}
+
+# ------------------------------------------------------------------------------
+# Handle backfill mode
+# ------------------------------------------------------------------------------
+
+if [[ -n "$BACKFILL_DAYS" ]]; then
+  echo "Backfilling last $BACKFILL_DAYS days..."
+
+  # Show initial rate limit info
+  rate_info=$(gh api rate_limit 2>/dev/null || echo '{}')
+  remaining=$(echo "$rate_info" | jq -r '.resources.core.remaining // "?"')
+  limit=$(echo "$rate_info" | jq -r '.resources.core.limit // "?"')
+  echo "Rate limit: $remaining/$limit requests remaining"
+  echo ""
+
+  today=$(date -u +%Y-%m-%d)
+  fetched_count=0
+
+  for ((i = BACKFILL_DAYS - 1; i >= 0; i--)); do
+    if date --version >/dev/null 2>&1; then
+      target_date=$(date -u -d "$i days ago" +%Y-%m-%d)
+    else
+      target_date=$(date -u -v-${i}d +%Y-%m-%d)
+    fi
+
+    if cache_exists "$target_date" && [[ "$FORCE_FETCH" != "true" ]]; then
+      printf "  %s: cached\n" "$target_date"
+    else
+      # Check rate limit every 10 fetches
+      if [[ $((fetched_count % 10)) -eq 0 ]] && [[ "$fetched_count" -gt 0 ]]; then
+        check_rate_limit
+      fi
+
+      printf "  %s: fetching..." "$target_date"
+      data=$(fetch_day_data "$target_date")
+      write_cache "$target_date" "$data"
+      prs=$(echo "$data" | jq '.prs_count')
+      issues=$(echo "$data" | jq '.issues_count')
+      commits=$(echo "$data" | jq '.commits_count')
+      printf " %d PRs, %d issues, %d commits\n" "$prs" "$issues" "$commits"
+      ((fetched_count++)) || true
+
+      # Small delay between requests
+      sleep 1
+    fi
+  done
+
+  echo ""
+  echo "Backfill complete! Fetched $fetched_count days."
+  exit 0
+fi
+
+# ------------------------------------------------------------------------------
 # Fetch data
 # ------------------------------------------------------------------------------
 
@@ -309,7 +865,7 @@ print_subheader "Commits"
 
 # Temp file to collect all commits (will dedupe later)
 ALL_COMMITS_FILE=$(mktemp)
-trap "rm -f $ALL_COMMITS_FILE" EXIT
+trap 'rm -f "$ALL_COMMITS_FILE"' EXIT
 
 # 1. Search API (default branches + indexed commits)
 page=1
@@ -321,18 +877,25 @@ while true; do
     --raw-field "page=$page" \
     2>/dev/null || echo '{"items":[]}')
 
-  echo "$page_data" | jq -r '.items[] | {
-    sha: .sha,
-    short_sha: .sha[0:7],
-    message: (.commit.message | split("\n")[0]),
-    url: .html_url,
-    repo: .repository.full_name,
-    repo_url: .repository.html_url,
-    date: .commit.committer.date,
-    source: "search"
-  }' >> "$ALL_COMMITS_FILE"
+  # Check if we got valid items
+  item_count=$(echo "$page_data" | jq -r '.items | length // 0' 2>/dev/null || echo "0")
+  # Ensure item_count is a valid number
+  item_count="${item_count//[^0-9]/}"
+  item_count="${item_count:-0}"
 
-  item_count=$(echo "$page_data" | jq '.items | length')
+  if [[ "$item_count" -gt 0 ]]; then
+    echo "$page_data" | jq -r '.items[] | {
+      sha: .sha,
+      short_sha: .sha[0:7],
+      message: (.commit.message | split("\n")[0]),
+      url: .html_url,
+      repo: .repository.full_name,
+      repo_url: .repository.html_url,
+      date: .commit.committer.date,
+      source: "search"
+    }' >> "$ALL_COMMITS_FILE" 2>/dev/null || true
+  fi
+
   if [[ "$item_count" -lt 100 ]] || [[ "$page" -ge 10 ]]; then
     break
   fi
@@ -468,10 +1031,39 @@ else
   echo "  Total: $total_commits commits"
 fi
 
+# --- Cache single-day data ---
+# For single-day queries, cache the fetched data
+if [[ "$DATE_FROM" == "$DATE_TO" ]]; then
+  cache_data=$(jq -n \
+    --arg date "$DATE_FROM" \
+    --arg user "$GH_USER" \
+    --argjson prs "$prs" \
+    --argjson issues "$issues" \
+    --argjson commits "$commits_json" \
+    --argjson pr_count "$pr_count" \
+    --argjson issue_count "$issue_count" \
+    --argjson commit_count "$total_commits" \
+    '{
+      date: $date,
+      user: $user,
+      prs_count: $pr_count,
+      issues_count: $issue_count,
+      commits_count: $commit_count,
+      prs: $prs,
+      issues: $issues,
+      commits: $commits
+    }')
+  write_cache "$DATE_FROM" "$cache_data"
+fi
+
 # --- Summary ---
 if [[ "$OUTPUT_FORMAT" != "org" ]]; then
   echo ""
   echo "═══════════════════════════════════════════════════════════════"
   printf "  Summary: %d PRs, %d issues, %d commits\n" "$pr_count" "$issue_count" "$total_commits"
   echo "═══════════════════════════════════════════════════════════════"
+
+  # Show analytics (only for text format)
+  # Pass DATE_TO as the reference date for weekday comparison
+  calculate_analytics "$pr_count" "$issue_count" "$total_commits" "$DATE_TO"
 fi
