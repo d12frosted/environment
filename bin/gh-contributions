@@ -557,6 +557,8 @@ date_range() {
 # ------------------------------------------------------------------------------
 
 # Calculate median from a newline-separated list of numbers
+# For odd n: middle element at position (n+1)/2
+# For even n: average of elements at positions n/2 and n/2+1
 calc_median() {
   local sorted
   sorted=$(echo "$1" | sort -n)
@@ -566,8 +568,21 @@ calc_median() {
     echo "0"
     return
   fi
-  local mid=$(( (count + 1) / 2 ))
-  echo "$sorted" | sed -n "${mid}p"
+
+  if (( count % 2 == 1 )); then
+    # Odd: return middle element
+    local mid=$(( (count + 1) / 2 ))
+    echo "$sorted" | sed -n "${mid}p"
+  else
+    # Even: return average of two middle elements
+    local mid1=$(( count / 2 ))
+    local mid2=$(( count / 2 + 1 ))
+    local val1 val2
+    val1=$(echo "$sorted" | sed -n "${mid1}p")
+    val2=$(echo "$sorted" | sed -n "${mid2}p")
+    # Integer division is fine for commit counts
+    echo $(( (val1 + val2) / 2 ))
+  fi
 }
 
 # Get day of week (1=Mon, 7=Sun) for a date
