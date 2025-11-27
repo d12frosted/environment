@@ -550,9 +550,9 @@ date_range() {
 # 30-day window) would dilute the signal. We compare against days with data.
 #
 # Output format:
-#   vs yesterday:      PRs +2, Commits +5           (raw delta)
-#   vs Thu median:     PRs +1 (med 0), Commits -1 (med 3)  [n=52]
-#   vs 30-day median:  PRs -1 (med 2), Commits +4 (med 5)  [n=30]
+#   vs yesterday:     PRs +2, Commits +5
+#   vs Thu median:    PRs +1 (med 0), Commits -1 (med 3)  [n=52]
+#   vs 30-day median: PRs -1 (med 2), Commits +4 (med 5)  [n=30]
 #
 # ------------------------------------------------------------------------------
 
@@ -687,7 +687,7 @@ calculate_analytics() {
     local diff_prs=$((current_prs - y_prs))
     local diff_commits=$((current_commits - y_commits))
 
-    printf "  vs yesterday:      PRs %+d, Commits %+d\n" "$diff_prs" "$diff_commits"
+    printf "  vs %-14s PRs %+d, Commits %+d\n" "yesterday:" "$diff_prs" "$diff_commits"
   fi
 
   # vs same weekday (median)
@@ -702,8 +702,8 @@ calculate_analytics() {
     local dow_name
     dow_name=$(echo "Mon Tue Wed Thu Fri Sat Sun" | cut -d' ' -f"$target_dow")
 
-    printf "  vs %s median:    PRs %+d (med %d), Commits %+d (med %d)  [n=%d]\n" \
-      "$dow_name" "$diff_prs" "$median_prs_dow" "$diff_commits" "$median_commits_dow" "$count_dow"
+    printf "  vs %-14s PRs %+d (med %d), Commits %+d (med %d)  [n=%d]\n" \
+      "${dow_name} median:" "$diff_prs" "$median_prs_dow" "$diff_commits" "$median_commits_dow" "$count_dow"
   fi
 
   # vs 30-day median
@@ -715,8 +715,8 @@ calculate_analytics() {
     local diff_prs=$((current_prs - median_prs_30))
     local diff_commits=$((current_commits - median_commits_30))
 
-    printf "  vs 30-day median:  PRs %+d (med %d), Commits %+d (med %d)  [n=%d]\n" \
-      "$diff_prs" "$median_prs_30" "$diff_commits" "$median_commits_30" "$count_30"
+    printf "  vs %-14s PRs %+d (med %d), Commits %+d (med %d)  [n=%d]\n" \
+      "30-day median:" "$diff_prs" "$median_prs_30" "$diff_commits" "$median_commits_30" "$count_30"
   fi
 
   if [[ "$count_30" -eq 0 ]] && [[ "$count_dow" -eq 0 ]] && [[ -z "$yesterday_data" ]]; then
