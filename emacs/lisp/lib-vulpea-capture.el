@@ -70,9 +70,7 @@ It is relative to `vulpea-directory', unless it is absolute.")
 
      ("p" "Project" entry
       (function vulpea-capture-project-target)
-      (function vulpea-capture-project-template)))
-   vulpea-create-default-template
-   '(:file-name "%(vulpea-subdir-select)/${timestamp}-${slug}.org")))
+      (function vulpea-capture-project-template)))))
 
 ;;;###autoload
 (defun vulpea-capture-task ()

@@ -92,7 +92,16 @@
                                   (= (vulpea-note-level note) 0)))
    vulpea-insert-default-filter (when vulpea-db-index-heading-level
                                   (lambda (note)
-                                    (= (vulpea-note-level note) 0))))
+                                    (= (vulpea-note-level note) 0)))
+
+   ;; templates
+   vulpea-create-default-template
+   '(:file-name "%(vulpea-subdir-select)/${timestamp}-${slug}.org"
+     :head "#+created: %<[%Y-%m-%d]>"
+     :properties (("CREATED" . "%<[%Y-%m-%d %H:%M]>")))
+   vulpea-journal-default-template
+   '(:file-name "journal/%Y-%m-%d.org"
+     :title "%Y-%m-%d %A"))
   :config
   (add-hook 'vulpea-insert-handle-functions #'vulpea-insert-handle)
 
