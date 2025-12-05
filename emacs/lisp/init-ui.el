@@ -139,6 +139,10 @@
   :ensure (widget-extra :host github :repo "d12frosted/widget-extra" :wait t)
   :demand t)
 
+(use-package vui
+  :ensure (:host github :repo "d12frosted/vui.el")
+  :demand t)
+
 
 
 (use-package svg-lib
