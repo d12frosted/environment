@@ -42,8 +42,8 @@
   :group 'org)
 
 (defface org-emphasis-marker
-  '((t :inherit org-drawer))
-  "Face for de-emphasized markup characters in org-mode."
+  '((t :inherit shadow))
+  "Face for de-emphasized markup characters in `org-mode'."
   :group 'org-emphasis-marker)
 
 (defun org-emphasis-marker--fontify (limit)
