@@ -230,10 +230,10 @@
            (overline-heading-2 bg-magenta-nuanced))
          modus-themes-preset-overrides-cooler)
         modus-themes-headings
-        '((1 . (variable-pitch heavy 2.0))
-          (2 . (variable-pitch bold 1.6))
-          (3 . (variable-pitch semibold 1.3))
-          (4 . (variable-pitch semibold 1.1))
+        '((1 . (variable-pitch heavy 1.6))
+          (2 . (variable-pitch bold 1.3))
+          (3 . (variable-pitch semibold 1.1))
+          (4 . (variable-pitch semibold 1.0))
           (5 . (variable-pitch medium 1.0))
           (t . (variable-pitch medium 1.0))))
 
