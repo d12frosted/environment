@@ -46,3 +46,6 @@ secrets/
 *.secret
 *.gpg
 !*.gpg.example
+
+# Machine-specific configs
+gitpulse/
