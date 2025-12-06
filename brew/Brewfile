@@ -83,6 +83,7 @@ brew "gnu-tar"
 brew "llvm"
 brew "make"
 brew "node"
+brew "go"
 brew "shellcheck"
 brew "yarn"
 
