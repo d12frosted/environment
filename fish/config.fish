@@ -5,6 +5,11 @@ end
 fish_add_path ~/.local/bin
 fish_add_path ~/.config/bin
 
+# Go XDG paths
+set -gx GOPATH ~/.local/share/go
+set -gx GOMODCACHE ~/.cache/go/mod
+set -gx GOBIN ~/.local/bin
+
 # setup GPG as SSH agent
 set -gx GPG_TTY (tty)
 set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
