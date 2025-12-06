@@ -345,6 +345,16 @@ function task_packages() {
     info "npm not available (install node via brew if needed)"
   fi
 
+  # go packages
+  if command -v go &> /dev/null; then
+    info "Installing Go packages..."
+    if [[ "$DRY_RUN" != "true" ]]; then
+      GOBIN="$HOME/.local/bin" go install github.com/d12frosted/gitpulse@latest
+    fi
+  else
+    info "go not available (install go via brew if needed)"
+  fi
+
   local complete_label="installed"
   [[ "$ACTION" == "upgrade" ]] && complete_label="upgraded"
   task_complete "packages" "Packages $complete_label"
