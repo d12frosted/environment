@@ -67,6 +67,17 @@
       (put-text-property stars-beg stars-end 'display indicator)))
   nil)
 
+(defun org-margin--clear-stale (beg end _len)
+  "Clear stale display properties in region BEG to END after buffer change."
+  (save-excursion
+    (save-match-data
+      (goto-char beg)
+      (beginning-of-line)
+      (let ((line-beg (point)))
+        (goto-char end)
+        (end-of-line)
+        (remove-text-properties line-beg (point) '(display nil))))))
+
 (defvar org-margin--font-lock-keywords
   '((org-margin--fontify))
   "Font-lock keywords for `org-margin-mode'.")
@@ -79,8 +90,10 @@
   (if org-margin-mode
       (progn
         (font-lock-add-keywords nil org-margin--font-lock-keywords 'append)
+        (add-hook 'after-change-functions #'org-margin--clear-stale nil t)
         (font-lock-flush))
     (font-lock-remove-keywords nil org-margin--font-lock-keywords)
+    (remove-hook 'after-change-functions #'org-margin--clear-stale t)
     (with-silent-modifications
       (remove-text-properties (point-min) (point-max) '(display nil)))
     (font-lock-flush)))
