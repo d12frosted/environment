@@ -196,6 +196,65 @@ function check_homebrew() {
   command -v brew &> /dev/null
 }
 
+# Create a symlink from source to target
+# Usage: create_symlink source target [no_backup]
+# If no_backup is "true", existing files are removed without backup
+function create_symlink() {
+  local source=$1
+  local target=$2
+  local no_backup=${3:-false}
+
+  # Check if source exists
+  if [[ ! -e "$source" ]]; then
+    info "Skipping $target (source not found: $source)"
+    return 0
+  fi
+
+  # Create target directory if needed
+  local target_dir
+  target_dir=$(dirname "$target")
+  if [[ ! -d "$target_dir" ]]; then
+    info "Creating directory: $target_dir"
+    if [[ "$DRY_RUN" != "true" ]]; then
+      mkdir -p "$target_dir"
+    fi
+  fi
+
+  # Check if it's already the correct symlink
+  if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$source" ]]; then
+    info "Symlink already exists: $target → $source"
+    return 0
+  fi
+
+  # Handle existing target
+  if [[ -e "$target" || -L "$target" ]]; then
+    if [[ "$no_backup" == "true" ]]; then
+      info "Removing existing $target"
+      if [[ "$DRY_RUN" != "true" ]]; then
+        rm -f "$target"
+      fi
+    else
+      local backup
+      backup="${target}.backup.$(date +%Y%m%d_%H%M%S)"
+      warn "Backing up existing $target to $backup"
+      if [[ "$DRY_RUN" != "true" ]]; then
+        mv "$target" "$backup"
+      fi
+    fi
+  fi
+
+  # Create symlink
+  info "Creating symlink: $target → $source"
+  if [[ "$DRY_RUN" != "true" ]]; then
+    if ln -sf "$source" "$target"; then
+      success "Created symlink: $target"
+    else
+      warn "Failed to create symlink: $target"
+      return 1
+    fi
+  fi
+}
+
 #
 # Lock File Management
 #
@@ -560,56 +619,6 @@ function task_devtools() {
 function task_symlinks() {
   task_start "symlinks" "Creating symlinks"
 
-  # Helper function to create a symlink with backup
-  create_symlink() {
-    local source=$1
-    local target=$2
-
-    # Check if source exists
-    if [[ ! -e "$source" ]]; then
-      info "Skipping $target (source not found: $source)"
-      return 0
-    fi
-
-    # Create target directory if needed
-    local target_dir
-    target_dir=$(dirname "$target")
-    if [[ ! -d "$target_dir" ]]; then
-      info "Creating directory: $target_dir"
-      if [[ "$DRY_RUN" != "true" ]]; then
-        mkdir -p "$target_dir"
-      fi
-    fi
-
-    # Handle existing target
-    if [[ -e "$target" || -L "$target" ]]; then
-      # Check if it's already the correct symlink
-      if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$source" ]]; then
-        info "Symlink already exists: $target → $source"
-        return 0
-      fi
-
-      # Backup existing file/symlink
-      local backup
-      backup="${target}.backup.$(date +%Y%m%d_%H%M%S)"
-      warn "Backing up existing $target to $backup"
-      if [[ "$DRY_RUN" != "true" ]]; then
-        mv "$target" "$backup"
-      fi
-    fi
-
-    # Create symlink
-    info "Creating symlink: $target → $source"
-    if [[ "$DRY_RUN" != "true" ]]; then
-      if ln -s "$source" "$target"; then
-        success "Created symlink: $target"
-      else
-        warn "Failed to create symlink: $target"
-        return 1
-      fi
-    fi
-  }
-
   # GnuPG configuration symlinks
   # GnuPG doesn't support XDG_CONFIG_HOME, so we symlink from ~/.config/gnupg to ~/.gnupg
   if [[ -d "$XDG_CONFIG_HOME/gnupg" ]]; then
@@ -732,30 +741,16 @@ function task_services() {
       fi
     fi
 
-    # Check if symlink already exists and is correct
-    if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$plist" ]]; then
-      info "Symlink already exists: $target"
-    else
-      # Remove existing file/symlink
-      if [[ -e "$target" ]] || [[ -L "$target" ]]; then
-        info "Removing existing $target"
-        if [[ "$DRY_RUN" != "true" ]]; then
-          launchctl unload "$target" 2>/dev/null || true
-          rm -f "$target"
-        fi
-      fi
-
-      # Create symlink
-      info "Creating symlink: $target → $plist"
-      if [[ "$DRY_RUN" != "true" ]]; then
-        ln -sf "$plist" "$target"
-      fi
+    # Unload existing service before modifying symlink
+    if [[ "$DRY_RUN" != "true" ]]; then
+      launchctl unload "$target" 2>/dev/null || true
     fi
+
+    # Create symlink (no backup for managed service plists)
+    create_symlink "$plist" "$target" true
 
     # Load service
     if [[ "$DRY_RUN" != "true" ]]; then
-      # Unload first in case it's already loaded
-      launchctl unload "$target" 2>/dev/null || true
       if launchctl load "$target"; then
         success "Loaded $label"
       else
