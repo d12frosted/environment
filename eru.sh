@@ -691,6 +691,83 @@ function task_symlinks() {
 }
 
 #
+# Task: Services (launchd)
+#
+
+function task_services() {
+  task_start "services" "Setting up launchd services"
+
+  if ! is_macos; then
+    task_skip "Not on macOS"
+    return 0
+  fi
+
+  local launchd_dir="$XDG_CONFIG_HOME/launchd"
+  local agents_dir="$HOME/Library/LaunchAgents"
+
+  if [[ ! -d "$launchd_dir" ]]; then
+    info "No launchd config directory at $launchd_dir"
+    return 0
+  fi
+
+  mkdir -p "$agents_dir"
+
+  for plist in "$launchd_dir"/*.plist; do
+    [[ -f "$plist" ]] || continue
+
+    local plist_name
+    plist_name=$(basename "$plist")
+    local label="${plist_name%.plist}"
+    local target="$agents_dir/$plist_name"
+
+    info "Processing $plist_name..."
+
+    # Create log directory if StandardOutPath/StandardErrorPath reference it
+    local log_dir
+    log_dir=$(grep -A1 'StandardOutPath\|StandardErrorPath' "$plist" 2>/dev/null | grep '<string>' | sed 's|.*<string>\(.*\)</string>.*|\1|' | xargs dirname 2>/dev/null | head -1)
+    if [[ -n "$log_dir" ]] && [[ ! -d "$log_dir" ]]; then
+      info "Creating log directory: $log_dir"
+      if [[ "$DRY_RUN" != "true" ]]; then
+        mkdir -p "$log_dir"
+      fi
+    fi
+
+    # Check if symlink already exists and is correct
+    if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$plist" ]]; then
+      info "Symlink already exists: $target"
+    else
+      # Remove existing file/symlink
+      if [[ -e "$target" ]] || [[ -L "$target" ]]; then
+        info "Removing existing $target"
+        if [[ "$DRY_RUN" != "true" ]]; then
+          launchctl unload "$target" 2>/dev/null || true
+          rm -f "$target"
+        fi
+      fi
+
+      # Create symlink
+      info "Creating symlink: $target → $plist"
+      if [[ "$DRY_RUN" != "true" ]]; then
+        ln -sf "$plist" "$target"
+      fi
+    fi
+
+    # Load service
+    if [[ "$DRY_RUN" != "true" ]]; then
+      # Unload first in case it's already loaded
+      launchctl unload "$target" 2>/dev/null || true
+      if launchctl load "$target"; then
+        success "Loaded $label"
+      else
+        warn "Failed to load $label"
+      fi
+    fi
+  done
+
+  task_complete "services" "Launchd services configured"
+}
+
+#
 # Task: Emacs
 #
 
@@ -945,6 +1022,48 @@ function doctor_symlinks() {
 }
 
 #
+# Doctor: Services
+#
+function doctor_services() {
+  info "Checking launchd services..."
+
+  if ! is_macos; then
+    info "  Skipping (not on macOS)"
+    return 0
+  fi
+
+  local launchd_dir="$XDG_CONFIG_HOME/launchd"
+
+  if [[ ! -d "$launchd_dir" ]]; then
+    info "  No launchd config directory"
+    return 0
+  fi
+
+  for plist in "$launchd_dir"/*.plist; do
+    [[ -f "$plist" ]] || continue
+
+    local plist_name
+    plist_name=$(basename "$plist")
+    local label="${plist_name%.plist}"
+    local target="$HOME/Library/LaunchAgents/$plist_name"
+
+    # Check symlink
+    if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$plist" ]]; then
+      doctor_ok "$plist_name symlinked"
+    else
+      doctor_issue "$plist_name not symlinked to LaunchAgents"
+    fi
+
+    # Check if loaded
+    if launchctl list | grep -q "^[0-9-]*[[:space:]]*[0-9-]*[[:space:]]*$label$"; then
+      doctor_ok "$label is loaded"
+    else
+      doctor_issue "$label is not loaded"
+    fi
+  done
+}
+
+#
 # Doctor: Emacs
 #
 function doctor_emacs() {
@@ -990,7 +1109,7 @@ function run_doctor() {
 
   # Default to all checks if none specified
   if [[ ${#checks[@]} -eq 0 ]]; then
-    checks=(brew shell wm symlinks emacs)
+    checks=(brew shell wm symlinks services emacs)
   fi
 
   DOCTOR_ISSUES=0
@@ -1006,6 +1125,7 @@ function run_doctor() {
       shell) doctor_shell ;;
       wm) doctor_wm ;;
       symlinks) doctor_symlinks ;;
+      services) doctor_services ;;
       emacs) doctor_emacs ;;
       *)
         warn "Unknown doctor check: $check"
@@ -1032,7 +1152,7 @@ function run_doctor() {
 # Check if a task name is valid
 function is_valid_task() {
   case "$1" in
-    homebrew|packages|macos|shell|wm|devtools|symlinks|emacs)
+    homebrew|packages|macos|shell|wm|devtools|symlinks|services|emacs)
       return 0
       ;;
     *)
@@ -1051,13 +1171,14 @@ function get_task_function() {
     wm) echo "task_wm" ;;
     devtools) echo "task_devtools" ;;
     symlinks) echo "task_symlinks" ;;
+    services) echo "task_services" ;;
     emacs) echo "task_emacs" ;;
     *) return 1 ;;
   esac
 }
 
 # Default task order for full installation
-DEFAULT_TASKS=(homebrew packages macos shell wm devtools symlinks emacs)
+DEFAULT_TASKS=(homebrew packages macos shell wm devtools symlinks services emacs)
 
 #
 # Main Execution
@@ -1080,6 +1201,7 @@ Tasks for install/upgrade (run all if none specified):
   wm                Configure yabai + skhd
   devtools          Set up git, ssh, gpg
   symlinks          Create symlinks
+  services          Set up launchd services
   emacs             Set up Emacs (supports emacs:subtask syntax)
 
 Checks for doctor (run all if none specified):
@@ -1087,6 +1209,7 @@ Checks for doctor (run all if none specified):
   shell             Verify fish is the default shell
   wm                Check yabai/skhd are running
   symlinks          Verify symlinks are correct
+  services          Check launchd services are loaded
   emacs             Run eldev lint
 
 Options:
@@ -1123,7 +1246,7 @@ function main() {
             show_usage
             exit 0
             ;;
-          brew|shell|wm|symlinks|emacs)
+          brew|shell|wm|symlinks|services|emacs)
             doctor_checks+=("$1")
             shift
             ;;

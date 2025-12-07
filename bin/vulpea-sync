@@ -2,40 +2,34 @@
 
 set -e
 
-function a_section() {
-  local text=">>> ${*:2}"
-  local length="${#text}"
-  echo
-	echo '┌────────────────────────────────────────────────────────────────────────────┐'
-	echo -ne "│ \033[$1m$text\033[0m"
-	printf "%$((75 - length))s│\n"
-	echo '└────────────────────────────────────────────────────────────────────────────┘'
+VULPEA_DIR="${VULPEA_DIR:-$HOME/vulpea}"
+
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
 }
 
-function section() {
-  a_section "1;32" "$1" "${*:2}"
-}
+cd "$VULPEA_DIR"
 
-section "$(date '+%d/%m/%y %H:%M:%S')"
+log "Syncing vulpea notes in $VULPEA_DIR"
 
-echo "Sync Vulpea files in $VULPEA_DIR as $USER"
-cd "$VULPEA_DIR" && {
-  git config user.name "Golem"
-  git config user.email "golem@d12frosted.io"
-  git add .
-  if git diff-index --quiet --cached HEAD --; then
-    echo "nothing to commit"
-  else
-    git commit -m "[$(date '+%d/%m/%y %H:%M:%S')] sync"
-  fi
-}
+git config user.name "Golem"
+git config user.email "golem@d12frosted.io"
 
-echo "fetching commits..."
+git add .
+if git diff-index --quiet --cached HEAD --; then
+  log "Nothing to commit"
+else
+  git commit -m "[$(date '+%d/%m/%y %H:%M:%S')] sync"
+  log "Committed changes"
+fi
+
+log "Fetching from origin..."
 git fetch origin
-echo "rebasing..."
+
+log "Rebasing on origin/master..."
 git rebase origin/master
 
-if [ "$USER" = "d12frosted" ]; then
-  echo "pushing..."
-  git push origin master
-fi
+log "Pushing to origin..."
+git push origin master
+
+log "Sync complete"
