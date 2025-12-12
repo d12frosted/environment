@@ -1,4 +1,7 @@
 {
+  "enabledPlugins": {
+    "frontend-design@claude-code-plugins": true
+  },
   "alwaysThinkingEnabled": true,
   "attribution": {
     "pr": "",
