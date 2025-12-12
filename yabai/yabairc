@@ -19,6 +19,11 @@ yabai -m config auto_balance off
 yabai -m config split_ratio 0.5
 yabai -m config window_shadow off
 
+# opacity (requires Screen Recording permission)
+yabai -m config window_opacity on
+yabai -m config active_window_opacity 1.00
+yabai -m config normal_window_opacity 0.90
+
 # borders
 # borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
 
