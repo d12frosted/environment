@@ -706,6 +706,13 @@ function task_symlinks() {
   # symlink eru.sh to eru
   create_symlink "$XDG_CONFIG_HOME/eru.sh" "$HOME/.local/bin/eru"
 
+  # Claude Code settings (doesn't support XDG, so symlink from ~/.config/claude)
+  if [[ -f "$XDG_CONFIG_HOME/claude/settings.json" ]]; then
+    info "Setting up Claude Code symlinks..."
+    mkdir -p "$HOME/.claude"
+    create_symlink "$XDG_CONFIG_HOME/claude/settings.json" "$HOME/.claude/settings.json"
+  fi
+
   task_complete "symlinks" "Symlinks created"
 }
 
