@@ -414,6 +414,16 @@ function task_packages() {
     info "go not available (install go via brew if needed)"
   fi
 
+  # bun
+  if command -v bun &> /dev/null; then
+    info "bun is already installed"
+  else
+    info "Installing bun..."
+    if [[ "$DRY_RUN" != "true" ]]; then
+      curl -fsSL https://bun.sh/install | bash
+    fi
+  fi
+
   local complete_label="installed"
   [[ "$ACTION" == "upgrade" ]] && complete_label="upgraded"
   task_complete "packages" "Packages $complete_label"
