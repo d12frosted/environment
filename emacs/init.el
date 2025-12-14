@@ -43,7 +43,7 @@
 ;; XDG_CONFIG_HOME value if possible.
 (let ((emacs-home (if-let ((xdg (getenv "XDG_CONFIG_HOME")))
                       (expand-file-name "emacs/" xdg)
-                    user-emacs-directory)))
+                    (expand-file-name ".config/emacs/" (getenv "HOME")))))
   ;; Add Lisp directory to `load-path'.
   (add-to-list 'load-path (expand-file-name "lisp" emacs-home)))
 
