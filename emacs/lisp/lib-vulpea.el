@@ -214,13 +214,43 @@ FILTER is a `vulpea-note' predicate."
 
 
 
+;;
+;; Semantic navigation
+;;
+
+(defvar-local semantic-nav-next-fn nil
+  "Buffer-local function to navigate to next semantic element.")
+
+(defvar-local semantic-nav-prev-fn nil
+  "Buffer-local function to navigate to previous semantic element.")
+
+;;;###autoload
+(defun semantic-nav-next ()
+  "Navigate to next semantic element.
+Uses buffer-local `semantic-nav-next-fn' if set."
+  (interactive)
+  (if semantic-nav-next-fn
+      (funcall semantic-nav-next-fn)
+    (user-error "No semantic navigation defined for this buffer")))
+
+;;;###autoload
+(defun semantic-nav-prev ()
+  "Navigate to previous semantic element.
+Uses buffer-local `semantic-nav-prev-fn' if set."
+  (interactive)
+  (if semantic-nav-prev-fn
+      (funcall semantic-nav-prev-fn)
+    (user-error "No semantic navigation defined for this buffer")))
+
 ;;;###autoload
 (defun vulpea-setup-buffer (&optional _)
   "Setup current buffer for notes viewing and editing."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
     (when (s-contains-p "journal" (buffer-file-name))
-      (org-cycle-set-startup-visibility))
+      (org-cycle-set-startup-visibility)
+      (setq-local semantic-nav-next-fn #'vulpea-journal-next)
+      (setq-local semantic-nav-prev-fn #'vulpea-journal-previous))
     (org-with-point-at 1
       (org-fold-hide-drawer-toggle 'off))
     (vulpea-ensure-filetag)))

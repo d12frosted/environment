@@ -97,8 +97,7 @@
 
   ;; This must be configured in config hook to avoid unnecessary load
   ;; of `vulpea' stuff.
-  ;; (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer)
-  )
+  (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer))
 
 (use-package vulpea-ui
   :ensure (:host github :repo "d12frosted/vulpea-ui")
@@ -128,8 +127,10 @@
     "nd" '(nil :which-key "by date...")
     "ndd" '(vulpea-journal-date :which-key "arbitrary date")
     "ndt" '(vulpea-journal-today :which-key "today")
+    "nd]" '(vulpea-journal-next :which-key "next")
     "ndn" '(vulpea-journal-next :which-key "next")
-    "ndp" '(vulpea-journal-previous :which-key "previous"))
+    "ndp" '(vulpea-journal-previous :which-key "previous")
+    "nd[" '(vulpea-journal-previous :which-key "previous"))
   :init
   (setq-default
    vulpea-journal-ui-previous-years-count 10)
@@ -147,6 +148,8 @@
          (org-mode . editor-disable-electric-indent))
   :commands (org-check-agenda-file
              org-link-set-parameters)
+  :bind (("M-]" . semantic-nav-next)
+         ("M-[" . semantic-nav-prev))
   :init
   ;; This is where my ~heart~ org files are.
   (setq org-directory vulpea-directory)
