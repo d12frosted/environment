@@ -50,11 +50,6 @@
     "ft" '(vulpea-find-project :which-key "project")
     "fp" '(vulpea-find-person :which-key "person")
     "n" '(nil :which-key "vulpea...")
-    "nd" '(nil :which-key "by date...")
-    "ndd" '(vulpea-dailies-date :which-key "arbitrary date")
-    "ndt" '(vulpea-dailies-today :which-key "today")
-    "ndn" '(vulpea-dailies-next :which-key "next")
-    "ndp" '(vulpea-dailies-prev :which-key "previous")
     "nf" '(vulpea-find :which-key "find")
     "nF" '(vulpea-find-backlink :which-key "find backlink")
     "ni" '(vulpea-insert :which-key "insert")
@@ -128,6 +123,13 @@
 (use-package vulpea-journal
   :ensure (:host github :repo "d12frosted/vulpea-journal")
   :defer t
+  :general
+  (leader-def
+    "nd" '(nil :which-key "by date...")
+    "ndd" '(vulpea-journal-date :which-key "arbitrary date")
+    "ndt" '(vulpea-journal-today :which-key "today")
+    "ndn" '(vulpea-journal-next :which-key "next")
+    "ndp" '(vulpea-journal-previous :which-key "previous"))
   :init
   (setq-default
    vulpea-journal-ui-previous-years-count 10)

@@ -292,32 +292,6 @@ FILTER is a `vulpea-note' predicate."
 
 
 ;;;###autoload
-(defun vulpea-dailies-today ()
-  "Find a daily note for today."
-  (interactive)
-  (user-error "Not implemented yet"))
-
-;;;###autoload
-(defun vulpea-dailies-date ()
-  "Find a daily note for date specified using calendar."
-  (interactive)
-  (user-error "Not implemented yet"))
-
-;;;###autoload
-(defun vulpea-dailies-prev ()
-  "Find a daily note that comes before current."
-  (interactive)
-  (user-error "Not implemented yet"))
-
-;;;###autoload
-(defun vulpea-dailies-next ()
-  "Find a daily note that comes after current."
-  (interactive)
-  (user-error "Not implemented yet"))
-
-
-
-;;;###autoload
 (defun vulpea-select-area ()
   "Select an area note."
   (interactive)
