@@ -341,7 +341,8 @@
    [remap org-archive-subtree] 'org-archive-subtree-tidily)
   :init
   (setq-default
-   org-archive-location "::* Archive"
+   ;; yeah, I just don't know how to use `org-align-tags' here hence the hard-code
+   org-archive-location "::* Archive                                                           :ARCHIVE:"
    org-archive-save-context-info
    '(time ltags itags todo category olpath)))
 
