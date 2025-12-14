@@ -58,6 +58,7 @@ brew "openssh"
 
 brew "awk"
 brew "gnu-sed"
+brew "gnumeric"
 brew "imagemagick"
 brew "pandoc"
 brew "texinfo"
