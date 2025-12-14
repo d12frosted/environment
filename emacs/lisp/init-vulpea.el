@@ -42,7 +42,6 @@
 
 (use-package vulpea
   :ensure (:host github :repo "d12frosted/vulpea" :branch "v2-rewrite")
-  ;; :ensure nil :load-path "/Users/d12frosted/Developer/vulpea"
   :defer t
   :general
   (leader-def
@@ -97,11 +96,7 @@
    ;; templates
    vulpea-create-default-template
    '(:file-name "%(vulpea-subdir-select)/${timestamp}-${slug}.org"
-     :head "#+created: %<[%Y-%m-%d]>"
-     :properties (("CREATED" . "%<[%Y-%m-%d %H:%M]>")))
-   vulpea-journal-default-template
-   '(:file-name "journal/%Y-%m-%d.org"
-     :title "%Y-%m-%d %A"))
+     :properties (("CREATED" . "%<[%Y-%m-%d %H:%M]>"))))
   :config
   (add-hook 'vulpea-insert-handle-functions #'vulpea-insert-handle)
 
@@ -109,6 +104,35 @@
   ;; of `vulpea' stuff.
   ;; (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer)
   )
+
+(use-package vulpea-ui
+  :ensure (:host github :repo "d12frosted/vulpea-ui")
+  :defer t
+  :init
+  (setq-default
+   vulpea-ui-sidebar-position 'right
+   vulpea-ui-sidebar-size 0.33
+   vulpea-ui-default-widget-collapsed nil
+   vulpea-ui-outline-max-depth nil
+   vulpea-ui-sidebar-auto-hide t
+   vulpea-ui-backlinks-show-preview t
+   vulpea-ui-backlinks-preview-lines 2
+   vulpea-ui-backlinks-prose-chars-before 30
+   vulpea-ui-backlinks-prose-chars-after 50
+   vulpea-ui-backlinks-note-filter (lambda (note)
+                                     (not (vulpea-note-tagged-any-p note "cellar" "rating" "event")))
+   vulpea-ui-backlinks-context-types '(meta header list quote code footnote prose)
+   vulpea-ui-backlinks-sort 'title-desc
+   vulpea-ui-fast-parse t))
+
+(use-package vulpea-journal
+  :ensure (:host github :repo "d12frosted/vulpea-journal")
+  :defer t
+  :init
+  (setq-default
+   vulpea-journal-ui-previous-years-count 10)
+  :config
+  (vulpea-journal-setup))
 
 
 
