@@ -1,4 +1,4 @@
-; -*- mode: emacs-lisp; lexical-binding: t; no-byte-compile: t -*-
+;;; -*- mode: emacs-lisp; lexical-binding: t; no-byte-compile: t -*-
 
 ;; Inject private configurations
 (let ((private-dir (getenv "EMACS_PRIVATE_DIR")))
@@ -21,7 +21,7 @@
       eldev-main-fileset '(:and ("init.el"
                                  "early-init.el"
                                  "lisp/*.el")
-                                (:not ("**/flycheck_*.el"))))
+                           (:not ("**/flycheck_*.el"))))
 
 
 
@@ -73,17 +73,22 @@
 
 
 
-(eldev-defcommand myconfig-vulpea-db-build (&rest _)
-  "Build vulpea database."
-  :command "vulpea-db-build"
+(defun -vulpea-db-bootstrap ()
+  "Bootstrap `vulpea-db'."
   (run-hooks 'after-init-hook)
   (vulpea-db-build))
 
+(eldev-defcommand myconfig-vulpea-db-build (&rest _)
+                  "Build vulpea database."
+                  :command "vulpea-db-build"
+                  (run-hooks 'after-init-hook)
+                  (vulpea-db-build))
+
 (eldev-defcommand myconfig-brb-sync (&rest _)
-  "Sync brb data with upstream."
-  :command "brb-sync"
-  (run-hooks 'after-init-hook)
-  (brb-sync-external-data-with-upstream))
+                  "Sync brb data with upstream."
+                  :command "brb-sync"
+                  (run-hooks 'after-init-hook)
+                  (brb-sync-external-data-with-upstream))
 
 
 
