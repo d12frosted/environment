@@ -12,6 +12,7 @@ Host *
   AddKeysToAgent yes
 
   # Use macOS keychain for SSH keys (macOS only)
+  IgnoreUnknown UseKeychain
   UseKeychain yes
 
   # Prefer ed25519 keys
