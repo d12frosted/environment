@@ -264,7 +264,7 @@ Uses buffer-local `semantic-nav-prev-fn' if set."
 
 
 
-(defface vulpea-svg-tag-face `((t (:foreground ,(face-foreground 'org-link nil t)
+(defface vulpea-svg-tag-face `((t (:foreground ,(or (face-foreground 'org-link nil t) 'unspecified)
                                    :inherit default)))
   "Faces used for svg tags in vulpea buffers."
   :group 'faces)
