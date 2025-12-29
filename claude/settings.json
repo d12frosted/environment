@@ -6,5 +6,9 @@
   "attribution": {
     "pr": "",
     "commit": ""
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/bin/bash ~/.config/claude/statusline-command.sh"
   }
 }
