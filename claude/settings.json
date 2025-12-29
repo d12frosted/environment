@@ -1,8 +1,17 @@
 {
-  "enabledPlugins": {
-    "frontend-design@claude-code-plugins": true
-  },
   "alwaysThinkingEnabled": true,
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(git:*)",
+      "Bash(yarn:*)",
+      "Bash(bun run:*)"
+    ],
+    "deny": [
+      "Bash(rm:*)",
+      "Read(./.env)"
+    ]
+  },
   "attribution": {
     "pr": "",
     "commit": ""
