@@ -56,7 +56,7 @@ lalt - o ; open
 open < lalt - o ; default
 
 # emacs
-open < e : open -na "$(brew --prefix emacs-plus@30)/Emacs.app" ; skhd -k "alt - o"
+open < e : open -na "$(brew --prefix emacs-plus@31)/Emacs.app" ; skhd -k "alt - o"
 open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "alt - o"
 
 # alacritty
