@@ -35,7 +35,7 @@ doctor:
 
 .PHONY: vulpea
 vulpea:
-	eldev -C --unstable vulpea-db-build
+	eldev -C --unstable myconfig-vulpea-db-build
 
 .PHONY: brb
 brb:
