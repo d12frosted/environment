@@ -19,5 +19,28 @@
   "statusLine": {
     "type": "command",
     "command": "/bin/bash ~/.config/claude/statusline-command.sh"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Awaiting your input\" with title \"Claude Code\"' && afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Task completed\" with title \"Claude Code\"' && afplay /System/Library/Sounds/Hero.aiff"
+          }
+        ]
+      }
+    ]
   }
 }
