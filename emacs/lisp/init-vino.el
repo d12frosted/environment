@@ -36,7 +36,7 @@
 ;;; Code:
 
 (use-package vino
-  :ensure (:host github :repo "d12frosted/vino" :branch "vulpea-v2")
+  :ensure (:host github :repo "d12frosted/vino")
   :defer t
   :commands (vino-setup)
   :general

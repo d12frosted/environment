@@ -41,7 +41,7 @@
 
 
 (use-package vulpea
-  :ensure (:host github :repo "d12frosted/vulpea" :branch "v2-rewrite")
+  :ensure (:host github :repo "d12frosted/vulpea")
   :defer t
   :general
   (leader-def
