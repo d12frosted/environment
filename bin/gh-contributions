@@ -31,6 +31,7 @@
 #   1. GitHub search index (default branches)
 #   2. All your open PR branches (auto-discovered)
 #   3. Extra branches you specify via -e/--extra
+#   4. Your forks (auto-discovered, filtered by activity date)
 #
 # Data is cached in ~/.cache/gh-contributions/ for analytics and faster lookups.
 #
@@ -310,6 +311,30 @@ write_cache() {
   echo "$data" > "$cache_file"
 }
 
+# Fetch user's forks that have been pushed to since a given date
+# Returns newline-separated list of "owner/repo:branch" strings
+fetch_active_forks() {
+  local since_date="$1"
+
+  gh api graphql -f query="
+{
+  user(login: \"${GH_USER}\") {
+    repositories(first: 100, isFork: true, orderBy: {field: PUSHED_AT, direction: DESC}) {
+      nodes {
+        nameWithOwner
+        pushedAt
+        defaultBranchRef { name }
+      }
+    }
+  }
+}" 2>/dev/null | jq -r --arg since "$since_date" '
+    .data.user.repositories.nodes // [] |
+    .[] |
+    select(.pushedAt >= $since and .defaultBranchRef != null) |
+    "\(.nameWithOwner):\(.defaultBranchRef.name)"
+  ' 2>/dev/null
+}
+
 # Fetch data for a single day (returns JSON with prs, issues, commits, counts)
 fetch_day_data() {
   local target_date="$1"
@@ -436,6 +461,28 @@ query {
         }' >> "$commits_tmp" 2>/dev/null || true
     done
   fi
+
+  # Forks (auto-discovered)
+  local fork_branches
+  fork_branches=$(fetch_active_forks "$target_date")
+
+  for repo_branch in $fork_branches; do
+    [[ -z "$repo_branch" ]] && continue
+    local repo="${repo_branch%:*}"
+    local branch="${repo_branch#*:}"
+
+    gh api "repos/${repo}/commits?sha=${branch}&author=${GH_USER}&since=${date_from_iso}&until=${date_to_iso}&per_page=100" \
+      2>/dev/null | jq -r --arg repo "$repo" --arg branch "$branch" '.[] | {
+        sha: .sha,
+        short_sha: .sha[0:7],
+        message: (.commit.message | split("\n")[0]),
+        url: .html_url,
+        repo: $repo,
+        repo_url: ("https://github.com/" + $repo),
+        date: .commit.committer.date,
+        source: ("fork:" + $branch)
+      }' >> "$commits_tmp" 2>/dev/null || true
+  done
 
   # Dedupe commits by SHA
   local commits_json
@@ -981,7 +1028,28 @@ if [[ ${#EXTRA_BRANCHES[@]} -gt 0 ]]; then
   done
 fi
 
-# 4. Dedupe by SHA and format output
+# 4. Forks (auto-discovered)
+fork_branches=$(fetch_active_forks "$DATE_FROM")
+
+for repo_branch in $fork_branches; do
+  [[ -z "$repo_branch" ]] && continue
+  repo="${repo_branch%:*}"
+  branch="${repo_branch#*:}"
+
+  gh api "repos/${repo}/commits?sha=${branch}&author=${GH_USER}&since=${DATE_FROM_ISO}&until=${DATE_TO_ISO}&per_page=100" \
+    2>/dev/null | jq -r --arg repo "$repo" --arg branch "$branch" '.[] | {
+      sha: .sha,
+      short_sha: .sha[0:7],
+      message: (.commit.message | split("\n")[0]),
+      url: .html_url,
+      repo: $repo,
+      repo_url: ("https://github.com/" + $repo),
+      date: .commit.committer.date,
+      source: ("fork:" + $branch)
+    }' >> "$ALL_COMMITS_FILE" 2>/dev/null || true
+done
+
+# 5. Dedupe by SHA and format output
 commits_json=$(cat "$ALL_COMMITS_FILE" | jq -s '
   group_by(.sha) |
   map(.[0]) |
