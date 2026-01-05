@@ -3,6 +3,15 @@
 # Find the terminal window running this Claude session by PID
 space_info=""
 session_title=""
+repo_name=""
+
+# Get git repository name if in a repo
+if git rev-parse --is-inside-work-tree &>/dev/null; then
+    repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+    if [ -n "$repo_root" ]; then
+        repo_name=$(basename "$repo_root")
+    fi
+fi
 
 if command -v yabai &> /dev/null; then
     # Get the terminal's PID (walk up process tree to find terminal app)
@@ -29,9 +38,9 @@ if command -v yabai &> /dev/null; then
             # Get space label
             space_label=$(yabai -m query --spaces 2>/dev/null | jq -r --arg idx "$space_idx" '.[] | select(.index == ($idx | tonumber)) | .label // empty')
             if [ -n "$space_label" ]; then
-                space_info="[${space_idx}:${space_label}]"
+                space_info="${space_idx}:${space_label}"
             else
-                space_info="[space ${space_idx}]"
+                space_info="space ${space_idx}"
             fi
         fi
 
@@ -47,21 +56,34 @@ if command -v yabai &> /dev/null; then
     fi
 fi
 
-# Build message
+# Message is just the input
 message="$1"
-if [ -n "$space_info" ]; then
-    message="${space_info} ${message}"
-fi
 
-# Build subtitle from session title
+# Build subtitle from space info and repo
 subtitle=""
-if [ -n "$session_title" ]; then
-    subtitle="$session_title"
+if [ -n "$space_info" ]; then
+    subtitle="$space_info"
+fi
+if [ -n "$repo_name" ]; then
+    if [ -n "$subtitle" ]; then
+        subtitle="${subtitle} ${repo_name}"
+    else
+        subtitle="$repo_name"
+    fi
 fi
 
-# Send notification
-if [ -n "$subtitle" ]; then
-    osascript -e "display notification \"${message}\" with title \"Claude Code\" subtitle \"${subtitle}\""
+# Send notification using terminal-notifier with Claude as sender if available
+if command -v terminal-notifier &>/dev/null; then
+    if [ -n "$subtitle" ]; then
+        terminal-notifier -title "Claude Code" -subtitle "$subtitle" -message "$message" -sender com.anthropic.claudefordesktop
+    else
+        terminal-notifier -title "Claude Code" -message "$message" -sender com.anthropic.claudefordesktop
+    fi
 else
-    osascript -e "display notification \"${message}\" with title \"Claude Code\""
+    # Fallback to osascript
+    if [ -n "$subtitle" ]; then
+        osascript -e "display notification \"${message}\" with title \"Claude Code\" subtitle \"${subtitle}\""
+    else
+        osascript -e "display notification \"${message}\" with title \"Claude Code\""
+    fi
 fi
