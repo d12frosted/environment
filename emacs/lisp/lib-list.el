@@ -1,6 +1,6 @@
 ;;; lib-list.el --- list helpers -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2023, Boris Buliga <boris@d12frosted.io>
+;; Copyright (c) 2023-2026, Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Author: Boris Buliga <boris@d12frosted.io>
 ;; Maintainer: Boris Buliga <boris@d12frosted.io>

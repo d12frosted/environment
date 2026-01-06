@@ -1,6 +1,6 @@
 ;;; lib-buffer-test.el --- Tests for buffer utilities -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2015-2022, Boris Buliga <boris@d12frosted.io>
+;; Copyright (c) 2015-2026, Boris Buliga <boris@d12frosted.io>
 ;;
 ;; Author: Boris Buliga <d12frosted@d12frosted.local>
 ;; Maintainer: Boris Buliga <d12frosted@d12frosted.local>
