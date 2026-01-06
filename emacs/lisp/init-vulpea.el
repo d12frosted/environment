@@ -139,6 +139,13 @@
 
 
 
+(use-package consult-vulpea
+  :ensure (:host github :repo "fabcontigiani/consult-vulpea")
+  :after vulpea
+  :config (consult-vulpea-mode 1))
+
+
+
 (use-package org
   :ensure (org :host sourcehut :repo "bzg/org-mode")
   :hook ((org-mode . visual-line-mode)
