@@ -279,7 +279,7 @@ Uses buffer-local `semantic-nav-prev-fn' if set."
      (concat "\\(" org-link-bracket-re "\\)")
      (list
       (lambda (_)
-        (when-let ((link (match-string 2)))
+        (when-let* ((link (match-string 2)))
           (cond
            ((string-prefix-p "id:" link)
             (when-let* ((id (string-remove-prefix "id:" link))
@@ -293,7 +293,7 @@ Uses buffer-local `semantic-nav-prev-fn' if set."
   (let ((tags (vulpea-note-tags note))
         (scale 0.8)
         (padding 2))
-    (when-let ((data
+    (when-let* ((data
                 (cond
                  ((seq-contains-p tags "people")
                   '("bootstrap" "person"))
@@ -337,7 +337,7 @@ Uses buffer-local `semantic-nav-prev-fn' if set."
 (defun vulpea-find-area ()
   "Select and visit area note."
   (interactive)
-  (when-let ((area (vulpea-select-area)))
+  (when-let* ((area (vulpea-select-area)))
     (vulpea-visit area)))
 
 ;;;###autoload
@@ -518,7 +518,7 @@ Defaults to `string-from'."
 (defun vulpea-review-random ()
   "Visit random `vulpea-note' for review."
   (interactive)
-  (if-let ((notes (seq-sort-by
+  (if-let* ((notes (seq-sort-by
                    (lambda (note)
                      (or (vulpea-note-meta-get note "last review")
                          "[1972-01-01]"))
@@ -568,7 +568,7 @@ CTX is the parse context (vulpea-parse-ctx).
 NOTE-DATA is the plist of note data being processed.
 
 Returns NOTE-DATA, possibly with additional keys added."
-  (when-let ((note-id (plist-get note-data :id))
+  (when-let* ((note-id (plist-get note-data :id))
              (dir (plist-get note-data :attach-dir)))
     (emacsql
      (vulpea-db)
