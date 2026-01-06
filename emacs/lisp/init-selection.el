@@ -102,9 +102,9 @@ _TOTAL arguments."
    ;; Ignore single !
    ((equal "!" word) `(orderless-literal . ""))
    ;; Prefix and suffix
-   ((if-let (x (assq (aref word 0) selection-orderless-dispatch-alist))
+   ((if-let* ((x (assq (aref word 0) selection-orderless-dispatch-alist)))
         (cons (cdr x) (substring word 1))
-      (when-let (x (assq (aref word (1- (length word))) selection-orderless-dispatch-alist))
+      (when-let* ((x (assq (aref word (1- (length word))) selection-orderless-dispatch-alist)))
         (cons (cdr x) (substring word 0 -1)))))))
 
 (use-package orderless

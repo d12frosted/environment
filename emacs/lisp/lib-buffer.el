@@ -136,7 +136,7 @@ exists, recreate it.
 
 See ‘get-buffer-create’ for the meaning of INHIBIT-BUFFER-HOOKS."
   (when unique
-    (when-let ((buffer (get-buffer name)))
+    (when-let* ((buffer (get-buffer name)))
       (kill-buffer buffer)))
   (generate-new-buffer name inhibit-buffer-hooks))
 

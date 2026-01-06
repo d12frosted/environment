@@ -797,7 +797,7 @@ PID is participant id."
                         (setf (alist-get 'participants data)
                               `(((id . ,id)
                                  (fee . ,fee)))))
-                      (if-let ((pd (--find (string-equal id (alist-get 'id it)) pds)))
+                      (if-let* ((pd (--find (string-equal id (alist-get 'id it)) pds)))
                           (setf (alist-get 'fee pd) fee)
                         (setf (alist-get 'participants data)
                               (-snoc (alist-get 'participants data)
@@ -877,15 +877,15 @@ PID is participant id."
       :pad-type '(right left left)
       :sep "  "
       :data
-      `(("Event RMS:" ,(if-let ((x (assoc-default 'rms summary)))
+      `(("Event RMS:" ,(if-let* ((x (assoc-default 'rms summary)))
                            (format "%.4f" x)
                          "······"))
-        ("Event WAVG:" ,(if-let ((x (assoc-default 'wavg summary)))
+        ("Event WAVG:" ,(if-let* ((x (assoc-default 'wavg summary)))
                             (format "%.4f" x)
                           "······"))
         ("Mean price (harmonic):" ,(brb-price-format (assoc-default 'wines-price-harmonic summary)))
         ("Mean price (median):" ,(brb-price-format (assoc-default 'wines-price-median summary)))
-        ("Event QPR:" ,(if-let ((x (assoc-default 'qpr summary)))
+        ("Event QPR:" ,(if-let* ((x (assoc-default 'qpr summary)))
                            (format "%.4f" x)
                          "······"))))
      "\n\n"
@@ -1551,7 +1551,7 @@ PID is participant id."
        (->> (brb-event-wines event)
             (--map-indexed
              (format "☆ %s - [%s](https://barberry.io/wines/%s.html)"
-                     (if-let ((wavg (assoc-default 'wavg (nth it-index summary))))
+                     (if-let* ((wavg (assoc-default 'wavg (nth it-index summary))))
                          (format "%.2f" wavg) "N/A ")
                      (vulpea-note-title it)
                      (vulpea-note-id it)))

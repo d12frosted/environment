@@ -76,7 +76,7 @@
   ;; Setup for Emacs configurations - use regular checker with elpaca load-path
   (defun my-flycheck-setup ()
     "Setup flycheck for Emacs configurations."
-    (when-let ((root (locate-dominating-file (or (buffer-file-name) default-directory) "Eldev")))
+    (when-let* ((root (locate-dominating-file (or (buffer-file-name) default-directory) "Eldev")))
       ;; Build load-path with lisp/ and elpaca packages
       (let* ((elpaca-builds-dir (expand-file-name "elpaca/builds"
                                                   (bound-and-true-p path-packages-dir)))
@@ -197,7 +197,7 @@ information (including meaning of PARSE-START)."
                       ;; condition is more debatable. It's so that I can have
                       ;; unquoted plists in macros. It assumes that you won't
                       ;; make a function whose name is a keyword.
-                      ;; (when-let (char-after (char-after (1+ containing-sexp)))
+                      ;; (when-let* (char-after (char-after (1+ containing-sexp)))
                       ;;   (char-equal char-after ?:))
 
                       ;; Check for quotes or backquotes around.
@@ -207,7 +207,7 @@ information (including meaning of PARSE-START)."
                              (any-quoted-p nil)
                              (point nil))
                         (or
-                         (when-let (char (char-before last))
+                         (when-let* ((char (char-before last)))
                            (or (char-equal char ?')
                                (char-equal char ?`)))
                          (progn
@@ -215,7 +215,7 @@ information (including meaning of PARSE-START)."
                              (setq point (pop rest))
                              (setq any-quoted-p
                                    (or
-                                    (when-let (char (char-before point))
+                                    (when-let* ((char (char-before point)))
                                       (or (char-equal char ?')
                                           (char-equal char ?`)))
                                     (save-excursion

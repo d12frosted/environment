@@ -42,7 +42,7 @@
   "Find first position in LIST satisfying PRED.
 
 Position is 1-based, while index is 0-based."
-  (when-let ((idx (-find-index pred list)))
+  (when-let* ((idx (-find-index pred list)))
     (1+ idx)))
 
 (defun -position-of (list str)
@@ -55,7 +55,7 @@ Position is 1-based, while index is 0-based."
   "Find all positions in LIST satisfying PRED.
 
 Position is 1-based, while index is 0-based."
-  (when-let ((idxs (-find-indices pred list)))
+  (when-let* ((idxs (-find-indices pred list)))
     (-map #'1+ idxs)))
 
 (defun -positions-of (list str)

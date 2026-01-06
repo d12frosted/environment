@@ -476,7 +476,7 @@ represented as association list."
           (vulpea-meta-set grape "parent 2" parent2 'append)
           (vulpea-meta-set grape "colour of skin" (s-downcase color) 'append)
           (--each synonyms
-            (when-let ((other (--filter (-intersection (cons (vulpea-note-title it)
+            (when-let* ((other (--filter (-intersection (cons (vulpea-note-title it)
                                                              (vulpea-note-aliases it))
                                                        (cons primary-name
                                                              synonyms))

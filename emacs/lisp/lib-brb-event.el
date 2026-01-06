@@ -146,7 +146,7 @@ Uses public name as description."
                     ((= (seq-length parts) 2)
                      (concat (nth 0 parts)
                              " "
-                             (if-let ((r (--find (s-prefix-p it (nth 1 parts)) rules)))
+                             (if-let* ((r (--find (s-prefix-p it (nth 1 parts)) rules)))
                                  r
                                (s-left 1 (nth 1 parts)))))
                     (t (read-string

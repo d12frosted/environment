@@ -93,7 +93,7 @@ Captured area is visited unless NOVISIT is provided."
   (let ((title (or title (s-trim (read-string "Area: ")))))
     (when (string-empty-p title)
       (user-error "Area name can't be empty"))
-    (when-let ((note (vulpea-create
+    (when-let* ((note (vulpea-create
                       title "area/${timestamp}-${slug}.org"
                       :body (string-join
                              '("* Notes"

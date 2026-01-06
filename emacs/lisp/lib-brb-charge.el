@@ -283,7 +283,7 @@ Result is a property list: (:actual :recommended)."
                (--map-indexed
                 (list
                  it
-                 (if-let ((price (gethash (vulpea-note-id it) (brb-charge-data-wines data))))
+                 (if-let* ((price (gethash (vulpea-note-id it) (brb-charge-data-wines data))))
                      (brb-price-format price)
                    "_______")
                  (buttonize "[set]" #'brb-charge--set-wine-price (vulpea-note-id it)))
@@ -496,7 +496,7 @@ Result is a property list: (:actual :recommended)."
 
 (defun brb-charge--delete-personal-item (id)
   "Add personal item to participant with ID."
-  (if-let ((items-tbl (brb-charge-data-personal-items brb-charge--data))
+  (if-let* ((items-tbl (brb-charge-data-personal-items brb-charge--data))
            (items (gethash id items-tbl)))
       (let ((item (completing-read "Item: " (hash-table-keys items) nil t))
             (personal (or (gethash id (brb-charge-data-personal-items brb-charge--data))

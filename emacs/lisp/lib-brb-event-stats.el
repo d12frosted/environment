@@ -170,7 +170,7 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                        it
                        (seq-length (brb-event-participants it))
                        (seq-length wines)
-                       (if-let ((v (alist-get 'wavg summary)))
+                       (if-let* ((v (alist-get 'wavg summary)))
                            (format "%.4f" v)
                          "----")
                        (alist-get 'wines-price-total summary)
@@ -245,16 +245,16 @@ When INCLUDE-GAIN is non-nil, the gain is included in the summary."
                                       (vulpea-note-meta-get it "producer" 'note)
                                       (vulpea-buttonize it (lambda (it) (vulpea-note-meta-get it "name")))
                                       (or (vulpea-note-meta-get it "vintage") "NV")
-                                      (if-let ((wavg (->> summary
+                                      (if-let* ((wavg (->> summary
                                                           (nth it-index)
                                                           (alist-get 'wavg))))
                                           (format "%.4f" wavg) "-")
-                                      (if-let ((sdev (->> summary
+                                      (if-let* ((sdev (->> summary
                                                           (nth it-index)
                                                           (alist-get 'sdev))))
                                           (format "%.4f" sdev) "-")
                                       (assoc-default 'price (nth it-index summary))
-                                      (if-let ((qpr (assoc-default 'qpr (nth it-index summary))))
+                                      (if-let* ((qpr (assoc-default 'qpr (nth it-index summary))))
                                           (format "%.4f" qpr) "-"))))))
               (-flatten-n 1)
               (--sort (string> (nth 5 it)

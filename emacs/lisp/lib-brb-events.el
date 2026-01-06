@@ -271,12 +271,12 @@ ARG to override and query for specific frame."
                                (if (string-equal "true" (vulpea-note-meta-get it "publish")) "+" "-"))
                               it
                               (buttonize
-                               (if-let ((location (vulpea-note-meta-get it "location" 'note)))
+                               (if-let* ((location (vulpea-note-meta-get it "location" 'note)))
                                    (vulpea-note-title location)
                                  "<unknown>")
                                set-location (vulpea-note-id it))
                               (buttonize
-                               (if-let ((host (vulpea-note-meta-get it "host" 'note)))
+                               (if-let* ((host (vulpea-note-meta-get it "host" 'note)))
                                    (or (vulpea-note-meta-get host "public name") (vulpea-note-title host))
                                  "<unknown>")
                                set-host (vulpea-note-id it))
@@ -411,7 +411,7 @@ ARG to override and query for specific frame."
                               it
                               (seq-length (brb-event-participants it))
                               (seq-length wines)
-                              (if-let ((wavg (assoc-default 'wavg summary)))
+                              (if-let* ((wavg (assoc-default 'wavg summary)))
                                   (format "%.4f" wavg)
                                 "-")
                               (brb-price-format (vulpea-meta-get it "price" 'number))
@@ -542,17 +542,17 @@ ARG to override and query for specific frame."
                                    (vulpea-note-meta-get it "producer" 'note)
                                    (vulpea-buttonize it (lambda (it) (vulpea-note-meta-get it "name")))
                                    (or (vulpea-note-meta-get it "vintage") "NV")
-                                   (if-let ((wavg (->> summary
+                                   (if-let* ((wavg (->> summary
                                                        (nth it-index)
                                                        (alist-get 'wavg))))
                                        (format "%.4f" wavg) "-")
-                                   (if-let ((sdev (->> summary
+                                   (if-let* ((sdev (->> summary
                                                        (nth it-index)
                                                        (alist-get 'sdev))))
                                        (format "%.4f" sdev) "-")
                                    (or (alist-get 'amount (alist-get 'price (nth it-index summary)))
                                        "-")
-                                   (if-let ((qpr (assoc-default 'qpr (nth it-index summary))))
+                                   (if-let* ((qpr (assoc-default 'qpr (nth it-index summary))))
                                        (format "%.4f" qpr) "-"))))))
            (-flatten-n 1)
            (--sort (string> (nth 5 it)

@@ -41,7 +41,7 @@
 
 ;; Since we might be running in CI or other environments, stick to
 ;; XDG_CONFIG_HOME value if possible.
-(let ((emacs-home (if-let ((xdg (getenv "XDG_CONFIG_HOME")))
+(let ((emacs-home (if-let* ((xdg (getenv "XDG_CONFIG_HOME")))
                       (expand-file-name "emacs/" xdg)
                     (expand-file-name ".config/emacs/" (getenv "HOME")))))
   ;; Add Lisp directory to `load-path'.

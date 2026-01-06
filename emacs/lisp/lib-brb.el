@@ -167,7 +167,7 @@
 
 (cl-defun brb--add-price (note price)
   "Add PRICE to wine NOTE in current buffer."
-  (if-let ((priceNew price)
+  (if-let* ((priceNew price)
            (priceOld (or (vulpea-note-meta-get note "price" 'number) 0)))
       (if (= priceNew priceOld)
           (message "[%s] price has not changed: %d" (vulpea-note-title note) priceNew)
@@ -254,7 +254,7 @@ some COMMENT. The balance of Barberry Garden decreases."
   ;; update sabotage links in wine entries
   (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
                                    (--filter (vulpea-note-meta-get it "wineBureauId")))
-    (if-let ((url (brb-sabotage-link (vulpea-note-meta-get it "wineBureauId"))))
+    (if-let* ((url (brb-sabotage-link (vulpea-note-meta-get it "wineBureauId"))))
         (vulpea-buffer-meta-set "sabotage" url 'append)
       (vulpea-buffer-meta-remove "sabotage")))
 
@@ -266,7 +266,7 @@ some COMMENT. The balance of Barberry Garden decreases."
   ;; update vivino links in wine entries
   (vulpea-utils-process-notes (->> (vulpea-db-query-by-tags-every '("wine" "cellar"))
                                    (--filter (vulpea-note-meta-get it "vivinoId")))
-    (if-let ((url (brb-vivino-link (vulpea-note-meta-get it "vivinoId")
+    (if-let* ((url (brb-vivino-link (vulpea-note-meta-get it "vivinoId")
                                    (vulpea-note-meta-get it "vintage"))))
         (vulpea-buffer-meta-set "vivino" url 'append)
       (vulpea-buffer-meta-remove "vivino")))
