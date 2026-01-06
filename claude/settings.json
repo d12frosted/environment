@@ -8,7 +8,6 @@
       "Bash(bun run:*)"
     ],
     "deny": [
-      "Bash(rm:*)",
       "Read(./.env)"
     ]
   },
