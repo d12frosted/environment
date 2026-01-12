@@ -1,7 +1,9 @@
 {
-  "alwaysThinkingEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
-    "defaultMode": "acceptEdits",
     "allow": [
       "Bash(git:*)",
       "Bash(yarn:*)",
@@ -9,15 +11,8 @@
     ],
     "deny": [
       "Read(./.env)"
-    ]
-  },
-  "attribution": {
-    "pr": "",
-    "commit": ""
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "/bin/bash ~/.config/claude/statusline-command.sh"
+    ],
+    "defaultMode": "acceptEdits"
   },
   "hooks": {
     "Notification": [
@@ -41,5 +36,13 @@
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/bin/bash ~/.config/claude/statusline-command.sh"
+  },
+  "alwaysThinkingEnabled": true,
+  "enabledPlugins": {
+    "playwright@claude-plugins-official": true
   }
 }
