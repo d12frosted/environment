@@ -71,6 +71,7 @@
 
    ;; performance (we also rely on fd + fswatch)
    vulpea-db-parse-method 'single-temp-buffer
+   vulpea-db-sync-external-method 'fswatch
 
    ;; eh, sadly, I need it for attachments
    vulpea-db-index-heading-level t
