@@ -49,5 +49,12 @@
 (defconst env-sys-name (system-name)
   "The host name of the machine Emacs is running on.")
 
+(use-package exec-path-from-shell
+  :if (not (bound-and-true-p ns-emacs-plus-injected-path))
+  :ensure (:wait t)
+  :demand t
+  :init
+  (exec-path-from-shell-initialize))
+
 (provide 'init-env)
 ;;; init-env.el ends here
