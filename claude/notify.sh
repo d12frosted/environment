@@ -75,9 +75,9 @@ fi
 # Send notification using terminal-notifier with Claude as sender if available
 if command -v terminal-notifier &>/dev/null; then
     if [ -n "$subtitle" ]; then
-        terminal-notifier -title "Claude Code" -subtitle "$subtitle" -message "$message" -sender com.anthropic.claudefordesktop
+        terminal-notifier -title "Claude Code" -subtitle "$subtitle" -message "$message"
     else
-        terminal-notifier -title "Claude Code" -message "$message" -sender com.anthropic.claudefordesktop
+        terminal-notifier -title "Claude Code" -message "$message"
     fi
 else
     # Fallback to osascript
