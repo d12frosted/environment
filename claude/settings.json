@@ -41,8 +41,8 @@
     "type": "command",
     "command": "/bin/bash ~/.config/claude/statusline-command.sh"
   },
-  "alwaysThinkingEnabled": true,
   "enabledPlugins": {
-    "playwright@claude-plugins-official": true
-  }
+    "playwright@claude-plugins-official": false
+  },
+  "alwaysThinkingEnabled": true
 }

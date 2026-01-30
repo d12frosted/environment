@@ -62,6 +62,7 @@ brew "gnumeric"
 brew "imagemagick"
 brew "pandoc"
 brew "texinfo"
+brew "vips"
 
 #
 # Security
@@ -123,7 +124,7 @@ brew "felixkratz/formulae/borders"
 # Editors
 #
 
-brew "d12frosted/emacs-plus/emacs-plus@30", args: ["with-dragon-icon"]
+cask "d12frosted/emacs-plus/emacs-plus-app@master"
 
 #
 # Terminals
