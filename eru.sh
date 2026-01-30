@@ -399,6 +399,8 @@ function task_packages() {
     if [[ "$DRY_RUN" != "true" ]]; then
       npm i -g @zed-industries/claude-code-acp
       npm i -g @openai/codex
+      npm i -g agent-browser
+      agent-browser install
     fi
   else
     info "npm not available (install node via brew if needed)"
