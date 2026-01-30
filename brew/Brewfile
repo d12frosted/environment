@@ -131,6 +131,7 @@ cask "d12frosted/emacs-plus/emacs-plus-app@master"
 #
 
 cask "alacritty"
+cask "ghostty"
 
 #
 # Browsers

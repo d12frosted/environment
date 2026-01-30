@@ -61,9 +61,9 @@ open < lalt - o ; default
 open < e : open -na "$(brew --prefix emacs-plus@31)/Emacs.app" ; skhd -k "alt - o"
 open < shift - e : nohup emacs --debug-init &>/dev/null & ; skhd -k "alt - o"
 
-# alacritty
-open < return : open -na /Applications/Alacritty.app ; skhd -k "alt - o"
-alt + shift - return : open -na /Applications/Alacritty.app
+# ghostty
+open < return : open -na /Applications/Ghostty.app ; skhd -k "alt - o"
+alt + shift - return : open -na /Applications/Ghostty.app
 
 ################################################################################
 #

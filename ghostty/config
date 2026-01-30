@@ -1,0 +1,11 @@
+font-family = SauceCodePro Nerd Font
+font-style = Medium
+
+shell-integration = fish
+command = /opt/homebrew/bin/fish --login
+
+macos-option-as-alt = true
+
+theme = Ayu Light
+
+quit-after-last-window-closed = true
