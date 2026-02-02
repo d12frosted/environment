@@ -6,6 +6,8 @@
   <a href="https://github.com/d12frosted/environment/actions?query=workflow%3ACI">
     <img src="https://github.com/d12frosted/environment/workflows/ci/badge.svg" alt="CI Status Badge">
   </a>
+
+  <a href="https://github.com/sponsors/d12frosted"><img alt="Sponsor" src="https://img.shields.io/badge/Sponsor-d12frosted-pink?logo=githubsponsors&logoColor=white"/></a>
 </p>
 
 > *"Of the theme that I have declared to you, I will now that ye make in harmony together a Great Music."*
@@ -396,3 +398,7 @@ If you want Nix, that's cool! But this repo is explicitly for a simpler approach
 ## License
 
 Use it however you want. No warranty. Your configs, your responsibility.
+
+## Support
+
+If you enjoy this project, you can support its development via [GitHub Sponsors](https://github.com/sponsors/d12frosted) or [Patreon](https://www.patreon.com/d12frosted).
