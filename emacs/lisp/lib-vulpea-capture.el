@@ -60,7 +60,8 @@ It is relative to `vulpea-directory', unless it is absolute.")
   (setq
    org-capture-templates
    '(("t" "todo" entry (file+headline vulpea-capture-inbox-file "Tasks")
-      "* TODO %?\n%U\n" :clock-in t :clock-resume t)
+      (function vulpea-capture-task-template)
+      :clock-in t :clock-resume t)
 
      ("m" "Meeting" entry
       (function vulpea-capture-meeting-target)
@@ -71,6 +72,17 @@ It is relative to `vulpea-directory', unless it is absolute.")
      ("p" "Project" entry
       (function vulpea-capture-project-target)
       (function vulpea-capture-project-template)))))
+
+(defun vulpea-capture-task-template ()
+  "Return a template for a task capture."
+  (string-join
+   (list "* TODO %?"
+         ":PROPERTIES:"
+         (format org-property-format ":ID:" (org-id-uuid))
+         (format org-property-format ":CREATED:"
+                 (format-time-string "[%Y-%m-%d %H:%M]"))
+         ":END:")
+   "\n"))
 
 ;;;###autoload
 (defun vulpea-capture-task ()
@@ -205,6 +217,9 @@ Captured area is visited unless NOVISIT is provided."
     (string-join
      (list (concat "* TODO " title " :project:")
            ":PROPERTIES:"
+           (format org-property-format ":ID:" (org-id-uuid))
+           (format org-property-format ":CREATED:"
+                   (format-time-string "[%Y-%m-%d %H:%M]"))
            (format org-property-format ":CATEGORY:"
                    (concat
                     (or (vulpea-note-meta-get area "short name")
@@ -212,7 +227,6 @@ Captured area is visited unless NOVISIT is provided."
                     " > "
                     title))
            ":END:"
-           (format-time-string (org-time-stamp-format t 'inactive))
            ""
            "%?")
      "\n")))
