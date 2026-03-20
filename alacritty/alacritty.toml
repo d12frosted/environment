@@ -1,9 +1,15 @@
 [general]
 import = ["~/.config/alacritty/colors.toml"]
 
+[font]
+size = 14.0
+
 [font.normal]
-family = "SauceCodePro Nerd Font"
-style = "Medium"
+family = "Iosevka Term Curly"
+style = "Regular"
+
+[font.offset]
+y = 4
 
 [terminal.shell]
 program = "/opt/homebrew/bin/fish"
