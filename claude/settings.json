@@ -12,7 +12,7 @@
     "deny": [
       "Read(./.env)"
     ],
-    "defaultMode": "acceptEdits"
+    "defaultMode": "auto"
   },
   "hooks": {
     "Notification": [
@@ -39,8 +39,22 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "/bin/bash ~/.config/claude/statusline-command.sh"
+    "command": "/bin/bash ~/.config/claude/statusline-command.sh",
+    "refreshInterval": 30
   },
-  "enabledPlugins": {},
-  "alwaysThinkingEnabled": true
+  "enabledPlugins": {
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+  },
+  "extraKnownMarketplaces": {
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true
 }
