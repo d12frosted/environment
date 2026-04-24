@@ -64,21 +64,45 @@ pct_color() {
   fi
 }
 
+# Segment with pace-aware coloring.
+# When a window length is given, color reflects the projected endpoint
+# (used% / elapsed fraction), not the raw percentage — so 40% one day
+# into a 7-day window reads red, not green.
 seg() {
-  local label=$1 pct=$2 reset=$3
+  local label=$1 pct=$2 reset=$3 window=$4
   [ -z "$pct" ] && return
   local p=${pct%.*}
-  local color; color=$(pct_color "$p")
+  local color="" projected=""
+
+  if [ -n "$reset" ] && [ -n "$window" ]; then
+    local elapsed=$(( window - (reset - now) ))
+    # Skip projection when the window just started — the multiplier
+    # explodes and is meaningless. Fall back to raw coloring.
+    if (( elapsed >= window / 20 )); then
+      projected=$(( p * window / elapsed ))
+      if   (( projected >= 100 )); then color="$C_RED"
+      elif (( projected >=  80 )); then color="$C_YELLOW"
+      else                              color="$C_GREEN"
+      fi
+    fi
+  fi
+
+  [ -z "$color" ] && color=$(pct_color "$p")
+
   local out=" ${C_DIM}·${C_RESET} ${C_DIM}${label}${C_RESET} ${color}${p}%${C_RESET}"
+  if [ -n "$projected" ]; then
+    (( projected > 999 )) && projected=999
+    out+="${C_DIM}→${C_RESET}${color}${projected}%${C_RESET}"
+  fi
   if [ -n "$reset" ]; then
     out+=" ${C_DIM}($(fmt_reset "$reset"))${C_RESET}"
   fi
   printf "%s" "$out"
 }
 
-ctx_seg=$(seg "ctx" "$ctx_pct" "")
-fh_seg=$(seg  "5h"  "$fh_pct"  "$fh_reset")
-wk_seg=$(seg  "wk"  "$wk_pct"  "$wk_reset")
+ctx_seg=$(seg "ctx" "$ctx_pct" "" "")
+fh_seg=$(seg  "5h"  "$fh_pct"  "$fh_reset" 18000)
+wk_seg=$(seg  "wk"  "$wk_pct"  "$wk_reset" 604800)
 
 printf "%s%s%s%s %s%s%s%s%s%s" \
   "$C_DIR" "$display_dir" "$C_RESET" "$git_seg" \
