@@ -72,6 +72,12 @@ seg() {
   local label=$1 pct=$2 reset=$3 window=$4
   [ -z "$pct" ] && return
   local p=${pct%.*}
+  # Right after launch the host occasionally feeds bogus rate-limit
+  # values (a unix timestamp where a percentage should be). Skip the
+  # segment unless the value parses as a sane 0..100 integer; the
+  # next refresh will fill it in.
+  [[ "$p" =~ ^[0-9]+$ ]] || return
+  (( p > 100 )) && return
   local color="" projected=""
 
   if [ -n "$reset" ] && [ -n "$window" ]; then
