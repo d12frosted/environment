@@ -29,7 +29,18 @@ C_RESET="${E}[0m"
 display_dir=${cwd/#$HOME/\~}
 
 git_seg=""
+wt_seg=""
 if git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
+  # In a linked worktree --git-dir and --git-common-dir differ. Collapse
+  # the (often deeply nested, e.g. .claude/worktrees/<name>) path back to
+  # the main repo root and flag it — the branch already names the worktree.
+  git_dir=$(git -C "$cwd" rev-parse --absolute-git-dir 2>/dev/null)
+  common=$(git -C "$cwd" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
+  if [ -n "$common" ] && [ "$git_dir" != "$common" ]; then
+    display_dir=${common%/.git}
+    display_dir=${display_dir/#$HOME/\~}
+    wt_seg=" ${C_DIM}⑂${C_RESET}"
+  fi
   branch=$(git -C "$cwd" --no-optional-locks branch --show-current 2>/dev/null)
   if [ -z "$branch" ]; then
     branch=$(git -C "$cwd" --no-optional-locks rev-parse --short HEAD 2>/dev/null)
@@ -43,6 +54,10 @@ if git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
     git_seg=" ${C_DIM}on${C_RESET} ${C_BRANCH}${branch}${C_RESET} ${dirty}"
   fi
 fi
+
+# Repos live under ~/Developer; that prefix is pure noise. Strip it so
+# ~/Developer/wix-academy reads as wix-academy. Paths elsewhere keep ~/….
+display_dir=${display_dir#\~/Developer/}
 
 now=$(date +%s)
 
@@ -110,7 +125,7 @@ ctx_seg=$(seg "ctx" "$ctx_pct" "" "")
 fh_seg=$(seg  "5h"  "$fh_pct"  "$fh_reset" 18000)
 wk_seg=$(seg  "wk"  "$wk_pct"  "$wk_reset" 604800)
 
-printf "%s%s%s%s %s%s%s%s%s%s" \
-  "$C_DIR" "$display_dir" "$C_RESET" "$git_seg" \
+printf "%s%s%s%s%s %s%s%s%s%s%s" \
+  "$C_DIR" "$display_dir" "$C_RESET" "$wt_seg" "$git_seg" \
   "$C_MODEL" "$model" "$C_RESET" \
   "$ctx_seg" "$fh_seg" "$wk_seg"
