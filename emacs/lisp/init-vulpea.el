@@ -225,7 +225,8 @@
    org-tag-persistent-alist '(("FOCUS" . ?f)
                               ("PROJECT" . ?p))
    org-use-tag-inheritance t
-   org-tags-exclude-from-inheritance '("project"
+   org-tags-exclude-from-inheritance '("agenda"
+                                       "project"
                                        "area"
                                        "litnotes"
                                        "FOCUS"

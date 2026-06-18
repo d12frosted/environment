@@ -31,7 +31,7 @@
 ;;
 ;; Dynamic org-agenda building using vulpea database. Includes commands for
 ;; refile, focus, projects, waiting tasks, and person-specific views. The
-;; agenda file list is built from notes tagged "project".
+;; agenda file list is built from notes tagged "agenda".
 ;;
 ;;; Code:
 
@@ -82,7 +82,7 @@ Affects the following commands:
 (defun vulpea-agenda-files-update (&rest _)
   "Update the value of `org-agenda-files'."
   (setq org-agenda-files
-        (->> (vulpea-db-query-by-tags-some '("project"))
+        (->> (vulpea-db-query-by-tags-some '("agenda"))
              (--remove (vulpea-note-tagged-any-p it "cemetery"))
              (-map #'vulpea-note-path)
              (--remove (s-contains-p "cemetery" it :ignore-case))

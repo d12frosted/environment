@@ -29,7 +29,7 @@
 ;;
 ;;; Commentary:
 ;;
-;; Core vulpea utilities: note detection, project tagging, filetag management,
+;; Core vulpea utilities: note detection, agenda tagging, filetag management,
 ;; SVG rendering for note links, buffer setup hooks, and database building.
 ;;
 ;;; Code:
@@ -61,8 +61,8 @@
 
 
 
-(defun vulpea-project-p ()
-  "Return non-nil if current buffer has any todo entry.
+(defun vulpea-buffer-open-work-p ()
+  "Return non-nil if current buffer has any open work.
 
 TODO entries marked as done are ignored, meaning the this
 function returns nil if current buffer contains only completed
@@ -164,10 +164,10 @@ FILTER is a `vulpea-note' predicate."
           (unless (seq-contains-p tags tag)
             (setq tags (cons tag tags)))))
 
-      ;; process projects
-      (if (vulpea-project-p)
-          (setq tags (cons "project" tags))
-        (setq tags (remove "project" tags)))
+      ;; tag notes with open work so they land on the agenda
+      (if (vulpea-buffer-open-work-p)
+          (setq tags (cons "agenda" tags))
+        (setq tags (remove "agenda" tags)))
 
       (setq tags (seq-uniq tags))
 
