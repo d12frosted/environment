@@ -101,6 +101,7 @@ brew "hledger"
 
 brew "cliclick"
 brew "fswatch"
+brew "mole"
 brew "terminal-notifier"
 brew "tinted-theming/tinted/tinty"
 
