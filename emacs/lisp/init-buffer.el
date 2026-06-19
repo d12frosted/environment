@@ -50,6 +50,23 @@
 
 
 
+;; remember recently visited files; `consult-buffer' surfaces them as a
+;; source once `recentf-mode' is on, and `consult-recent-file' (M-m br)
+;; jumps to them directly.
+(use-package recentf
+  :ensure nil
+  :hook (after-init . recentf-mode)
+  :init
+  (setq-default
+   recentf-save-file (expand-file-name "recentf" path-cache-dir)
+   recentf-max-saved-items 256
+   recentf-auto-cleanup 'never
+   recentf-exclude (list "\\.git/" "\\.gpg\\'"
+                         (concat "\\`" (regexp-quote
+                                        (expand-file-name path-local-dir))))))
+
+
+
 (defvar buffer-fallback-name "*scratch*"
   "The name of the buffer to fall back to.
 
@@ -213,6 +230,7 @@ for a file to visit if current buffer is not visiting a file."
     "bb" '(switch-to-buffer :which-key "switch buffer")
     "bk" '(kill-current-buffer :which-key "kill current buffer")
     "bm" '(buffer-pop-messages :which-key "pop messages buffer")
+    "br" '(consult-recent-file :which-key "recent file")
     "bs" '(save-buffer :which-key "save buffer")
     "bx" '(buffer-pop-scratch :which-key "pop scratch buffer")))
 
