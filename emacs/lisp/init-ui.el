@@ -313,5 +313,20 @@
 
 
 
+;; show the key + command I just pressed; off by default, toggle on for
+;; demos and screencasts with `keycast-mode-line-mode'.
+;;
+;; pinned to v1.4.7: keycast master (v1.4.8+) requires `cond-let' 1.1,
+;; which is unreleased upstream (cond-let is still at 0.2.0). Drop the
+;; :ref pin once cond-let 1.1 lands.
+(use-package keycast
+  :ensure (keycast :host github :repo "tarsius/keycast" :ref "v1.4.7")
+  :defer t
+  :commands (keycast-mode-line-mode
+             keycast-header-line-mode
+             keycast-log-mode))
+
+
+
 (provide 'init-ui)
 ;;; init-ui.el ends here
