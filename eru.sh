@@ -373,13 +373,27 @@ function task_packages() {
   for brewfile in "${brewfiles[@]}"; do
     info "Processing $(basename "$brewfile")..."
     if [[ "$DRY_RUN" != "true" ]]; then
-      local bundle_args=("--file=$brewfile")
+      local effective_brewfile="$brewfile"
+      local tmp_brewfile=""
+
+      # FORMULA_ONLY restricts installation to taps and formulae (skipping
+      # casks, mas, etc). The `--formula` switch was removed from
+      # `brew bundle install`, so filter the Brewfile to formula entries
+      # instead.
+      if [[ "${FORMULA_ONLY:-false}" == "true" ]]; then
+        tmp_brewfile=$(mktemp)
+        grep -E '^[[:space:]]*(tap|brew)[[:space:]]' "$brewfile" > "$tmp_brewfile" || true
+        effective_brewfile="$tmp_brewfile"
+      fi
+
+      local bundle_args=("--file=$effective_brewfile")
       [[ -n "${FORCE:-}" ]] && bundle_args+=("--no-upgrade")
-      [[ "${FORMULA_ONLY:-false}" == "true" ]] && bundle_args+=("--formula")
 
       if ! brew bundle "${bundle_args[@]}"; then
+        [[ -n "$tmp_brewfile" ]] && rm -f "$tmp_brewfile"
         fail "Failed to install packages from $(basename "$brewfile")"
       fi
+      [[ -n "$tmp_brewfile" ]] && rm -f "$tmp_brewfile"
     fi
   done
 
