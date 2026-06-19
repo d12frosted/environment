@@ -61,40 +61,9 @@
 
 
 
-(defun vulpea-buffer-open-work-p ()
-  "Return non-nil if current buffer has any open work.
-
-TODO entries marked as done are ignored, meaning the this
-function returns nil if current buffer contains only completed
-tasks. The only exception is headings tagged as REFILE."
-  (org-element-map
-      (org-element-parse-buffer 'headline)
-      'headline
-    (lambda (h)
-      (let ((todo-type (org-element-property :todo-type h)))
-        (or
-         ;; any headline with some todo keyword
-         (eq 'todo todo-type)
-         ;; any headline with REFILE tag (no inheritance)
-         (seq-contains-p (org-element-property :tags h) "REFILE")
-         ;; any non-todo headline with an active timestamp
-         (and
-          (not (eq 'done todo-type))
-          (org-element-property :contents-begin h)
-          (save-excursion
-            (goto-char (org-element-property :contents-begin h))
-            (let ((end (save-excursion
-                         ;; we must look for active timestamps only
-                         ;; before then next heading, even if it's
-                         ;; child, but org-element-property
-                         ;; :contents-end includes all children
-                         (or
-                          (re-search-forward org-element-headline-re
-                                             (org-element-property :contents-end h)
-                                             ':noerror)
-                          (org-element-property :contents-end h)))))
-              (re-search-forward org-ts-regexp end 'noerror)))))))
-    nil 'first-match))
+;; `vulpea-buffer-open-work-p' now lives in vulpea-para as
+;; `vulpea-para-buffer-open-work-p' (REFILE force tag and active
+;; timestamps included).
 
 
 
@@ -163,11 +132,6 @@ FILTER is a `vulpea-note' predicate."
         (let ((tag (vulpea--title-as-tag)))
           (unless (seq-contains-p tags tag)
             (setq tags (cons tag tags)))))
-
-      ;; tag notes with open work so they land on the agenda
-      (if (vulpea-buffer-open-work-p)
-          (setq tags (cons "agenda" tags))
-        (setq tags (remove "agenda" tags)))
 
       (setq tags (seq-uniq tags))
 
@@ -260,6 +224,8 @@ Uses buffer-local `semantic-nav-prev-fn' if set."
   "Do all the dirty stuff when file is being saved."
   (when (and (not (active-minibuffer-window))
              (vulpea-buffer-p))
+    ;; path tags + people; the `agenda' tag is maintained separately by
+    ;; `vulpea-para-agenda-mode'
     (vulpea-ensure-filetag)))
 
 
@@ -330,7 +296,7 @@ Uses buffer-local `semantic-nav-prev-fn' if set."
                           (--remove (vulpea-note-tagged-all-p it "cemetery"))))
          (area (vulpea-select-from "Area" candidates)))
     (unless (vulpea-note-id area)
-      (setq area (vulpea-capture-area (vulpea-note-title area) :no-visit)))
+      (setq area (vulpea-para-capture-area (vulpea-note-title area) :no-visit)))
     area))
 
 ;;;###autoload
@@ -465,7 +431,7 @@ irritating to answer this question every time new note is created.
 
 Also, it doesn't matter if the file in question is present in the
 list of `org-agenda-files' or not, since it is built dynamically
-via `vulpea-agenda-files-update'.")
+via `vulpea-para-agenda-files-update'.")
 
 
 

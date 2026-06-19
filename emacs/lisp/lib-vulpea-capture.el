@@ -57,32 +57,21 @@ It is relative to `vulpea-directory', unless it is absolute.")
     (set var (expand-file-name (symbol-value var) vulpea-directory)))
   (unless org-default-notes-file
     (setq org-default-notes-file vulpea-capture-inbox-file))
-  (setq
-   org-capture-templates
-   '(("t" "todo" entry (file+headline vulpea-capture-inbox-file "Tasks")
-      (function vulpea-capture-task-template)
-      :clock-in t :clock-resume t)
+  ;; the project ("p") and meeting ("m") templates come from
+  ;; `vulpea-para-setup-defaults'; only the personal inbox todo is added
+  ;; here, appended so it composes with them
+  (add-to-list 'org-capture-templates
+               '("t" "todo" entry
+                 (file+headline vulpea-capture-inbox-file "Tasks")
+                 (function vulpea-para-capture-task-template)
+                 :clock-in t :clock-resume t)
+               t))
 
-     ("m" "Meeting" entry
-      (function vulpea-capture-meeting-target)
-      (function vulpea-capture-meeting-template)
-      :clock-in t
-      :clock-resume t)
-
-     ("p" "Project" entry
-      (function vulpea-capture-project-target)
-      (function vulpea-capture-project-template)))))
-
-(defun vulpea-capture-task-template ()
-  "Return a template for a task capture."
-  (string-join
-   (list "* TODO %?"
-         ":PROPERTIES:"
-         (format org-property-format ":ID:" (org-id-uuid))
-         (format org-property-format ":CREATED:"
-                 (format-time-string "[%Y-%m-%d %H:%M]"))
-         ":END:")
-   "\n"))
+;; Capture templates and targets, and area creation, live in vulpea-para:
+;; the task template (`vulpea-para-capture-task-template'), and the
+;; project and meeting targets/templates installed as the "p"/"m" keys by
+;; `vulpea-para-setup-defaults', plus `vulpea-para-capture-area'.  The
+;; commands below are thin wrappers over those capture keys.
 
 ;;;###autoload
 (defun vulpea-capture-task ()
@@ -97,139 +86,14 @@ It is relative to `vulpea-directory', unless it is absolute.")
   (org-capture nil "m"))
 
 ;;;###autoload
-(defun vulpea-capture-area (&optional title novisit)
-  "Capture an area with TITLE.
-
-Captured area is visited unless NOVISIT is provided."
-  (interactive)
-  (let ((title (or title (s-trim (read-string "Area: ")))))
-    (when (string-empty-p title)
-      (user-error "Area name can't be empty"))
-    (when-let* ((note (vulpea-create
-                      title "area/${timestamp}-${slug}.org"
-                      :body (string-join
-                             '("* Notes"
-                               "* Research"
-                               "* Action Items"
-                               "* Projects"
-                               "* History Log"
-                               "* Archive")
-                             "\n\n"))))
-      (unless novisit
-        (vulpea-visit note))
-      note)))
-
-;;;###autoload
 (defun vulpea-capture-project ()
   "Capture a project."
   (interactive)
   (org-capture nil "p"))
 
-(defun vulpea-capture-meeting-target ()
-  "Return a target for a meeting capture."
-  (let* ((person (org-capture-get :meeting-person))
-         (path (if (vulpea-note-id person)
-                   (vulpea-note-path person)
-                 vulpea-capture-inbox-file))
-         (headline "Meetings"))
-    ;; unfortunately, I could not find a way to reuse
-    ;; `org-capture-set-target-location'
-    (set-buffer (org-capture-target-buffer path))
-    ;; Org expects the target file to be in Org mode, otherwise
-    ;; it throws an error. However, the default notes files
-    ;; should work out of the box. In this case, we switch it to
-    ;; Org mode.
-    (unless (derived-mode-p 'org-mode)
-      (org-display-warning
-       (format
-        "Capture requirement: switching buffer %S to Org mode"
-        (current-buffer)))
-      (org-mode))
-    (org-capture-put-target-region-and-position)
-    (widen)
-    (goto-char (point-min))
-    (if (re-search-forward
-         (format org-complex-heading-regexp-format
-                 (regexp-quote headline))
-         nil t)
-        (beginning-of-line)
-      (goto-char (point-max))
-      (unless (bolp) (insert "\n"))
-      (insert "* " headline "\n")
-      (beginning-of-line 0))))
-
-(defun vulpea-capture-meeting-template ()
-  "Return a template for a meeting capture."
-  (let ((person (vulpea-select-from
-                 "Person"
-                 (vulpea-db-query-by-tags-every '("people")))))
-    (org-capture-put :meeting-person person)
-    (if (vulpea-note-id person)
-        "* MEETING [%<%Y-%m-%d %a>] :REFILE:MEETING:\n%U\n\n%?"
-      (concat "* MEETING with "
-              (vulpea-note-title person)
-              " on [%<%Y-%m-%d %a>] :MEETING:\n%U\n\n%?"))))
-
-(defun vulpea-capture-project-target ()
-  "Return a target for a project capture."
-  (let ((area (org-capture-get :project-area)))
-    ;; unfortunately, I could not find a way to reuse
-    ;; `org-capture-set-target-location'
-    (let ((path (vulpea-note-path area))
-          (headline "Tasks"))
-      (set-buffer (org-capture-target-buffer path))
-      ;; Org expects the target file to be in Org mode, otherwise
-      ;; it throws an error. However, the default notes files
-      ;; should work out of the box. In this case, we switch it to
-      ;; Org mode.
-      (unless (derived-mode-p 'org-mode)
-        (org-display-warning
-         (format
-          "Capture requirement: switching buffer %S to Org mode"
-          (current-buffer)))
-        (org-mode))
-      (org-capture-put-target-region-and-position)
-      (widen)
-      (goto-char (point-min))
-      (if (re-search-forward
-           (format org-complex-heading-regexp-format
-                   (regexp-quote headline))
-           nil t)
-          (beginning-of-line)
-        (goto-char (point-max))
-        (unless (bolp) (insert "\n"))
-        (insert "* " headline "\n")
-        (beginning-of-line 0)))))
-
-(defun vulpea-capture-project-template ()
-  "Return a template for a project capture."
-  (let* ((area (vulpea-select-from
-                "Area"
-                (->> (vulpea-db-query-by-tags-every '("area"))
-                     (--filter (= 0 (vulpea-note-level it))))))
-         (area (if (vulpea-note-id area)
-                   area
-                 (vulpea-capture-area (vulpea-note-title area) :no-visit)))
-         (title (s-trim (read-string "Project: "))))
-    (when (string-empty-p title)
-      (user-error "Project name can't be empty"))
-    (org-capture-put :project-area area)
-    (string-join
-     (list (concat "* TODO " title " :project:")
-           ":PROPERTIES:"
-           (format org-property-format ":ID:" (org-id-uuid))
-           (format org-property-format ":CREATED:"
-                   (format-time-string "[%Y-%m-%d %H:%M]"))
-           (format org-property-format ":CATEGORY:"
-                   (concat
-                    (or (vulpea-note-meta-get area "short name")
-                        (vulpea-note-title area))
-                    " > "
-                    title))
-           ":END:"
-           ""
-           "%?")
-     "\n")))
+;; Meeting capture (target + template) now lives in vulpea-para as
+;; `vulpea-para-capture-meeting-target' and
+;; `vulpea-para-capture-meeting-template'.
 
 ;;;###autoload
 (defun vulpea-capture-journal ()

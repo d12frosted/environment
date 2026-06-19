@@ -61,7 +61,8 @@
          ;; we could use after-init; but we need to wait for elpaca to
          ;; finish its work
          (elpaca-after-init . vulpea-db-setup-attachments)
-         (elpaca-after-init . vulpea-db-autosync-mode))
+         (elpaca-after-init . vulpea-db-autosync-mode)
+         (org-mode . vulpea-title-change-detection-mode))
   :init
   (setq-default
    ;; file locations
@@ -139,6 +140,32 @@
   (vulpea-journal-setup))
 
 
+
+(use-package vulpea-para
+  :ensure (:host github :repo "d12frosted/vulpea-para")
+  :after vulpea
+  :demand t
+  :general
+  (leader-def
+    "oa" '(vulpea-para-agenda-main :which-key "agenda")
+    "op" '(vulpea-para-agenda-person :which-key "person"))
+  :init
+  ;; keep my own agenda buffer name when setup-defaults builds the dispatcher
+  (setq vulpea-para-agenda-main-buffer-name "*agenda:main*")
+  ;; keep the cemetery out of the agenda, by tag and by path
+  (setq vulpea-para-agenda-files-filter
+        (lambda (note)
+          (and (not (vulpea-note-tagged-any-p note "cemetery"))
+               (not (string-match-p
+                     "cemetery"
+                     (downcase (or (vulpea-note-path note) "")))))))
+  :config
+  ;; install the opinionated defaults: agenda-mode, the agenda dispatcher
+  ;; (with my buffer name and stuck-projects), the prefix-format, and the
+  ;; p/m capture templates.  Eager (:demand) so the save hook is in place
+  ;; before any note buffer opens; my extra capture key layers on in the
+  ;; org-capture block below.
+  (vulpea-para-setup-defaults))
 
 (use-package consult-vulpea
   :ensure (:host github :repo "fabcontigiani/consult-vulpea")
@@ -321,7 +348,7 @@
   (leader-def
     "c" '(nil :which-key "capture...")
     "cX" '(org-capture :which-key "dispatch")
-    "ca" '(vulpea-capture-area :which-key "area")
+    "ca" '(vulpea-para-capture-area :which-key "area")
     "cj" '(vulpea-capture-journal :which-key "journal")
     "cl" '(org-store-link :which-key "link")
     "cm" '(vulpea-capture-meeting :which-key "meeting")
@@ -367,11 +394,11 @@
   :after org
   :general
   (leader-def
-    "oA" '(org-agenda :which-key "agenda dispatch")
-    "oa" '(vulpea-agenda-main :which-key "agenda")
-    "op" '(vulpea-agenda-person :which-key "person"))
+    "oA" '(org-agenda :which-key "agenda dispatch"))
   :config
-  (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
+  ;; the agenda dispatcher, the `Area > Project' prefix and the
+  ;; self-updating agenda come from `vulpea-para-setup-defaults' (in the
+  ;; vulpea-para block above); only the rest of my tweaks live here
   (setq
    org-agenda-dim-blocked-tasks nil
    ;; setting it to t speeds up agenda, but... initial visibility is
@@ -384,12 +411,6 @@
    ;; tags
    org-agenda-show-inherited-tags nil
 
-   ;; more structured view
-   org-agenda-prefix-format
-   '((agenda . " %(vulpea-agenda-category 36) %?-12t %12s")
-     (todo . " %(vulpea-agenda-category 36) ")
-     (tags . " %(vulpea-agenda-category 36) ")
-     (search . " %(vulpea-agenda-category 36) "))
    org-agenda-todo-keyword-format "%-1s"
    org-agenda-tags-column 0
 
@@ -397,16 +418,7 @@
    org-agenda-window-setup 'current-window
 
    ;; these tags have no value in agenda buffer
-   org-agenda-hide-tags-regexp "REFILE\\|FOCUS\\|MEETING"
-
-   org-agenda-custom-commands
-   `((" " "Agenda"
-      (,vulpea-agenda-cmd-refile
-       ,vulpea-agenda-cmd-today
-       ,vulpea-agenda-cmd-focus
-       ,vulpea-agenda-cmd-waiting
-       ,(vulpea-agenda-cmd-current-quarter))
-      ((org-agenda-buffer-name vulpea-agenda-main-buffer-name))))))
+   org-agenda-hide-tags-regexp "REFILE\\|FOCUS\\|MEETING"))
 
 
 
