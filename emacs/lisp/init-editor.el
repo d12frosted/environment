@@ -149,6 +149,17 @@
   (([M-S-down] . #'move-text-down)
    ([M-S-up] . #'move-text-up)))
 
+
+
+;; visualize the undo history as a compact tree; quick undo stays on C-/
+(use-package vundo
+  :ensure t
+  :defer t
+  :bind (("C-x u" . vundo))
+  :config
+  (setq vundo-glyph-alist vundo-unicode-symbols
+        vundo-compact-display t))
+
 
 
 (use-package avy
