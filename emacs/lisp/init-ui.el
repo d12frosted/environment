@@ -288,5 +288,30 @@
 
 
 
+;; briefly pulse the line I land on after a jump, so the eye can catch up
+(use-package pulsar
+  :ensure t
+  :init
+  (setq pulsar-pulse t
+        pulsar-delay 0.055
+        pulsar-iterations 10)
+  :config
+  ;; window/scroll commands are pulsed by default; add the ones I jump with
+  (dolist (fn '(avy-goto-char
+                avy-goto-char-timer
+                avy-goto-line
+                avy-goto-word-0
+                ace-window
+                ace-link
+                window-zoom))
+    (add-to-list 'pulsar-pulse-functions fn))
+  (pulsar-global-mode 1)
+  ;; pulse (and reveal folded entries) after consult jumps
+  (with-eval-after-load 'consult
+    (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
+    (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)))
+
+
+
 (provide 'init-ui)
 ;;; init-ui.el ends here
