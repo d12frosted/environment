@@ -76,6 +76,16 @@
            "eru install emacs"))
   (load path-autoloads-file nil 'nomessage))
 
+;; Compatibility shim for `set-local'. Emacs 31 introduces it as a
+;; built-in, but this build predates that and `compat' assumes the
+;; native version (so it does not backport it). The upgraded
+;; vertico/consult/marginalia/corfu/cape all call it, so define a
+;; fallback. Remove once the Emacs build provides `set-local' natively.
+(unless (fboundp 'set-local)
+  (defun set-local (variable value)
+    "Set VARIABLE to VALUE buffer-locally."
+    (set (make-local-variable variable) value)))
+
 ;; core
 (require 'init-env)
 (require 'init-kbd)
