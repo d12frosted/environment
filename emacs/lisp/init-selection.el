@@ -155,13 +155,25 @@ _TOTAL arguments."
     "pg" '(consult-grep :which-key "Grep the project")
     "ji" '(consult-imenu :which-key "imenu")))
 
-;; (use-package embark
-;;   :bind
-;;   (("M-." . embark-dwim)
-;;    ("C-." . embark-act)))
+;; act on the thing at point or the current minibuffer candidate; the
+;; "verb layer" on top of vertico/consult/marginalia. `C-;' for dwim
+;; keeps `M-.' free for xref/lsp go-to-definition.
+(use-package embark
+  :ensure t
+  :bind (("C-." . embark-act)
+         ("C-;" . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :config
+  ;; hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
 
-;; (use-package embark-conuslt
-;;   :defer t)
+(use-package embark-consult
+  :ensure t
+  :after (embark consult)
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 
 
