@@ -113,6 +113,14 @@
   :hook ((prog-mode . turn-on-diff-hl-mode)
          (text-mode . turn-on-diff-hl-mode)))
 
+;; structural (syntax-aware) diffs via the `difft' binary; installs the
+;; bindings into magit (M-d/M-c in the diff transient, M-= in dired)
+;; without eagerly loading magit
+(use-package difftastic-bindings
+  :ensure difftastic
+  :config
+  (difftastic-bindings-mode))
+
 (defun vcs-quit (&optional _kill-buffer)
   "Clean up magit buffers after quitting `magit-status'.
 
