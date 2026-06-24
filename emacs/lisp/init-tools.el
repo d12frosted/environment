@@ -69,5 +69,24 @@
 	         (error
 	          (message "Could not read data from %s" file))))))))
 
+;; discoverable transient menus for built-in modes I use but don't
+;; memorize every key for. `C-o' is mode-local here, so the global
+;; `open-line' binding is untouched.
+(use-package casual-suite
+  :ensure t
+  :defer t
+  :commands (casual-dired-tmenu
+             casual-isearch-tmenu
+             casual-calc-tmenu
+             casual-agenda-tmenu)
+  :init
+  (keymap-set isearch-mode-map "C-o" #'casual-isearch-tmenu)
+  (with-eval-after-load 'dired
+    (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu))
+  (with-eval-after-load 'calc
+    (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu))
+  (with-eval-after-load 'org-agenda
+    (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)))
+
 (provide 'init-tools)
 ;;; init-tools.el ends here
