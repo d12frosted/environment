@@ -86,6 +86,13 @@
   :config
   (global-flycheck-mode +1))
 
+(use-package consult-flycheck
+  :ensure t
+  :defer t
+  :general
+  (leader-def
+    "je" '(consult-flycheck :which-key "diagnostic")))
+
 ;; See lisp/dash-functional.el for more information. Here we simply
 ;; make sure that our mock is loaded instead of upstream.
 (eval-when-compile
