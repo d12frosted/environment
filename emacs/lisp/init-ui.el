@@ -145,48 +145,6 @@
 
 
 
-(use-package svg-lib
-  :ensure (:host github :repo "rougier/svg-lib")
-  :defer t
-  :init
-  (setq-default
-   svg-lib-icons-dir (expand-file-name "svg-lib/" path-etc-dir))
-  (setq-default
-   svg-lib-icon-collections
-   (list
-    (cons "custom" (concat
-                    "file://"
-                    (expand-file-name
-                     "resources/icons/custom/%s.svg"
-                     path-cloud-dir)))
-    (cons "bootstrap" (concat
-                       "file://"
-                       (expand-file-name
-                        "icons/bootstrap/%s.svg"
-                        path-cache-dir)))
-    (cons "fa-brands" (concat
-                       "file://"
-                       (expand-file-name
-                        "icons/fontawesome/svgs/brands/%s.svg"
-                        path-cache-dir)))
-    (cons "fa-regular" (concat
-                        "file://"
-                        (expand-file-name
-                         "icons/fontawesome/svgs/regular/%s.svg"
-                         path-cache-dir)))
-    (cons "fa-solid" (concat
-                      "file://"
-                      (expand-file-name
-                       "icons/fontawesome/svgs/solid/%s.svg"
-                       path-cache-dir))))))
-
-(use-package svg-tag-mode
-  :ensure (:host github :repo "rougier/svg-tag-mode")
-  :commands (svg-tag-mode
-             svg-tag-mode-on)
-  :init
-  (advice-add #'svg-tag-mode-on :around #'fun-silent))
-
 ;; when theme is right, this thing is good
 (global-hl-line-mode)
 
