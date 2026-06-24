@@ -58,8 +58,7 @@ ARGS are passed to `general-def' with leader prefix configuration."
     "g" '(nil :which-key "git...")
     "i" '(nil :which-key "insert...")
     "j" '(nil :which-key "jump...")
-    "o" '(nil :which-key "open...")
-    "v" '(nil :which-key "vino...")))
+    "o" '(nil :which-key "open...")))
 
 (use-package which-key
   :ensure (:wait t)
