@@ -145,6 +145,19 @@ _TOTAL arguments."
                   marginalia-annotators-light
                   nil)))
 
+;; icons (needs the "Symbols Nerd Font Mono" family, installed via the
+;; font-symbols-only-nerd-font cask in brew/Brewfile)
+(use-package nerd-icons
+  :ensure t
+  :defer t)
+
+(use-package nerd-icons-completion
+  :ensure t
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
 (use-package consult
   :ensure t
   :bind

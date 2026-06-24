@@ -48,6 +48,12 @@
 
 
 
+(use-package nerd-icons-dired
+  :ensure t
+  :hook (dired-mode . nerd-icons-dired-mode))
+
+
+
 ;; sort dired buffer so directories are first
 (add-hook 'dired-after-readin-hook #'dired-sort-directories-first)
 

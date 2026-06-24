@@ -58,6 +58,12 @@
   (corfu-history-mode)
   (corfu-popupinfo-mode))
 
+(use-package nerd-icons-corfu
+  :ensure t
+  :after corfu
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
 (use-package cape
   :ensure t
   :bind ("C-c p" . cape-prefix-map)
