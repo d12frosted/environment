@@ -93,6 +93,18 @@
   (leader-def
     "je" '(consult-flycheck :which-key "diagnostic")))
 
+;; project + symbol breadcrumb in the header line, for the prog modes
+;; that do not already get lsp's own `lsp-headerline-breadcrumb' (elisp,
+;; shell, nix, markdown). lsp buffers keep their native breadcrumb, so
+;; there is no header-line conflict.
+(use-package breadcrumb
+  :ensure t
+  :hook ((emacs-lisp-mode . breadcrumb-local-mode)
+         (sh-mode . breadcrumb-local-mode)
+         (bash-ts-mode . breadcrumb-local-mode)
+         (nix-mode . breadcrumb-local-mode)
+         (markdown-mode . breadcrumb-local-mode)))
+
 ;; See lisp/dash-functional.el for more information. Here we simply
 ;; make sure that our mock is loaded instead of upstream.
 (eval-when-compile
