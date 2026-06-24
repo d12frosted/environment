@@ -328,5 +328,19 @@
 
 
 
+;; subtle vertical indentation guides; tree-sitter aware where available
+(use-package indent-bars
+  :ensure t
+  :hook ((prog-mode . indent-bars-mode))
+  :init
+  (setq indent-bars-treesit-support t
+        indent-bars-no-descend-string t
+        indent-bars-width-frac 0.15
+        indent-bars-pad-frac 0.2
+        indent-bars-color '(highlight :face-bg t :blend 0.25)
+        indent-bars-highlight-current-depth '(:blend 0.4)))
+
+
+
 (provide 'init-ui)
 ;;; init-ui.el ends here
