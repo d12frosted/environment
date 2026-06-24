@@ -42,7 +42,6 @@
 (require 'lib-string)
 
 (require 'vulpea)
-(require 'vino)
 (require 'org-attach)
 
 
@@ -69,7 +68,7 @@
   "Return list of candidates for `vulpea-find'.
 
 FILTER is a `vulpea-note' predicate."
-  (let ((notes (vulpea-db-query-by-tags-none '("cellar" "rating" "appellation" "grape" "region" "cemetery"))))
+  (let ((notes (vulpea-db-query-by-tags-none '("cemetery"))))
     (if filter
         (-filter filter notes)
       notes)))
@@ -79,7 +78,7 @@ FILTER is a `vulpea-note' predicate."
   "Return list of candidates for `vulpea-find'.
 
 FILTER is a `vulpea-note' predicate."
-  (let ((notes (vulpea-db-query-by-tags-none '("cellar" "rating" "appellation" "grape" "region"))))
+  (let ((notes (vulpea-db-query-by-tags-none nil)))
     (if filter
         (-filter filter notes)
       notes)))
@@ -327,12 +326,7 @@ useful features and properties:
   "Update notes database."
   (interactive)
   (when (file-directory-p vulpea-directory)
-    (require 'vino)
-    (require 'lib-brb)
-
     (vulpea-db-sync-full-scan)
-    (brb-sync-external-data-with-upstream)
-
     (message " -> done building vulpea db")))
 
 

@@ -115,8 +115,6 @@
    vulpea-ui-backlinks-preview-lines 2
    vulpea-ui-backlinks-prose-chars-before 30
    vulpea-ui-backlinks-prose-chars-after 50
-   vulpea-ui-backlinks-note-filter (lambda (note)
-                                     (not (vulpea-note-tagged-any-p note "cellar" "rating" "event")))
    vulpea-ui-backlinks-context-types '(meta header list quote code footnote prose)
    vulpea-ui-backlinks-sort 'title-desc
    vulpea-ui-fast-parse t))
@@ -520,13 +518,6 @@
               (list
                url
                package))
-            fancy-yank-format-link))
-    (cons "\\(https://www.vivino.com/.*/?w/\\([[:alnum:]]+.*\\)\\)"
-          '(fancy-yank-extract-regex
-            (lambda (_ query &rest _)
-              (list
-               (concat "https://www.vivino.com/w/" query)
-               "vivino.com"))
             fancy-yank-format-link))
     (cons (concat "^" string-http-url-regexp "$")
           '(fancy-yank-extract-regex
