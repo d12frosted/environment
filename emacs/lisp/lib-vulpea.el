@@ -39,13 +39,10 @@
 (require 'config-vulpea)
 
 (require 'lib-directory)
-(require 'lib-svg)
 (require 'lib-string)
 
 (require 'vulpea)
 (require 'vino)
-(require 'svg-lib)
-(require 'svg-tag-mode)
 (require 'org-attach)
 
 
@@ -227,63 +224,6 @@ Uses buffer-local `semantic-nav-prev-fn' if set."
     ;; path tags + people; the `agenda' tag is maintained separately by
     ;; `vulpea-para-agenda-mode'
     (vulpea-ensure-filetag)))
-
-
-
-(defface vulpea-svg-tag-face `((t (:foreground ,(or (face-foreground 'org-link nil t) 'unspecified)
-                                   :inherit default)))
-  "Faces used for svg tags in vulpea buffers."
-  :group 'faces)
-
-;;;###autoload
-(defun vulpea-setup-svg-tags ()
-  "Configure SVG tag rendering for vulpea note links."
-  (setq-local
-   svg-tag-tags
-   (list
-    (cons
-     (concat "\\(" org-link-bracket-re "\\)")
-     (list
-      (lambda (_)
-        (when-let* ((link (match-string 2)))
-          (cond
-           ((string-prefix-p "id:" link)
-            (when-let* ((id (string-remove-prefix "id:" link))
-                        (note (vulpea-db-get-by-id id)))
-              (vulpea-note-to-svg note))))))))))
-  (when env-graphic-p
-    (svg-tag-mode)))
-
-(defun vulpea-note-to-svg (note)
-  "Return SVG representation of the NOTE."
-  (let ((tags (vulpea-note-tags note))
-        (scale 0.8)
-        (padding 2))
-    (when-let* ((data
-                (cond
-                 ((seq-contains-p tags "people")
-                  '("bootstrap" "person"))
-                 ((seq-contains-p tags "grape")
-                  '("custom" "grapes"))
-                 ((seq-contains-p tags "cellar")
-                  '("fa-solid" "wine-glass"))
-                 ((seq-contains-p tags "appellation")
-                  '("fa-solid" "location-arrow"))
-                 ((seq-contains-p tags "region")
-                  '("fa-solid" "location-arrow"))
-                 ((seq-contains-p tags "places")
-                  '("fa-solid" "location-arrow"))
-                 ((seq-contains-p tags "producer")
-                  '("bootstrap" "person"))
-                 ((seq-contains-p tags "aroma")
-                  '("bootstrap" "flower3")))))
-      (svg-concat
-       (svg-icon (nth 0 data) (nth 1 data)
-                 :face 'vulpea-svg-tag-face
-                 :scale scale)
-       (svg-label (vulpea-note-title note)
-                  :face 'vulpea-svg-tag-face
-                  :padding padding)))))
 
 
 
