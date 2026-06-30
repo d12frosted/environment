@@ -56,6 +56,7 @@ cd ~/.config
 │   └── $HOSTNAME.Brewfile   # Machine-specific packages (gitignored)
 ├── macos/
 │   └── defaults.sh          # macOS system preferences
+├── launchd/                 # launchd service definitions (*.plist)
 ├── gnupg/                   # GnuPG configuration (symlinked to ~/.gnupg)
 │   ├── ...
 │   └── README.md
@@ -147,13 +148,26 @@ Features:
 
 See [gnupg/README.md](gnupg/README.md) and [ssh/README.md](ssh/README.md) for details.
 
-### `emacs`
-Set up Emacs configuration. Supports subtasks:
+### `services`
+Set up launchd services (macOS only). Symlinks every `launchd/*.plist` into
+`~/Library/LaunchAgents`, creates any referenced log directories, and reloads
+the services via `launchctl`.
 
 ```bash
-./eru.sh install emacs           # All Emacs setup
-./eru.sh install emacs:config    # Just config
-./eru.sh install emacs:db        # Just database sync
+./eru.sh install services
+```
+
+### `emacs`
+Set up Emacs configuration by running `emacs/setup.sh` (bootstraps packages and
+generates autoloads). Supports subtasks via `emacs:<subtask>` syntax, passed
+straight through to `setup.sh`: `install`, `upgrade`, `compile`, `lint`,
+`test`, `clean`, `doctor`.
+
+```bash
+./eru.sh install emacs            # Full Emacs setup (install)
+./eru.sh install emacs:compile    # Just byte-compile
+./eru.sh install emacs:lint       # Just lint
+./eru.sh install emacs:test       # Just run tests
 ```
 
 ## Usage
@@ -162,6 +176,7 @@ Set up Emacs configuration. Supports subtasks:
 
 - `install` - Install and configure
 - `upgrade` - Update existing installations
+- `doctor` - Run health checks without changing anything (see [Health Checks](#health-checks))
 
 ### Options
 
@@ -186,11 +201,37 @@ Set up Emacs configuration. Supports subtasks:
 ./eru.sh install wm
 
 # Run Emacs-specific subtask
-./eru.sh install emacs:config
+./eru.sh install emacs:compile
 
 # Force install even if dependencies missing
 ./eru.sh install wm --force
+
+# Run all health checks
+./eru.sh doctor
+
+# Check only brew packages
+./eru.sh doctor brew
 ```
+
+## Health Checks
+
+The `doctor` action runs read-only health checks. It never changes anything; it
+just reports issues and exits non-zero if any are found. Run all checks, or pass
+specific ones:
+
+```bash
+./eru.sh doctor              # Run all checks
+./eru.sh doctor brew shell   # Run only the listed checks
+```
+
+Available checks:
+
+- `brew` - Report installed packages that aren't tracked in any Brewfile (orphans)
+- `shell` - Verify fish is the default shell
+- `wm` - Check yabai and skhd are running
+- `symlinks` - Verify managed symlinks point where they should
+- `services` - Check launchd services are loaded
+- `emacs` - Run `eldev lint` on the Emacs configuration
 
 ## Setting Up Your Machine
 
@@ -237,6 +278,7 @@ packages (requires: homebrew)
 wm (requires: packages → yabai, skhd)
 shell (requires: packages → fish)
 devtools (requires: packages → gnupg, ssh)
+services (requires: packages, emacs → vulpea-sync)
 emacs (requires: packages → emacs-plus)
 ```
 
@@ -286,6 +328,7 @@ The repository includes GitHub Actions workflows that test:
 - ✅ Dry-run mode on all tasks
 - ✅ Homebrew installation
 - ✅ Package installation
+- ✅ Doctor health checks
 - ✅ Help and error handling
 - ✅ Script syntax validation
 
@@ -293,13 +336,16 @@ Run tests locally:
 
 ```bash
 # Lint
-shellcheck eru.sh macos/defaults.sh
+shellcheck eru.sh macos/defaults.sh emacs/setup.sh
 
 # Syntax check
 bash -n eru.sh
 
 # Dry run
 ./eru.sh install --dry-run
+
+# Health checks
+./eru.sh doctor
 ```
 
 ## Customization
