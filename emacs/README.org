@@ -7,6 +7,9 @@
 
   <a href="https://github.com/sponsors/d12frosted"><img alt="Sponsor" src="https://img.shields.io/badge/Sponsor-d12frosted-pink?logo=githubsponsors&logoColor=white"/></a>
 </p>
+<p align="center">
+  <img src="images/vulpea-ui.png" alt="vulpea-ui: my org knowledge base in Emacs" width="100%">
+</p>
 #+end_html
 
 Personal frustration and the biggest time waster in my life (comparable to video
