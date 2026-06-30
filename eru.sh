@@ -386,6 +386,18 @@ function task_packages() {
         effective_brewfile="$tmp_brewfile"
       fi
 
+      # Homebrew refuses to load formulae/casks from non-official taps unless
+      # they are explicitly trusted (when HOMEBREW_REQUIRE_TAP_TRUST is set, as
+      # it is on CI runners). Trust every tap this Brewfile declares before
+      # bundling. Safe to run before the taps exist, and a no-op on Homebrew
+      # versions that predate `brew trust`.
+      if brew trust --help &> /dev/null; then
+        local tap_name=""
+        while IFS= read -r tap_name; do
+          [[ -n "$tap_name" ]] && brew trust --tap "$tap_name" > /dev/null
+        done < <(sed -nE 's/^[[:space:]]*tap[[:space:]]+"([^"]+)".*/\1/p' "$brewfile")
+      fi
+
       local bundle_args=("--file=$effective_brewfile")
       [[ -n "${FORCE:-}" ]] && bundle_args+=("--no-upgrade")
 
