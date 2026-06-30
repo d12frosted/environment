@@ -3,10 +3,9 @@
   <img width="256px" src="images/d12frosted.png" alt="Banner">
 </p>
 <p align="center">
-  <a href="https://github.com/d12frosted/environment/actions?query=workflow%3ACI">
-    <img src="https://github.com/d12frosted/environment/workflows/ci/badge.svg" alt="CI Status Badge">
+  <a href="https://github.com/d12frosted/environment/actions/workflows/ci.yml">
+    <img src="https://github.com/d12frosted/environment/actions/workflows/ci.yml/badge.svg" alt="CI Status Badge">
   </a>
-
   <a href="https://github.com/sponsors/d12frosted"><img alt="Sponsor" src="https://img.shields.io/badge/Sponsor-d12frosted-pink?logo=githubsponsors&logoColor=white"/></a>
 </p>
 
