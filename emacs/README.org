@@ -4,285 +4,226 @@
   <a href="https://github.com/d12frosted/environment/actions?query=workflow%3AEmacs">
     <img src="https://github.com/d12frosted/environment/workflows/Emacs/badge.svg" alt="Emacs Status Badge">
   </a>
+
+  <a href="https://github.com/sponsors/d12frosted"><img alt="Sponsor" src="https://img.shields.io/badge/Sponsor-d12frosted-pink?logo=githubsponsors&logoColor=white"/></a>
 </p>
 #+end_html
 
 Personal frustration and the biggest time waster in my life (comparable to video
 games). Please turn away and retain your sanity. Otherwise you might end up
-tracking all your tasks, notes, thoughts, and wine in Emacs.
+tracking all your tasks, notes, and thoughts in Emacs.
 
-* Overview
+This README is the high-level tour: what this configuration is, why it looks the
+way it does, and how the pieces fit together. If you just want to run it, skip to
+[[*Getting it running][Getting it running]].
 
-This Emacs configuration is designed with the following goals:
+* A short history
 
-1. *Fast loading* - Less than a second startup time
-2. *Clean compilation* - Byte compilation succeeds without warnings
-3. *Passing lints* - All code passes style checks
-4. *Testable* - Ability to write and run tests
-5. *Extensible* - Easy to add personal libraries and applications
+I did not start here. For years I ran [[https://github.com/syl20bnr/spacemacs][Spacemacs]] and helped maintain it. It is a
+lovely project, but over time I wanted something smaller, something I could hold
+in my head completely and change without fighting a framework.
 
-** Technology Stack
+Then there is [[https://github.com/doomemacs/doomemacs][Doom Emacs]]. Doom is great and very opinionated, which is not a bad
+thing on its own. But it is heavily vim-driven, and it carries a whole layer of
+machinery (and its own mental model) that I did not want to keep paying for. I do
+not edit modally, so most of that would be complexity I carry without ever using.
 
-- *Package Manager*: [[https://github.com/progfolio/elpaca][elpaca]] - Fast, asynchronous installation from ELPA, MELPA, and git repositories
-- *Build System*: [[https://github.com/doublep/eldev/][Eldev]] - Manages bootstrapping, autoloads, compilation, linting, and testing
-- *Setup Script*: =./setup.sh= - Unified interface for all operations
-- *Testing Framework*: [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]]
+So this is the third option: roll my own. Small, legible, mine. The goal was
+never to be clever. The goal was a setup I fully understand, where nothing
+happens that I cannot point to.
 
-* Installation
+* The idea
 
-** Quick Start
+The whole thing is built around one decision: treat the configuration as a real
+Emacs package, not a pile of scripts.
+
+Once you commit to that, a lot follows almost for free:
+
+- *Fast to load.* Startup stays under a second. Packages load lazily and garbage
+  collection is tuned during startup (see [[file:early-init.el][early-init.el]] and [[file:init.el][init.el]]).
+- *Clean byte-compilation.* Everything compiles with warnings treated as errors,
+  so a typo or a bad call is a build failure now, not a surprise at runtime three
+  weeks from now.
+- *Linted.* checkdoc and friends keep the source honest.
+- *Tested.* Real libraries get real tests.
+- *Autoloaded.* Personal functions are available everywhere without me wiring up
+  ~require~ by hand.
+- *Extensible.* Adding a feature or a library is a small, local change.
+
+The rest of this document is really just the consequences of that one decision.
+
+* How it fits together
+
+** Three kinds of files
+
+Everything lives in =lisp/=, and every file is one of three kinds, marked by its
+prefix:
+
+- =init-*.el= feature configuration. This is where packages get configured with
+  =use-package=, lazily. [[file:init.el][init.el]] requires each of these in order. Examples:
+  [[file:lisp/init-editor.el][init-editor.el]], [[file:lisp/init-ui.el][init-ui.el]], [[file:lisp/init-vulpea.el][init-vulpea.el]].
+- =config-*.el= plain constants and variables. Cheap to load, safe to require
+  from anywhere, no package loading or heavy work. Example: [[file:lisp/config-path.el][config-path.el]].
+- =lib-*.el= personal libraries. These are *not* required directly. Public
+  functions are marked =;;;###autoload=, an autoloads file is generated at build
+  time, and they become available everywhere on demand. Examples: [[file:lisp/lib-string.el][lib-string.el]],
+  [[file:lisp/lib-buffer.el][lib-buffer.el]], [[file:lisp/lib-vulpea.el][lib-vulpea.el]].
+
+A library is just a normal file with autoload cookies:
+
+#+begin_src emacs-lisp
+;;; lib-greeting.el --- Tiny example -*- lexical-binding: t; -*-
+
+(require 'dash) ; lib files may require their dependencies freely
+
+;;;###autoload
+(defun greeting-shout (&rest words)
+  "Upcase WORDS and join them with spaces."
+  (string-join (-map #'upcase words) " "))
+
+(provide 'lib-greeting)
+;;; lib-greeting.el ends here
+#+end_src
+
+After adding it, =./setup.sh install= regenerates the autoloads and
+=greeting-shout= is available everywhere, no =require= needed.
+
+** Eldev: the config is a package
+
+[[https://github.com/doublep/eldev/][Eldev]] is what makes "treat the config as a package" real. The [[file:Eldev][Eldev]] file declares
+=init.el= as the package main file and pulls every =lisp/*.el= into the project.
+From there Eldev gives me:
+
+- byte-compilation with warnings as errors,
+- linting,
+- the [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]] test suite,
+- generation of the autoloads file from the =lib-*.el= sources,
+- a clean, isolated environment where dependencies live separately from my actual
+  Emacs.
+
+Day to day I do not call Eldev directly: [[file:setup.sh][setup.sh]] wraps it (and a [[file:Makefile][Makefile]] wraps
+that). The same commands run in CI, so the badge up top is just "does it still
+compile, lint, and test".
+
+** elpaca: packages
+
+Packages are installed with [[https://github.com/progfolio/elpaca][elpaca]], bootstrapped in [[file:lisp/init-elpa.el][init-elpa.el]]. It is, in my
+opinion, the best package manager Emacs has today: fast, asynchronous, installs
+from ELPA, MELPA, and arbitrary git repos, and integrates cleanly with
+=use-package=.
+
+Guix and Nix can also manage Emacs packages, but I do not go that route here and
+this README does not get into it. (If you are curious where my head is at on Nix,
+I wrote about it [[https://www.d12frosted.io/posts/2025-11-25-nix][here]].)
+
+* Notes, tasks, everything: vulpea
+
+My whole org-mode life runs on [[https://github.com/d12frosted/vulpea][vulpea]], a tool I built for exactly this. It keeps
+its own database and *is not org-roam*; please do not reach for org-roam commands
+or assumptions when reading this part.
+
+The org side is a small stack of vulpea packages plus a few helpers:
+
+- *vulpea* the core: notes, links, the database, capture, the moving parts of a
+  personal knowledge base.
+- *[[https://github.com/d12frosted/vulpea-ui][vulpea-ui]]* the visual layer: sidebar, backlinks with previews.
+- *[[https://github.com/d12frosted/vulpea-journal][vulpea-journal]]* dated notes and journaling.
+- *[[https://github.com/d12frosted/vulpea-para][vulpea-para]]* opinionated PARA-style defaults: the agenda dispatcher, project
+  and task predicates, capture templates.
+- *consult-vulpea* notes through consult.
+
+On top of that sit the usual org niceties (capture, refile, attach, agenda,
+download, toc) and a couple of my own touches for margins and emphasis markers.
+It all lives in [[file:lisp/init-vulpea.el][init-vulpea.el]].
+
+One detail worth calling out: with more than ten thousand org files, scanning all
+of them to build the agenda is far too slow. Instead the agenda file list is
+derived from the database (the files that actually carry open work) and refreshed
+as I go. I have written about this approach over a series of posts, starting
+[[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][here]].
+
+* UI: stable on purpose
+
+I do not chase Emacs eye-candy. I want a UI that looks the same next year as it
+does today, with just enough air that it feels modern and is easy on the eyes.
+Concretely ([[file:lisp/init-ui.el][init-ui.el]] and [[file:early-init.el][early-init.el]]):
+
+- *Theme:* [[https://github.com/protesilaos/modus-themes][modus]] by Protesilaos, with a few palette and heading tweaks. =<f5>=
+  toggles light and dark.
+- *Fonts:* Iosevka via [[https://github.com/protesilaos/fontaine][fontaine]], with presets for different sizes.
+- *Breathing room:* [[https://github.com/protesilaos/spacious-padding][spacious-padding]], wide window dividers, rounded undecorated
+  frames, internal borders. This is the "modern" part, and it is all spacing, not
+  chrome.
+- *Quiet mode line:* [[https://github.com/tarsius/minions][minions]] folds away the minor-mode noise.
+- *Small comforts:* pulsar briefly pulses the line I jump to, indent-bars draws
+  subtle indentation guides, hl-line, no blinking cursor, no bell.
+
+That is the whole story. No dashboards, no animations, nothing that moves unless
+I asked it to.
+
+* Keys
+
+Keybindings go through [[https://github.com/noctuid/general.el][general.el]] with =M-m= as the leader prefix
+([[file:lisp/init-kbd.el][init-kbd.el]]). It is the Spacemacs leader idea without the modal editing: plain
+Emacs keys, no evil, no vim states to track. =which-key= shows what lives under a
+prefix as I type.
+
+* Private bits
+
+Some configuration is private (machine-specific or secret) and does not belong in
+this repo. If =EMACS_PRIVATE_DIR= is set, Eldev links any =*.el= files from there
+into =lisp/= before building, so private files take part in the same compile and
+autoload flow as everything else without ever being committed.
+
+* Getting it running
+
+** Requirements
+
+- Emacs 30.2 or newer
+- Eldev (installed automatically by =setup.sh= if missing)
+
+** Install
 
 From the dotfiles root:
 
 #+begin_src bash
-# Install Emacs configuration and all packages
 ./eru.sh install emacs
+#+end_src
 
-# Or from the emacs directory directly
+Or straight from this directory:
+
+#+begin_src bash
 cd emacs
 ./setup.sh install
 #+end_src
 
-** Requirements
+** Commands
 
-- Emacs 30.2 or higher
-- Eldev (automatically installed by =setup.sh= if not present)
+[[file:setup.sh][setup.sh]] is the single entry point, and =make= targets mirror it:
 
-** Available Commands
+| Command | What it does                               |
+|---------+--------------------------------------------|
+| install | Bootstrap packages and generate autoloads  |
+| upgrade | Upgrade all packages                       |
+| compile | Byte-compile everything (warnings = errors) |
+| lint    | Run checkdoc and regexp linting            |
+| test    | Run the buttercup suite                    |
+| clean   | Remove generated files                     |
+| doctor  | Health check the setup                     |
 
-The =setup.sh= script provides:
-
-| Command   | Description                              |
-|-----------+------------------------------------------|
-| install   | Bootstrap packages and generate autoloads |
-| upgrade   | Upgrade all packages                     |
-| compile   | Byte-compile all Emacs Lisp files        |
-| lint      | Run linters (checkdoc, regexp)           |
-| test      | Run test suite                           |
-| clean     | Remove generated files                   |
-| doctor    | Health check for configuration           |
+Commands chain, so my usual pre-commit pass is:
 
 #+begin_src bash
-# Multiple commands can be chained
 ./setup.sh compile lint test
-
-# Or use make
-make install
-make lint
-make doctor
 #+end_src
 
-* Configuration Structure
-
-** File Organization
-
-All configuration files live in =lisp/= and are organized into three categories:
-
-*** =init-*.el= - Feature Configurations
-
-Configure built-in and external packages via =use-package=.
-
-- Must avoid eagerly loading packages (use lazy loading)
-- All =init= files are required by =init.el=
-- Can require other =init= and =config= files
-- Examples: =init-editor.el=, =init-ui.el=, =init-vulpea.el=
-
-*** =config-*.el= - Configuration Constants
-
-Contains variables and constants.
-
-- Safe to require from anywhere (minimal loading impact)
-- No package loading or heavy computation
-- Example: =config-path.el=
-
-*** =lib-*.el= - Autoloaded Libraries
-
-Personal libraries and utilities.
-
-- *Should not* be required directly
-- Loaded automatically via generated autoloads
-- Can freely require packages for byte-compilation
-- Public functions marked with =;;;###autoload=
-- Examples: =lib-vulpea.el=, =lib-vino.el=, =lib-brb.el=
-
-** Example: Creating a Library
-
-#+begin_src emacs-lisp
-;;; lib-my-feature.el --- My custom feature -*- lexical-binding: t; -*-
-
-(require 'dash)  ; OK to require dependencies in lib files
-
-;;;###autoload
-(defun my-feature-do-something ()
-  "This function is automatically available everywhere."
-  (interactive)
-  (-map #'upcase '("hello" "world")))
-
-(provide 'lib-my-feature)
-;;; lib-my-feature.el ends here
-#+end_src
-
-After creating the file:
-1. Run =./setup.sh install= to regenerate autoloads
-2. Function =my-feature-do-something= is now available globally
-
-* Development Workflow
-
-** Eldev Integration
-
-[[https://github.com/doublep/eldev/][Eldev]] manages the development lifecycle. The =Eldev= file configures:
-
-*** Build Process
-
-#+begin_src bash
-./setup.sh install
-#+end_src
-
-1. Bootstraps elpaca
-2. Installs all packages via =use-package= declarations
-3. Generates =init-autoloads.el= from =lib-*.el= files
-4. Byte-compiles with warnings as errors
-
-*** Linting
-
-#+begin_src bash
-./setup.sh lint
-#+end_src
-
-Runs two linters:
-- *checkdoc* - Documentation style (docstrings, formatting)
-- *regexp* - Regular expression validation
-
-*Note*: =package-lint= is deliberately disabled because it's designed for ELPA
-packages, not personal configurations. It expects package.el conventions like
-prefix naming that don't make sense here.
-
-Configuration details:
-- =.dir-locals.el= enforces =byte-compile-error-on-warn=
-- =lisp/= directory is added to load-path during linting
-- =init-*.el= files can find each other without errors
-- Non-standard separators allowed (e.g., =vino/germany/wein=)
-
-*** Testing
-
-#+begin_src bash
-./setup.sh test
-#+end_src
-
-Runs [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]] test suite.
-
-** In-Editor Flycheck
-
-The configuration includes smart flycheck integration:
-
-- *Auto-detects Eldev projects* via =Eldev= file
-- *Adds =lisp/= to load-path* so =init-*.el= files can find each other
-- *Includes elpaca packages* so =lib-*.el= files can find dependencies
-
-This eliminates false errors:
-- =(require 'config-path)= in =init-ide.el= ✓
-- =(require 'dash)= in =lib-brb.el= ✓
-- Using =org-roam= functions in =lib-vulpea.el= ✓
-
-The flycheck checker used is the standard =emacs-lisp= checker with an enhanced
-load-path, not =emacs-lisp-eldev= (which doesn't work well with elpaca-based
-configurations).
-
-** Common Tasks
-
-*** Adding a Package
-
-#+begin_src emacs-lisp
-;; In any init-*.el file
-(use-package helpful
-  :ensure t
-  :bind (("C-h f" . helpful-callable)
-         ("C-h v" . helpful-variable)))
-#+end_src
-
-Restart Emacs or =M-x eval-buffer=.
-
-*** Verifying Changes
-
-#+begin_src bash
-# Recommended workflow
-./setup.sh compile lint test
-
-# Just compilation
-./setup.sh compile
-
-# Health check
-./setup.sh doctor
-#+end_src
-
-*** Upgrading Packages
-
-#+begin_src bash
-# Via setup script
-./setup.sh upgrade
-
-# Via eru
-./eru.sh upgrade emacs
-#+end_src
-
-** Troubleshooting
-
-*** Flycheck: "Cannot open load file"
-
-1. Install packages: =./setup.sh install=
-2. Restart Emacs
-3. Check diagnostics: =M-x flycheck-verify-setup=
-
-*** Byte-compilation Fails
-
-1. Verify autoloads exist: =ls lisp/init-autoloads.el=
-2. Check =use-package= declarations have =:ensure t=
-3. Clean rebuild: =./setup.sh clean install=
-
-*** Linter Reports Errors
-
-The linter only checks:
-- Documentation style (checkdoc)
-- Regexp syntax
-
-It does *not* check:
-- Package.el naming conventions (=package-lint= is disabled)
-- Prefix requirements
-- File headers
-
-If you see package-lint-style errors about prefixes or naming, something is
-misconfigured.
-
-* Interesting Features
-
-** Dynamic Org Agenda
-
-With 10k+ org files, building =org-agenda-files= by scanning all files is slow.
-This configuration dynamically builds the agenda file list by:
-
-1. Marking files with =project= tag when they contain TODOs
-2. Querying only tagged files using =org-roam= database
-3. Updating =org-agenda-files= before running agenda
-
-Read more at [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][d12frosted.io]].
-
-*Implementation*:
-- =lib-vulpea-agenda.el= - =vulpea-agenda-files-update=
-- =lib-vulpea.el= - =vulpea-ensure-filetag=, =vulpea-project-files=
-- =init-vulpea.el= - Hooks setup
-
-** Meeting Capture Flow
-
-Intelligent meeting note capture that prompts for a person and creates notes
-under =Meetings= outline in their file.
-
-Read more at [[https://d12frosted.io/posts/2021-05-21-task-management-with-roam-vol7.html][d12frosted.io]].
-
-*Implementation*:
-- =lib-vulpea-capture.el= - =vulpea-capture-meeting-template=, =vulpea-capture-meeting-target=
-
-** Wine Tracking (vino)
-
-The [[https://github.com/d12frosted/vino][vino]] library tracks wine tasting notes.
-
-*Implementation*: =lib-vino.el=
+** A note on linting
+
+=package-lint= is intentionally off. It exists to police ELPA packages (prefix
+naming, file headers, and so on), none of which applies to a personal
+configuration. checkdoc and byte-compilation do the real work here. If you ever
+see package-lint-style complaints about prefixes, something is misconfigured.
+
+In-editor, flycheck uses the standard =emacs-lisp= checker with =lisp/= and the
+elpaca packages added to its load path, so =init-*= files can find each other and
+=lib-*= files can find their dependencies without false errors.
