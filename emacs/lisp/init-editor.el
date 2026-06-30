@@ -122,10 +122,6 @@
   :ensure t
   :hook ((visual-line-mode . visual-fill-column-mode)))
 
-(use-package adaptive-wrap
-  :ensure t
-  :defer t)
-
 (use-package unfill
   :ensure t
   :commands (unfill-toggle)
