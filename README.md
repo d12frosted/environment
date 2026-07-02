@@ -156,6 +156,12 @@ the services via `launchctl`.
 ./eru.sh install services
 ```
 
+The vulpea note sync lives here. `bin/vulpea-sync` mirrors `~/vulpea` to git on
+a 10-minute launchd backstop; `bin/vulpea-watch` (a KeepAlive `fswatch` daemon)
+debounces file changes and kicks off a sync shortly after you stop editing, so a
+burst of edits becomes a single push. Both funnel through `vulpea-sync`, which
+takes a lock so runs never overlap.
+
 ### `emacs`
 Set up Emacs configuration by running `emacs/setup.sh` (bootstraps packages and
 generates autoloads). Supports subtasks via `emacs:<subtask>` syntax, passed
@@ -277,7 +283,7 @@ packages (requires: homebrew)
 wm (requires: packages → yabai, skhd)
 shell (requires: packages → fish)
 devtools (requires: packages → gnupg, ssh)
-services (requires: packages, emacs → vulpea-sync)
+services (requires: packages, emacs → vulpea-sync, vulpea-watch)
 emacs (requires: packages → emacs-plus)
 ```
 
