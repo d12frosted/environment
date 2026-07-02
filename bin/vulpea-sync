@@ -40,6 +40,18 @@ log "Syncing vulpea notes in $VULPEA_DIR"
 git config user.name "Golem"
 git config user.email "golem@d12frosted.io"
 
+# Flush unsaved org buffers from the running Emacs so the commit captures
+# the latest edits (agenda todo/refile/schedule changes, etc.) instead of
+# stale on-disk copies. Guard the probe and time-box the eval so a missing
+# server or a stuck minibuffer never wedges the sync.
+if emacsclient --eval t >/dev/null 2>&1; then
+  log "Flushing org buffers via emacsclient..."
+  timeout 30 emacsclient --eval '(ignore-errors (org-save-all-org-buffers))' \
+    >/dev/null 2>&1 || log "WARN: emacsclient flush failed or timed out"
+else
+  log "Emacs server not running; skipping buffer flush"
+fi
+
 git add .
 if git diff-index --quiet --cached HEAD --; then
   log "Nothing to commit"
