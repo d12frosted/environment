@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# Watch the vulpea notes directory and trigger a debounced sync.
+#
+# fswatch fires on every file change; we wait until things have been
+# quiet for $DEBOUNCE seconds and then run bin/vulpea-sync once. This
+# collapses a burst of edits (or an org-save sweep) into a single push --
+# and therefore a single site rebuild -- while still publishing shortly
+# after you stop editing. bin/vulpea-sync guards against overlapping
+# runs, so this cooperates safely with the launchd backstop.
+#
+# .git and Emacs scratch files (#foo#, .#foo, foo~) are excluded so the
+# sync's own git writes and autosave churn do not feed back into a loop.
+
+set -u
+
+VULPEA_DIR="${VULPEA_DIR:-$HOME/vulpea}"
+SYNC_BIN="${SYNC_BIN:-$HOME/.config/bin/vulpea-sync}"
+DEBOUNCE="${VULPEA_WATCH_DEBOUNCE:-30}"
+
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+}
+
+log "Watching $VULPEA_DIR (debounce ${DEBOUNCE}s)"
+
+fswatch -o -E \
+  -e '/\.git' \
+  -e '#.*#$' \
+  -e '/\.#' \
+  -e '~$' \
+  "$VULPEA_DIR" |
+while read -r _; do
+  # Coalesce: keep draining events until it has been quiet for $DEBOUNCE
+  # seconds, then sync once.
+  while read -r -t "$DEBOUNCE" _; do :; done
+  log "Changes settled; running sync"
+  "$SYNC_BIN" || log "Sync exited non-zero"
+done
