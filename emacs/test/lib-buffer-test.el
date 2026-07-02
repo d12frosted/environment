@@ -168,5 +168,55 @@
       (expect (buffer-lines buffer) :to-equal expected)
       (expect (current-buffer) :to-equal current-buffer))))
 
+(describe "buffer-save-modified-in-mode"
+  (it "saves modified file buffers whose mode matches"
+    (let ((file (make-temp-file "lib-buffer-test-")))
+      (unwind-protect
+          (let ((buffer (find-file-noselect file)))
+            (unwind-protect
+                (with-current-buffer buffer
+                  (text-mode)
+                  (setq-local require-final-newline nil)
+                  (insert "hello frodo")
+                  (expect (buffer-modified-p) :to-be-truthy)
+                  (expect (buffer-save-modified-in-mode 'text-mode)
+                          :to-equal 1)
+                  (expect (buffer-modified-p) :to-be nil)
+                  (expect (with-temp-buffer
+                            (insert-file-contents file)
+                            (buffer-string))
+                          :to-equal "hello frodo"))
+              (kill-buffer buffer)))
+        (delete-file file))))
+
+  (it "ignores modified buffers of other modes"
+    (let ((file (make-temp-file "lib-buffer-test-")))
+      (unwind-protect
+          (let ((buffer (find-file-noselect file)))
+            (unwind-protect
+                (with-current-buffer buffer
+                  (fundamental-mode)
+                  (insert "hello frodo")
+                  (expect (buffer-save-modified-in-mode 'text-mode)
+                          :to-equal 0)
+                  (expect (buffer-modified-p) :to-be-truthy))
+              (with-current-buffer buffer
+                (set-buffer-modified-p nil))
+              (kill-buffer buffer)))
+        (delete-file file))))
+
+  (it "ignores buffers not visiting a file"
+    (let ((buffer (generate-new-buffer "test-buffer")))
+      (unwind-protect
+          (with-current-buffer buffer
+            (text-mode)
+            (insert "hello frodo")
+            (expect (buffer-save-modified-in-mode 'text-mode)
+                    :to-equal 0)
+            (expect (buffer-modified-p) :to-be-truthy))
+        (with-current-buffer buffer
+          (set-buffer-modified-p nil))
+        (kill-buffer buffer)))))
+
 (provide 'lib-buffer-test)
 ;;; lib-buffer-test.el ends here

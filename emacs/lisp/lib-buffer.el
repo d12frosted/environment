@@ -127,6 +127,25 @@ is not present."
         (replace-region-contents l0 l1 (lambda () (funcall fn s)))
         (forward-line)))))
 
+;;;###autoload
+(defun buffer-save-modified-in-mode (mode)
+  "Save modified file-visiting buffers whose major mode derives from MODE.
+
+Saving happens without prompting.  Return the number of buffers
+that were saved.
+
+Handy on an idle timer to flush edits to disk -- for example to
+keep note files current for external tooling that watches the
+file system."
+  (let ((count 0))
+    (save-some-buffers
+     t
+     (lambda ()
+       (and buffer-file-name
+            (derived-mode-p mode)
+            (setq count (1+ count)))))
+    count))
+
 (defun buffer-generate (name &optional unique inhibit-buffer-hooks)
   "Create and return a buffer with a name based on NAME.
 
