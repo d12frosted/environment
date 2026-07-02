@@ -160,7 +160,8 @@ The vulpea note sync lives here. `bin/vulpea-sync` mirrors `~/vulpea` to git on
 a 10-minute launchd backstop; `bin/vulpea-watch` (a KeepAlive `fswatch` daemon)
 debounces file changes and kicks off a sync shortly after you stop editing, so a
 burst of edits becomes a single push. Both funnel through `vulpea-sync`, which
-takes a lock so runs never overlap.
+takes a lock so runs never overlap. See [docs/vulpea-sync.md](docs/vulpea-sync.md)
+for the full flow and design rationale.
 
 ### `emacs`
 Set up Emacs configuration by running `emacs/setup.sh` (bootstraps packages and
