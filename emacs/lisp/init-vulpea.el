@@ -158,6 +158,9 @@
                (not (string-match-p
                      "cemetery"
                      (downcase (or (vulpea-note-path note) "")))))))
+  ;; the inboxes stay on the agenda no matter their content, so an empty
+  ;; inbox is still a reminder to process it
+  (setq vulpea-para-open-work-files '("inbox.org" "inbox-dor.org"))
   :config
   ;; install the opinionated defaults: agenda-mode, the agenda dispatcher
   ;; (with my buffer name and stuck-projects), the prefix-format, and the
