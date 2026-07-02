@@ -37,6 +37,7 @@
 
 (require 'config-path)
 (require 'config-vulpea)
+(require 'lib-buffer)
 
 
 
@@ -570,6 +571,27 @@
   :hook (org-mode . org-emphasis-marker-mode)
   :init
   (setq org-hide-emphasis-markers nil))
+
+
+
+;; Flush notes to disk on idle -----------------------------------------
+;;
+;; Agenda commands (todo state, refile, schedule, ...) and ordinary
+;; edits modify note buffers without writing them, so the files on disk
+;; -- and everything watching them -- fall behind.  In particular the
+;; fswatch-driven vulpea DB and the git mirror (`bin/vulpea-sync', kicked
+;; off by `bin/vulpea-watch') only see saved files.  Save modified org
+;; buffers after a short idle so they stay current without waiting for a
+;; manual save.
+
+(defvar vulpea-idle-save-seconds 30
+  "Idle time in seconds before modified org buffers are saved.")
+
+(defvar vulpea-idle-save-timer
+  (run-with-idle-timer
+   vulpea-idle-save-seconds t
+   (lambda () (buffer-save-modified-in-mode 'org-mode)))
+  "Timer that flushes modified org buffers to disk while idle.")
 
 (provide 'init-vulpea)
 ;;; init-vulpea.el ends here
