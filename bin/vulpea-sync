@@ -3,10 +3,35 @@
 set -e
 
 VULPEA_DIR="${VULPEA_DIR:-$HOME/vulpea}"
+LOCK_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/vulpea-sync/sync.lock"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
 }
+
+# Only one sync at a time. The launchd backstop, bin/vulpea-watch and
+# manual runs all funnel through here; macOS has no flock(1), so use an
+# atomic mkdir as the mutex and record the owner pid for staleness checks.
+mkdir -p "$(dirname "$LOCK_DIR")"
+if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+  lock_pid="$(cat "$LOCK_DIR/pid" 2>/dev/null || true)"
+  if [ -n "$lock_pid" ]; then
+    if kill -0 "$lock_pid" 2>/dev/null; then
+      log "Another sync is running (pid $lock_pid); skipping"
+      exit 0
+    fi
+    log "Stale lock (dead pid $lock_pid); taking over"
+    rm -rf "$LOCK_DIR"; mkdir "$LOCK_DIR"
+  elif [ -n "$(find "$LOCK_DIR" -maxdepth 0 -mmin +10 2>/dev/null)" ]; then
+    log "Stale lock (no owner, older than 10m); taking over"
+    rm -rf "$LOCK_DIR"; mkdir "$LOCK_DIR"
+  else
+    log "Lock held (acquiring elsewhere); skipping"
+    exit 0
+  fi
+fi
+echo $$ >"$LOCK_DIR/pid"
+trap 'rm -rf "$LOCK_DIR"' EXIT
 
 cd "$VULPEA_DIR"
 
