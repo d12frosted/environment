@@ -9,6 +9,14 @@ log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
 }
 
+# Surface actionable failures (e.g. rebase conflicts) so a broken sync
+# does not stay silent. Routine, self-healing hiccups (offline fetch or
+# push) are only logged, to avoid notification spam.
+notify() {
+  command -v terminal-notifier >/dev/null 2>&1 &&
+    terminal-notifier -title "vulpea-sync" -message "$1" >/dev/null 2>&1 || true
+}
+
 # Only one sync at a time. The launchd backstop, bin/vulpea-watch and
 # manual runs all funnel through here; macOS has no flock(1), so use an
 # atomic mkdir as the mutex and record the owner pid for staleness checks.
@@ -64,7 +72,12 @@ log "Fetching from origin..."
 git fetch origin
 
 log "Rebasing on origin/master..."
-git rebase origin/master
+if ! git rebase origin/master; then
+  git rebase --abort || true
+  log "ERROR: rebase conflict; manual resolution required"
+  notify "sync paused: rebase conflict in vulpea notes"
+  exit 1
+fi
 
 log "Pushing to origin..."
 git push origin master
