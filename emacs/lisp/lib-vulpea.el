@@ -452,6 +452,14 @@ Defaults to `string-from'."
     :name 'vulpea-attachment-extractor
     :version 1
     :priority 50
+    ;; Works purely from note-data (:id, :attach-dir) - never touches
+    ;; the AST - so async extraction and element-granularity parsing
+    ;; stay enabled.  worker-safe: in full async mode the worker loads
+    ;; lib-vulpea and runs this extractor itself, keeping the
+    ;; zero-freeze write path.
+    :requires-ast nil
+    :worker-safe t
+    :worker-lib 'lib-vulpea
     :schema '((attachments
                [(note-id :not-null)
                 (file :not-null)
