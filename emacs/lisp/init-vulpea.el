@@ -42,7 +42,7 @@
 
 
 (use-package vulpea
-  :ensure (:host github :repo "d12frosted/vulpea")
+  :ensure (:host github :repo "d12frosted/vulpea" :branch "perf/single-file-sync")
   :defer t
   :general
   (leader-def
@@ -74,6 +74,8 @@
    ;; performance (we also rely on fd + fswatch)
    vulpea-db-parse-method 'single-temp-buffer
    vulpea-db-sync-external-method 'fswatch
+   vulpea-db-index-plain-links nil
+   vulpea-db-async-extraction 'full
 
    ;; eh, sadly, I need it for attachments
    vulpea-db-index-heading-level t
