@@ -42,7 +42,7 @@
 
 
 (use-package vulpea
-  :ensure (:host github :repo "d12frosted/vulpea" :branch "perf/single-file-sync")
+  :ensure (:host github :repo "d12frosted/vulpea")
   :defer t
   :general
   (leader-def
