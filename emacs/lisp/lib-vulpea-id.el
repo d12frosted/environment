@@ -40,6 +40,7 @@
 ;;; Code:
 
 (require 'org-id)
+(require 'lib-buffer)
 
 (defvar vulpea-id-auto-targets nil
   "Targets for automatic ID assignment.
@@ -55,17 +56,23 @@ Empty list means no id assignment is needed.")
 (defun vulpea-id-auto-assign ()
   "Add ID property to the current file.
 
-Targets are defined by `vulpea-id-auto-targets'."
+Targets are defined by `vulpea-id-auto-targets'.
+
+Does nothing when `buffer-save-inhibit-mutations' is non-nil, so
+that automatic background saves don't edit the buffer under the
+user."
   (when (and vulpea-id-auto-targets
+             (not buffer-save-inhibit-mutations)
              (derived-mode-p 'org-mode)
              (eq buffer-read-only nil))
     (save-excursion
-      (widen)
-      (goto-char (point-min))
-      (when (seq-contains-p vulpea-id-auto-targets 'file)
-        (org-id-get-create))
-      (when (seq-contains-p vulpea-id-auto-targets 'headings)
-        (org-map-entries #'org-id-get-create)))))
+      (save-restriction
+        (widen)
+        (goto-char (point-min))
+        (when (seq-contains-p vulpea-id-auto-targets 'file)
+          (org-id-get-create))
+        (when (seq-contains-p vulpea-id-auto-targets 'headings)
+          (org-map-entries #'org-id-get-create))))))
 
 (provide 'lib-vulpea-id)
 ;;; lib-vulpea-id.el ends here

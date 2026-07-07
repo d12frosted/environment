@@ -588,14 +588,27 @@
 ;; off by `bin/vulpea-watch') only see saved files.  Save modified org
 ;; buffers after a short idle so they stay current without waiting for a
 ;; manual save.
+;;
+;; The flush must be invisible.  Before-save hooks that edit the buffer
+;; (`vulpea-id-auto-assign', `vulpea-pre-save-hook', ws-butler) are
+;; suspended via `buffer-save-inhibit-mutations', otherwise resuming
+;; typing after an idle pause lands in a buffer that just changed under
+;; point (property drawers inserted, whitespace trimmed, undo history
+;; polluted).  All of that maintenance still runs on manual saves.
 
 (defvar vulpea-idle-save-seconds 30
   "Idle time in seconds before modified org buffers are saved.")
 
+(defun vulpea-idle-save-flush ()
+  "Save modified org buffers without mutating their content.
+See `buffer-save-inhibit-mutations'."
+  (let ((buffer-save-inhibit-mutations t)
+        (save-silently t))
+    (buffer-save-modified-in-mode 'org-mode)))
+
 (defvar vulpea-idle-save-timer
   (run-with-idle-timer
-   vulpea-idle-save-seconds t
-   (lambda () (buffer-save-modified-in-mode 'org-mode)))
+   vulpea-idle-save-seconds t #'vulpea-idle-save-flush)
   "Timer that flushes modified org buffers to disk while idle.")
 
 (provide 'init-vulpea)

@@ -97,7 +97,14 @@
   :config
   (setq ws-butler-global-exempt-modes
         (append ws-butler-global-exempt-modes
-                '(special-mode comint-mode term-mode eshell-mode))))
+                '(special-mode comint-mode term-mode eshell-mode)))
+  ;; don't trim whitespace during automatic background saves (e.g. the
+  ;; idle flush of org buffers in init-vulpea), only on manual saves --
+  ;; trimming the trailing space the user just typed mid-sentence is
+  ;; exactly the kind of intrusion background saves must avoid
+  (setq ws-butler-trim-predicate
+        (lambda (_beg _end)
+          (not (bound-and-true-p buffer-save-inhibit-mutations)))))
 
 
 ;; Disable backup files. While I find them useful in general, they

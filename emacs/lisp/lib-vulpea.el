@@ -38,6 +38,7 @@
 
 (require 'config-vulpea)
 
+(require 'lib-buffer)
 (require 'lib-directory)
 (require 'lib-string)
 
@@ -217,8 +218,13 @@ Uses buffer-local `semantic-nav-prev-fn' if set."
 
 ;;;###autoload
 (defun vulpea-pre-save-hook ()
-  "Do all the dirty stuff when file is being saved."
-  (when (and (not (active-minibuffer-window))
+  "Do all the dirty stuff when file is being saved.
+
+Does nothing when `buffer-save-inhibit-mutations' is non-nil, so
+that automatic background saves don't edit the buffer under the
+user."
+  (when (and (not buffer-save-inhibit-mutations)
+             (not (active-minibuffer-window))
              (vulpea-buffer-p))
     ;; path tags + people; the `agenda' tag is maintained separately by
     ;; `vulpea-para-agenda-mode'

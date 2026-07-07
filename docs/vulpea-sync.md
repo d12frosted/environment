@@ -31,7 +31,7 @@ flowchart TD
 
 | Piece | Role |
 |---|---|
-| Emacs idle-save | `buffer-save-modified-in-mode` on a timer (in [`emacs/lisp/init-vulpea.el`](../emacs/lisp/init-vulpea.el), helper in [`emacs/lisp/lib-buffer.el`](../emacs/lisp/lib-buffer.el)) writes modified org buffers to disk after a short idle. |
+| Emacs idle-save | `vulpea-idle-save-flush` on a timer (in [`emacs/lisp/init-vulpea.el`](../emacs/lisp/init-vulpea.el), helper in [`emacs/lisp/lib-buffer.el`](../emacs/lisp/lib-buffer.el)) writes modified org buffers to disk after a short idle. |
 | [`bin/vulpea-watch`](../bin/vulpea-watch) | KeepAlive `fswatch` daemon; debounces file changes and calls `vulpea-sync` once things settle. |
 | [`bin/vulpea-sync`](../bin/vulpea-sync) | Does the actual work: lock, flush unsaved buffers, commit, fetch/rebase, push. |
 | [`launchd/io.d12frosted.vulpea-watch.plist`](../launchd/io.d12frosted.vulpea-watch.plist) | Runs the watcher (KeepAlive). |
@@ -58,6 +58,12 @@ The parts that aren't obvious from reading any single file:
   several writers — mobile captures, the `dor` pipeline, manual commits — so
   pulling is useful work regardless of local changes. Only the final `push` is a
   no-op when idle, and that's a cheap ref check.
+- **Idle-save never edits the buffer.** The flush binds
+  `buffer-save-inhibit-mutations`, which suspends the before-save hooks that
+  mutate content (`vulpea-id-auto-assign` property drawers,
+  `vulpea-ensure-filetag`, ws-butler whitespace trimming). Without this,
+  resuming typing after an idle pause landed in a buffer that had just changed
+  under point. All that maintenance still runs on manual saves.
 - **The emacsclient flush is belt-and-suspenders.** Idle-save usually beats the
   sync, but flushing buffers right before the commit guarantees it captures the
   very latest even if the backstop fires mid-edit.
