@@ -34,6 +34,15 @@
 ;;
 ;;; Code:
 
+(defvar buffer-save-inhibit-mutations nil
+  "Non-nil when buffers are being saved by an automatic background flush.
+
+Save hooks that edit the buffer (id assignment, filetag
+maintenance, whitespace trimming and alike) should check this
+variable and skip their work, so that a background save never
+modifies a buffer under the user.  Manual saves leave it nil, so
+all the maintenance still happens there.")
+
 (defun buffer-content (buffer-or-name)
   "Return content of BUFFER-OR-NAME.
 
