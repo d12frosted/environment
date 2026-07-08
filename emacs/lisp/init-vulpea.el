@@ -100,6 +100,10 @@
   :config
   (add-hook 'vulpea-insert-handle-functions #'vulpea-insert-handle)
 
+  ;; Note schemas — consumers (e.g. tasogare.ink pull) validate against
+  ;; them, and flymake/health widgets pick them up interactively.
+  (require 'lib-vulpea-schemas)
+
   ;; This must be configured in config hook to avoid unnecessary load
   ;; of `vulpea' stuff.
   (add-to-list 'window-buffer-change-functions #'vulpea-setup-buffer))
