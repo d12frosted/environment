@@ -9,92 +9,22 @@
       "Bash(yarn:*)",
       "Bash(bun run:*)"
     ],
+    "deny": [
+      "Read(./.env)"
+    ],
     "defaultMode": "auto"
   },
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
-          }
-        ]
-      }
-    ],
-    "PostToolUseFailure": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
-          }
-        ]
-      }
-    ],
-    "PermissionRequest": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
-          }
-        ]
-      }
-    ]
-  },
+  "model": "claude-fable-5[1m]",
   "statusLine": {
     "type": "command",
     "command": "/bin/bash ~/.config/claude/statusline-command.sh",
     "refreshInterval": 30
   },
   "enabledPlugins": {
-    "ui-ux-pro-max@ui-ux-pro-max-skill": false,
-    "no-em-dashes@exmergo-skills": true,
-    "vercel@claude-plugins-official": true
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
+    "bb-employee-lookup@big-brother-client": true,
+    "impeccable@impeccable": true,
+    "autoresearch@autoresearch": false
   },
   "extraKnownMarketplaces": {
     "ui-ux-pro-max-skill": {
@@ -103,16 +33,16 @@
         "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
       }
     },
-    "exmergo-skills": {
+    "impeccable": {
       "source": {
         "source": "github",
-        "repo": "exmergo/exmergo-skills"
+        "repo": "pbakaus/impeccable"
       }
     },
-    "telegather": {
+    "autoresearch": {
       "source": {
-        "source": "git",
-        "url": "git@github.com:d12frosted/telegather.git"
+        "source": "github",
+        "repo": "uditgoenka/autoresearch"
       }
     }
   },
@@ -120,8 +50,6 @@
   "effortLevel": "high",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "skipWorkflowUsageWarning": true,
-  "theme": "light",
-  "agentPushNotifEnabled": true,
+  "theme": "light-daltonized",
   "skipAutoPermissionPrompt": true
 }
