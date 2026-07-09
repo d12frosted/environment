@@ -60,6 +60,7 @@ yabai -m rule --add app="^Firefox$" space=3
 yabai -m rule --add app="^Safari$" space=3
 yabai -m rule --add app="^Brave$" space=3
 yabai -m rule --add app="^Chrome$" space=3
+yabai -m rule --add app="^.*Chrome.*$" space=3
 
 yabai -m rule --add app="^Discord$" space=4
 yabai -m rule --add app="^Hey$" space=4
