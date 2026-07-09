@@ -126,6 +126,13 @@ Set up development tools:
 ./eru.sh install devtools
 ```
 
+### `private`
+Sync private configuration from a separate private repo (cloned to `~/.config-private`). Skipped gracefully when the repo is not accessible, so public users of this repo are not affected. Also adopts local Claude auto-memory directories into the private repo (moves them in and leaves symlinks behind).
+
+```bash
+./eru.sh install private
+```
+
 ### `symlinks`
 Create symlinks for configuration files that need to live outside `~/.config`.
 
@@ -133,6 +140,7 @@ Some programs (like GnuPG and SSH) don't support XDG Base Directory spec and exp
 
 - **GnuPG**: `~/.config/gnupg/*` → `~/.gnupg/*`
 - **SSH**: `~/.config/ssh/config` → `~/.ssh/config`
+- **Claude Code**: `~/.config/claude/settings.json` → `~/.claude/settings.json`, plus private bits from `~/.config-private` (CLAUDE.md, per-project auto-memory) when available
 
 Setup:
 

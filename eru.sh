@@ -66,6 +66,11 @@ export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 SCRIPT_DIR="$(cd "$(dirname "$(readlink "${BASH_SOURCE[0]}")")" && pwd)"
 mkdir -p "$HOME/.local/bin"
 
+# Private counterpart of this repo. Optional: everything works without it,
+# machines with access get private bits (Claude CLAUDE.md, auto-memory).
+PRIVATE_CONFIG_HOME="${PRIVATE_CONFIG_HOME:-$HOME/.config-private}"
+PRIVATE_CONFIG_REPO="${PRIVATE_CONFIG_REPO:-git@github.com:d12frosted/environment-private.git}"
+
 #
 # Logging Functions
 #
@@ -651,6 +656,56 @@ function task_devtools() {
 }
 
 #
+# Task: Private configuration
+#
+
+function task_private() {
+  task_start "private" "Syncing private configuration"
+
+  # Clone the private repo if it is not there yet. Missing access is fine:
+  # the machine simply runs without private bits.
+  if [[ ! -d "$PRIVATE_CONFIG_HOME/.git" ]]; then
+    info "Cloning $PRIVATE_CONFIG_REPO to $PRIVATE_CONFIG_HOME..."
+    if [[ "$DRY_RUN" != "true" ]]; then
+      if ! git clone "$PRIVATE_CONFIG_REPO" "$PRIVATE_CONFIG_HOME"; then
+        task_skip "private config is not available (no access to $PRIVATE_CONFIG_REPO)"
+        return 0
+      fi
+    fi
+  else
+    info "Private config already cloned at $PRIVATE_CONFIG_HOME"
+  fi
+
+  # Adopt Claude auto-memory directories that exist locally but are not in
+  # the private repo yet: move them in and leave a symlink behind. Commit
+  # and push from $PRIVATE_CONFIG_HOME to sync them to other machines.
+  if [[ -d "$HOME/.claude/projects" ]]; then
+    for project_dir in "$HOME/.claude/projects"/*/; do
+      local memory_dir="${project_dir%/}/memory"
+      [[ -d "$memory_dir" ]] || continue
+      [[ -L "$memory_dir" ]] && continue
+
+      local slug
+      slug=$(basename "${project_dir%/}")
+      local repo_dir="$PRIVATE_CONFIG_HOME/claude/memory/$slug"
+      if [[ -e "$repo_dir" ]]; then
+        warn "Both $memory_dir and $repo_dir exist; resolve manually"
+        continue
+      fi
+
+      info "Adopting Claude memory: $slug"
+      if [[ "$DRY_RUN" != "true" ]]; then
+        mkdir -p "$PRIVATE_CONFIG_HOME/claude/memory"
+        mv "$memory_dir" "$repo_dir"
+        ln -s "$repo_dir" "$memory_dir"
+      fi
+    done
+  fi
+
+  task_complete "private" "Private configuration synced"
+}
+
+#
 # Task: Symlinks
 #
 
@@ -739,6 +794,19 @@ function task_symlinks() {
     info "Setting up Claude Code symlinks..."
     mkdir -p "$HOME/.claude"
     create_symlink "$XDG_CONFIG_HOME/claude/settings.json" "$HOME/.claude/settings.json"
+  fi
+
+  # Private Claude Code configuration (see task_private)
+  if [[ -f "$PRIVATE_CONFIG_HOME/claude/CLAUDE.md" ]]; then
+    create_symlink "$PRIVATE_CONFIG_HOME/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+  fi
+  if [[ -d "$PRIVATE_CONFIG_HOME/claude/memory" ]]; then
+    for memory_dir in "$PRIVATE_CONFIG_HOME/claude/memory"/*/; do
+      [[ -d "$memory_dir" ]] || continue
+      local slug
+      slug=$(basename "${memory_dir%/}")
+      create_symlink "${memory_dir%/}" "$HOME/.claude/projects/$slug/memory"
+    done
   fi
 
   task_complete "symlinks" "Symlinks created"
@@ -1059,6 +1127,37 @@ function doctor_symlinks() {
       doctor_issue "\$HOME/.ssh/config is not symlinked correctly"
     fi
   fi
+
+  # Check private Claude config symlinks
+  if [[ -f "$PRIVATE_CONFIG_HOME/claude/CLAUDE.md" ]]; then
+    local claude_md="$HOME/.claude/CLAUDE.md"
+    if [[ -L "$claude_md" ]] && [[ "$(readlink "$claude_md")" == "$PRIVATE_CONFIG_HOME/claude/CLAUDE.md" ]]; then
+      doctor_ok "\$HOME/.claude/CLAUDE.md → private config"
+    else
+      doctor_issue "\$HOME/.claude/CLAUDE.md is not symlinked to private config"
+    fi
+  fi
+  if [[ -d "$PRIVATE_CONFIG_HOME/claude/memory" ]]; then
+    for memory_dir in "$PRIVATE_CONFIG_HOME/claude/memory"/*/; do
+      [[ -d "$memory_dir" ]] || continue
+      local slug memory_target
+      slug=$(basename "${memory_dir%/}")
+      memory_target="$HOME/.claude/projects/$slug/memory"
+      if [[ -L "$memory_target" ]] && [[ "$(readlink "$memory_target")" == "${memory_dir%/}" ]]; then
+        doctor_ok "claude memory: $slug"
+      else
+        doctor_issue "claude memory is not linked: $slug"
+      fi
+    done
+  fi
+  if [[ -d "$HOME/.claude/projects" ]]; then
+    for project_dir in "$HOME/.claude/projects"/*/; do
+      local local_memory="${project_dir%/}/memory"
+      if [[ -d "$local_memory" ]] && [[ ! -L "$local_memory" ]]; then
+        doctor_issue "claude memory not adopted into private config: $(basename "${project_dir%/}") (run: eru install private symlinks)"
+      fi
+    done
+  fi
 }
 
 #
@@ -1192,7 +1291,7 @@ function run_doctor() {
 # Check if a task name is valid
 function is_valid_task() {
   case "$1" in
-    homebrew|packages|macos|shell|wm|devtools|symlinks|services|emacs)
+    homebrew|packages|macos|shell|wm|devtools|private|symlinks|services|emacs)
       return 0
       ;;
     *)
@@ -1210,6 +1309,7 @@ function get_task_function() {
     shell) echo "task_shell" ;;
     wm) echo "task_wm" ;;
     devtools) echo "task_devtools" ;;
+    private) echo "task_private" ;;
     symlinks) echo "task_symlinks" ;;
     services) echo "task_services" ;;
     emacs) echo "task_emacs" ;;
@@ -1218,7 +1318,7 @@ function get_task_function() {
 }
 
 # Default task order for full installation
-DEFAULT_TASKS=(homebrew packages macos shell wm devtools symlinks services emacs)
+DEFAULT_TASKS=(homebrew packages macos shell wm devtools private symlinks services emacs)
 
 #
 # Main Execution
@@ -1240,6 +1340,7 @@ Tasks for install/upgrade (run all if none specified):
   shell             Set up fish shell
   wm                Configure yabai + skhd
   devtools          Set up git, ssh, gpg
+  private           Sync private config (clone environment-private, adopt Claude memory)
   symlinks          Create symlinks
   services          Set up launchd services
   emacs             Set up Emacs (supports emacs:subtask syntax)
