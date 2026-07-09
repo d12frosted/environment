@@ -63,7 +63,14 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 
-SCRIPT_DIR="$(cd "$(dirname "$(readlink "${BASH_SOURCE[0]}")")" && pwd)"
+# Resolve the real location of this script even when invoked directly
+# (readlink on a non-symlink prints nothing, which used to leave SCRIPT_DIR
+# pointing at the caller's cwd).
+ERU_SOURCE="${BASH_SOURCE[0]}"
+if [[ -L "$ERU_SOURCE" ]]; then
+  ERU_SOURCE="$(readlink "$ERU_SOURCE")"
+fi
+SCRIPT_DIR="$(cd "$(dirname "$ERU_SOURCE")" && pwd)"
 mkdir -p "$HOME/.local/bin"
 
 # Private counterpart of this repo. Optional: everything works without it,
