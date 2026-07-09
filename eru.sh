@@ -435,7 +435,7 @@ function task_packages() {
   if command -v npm &> /dev/null; then
     info "Installing global npm packages..."
     if [[ "$DRY_RUN" != "true" ]]; then
-      npm i -g @zed-industries/claude-code-acp
+      npm i -g @agentclientprotocol/claude-agent-acp
       npm i -g @openai/codex
       npm i -g agent-browser
       agent-browser install
