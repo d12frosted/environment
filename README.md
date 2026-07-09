@@ -26,9 +26,17 @@ Inspired by the Ainulindalë, where Eru Ilúvatar shaped the world through the h
 
 ## Quick Start
 
+On a factory-fresh Mac (no git, no Xcode CLT), one command does everything: installs Command Line Tools, clones this repo to `~/.config` over HTTPS, and runs the full installation. Git identity comes with the clone (`git/config` is the XDG git config).
+
 ```bash
-# Clone into ~/.config
-git clone <your-repo> ~/.config
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/d12frosted/environment/master/bootstrap.sh)"
+```
+
+Use the `bash -c "$(curl ...)"` form, not `curl | bash`: it keeps stdin attached to the terminal so sudo prompts work.
+
+Already have the repo cloned?
+
+```bash
 cd ~/.config
 
 # Full installation
