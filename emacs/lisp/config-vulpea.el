@@ -51,8 +51,8 @@ real notes. Maybe it also means experimental features.")
        "vulpea-test/"
        path-home-dir)
     (expand-file-name
-       "vulpea/"
-       path-home-dir))
+     "vulpea/"
+     path-home-dir))
   "Directory containing notes.")
 
 (provide 'config-vulpea)
