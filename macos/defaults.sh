@@ -43,6 +43,9 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 15
 # Disable press-and-hold for keys in favor of key repeat
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
+# Use F1, F2, etc. as standard function keys (hold Fn for brightness/media)
+defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
+
 # Disable auto-correct
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
