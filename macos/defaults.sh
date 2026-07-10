@@ -29,6 +29,9 @@ defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 # Disable automatic termination of inactive apps
 defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
 
+# Near-instant dialog/sheet resize animations
+defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+
 # Reveal IP address, hostname, OS version, etc. when clicking the clock in the login window
 sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
@@ -48,6 +51,16 @@ defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
 
 # Disable auto-correct
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+
+# Disable smart quotes, smart dashes, auto-capitalization and period
+# substitution — they mangle code in native text fields
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+
+# Full keyboard access: Tab moves focus through all controls in dialogs
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
 # Map Caps Lock to Control on every connected keyboard. The mapping is stored
 # per keyboard (vendor-product pair, decimal), and takes effect on next login;
@@ -104,6 +117,15 @@ defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryCli
 #
 # Finder
 #
+
+# Allow quitting Finder via Cmd+Q
+defaults write com.apple.finder QuitMenuItem -bool true
+
+# Show full POSIX path in Finder window titles
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+
+# New Finder windows open in the home directory instead of Recents
+defaults write com.apple.finder NewWindowTarget -string "PfHm"
 
 # Hide hidden files by default
 defaults write com.apple.finder AppleShowAllFiles -bool false
