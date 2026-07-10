@@ -46,6 +46,18 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 # Disable auto-correct
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
+# Map Caps Lock to Control on every connected keyboard. The mapping is stored
+# per keyboard (vendor-product pair, decimal), and takes effect on next login;
+# run `hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x7000000E0}]}'`
+# to apply immediately without logging out.
+caps_lock=30064771129 # HID usage 0x700000039
+left_ctrl=30064771296 # HID usage 0x7000000E0
+while read -r vid pid; do
+  defaults -currentHost write -g \
+    "com.apple.keyboard.modifiermapping.$((vid))-$((pid))-0" -array \
+    "<dict><key>HIDKeyboardModifierMappingSrc</key><integer>${caps_lock}</integer><key>HIDKeyboardModifierMappingDst</key><integer>${left_ctrl}</integer></dict>"
+done < <(hidutil list --matching '{"DeviceUsagePage":1,"DeviceUsage":6}' | awk '$1 ~ /^0x/ {print $1, $2}' | sort -u)
+
 #
 # Trackpad
 #
@@ -106,6 +118,9 @@ sudo chflags nohidden /Volumes
 #
 # Dock
 #
+
+# Position the Dock on the left side of the screen
+defaults write com.apple.dock orientation -string "left"
 
 # Set the icon size of Dock items to 36 pixels
 defaults write com.apple.dock tilesize -int 36
