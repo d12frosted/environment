@@ -165,6 +165,7 @@ cask "claude"
 cask "dbeaver-community"
 cask "figma"
 cask "rancher"
+cask "session-manager-plugin"
 
 #
 # Media
