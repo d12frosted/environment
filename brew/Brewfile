@@ -211,6 +211,7 @@ cask "whisky"
 ################################################################################
 
 cask "font-iosevka"
+cask "font-iosevka-curly"
 cask "font-sauce-code-pro-nerd-font"
 cask "font-source-code-pro"
 cask "font-symbols-only-nerd-font"
