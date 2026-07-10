@@ -59,6 +59,31 @@ while read -r vid pid; do
 done < <(hidutil list --matching '{"DeviceUsagePage":1,"DeviceUsage":6}' | awk '$1 ~ /^0x/ {print $1, $2}' | sort -u)
 
 #
+# System Keybindings
+#
+# Symbolic hotkey IDs: 60 = select previous input source, 61 = select next
+# source in input menu, 64 = show Spotlight search, 65 = show Finder search
+# window. Modifier masks: Shift=131072, Ctrl=262144, Option=524288,
+# Cmd=1048576. Parameters are [ascii char (65535 = none), key code, modifiers].
+#
+
+# Disable Spotlight shortcuts (Cmd+Space and Cmd+Option+Space); Raycast is used instead
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 \
+  "<dict><key>enabled</key><false/></dict>"
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 65 \
+  "<dict><key>enabled</key><false/></dict>"
+
+# Switch input source (language) with Option+Esc
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 60 \
+  "<dict><key>enabled</key><true/><key>value</key><dict><key>type</key><string>standard</string><key>parameters</key><array><integer>65535</integer><integer>53</integer><integer>524288</integer></array></dict></dict>"
+
+# Make the system pick up symbolic hotkey changes without re-login
+/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+
+# Open Raycast with Cmd+Shift+Space (49 = Space key code)
+defaults write com.raycast.macos raycastGlobalHotkey -string "Command-Shift-49"
+
+#
 # Trackpad
 #
 
