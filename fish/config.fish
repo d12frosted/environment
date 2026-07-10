@@ -1,3 +1,7 @@
+# macOS synthesizes LANG from Language + Region (en_UA.UTF-8), which is not
+# a real locale, so set a valid one explicitly.
+set -gx LANG en_US.UTF-8
+
 # Homebrew
 eval (/opt/homebrew/bin/brew shellenv fish)
 
