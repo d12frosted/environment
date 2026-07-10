@@ -28,5 +28,7 @@ end
 starship init fish | source
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-set --export --prepend PATH "/Users/borysb/.rd/bin"
+if test -d "$HOME/.rd/bin"
+    set --export --prepend PATH "$HOME/.rd/bin"
+end
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
