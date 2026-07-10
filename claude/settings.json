@@ -21,28 +21,27 @@
     "refreshInterval": 30
   },
   "enabledPlugins": {
-    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
     "bb-employee-lookup@big-brother-client": true,
-    "impeccable@impeccable": true,
-    "autoresearch@autoresearch": false
+    "d12hey@hey-d12frosted": true,
+    "impeccable@impeccable": true
   },
   "extraKnownMarketplaces": {
-    "ui-ux-pro-max-skill": {
-      "source": {
-        "source": "github",
-        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
-      }
-    },
     "impeccable": {
       "source": {
         "source": "github",
         "repo": "pbakaus/impeccable"
       }
     },
-    "autoresearch": {
+    "big-brother-client": {
       "source": {
-        "source": "github",
-        "repo": "uditgoenka/autoresearch"
+        "source": "git",
+        "url": "git@github.com:d12frosted/big-brother-client.git"
+      }
+    },
+    "hey-d12frosted": {
+      "source": {
+        "source": "git",
+        "url": "git@github.com:d12frosted/hey.d12frosted.io.git"
       }
     }
   },
