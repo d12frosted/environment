@@ -679,57 +679,15 @@ function task_private() {
         return 0
       fi
     fi
-  else
-    info "Updating private config..."
-    if [[ "$DRY_RUN" != "true" ]]; then
-      if ! git -C "$PRIVATE_CONFIG_HOME" pull --rebase --autostash origin master; then
-        git -C "$PRIVATE_CONFIG_HOME" rebase --abort &> /dev/null || true
-        warn "Could not update private config (offline or conflict); continuing with local copy"
-      fi
-    fi
   fi
 
-  # Adopt Claude auto-memory directories that exist locally but are not in
-  # the private repo yet: move them in and leave a symlink behind. Commit
-  # and push from $PRIVATE_CONFIG_HOME to sync them to other machines.
-  if [[ -d "$HOME/.claude/projects" ]]; then
-    for project_dir in "$HOME/.claude/projects"/*/; do
-      local memory_dir="${project_dir%/}/memory"
-      [[ -d "$memory_dir" ]] || continue
-      [[ -L "$memory_dir" ]] && continue
-
-      local slug
-      slug=$(basename "${project_dir%/}")
-      local repo_dir="$PRIVATE_CONFIG_HOME/claude/memory/$slug"
-      if [[ -e "$repo_dir" ]]; then
-        warn "Both $memory_dir and $repo_dir exist; resolve manually"
-        continue
-      fi
-
-      info "Adopting Claude memory: $slug"
-      if [[ "$DRY_RUN" != "true" ]]; then
-        mkdir -p "$PRIVATE_CONFIG_HOME/claude/memory"
-        mv "$memory_dir" "$repo_dir"
-        ln -s "$repo_dir" "$memory_dir"
-      fi
-    done
-  fi
-
-  # Auto-commit and push Claude memory. It is machine-generated, so there
-  # is nothing to review; everything else in the private repo (CLAUDE.md,
-  # etc.) is committed manually.
-  if [[ "$DRY_RUN" != "true" ]] && [[ -d "$PRIVATE_CONFIG_HOME/.git" ]]; then
-    if [[ -n "$(git -C "$PRIVATE_CONFIG_HOME" status --porcelain -- claude/memory)" ]]; then
-      info "Committing Claude memory changes..."
-      git -C "$PRIVATE_CONFIG_HOME" add claude/memory
-      git -C "$PRIVATE_CONFIG_HOME" commit -m "chore: sync claude memory from $(hostname -s)"
-    fi
-    if [[ -n "$(git -C "$PRIVATE_CONFIG_HOME" log origin/master..master --oneline 2> /dev/null)" ]]; then
-      info "Pushing private config..."
-      if ! git -C "$PRIVATE_CONFIG_HOME" push origin master; then
-        warn "Could not push private config; push manually from $PRIVATE_CONFIG_HOME"
-      fi
-    fi
+  # The actual sync (pull, adopt Claude memory, commit, push, link) lives
+  # in bin/private-sync so the launchd service (io.d12frosted.private-sync),
+  # eru and manual runs all share one implementation.
+  if [[ "$DRY_RUN" == "true" ]]; then
+    info "Would run bin/private-sync"
+  elif ! "$SCRIPT_DIR/bin/private-sync"; then
+    warn "Private sync failed; check output above"
   fi
 
   task_complete "private" "Private configuration synced"

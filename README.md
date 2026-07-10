@@ -135,7 +135,9 @@ Set up development tools:
 ```
 
 ### `private`
-Sync private configuration from a separate private repo (cloned to `~/.config-private`). Skipped gracefully when the repo is not accessible, so public users of this repo are not affected. On each run it pulls (rebase), adopts local Claude auto-memory directories into the repo (moves them in and leaves symlinks behind), and auto-commits and pushes memory changes. Memory is machine-generated so there is nothing to review; other private files (CLAUDE.md, etc.) are committed manually.
+Sync private configuration from a separate private repo (cloned to `~/.config-private`). Skipped gracefully when the repo is not accessible, so public users of this repo are not affected. The sync itself lives in `bin/private-sync`: pull (rebase), adopt local Claude auto-memory directories into the repo (move them in, leave symlinks behind), auto-commit and push memory changes, and link memory pulled from other machines. Memory is machine-generated so there is nothing to review; other private files (CLAUDE.md, etc.) are committed manually.
+
+The same script runs every 30 minutes via launchd (`io.d12frosted.private-sync`, installed by the `services` task) and sends a notification via terminal-notifier when a sync needs manual attention (rebase conflict). Offline hiccups are only logged and retried on the next run.
 
 ```bash
 ./eru.sh install private

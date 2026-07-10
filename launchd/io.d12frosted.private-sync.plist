@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>io.d12frosted.private-sync</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/d12frosted/.config/bin/private-sync</string>
+    </array>
+
+    <key>StartInterval</key>
+    <integer>1800</integer>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/bin:/opt/homebrew/bin:/usr/local/bin:/bin:/usr/sbin:/sbin</string>
+        <key>HOME</key>
+        <string>/Users/d12frosted</string>
+        <key>SSH_AUTH_SOCK</key>
+        <string>/Users/d12frosted/.gnupg/S.gpg-agent.ssh</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/d12frosted/.local/share/private-sync/stdout.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/d12frosted/.local/share/private-sync/stderr.log</string>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/d12frosted</string>
+</dict>
+</plist>
