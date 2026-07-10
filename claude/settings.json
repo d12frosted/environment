@@ -52,5 +52,6 @@
   "skipDangerousModePermissionPrompt": true,
   "theme": "light-daltonized",
   "skipAutoPermissionPrompt": true,
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "skipWorkflowUsageWarning": true
 }
