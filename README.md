@@ -135,7 +135,7 @@ Set up development tools:
 ```
 
 ### `private`
-Sync private configuration from a separate private repo (cloned to `~/.config-private`). Skipped gracefully when the repo is not accessible, so public users of this repo are not affected. Also adopts local Claude auto-memory directories into the private repo (moves them in and leaves symlinks behind).
+Sync private configuration from a separate private repo (cloned to `~/.config-private`). Skipped gracefully when the repo is not accessible, so public users of this repo are not affected. On each run it pulls (rebase), adopts local Claude auto-memory directories into the repo (moves them in and leaves symlinks behind), and auto-commits and pushes memory changes. Memory is machine-generated so there is nothing to review; other private files (CLAUDE.md, etc.) are committed manually.
 
 ```bash
 ./eru.sh install private

@@ -680,7 +680,13 @@ function task_private() {
       fi
     fi
   else
-    info "Private config already cloned at $PRIVATE_CONFIG_HOME"
+    info "Updating private config..."
+    if [[ "$DRY_RUN" != "true" ]]; then
+      if ! git -C "$PRIVATE_CONFIG_HOME" pull --rebase --autostash origin master; then
+        git -C "$PRIVATE_CONFIG_HOME" rebase --abort &> /dev/null || true
+        warn "Could not update private config (offline or conflict); continuing with local copy"
+      fi
+    fi
   fi
 
   # Adopt Claude auto-memory directories that exist locally but are not in
@@ -707,6 +713,23 @@ function task_private() {
         ln -s "$repo_dir" "$memory_dir"
       fi
     done
+  fi
+
+  # Auto-commit and push Claude memory. It is machine-generated, so there
+  # is nothing to review; everything else in the private repo (CLAUDE.md,
+  # etc.) is committed manually.
+  if [[ "$DRY_RUN" != "true" ]] && [[ -d "$PRIVATE_CONFIG_HOME/.git" ]]; then
+    if [[ -n "$(git -C "$PRIVATE_CONFIG_HOME" status --porcelain -- claude/memory)" ]]; then
+      info "Committing Claude memory changes..."
+      git -C "$PRIVATE_CONFIG_HOME" add claude/memory
+      git -C "$PRIVATE_CONFIG_HOME" commit -m "chore: sync claude memory from $(hostname -s)"
+    fi
+    if [[ -n "$(git -C "$PRIVATE_CONFIG_HOME" log origin/master..master --oneline 2> /dev/null)" ]]; then
+      info "Pushing private config..."
+      if ! git -C "$PRIVATE_CONFIG_HOME" push origin master; then
+        warn "Could not push private config; push manually from $PRIVATE_CONFIG_HOME"
+      fi
+    fi
   fi
 
   task_complete "private" "Private configuration synced"
