@@ -85,3 +85,13 @@ yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app='^IntelliJ IDEA$' subrole='AXDialog' manage=off
 yabai -m rule --add title="^Preferences" manage=off
 yabai -m rule --add title="^Settings" manage=off
+
+# Picture-in-Picture (classic PiP is titled "Picture in Picture", Google
+# Meet's document PiP is titled "meet.google.com"): keep it out of the
+# tiling layout, and shrink each new PiP window into the bottom-right
+# corner — Chromium recreates it at a huge default size for every meeting.
+yabai -m rule --add title="^(Picture.in.Picture|meet\.google\.com)$" manage=off
+yabai -m signal --add event=window_created \
+  title="^(Picture.in.Picture|meet\.google\.com)$" \
+  label=pip_shrink \
+  action='yabai -m window $YABAI_WINDOW_ID --grid 5:5:4:4:1:1'
