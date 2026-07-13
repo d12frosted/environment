@@ -57,6 +57,7 @@ brew "openssh"
 #
 
 brew "awk"
+brew "enchant"
 brew "gnu-sed"
 brew "gnumeric"
 brew "imagemagick"
@@ -87,6 +88,7 @@ brew "llvm"
 brew "make"
 brew "node"
 brew "go"
+brew "pkgconf"
 brew "shellcheck"
 brew "yarn"
 
