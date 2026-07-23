@@ -65,7 +65,12 @@ It is relative to `vulpea-directory', unless it is absolute.")
                  (file+headline vulpea-capture-inbox-file "Tasks")
                  (function vulpea-para-capture-task-template)
                  :clock-in t :clock-resume t)
-               t))
+               t)
+  ;; and of course, we need journal capture
+  (add-to-list 'org-capture-templates
+               '("j" "Journal" entry
+                 (function vulpea-capture--journal-target)
+                 "* %<%H:%M> %?")))
 
 ;; Capture templates and targets, and area creation, live in vulpea-para:
 ;; the task template (`vulpea-para-capture-task-template'), and the
@@ -95,6 +100,40 @@ It is relative to `vulpea-directory', unless it is absolute.")
 ;; `vulpea-para-capture-meeting-target' and
 ;; `vulpea-para-capture-meeting-template'.
 
+;; The journal capture target is a function, and `org-capture' calls it
+;; without arguments, so the date travels through a dynamic variable that
+;; `vulpea-capture-journal' let-binds around the capture.
+
+(declare-function vulpea-journal-capture-target "vulpea-journal" (&optional date))
+(declare-function vulpea-journal-date-next "vulpea-journal" ())
+(declare-function vulpea-journal-date-previous "vulpea-journal" ())
+
+(defvar vulpea-capture--journal-date nil
+  "Date to capture the journal entry for.
+
+When nil, the entry goes to today's journal note.")
+
+(defun vulpea-capture--journal-target ()
+  "Set buffer and point for the journal capture template.
+
+Targets `vulpea-capture--journal-date', or today when it is nil."
+  (vulpea-journal-capture-target vulpea-capture--journal-date))
+
+(defun vulpea-capture--journal-read-date ()
+  "Read a date to capture a journal entry for.
+
+Reading works just like in `vulpea-journal-date': future dates are
+not preferred, and \\`M-<left>' and \\`M-<right>' jump between
+dates that already have a journal entry."
+  (require 'vulpea-journal)
+  (minibuffer-with-setup-hook
+      (lambda ()
+        (local-set-key (kbd "M-<left>") #'vulpea-journal-date-previous)
+        (local-set-key (kbd "M-<right>") #'vulpea-journal-date-next))
+    (let ((org-read-date-prefer-future nil))
+      (org-time-string-to-time
+       (org-read-date nil nil nil "Journal date: ")))))
+
 ;;;###autoload
 (defun vulpea-capture-journal ()
   "Capture a journal entry.
@@ -102,11 +141,10 @@ It is relative to `vulpea-directory', unless it is absolute.")
 By default it uses current date to find a daily. With
 \\[universal-argument] user may select the date."
   (interactive)
-  (cond
-   ((equal current-prefix-arg '(4))     ; select date
-    (user-error "Not implemented"))
-   (t
-    (user-error "Not implemented"))))
+  (let ((vulpea-capture--journal-date
+         (when (equal current-prefix-arg '(4))
+           (vulpea-capture--journal-read-date))))
+    (org-capture nil "j")))
 
 (provide 'lib-vulpea-capture)
 ;;; lib-vulpea-capture.el ends here
