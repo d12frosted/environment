@@ -185,7 +185,6 @@
 (use-package org
   :ensure (org :host sourcehut :repo "bzg/org-mode")
   :hook ((org-mode . visual-line-mode)
-         (org-mode . visual-wrap-prefix-mode)
          (org-mode . org-indent-mode)
          ;; oh, how much I hate it in Org mode buffers
          (org-mode . editor-disable-electric-indent))
