@@ -455,12 +455,31 @@ function task_packages() {
   fi
 
   # bun
-  if command -v bun &> /dev/null; then
+  #
+  # eru runs under bash, where ~/.bun/bin is not on PATH (fish/config.fish adds
+  # it), so probe the binary directly instead of relying on `command -v`.
+  #
+  # The official installer appends its own "# bun" PATH block to
+  # ~/.config/fish/config.fish -- which is this repository -- unless it can
+  # already find bun on PATH once the binary is in place. fish/config.fish
+  # exports BUN_INSTALL and adds it to PATH already, so pre-seed PATH here to
+  # take the installer's early-exit path and leave the repo clean.
+  #
+  # Fetched from bun.com, bun's current primary domain; bun.sh serves the same
+  # script but is unreachable from some networks.
+  local bun_install="${BUN_INSTALL:-$HOME/.bun}"
+  if [[ -x "$bun_install/bin/bun" ]] || command -v bun &> /dev/null; then
     info "bun is already installed"
   else
     info "Installing bun..."
     if [[ "$DRY_RUN" != "true" ]]; then
-      curl -fsSL https://bun.sh/install | bash
+      local bun_installer=""
+      if bun_installer=$(curl -fsSL https://bun.com/install); then
+        BUN_INSTALL="$bun_install" PATH="$bun_install/bin:$PATH" \
+          bash -c "$bun_installer" || warn "Failed to install bun"
+      else
+        warn "Failed to download the bun installer"
+      fi
     fi
   fi
 
