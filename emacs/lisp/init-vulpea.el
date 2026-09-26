@@ -84,14 +84,15 @@
    vulpea-db-sync-scan-on-enable 'async
 
    ;; candidates
-   vulpea-find-default-candidates-source #'vulpea-find-candidates
-   vulpea-insert-default-candidates-source #'vulpea-insert-candidates
    vulpea-find-default-filter (when vulpea-db-index-heading-level
                                 (lambda (note)
                                   (= (vulpea-note-level note) 0)))
    vulpea-insert-default-filter (when vulpea-db-index-heading-level
                                   (lambda (note)
                                     (= (vulpea-note-level note) 0)))
+   ;; the filters look at the note only, so the candidate cache can
+   ;; serve them
+   vulpea-select-cache-default-filters t
 
    ;; templates
    vulpea-create-default-template
