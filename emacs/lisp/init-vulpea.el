@@ -61,7 +61,6 @@
   :hook ((before-save . vulpea-pre-save-hook)
          ;; we could use after-init; but we need to wait for elpaca to
          ;; finish its work
-         (elpaca-after-init . vulpea-db-setup-attachments)
          (elpaca-after-init . vulpea-db-autosync-mode)
          (org-mode . vulpea-title-change-detection-mode))
   :init

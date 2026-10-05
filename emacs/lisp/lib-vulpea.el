@@ -43,7 +43,6 @@
 (require 'lib-string)
 
 (require 'vulpea)
-(require 'org-attach)
 
 
 
@@ -424,62 +423,6 @@ Defaults to `string-from'."
    (format-time-string
     (org-time-stamp-format 'long 'inactive))
    'append))
-
-
-
-;;;###autoload
-(defun vulpea-db-setup-attachments ()
-  "Setup attachments table in Vulpea DB."
-  (message ">>> register")
-  (vulpea-db-register-extractor
-   (make-vulpea-extractor
-    :name 'vulpea-attachment-extractor
-    :version 1
-    :priority 50
-    ;; Works purely from note-data (:id, :attach-dir) - never touches
-    ;; the AST - so async extraction and element-granularity parsing
-    ;; stay enabled.  worker-safe: in full async mode the worker loads
-    ;; lib-vulpea and runs this extractor itself, keeping the
-    ;; zero-freeze write path.
-    :requires-ast nil
-    :worker-safe t
-    :worker-lib 'lib-vulpea
-    :schema '((attachments
-               [(note-id :not-null)
-                (file :not-null)
-                (hash :not-null)]
-               (:primary-key [note-id file])
-               (:foreign-key [note-id] :references notes [id]
-                :on-delete :cascade)))
-    :extract-fn #'vulpea-attachment-extractor-fn)))
-
-(defun vulpea-attachment-extractor-fn (_ctx note-data)
-  "Extract attachment data from CTX and NOTE-DATA.
-
-CTX is the parse context (vulpea-parse-ctx).
-NOTE-DATA is the plist of note data being processed.
-
-Returns NOTE-DATA, possibly with additional keys added."
-  (when-let* ((note-id (plist-get note-data :id))
-             (dir (plist-get note-data :attach-dir)))
-    (emacsql
-     (vulpea-db)
-     [:delete :from attachments
-      :where (= note-id $s1)]
-     note-id)
-
-    (when (file-exists-p dir)
-      (--each (org-attach-file-list dir)
-        (emacsql (vulpea-db)
-                 [:insert :into attachments :values $v1]
-                 (vector note-id
-                         it
-                         (s-trim
-                          (shell-command-to-string
-                           (format "sha1sum '%s' | cut -d ' ' -f 1 -"
-                                   (expand-file-name it dir))))))))
-
-    note-data))
 
 
 
