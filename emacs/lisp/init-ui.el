@@ -105,6 +105,7 @@
 
 (use-package minions
   :ensure t
+  :if env-interactive-p
   :init
   (minions-mode 1))
 
@@ -179,6 +180,7 @@
 
 (use-package modus-themes
   :ensure t
+  :if env-interactive-p
   :config
   (setq modus-themes-italic-constructs nil
         modus-themes-bold-constructs nil
@@ -234,6 +236,7 @@
 
 (use-package spacious-padding
   :ensure t
+  :if env-interactive-p
   :config
   (setq spacious-padding-widths
         '(:internal-border-width 14
@@ -249,6 +252,7 @@
 ;; briefly pulse the line I land on after a jump, so the eye can catch up
 (use-package pulsar
   :ensure t
+  :if env-interactive-p
   :init
   (setq pulsar-pulse t
         pulsar-delay 0.055

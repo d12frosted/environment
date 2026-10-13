@@ -35,10 +35,12 @@
 ;;
 ;;; Code:
 
+(require 'init-env)
 (require 'config-path)
 
 (use-package corfu
   :ensure t
+  :if env-interactive-p
   :commands (global-corfu-mode
              corfu-history-mode
              corfu-popupinfo-mode)
@@ -331,6 +333,7 @@
 
 (use-package apheleia
   :ensure t
+  :if env-interactive-p
   :diminish ""
   :defines
   apheleia-formatters

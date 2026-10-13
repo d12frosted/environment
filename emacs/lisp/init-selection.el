@@ -35,22 +35,26 @@
 ;;; Code:
 
 (require 'init-elpa)
+(require 'init-env)
 (require 'config-path)
 
 
 
 (use-package vertico
   :ensure (vertico :files ("*.el" "extensions/*.el"))
+  :if env-interactive-p
   :init
   (vertico-mode))
 
 (use-package vertico-repeat
   :ensure nil
+  :if env-interactive-p
   :bind ("M-R" . vertico-repeat)
   :hook ((minibuffer-setup . vertico-repeat-save)))
 
 (use-package savehist
   :ensure nil
+  :if env-interactive-p
   :init
   (savehist-mode))
 
@@ -109,6 +113,7 @@ _TOTAL arguments."
 
 (use-package orderless
   :ensure t
+  :if env-interactive-p
   :functions (orderless-define-completion-style)
   :config
   ;; Define orderless style with initialism by default
@@ -127,6 +132,7 @@ _TOTAL arguments."
 
 (use-package marginalia
   :ensure (:wait t)
+  :if env-interactive-p
   :demand t
   :commands (marginalia-mode
              marginalia-cycle)

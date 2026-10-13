@@ -35,6 +35,7 @@
 ;;
 ;;; Code:
 
+(require 'init-env)
 (require 'config-path)
 
 
@@ -139,6 +140,7 @@
 
 (use-package ukrainian-input-method
   :ensure (:host github :repo "d12frosted/emacs-ukrainian-input-method")
+  :if env-interactive-p
   :init
   (setq-default default-input-method "ukrainian"))
 

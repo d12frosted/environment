@@ -37,6 +37,12 @@
 (defconst env-graphic-p (display-graphic-p)
   "Non-nil if Emacs is running with a graphical display.")
 
+(defconst env-interactive-p (not noninteractive)
+  "Non-nil if Emacs is running interactively, i.e. not in batch mode.
+
+Use it to skip setup that makes sense only when there is someone to
+look at Emacs: themes, completion UI, global modes and so on.")
+
 (defconst env-rootp (string-equal "root" (getenv "USER"))
   "Non-nil if Emacs is running as root user.")
 

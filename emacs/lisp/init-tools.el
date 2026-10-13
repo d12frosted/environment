@@ -34,10 +34,12 @@
 ;;
 ;;; Code:
 
+(require 'init-env)
 (require 'config-vulpea)
 
 (use-package agent-shell
-  :ensure t)
+  :ensure t
+  :if env-interactive-p)
 
 (use-package restclient
   :ensure (:host github :repo "pashky/restclient.el" :files ("restclient.el" "restclient-jq.el"))

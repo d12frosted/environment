@@ -40,7 +40,22 @@
 (require 'buttercup)
 
 (defconst init-batch-test-interactive-features
-  '(combobulate-rules)
+  '(agent-shell
+    apheleia
+    combobulate-rules
+    corfu
+    difftastic-bindings
+    jinx
+    marginalia
+    minions
+    modus-themes
+    orderless
+    pulsar
+    savehist
+    spacious-padding
+    ukrainian-input-method
+    vertico
+    which-key)
   "Features that make sense only in an interactive session.")
 
 (describe "batch startup"
