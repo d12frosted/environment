@@ -121,6 +121,32 @@ FN is called with ARGS."
 
 (setq-default use-package-enable-imenu-support t)
 
+;; When a file is byte-compiled, `use-package' appends a form to the
+;; preface of a declaration that loads the package at compile time, so
+;; the compiler knows its symbols. Elpaca does not compile the body of
+;; an order: it keeps it as data and evaluates it once the package is
+;; ready. So in a compiled file that form runs at startup and every
+;; package is loaded eagerly, deferred or not. It is of no use in a
+;; body that is never compiled, so drop it.
+(defun elpa--drop-compile-time-forms (fn name keyword ensure rest state)
+  "Call FN without compile time forms in preface of REST.
+
+FN is the Elpaca handler of `:ensure', see it for the meaning of
+NAME, KEYWORD, ENSURE, REST and STATE. Nothing is dropped when
+ENSURE is nil, as then the body is not wrapped into an order."
+  (funcall fn name keyword ensure
+           (if (and ensure (plist-member rest :preface))
+               (plist-put (copy-sequence rest) :preface
+                          (seq-remove
+                           (lambda (form)
+                             (eq (car-safe form) 'eval-when-compile))
+                           (plist-get rest :preface)))
+             rest)
+           state))
+
+(advice-add 'elpaca-use-package--handler
+            :around #'elpa--drop-compile-time-forms)
+
 
 ;; critical packages
 
