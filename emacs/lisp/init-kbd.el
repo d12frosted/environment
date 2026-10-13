@@ -38,7 +38,7 @@
 (require 'init-env)
 
 (defmacro leader-def (&rest args)
-  "Define keybindings under the leader prefix (M-m).
+  "Define keybindings under the leader prefix (\\`M-m').
 ARGS are passed to `general-def' with leader prefix configuration."
   (declare (indent defun))
   `(,'general-def ,@args ,@'(:states nil
