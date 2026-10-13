@@ -62,5 +62,23 @@ Must stay in sync with WORK_STATUSES in tasogare's lib/types.ts.")
     (:key "works" :type note :multiple t :target-tags ("tasogare" "works"))
     (:key "related" :type note :multiple t :target-tags ("tasogare"))))
 
+(defconst tasogare-character-description-max-length 110
+  "Maximum length of the \"description\" field of tasogare character notes.
+The line is shown on a small hover card and has to fit it.")
+
+(vulpea-schema-define 'tasogare-character
+  :predicate (lambda (note)
+               (vulpea-note-tagged-all-p note "tasogare" "characters"))
+  :fields
+  `((:key "work" :type note :required t :target-tags ("tasogare" "works"))
+    (:key "description" :required t
+          :validate ,(lambda (value _note)
+                       (or (<= (length value)
+                               tasogare-character-description-max-length)
+                           (format "Field \"description\" is %d characters long, the limit is %d"
+                                   (length value)
+                                   tasogare-character-description-max-length))))
+    (:key "publish" :one-of ("true" "false"))))
+
 (provide 'lib-vulpea-schemas)
 ;;; lib-vulpea-schemas.el ends here
