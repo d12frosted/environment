@@ -39,10 +39,18 @@
 
 (require 'buttercup)
 
+(defconst init-batch-test-interactive-features
+  '(combobulate-rules)
+  "Features that make sense only in an interactive session.")
+
 (describe "batch startup"
   (it "loads init.el"
     (expect noninteractive :to-be-truthy)
     (expect (featurep 'init) :to-be-truthy))
+
+  (it "does not load features needed only for interactive use"
+    (expect (seq-filter #'featurep init-batch-test-interactive-features)
+            :to-equal nil))
 
   (it "does not open elpaca log buffer"
     (expect (get-buffer "*elpaca-log*") :to-be nil)))

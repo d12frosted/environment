@@ -222,8 +222,12 @@
    lsp-ui-doc-include-signature t
    lsp-ui-doc-position 'at-point))
 
+;; Autoloads of `combobulate' require all of its modules, so merely
+;; activating the package loads it. Skip them: the hooks and commands
+;; below cover everything they define.
 (use-package combobulate
-  :ensure (:host github :repo "mickeynp/combobulate")
+  :ensure (:host github :repo "mickeynp/combobulate" :autoloads nil)
+  :commands (combobulate-query-builder)
   :preface
   (setq combobulate-key-prefix "C-c o")
   :hook
