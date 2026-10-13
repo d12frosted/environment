@@ -41,7 +41,7 @@
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'reverse
       uniquify-separator " • "
-      uniquify-after-kill-buffer-p t
+      uniquify-after-kill-buffer-flag t
       uniquify-ignore-buffers-re "^\\*")
 
 ;; size of temporary buffers
