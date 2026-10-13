@@ -62,6 +62,7 @@ ARGS are passed to `general-def' with leader prefix configuration."
 
 (use-package which-key
   :ensure (:wait t)
+  :if env-interactive-p
   :demand t
   :diminish which-key-mode
   :init

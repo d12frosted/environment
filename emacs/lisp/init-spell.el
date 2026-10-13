@@ -34,8 +34,11 @@
 ;;
 ;;; Code:
 
+(require 'init-env)
+
 (use-package jinx
   :ensure t
+  :if env-interactive-p
   :commands (global-jinx-mode)
   :bind (("M-$" . jinx-correct)
          ("C-M-$" . jinx-languages))

@@ -34,6 +34,7 @@
 ;;
 ;;; Code:
 
+(require 'init-env)
 (require 'lib-hook)
 (require 'lib-vcs)
 (require 'config-path)
@@ -118,6 +119,7 @@
 ;; without eagerly loading magit
 (use-package difftastic-bindings
   :ensure difftastic
+  :if env-interactive-p
   :config
   (difftastic-bindings-mode))
 

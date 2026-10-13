@@ -108,6 +108,13 @@ Day to day I do not call Eldev directly: [[file:setup.sh][setup.sh]] wraps it (a
 that). The same commands run in CI, so the badge up top is just "does it still
 compile, lint, and test".
 
+All of this loads =init.el= in batch mode, so batch startup has to be cheap.
+Packages that only make sense when someone is looking at Emacs (theme,
+completion UI, =which-key=, spell checking and so on) are marked with
+=:if env-interactive-p= (see [[file:lisp/init-env.el][init-env.el]]): they are still installed, but
+not loaded in batch. The elpaca log buffer is turned off there as well. A test
+keeps it that way.
+
 ** elpaca: packages
 
 Packages are installed with [[https://github.com/progfolio/elpaca][elpaca]], bootstrapped in [[file:lisp/init-elpa.el][init-elpa.el]]. It is, in my
