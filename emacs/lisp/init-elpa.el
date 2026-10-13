@@ -50,6 +50,15 @@ When set, triggers autoload generation and verbose logging.")
 
 ;; bootstrap `elpaca'
 
+;; In batch mode init.el is loaded after `after-init-time' is set, so
+;; Elpaca treats every order as a fresh one, opens its log buffer and
+;; redraws it on each status change of each package. Nobody is there
+;; to look at it, and it takes most of the startup time (seconds
+;; instead of a fraction of a second).
+(defvar elpaca-log-functions)
+(when noninteractive
+  (setq elpaca-log-functions nil))
+
 (defvar elpaca-installer-version 0.12)
 (defvar elpaca-directory (expand-file-name "elpaca/" path-packages-dir))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
