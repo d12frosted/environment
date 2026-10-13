@@ -101,15 +101,16 @@ When set, triggers autoload generation and verbose logging.")
 (when elpa-bootstrap-p
   (elpaca-generate-autoloads "init" (expand-file-name "lisp/" path-emacs-dir)))
 
-(when elpa-bootstrap-p
-  (defun elpa--log-wrapper (fn &rest args)
-    "Add messages buffer logging to `elpaca--log'.
+(defun elpa--log-wrapper (fn &rest args)
+  "Add messages buffer logging to `elpaca--log'.
 
 FN is called with ARGS."
-    (let ((e (nth 0 args))
-          (txt (nth 1 args)))
-      (message "[%s] %s" (elpaca<-id e) txt))
-    (apply fn args))
+  (let ((e (nth 0 args))
+        (txt (nth 1 args)))
+    (message "[%s] %s" (elpaca<-id e) txt))
+  (apply fn args))
+
+(when elpa-bootstrap-p
   (advice-add 'elpaca--log :around #'elpa--log-wrapper))
 
 
