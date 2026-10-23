@@ -73,6 +73,11 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "$ERU_SOURCE")" && pwd)"
 mkdir -p "$HOME/.local/bin"
 
+# Checkout of this repo. On macOS it is $XDG_CONFIG_HOME itself; on a Coder
+# box ~/.config already belongs to other tools, so the repo lives elsewhere
+# (~/.environment) and repo files are found relative to the script.
+ERU_HOME="$SCRIPT_DIR"
+
 # Private counterpart of this repo. Optional: everything works without it,
 # machines with access get private bits (Claude CLAUDE.md, auto-memory).
 PRIVATE_CONFIG_HOME="${PRIVATE_CONFIG_HOME:-$HOME/.config-private}"
@@ -204,6 +209,11 @@ function is_linux() {
   [[ "$KERNEL_NAME" == "linux" ]]
 }
 
+# Coder workspace (the Coder agent sets CODER=true in every session)
+function is_coder() {
+  [[ "${CODER:-}" == "true" ]]
+}
+
 function check_homebrew() {
   command -v brew &> /dev/null
 }
@@ -264,6 +274,83 @@ function create_symlink() {
       warn "Failed to create symlink: $target"
       return 1
     fi
+  fi
+}
+
+# Claude Code names a project after its path, with every non-alphanumeric
+# character replaced by '-'.
+function claude_project_slug() {
+  printf '%s' "$1" | sed 's/[^A-Za-z0-9]/-/g'
+}
+
+# Merge the Claude settings we own (environment-private
+# claude/settings.coder.json) into ~/.claude/settings.json. Used where the
+# settings file can't be a symlink: on a Coder box other tools keep their
+# own hooks in it.
+function merge_claude_settings() {
+  local overlay="$PRIVATE_CONFIG_HOME/claude/settings.coder.json"
+  local target="$HOME/.claude/settings.json"
+
+  if [[ ! -f "$overlay" ]]; then
+    info "No Claude settings overlay at $overlay"
+    return 0
+  fi
+  if ! command -v jq &> /dev/null; then
+    warn "jq is not installed; skipping Claude settings merge"
+    return 0
+  fi
+  if [[ -L "$target" ]]; then
+    warn "$target is a symlink; not merging into it"
+    return 0
+  fi
+
+  local merged
+  merged=$(mktemp)
+  if [[ -f "$target" ]]; then
+    jq -s '.[0] * .[1]' "$target" "$overlay" > "$merged"
+  else
+    jq '.' "$overlay" > "$merged"
+  fi
+
+  if [[ -f "$target" ]] && cmp -s "$merged" "$target"; then
+    info "Claude settings already up to date"
+  elif [[ "$DRY_RUN" == "true" ]]; then
+    info "Would merge $overlay into $target"
+  else
+    mkdir -p "$(dirname "$target")"
+    if [[ -f "$target" ]]; then
+      cp "$target" "${target}.backup.$(date +%Y%m%d_%H%M%S)"
+    fi
+    cat "$merged" > "$target"
+    success "Merged Claude settings from $overlay"
+  fi
+  rm -f "$merged"
+}
+
+# Run bin/private-sync every 30 minutes from cron (Linux has no launchd;
+# Coder boxes have no systemd user session either).
+function install_private_sync_cron() {
+  if ! command -v crontab &> /dev/null; then
+    warn "crontab is not available; private-sync will only run with eru"
+    return 0
+  fi
+
+  local marker="# eru:private-sync"
+  local log_dir="$XDG_DATA_HOME/private-sync"
+  local line="*/30 * * * * PATH=/usr/local/bin:/usr/bin:/bin HOME=$HOME $ERU_HOME/bin/private-sync >>$log_dir/cron.log 2>&1 $marker"
+  local current
+  current=$(crontab -l 2>/dev/null || true)
+
+  if grep -qxF "$line" <<< "$current"; then
+    info "private-sync cron job already installed"
+    return 0
+  fi
+
+  info "Installing private-sync cron job..."
+  if [[ "$DRY_RUN" != "true" ]]; then
+    mkdir -p "$log_dir"
+    { grep -vF "$marker" <<< "$current" || true; echo "$line"; } | crontab -
+    success "Installed private-sync cron job"
   fi
 }
 
@@ -794,26 +881,54 @@ function task_symlinks() {
   fi
 
   # symlink eru.sh to eru
-  create_symlink "$XDG_CONFIG_HOME/eru.sh" "$HOME/.local/bin/eru"
+  create_symlink "$ERU_HOME/eru.sh" "$HOME/.local/bin/eru"
 
-  # Claude Code settings (doesn't support XDG, so symlink from ~/.config/claude)
-  if [[ -f "$XDG_CONFIG_HOME/claude/settings.json" ]]; then
+  # Claude Code settings (doesn't support XDG, so symlink from ~/.config/claude).
+  # On a Coder box the file also carries other tools' hooks, so only the keys
+  # we own are merged in (see merge_claude_settings).
+  if is_coder; then
+    merge_claude_settings
+  elif [[ -f "$ERU_HOME/claude/settings.json" ]]; then
     info "Setting up Claude Code symlinks..."
     mkdir -p "$HOME/.claude"
-    create_symlink "$XDG_CONFIG_HOME/claude/settings.json" "$HOME/.claude/settings.json"
+    create_symlink "$ERU_HOME/claude/settings.json" "$HOME/.claude/settings.json"
   fi
 
   # Private Claude Code configuration (see task_private)
   if [[ -f "$PRIVATE_CONFIG_HOME/claude/CLAUDE.md" ]]; then
     create_symlink "$PRIVATE_CONFIG_HOME/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
   fi
+  if [[ -d "$PRIVATE_CONFIG_HOME/claude/skills" ]]; then
+    for skill_dir in "$PRIVATE_CONFIG_HOME/claude/skills"/*/; do
+      [[ -d "$skill_dir" ]] || continue
+      create_symlink "${skill_dir%/}" "$HOME/.claude/skills/$(basename "${skill_dir%/}")"
+    done
+  fi
+
+  # Memory of other machines' projects stays in the repo only: linking it
+  # here would leave empty project dirs in ~/.claude/projects.
+  local home_slug
+  home_slug=$(claude_project_slug "$HOME")
   if [[ -d "$PRIVATE_CONFIG_HOME/claude/memory" ]]; then
     for memory_dir in "$PRIVATE_CONFIG_HOME/claude/memory"/*/; do
       [[ -d "$memory_dir" ]] || continue
       local slug
       slug=$(basename "${memory_dir%/}")
+      [[ "$slug" == "$home_slug"* ]] || continue
       create_symlink "${memory_dir%/}" "$HOME/.claude/projects/$slug/memory"
     done
+  fi
+
+  # Shared memory: several project slugs see one dir (see the aliases file)
+  local aliases="$PRIVATE_CONFIG_HOME/claude/memory-shared/aliases"
+  if [[ -f "$aliases" ]]; then
+    local alias_slug alias_name
+    while read -r alias_slug alias_name; do
+      [[ -z "$alias_slug" || "$alias_slug" == \#* ]] && continue
+      [[ "$alias_slug" == "$home_slug"* ]] || continue
+      create_symlink "$PRIVATE_CONFIG_HOME/claude/memory-shared/$alias_name" \
+        "$HOME/.claude/projects/$alias_slug/memory"
+    done < "$aliases"
   fi
 
   task_complete "symlinks" "Symlinks created"
@@ -824,14 +939,25 @@ function task_symlinks() {
 #
 
 function task_services() {
-  task_start "services" "Setting up launchd services"
+  task_start "services" "Setting up background services"
+
+  # Linux has no launchd; the only service we need there is private-sync
+  if is_linux; then
+    if [[ -d "$PRIVATE_CONFIG_HOME/.git" ]]; then
+      install_private_sync_cron
+    else
+      info "No private config at $PRIVATE_CONFIG_HOME; nothing to schedule"
+    fi
+    task_complete "services" "Cron services configured"
+    return 0
+  fi
 
   if ! is_macos; then
     task_skip "Not on macOS"
     return 0
   fi
 
-  local launchd_dir="$XDG_CONFIG_HOME/launchd"
+  local launchd_dir="$ERU_HOME/launchd"
   local agents_dir="$HOME/Library/LaunchAgents"
 
   if [[ ! -d "$launchd_dir" ]]; then
@@ -880,6 +1006,111 @@ function task_services() {
   done
 
   task_complete "services" "Launchd services configured"
+}
+
+#
+# Task: Coder
+#
+
+# Register $1 as an alias of shared memory dir $2 (see private-sync) and
+# link it. The aliases file is committed by the next private-sync.
+function register_memory_alias() {
+  local slug=$1
+  local name=$2
+  local aliases="$PRIVATE_CONFIG_HOME/claude/memory-shared/aliases"
+
+  [[ -d "$PRIVATE_CONFIG_HOME/claude/memory-shared/$name" ]] || return 0
+  if ! grep -q "^$slug " "$aliases" 2>/dev/null; then
+    info "Registering memory alias: $slug -> $name"
+    if [[ "$DRY_RUN" != "true" ]]; then
+      echo "$slug $name" >> "$aliases"
+    fi
+  fi
+  create_symlink "$PRIVATE_CONFIG_HOME/claude/memory-shared/$name" \
+    "$HOME/.claude/projects/$slug/memory"
+}
+
+# Warn (never fail) when something a Coder session needs is missing
+function coder_check() {
+  local what=$1
+  shift
+  if "$@" &> /dev/null; then
+    success "$what"
+  else
+    warn "$what: not ready"
+  fi
+}
+
+function task_coder() {
+  task_start "coder" "Setting up the Coder workspace"
+
+  if ! is_coder; then
+    task_skip "Not a Coder workspace"
+    return 0
+  fi
+
+  # The box's own git identity is the work one; commits to these repos
+  # should carry the identity from git/config. Coder also exports
+  # GIT_AUTHOR_*/GIT_COMMITTER_* into interactive sessions, which win over
+  # repo config, so this covers cron (private-sync); commits made by hand
+  # in a session need those variables overridden.
+  local git_name git_email repo
+  git_name=$(git config -f "$ERU_HOME/git/config" user.name || true)
+  git_email=$(git config -f "$ERU_HOME/git/config" user.email || true)
+  for repo in "$ERU_HOME" "$PRIVATE_CONFIG_HOME"; do
+    [[ -d "$repo/.git" && -n "$git_email" ]] || continue
+    if [[ "$DRY_RUN" != "true" ]]; then
+      git -C "$repo" config user.name "$git_name"
+      git -C "$repo" config user.email "$git_email"
+    fi
+  done
+
+  # Cron can't use the git SSH helper Coder injects into sessions (its path
+  # changes on every agent start), so private-sync pushes over HTTPS with
+  # the token gh keeps on disk
+  local gh_bin
+  gh_bin=$(command -v gh || true)
+  if [[ -d "$PRIVATE_CONFIG_HOME/.git" && -n "$gh_bin" ]]; then
+    local https_url
+    https_url=$(sed -E 's#^git@github.com:#https://github.com/#' <<< "$PRIVATE_CONFIG_REPO")
+    info "Pointing $PRIVATE_CONFIG_HOME at $https_url with gh credentials..."
+    if [[ "$DRY_RUN" != "true" ]]; then
+      git -C "$PRIVATE_CONFIG_HOME" remote set-url origin "$https_url"
+      git -C "$PRIVATE_CONFIG_HOME" config --unset-all credential.https://github.com.helper || true
+      git -C "$PRIVATE_CONFIG_HOME" config --add credential.https://github.com.helper ""
+      git -C "$PRIVATE_CONFIG_HOME" config --add credential.https://github.com.helper "!$gh_bin auth git-credential"
+    fi
+  fi
+
+  # ~/work: where Claude.app sessions run (see environment-private coder/work)
+  local work_dir="$HOME/work"
+  local private_work="$PRIVATE_CONFIG_HOME/coder/work"
+  if [[ -d "$private_work" ]]; then
+    create_symlink "$private_work/CLAUDE.md" "$work_dir/CLAUDE.md"
+    local brief
+    for brief in "$private_work/leads"/*.md; do
+      [[ -f "$brief" ]] || continue
+      create_symlink "$brief" "$work_dir/leads/$(basename "$brief")"
+    done
+  fi
+
+  # Project checkouts and work-specific checks live in the private repo; the
+  # script is sourced so it can use the helpers above (create_symlink,
+  # register_memory_alias, coder_check, info/warn, DRY_RUN)
+  local private_setup="$PRIVATE_CONFIG_HOME/coder/setup.sh"
+  if [[ -f "$private_setup" ]]; then
+    info "Running $private_setup..."
+    # shellcheck source=/dev/null
+    source "$private_setup"
+  fi
+
+  # Things Claude sessions on this box rely on
+  coder_check "gh is logged in" gh auth status
+  coder_check "claude is logged in" claude auth status
+  coder_check "uv is installed" command -v uv
+  coder_check "bun is installed" command -v bun
+
+  task_complete "coder" "Coder workspace ready"
 }
 
 #
@@ -1298,7 +1529,7 @@ function run_doctor() {
 # Check if a task name is valid
 function is_valid_task() {
   case "$1" in
-    homebrew|packages|macos|shell|wm|devtools|private|symlinks|services|emacs)
+    homebrew|packages|macos|shell|wm|devtools|private|symlinks|services|coder|emacs)
       return 0
       ;;
     *)
@@ -1319,13 +1550,14 @@ function get_task_function() {
     private) echo "task_private" ;;
     symlinks) echo "task_symlinks" ;;
     services) echo "task_services" ;;
+    coder) echo "task_coder" ;;
     emacs) echo "task_emacs" ;;
     *) return 1 ;;
   esac
 }
 
 # Default task order for full installation
-DEFAULT_TASKS=(homebrew packages macos shell wm devtools private symlinks services emacs)
+DEFAULT_TASKS=(homebrew packages macos shell wm devtools private symlinks services coder emacs)
 
 #
 # Main Execution
@@ -1349,7 +1581,8 @@ Tasks for install/upgrade (run all if none specified):
   devtools          Set up git, ssh, gpg
   private           Sync private config (clone environment-private, adopt Claude memory)
   symlinks          Create symlinks
-  services          Set up launchd services
+  services          Set up launchd services (cron for private-sync on Linux)
+  coder             Set up a Coder workspace (~/work, private setup, checks)
   emacs             Set up Emacs (supports emacs:subtask syntax)
 
 Checks for doctor (run all if none specified):
