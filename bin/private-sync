@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 #
-# Sync ~/.config-private across machines. Runs from launchd (see
-# io.d12frosted.private-sync.plist) and from eru's private task.
+# Sync ~/.config-private across machines. Runs from launchd on macOS (see
+# io.d12frosted.private-sync.plist), from cron on Linux (see eru's services
+# task) and from eru's private task.
 #
-# Auto-synced content is limited to claude/memory: it is machine-generated,
-# so there is nothing to review. Other private files (CLAUDE.md, etc.) are
-# committed manually.
+# Auto-synced content is limited to claude/memory and claude/memory-shared:
+# it is machine-generated, so there is nothing to review. Other private
+# files (CLAUDE.md, skills, etc.) are committed manually.
 
 set -e
 
@@ -55,6 +56,58 @@ trap 'rm -rf "$LOCK_DIR"' EXIT
 
 cd "$PRIVATE_CONFIG_HOME"
 
+# Claude names a project after its path with every non-alphanumeric
+# character replaced by '-'; this machine's projects all start with the
+# slug of $HOME.
+HOME_SLUG=$(printf '%s' "$HOME" | sed 's/[^A-Za-z0-9]/-/g')
+
+# Memory that is not worth keeping: projects under temp dirs, Claude.app
+# scratch workspaces, plus any glob listed in claude/memory-ignore (one per
+# line) for machine-specific throwaways.
+IGNORE_FILE="$PRIVATE_CONFIG_HOME/claude/memory-ignore"
+is_throwaway_slug() {
+  case "$1" in
+    -tmp-* | -private-tmp-* | -private-var-folders-* | *scratch*) return 0 ;;
+  esac
+  [ -f "$IGNORE_FILE" ] || return 1
+  while read -r pattern; do
+    case "$pattern" in '' | '#'*) continue ;; esac
+    # shellcheck disable=SC2254 # the pattern is a glob on purpose
+    case "$1" in $pattern) return 0 ;; esac
+  done <"$IGNORE_FILE"
+  return 1
+}
+
+# Only link memory that belongs to this machine's home; other machines'
+# projects would be empty clutter in ~/.claude/projects here.
+is_local_slug() {
+  case "$1" in
+    "$HOME_SLUG"*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+# Link $1 (a dir in this repo) as the memory of project $2, unless the
+# project already has memory of its own.
+link_memory() {
+  target="$HOME/.claude/projects/$2/memory"
+  if [ ! -e "$target" ] && [ ! -L "$target" ]; then
+    log "Linking Claude memory: $2"
+    mkdir -p "$(dirname "$target")"
+    ln -s "$1" "$target"
+  elif [ -d "$target" ] && [ ! -L "$target" ]; then
+    log "WARN: $target is a local dir, not linked to $1; resolve manually"
+  fi
+}
+
+# Shared memory: claude/memory-shared/<name>/ holds memory that several
+# project slugs see (other checkouts, worktree caches); the aliases file
+# maps each slug to its dir, one "<slug> <name>" per line.
+ALIASES="$PRIVATE_CONFIG_HOME/claude/memory-shared/aliases"
+is_alias_slug() {
+  [ -f "$ALIASES" ] && grep -q "^$1 " "$ALIASES"
+}
+
 # Adopt Claude auto-memory directories that exist locally but are not in
 # the repo yet: move them in and leave a symlink behind.
 if [ -d "$HOME/.claude/projects" ]; then
@@ -64,6 +117,13 @@ if [ -d "$HOME/.claude/projects" ]; then
     [ -L "$memory_dir" ] && continue
 
     slug=$(basename "${project_dir%/}")
+    if is_throwaway_slug "$slug" || [ -z "$(ls -A "$memory_dir")" ]; then
+      continue
+    fi
+    if is_alias_slug "$slug"; then
+      log "WARN: $memory_dir should be shared memory (see $ALIASES); resolve manually"
+      continue
+    fi
     repo_dir="$PRIVATE_CONFIG_HOME/claude/memory/$slug"
     if [ -e "$repo_dir" ]; then
       log "WARN: both $memory_dir and $repo_dir exist; resolve manually"
@@ -77,8 +137,8 @@ if [ -d "$HOME/.claude/projects" ]; then
   done
 fi
 
-if [ -n "$(git status --porcelain -- claude/memory)" ]; then
-  git add claude/memory
+if [ -n "$(git status --porcelain -- claude/memory claude/memory-shared)" ]; then
+  git add claude/memory claude/memory-shared
   git commit -m "chore: sync claude memory from $(hostname -s)"
   log "Committed claude memory changes"
 else
@@ -105,13 +165,18 @@ if [ -d "$PRIVATE_CONFIG_HOME/claude/memory" ]; then
   for repo_dir in "$PRIVATE_CONFIG_HOME/claude/memory"/*/; do
     [ -d "$repo_dir" ] || continue
     slug=$(basename "${repo_dir%/}")
-    target="$HOME/.claude/projects/$slug/memory"
-    if [ ! -e "$target" ] && [ ! -L "$target" ]; then
-      log "Linking Claude memory: $slug"
-      mkdir -p "$(dirname "$target")"
-      ln -s "${repo_dir%/}" "$target"
-    fi
+    is_local_slug "$slug" || continue
+    link_memory "${repo_dir%/}" "$slug"
   done
+fi
+if [ -f "$ALIASES" ]; then
+  while read -r slug name; do
+    case "$slug" in '' | '#'*) continue ;; esac
+    is_local_slug "$slug" || continue
+    shared_dir="$PRIVATE_CONFIG_HOME/claude/memory-shared/$name"
+    [ -d "$shared_dir" ] || continue
+    link_memory "$shared_dir" "$slug"
+  done <"$ALIASES"
 fi
 
 if [ -n "$(git log origin/master..master --oneline)" ]; then

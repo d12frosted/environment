@@ -135,9 +135,11 @@ Set up development tools:
 ```
 
 ### `private`
-Sync private configuration from a separate private repo (cloned to `~/.config-private`). Skipped gracefully when the repo is not accessible, so public users of this repo are not affected. The sync itself lives in `bin/private-sync`: pull (rebase), adopt local Claude auto-memory directories into the repo (move them in, leave symlinks behind), auto-commit and push memory changes, and link memory pulled from other machines. Memory is machine-generated so there is nothing to review; other private files (CLAUDE.md, etc.) are committed manually.
+Sync private configuration from a separate private repo (cloned to `~/.config-private`). Skipped gracefully when the repo is not accessible, so public users of this repo are not affected. The sync itself lives in `bin/private-sync`: pull (rebase), adopt local Claude auto-memory directories into the repo (move them in, leave symlinks behind), auto-commit and push memory changes, and link memory pulled from other machines. Memory is machine-generated so there is nothing to review; other private files (CLAUDE.md, skills, etc.) are committed manually.
 
-The same script runs every 30 minutes via launchd (`io.d12frosted.private-sync`, installed by the `services` task) and sends a notification via terminal-notifier when a sync needs manual attention (rebase conflict). Offline hiccups are only logged and retried on the next run.
+Not every memory directory is worth keeping. Projects under temp dirs, Claude.app scratch workspaces, empty directories and any glob listed in the private repo's `claude/memory-ignore` are never adopted. Memory is only linked for projects under this machine's `$HOME`, so other machines' projects don't show up as empty entries in `~/.claude/projects`. Memory that several projects should share (the same repo checked out in different places) lives in `claude/memory-shared/<name>/`, and `claude/memory-shared/aliases` maps each project slug to it.
+
+The same script runs every 30 minutes via launchd on macOS (`io.d12frosted.private-sync`) or cron on Linux, both installed by the `services` task, and sends a notification via terminal-notifier when a sync needs manual attention (rebase conflict). Offline hiccups are only logged and retried on the next run.
 
 ```bash
 ./eru.sh install private
@@ -150,7 +152,7 @@ Some programs (like GnuPG and SSH) don't support XDG Base Directory spec and exp
 
 - **GnuPG**: `~/.config/gnupg/*` → `~/.gnupg/*`
 - **SSH**: `~/.config/ssh/config` → `~/.ssh/config`
-- **Claude Code**: `~/.config/claude/settings.json` → `~/.claude/settings.json`, plus private bits from `~/.config-private` (CLAUDE.md, per-project auto-memory) when available
+- **Claude Code**: `~/.config/claude/settings.json` → `~/.claude/settings.json`, plus private bits from `~/.config-private` (CLAUDE.md, skills, per-project and shared auto-memory) when available. On a Coder workspace the settings file also holds other tools' hooks, so only the keys from the private `claude/settings.coder.json` are merged into it (with `jq`) instead of linking it
 
 Setup:
 
@@ -166,9 +168,10 @@ Features:
 See [gnupg/README.md](gnupg/README.md) and [ssh/README.md](ssh/README.md) for details.
 
 ### `services`
-Set up launchd services (macOS only). Symlinks every `launchd/*.plist` into
+Set up background services. On macOS it symlinks every `launchd/*.plist` into
 `~/Library/LaunchAgents`, creates any referenced log directories, and reloads
-the services via `launchctl`.
+the services via `launchctl`. On Linux there is no launchd, so it installs one
+crontab line that runs `bin/private-sync` every 30 minutes.
 
 ```bash
 ./eru.sh install services
@@ -180,6 +183,21 @@ debounces file changes and kicks off a sync shortly after you stop editing, so a
 burst of edits becomes a single push. Both funnel through `vulpea-sync`, which
 takes a lock so runs never overlap. See [docs/vulpea-sync.md](docs/vulpea-sync.md)
 for the full flow and design rationale.
+
+### `coder`
+Set up a [Coder](https://coder.com) workspace (skipped everywhere else). On such a box `~/.config` already belongs to other tools, so the repo is cloned to `~/.environment` instead, and eru finds its files relative to itself:
+
+```bash
+git clone https://github.com/d12frosted/environment.git ~/.environment
+~/.environment/eru.sh install private symlinks services coder
+```
+
+The task:
+- sets the git identity from `git/config` on this repo and the private one (a work box usually has a different global identity)
+- points the private repo at HTTPS with gh's stored token, because cron can't use the git SSH helper Coder injects into sessions
+- links `~/work/CLAUDE.md` and lead briefs from the private repo's `coder/work/`
+- sources the private repo's `coder/setup.sh` when it exists, for project checkouts and work-specific checks
+- warns (never fails) when gh, claude, uv or bun aren't ready
 
 ### `emacs`
 Set up Emacs configuration by running `emacs/setup.sh` (bootstraps packages and
