@@ -9,7 +9,9 @@ Runs on the laptop (launchd on macOS, see io.d12frosted.box-bridge.plist):
 - serves a small helper on 127.0.0.1 and reverse-forwards it to a box port,
   so `box-open` on the box can open URLs in the laptop browser. When the URL
   mentions localhost:<port> (an OAuth redirect_uri, a dev server), that port
-  is forwarded first, so the browser's redirect reaches the box.
+  is forwarded first, so the browser's redirect reaches the box. box-open
+  closes the forward once nothing listens on the port on the box any more
+  (the login finished); a TTL drops it when the box never says so.
 
 Usage:
   box-bridge run      connect and keep the bridge up (what launchd runs)
@@ -28,12 +30,14 @@ machines that have no box.
 Python 3.9+ standard library only (the macOS Command Line Tools python).
 """
 
+import errno
 import http.server
 import json
 import os
 import re
 import secrets
 import signal
+import socket
 import subprocess
 import sys
 import threading
@@ -48,9 +52,10 @@ CONFIG_PATH = os.environ.get("BOX_BRIDGE_CONFIG") or os.path.expanduser(
 )
 # Command that opens a URL on this machine; the URL is appended
 OPENER = os.environ.get("BOX_BRIDGE_OPENER") or ("open" if sys.platform == "darwin" else "xdg-open")
-# Forwards added for a URL are dropped after this long: callbacks are quick,
-# and a stale forward would keep the laptop port busy
-DYNAMIC_FORWARD_TTL = int(os.environ.get("BOX_BRIDGE_FORWARD_TTL", "900"))
+# Forwards added for a URL are dropped after this long when box-open never
+# closes them (box restart, dropped connection): a stale forward would keep
+# the laptop port busy
+DYNAMIC_FORWARD_TTL = float(os.environ.get("BOX_BRIDGE_FORWARD_TTL", "600"))
 # Where box-open finds the helper; read by box-open, so keep both in sync
 BOX_ENDPOINT = "${XDG_STATE_HOME:-$HOME/.local/state}/box-bridge/endpoint"
 
@@ -141,6 +146,20 @@ def localhost_ports(url):
     return ports
 
 
+def port_busy(port):
+    """Whether something on this machine already listens on loopback PORT
+    (IPv4 or IPv6; a machine without IPv6 just skips that check)."""
+    for family, address in ((socket.AF_INET, "127.0.0.1"), (socket.AF_INET6, "::1")):
+        try:
+            with socket.socket(family, socket.SOCK_STREAM) as s:
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                s.bind((address, port))
+        except OSError as error:
+            if error.errno == errno.EADDRINUSE:
+                return True
+    return False
+
+
 #
 # ssh
 #
@@ -156,6 +175,10 @@ class Connection:
         self.lock = threading.Lock()
         self.dynamic = {}  # laptop port -> timer that cancels it
         self.box_port = None
+        self.ttl = DYNAMIC_FORWARD_TTL
+
+    def port_busy(self, port):
+        return port_busy(port)
 
     def ssh_args(self, *args, command=None):
         argv = ["ssh", "-S", self.control]
@@ -212,30 +235,36 @@ class Connection:
         self.mux("-O", "cancel", "-L", "{}:127.0.0.1:{}".format(local, remote))
 
     def forward_for_url(self, port):
-        """Forward laptop PORT to the same box port for a while. Returns an
-        error string, or None when the port is forwarded."""
+        """Forward laptop PORT to the same box port until close() or the TTL.
+        Returns (status, message), status one of added, exists, static,
+        error."""
         with self.lock:
+            if port in (local for local, _ in self.config.forwards):
+                return "static", "localhost:{} is always forwarded".format(port)
             if port in self.dynamic:
-                self.dynamic[port].cancel()
-            elif port in (local for local, _ in self.config.forwards):
-                return None
-            else:
-                error = self.forward(port, port)
-                if error:
-                    return error
-                log("forwarded localhost:{} for a URL".format(port))
-            timer = threading.Timer(DYNAMIC_FORWARD_TTL, self.expire, (port,))
+                return "exists", "localhost:{} is already forwarded".format(port)
+            if self.port_busy(port):
+                return "error", "localhost:{} is busy on the laptop; not forwarded".format(port)
+            error = self.forward(port, port)
+            if error:
+                return "error", "could not forward localhost:{}: {}".format(port, error)
+            timer = threading.Timer(self.ttl, self.close, (port, "TTL"))
             timer.daemon = True
             self.dynamic[port] = timer
             timer.start()
-        return None
+        log("forwarded localhost:{} for a URL".format(port))
+        return "added", "forwarded localhost:{} to the box".format(port)
 
-    def expire(self, port):
+    def close(self, port, reason="box-open"):
+        """Drop a forward made for a URL. Returns whether there was one."""
         with self.lock:
-            if self.dynamic.pop(port, None) is None:
-                return
+            timer = self.dynamic.pop(port, None)
+            if timer is None:
+                return False
+            timer.cancel()
             self.cancel(port, port)
-        log("dropped forward localhost:{}".format(port))
+        log("dropped forward localhost:{} ({})".format(port, reason))
+        return True
 
     def reverse(self, helper_port):
         """Reverse-forward the helper to a box port the server picks."""
@@ -274,14 +303,20 @@ class Helper:
 
         class Handler(http.server.BaseHTTPRequestHandler):
             def do_POST(self):
-                if self.path != "/open":
+                if self.path not in ("/open", "/close"):
                     return self.reply(404, "unknown path")
                 if not secrets.compare_digest(self.headers.get("X-Box-Bridge-Token", ""), helper.token):
                     return self.reply(403, "bad token")
                 length = int(self.headers.get("Content-Length") or 0)
-                url = self.rfile.read(min(length, 65536)).decode("utf-8", "replace").strip()
-                status, message = helper.open(url)
-                self.reply(status, message)
+                body = self.rfile.read(min(length, 65536)).decode("utf-8", "replace").strip()
+                if self.path == "/open":
+                    self.reply(*helper.open(body))
+                elif not body.isdigit():
+                    self.reply(400, "close takes a port")
+                elif helper.connection.close(int(body)):
+                    self.reply(200, "dropped forward localhost:{}".format(body))
+                else:
+                    self.reply(404, "no forward for localhost:{} to drop".format(body))
 
             def reply(self, status, message):
                 body = (message + "\n").encode()
@@ -305,16 +340,12 @@ class Helper:
             return 400, "only http(s) URLs are opened"
         lines = []
         for port in localhost_ports(url):
-            error = self.connection.forward_for_url(port)
-            if error:
-                lines.append("could not forward localhost:{}: {}".format(port, error))
-            else:
-                lines.append("forwarded localhost:{} to the box".format(port))
+            lines.append(self.connection.forward_for_url(port)[1])
         result = subprocess.run(OPENER.split() + [url], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         if result.returncode != 0:
             log("opener failed for a URL: " + result.stderr.decode(errors="replace").strip())
             return 502, "\n".join(lines + ["the laptop could not open the URL"])
-        log("opened a URL ({} forwards)".format(len(lines)))
+        log("; ".join(["opened a URL"] + lines))
         return 200, "\n".join(lines + ["opened in the laptop browser"])
 
 

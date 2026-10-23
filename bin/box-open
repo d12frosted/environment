@@ -6,9 +6,42 @@
 # box-bridge on the laptop reverse-forwards its helper to a box port and
 # writes that port and a token to the endpoint file. When the laptop is not
 # connected, the URL is printed instead so it can be opened by hand.
+#
+# When the laptop forwarded a localhost port for the URL (an OAuth
+# callback), a detached watcher closes that forward once nothing on the box
+# listens on the port any more, i.e. the CLI got its callback and quit.
+
+endpoint="${XDG_STATE_HOME:-$HOME/.local/state}/box-bridge/endpoint"
+# Give up watching after this long; the laptop drops the forward by then
+watch_limit=600
+
+# POST $2 to the helper's /$1. The token goes through a file, not argv, so
+# ps does not show it.
+post() {
+  helper_port=$(sed -n 's/^port=//p' "$endpoint" 2>/dev/null)
+  [ -n "$helper_port" ] || return 1
+  header=$(mktemp) || return 1
+  sed -n 's/^header=//p' "$endpoint" > "$header"
+  printf '%s' "$2" |
+    curl -sS --fail-with-body --max-time 20 -H @"$header" --data-binary @- \
+      "http://127.0.0.1:$helper_port/$1"
+  post_status=$?
+  rm -f "$header"
+  return "$post_status"
+}
+
+if [ "${1:-}" = "--watch" ]; then
+  port=$2
+  waited=0
+  while [ "$waited" -lt "$watch_limit" ] && ss -ltnH "sport = :$port" | grep -q .; do
+    sleep 2
+    waited=$((waited + 2))
+  done
+  post close "$port"
+  exit 0
+fi
 
 url=${1:-}
-endpoint="${XDG_STATE_HOME:-$HOME/.local/state}/box-bridge/endpoint"
 
 fallback() {
   echo "box-open: $1; open this URL on your laptop:" >&2
@@ -27,18 +60,16 @@ case "$url" in
 esac
 
 [ -r "$endpoint" ] || fallback "box-bridge has never connected"
-port=$(sed -n 's/^port=//p' "$endpoint")
-[ -n "$port" ] || fallback "box-bridge endpoint is broken"
 
-# The token goes through a file, not argv, so ps does not show it
-header=$(mktemp) || fallback "mktemp failed"
-trap 'rm -f "$header"' EXIT
-sed -n 's/^header=//p' "$endpoint" > "$header"
-
-if reply=$(printf '%s' "$url" |
-  curl -sS --fail-with-body --max-time 20 -H @"$header" --data-binary @- \
-    "http://127.0.0.1:$port/open" 2>&1); then
-  printf '%s\n' "$reply" | sed 's/^/box-open: /' >&2
-else
+if ! reply=$(post open "$url" 2>&1); then
   fallback "the laptop is not reachable ($(printf '%s' "$reply" | tail -n 1))"
 fi
+printf '%s\n' "$reply" | sed 's/^/box-open: /' >&2
+
+command -v ss > /dev/null || exit 0
+detach="nohup"
+command -v setsid > /dev/null && detach=setsid
+for port in $(printf '%s\n' "$reply" | sed -n 's/^forwarded localhost:\([0-9]*\) .*/\1/p'); do
+  "$detach" "$0" --watch "$port" < /dev/null > /dev/null 2>&1 &
+done
+exit 0

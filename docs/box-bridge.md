@@ -21,7 +21,9 @@ box-bridge run (launchd)
     -R 127.0.0.1:<any>:<helper>              <---  box-open -> 127.0.0.1:<any>
   helper on 127.0.0.1:<helper>                     (port + token in
     `ssh -O forward -L <cb>...` per URL             ~/.local/state/box-bridge/endpoint)
-    open <url>
+    open <url>                                     box-open --watch <cb>
+    `ssh -O cancel -L <cb>...`               <---    (POST /close once nothing
+                                                      listens on <cb> any more)
 ```
 
 - `bin/box-bridge` runs on the laptop. It starts one ssh master connection
@@ -33,8 +35,17 @@ box-bridge run (launchd)
 - The helper listens on `127.0.0.1` only and takes `POST /open` with the
   token. It forwards every `localhost`/`127.0.0.1`/`[::1]` port mentioned in
   the URL (also percent-encoded inside `redirect_uri`, `next`, ...) to the
-  same port on the box, then runs `open <url>`. Those forwards are dropped
-  after 15 minutes so the laptop ports do not stay busy.
+  same port on the box, then runs `open <url>`. A port that is already
+  taken on the laptop is not forwarded (the URL still opens), and a port
+  that is already forwarded is left as it is. Configured forwards are never
+  touched.
+- Per-URL forwards are short-lived. The box knows when a login is done: the
+  CLI's callback listener goes away. So for every port it forwarded,
+  `box-open` leaves a detached watcher that polls `ss` and asks the helper to
+  drop the forward (`POST /close`, `ssh -O cancel`) once nothing listens on
+  the port. When the box never reports back (box restart, dropped
+  connection), the helper drops the forward after 10 minutes anyway
+  (`BOX_BRIDGE_FORWARD_TTL`).
 - `bin/box-open` runs on the box. eru's `coder` task links it to
   `~/.local/bin/box-open` and makes `~/.local/bin/xdg-open` and
   `coderplex-open` tiny wrappers around it. When the laptop is not connected
@@ -84,8 +95,6 @@ calling `xdg-open` (Claude Code's `env` setting, for example).
 - `dpx auth login` picks the token-paste flow on any box with `CODER` set.
   Run it as `CODER=false dpx auth login` to get the browser flow, which then
   completes through the bridge.
-- A per-URL forward fails when that port is already taken on the laptop;
-  `box-open` prints the error and the URL still opens.
 - Only one laptop at a time: the endpoint file on the box points at the last
   laptop that connected.
 - `box-bridge` needs Python 3.9+ (the macOS Command Line Tools python is
