@@ -1030,6 +1030,29 @@ function register_memory_alias() {
     "$HOME/.claude/projects/$slug/memory"
 }
 
+# Make $1 a tiny script that hands its arguments to box-open. A copy, not
+# a symlink: coderplex rewrites ~/.local/bin/xdg-open and coderplex-open
+# whenever its daemon starts, and that write would go through a symlink
+# into this repo.
+function install_box_open_wrapper() {
+  local target=$1
+  local wrapper
+  wrapper=$(printf '#!/bin/sh\n# Installed by eru: open URLs in the laptop browser (bin/box-open)\nexec "%s" "$@"' \
+    "$HOME/.local/bin/box-open")
+
+  if [[ -f "$target" && ! -L "$target" && "$(cat "$target")" == "$wrapper" ]]; then
+    info "$target already uses box-open"
+    return 0
+  fi
+  info "Pointing $target at box-open..."
+  if [[ "$DRY_RUN" != "true" ]]; then
+    mkdir -p "$(dirname "$target")"
+    rm -f "$target"
+    printf '%s\n' "$wrapper" > "$target"
+    chmod 755 "$target"
+  fi
+}
+
 # Warn (never fail) when something a Coder session needs is missing
 function coder_check() {
   local what=$1
@@ -1094,6 +1117,11 @@ function task_coder() {
     done
   fi
 
+  # URLs opened on the box go to the laptop browser through box-bridge
+  create_symlink "$ERU_HOME/bin/box-open" "$HOME/.local/bin/box-open"
+  install_box_open_wrapper "$HOME/.local/bin/xdg-open"
+  install_box_open_wrapper "$HOME/.local/bin/coderplex-open"
+
   # Project checkouts and work-specific checks live in the private repo; the
   # script is sourced so it can use the helpers above (create_symlink,
   # register_memory_alias, coder_check, info/warn, DRY_RUN)
@@ -1109,6 +1137,7 @@ function task_coder() {
   coder_check "claude is logged in" claude auth status
   coder_check "uv is installed" command -v uv
   coder_check "bun is installed" command -v bun
+  coder_check "xdg-open goes through box-open" grep -q box-open "$HOME/.local/bin/xdg-open"
 
   task_complete "coder" "Coder workspace ready"
 }

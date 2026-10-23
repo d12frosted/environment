@@ -64,6 +64,7 @@ cd ~/.config
 ├── macos/
 │   └── defaults.sh          # macOS system preferences
 ├── launchd/                 # launchd service definitions (*.plist)
+├── bin/                     # Scripts used by services and tasks (private-sync, box-bridge, ...)
 ├── gnupg/                   # GnuPG configuration (symlinked to ~/.gnupg)
 │   ├── ...
 │   └── README.md
@@ -184,6 +185,13 @@ burst of edits becomes a single push. Both funnel through `vulpea-sync`, which
 takes a lock so runs never overlap. See [docs/vulpea-sync.md](docs/vulpea-sync.md)
 for the full flow and design rationale.
 
+The box bridge lives here too. `bin/box-bridge` (`io.d12frosted.box-bridge`)
+keeps one ssh connection to a remote dev box and reconnects after sleep or a
+network drop. Over it, it forwards laptop ports to the box, and lets the box
+open URLs in the laptop browser, forwarding OAuth callback ports on the way.
+It reads `~/.config-private/box-bridge/config` and stays idle without it. See
+[docs/box-bridge.md](docs/box-bridge.md).
+
 ### `coder`
 Set up a [Coder](https://coder.com) workspace (skipped everywhere else). On such a box `~/.config` already belongs to other tools, so the repo is cloned to `~/.environment` instead, and eru finds its files relative to itself:
 
@@ -196,6 +204,7 @@ The task:
 - sets the git identity from `git/config` on this repo and the private one (a work box usually has a different global identity)
 - points the private repo at HTTPS with gh's stored token, because cron can't use the git SSH helper Coder injects into sessions
 - links `~/work/CLAUDE.md` and lead briefs from the private repo's `coder/work/`
+- installs `box-open` and makes `~/.local/bin/xdg-open` and `coderplex-open` hand URLs to it, so they open in the laptop browser through box-bridge (see [docs/box-bridge.md](docs/box-bridge.md))
 - sources the private repo's `coder/setup.sh` when it exists, for project checkouts and work-specific checks
 - warns (never fails) when gh, claude, uv or bun aren't ready
 

@@ -1,0 +1,429 @@
+#!/usr/bin/env python3
+"""Keep a laptop bridged to a remote dev box over one ssh connection.
+
+Runs on the laptop (launchd on macOS, see io.d12frosted.box-bridge.plist):
+
+- holds one ssh ControlMaster connection to the box and reconnects when it
+  drops (sleep, network change), with ServerAlive to notice dead links;
+- forwards the laptop ports listed in the config to the box;
+- serves a small helper on 127.0.0.1 and reverse-forwards it to a box port,
+  so `box-open` on the box can open URLs in the laptop browser. When the URL
+  mentions localhost:<port> (an OAuth redirect_uri, a dev server), that port
+  is forwarded first, so the browser's redirect reaches the box.
+
+Usage:
+  box-bridge run      connect and keep the bridge up (what launchd runs)
+  box-bridge status   show the connection and its forwards
+
+Config (BOX_BRIDGE_CONFIG, default ~/.config-private/box-bridge/config):
+
+  host coder.my-box          # ssh destination of the box (required)
+  forward 37999              # laptop port -> same port on the box
+  forward 48080 8080         # laptop port -> box port
+  ssh_option Key=Value       # extra `ssh -o` option, repeatable
+
+Without a config file `run` exits 0, so the launchd job stays idle on
+machines that have no box.
+
+Python 3.9+ standard library only (the macOS Command Line Tools python).
+"""
+
+import http.server
+import json
+import os
+import re
+import secrets
+import signal
+import subprocess
+import sys
+import threading
+import time
+import urllib.parse
+
+STATE_DIR = os.path.join(
+    os.environ.get("XDG_STATE_HOME") or os.path.expanduser("~/.local/state"), "box-bridge"
+)
+CONFIG_PATH = os.environ.get("BOX_BRIDGE_CONFIG") or os.path.expanduser(
+    "~/.config-private/box-bridge/config"
+)
+# Command that opens a URL on this machine; the URL is appended
+OPENER = os.environ.get("BOX_BRIDGE_OPENER") or ("open" if sys.platform == "darwin" else "xdg-open")
+# Forwards added for a URL are dropped after this long: callbacks are quick,
+# and a stale forward would keep the laptop port busy
+DYNAMIC_FORWARD_TTL = int(os.environ.get("BOX_BRIDGE_FORWARD_TTL", "900"))
+# Where box-open finds the helper; read by box-open, so keep both in sync
+BOX_ENDPOINT = "${XDG_STATE_HOME:-$HOME/.local/state}/box-bridge/endpoint"
+
+SSH_OPTIONS = [
+    "BatchMode=yes",
+    "ConnectTimeout=30",
+    "ServerAliveInterval=10",
+    "ServerAliveCountMax=3",
+    "ExitOnForwardFailure=no",
+    "ControlPersist=no",
+]
+
+
+def log(message):
+    print(time.strftime("[%Y-%m-%d %H:%M:%S] ") + message, flush=True)
+
+
+#
+# Config
+#
+
+
+class ConfigError(Exception):
+    pass
+
+
+class Config:
+    def __init__(self):
+        self.host = None
+        self.forwards = []
+        self.ssh_options = []
+
+
+def parse_port(value, line_no):
+    if not value.isdigit() or not 0 < int(value) < 65536:
+        raise ConfigError("line {}: bad port {!r}".format(line_no, value))
+    return int(value)
+
+
+def load_config(path):
+    config = Config()
+    with open(path) as f:
+        for line_no, raw in enumerate(f, 1):
+            line = raw.split("#", 1)[0].strip()
+            if not line:
+                continue
+            key, _, value = line.partition(" ")
+            value = value.strip()
+            if key == "host":
+                config.host = value
+            elif key == "forward":
+                ports = value.split()
+                if len(ports) not in (1, 2):
+                    raise ConfigError("line {}: forward takes 1 or 2 ports".format(line_no))
+                local = parse_port(ports[0], line_no)
+                remote = parse_port(ports[-1], line_no)
+                config.forwards.append((local, remote))
+            elif key == "ssh_option":
+                config.ssh_options.append(value)
+            else:
+                raise ConfigError("line {}: unknown key {!r}".format(line_no, key))
+    if not config.host:
+        raise ConfigError("{}: no host".format(path))
+    return config
+
+
+#
+# URLs
+#
+
+LOCALHOST_PORT = re.compile(r"(?<![\w.-])(?:localhost|127\.0\.0\.1|\[::1\]):(\d+)", re.IGNORECASE)
+
+
+def localhost_ports(url):
+    """Ports of every localhost/loopback address mentioned in URL, even
+    percent-encoded inside a parameter (redirect_uri, next, ...)."""
+    ports = []
+    text = url
+    for _ in range(4):
+        for match in LOCALHOST_PORT.finditer(text):
+            port = int(match.group(1))
+            if 1024 <= port < 65536 and port not in ports:
+                ports.append(port)
+        decoded = urllib.parse.unquote(text)
+        if decoded == text:
+            break
+        text = decoded
+    return ports
+
+
+#
+# ssh
+#
+
+
+class Connection:
+    """One ssh ControlMaster connection and the forwards made over it."""
+
+    def __init__(self, config):
+        self.config = config
+        self.control = os.path.join(STATE_DIR, "ctl")
+        self.process = None
+        self.lock = threading.Lock()
+        self.dynamic = {}  # laptop port -> timer that cancels it
+        self.box_port = None
+
+    def ssh_args(self, *args, command=None):
+        argv = ["ssh", "-S", self.control]
+        for option in SSH_OPTIONS + self.config.ssh_options:
+            argv += ["-o", option]
+        return argv + list(args) + [self.config.host] + ([command] if command else [])
+
+    def mux(self, *args, command=None, stdin=None):
+        """Run an ssh client over the master connection."""
+        return subprocess.run(
+            self.ssh_args(*args, command=command),
+            input=stdin,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            timeout=30,
+        )
+
+    def start(self):
+        if os.path.exists(self.control):
+            os.unlink(self.control)
+        self.process = subprocess.Popen(self.ssh_args("-N", "-M"), stdin=subprocess.DEVNULL)
+        deadline = time.time() + 60
+        while time.time() < deadline:
+            if self.process.poll() is not None:
+                return False
+            if os.path.exists(self.control) and self.mux("-O", "check").returncode == 0:
+                return True
+            time.sleep(0.5)
+        log("ssh master did not come up in 60s")
+        self.stop()
+        return False
+
+    def stop(self):
+        with self.lock:
+            for timer in self.dynamic.values():
+                timer.cancel()
+            self.dynamic.clear()
+            self.box_port = None
+        if self.process and self.process.poll() is None:
+            self.process.terminate()
+            try:
+                self.process.wait(10)
+            except subprocess.TimeoutExpired:
+                self.process.kill()
+
+    def forward(self, local, remote):
+        result = self.mux("-O", "forward", "-L", "{}:127.0.0.1:{}".format(local, remote))
+        if result.returncode != 0:
+            return result.stderr.strip() or "ssh exited {}".format(result.returncode)
+        return None
+
+    def cancel(self, local, remote):
+        self.mux("-O", "cancel", "-L", "{}:127.0.0.1:{}".format(local, remote))
+
+    def forward_for_url(self, port):
+        """Forward laptop PORT to the same box port for a while. Returns an
+        error string, or None when the port is forwarded."""
+        with self.lock:
+            if port in self.dynamic:
+                self.dynamic[port].cancel()
+            elif port in (local for local, _ in self.config.forwards):
+                return None
+            else:
+                error = self.forward(port, port)
+                if error:
+                    return error
+                log("forwarded localhost:{} for a URL".format(port))
+            timer = threading.Timer(DYNAMIC_FORWARD_TTL, self.expire, (port,))
+            timer.daemon = True
+            self.dynamic[port] = timer
+            timer.start()
+        return None
+
+    def expire(self, port):
+        with self.lock:
+            if self.dynamic.pop(port, None) is None:
+                return
+            self.cancel(port, port)
+        log("dropped forward localhost:{}".format(port))
+
+    def reverse(self, helper_port):
+        """Reverse-forward the helper to a box port the server picks."""
+        result = self.mux("-O", "forward", "-R", "127.0.0.1:0:127.0.0.1:{}".format(helper_port))
+        port = result.stdout.strip()
+        if result.returncode != 0 or not port.isdigit():
+            raise RuntimeError("reverse forward failed: " + (result.stderr.strip() or port))
+        self.box_port = int(port)
+        return self.box_port
+
+    def publish_endpoint(self, box_port, token):
+        """Tell box-open where the helper is. Runs under sh: the box's login
+        shell may not be POSIX."""
+        script = (
+            "umask 077; f={0}; mkdir -p \"$(dirname \"$f\")\" && "
+            "cat > \"$f.tmp\" && mv \"$f.tmp\" \"$f\""
+        ).format(BOX_ENDPOINT)
+        content = "port={}\nheader=X-Box-Bridge-Token: {}\n".format(box_port, token)
+        result = self.mux(command="sh -c '{}'".format(script), stdin=content)
+        if result.returncode != 0:
+            raise RuntimeError("could not write the endpoint on the box: " + result.stderr.strip())
+
+
+#
+# Helper
+#
+
+
+class Helper:
+    """HTTP helper the box reaches through the reverse forward."""
+
+    def __init__(self, connection):
+        self.connection = connection
+        self.token = secrets.token_urlsafe(32)
+        helper = self
+
+        class Handler(http.server.BaseHTTPRequestHandler):
+            def do_POST(self):
+                if self.path != "/open":
+                    return self.reply(404, "unknown path")
+                if not secrets.compare_digest(self.headers.get("X-Box-Bridge-Token", ""), helper.token):
+                    return self.reply(403, "bad token")
+                length = int(self.headers.get("Content-Length") or 0)
+                url = self.rfile.read(min(length, 65536)).decode("utf-8", "replace").strip()
+                status, message = helper.open(url)
+                self.reply(status, message)
+
+            def reply(self, status, message):
+                body = (message + "\n").encode()
+                self.send_response(status)
+                self.send_header("Content-Type", "text/plain; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *args):
+                pass
+
+        self.server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        self.port = self.server.server_address[1]
+        thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        thread.start()
+
+    def open(self, url):
+        scheme = urllib.parse.urlsplit(url).scheme
+        if scheme not in ("http", "https"):
+            return 400, "only http(s) URLs are opened"
+        lines = []
+        for port in localhost_ports(url):
+            error = self.connection.forward_for_url(port)
+            if error:
+                lines.append("could not forward localhost:{}: {}".format(port, error))
+            else:
+                lines.append("forwarded localhost:{} to the box".format(port))
+        result = subprocess.run(OPENER.split() + [url], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        if result.returncode != 0:
+            log("opener failed for a URL: " + result.stderr.decode(errors="replace").strip())
+            return 502, "\n".join(lines + ["the laptop could not open the URL"])
+        log("opened a URL ({} forwards)".format(len(lines)))
+        return 200, "\n".join(lines + ["opened in the laptop browser"])
+
+
+#
+# Commands
+#
+
+
+def write_state(state):
+    path = os.path.join(STATE_DIR, "state.json")
+    with open(path + ".tmp", "w") as f:
+        json.dump(state, f, indent=2)
+    os.replace(path + ".tmp", path)
+
+
+def run(config):
+    os.makedirs(STATE_DIR, mode=0o700, exist_ok=True)
+    connection = Connection(config)
+    helper = Helper(connection)
+    stopping = threading.Event()
+
+    def on_signal(signum, _frame):
+        stopping.set()
+        connection.stop()
+
+    signal.signal(signal.SIGTERM, on_signal)
+    signal.signal(signal.SIGINT, on_signal)
+
+    log("bridging to {} (helper on 127.0.0.1:{})".format(config.host, helper.port))
+    backoff = 2
+    while not stopping.is_set():
+        write_state({"host": config.host, "connected": False})
+        started = time.time()
+        if connection.start():
+            try:
+                failed = []
+                for local, remote in config.forwards:
+                    error = connection.forward(local, remote)
+                    if error:
+                        failed.append(local)
+                        log("forward {} -> box {} failed: {}".format(local, remote, error))
+                box_port = connection.reverse(helper.port)
+                connection.publish_endpoint(box_port, helper.token)
+                log("connected; box port {} reaches the helper".format(box_port))
+                write_state({
+                    "host": config.host,
+                    "connected": True,
+                    "since": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "forwards": [[local, remote] for local, remote in config.forwards if local not in failed],
+                    "failed_forwards": failed,
+                    "box_port": box_port,
+                    "pid": connection.process.pid,
+                })
+            except (RuntimeError, subprocess.TimeoutExpired) as error:
+                log(str(error))
+                connection.stop()
+            if connection.process.poll() is None:
+                connection.process.wait()
+            connection.stop()
+            log("connection closed (ssh exited {})".format(connection.process.returncode))
+        else:
+            log("could not connect to {}".format(config.host))
+        if stopping.is_set():
+            break
+        if time.time() - started > 60:
+            backoff = 2
+        stopping.wait(backoff)
+        backoff = min(backoff * 2, 30)
+    write_state({"host": config.host, "connected": False})
+    log("stopped")
+
+
+def status(config):
+    try:
+        with open(os.path.join(STATE_DIR, "state.json")) as f:
+            state = json.load(f)
+    except (OSError, ValueError):
+        state = {}
+    alive = Connection(config).mux("-O", "check").returncode == 0 if os.path.exists(
+        os.path.join(STATE_DIR, "ctl")) else False
+    print("host:      {}".format(config.host))
+    print("connected: {}".format("yes, since " + state.get("since", "?") if alive else "no"))
+    if alive:
+        for local, remote in state.get("forwards", []):
+            print("forward:   laptop {} -> box {}".format(local, remote))
+        for local in state.get("failed_forwards", []):
+            print("failed:    laptop {} (port busy on the laptop?)".format(local))
+        print("box-open:  box port {}".format(state.get("box_port")))
+    return 0 if alive else 1
+
+
+def main(argv):
+    command = argv[1] if len(argv) > 1 else "help"
+    if command not in ("run", "status"):
+        print(__doc__.strip())
+        return 0 if command in ("help", "-h", "--help") else 2
+    if not os.path.exists(CONFIG_PATH):
+        print("box-bridge: no config at {}; nothing to do".format(CONFIG_PATH))
+        return 0
+    try:
+        config = load_config(CONFIG_PATH)
+    except ConfigError as error:
+        print("box-bridge: {}".format(error), file=sys.stderr)
+        return 2
+    if command == "run":
+        run(config)
+        return 0
+    return status(config)
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

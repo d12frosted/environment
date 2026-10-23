@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# Open a URL in the laptop browser through box-bridge (see bin/box-bridge).
+# Runs on the box; eru's coder task points xdg-open and $BROWSER here.
+#
+# box-bridge on the laptop reverse-forwards its helper to a box port and
+# writes that port and a token to the endpoint file. When the laptop is not
+# connected, the URL is printed instead so it can be opened by hand.
+
+url=${1:-}
+endpoint="${XDG_STATE_HOME:-$HOME/.local/state}/box-bridge/endpoint"
+
+fallback() {
+  echo "box-open: $1; open this URL on your laptop:" >&2
+  echo "  $url" >&2
+  exit 1
+}
+
+if [ -z "$url" ]; then
+  echo "usage: box-open URL" >&2
+  exit 2
+fi
+
+case "$url" in
+  http://*|https://*) ;;
+  *) echo "box-open: only http(s) URLs can be opened on the laptop: $url" >&2; exit 3 ;;
+esac
+
+[ -r "$endpoint" ] || fallback "box-bridge has never connected"
+port=$(sed -n 's/^port=//p' "$endpoint")
+[ -n "$port" ] || fallback "box-bridge endpoint is broken"
+
+# The token goes through a file, not argv, so ps does not show it
+header=$(mktemp) || fallback "mktemp failed"
+trap 'rm -f "$header"' EXIT
+sed -n 's/^header=//p' "$endpoint" > "$header"
+
+if reply=$(printf '%s' "$url" |
+  curl -sS --fail-with-body --max-time 20 -H @"$header" --data-binary @- \
+    "http://127.0.0.1:$port/open" 2>&1); then
+  printf '%s\n' "$reply" | sed 's/^/box-open: /' >&2
+else
+  fallback "the laptop is not reachable ($(printf '%s' "$reply" | tail -n 1))"
+fi
