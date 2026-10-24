@@ -1,0 +1,281 @@
+#!/usr/bin/env bash
+#
+# Pace opted-in Claude Code sessions against the weekly plan limit.
+#
+# Day N of the weekly window (counted from its reset, not from midnight)
+# allows N/7 of the weekly limit. Once weekly usage reaches today's
+# budget, paced sessions are told to park their work and then cut off.
+#
+#   claude-budget poll           fetch usage, write state (launchd, every 5m)
+#   claude-budget status         show usage vs today's budget
+#   claude-budget sessions [N]   recent sessions, * marks paced ones
+#   claude-budget add ID|DIR...  pace a session id, or every session under DIR
+#   claude-budget rm ID|DIR...   stop pacing it
+#   claude-budget hook           Claude Code hook (PreToolUse, UserPromptSubmit)
+#
+# A session is paced when its id or a parent of its cwd is listed, or when
+# it runs with CLAUDE_BUDGET=paced. Inside a session, typing `budget:on` or
+# `budget:off` as the whole prompt toggles it for that session. Pacing a
+# directory also covers sessions spawned into worktrees under it.
+#
+# The hook fails open: missing or stale state never blocks anything.
+
+set -euo pipefail
+
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/claude-budget"
+STATE_FILE="$STATE_DIR/state.json"
+PACED_FILE="$STATE_DIR/paced"
+TRIPPED_DIR="$STATE_DIR/tripped"
+
+# Tool calls a session may still make after it is told to park.
+GRACE_CALLS="${CLAUDE_BUDGET_GRACE:-20}"
+# Trip this many percentage points before the budget (usage lags a bit).
+MARGIN="${CLAUDE_BUDGET_MARGIN:-0}"
+# State older than this is ignored by the hook.
+STALE_AFTER=1800
+WEEK=604800
+
+USAGE_URL=https://api.anthropic.com/api/oauth/usage
+
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+}
+
+notify() {
+  command -v terminal-notifier >/dev/null 2>&1 &&
+    terminal-notifier -title "claude-budget" -message "$1" >/dev/null 2>&1 || true
+}
+
+# Claude Code's OAuth access token: the macOS keychain first, then the
+# credentials file it uses elsewhere.
+access_token() {
+  local creds=""
+  if command -v security >/dev/null 2>&1; then
+    creds=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null || true)
+  fi
+  if [[ -z "$creds" && -f "$HOME/.claude/.credentials.json" ]]; then
+    creds=$(cat "$HOME/.claude/.credentials.json")
+  fi
+  jq -r '.claudeAiOauth.accessToken // empty' <<<"$creds" 2>/dev/null
+}
+
+cmd_poll() {
+  mkdir -p "$STATE_DIR"
+  local token usage
+  token=$(access_token)
+  if [[ -z "$token" ]]; then
+    log "No Claude Code OAuth token found"
+    return 1
+  fi
+  if ! usage=$(curl -fsS -m 20 "$USAGE_URL" \
+    -H "Authorization: Bearer $token" \
+    -H "anthropic-beta: oauth-2025-04-20"); then
+    # Keep the previous state; the hook ignores it once it goes stale.
+    log "Usage request failed (token expired? offline?)"
+    return 1
+  fi
+
+  local was_over=false
+  [[ -f "$STATE_FILE" ]] && was_over=$(jq -r '.over' "$STATE_FILE" 2>/dev/null || echo false)
+
+  local state
+  state=$(jq --argjson now "$(date +%s)" --argjson week "$WEEK" \
+    --argjson margin "$MARGIN" '
+    .seven_day as $w
+    | ($w.resets_at | sub("\\.[0-9]+"; "") | sub("\\+00:00$"; "Z") | fromdateiso8601) as $reset
+    | ($now - ($reset - $week)) as $elapsed
+    | ([1, ([7, (($elapsed / 86400) | ceil)] | min)] | max) as $day
+    | ($day * 100 / 7) as $budget
+    | {
+        fetched_at: $now,
+        used: $w.utilization,
+        resets_at: $reset,
+        day: $day,
+        budget: (($budget * 10 | round) / 10),
+        over: ($w.utilization >= $budget - $margin)
+      }' <<<"$usage")
+  printf '%s\n' "$state" >"$STATE_FILE.tmp"
+  mv "$STATE_FILE.tmp" "$STATE_FILE"
+
+  local over used budget
+  IFS=$'\t' read -r over used budget < <(jq -r '[.over, .used, .budget] | @tsv' <<<"$state")
+  log "used ${used}% of today's ${budget}% (over: $over)"
+
+  if [[ "$over" == true && "$was_over" != true ]]; then
+    notify "Weekly usage ${used}% reached today's budget ${budget}%; parking paced sessions"
+  elif [[ "$over" != true ]]; then
+    # A new day (or a lull) re-arms every tripped session.
+    rm -rf "$TRIPPED_DIR"
+  fi
+}
+
+cmd_status() {
+  if [[ ! -f "$STATE_FILE" ]]; then
+    echo "No state yet; run: claude-budget poll"
+    return 1
+  fi
+  jq -r --argjson now "$(date +%s)" '
+    "day \(.day)/7: used \(.used)% of \(.budget)% budget"
+    + (if .over then " — OVER" else "" end)
+    + "\nweek resets \(.resets_at | todate), state \((($now - .fetched_at) / 60) | floor)m old"
+  ' "$STATE_FILE"
+  local n=0
+  [[ -f "$PACED_FILE" ]] && n=$(grep -c . "$PACED_FILE" || true)
+  echo "$n paced entries (claude-budget sessions to list)"
+}
+
+# Recent sessions from Claude Code's transcripts: id, age, cwd, first prompt.
+cmd_sessions() {
+  local limit="${1:-15}"
+  local f
+  # head closing the pipe early is expected here.
+  set +o pipefail
+  # shellcheck disable=SC2012
+  ls -t "$HOME"/.claude/projects/*/*.jsonl 2>/dev/null | head -n "$limit" | while read -r f; do
+    local id cwd prompt mark=" " age
+    id=$(basename "$f" .jsonl)
+    # Subagent transcripts share their parent's session id in hooks.
+    [[ "$id" == agent-* ]] && continue
+    cwd=$(jq -nr 'first(inputs | select(.cwd) | .cwd) // ""' "$f" 2>/dev/null)
+    prompt=$(jq -nr 'first(inputs | select(.type == "user")
+      | .message.content
+      | if type == "array" then map(select(.type == "text") | .text) | join(" ") else . end
+      | strings | select(length > 0 and (startswith("<") | not))) // ""' "$f" 2>/dev/null |
+      tr '\n' ' ' | cut -c1-50)
+    age=$(($(date +%s) - $(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f")))
+    is_paced "$id" "$cwd" && mark="*"
+    printf '%s %s %5s  %s  %s\n' "$mark" "$id" "$((age / 60))m" "${cwd/#$HOME/~}" "$prompt"
+  done
+}
+
+cmd_add() {
+  mkdir -p "$STATE_DIR"
+  touch "$PACED_FILE"
+  local entry
+  for entry in "$@"; do
+    [[ -d "$entry" ]] && entry=$(cd "$entry" && pwd -P)
+    grep -qxF "$entry" "$PACED_FILE" || echo "$entry" >>"$PACED_FILE"
+    echo "pacing $entry"
+  done
+}
+
+cmd_rm() {
+  [[ -f "$PACED_FILE" ]] || return 0
+  local entry
+  for entry in "$@"; do
+    [[ -d "$entry" ]] && entry=$(cd "$entry" && pwd -P)
+    grep -vxF "$entry" "$PACED_FILE" >"$PACED_FILE.tmp" || true
+    mv "$PACED_FILE.tmp" "$PACED_FILE"
+    echo "not pacing $entry"
+  done
+}
+
+# is_paced SESSION_ID CWD
+is_paced() {
+  [[ "${CLAUDE_BUDGET:-}" == paced ]] && return 0
+  [[ -f "$PACED_FILE" ]] || return 1
+  local entry
+  while IFS= read -r entry; do
+    [[ -z "$entry" ]] && continue
+    [[ "$entry" == "$1" ]] && return 0
+    [[ "$entry" == /* && -n "$2" ]] &&
+      [[ "$2" == "$entry" || "$2" == "$entry"/* ]] && return 0
+  done <"$PACED_FILE"
+  return 1
+}
+
+# Echo "used<TAB>budget" and succeed when fresh state says we are over.
+over_budget() {
+  [[ -f "$STATE_FILE" ]] || return 1
+  jq -er --argjson now "$(date +%s)" --argjson stale "$STALE_AFTER" '
+    select(.over and ($now - .fetched_at) < $stale) | [.used, .budget] | @tsv
+  ' "$STATE_FILE" 2>/dev/null
+}
+
+park_message() {
+  echo "Claude usage budget for today is spent (weekly usage ${1}% ≥ today's ${2}% budget). Park now: stop starting new work, do not spawn agents or sessions, commit WIP to the current branch, write a short handoff note of what is done and what is left (in the repo's usual place, or your final message), then stop. You have $GRACE_CALLS tool calls left for this; after that every tool call is denied."
+}
+
+hook_prompt() {
+  local input=$1 id=$2 cwd=$3 prompt
+  prompt=$(jq -r '.prompt // ""' <<<"$input" | tr -d '[:space:]')
+  case "$prompt" in
+    budget:on)
+      cmd_add "$id" >/dev/null
+      jq -n --arg r "This session is now paced by claude-budget ($id)." \
+        '{decision: "block", reason: $r}'
+      return ;;
+    budget:off)
+      cmd_rm "$id" >/dev/null
+      rm -f "$TRIPPED_DIR/$id"
+      jq -n --arg r "This session is no longer paced by claude-budget." \
+        '{decision: "block", reason: $r}'
+      return ;;
+  esac
+
+  is_paced "$id" "$cwd" || return 0
+  local used budget
+  IFS=$'\t' read -r used budget < <(over_budget) || return 0
+  jq -n --arg ctx "$(park_message "$used" "$budget") Tell the user before doing anything else; they can type budget:off to override." \
+    --arg msg "claude-budget: today's budget is spent (${used}% ≥ ${budget}%)" \
+    '{systemMessage: $msg,
+      hookSpecificOutput: {hookEventName: "UserPromptSubmit", additionalContext: $ctx}}'
+}
+
+deny() {
+  jq -n --arg r "$1" '{hookSpecificOutput: {hookEventName: "PreToolUse",
+    permissionDecision: "deny", permissionDecisionReason: $r}}'
+}
+
+hook_tool() {
+  local input=$1 id=$2 cwd=$3
+  is_paced "$id" "$cwd" || return 0
+  local used budget
+  if ! IFS=$'\t' read -r used budget < <(over_budget); then
+    rm -f "$TRIPPED_DIR/$id"
+    return 0
+  fi
+
+  mkdir -p "$TRIPPED_DIR"
+  local tripped="$TRIPPED_DIR/$id"
+  if [[ ! -f "$tripped" ]]; then
+    # The first call after tripping is denied so the message is seen.
+    echo 0 >"$tripped"
+    deny "$(park_message "$used" "$budget")"
+    return
+  fi
+
+  local tool calls
+  tool=$(jq -r '.tool_name // ""' <<<"$input")
+  case "$tool" in
+    Agent | Task | Workflow | mcp__ccd_session__start_session | mcp__ccd_session__hand_off_to_session)
+      deny "Usage budget spent: no new agents or sessions. Park the work you have."
+      return ;;
+  esac
+
+  calls=$(($(cat "$tripped") + 1))
+  echo "$calls" >"$tripped"
+  if ((calls > GRACE_CALLS)); then
+    deny "Usage budget spent and the parking grace ($GRACE_CALLS tool calls) is used up. Stop now: end your turn with a short summary of where the work stands."
+  fi
+}
+
+cmd_hook() {
+  local input event id cwd
+  input=$(cat)
+  IFS=$'\t' read -r event id cwd < <(jq -r '[.hook_event_name, .session_id, .cwd // ""] | @tsv' <<<"$input")
+  case "$event" in
+    UserPromptSubmit) hook_prompt "$input" "$id" "$cwd" ;;
+    PreToolUse) hook_tool "$input" "$id" "$cwd" ;;
+  esac
+}
+
+case "${1:-status}" in
+  poll) cmd_poll ;;
+  status) cmd_status ;;
+  sessions) shift; cmd_sessions "$@" ;;
+  add) shift; cmd_add "$@" ;;
+  rm) shift; cmd_rm "$@" ;;
+  hook) cmd_hook ;;
+  *) sed -n '2,/^$/s/^# \{0,1\}//p' "$0"; exit 1 ;;
+esac

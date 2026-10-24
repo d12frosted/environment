@@ -52,5 +52,29 @@
   "theme": "light-daltonized",
   "skipAutoPermissionPrompt": true,
   "agentPushNotifEnabled": true,
-  "skipWorkflowUsageWarning": true
+  "skipWorkflowUsageWarning": true,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -x \"$HOME/.config/bin/claude-budget\" ] || exit 0; \"$HOME/.config/bin/claude-budget\" hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -x \"$HOME/.config/bin/claude-budget\" ] || exit 0; \"$HOME/.config/bin/claude-budget\" hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 }
