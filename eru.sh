@@ -938,6 +938,16 @@ function task_symlinks() {
 # Task: Services (launchd)
 #
 
+function render_plist() {
+  sed "s|__HOME__|$HOME|g" "$1"
+}
+
+# Value of the <string> following <key>$2</key> in rendered plist text $1.
+function plist_string() {
+  printf '%s\n' "$1" | grep -A1 "<key>$2</key>" | grep '<string>' |
+    sed 's|.*<string>\(.*\)</string>.*|\1|' | head -1
+}
+
 function task_services() {
   task_start "services" "Setting up background services"
 
@@ -977,9 +987,27 @@ function task_services() {
 
     info "Processing $plist_name..."
 
+    # launchd does not expand variables, so plists use a __HOME__
+    # placeholder that is rendered for the current user at install time.
+    local rendered
+    rendered=$(render_plist "$plist")
+
+    # Services whose WorkingDirectory is missing (e.g. no ~/vulpea on this
+    # machine) would only crash-loop; skip them and unload any old copy.
+    local work_dir
+    work_dir=$(plist_string "$rendered" WorkingDirectory)
+    if [[ -n "$work_dir" ]] && [[ ! -d "$work_dir" ]]; then
+      info "Skipping $label (no $work_dir)"
+      if [[ "$DRY_RUN" != "true" ]] && [[ -e "$target" || -L "$target" ]]; then
+        launchctl unload "$target" 2>/dev/null || true
+        rm -f "$target"
+      fi
+      continue
+    fi
+
     # Create log directory if StandardOutPath/StandardErrorPath reference it
     local log_dir
-    log_dir=$(grep -A1 'StandardOutPath\|StandardErrorPath' "$plist" 2>/dev/null | grep '<string>' | sed 's|.*<string>\(.*\)</string>.*|\1|' | xargs dirname 2>/dev/null | head -1)
+    log_dir=$(dirname "$(plist_string "$rendered" StandardOutPath)")
     if [[ -n "$log_dir" ]] && [[ ! -d "$log_dir" ]]; then
       info "Creating log directory: $log_dir"
       if [[ "$DRY_RUN" != "true" ]]; then
@@ -992,8 +1020,11 @@ function task_services() {
       launchctl unload "$target" 2>/dev/null || true
     fi
 
-    # Create symlink (no backup for managed service plists)
-    create_symlink "$plist" "$target" true
+    # Write the rendered copy (a symlink would carry the placeholder)
+    if [[ "$DRY_RUN" != "true" ]]; then
+      rm -f "$target"
+      printf '%s\n' "$rendered" >"$target"
+    fi
 
     # Load service
     if [[ "$DRY_RUN" != "true" ]]; then
@@ -1424,11 +1455,20 @@ function doctor_services() {
     local label="${plist_name%.plist}"
     local target="$HOME/Library/LaunchAgents/$plist_name"
 
-    # Check symlink
-    if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$plist" ]]; then
-      doctor_ok "$plist_name symlinked"
+    local rendered work_dir
+    rendered=$(render_plist "$plist")
+    work_dir=$(plist_string "$rendered" WorkingDirectory)
+    if [[ -n "$work_dir" ]] && [[ ! -d "$work_dir" ]]; then
+      info "  Skipping $label (no $work_dir)"
+      continue
+    fi
+
+    # Check installed copy matches the rendered plist
+    if [[ -f "$target" ]] && [[ ! -L "$target" ]] &&
+       [[ "$(cat "$target")" == "$rendered" ]]; then
+      doctor_ok "$plist_name installed"
     else
-      doctor_issue "$plist_name not symlinked to LaunchAgents"
+      doctor_issue "$plist_name not installed or outdated in LaunchAgents"
     fi
 
     # Check if loaded

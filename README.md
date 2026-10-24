@@ -168,10 +168,13 @@ Features:
 See [gnupg/README.md](gnupg/README.md) and [ssh/README.md](ssh/README.md) for details.
 
 ### `services`
-Set up background services. On macOS it symlinks every `launchd/*.plist` into
-`~/Library/LaunchAgents`, creates any referenced log directories, and reloads
-the services via `launchctl`. On Linux there is no launchd, so it installs one
-crontab line that runs `bin/private-sync` every 30 minutes.
+Set up background services. On macOS it renders every `launchd/*.plist` into
+`~/Library/LaunchAgents` (launchd does not expand variables, so plists use a
+`__HOME__` placeholder that is replaced with the current `$HOME`), creates any
+referenced log directories, and reloads the services via `launchctl`. Services
+whose `WorkingDirectory` does not exist on this machine are skipped. On Linux
+there is no launchd, so it installs one crontab line that runs
+`bin/private-sync` every 30 minutes.
 
 ```bash
 ./eru.sh install services
