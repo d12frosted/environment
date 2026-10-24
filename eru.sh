@@ -1428,6 +1428,8 @@ function doctor_symlinks() {
       [[ "$(basename "${memory_dir%/}")" == @home* ]] || continue
       local slug memory_target
       slug=$(claude_memory_slug "$(basename "${memory_dir%/}")")
+      # Throwaway memory is never linked by bin/private-sync
+      case "$slug" in -tmp-* | -private-tmp-* | -private-var-folders-* | *scratch*) continue ;; esac
       memory_target="$HOME/.claude/projects/$slug/memory"
       if [[ -L "$memory_target" ]] && [[ "$(readlink "$memory_target")" == "${memory_dir%/}" ]]; then
         doctor_ok "claude memory: $slug"
