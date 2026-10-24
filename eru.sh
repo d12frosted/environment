@@ -803,6 +803,19 @@ function task_private() {
 # Task: Symlinks
 #
 
+# Local Claude project slug for a home-relative memory dir name in the
+# private repo (@home--config -> -Users-borysb--config). Keep in sync with
+# bin/private-sync.
+function claude_memory_slug() {
+  local home_slug
+  home_slug=$(claude_project_slug "$HOME")
+  case "$1" in
+    @home) echo "$home_slug" ;;
+    @home-*) echo "$home_slug${1#@home}" ;;
+    *) echo "$1" ;;
+  esac
+}
+
 function task_symlinks() {
   task_start "symlinks" "Creating symlinks"
 
@@ -905,16 +918,18 @@ function task_symlinks() {
     done
   fi
 
-  # Memory of other machines' projects stays in the repo only: linking it
-  # here would leave empty project dirs in ~/.claude/projects.
+  # Memory is stored under home-relative names (@home--config) and linked
+  # under this machine's slug; anything else (compat aliases for machines on
+  # an older private-sync, absolute paths outside a home) belongs to a
+  # specific machine and stays in the repo only.
   local home_slug
   home_slug=$(claude_project_slug "$HOME")
   if [[ -d "$PRIVATE_CONFIG_HOME/claude/memory" ]]; then
     for memory_dir in "$PRIVATE_CONFIG_HOME/claude/memory"/*/; do
-      [[ -d "$memory_dir" ]] || continue
+      [[ -d "$memory_dir" ]] && [[ ! -L "${memory_dir%/}" ]] || continue
       local slug
-      slug=$(basename "${memory_dir%/}")
-      [[ "$slug" == "$home_slug"* ]] || continue
+      [[ "$(basename "${memory_dir%/}")" == @home* ]] || continue
+      slug=$(claude_memory_slug "$(basename "${memory_dir%/}")")
       create_symlink "${memory_dir%/}" "$HOME/.claude/projects/$slug/memory"
     done
   fi
@@ -925,6 +940,7 @@ function task_symlinks() {
     local alias_slug alias_name
     while read -r alias_slug alias_name; do
       [[ -z "$alias_slug" || "$alias_slug" == \#* ]] && continue
+      alias_slug=$(claude_memory_slug "$alias_slug")
       [[ "$alias_slug" == "$home_slug"* ]] || continue
       create_symlink "$PRIVATE_CONFIG_HOME/claude/memory-shared/$alias_name" \
         "$HOME/.claude/projects/$alias_slug/memory"
@@ -1408,9 +1424,10 @@ function doctor_symlinks() {
   fi
   if [[ -d "$PRIVATE_CONFIG_HOME/claude/memory" ]]; then
     for memory_dir in "$PRIVATE_CONFIG_HOME/claude/memory"/*/; do
-      [[ -d "$memory_dir" ]] || continue
+      [[ -d "$memory_dir" ]] && [[ ! -L "${memory_dir%/}" ]] || continue
+      [[ "$(basename "${memory_dir%/}")" == @home* ]] || continue
       local slug memory_target
-      slug=$(basename "${memory_dir%/}")
+      slug=$(claude_memory_slug "$(basename "${memory_dir%/}")")
       memory_target="$HOME/.claude/projects/$slug/memory"
       if [[ -L "$memory_target" ]] && [[ "$(readlink "$memory_target")" == "${memory_dir%/}" ]]; then
         doctor_ok "claude memory: $slug"

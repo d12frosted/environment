@@ -56,10 +56,60 @@ trap 'rm -rf "$LOCK_DIR"' EXIT
 
 cd "$PRIVATE_CONFIG_HOME"
 
+MEMORY_REPO="$PRIVATE_CONFIG_HOME/claude/memory"
+PROJECTS_DIR="$HOME/.claude/projects"
+
 # Claude names a project after its path with every non-alphanumeric
 # character replaced by '-'; this machine's projects all start with the
 # slug of $HOME.
 HOME_SLUG=$(printf '%s' "$HOME" | sed 's/[^A-Za-z0-9]/-/g')
+
+# That makes the same repository a different slug per machine
+# (-Users-borysb--config vs -home-coder--config), so the repo stores memory
+# under a home-relative name instead (@home--config, @home for $HOME
+# itself) and each machine links its own slug to it.
+canonical_name() {
+  case "$1" in
+    "$HOME_SLUG") echo "@home" ;;
+    "$HOME_SLUG"-*) echo "@home${1#"$HOME_SLUG"}" ;;
+    *) echo "$1" ;;
+  esac
+}
+
+local_slug() {
+  case "$1" in
+    @home) echo "$HOME_SLUG" ;;
+    @home-*) echo "$HOME_SLUG${1#@home}" ;;
+    *) echo "$1" ;;
+  esac
+}
+
+# Move the contents of memory dir $1 into $2. Identical files are dropped,
+# MEMORY.md indexes are unioned line by line, and any other conflicting
+# file is left in $1 for manual resolution. Removes $1 when it ends up empty.
+merge_memory_dir() {
+  local src="$1" dst="$2" file name
+  mkdir -p "$dst"
+  for file in "$src"/* "$src"/.[!.]*; do
+    [ -e "$file" ] || continue
+    name="$(basename "$file")"
+    if [ ! -e "$dst/$name" ]; then
+      mv "$file" "$dst/$name"
+    elif cmp -s "$file" "$dst/$name"; then
+      rm -f "$file"
+    elif [ "$name" = "MEMORY.md" ]; then
+      awk 'NR == FNR { seen[$0] = 1; next } $0 == "" || !seen[$0]' \
+        "$dst/$name" "$file" >"$dst/$name.merge"
+      if grep -q '[^[:space:]]' "$dst/$name.merge"; then
+        { echo; cat "$dst/$name.merge"; } >>"$dst/$name"
+      fi
+      rm -f "$dst/$name.merge" "$file"
+    else
+      log "WARN: $file conflicts with $dst/$name; resolve manually"
+    fi
+  done
+  rmdir "$src" 2>/dev/null || true
+}
 
 # Memory that is not worth keeping: projects under temp dirs, Claude.app
 # scratch workspaces, plus any glob listed in claude/memory-ignore (one per
@@ -78,19 +128,10 @@ is_throwaway_slug() {
   return 1
 }
 
-# Only link memory that belongs to this machine's home; other machines'
-# projects would be empty clutter in ~/.claude/projects here.
-is_local_slug() {
-  case "$1" in
-    "$HOME_SLUG"*) return 0 ;;
-    *) return 1 ;;
-  esac
-}
-
 # Link $1 (a dir in this repo) as the memory of project $2, unless the
 # project already has memory of its own.
 link_memory() {
-  target="$HOME/.claude/projects/$2/memory"
+  target="$PROJECTS_DIR/$2/memory"
   if [ ! -e "$target" ] && [ ! -L "$target" ]; then
     log "Linking Claude memory: $2"
     mkdir -p "$(dirname "$target")"
@@ -102,40 +143,87 @@ link_memory() {
 
 # Shared memory: claude/memory-shared/<name>/ holds memory that several
 # project slugs see (other checkouts, worktree caches); the aliases file
-# maps each slug to its dir, one "<slug> <name>" per line.
+# maps each slug to its dir, one "<slug> <name>" per line. A slug may be
+# written home-relative (@home-work-builder-kit) to cover every machine.
 ALIASES="$PRIVATE_CONFIG_HOME/claude/memory-shared/aliases"
 is_alias_slug() {
-  [ -f "$ALIASES" ] && grep -q "^$1 " "$ALIASES"
+  [ -f "$ALIASES" ] &&
+    grep -q -e "^$1 " -e "^$(canonical_name "$1") " "$ALIASES"
 }
 
-# Adopt Claude auto-memory directories that exist locally but are not in
-# the repo yet: move them in and leave a symlink behind.
-if [ -d "$HOME/.claude/projects" ]; then
-  for project_dir in "$HOME/.claude/projects"/*/; do
-    memory_dir="${project_dir%/}/memory"
-    [ -d "$memory_dir" ] || continue
-    [ -L "$memory_dir" ] && continue
+# Rename this machine's legacy repo dirs (named after its absolute slug) to
+# their home-relative name. Machines still running the old script resolve
+# their symlinks through a compat alias left behind; see the cleanup below.
+for repo_dir in "$MEMORY_REPO"/"$HOME_SLUG" "$MEMORY_REPO"/"$HOME_SLUG"-*; do
+  [ -d "$repo_dir" ] && [ ! -L "$repo_dir" ] || continue
+  slug=$(basename "$repo_dir")
+  name=$(canonical_name "$slug")
+  log "Renaming Claude memory: $slug -> $name"
+  merge_memory_dir "$repo_dir" "$MEMORY_REPO/$name"
+  [ -e "$repo_dir" ] || ln -s "$name" "$repo_dir"
+done
 
+# Adopt Claude auto-memory directories that exist locally but are not in
+# the repo yet (moving them in and leaving a symlink behind), and repoint
+# links that still target a legacy repo path.
+if [ -d "$PROJECTS_DIR" ]; then
+  for project_dir in "$PROJECTS_DIR"/*/; do
+    memory_dir="${project_dir%/}/memory"
     slug=$(basename "${project_dir%/}")
-    if is_throwaway_slug "$slug" || [ -z "$(ls -A "$memory_dir")" ]; then
+    repo_dir="$MEMORY_REPO/$(canonical_name "$slug")"
+
+    if [ -L "$memory_dir" ]; then
+      target=$(readlink "$memory_dir")
+      # A link into the repo that no longer resolves was made for another
+      # machine's slug whose compat alias has since been removed.
+      if [ ! -e "$memory_dir" ] && [ "$target" != "$repo_dir" ] &&
+         [ "${target#"$MEMORY_REPO"/}" != "$target" ]; then
+        log "Removing stale Claude memory link: $slug"
+        rm -f "$memory_dir"
+        rmdir "${project_dir%/}" 2>/dev/null || true
+        continue
+      fi
+      case "$target" in
+        "$repo_dir") ;;
+        "$MEMORY_REPO"/*)
+          log "Relinking Claude memory: $slug"
+          mkdir -p "$repo_dir"
+          ln -sfn "$repo_dir" "$memory_dir"
+          ;;
+      esac
+      continue
+    fi
+    [ -d "$memory_dir" ] || continue
+
+    if is_throwaway_slug "$slug"; then
       continue
     fi
     if is_alias_slug "$slug"; then
       log "WARN: $memory_dir should be shared memory (see $ALIASES); resolve manually"
       continue
     fi
-    repo_dir="$PRIVATE_CONFIG_HOME/claude/memory/$slug"
-    if [ -e "$repo_dir" ]; then
-      log "WARN: both $memory_dir and $repo_dir exist; resolve manually"
+    # An empty dir is only worth replacing with a link to existing memory.
+    if [ -z "$(ls -A "$memory_dir")" ] && [ ! -d "$repo_dir" ]; then
       continue
     fi
 
     log "Adopting Claude memory: $slug"
-    mkdir -p "$PRIVATE_CONFIG_HOME/claude/memory"
-    mv "$memory_dir" "$repo_dir"
+    merge_memory_dir "$memory_dir" "$repo_dir"
+    if [ -e "$memory_dir" ]; then
+      log "WARN: could not fully adopt $memory_dir; resolve manually"
+      continue
+    fi
     ln -s "$repo_dir" "$memory_dir"
   done
 fi
+
+# This machine's links now point at home-relative dirs, so the compat
+# aliases named after its slug are no longer needed.
+for alias in "$MEMORY_REPO"/"$HOME_SLUG" "$MEMORY_REPO"/"$HOME_SLUG"-*; do
+  [ -L "$alias" ] || continue
+  log "Removing compat alias: $(basename "$alias")"
+  rm -f "$alias"
+done
 
 if [ -n "$(git status --porcelain -- claude/memory claude/memory-shared)" ]; then
   git add claude/memory claude/memory-shared
@@ -160,19 +248,20 @@ if ! git rebase --autostash origin/master; then
 fi
 
 # Link memory directories pulled from other machines so new knowledge is
-# available locally without waiting for the next eru run.
-if [ -d "$PRIVATE_CONFIG_HOME/claude/memory" ]; then
-  for repo_dir in "$PRIVATE_CONFIG_HOME/claude/memory"/*/; do
-    [ -d "$repo_dir" ] || continue
-    slug=$(basename "${repo_dir%/}")
-    is_local_slug "$slug" || continue
-    link_memory "${repo_dir%/}" "$slug"
-  done
-fi
+# available locally without waiting for the next eru run. Only home-relative
+# dirs are linked: anything else (compat aliases, absolute paths outside a
+# home) belongs to a specific machine and would be empty clutter here.
+for repo_dir in "$MEMORY_REPO"/@home*; do
+  [ -d "$repo_dir" ] && [ ! -L "$repo_dir" ] || continue
+  slug=$(local_slug "$(basename "$repo_dir")")
+  is_throwaway_slug "$slug" && continue
+  link_memory "$repo_dir" "$slug"
+done
 if [ -f "$ALIASES" ]; then
   while read -r slug name; do
     case "$slug" in '' | '#'*) continue ;; esac
-    is_local_slug "$slug" || continue
+    slug=$(local_slug "$slug")
+    case "$slug" in "$HOME_SLUG"*) ;; *) continue ;; esac
     shared_dir="$PRIVATE_CONFIG_HOME/claude/memory-shared/$name"
     [ -d "$shared_dir" ] || continue
     link_memory "$shared_dir" "$slug"
