@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>io.d12frosted.claude-budget</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>__HOME__/.config/bin/claude-budget</string>
+        <string>poll</string>
+    </array>
+
+    <key>StartInterval</key>
+    <integer>300</integer>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/bin:/opt/homebrew/bin:/usr/local/bin:/bin:/usr/sbin:/sbin</string>
+        <key>HOME</key>
+        <string>__HOME__</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>__HOME__/.local/share/claude-budget/stdout.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>__HOME__/.local/share/claude-budget/stderr.log</string>
+
+    <key>WorkingDirectory</key>
+    <string>__HOME__</string>
+</dict>
+</plist>
