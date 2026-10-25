@@ -59,6 +59,28 @@ access_token() {
   jq -r '.claudeAiOauth.accessToken // empty' <<<"$creds" 2>/dev/null
 }
 
+write_state() {
+  printf '%s\n' "$1" >"$STATE_FILE.tmp"
+  mv "$STATE_FILE.tmp" "$STATE_FILE"
+}
+
+# Run jq filter $1 over the state on stdin, with day, budget, over and
+# stale computed for the current time (not when the state was fetched).
+pace() {
+  jq -r --argjson now "$(date +%s)" --argjson week "$WEEK" \
+    --argjson margin "$MARGIN" --argjson stale_after "$STALE_AFTER" '
+    ([1, ([7, ((($now - (.resets_at - $week)) / 86400) | ceil)] | min)] | max) as $day
+    | ($day * 100 / 7) as $budget
+    | . + {
+        day: $day,
+        budget: (($budget * 10 | round) / 10),
+        over: (.used >= $budget - $margin),
+        age: ($now - .fetched_at),
+        stale: (($now - .fetched_at) >= $stale_after)
+      }
+    | '"$1"
+}
+
 cmd_poll() {
   mkdir -p "$STATE_DIR"
   local token usage
@@ -67,38 +89,35 @@ cmd_poll() {
     log "No Claude Code OAuth token found"
     return 1
   fi
+  local err
   if ! usage=$(curl -fsS -m 20 "$USAGE_URL" \
     -H "Authorization: Bearer $token" \
-    -H "anthropic-beta: oauth-2025-04-20"); then
-    # Keep the previous state; the hook ignores it once it goes stale.
-    log "Usage request failed (token expired? offline?)"
+    -H "anthropic-beta: oauth-2025-04-20" 2>&1); then
+    # Keep the previous usage; the hook ignores it once it goes stale.
+    # A 401/403 usually means the token expired while Claude Code was
+    # idle; it refreshes the token on its next run.
+    err=$(tail -1 <<<"$usage")
+    log "Usage request failed: $err"
+    write_state "$(jq --arg e "$err" --argjson now "$(date +%s)" \
+      '. + {last_error: $e, last_error_at: $now}' "$STATE_FILE" 2>/dev/null ||
+      jq -n --arg e "$err" --argjson now "$(date +%s)" \
+        '{last_error: $e, last_error_at: $now}')"
     return 1
   fi
 
   local was_over=false
-  [[ -f "$STATE_FILE" ]] && was_over=$(jq -r '.over' "$STATE_FILE" 2>/dev/null || echo false)
+  [[ -f "$STATE_FILE" ]] && was_over=$(pace '.over' <"$STATE_FILE" 2>/dev/null || echo false)
 
-  local state
-  state=$(jq --argjson now "$(date +%s)" --argjson week "$WEEK" \
-    --argjson margin "$MARGIN" '
-    .seven_day as $w
-    | ($w.resets_at | sub("\\.[0-9]+"; "") | sub("\\+00:00$"; "Z") | fromdateiso8601) as $reset
-    | ($now - ($reset - $week)) as $elapsed
-    | ([1, ([7, (($elapsed / 86400) | ceil)] | min)] | max) as $day
-    | ($day * 100 / 7) as $budget
-    | {
-        fetched_at: $now,
-        used: $w.utilization,
-        resets_at: $reset,
-        day: $day,
-        budget: (($budget * 10 | round) / 10),
-        over: ($w.utilization >= $budget - $margin)
-      }' <<<"$usage")
-  printf '%s\n' "$state" >"$STATE_FILE.tmp"
-  mv "$STATE_FILE.tmp" "$STATE_FILE"
+  write_state "$(jq --argjson now "$(date +%s)" '
+    {
+      fetched_at: $now,
+      used: .seven_day.utilization,
+      resets_at: (.seven_day.resets_at
+        | sub("\\.[0-9]+"; "") | sub("\\+00:00$"; "Z") | fromdateiso8601)
+    }' <<<"$usage")"
 
   local over used budget
-  IFS=$'\t' read -r over used budget < <(jq -r '[.over, .used, .budget] | @tsv' <<<"$state")
+  IFS=$'\t' read -r over used budget < <(pace '[.over, .used, .budget] | @tsv' <"$STATE_FILE")
   log "used ${used}% of today's ${budget}% (over: $over)"
 
   if [[ "$over" == true && "$was_over" != true ]]; then
@@ -110,15 +129,21 @@ cmd_poll() {
 }
 
 cmd_status() {
-  if [[ ! -f "$STATE_FILE" ]]; then
-    echo "No state yet; run: claude-budget poll"
+  if ! jq -e '.fetched_at' "$STATE_FILE" >/dev/null 2>&1; then
+    echo "No usage yet; run: claude-budget poll"
+    [[ -f "$STATE_FILE" ]] && jq -r '"last poll failed: \(.last_error)"' "$STATE_FILE"
     return 1
   fi
-  jq -r --argjson now "$(date +%s)" '
+  # shellcheck disable=SC2016 # $now is a jq variable
+  pace '
     "day \(.day)/7: used \(.used)% of \(.budget)% budget"
     + (if .over then " — OVER" else "" end)
-    + "\nweek resets \(.resets_at | todate), state \((($now - .fetched_at) / 60) | floor)m old"
-  ' "$STATE_FILE"
+    + "\nweek resets \(.resets_at | todate), usage \((.age / 60) | floor)m old"
+    + (if .stale then " — STALE, not enforced" else "" end)
+    + (if .last_error_at and .last_error_at > .fetched_at
+       then "\nlast poll failed \((($now - .last_error_at) / 60) | floor)m ago: \(.last_error)"
+       else "" end)
+  ' <"$STATE_FILE"
   local n=0
   [[ -f "$PACED_FILE" ]] && n=$(grep -c . "$PACED_FILE" || true)
   echo "$n paced entries (claude-budget sessions to list)"
@@ -187,9 +212,7 @@ is_paced() {
 # Echo "used<TAB>budget" and succeed when fresh state says we are over.
 over_budget() {
   [[ -f "$STATE_FILE" ]] || return 1
-  jq -er --argjson now "$(date +%s)" --argjson stale "$STALE_AFTER" '
-    select(.over and ($now - .fetched_at) < $stale) | [.used, .budget] | @tsv
-  ' "$STATE_FILE" 2>/dev/null
+  pace 'select(.over and (.stale | not)) | [.used, .budget] | @tsv' <"$STATE_FILE" 2>/dev/null | grep .
 }
 
 park_message() {
