@@ -49,6 +49,24 @@ jobs:
       - name: Test doctor help
         run: ./eru.sh doctor --help
 
+  test-dry-run-coder:
+    name: Test Dry Run (Coder)
+    runs-on: ubuntu-latest
+    env:
+      CODER: "true"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test dry-run install all
+        run: |
+          ./eru.sh install --dry-run | tee eru.log
+          grep -q 'ppa:fish-shell/release-4' eru.log
+          grep -q 'Would start fish from interactive bash' eru.log
+          grep -q "$HOME/.config/fish" eru.log
+          grep -q "Would include .*/git/aliases" eru.log
+          grep -q 'Skipped: Not wanted on Coder' eru.log
+
   test-homebrew:
     name: Test Homebrew Installation
     runs-on: macos-latest

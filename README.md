@@ -100,6 +100,8 @@ Install packages from Brewfiles. Automatically processes:
 ./eru.sh upgrade packages
 ```
 
+On a Coder workspace there is no Homebrew and the image already has the dev tools, so this task only installs fish 4 from the `ppa:fish-shell/release-4` PPA (Ubuntu itself ships fish 3).
+
 ### `macos`
 Configure macOS system defaults (Dock, Finder, keyboard, etc.).
 
@@ -108,7 +110,9 @@ Configure macOS system defaults (Dock, Finder, keyboard, etc.).
 ```
 
 ### `shell`
-Set up fish shell as the default shell.
+Set up fish shell as the default shell and apply the tinty colour theme (when tinty is installed).
+
+On a Coder workspace the login shell stays bash, because Coder, IDEs and the Claude app run their commands through it and those commands are written for bash. Instead, a marked block at the end of `~/.bashrc` hands interactive bash over to fish. It leaves bash alone when bash runs a command (`bash -c`), when its parent is fish (so typing `bash` in fish gives bash), and when fish is missing. Other tools keep appending to `~/.bashrc` and nothing after `exec fish` runs, so the task moves the block back to the end whenever it isn't last.
 
 ```bash
 ./eru.sh install shell
@@ -152,6 +156,7 @@ Some programs (like GnuPG and SSH) don't support XDG Base Directory spec and exp
 
 - **GnuPG**: `~/.config/gnupg/*` → `~/.gnupg/*`
 - **SSH**: `~/.config/ssh/config` → `~/.ssh/config`
+- **Fish**: `~/.environment/fish` → `~/.config/fish`, only where the repo is not `~/.config` itself (Coder)
 - **Claude Code**: `~/.config/claude/settings.json` → `~/.claude/settings.json`, plus private bits from `~/.config-private` (CLAUDE.md, skills, per-project and shared auto-memory) when available. On a Coder workspace the settings file also holds other tools' hooks, so only the keys from the private `claude/settings.coder.json` are merged into it (with `jq`) instead of linking it
 
 Setup:
@@ -192,10 +197,13 @@ Set up a [Coder](https://coder.com) workspace (skipped everywhere else). On such
 
 ```bash
 git clone https://github.com/d12frosted/environment.git ~/.environment
-~/.environment/eru.sh install private symlinks services coder
+~/.environment/eru.sh install
 ```
 
+The macOS-only tasks skip themselves, `emacs` is skipped on Coder, `packages` installs fish and `shell` starts it from interactive bash (see above).
+
 The task:
+- includes `git/aliases` from `~/.gitconfig`, so git aliases like `git lg` work there too (the rest of `git/config` carries the personal identity and signing, which don't belong in the work box's global config; on macOS `git/config` includes the same file)
 - sets the git identity from `git/config` on this repo and the private one (a work box usually has a different global identity)
 - points the private repo at HTTPS with gh's stored token, because cron can't use the git SSH helper Coder injects into sessions
 - links `~/work/CLAUDE.md` and lead briefs from the private repo's `coder/work/`
@@ -206,7 +214,7 @@ The task:
 Set up Emacs configuration by running `emacs/setup.sh` (bootstraps packages and
 generates autoloads). Supports subtasks via `emacs:<subtask>` syntax, passed
 straight through to `setup.sh`: `install`, `upgrade`, `compile`, `lint`,
-`test`, `clean`, `doctor`.
+`test`, `clean`, `doctor`. Skipped on Coder workspaces, where Emacs is not wanted.
 
 ```bash
 ./eru.sh install emacs            # Full Emacs setup (install)
@@ -371,6 +379,7 @@ The repository includes GitHub Actions workflows that test:
 
 - ✅ ShellCheck linting
 - ✅ Dry-run mode on all tasks
+- ✅ Dry-run on a Coder workspace (`CODER=true` on Ubuntu)
 - ✅ Homebrew installation
 - ✅ Package installation
 - ✅ Doctor health checks

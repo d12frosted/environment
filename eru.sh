@@ -419,10 +419,50 @@ function task_homebrew() {
 # Task: Packages
 #
 
+# Coder workspaces run Ubuntu without Homebrew, and the image already has
+# the dev tools; the only thing missing there is fish. Ubuntu ships fish 3,
+# so it comes from the fish PPA to match the fish 4 from Homebrew.
+FISH_PPA="ppa:fish-shell/release-4"
+
+function install_coder_packages() {
+  if grep -rqs "fish-shell/release-4" /etc/apt/sources.list /etc/apt/sources.list.d/; then
+    info "fish PPA is already added"
+  else
+    info "Adding $FISH_PPA..."
+    if [[ "$DRY_RUN" != "true" ]]; then
+      if ! sudo add-apt-repository -y "$FISH_PPA"; then
+        fail "Failed to add $FISH_PPA"
+      fi
+    fi
+  fi
+
+  local fish_major=""
+  if command -v fish &> /dev/null; then
+    fish_major=$(fish --version | sed -E 's/[^0-9]*([0-9]+).*/\1/')
+  fi
+  if [[ -n "$fish_major" && "$fish_major" -ge 4 && "$ACTION" != "upgrade" ]]; then
+    info "fish $fish_major is already installed"
+    return 0
+  fi
+
+  info "Installing fish from $FISH_PPA..."
+  if [[ "$DRY_RUN" != "true" ]]; then
+    if ! { sudo apt-get update -qq && sudo apt-get install -y fish; }; then
+      fail "Failed to install fish"
+    fi
+  fi
+}
+
 function task_packages() {
   local action_label="Installing"
   [[ "$ACTION" == "upgrade" ]] && action_label="Upgrading"
   task_start "packages" "$action_label packages"
+
+  if is_coder; then
+    install_coder_packages
+    task_complete "packages" "Packages ready"
+    return 0
+  fi
 
   if ! is_macos; then
     task_skip "Not on macOS (Homebrew only)"
@@ -608,11 +648,67 @@ function task_macos() {
 # Task: Shell Setup
 #
 
+# On a Coder box the login shell stays bash: Coder, IDEs and the Claude app
+# run their commands through it, and those commands are written for bash.
+# Interactive bash hands over to fish instead, unless bash was started to
+# run a command (-c), its parent is fish (typing `bash` in fish should give
+# bash), or fish is missing.
+BASHRC_FISH_BLOCK=$(cat << 'EOF'
+# eru:fish start
+if [[ $- == *i* && -z "${BASH_EXECUTION_STRING:-}" ]] && command -v fish &> /dev/null &&
+  [[ "$(ps -o comm= -p "$PPID" 2> /dev/null)" != "fish" ]]; then
+  if shopt -q login_shell; then exec fish --login; else exec fish; fi
+fi
+# eru:fish end
+EOF
+)
+
+# Tools keep appending to ~/.bashrc, and anything after `exec fish` never
+# runs, so the block is moved back to the end whenever it isn't last.
+function install_bashrc_fish() {
+  local bashrc="$HOME/.bashrc"
+  local current=""
+  [[ -f "$bashrc" ]] && current=$(< "$bashrc")
+
+  if [[ "$current" == *"$BASHRC_FISH_BLOCK" ]]; then
+    info "fish already starts from interactive bash"
+    return 0
+  fi
+  if [[ "$DRY_RUN" == "true" ]]; then
+    info "Would start fish from interactive bash ($bashrc)"
+    return 0
+  fi
+
+  local rest
+  rest=$(sed '/^# eru:fish start$/,/^# eru:fish end$/d' <<< "$current")
+  [[ -f "$bashrc" ]] && cp "$bashrc" "${bashrc}.backup.$(date +%Y%m%d_%H%M%S)"
+  printf '%s\n\n%s\n' "$rest" "$BASHRC_FISH_BLOCK" > "$bashrc"
+  success "fish now starts from interactive bash ($bashrc)"
+}
+
 function task_shell() {
   task_start "shell" "Setting up fish shell"
 
   check_command fish "fish not installed. Run: $0 install packages"
 
+  if is_coder; then
+    install_bashrc_fish
+  else
+    set_default_shell_fish
+  fi
+
+  # sync and apply tinty
+  if command -v tinty &> /dev/null; then
+    tinty sync
+    tinty apply base16-chinoiserie
+  else
+    info "tinty is not installed; skipping the colour theme"
+  fi
+
+  task_complete "shell" "Shell configured"
+}
+
+function set_default_shell_fish() {
   local fish_path
   fish_path=$(command -v fish)
 
@@ -639,12 +735,6 @@ function task_shell() {
   else
     info "Fish is already the default shell"
   fi
-
-  # sync and apply tinty
-  tinty sync
-  tinty apply base16-chinoiserie
-
-  task_complete "shell" "Shell configured"
 }
 
 #
@@ -896,6 +986,12 @@ function task_symlinks() {
   # symlink eru.sh to eru
   create_symlink "$ERU_HOME/eru.sh" "$HOME/.local/bin/eru"
 
+  # Where the repo is not ~/.config itself (Coder), fish finds its config
+  # through a link
+  if [[ "$ERU_HOME" != "$XDG_CONFIG_HOME" ]]; then
+    create_symlink "$ERU_HOME/fish" "$XDG_CONFIG_HOME/fish"
+  fi
+
   # Claude Code settings (doesn't support XDG, so symlink from ~/.config/claude).
   # On a Coder box the file also carries other tools' hooks, so only the keys
   # we own are merged in (see merge_claude_settings).
@@ -1101,6 +1197,19 @@ function task_coder() {
   # GIT_AUTHOR_*/GIT_COMMITTER_* into interactive sessions, which win over
   # repo config, so this covers cron (private-sync); commits made by hand
   # in a session need those variables overridden.
+  # Git aliases are shared with macOS, where git/config includes them. The
+  # rest of git/config (identity, signing) doesn't belong in this box's
+  # global config, so only the aliases file is included there.
+  local git_aliases="$ERU_HOME/git/aliases"
+  if git config --global --get-all include.path 2> /dev/null | grep -qxF "$git_aliases"; then
+    info "Git aliases are already included in ~/.gitconfig"
+  elif [[ "$DRY_RUN" == "true" ]]; then
+    info "Would include $git_aliases in ~/.gitconfig"
+  else
+    git config --global --add include.path "$git_aliases"
+    success "Included $git_aliases in ~/.gitconfig"
+  fi
+
   local git_name git_email repo
   git_name=$(git config -f "$ERU_HOME/git/config" user.name || true)
   git_email=$(git config -f "$ERU_HOME/git/config" user.email || true)
@@ -1166,6 +1275,11 @@ function task_coder() {
 
 function task_emacs() {
   task_start "emacs" "Setting up Emacs"
+
+  if is_coder; then
+    task_skip "Not wanted on Coder"
+    return 0
+  fi
 
   check_command emacs "Emacs not installed. Run: $0 install packages"
 
@@ -1322,6 +1436,21 @@ function doctor_shell() {
   if [[ -z "$fish_path" ]]; then
     doctor_issue "Fish shell is not installed"
     return 1
+  fi
+
+  # On Coder fish starts from interactive bash (see install_bashrc_fish)
+  if is_coder; then
+    if [[ "$(cat "$HOME/.bashrc" 2> /dev/null)" == *"$BASHRC_FISH_BLOCK" ]]; then
+      doctor_ok "fish starts from interactive bash"
+    else
+      doctor_issue "fish doesn't start from interactive bash (missing or not last in ~/.bashrc)"
+    fi
+    if [[ -L "$XDG_CONFIG_HOME/fish" && "$(readlink "$XDG_CONFIG_HOME/fish")" == "$ERU_HOME/fish" ]]; then
+      doctor_ok "\$XDG_CONFIG_HOME/fish → $ERU_HOME/fish"
+    else
+      doctor_issue "\$XDG_CONFIG_HOME/fish is not symlinked to $ERU_HOME/fish"
+    fi
+    return 0
   fi
 
   # Check if fish is in /etc/shells
@@ -1505,6 +1634,11 @@ function doctor_services() {
 function doctor_emacs() {
   info "Checking Emacs..."
 
+  if is_coder; then
+    info "Emacs is not wanted on Coder"
+    return 0
+  fi
+
   if ! command -v emacs &>/dev/null; then
     doctor_issue "Emacs is not installed"
     return 1
@@ -1633,9 +1767,9 @@ Actions:
 
 Tasks for install/upgrade (run all if none specified):
   homebrew          Install/update Homebrew
-  packages          Install packages from Brewfiles
+  packages          Install packages from Brewfiles (fish from apt on Coder)
   macos             Configure macOS defaults
-  shell             Set up fish shell
+  shell             Set up fish shell (started from bash on Coder)
   wm                Configure yabai + skhd
   devtools          Set up git, ssh, gpg
   private           Sync private config (clone environment-private, adopt Claude memory)
@@ -1646,7 +1780,7 @@ Tasks for install/upgrade (run all if none specified):
 
 Checks for doctor (run all if none specified):
   brew              Check for orphan packages not in Brewfiles
-  shell             Verify fish is the default shell
+  shell             Verify fish is the default shell (started from bash on Coder)
   wm                Check yabai/skhd are running
   symlinks          Verify symlinks are correct
   services          Check launchd services are loaded

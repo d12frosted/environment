@@ -15,5 +15,6 @@
 	defaultBranch = master
 [pull]
 	rebase = true
-[alias]
-	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+[include]
+	# shared with machines that don't use this file (Coder)
+	path = aliases

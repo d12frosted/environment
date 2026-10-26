@@ -3,7 +3,9 @@
 set -gx LANG en_US.UTF-8
 
 # Homebrew
-eval (/opt/homebrew/bin/brew shellenv fish)
+if test -x /opt/homebrew/bin/brew
+    eval (/opt/homebrew/bin/brew shellenv fish)
+end
 
 if status is-interactive
     # Commands to run in interactive sessions can go here
@@ -21,15 +23,25 @@ set -gx GOBIN ~/.local/bin
 set -gx BUN_INSTALL ~/.bun
 fish_add_path $BUN_INSTALL/bin
 
-# setup GPG as SSH agent
+# fnm (Coder images manage node with it)
+if command -q fnm
+    fnm env --use-on-cd --shell fish | source
+end
+
+# setup GPG as SSH agent, except on Coder, where SSH goes through what Coder
+# sets up (its git SSH helper, or the agent forwarded by `coder ssh -A`)
 set -gx GPG_TTY (tty)
-set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
-if ! pgrep -x gpg-agent >/dev/null
-    gpgconf --launch gpg-agent
+if test "$CODER" != true
+    set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
+    if ! pgrep -x gpg-agent >/dev/null
+        gpgconf --launch gpg-agent
+    end
 end
 
 # start starship
-starship init fish | source
+if command -q starship
+    starship init fish | source
+end
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 if test -d "$HOME/.rd/bin"
