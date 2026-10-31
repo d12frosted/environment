@@ -420,11 +420,33 @@ function task_homebrew() {
 #
 
 # Coder workspaces run Ubuntu without Homebrew, and the image already has
-# the dev tools; the only thing missing there is fish. Ubuntu ships fish 3,
-# so it comes from the fish PPA to match the fish 4 from Homebrew.
+# the dev tools; the only things missing there are fish and starship.
+# Ubuntu ships fish 3, so it comes from the fish PPA to match the fish 4
+# from Homebrew. Ubuntu has no starship package, so its latest release
+# binary comes straight from GitHub into ~/.local/bin (starship.rs, where
+# the official installer lives, is not reachable from Coder boxes).
 FISH_PPA="ppa:fish-shell/release-4"
 
+function install_coder_starship() {
+  if command -v starship &> /dev/null && [[ "$ACTION" != "upgrade" ]]; then
+    info "starship is already installed"
+    return 0
+  fi
+
+  local url
+  url="https://github.com/starship/starship/releases/latest/download/starship-$(uname -m)-unknown-linux-musl.tar.gz"
+  info "Installing starship into $HOME/.local/bin..."
+  if [[ "$DRY_RUN" != "true" ]]; then
+    mkdir -p "$HOME/.local/bin"
+    if ! curl -fsSL "$url" | tar -xz -C "$HOME/.local/bin" starship; then
+      fail "Failed to install starship from $url"
+    fi
+  fi
+}
+
 function install_coder_packages() {
+  install_coder_starship
+
   if grep -rqs "fish-shell/release-4" /etc/apt/sources.list /etc/apt/sources.list.d/; then
     info "fish PPA is already added"
   else
@@ -986,10 +1008,11 @@ function task_symlinks() {
   # symlink eru.sh to eru
   create_symlink "$ERU_HOME/eru.sh" "$HOME/.local/bin/eru"
 
-  # Where the repo is not ~/.config itself (Coder), fish finds its config
-  # through a link
+  # Where the repo is not ~/.config itself (Coder), fish and starship find
+  # their config through links
   if [[ "$ERU_HOME" != "$XDG_CONFIG_HOME" ]]; then
     create_symlink "$ERU_HOME/fish" "$XDG_CONFIG_HOME/fish"
+    create_symlink "$ERU_HOME/starship.toml" "$XDG_CONFIG_HOME/starship.toml"
   fi
 
   # Claude Code settings (doesn't support XDG, so symlink from ~/.config/claude).
@@ -1449,6 +1472,16 @@ function doctor_shell() {
       doctor_ok "\$XDG_CONFIG_HOME/fish → $ERU_HOME/fish"
     else
       doctor_issue "\$XDG_CONFIG_HOME/fish is not symlinked to $ERU_HOME/fish"
+    fi
+    if command -v starship &> /dev/null; then
+      doctor_ok "starship is installed"
+    else
+      doctor_issue "starship is not installed (fish falls back to its default prompt)"
+    fi
+    if [[ -L "$XDG_CONFIG_HOME/starship.toml" && "$(readlink "$XDG_CONFIG_HOME/starship.toml")" == "$ERU_HOME/starship.toml" ]]; then
+      doctor_ok "\$XDG_CONFIG_HOME/starship.toml → $ERU_HOME/starship.toml"
+    else
+      doctor_issue "\$XDG_CONFIG_HOME/starship.toml is not symlinked to $ERU_HOME/starship.toml"
     fi
     return 0
   fi

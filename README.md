@@ -100,7 +100,7 @@ Install packages from Brewfiles. Automatically processes:
 ./eru.sh upgrade packages
 ```
 
-On a Coder workspace there is no Homebrew and the image already has the dev tools, so this task only installs fish 4 from the `ppa:fish-shell/release-4` PPA (Ubuntu itself ships fish 3).
+On a Coder workspace there is no Homebrew and the image already has the dev tools, so this task only installs fish 4 from the `ppa:fish-shell/release-4` PPA (Ubuntu itself ships fish 3) and [starship](https://starship.rs) as its latest GitHub release binary into `~/.local/bin` (Ubuntu has no package for it, and starship.rs with the official installer is not reachable from Coder boxes). Without starship, fish falls back to its default prompt.
 
 ### `macos`
 Configure macOS system defaults (Dock, Finder, keyboard, etc.).
@@ -157,6 +157,7 @@ Some programs (like GnuPG and SSH) don't support XDG Base Directory spec and exp
 - **GnuPG**: `~/.config/gnupg/*` → `~/.gnupg/*`
 - **SSH**: `~/.config/ssh/config` → `~/.ssh/config`
 - **Fish**: `~/.environment/fish` → `~/.config/fish`, only where the repo is not `~/.config` itself (Coder)
+- **Starship**: `~/.environment/starship.toml` → `~/.config/starship.toml`, same condition as fish
 - **Claude Code**: `~/.config/claude/settings.json` → `~/.claude/settings.json`, plus private bits from `~/.config-private` (CLAUDE.md, skills, per-project and shared auto-memory) when available. On a Coder workspace the settings file also holds other tools' hooks, so only the keys from the private `claude/settings.coder.json` are merged into it (with `jq`) instead of linking it
 
 Setup:
