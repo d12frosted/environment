@@ -83,6 +83,14 @@ ERU_HOME="$SCRIPT_DIR"
 PRIVATE_CONFIG_HOME="${PRIVATE_CONFIG_HOME:-$HOME/.config-private}"
 PRIVATE_CONFIG_REPO="${PRIVATE_CONFIG_REPO:-git@github.com:d12frosted/environment-private.git}"
 
+# yabai is built from source: upstream (asmvik/yabai) has no macOS 27 support
+# and is no longer maintained. The fork carries the scripting addition offsets
+# for macOS 27. Installed outside of Homebrew, so the sudoers entry pins a
+# stable path.
+YABAI_REPO="${YABAI_REPO:-https://github.com/AhsanFazal/yabai.git}"
+YABAI_SRC="${YABAI_SRC:-$HOME/Developer/yabai}"
+YABAI_BIN="/usr/local/bin/yabai"
+
 #
 # Logging Functions
 #
@@ -763,6 +771,40 @@ function set_default_shell_fish() {
 # Task: Window Manager (yabai + skhd)
 #
 
+# Build yabai from $YABAI_REPO and install it to $YABAI_BIN. Clones on first
+# run and pulls on upgrade. The build is reproducible, so an unchanged checkout
+# produces the same binary and the install is skipped: a new binary resets the
+# Accessibility grant and the sudoers hash.
+function install_yabai() {
+  info "Building yabai from $YABAI_REPO..."
+  if [[ "$DRY_RUN" == "true" ]]; then
+    return 0
+  fi
+
+  if [[ ! -d "$YABAI_SRC/.git" ]]; then
+    mkdir -p "$(dirname "$YABAI_SRC")"
+    git clone "$YABAI_REPO" "$YABAI_SRC" || fail "Failed to clone $YABAI_REPO"
+  elif [[ "$ACTION" == "upgrade" ]]; then
+    git -C "$YABAI_SRC" pull --ff-only || fail "Failed to update $YABAI_SRC"
+  fi
+
+  # Same steps as the Homebrew formula's HEAD build.
+  make -C "$YABAI_SRC" -j1 install > /dev/null || fail "Failed to build yabai"
+  codesign -fs - "$YABAI_SRC/bin/yabai" || fail "Failed to sign yabai"
+
+  if cmp -s "$YABAI_SRC/bin/yabai" "$YABAI_BIN"; then
+    info "yabai is up to date ($("$YABAI_BIN" --version))"
+    return 0
+  fi
+
+  info "Installing yabai to $YABAI_BIN..."
+  sudo install -m 755 -o root -g wheel "$YABAI_SRC/bin/yabai" "$YABAI_BIN" ||
+    fail "Failed to install yabai"
+  # Drop the old scripting addition; yabairc loads the new one on start.
+  sudo "$YABAI_BIN" --uninstall-sa || true
+  warn "New yabai binary: grant Accessibility to $YABAI_BIN in System Settings"
+}
+
 function task_wm() {
   task_start "wm" "Configuring window manager"
 
@@ -771,25 +813,27 @@ function task_wm() {
     return 0
   fi
 
-  check_command yabai "yabai not installed. Run: $0 install packages"
   check_command skhd "skhd not installed. Run: $0 install packages"
+
+  install_yabai
 
   # Configure yabai sudoers
   info "Configuring yabai sudoers..."
-  local yabai_path
-  yabai_path=$(command -v yabai)
-  local yabai_hash
-  yabai_hash=$(shasum -a 256 "$yabai_path" | cut -d " " -f 1)
-
   if [[ "$DRY_RUN" != "true" ]]; then
-    if ! echo "$(whoami) ALL=(root) NOPASSWD: sha256:$yabai_hash $yabai_path --load-sa" | \
-      sudo tee /private/etc/sudoers.d/yabai > /dev/null; then
+    local yabai_hash sudoers_tmp
+    yabai_hash=$(shasum -a 256 "$YABAI_BIN" | cut -d " " -f 1)
+    sudoers_tmp=$(mktemp)
+    echo "$(whoami) ALL=(root) NOPASSWD: sha256:$yabai_hash $YABAI_BIN --load-sa" > "$sudoers_tmp"
+    if ! sudo visudo -cqf "$sudoers_tmp" ||
+      ! sudo install -m 440 -o root -g wheel "$sudoers_tmp" /private/etc/sudoers.d/yabai; then
+      rm -f "$sudoers_tmp"
       fail "Failed to configure yabai sudoers"
     fi
+    rm -f "$sudoers_tmp"
 
     info "Restarting yabai..."
-    yabai --stop-service || true
-    if ! yabai --start-service; then
+    "$YABAI_BIN" --stop-service || true
+    if ! "$YABAI_BIN" --start-service; then
       fail "Failed to start yabai service"
     fi
   fi
@@ -1516,6 +1560,9 @@ function doctor_wm() {
 
   # Check yabai
   if command -v yabai &>/dev/null; then
+    if [[ "$(command -v yabai)" != "$YABAI_BIN" ]]; then
+      doctor_issue "yabai resolves to $(command -v yabai), expected $YABAI_BIN (Homebrew yabai shadows the fork build?)"
+    fi
     if pgrep -x yabai &>/dev/null; then
       doctor_ok "yabai is running"
     else

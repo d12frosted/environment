@@ -6,7 +6,7 @@
 
 tap "d12frosted/emacs-plus"
 tap "felixkratz/formulae"
-tap "koekeishiya/formulae"
+tap "asmvik/formulae"
 tap "tinted-theming/tinted"
 
 ################################################################################
@@ -114,8 +114,9 @@ brew "tinted-theming/tinted/tinty"
 #
 ################################################################################
 
-brew "koekeishiya/formulae/yabai"
-brew "koekeishiya/formulae/skhd"
+# yabai is built from source by `eru.sh install wm`: upstream has no macOS 27
+# support. Do not add it here, /opt/homebrew/bin would shadow the build.
+brew "asmvik/formulae/skhd"
 brew "felixkratz/formulae/borders"
 
 ################################################################################

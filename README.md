@@ -120,6 +120,7 @@ On a Coder workspace the login shell stays bash, because Coder, IDEs and the Cla
 
 ### `wm`
 Configure window manager (yabai + skhd):
+- Builds yabai from source and installs it to `/usr/local/bin/yabai` (see below)
 - Sets up yabai sudoers for scripting additions
 - Patches skhd LaunchAgent plist
 - Restarts services
@@ -127,6 +128,8 @@ Configure window manager (yabai + skhd):
 ```bash
 ./eru.sh install wm
 ```
+
+yabai is not installed from Homebrew. Upstream has no macOS 27 support and is no longer maintained, so `wm` builds the [AhsanFazal/yabai](https://github.com/AhsanFazal/yabai) fork, which carries the scripting addition offsets for macOS 27. The checkout lives in `~/Developer/yabai` (override with `YABAI_SRC`, or point `YABAI_REPO` at another fork); `install` clones it and `upgrade` pulls it. The binary is only replaced when the build changes, because a new binary needs Accessibility granted again.
 
 ### `devtools`
 Set up development tools:
@@ -329,7 +332,7 @@ homebrew (standalone)
   ↓
 packages (requires: homebrew)
   ↓
-wm (requires: packages → yabai, skhd)
+wm (requires: packages → skhd; builds yabai)
 shell (requires: packages → fish)
 devtools (requires: packages → gnupg, ssh)
 services (requires: packages, emacs → vulpea-sync, vulpea-watch)

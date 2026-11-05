@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"
+yabai --restart-service
